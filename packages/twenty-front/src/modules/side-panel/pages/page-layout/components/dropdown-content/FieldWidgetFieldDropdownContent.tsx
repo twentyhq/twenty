@@ -1,8 +1,8 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import {
   getFieldWidgetDefaultDisplayMode,
@@ -26,6 +26,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type FieldConfiguration } from '~/generated-metadata/graphql';
@@ -92,6 +93,9 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
+  const { resolveFieldWidgetRelationTableViewIdChange } =
+    useResolveFieldWidgetRelationTableViewIdChange(pageLayoutId);
+
   const { closeDropdown } = useCloseDropdown();
 
   const { getIcon } = useIcons();
@@ -126,9 +130,22 @@ export const FieldWidgetFieldDropdownContent = () => {
         selectedField.relation?.type,
       );
 
+    const isSelectingDifferentField =
+      currentFieldMetadataId !== fieldMetadataId;
+
+    const relationTableViewIdChange =
+      resolveFieldWidgetRelationTableViewIdChange({
+        selectedField,
+        currentDisplayMode,
+        isSelectingDifferentField,
+        widgetId: widgetInEditMode?.id,
+        currentViewId: fieldConfiguration?.viewId,
+      });
+
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldMetadataId,
+        ...relationTableViewIdChange,
         ...(needsDisplayModeSwitch && {
           fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
             selectedField.type,

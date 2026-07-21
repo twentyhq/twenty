@@ -4,7 +4,7 @@ description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 
 icon: window-maximize
 ---
 
-前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒中执行，但会原生渲染到页面中，而非在 iframe 里。
+前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒化的、不透明来源的 iframe 中执行，但其 UI 仍然原生渲染在页面中，而不是被限制在该 iframe 内。
 
 ## 前端组件可用位置
 
@@ -49,14 +49,13 @@ export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
-  icon: 'IconBolt',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
-使用 `yarn twenty dev` 同步后（或单次运行 `yarn twenty dev --once`），快速操作会出现在页面右上角：
+使用 `yarn twenty dev` 同步后（或单次运行 `yarn twenty apply`），快速操作会出现在页面右上角：
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="右上角的快速操作按钮" />
@@ -88,11 +87,11 @@ export default defineCommandMenuItem({
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
     enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
@@ -116,19 +115,19 @@ export default defineFrontComponent({
 
 `twenty-sdk` 包提供了四个为无头前端组件设计的 Command 辅助组件。 每个组件都会在挂载时执行一个操作，通过显示 snackbar 通知来处理错误，并在完成后自动卸载该前端组件。
 
-从 `twenty-sdk/command` 导入它们：
+从 `twenty-sdk/front-component` 导入它们：
 
 * **`Command`** — 通过 `execute` 属性运行异步回调。
 * **`CommandLink`** — 导航到某个应用路径。 属性：`to`、`params`、`queryParams`、`options`。
 * **`CommandModal`** — 打开一个确认模态框。 如果用户确认，则执行 `execute` 回调。 属性：`title`、`subtitle`、`execute`、`confirmButtonText`、`confirmButtonAccent`。
-* **`CommandOpenSidePanelPage`** — 打开一个侧边栏页面。 Props 取决于 `page` —— 例如，`ViewRecord` 需要 `recordId` + `objectNameSingular`，其他页面需要 `pageTitle` + `pageIcon`。
+* **`CommandOpenSidePanelPage`** — 打开一个侧边栏页面。 Props 取决于 `page` —— 例如，`ViewRecord` 需要 `recordId` + `objectNameSingular`（以及一个可选的 `tab` id，用于在特定标签页中打开该记录），其他页面需要 `pageTitle` + `pageIcon`。
 
 下面是一个完整示例：无头前端组件使用 `Command` 从命令菜单运行一个操作：
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const RunAction = () => {
   const execute = async () => {
@@ -160,7 +159,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
@@ -169,7 +167,7 @@ export default defineCommandMenuItem({
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CommandModal } from 'twenty-sdk/command';
+import { CommandModal } from 'twenty-sdk/front-component';
 
 const DeleteDraft = () => {
   const execute = async () => {
@@ -196,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+以及一个使用 `CommandOpenSidePanelPage` 的示例，用于在特定标签页的侧边栏中打开当前记录。 `tab` 是页面布局的标签页 id（默认布局使用类似 `company-tab-emails` 或 `company-tab-timeline` 这样的 id；自定义布局使用标签页自身的 id）。 如果该 id 在记录的布局中不存在，则会改为打开默认标签页：
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## 调用逻辑函数
 
-前端组件在沙盒 Web Worker 中于浏览器端运行，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
+前端组件在浏览器端的 Web Worker 中运行，该 Web Worker 被沙盒化在不透明来源的 iframe 中，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
 
-使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 Twenty 会将提供你函数服务的基础 URL 作为 `TWENTY_FUNCTIONS_URL` 注入到 worker 中，同时注入用于对调用进行身份验证的 `TWENTY_APP_ACCESS_TOKEN`。 目前还没有用于调用你自定义函数的专用 SDK 客户端，因此请使用普通的 `fetch` 来调用它们：
+使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 `RestApiClient` 会将以 `/s/` 开头的路径视为应用路由，将其解析到你的函数提供服务的 URL，并使用 `TWENTY_APP_ACCESS_TOKEN` 对其进行认证。
 
-> **在 Twenty Cloud 上，HTTP 触发的逻辑函数通过每个工作区的专用域名提供服务**，域名为 `https://\<your-workspace-subdomain>.twenty.com\<path>`——这正是 `TWENTY_FUNCTIONS_URL` 所解析到的地址。 对于外部调用方，请从函数的 **HTTP trigger** 设置或应用的 **Settings** 选项卡中复制准确的 URL。
-
-<Warning>
-  旧版的 `/s/` 函数路由已被**弃用**，并将于 **2026-07-24 停用**。 请改用上面的 `TWENTY_FUNCTIONS_URL`，并在该日期之前迁移所有硬编码的 `/s/` URL。 `/s/` 路由在自托管场景下仍可用。
-</Warning>
+> **在 Twenty Cloud 上，HTTP 触发的逻辑函数通过每个工作区的专用域名提供服务**，域名为 `https://\<your-workspace-subdomain>.withtwenty.com\<path>`。 对于外部调用方，请从函数的 **HTTP trigger** 设置或应用的 **Settings** 选项卡中复制准确的 URL。
 
 无头前端组件可以通过 `Command` 组件在挂载时执行调用，然后自动卸载：
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
+import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -238,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-附加到 `TWENTY_FUNCTIONS_URL` 的路径是逻辑函数的 `httpRouteTriggerSettings.path`。 保持 `isAuthRequired: true`；Twenty 为你的组件生成的 `TWENTY_APP_ACCESS_TOKEN` 会对请求进行认证：
+传递给 `RestApiClient` 的路径是逻辑函数的 `httpRouteTriggerSettings.path`，并以 `/s` 作为前缀。 保持 `isAuthRequired: true`；Twenty 为你的组件生成的 `TWENTY_APP_ACCESS_TOKEN` 会对请求进行认证：
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -263,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
+`TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
 </Note>
 
 ### 调用 Twenty REST API
 
-要在前端组件中读取或写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它与 `CoreApiClient` 和 `MetadataApiClient` 属于同一客户端家族，但目标是 Twenty REST API（`/rest/...`），而不是 GraphQL API，其基础 URL 来自 `TWENTY_API_URL`。
+要在前端组件中调用应用 HTTP 路由或读取、写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它会将 `/s/...` 路径发送到你工作区的函数基础 URL，而将包括 `/rest/...` 在内的其他所有路径发送到 `TWENTY_API_URL`。
 
-| 方法                                | 描述                |
-| --------------------------------- | ----------------- |
-| `get(path, options?)`             | 发送一个 `GET` 请求     |
-| `post(path, body?, options?)`     | 发送一个 `POST` 请求    |
-| `put(path, body?, options?)`      | 发送一个 `PUT` 请求     |
-| `patch(path, body?, options?)`    | 发送一个 `PATCH` 请求   |
-| `delete(path, options?)`          | 发送一个 `DELETE` 请求  |
-| `request(method, path, options?)` | 使用任意 HTTP 方法的通用请求 |
+| 方法                                | 描述                            |
+| --------------------------------- | ----------------------------- |
+| `get(path, options?)`             | 发送一个 `GET` 请求                 |
+| `post(path, body?, options?)`     | 发送一个 `POST` 请求                |
+| `put(path, body?, options?)`      | 发送一个 `PUT` 请求                 |
+| `patch(path, body?, options?)`    | 发送一个 `PATCH` 请求               |
+| `delete(path, options?)`          | 发送一个 `DELETE` 请求              |
+| `request(method, path, options?)` | 使用任意 HTTP 方法的通用请求             |
+| `resolveUrl(path, options?)`      | 在不发送请求的情况下将路径解析为其完整 URL（用于链接） |
 
 `options` 接受 `headers`、`query`（查询字符串参数记录；空值会被跳过），以及通过 `signal` 传入的 `AbortSignal`。 非 `FormData` 类型的对象 `body` 会被自动进行 JSON 序列化。 在收到 `401` 时，客户端会通过宿主刷新一次访问令牌，然后重试该请求。
 
@@ -316,13 +346,13 @@ try {
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   useUserId,
-  useRecordId,
+  useSelectedRecordIds,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
   const componentId = useFrontComponentId();
 
   return (
@@ -377,13 +407,26 @@ export default defineFrontComponent({
 机密变量（`isSecret: true`）**不会**暴露给前端组件。 它们仅在服务器端运行的 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions) 中可用。 这可以防止诸如 API 密钥之类的敏感值被发送到浏览器。
 </Warning>
 
+无论变量声明的 `type` 为何，`getApplicationVariable` 始终返回一个 **string**（或 `undefined`）。 该字符串会按照类型被一致地序列化（布尔值为 `"true"` / `"false"`，数字为十进制字符串，数组 / 对象为 JSON），与逻辑函数 `process.env` 使用的格式相同 —— 需要你自行解析（`Number(...)`、`JSON.parse(...)`、`=== 'true'`）。 参见[变量类型](/l/zh/developers/extend/apps/config/application#variable-types)。
+
 以下系统变量始终可以通过 `process.env` 获取：
 
-| 变量                        | 描述                     |
-| ------------------------- | ---------------------- |
-| `TWENTY_FUNCTIONS_URL`    | 提供你应用 HTTP 逻辑函数的基础 URL |
-| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL  |
-| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌      |
+| 变量                        | 描述                    |
+| ------------------------- | --------------------- |
+| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL |
+| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌     |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty 还会将 `TWENTY_FUNCTIONS_URL` 注入到前端组件和逻辑函数中：也就是你的应用的 HTTP 触发逻辑函数所提供服务的基础 URL。
+
+之所以存在这个变量，是因为该 URL 并不总是 Twenty 服务器本身。 在 Twenty Cloud 上，应用路由通过每个工作区的专用域名提供服务（`https://\<your-workspace-subdomain>.withtwenty.com`，或者在已配置时为应用的主公共域名），以便应用生成的响应运行在一个与 Twenty 应用源不同的隔离源上。 自托管和本地实例会在服务器本身的 `/s` 前缀下提供应用路由，并且可能完全不会设置该变量。 由于基础 URL 会因工作区和实例而异，你的代码不能将其硬编码——服务器会在运行时注入正确的值。
+
+你很少需要直接读取它。 通过 `RestApiClient` 使用带有 `/s/` 前缀的路径来调用你的路由，客户端会为你解析 URL：它会去掉 `/s` 前缀并将请求发往 `TWENTY_FUNCTIONS_URL`，在该变量未设置时则回退到 `\<TWENTY_API_URL>/s`。 使用 `resolveUrl('/s/\<path>')` 来在不发送请求的情况下获取绝对 URL，例如用于链接。 仅在手动构建 URL 时才直接读取该变量：
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## 宿主通信 API
 
@@ -403,12 +446,11 @@ export default defineFrontComponent({
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   const handleArchive = async () => {
     const client = new CoreApiClient();
@@ -449,10 +491,10 @@ export default defineFrontComponent({
 使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const BulkExport = () => {
   const selectedRecordIds = useSelectedRecordIds();
@@ -490,12 +532,19 @@ export default defineFrontComponent({
   name: 'bulk-export',
   description: 'Export selected records',
   component: BulkExport,
-  command: {
-    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
-    label: 'Bulk Export',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+});
+```
+
+通过仅限记录选择的[命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)将其呈现出来：
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
 
@@ -523,15 +572,43 @@ export default defineFrontComponent({
 前端组件支持多种样式方案。 你可以使用：
 
 * **内联样式** — `style={{ color: 'red' }}`
-* **Twenty UI 组件** — 从 `twenty-sdk/ui` 导入（Button、Tag、Status、Chip、Avatar 等）
+* **Twenty UI 组件** — Twenty 自身的组件库；请参阅下文的 [使用 Twenty UI 组件](#using-twenty-ui-components)
 * **Emotion** — 使用 `@emotion/react` 的 CSS-in-JS
 * **Styled-components** — `styled.div` 模式
 * **Tailwind CSS** — 工具类
 * **任何 CSS-in-JS 库**（与 React 兼容）
 
+## 使用 Twenty UI 组件
+
+Twenty 通过 [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) 包提供其组件库。 前端组件可以将其用于按钮、标签、状态徽章、Chip、头像、图标、排版，以及能够自动匹配工作区明暗主题的主题令牌。
+
+### 安装
+
+将该包添加到你的应用中，并固定为你的 Twenty 实例所提供的版本：
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` 会在构建时被打包进你的前端组件中，因此它只需要作为你的应用的依赖——在运行时无需任何配置。
+
+### 导入组件
+
+请从匹配的子路径而不是包根路径导入，这样只有你使用到的组件才会被打包进你的 bundle：
+
+| 子路径                         | 导出内容                                    |
+| --------------------------- | --------------------------------------- |
+| `twenty-ui/input`           | `Button` 和表单输入组件                        |
+| `twenty-ui/data-display`    | `Tag`、`Status`、`Chip`、`Avatar` 等        |
+| `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` 等             |
+| `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` 等 |
+| `twenty-ui/icon`            | `Icon*` 组件（例如 `IconCheck`）              |
+| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`     |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +626,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### 图标
+
+从 `twenty-ui/icon` 导入单个图标：
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+每个具名图标都支持 tree-shaking，因此只导入少量图标对 bundle 体积影响很小。 避免使用 `IconsProvider`、`useIcons` 和 `iconsState`——它们会引入完整的 Tabler 图标集（数 MB 大小）。
+
+### 主题和主题令牌
+
+Twenty UI 组件会自动匹配工作区的明暗主题——渲染器会在宿主上应用当前启用的配色方案，组件会基于该方案解析自己的颜色。
+
+要在你自己的行内样式中使用相同的设计令牌，请调用 `useTheme()` hook。 它会返回与当前主题关联的 Twenty 主题令牌（间距、颜色、圆角、字体），你的组件中无需设置 `ThemeProvider`：
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+由于 `useTheme()` 是一个 hook，你需要在组件主体内部读取令牌，因此这些值始终能反映实时的主题。 同一份令牌映射也作为常量 `themeCssVariables` 导出，但在前端组件中更推荐使用 `useTheme()`——在应用清单被抽取时，解引用 `themeCssVariables` 的模块级常量可能会是 undefined。
+
+如果需要显式地根据当前配色方案做分支判断，可从 `twenty-sdk/front-component` 中使用 `useColorScheme()` 读取，它会返回 `'light'` 或 `'dark'`。

@@ -2,25 +2,34 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
+import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { SubscriptionInfoRowContainer } from '@/settings/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import {
   ENTERPRISE_PLAN_MODAL_ID,
   EnterprisePlanModal,
 } from '@/settings/enterprise/components/EnterprisePlanModal';
 import { REFRESH_ENTERPRISE_VALIDITY_TOKEN } from '@/settings/enterprise/graphql/mutations/refreshEnterpriseValidityToken';
+import { RELEASE_ENTERPRISE_SERVER_BINDING } from '@/settings/enterprise/graphql/mutations/releaseEnterpriseServerBinding';
 import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setEnterpriseKey';
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import {
+  ENTERPRISE_INSTANCE_TYPE,
+  type EnterpriseInstanceType,
+} from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -31,11 +40,14 @@ import {
   IconKey,
   IconUser,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+
+const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
+  'release-enterprise-binding-confirmation-modal';
 
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
@@ -54,6 +66,7 @@ const StyledStatusDot = styled.div<{ isActive: boolean }>`
   background-color: ${({ isActive }) =>
     isActive ? themeCssVariables.color.green : themeCssVariables.color.red};
   border-radius: 50%;
+  corner-shape: round;
   height: 8px;
   width: 8px;
 `;
@@ -107,13 +120,64 @@ export const SettingsEnterprise = ({
   const [refreshValidityTokenMutation] = useMutation<{
     refreshEnterpriseValidityToken: boolean;
   }>(REFRESH_ENTERPRISE_VALIDITY_TOKEN);
+  const [releaseServerBindingMutation] = useMutation<{
+    releaseEnterpriseServerBinding: {
+      isValid: boolean;
+      licensee: string | null;
+      expiresAt: string | null;
+      subscriptionId: string | null;
+    };
+  }>(RELEASE_ENTERPRISE_SERVER_BINDING);
   const [fetchPortalSession] = useLazyQuery<{
     enterprisePortalSession: string | null;
   }>(ENTERPRISE_PORTAL_SESSION);
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
+  const [isReleasing, setIsReleasing] = useState(false);
+  const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const { openModal } = useModal();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { loadCurrentUser } = useLoadCurrentUser();
+
+  const apolloAdminClient = useApolloAdminClient();
+  const {
+    handleUpdateVariable: updateInstanceTypeVariable,
+    handleDeleteVariable: deleteInstanceTypeVariable,
+  } = useConfigVariableActions('ENTERPRISE_INSTANCE_TYPE');
+  const [instanceType, setInstanceType] = useState<EnterpriseInstanceType>(
+    ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+  );
+  const [isInstanceTypeFromDb, setIsInstanceTypeFromDb] = useState(false);
+  const [isUpdatingInstanceType, setIsUpdatingInstanceType] = useState(false);
+
+  useEffect(() => {
+    const loadInstanceType = async () => {
+      try {
+        const { data } = await apolloAdminClient.query<{
+          getDatabaseConfigVariable: {
+            value: unknown;
+            source: string;
+          } | null;
+        }>({
+          query: GET_DATABASE_CONFIG_VARIABLE,
+          variables: { key: 'ENTERPRISE_INSTANCE_TYPE' },
+          fetchPolicy: 'network-only',
+        });
+
+        const variable = data?.getDatabaseConfigVariable;
+
+        setInstanceType(
+          variable?.value === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
+            ? ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
+            : ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+        );
+        setIsInstanceTypeFromDb(variable?.source === 'DATABASE');
+      } catch {
+        // Best-effort: the instance-type control simply stays at its default.
+      }
+    };
+
+    loadInstanceType();
+  }, [apolloAdminClient]);
 
   const hasSignedEnterpriseKey =
     currentWorkspace?.hasValidSignedEnterpriseKey === true;
@@ -202,7 +266,27 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      if (isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')) {
+      const isServerBindingRejection =
+        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER') ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
+        isGraphqlErrorOfType(
+          error,
+          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
+        ) ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE');
+
+      if (isServerBindingRejection) {
+        setIsBoundToAnotherServer(
+          isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
+        );
+        await loadCurrentUser();
+        enqueueErrorSnackBar({
+          apolloError: error,
+          options: { duration: 10000 },
+        });
+      } else if (
+        isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')
+      ) {
         enqueueErrorSnackBar({
           apolloError: error,
           options: { duration: 10000 },
@@ -262,6 +346,7 @@ export const SettingsEnterprise = ({
       const { data } = await refreshValidityTokenMutation();
 
       if (data?.refreshEnterpriseValidityToken === true) {
+        setIsBoundToAnotherServer(false);
         enqueueSuccessSnackBar({
           message: t`Validity token refreshed successfully`,
         });
@@ -271,10 +356,34 @@ export const SettingsEnterprise = ({
           message: t`Could not refresh validity token. Please contact support.`,
         });
       }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Error refreshing validity token. Please contact support.`,
-      });
+    } catch (error) {
+      if (
+        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')
+      ) {
+        setIsBoundToAnotherServer(true);
+        await loadCurrentUser();
+        enqueueErrorSnackBar({
+          apolloError: error,
+          options: { duration: 10000 },
+        });
+      } else if (
+        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
+        isGraphqlErrorOfType(
+          error,
+          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
+        ) ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
+      ) {
+        enqueueErrorSnackBar({
+          apolloError: error,
+          options: { duration: 10000 },
+        });
+      } else {
+        enqueueErrorSnackBar({
+          message: t`Error refreshing validity token. Please contact support.`,
+        });
+      }
     } finally {
       setIsRefreshingToken(false);
     }
@@ -286,11 +395,122 @@ export const SettingsEnterprise = ({
     t,
   ]);
 
+  const handleReleaseBinding = useCallback(async () => {
+    setIsReleasing(true);
+
+    try {
+      const result = await releaseServerBindingMutation();
+
+      if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
+        setIsBoundToAnotherServer(false);
+        enqueueSuccessSnackBar({
+          message: t`Enterprise key transferred to this server`,
+        });
+        const { data: statusData } = await fetchSubscriptionStatus();
+
+        setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
+        await loadCurrentUser();
+      } else {
+        enqueueErrorSnackBar({
+          message: t`Could not transfer the enterprise key. Please contact support.`,
+        });
+      }
+    } catch (error) {
+      if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
+        enqueueErrorSnackBar({
+          message: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
+        });
+      } else {
+        enqueueErrorSnackBar({
+          message: t`Error transferring the enterprise key`,
+        });
+      }
+    } finally {
+      setIsReleasing(false);
+    }
+  }, [
+    releaseServerBindingMutation,
+    enqueueSuccessSnackBar,
+    enqueueErrorSnackBar,
+    fetchSubscriptionStatus,
+    loadCurrentUser,
+    t,
+  ]);
+
+  const handleSetInstanceType = useCallback(
+    async (nextInstanceType: EnterpriseInstanceType) => {
+      setIsUpdatingInstanceType(true);
+      const previousInstanceType = instanceType;
+      const previousIsInstanceTypeFromDb = isInstanceTypeFromDb;
+      let instanceUpdateSuccess = false;
+      let tokenRefreshSuccess = false;
+
+      try {
+        await updateInstanceTypeVariable(
+          nextInstanceType,
+          isInstanceTypeFromDb,
+        );
+        instanceUpdateSuccess = true;
+        setInstanceType(nextInstanceType);
+        setIsInstanceTypeFromDb(true);
+        await loadCurrentUser();
+
+        enqueueSuccessSnackBar({
+          message:
+            nextInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
+              ? t`Registered as a development instance. This instance will not be billed.`
+              : t`Switched to a production instance.`,
+        });
+
+        await refreshValidityTokenMutation();
+        tokenRefreshSuccess = true;
+      } catch {
+        if (!instanceUpdateSuccess) {
+          enqueueErrorSnackBar({
+            message: t`Could not update the instance type`,
+          });
+        }
+      } finally {
+        if (instanceUpdateSuccess && !tokenRefreshSuccess) {
+          try {
+            if (previousIsInstanceTypeFromDb) {
+              await updateInstanceTypeVariable(previousInstanceType, true);
+            } else {
+              await deleteInstanceTypeVariable();
+            }
+            setInstanceType(previousInstanceType);
+            setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
+            await loadCurrentUser();
+            enqueueErrorSnackBar({
+              message: t`Could not refresh validity token - reverted the instance type change.`,
+            });
+          } catch {
+            enqueueErrorSnackBar({
+              message: t`Could not refresh validity token and could not revert the instance type change.`,
+            });
+          }
+        }
+        setIsUpdatingInstanceType(false);
+      }
+    },
+    [
+      instanceType,
+      updateInstanceTypeVariable,
+      deleteInstanceTypeVariable,
+      isInstanceTypeFromDb,
+      refreshValidityTokenMutation,
+      loadCurrentUser,
+      enqueueSuccessSnackBar,
+      enqueueErrorSnackBar,
+      t,
+    ],
+  );
+
   const activateKeySection = (
     <Section>
       <H2Title
         title={t`Activate Enterprise Key`}
-        description={t`Paste your enterprise key below to activate`}
+        description={t`Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
       />
       <StyledInputContainer>
         <StyledInputWrapper>
@@ -313,6 +533,78 @@ export const SettingsEnterprise = ({
           />
         </StyledActivateButtonWrapper>
       </StyledInputContainer>
+    </Section>
+  );
+
+  const transferSection = (
+    <Section>
+      <H2Title
+        title={t`Key in use on another server`}
+        description={t`This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
+      />
+      <Button
+        Icon={IconKey}
+        title={
+          isReleasing
+            ? t`Transferring...`
+            : t`Release & transfer to this server`
+        }
+        variant="secondary"
+        accent="blue"
+        onClick={() =>
+          openModal(RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID)
+        }
+        disabled={isReleasing}
+      />
+    </Section>
+  );
+
+  const enterpriseKeyInfoSection = (
+    <Section>
+      <H2Title
+        title={t`Your enterprise key`}
+        description={t`This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
+      />
+    </Section>
+  );
+
+  const instanceTypeSection = (
+    <Section>
+      <H2Title
+        title={t`Development instance`}
+        description={
+          instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
+            ? t`This server is registered as a development instance and is not billed additionally. A subscription can have a single development instance in addition to its production one. Switching it back to a production instance will make its seats count toward billing.`
+            : t`One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats.`
+        }
+      />
+      {instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT ? (
+        <Button
+          title={
+            isUpdatingInstanceType
+              ? t`Updating...`
+              : t`Switch to production instance`
+          }
+          variant="secondary"
+          onClick={() =>
+            handleSetInstanceType(ENTERPRISE_INSTANCE_TYPE.PRODUCTION)
+          }
+          disabled={isUpdatingInstanceType}
+        />
+      ) : (
+        <Button
+          title={
+            isUpdatingInstanceType
+              ? t`Updating...`
+              : t`Register as development instance`
+          }
+          variant="secondary"
+          onClick={() =>
+            handleSetInstanceType(ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT)
+          }
+          disabled={isUpdatingInstanceType}
+        />
+      )}
     </Section>
   );
 
@@ -411,6 +703,7 @@ export const SettingsEnterprise = ({
               )}
             </SubscriptionInfoContainer>
           </Section>
+          {isBoundToAnotherServer && transferSection}
           <Section>
             <H2Title
               title={t`Manage billing information`}
@@ -656,10 +949,23 @@ export const SettingsEnterprise = ({
     );
   };
 
+  const hasEnterpriseLicense = hasSignedEnterpriseKey || hasValidityToken;
+
   const innerContent = (
     <>
       <EnterprisePlanModal />
+      <ConfirmationModal
+        modalInstanceId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
+        title={t`Release & transfer enterprise key`}
+        subtitle={t`This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
+        confirmButtonText={t`Release & transfer`}
+        confirmButtonAccent="blue"
+        loading={isReleasing}
+        onConfirmClick={handleReleaseBinding}
+      />
       {renderContent()}
+      {hasSignedEnterpriseKey && enterpriseKeyInfoSection}
+      {hasEnterpriseLicense && instanceTypeSection}
     </>
   );
 

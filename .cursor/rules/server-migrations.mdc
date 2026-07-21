@@ -31,6 +31,8 @@ See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
 
 - **Keep commands consistent and reversible**: include both `up` and `down` logic. Do not delete or rewrite existing, committed commands unless on a pre-release branch.
 
+- **Shipping a command for a future version (deferred drops)**: pass `--version <next-version>` (a `TWENTY_NEXT_VERSIONS` value) to the generator to write a command that registers but stays dormant until `nx version:bump` makes that version current — e.g. dropping a column one release after its replacement ships. Caveat: `@WasRemovedInUpgrade`/`@WasIntroducedInUpgrade` reject a still-dormant next-version command at boot (`unknown-step-name`), so keep the entity's `WasRemovedInUpgrade<T>` type wrapper and add the decorator only once the version is current. See `docs/UPGRADE_COMMANDS.md`.
+
 ### Workspace Commands
 
 - Use the `@RegisteredWorkspaceCommand` decorator alongside nest-commander's `@Command` decorator.

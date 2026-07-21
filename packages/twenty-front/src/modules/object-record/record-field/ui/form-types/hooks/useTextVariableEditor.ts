@@ -9,6 +9,7 @@ import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { Slice } from '@tiptap/pm/model';
 
 import { type Editor, useEditor } from '@tiptap/react';
+import { useEffect } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -130,6 +131,10 @@ export const useTextVariableEditor = ({
     enablePasteRules: false,
     injectCSS: false,
   });
+
+  useEffect(() => {
+    editor?.setEditable(!readonly, false);
+  }, [editor, readonly]);
 
   return editor;
 };

@@ -20,42 +20,47 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "Suspended Workspace"
-msgstr "crwdns5766:0crwdne5766:0"
+msgid "Your workspace is paused"
+msgstr "crwdns134383:0crwdne134383:0"
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "Dear {userName},"
-msgstr "crwdns4867:0{userName}crwdne4867:0"
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr "crwdns134385:0{userName}crwdne134385:0"
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
 #: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "Hello,"
 msgstr "crwdns4871:0crwdne4871:0"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "crwdns21:0{workspaceDisplayName}crwdnd21:0{daysSinceInactive}crwdne21:0"
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr "crwdns134387:0{workspaceDisplayName}crwdne134387:0"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "crwdns33:0{remainingDays}crwdnd33:0{dayOrDays}crwdne33:0"
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr "crwdns134389:0{remainingDays}crwdnd134389:0{dayOrDays}crwdne134389:0"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "crwdns17:0{remainingDays}crwdnd17:0{dayOrDays}crwdne17:0"
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr "crwdns134391:0crwdne134391:0"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "Update your subscription"
-msgstr "crwdns39:0crwdne39:0"
+msgid "Reactivate workspace"
+msgstr "crwdns134393:0crwdne134393:0"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -72,6 +77,21 @@ msgstr "crwdns5768:0{senderName}crwdnd5768:0{senderEmail}crwdnd5768:0{domain}crw
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "crwdns5770:0crwdne5770:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "crwdns134395:0crwdne134395:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "crwdns134397:0crwdne134397:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "crwdns134399:0crwdne134399:0"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -115,6 +135,11 @@ msgstr "crwdns25:0crwdne25:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "crwdns4867:0{userName}crwdne4867:0"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "crwdns35:0{email}crwdnd35:0{formattedDate}crwdne35:0"
 
@@ -127,6 +152,87 @@ msgstr "crwdns15:0crwdne15:0"
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
 msgstr "crwdns7:0crwdne7:0"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "crwdns134411:0crwdne134411:0"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "crwdns134413:0{workspaceDisplayName}crwdnd134413:0{daysSinceInactive}crwdne134413:0"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "crwdns134415:0crwdne134415:0"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "crwdns134417:0crwdne134417:0"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "crwdns134419:0crwdne134419:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "crwdns134401:0crwdne134401:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "crwdns134403:0{workspaceDisplayName}crwdnd134403:0{formattedDate}crwdne134403:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "crwdns134405:0crwdne134405:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "crwdns134407:0{dataRetentionDays}crwdne134407:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "crwdns134409:0crwdne134409:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "crwdns134421:0crwdne134421:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "crwdns134423:0crwdne134423:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "crwdns134425:0{workspaceDisplayName}crwdnd134425:0{formattedDate}crwdne134425:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "crwdns134427:0{workspaceDisplayName}crwdnd134427:0{formattedDate}crwdne134427:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "crwdns134429:0crwdne134429:0"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "crwdns134431:0crwdne134431:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -154,29 +260,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "crwdns37:0{duration}crwdne37:0"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "crwdns4869:0crwdne4869:0"
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "crwdns134433:0crwdne134433:0"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "crwdns4845:0{workspaceDisplayName}crwdnd4845:0{daysSinceInactive}crwdne4845:0"
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "crwdns134435:0crwdne134435:0"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "crwdns3:0crwdne3:0"
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "crwdns134437:0{workspaceDisplayName}crwdnd134437:0{formattedDate}crwdne134437:0"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "crwdns19:0crwdne19:0"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "crwdns4865:0crwdne4865:0"
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "crwdns134439:0crwdne134439:0"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -237,3 +338,23 @@ msgstr "crwdns5794:0crwdne5794:0"
 #: src/components/Footer.tsx
 msgid "San Francisco / Paris"
 msgstr "crwdns5796:0crwdne5796:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.summary"
+msgstr "crwdns134441:0crwdne134441:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.fullAdmin"
+msgstr "crwdns134443:0crwdne134443:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.warning"
+msgstr "crwdns134445:0crwdne134445:0"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.impersonation"
+msgstr "crwdns134447:0crwdne134447:0"

@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import { copyReadmeToOutput } from '@/cli/utilities/build/common/copy-readme-to-output';
 import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
@@ -16,6 +17,7 @@ import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/fron
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
   copy,
   emptyDir,
@@ -23,6 +25,7 @@ import {
   pathExists,
   pathExistsSync,
 } from '@/cli/utilities/file/fs-utils';
+import { FRONT_COMPONENT_TRANSLATIONS_KEY } from '@/sdk/front-component/constants/front-component-translations-key';
 
 export type AppBuildOptions = {
   appPath: string;
@@ -65,6 +68,23 @@ export const buildApplication = async (
 
   const { logicFunctions, frontComponents } = options.filePaths;
 
+  // Bake the app's compiled translation catalogs into every front-component
+  // bundle so the runtime t()/<Trans> resolves them in the sandboxed worker
+  // without a server round-trip. Omitted entirely when the app has no
+  // translations, leaving the runtime to fall back to source strings.
+  const frontComponentTranslationCatalogs =
+    await loadFrontComponentTranslationCatalogs(options.appPath);
+
+  const frontComponentTranslationsBanner = Object.keys(
+    frontComponentTranslationCatalogs,
+  ).length
+    ? {
+        js: `globalThis[${JSON.stringify(FRONT_COMPONENT_TRANSLATIONS_KEY)}]=${JSON.stringify(
+          frontComponentTranslationCatalogs,
+        )};`,
+      }
+    : undefined;
+
   await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
@@ -99,12 +119,22 @@ export const buildApplication = async (
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
+      ...(frontComponentTranslationsBanner !== undefined
+        ? { banner: frontComponentTranslationsBanner }
+        : {}),
       plugins: [
         ...getFrontComponentBuildPlugins(),
         createStubTwentySdkDefinePlugin(),
       ],
     },
     onFileBuilt: collectFileBuilt,
+  });
+
+  await copyStaticFiles({
+    appPath: options.appPath,
+    fileFolder: FileFolder.Source,
+    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
+    collectFileBuilt,
   });
 
   await copyStaticFiles({
@@ -130,6 +160,8 @@ export const buildApplication = async (
       collectFileBuilt,
     });
   }
+
+  await copyReadmeToOutput(options.appPath);
 
   return { builtFileInfos };
 };

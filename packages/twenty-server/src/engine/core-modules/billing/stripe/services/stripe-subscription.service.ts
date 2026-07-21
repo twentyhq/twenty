@@ -34,9 +34,7 @@ export class StripeSubscriptionService {
       limit: 1,
     });
 
-    return subscription.data[0].customer
-      ? subscription.data[0].customer
-      : undefined;
+    return subscription.data[0]?.customer ?? undefined;
   }
 
   async collectLastInvoice(stripeSubscriptionId: string) {

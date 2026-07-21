@@ -6,17 +6,17 @@ description: 数分で最初の Twenty アプリを作成しましょう。
 
 ## 前提条件
 
-* **Node.js 24+** — [こちらからダウンロード](https://nodejs.org/)
+* **Node.js 24.5+** — [こちらからダウンロード](https://nodejs.org/)
 * **Yarn 4** — Corepack 経由で Node.js に同梱されています。 有効化: `corepack enable`
 * **Docker** — [こちらからダウンロード](https://www.docker.com/products/docker-desktop/)。 ローカルの Twenty サーバーを実行するために必要です。 すでに別の場所で Twenty が稼働している場合はスキップしてください。
 
 Twenty アプリの構築は 3 つのフェーズで構成されます。 スキャフォルダーはそれらをハッピーパスの 1 つのコマンドにまとめますが、各フェーズは別個の概念です — 何かが失敗したとき、いまどのフェーズにいるかが分かると、直すべき箇所が特定できます。
 
-| フェーズ            | やること                    | ツール                           | 結果                       |
-| --------------- | ----------------------- | ----------------------------- | ------------------------ |
-| **1. スキャフォールド** | アプリのソースコードを生成する         | `npx create-twenty-app`       | ディスク上の TypeScript プロジェクト |
-| **2. サーバーを起動**  | 同期先となる Twenty サーバーを起動する | Docker + `yarn twenty server` | 稼働中の Twenty インスタンス       |
-| **3. 同期**       | コードをサーバーにライブ同期する        | `yarn twenty dev`             | 変更が UI に反映されます           |
+| フェーズ            | やること                    | ツール                                 | 結果                       |
+| --------------- | ----------------------- | ----------------------------------- | ------------------------ |
+| **1. スキャフォールド** | アプリのソースコードを生成する         | `npx create-twenty-app`             | ディスク上の TypeScript プロジェクト |
+| **2. サーバーを起動**  | 同期先となる Twenty サーバーを起動する | Docker + `yarn twenty docker:start` | 稼働中の Twenty インスタンス       |
+| **3. 同期**       | コードをサーバーにライブ同期する        | `yarn twenty dev`                   | 変更が UI に反映されます           |
 
 ---
 
@@ -28,7 +28,7 @@ Twenty アプリの構築は 3 つのフェーズで構成されます。 スキ
 npx create-twenty-app@latest my-twenty-app
 ```
 
-名前と説明の入力を求められます — 既定値でよければ **Enter** を押します。 これにより、`my-twenty-app/` にスターターの `application-config.ts`、デフォルトロール、CI ワークフロー、統合テストを含む TypeScript プロジェクトが生成されます。
+スキャフォルダーは非対話型であり、ディレクトリ名がアプリ名になります。 生成されるメタデータをカスタマイズするには、`--display-name` と `--description` を指定します（後から `src/constants/universal-identifiers.ts` 内で編集することもできます）。 これにより、`my-twenty-app/` にスターターの `application-config.ts`、デフォルトロール、CI/CD ワークフロー、および統合テストを含む TypeScript プロジェクトが生成されます。
 
 **このフェーズ後:** マシン上にアプリのソースコードがあります。 まだ実行はされていません — それはフェーズ 2 です。
 
@@ -38,27 +38,13 @@ npx create-twenty-app@latest my-twenty-app
 
 アプリは同期先としての Twenty サーバーを必要とします。 サーバーは、UI、GraphQL API、PostgreSQL を備えた完全な Twenty インスタンスで、Docker 上でローカルに実行されます。 ローカルのコードは定義をそのサーバーにアップロードし、UI に反映されます。
 
-スキャフォルダーが起動を提案します:
+スキャフォルダーが環境を自動的に起動します。Docker が動作している状態で、`twentycrm/twenty-app-dev` イメージを取得し、ポート `2020` で起動して、事前にデモデータが投入されたワークスペース（`tim@apple.dev`）に対して CLI を認証します — サインインは不要です。
 
-> **ローカルの Twenty インスタンスをセットアップしますか？**
-
-* **Yes（推奨）** — `twentycrm/twenty-app-dev` Docker イメージを取得し、ポート `2020` で起動します。 まず Docker が起動していることを確認してください。
-* **No** — すでに接続したい Twenty サーバーがある場合に選択します。 後で `yarn twenty remote:add` で接続を設定できます。
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="ローカルインスタンスを開始しますか？" />
-</div>
-
-サーバーが起動すると、サインイン用にブラウザーが開きます。 あらかじめ用意されたデモアカウントを使用します:
-
-* **メールアドレス:** `tim@apple.dev`
-* **パスワード:** `tim@apple.dev`
+既存の Twenty サーバーに接続する場合は、代わりに `--url \<your-server-url>` を指定してください。 リモートサーバーは OAuth で認証されます。ブラウザーが開き、サインインして **Authorize** をクリックすると、CLI にワークスペースへのアクセス権が付与されます。 （ローカルでも `--authentication-method oauth` を指定して OAuth を利用できます。その場合は `tim@apple.dev` / `tim@apple.dev` でサインインします。）
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty のログイン画面" />
 </div>
-
-次の画面で **Authorize** をクリックします — これにより、CLI にワークスペースへのアクセスが許可されます。
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI の承認画面" />
@@ -117,28 +103,32 @@ yarn twenty dev
 
 ### CI やスクリプト向けの一回限りの同期
 
-単一のビルド＋同期を実行して終了するには `--once` を指定します — パイプラインは同じでウォッチャーはありません:
+ウォッチャーなしで同じパイプラインを 1 回だけ実行するには、`plan` と `apply` を使用します。
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| コマンド                               | 動作                                          | 使用する場面                                       |
-| ---------------------------------- | ------------------------------------------- | -------------------------------------------- |
-| `yarn twenty dev`                  | ソースファイルを監視し、変更のたびに再同期します。 停止するまで実行し続けます。    | 対話的なローカル開発。                                  |
-| `yarn twenty dev --once`           | ビルドと同期を一度だけ実行し、成功時はコード `0`、失敗時は `1` で終了します。 | CI、pre-commit フック、AI エージェント、スクリプト化されたワークフロー。 |
-| `yarn twenty dev --once --dry-run` | メタデータの変更をビルドして出力しますが、**実際には適用しません**。        | 同期によってどのような変更が行われるかを、実行を確定する前に確認します。         |
+| コマンド                | 動作                                                                                          | 使用する場面                                       |
+| ------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `yarn twenty dev`   | ソースファイルを監視し、変更のたびに再同期します。 停止するまで実行し続けます。                                                    | 対話的なローカル開発。                                  |
+| `yarn twenty apply` | ビルドと同期を一度だけ実行し、成功時はコード `0`、失敗時は `1` で終了します。 破壊的な変更がある場合に確認を求めます（スキップするには `--force` を指定します）。 | CI、pre-commit フック、AI エージェント、スクリプト化されたワークフロー。 |
+| `yarn twenty plan`  | メタデータの変更をビルドして出力しますが、**実際には適用しません**。                                                        | 同期によってどのような変更が行われるかを、実行を確定する前に確認します。         |
 
-どちらのモードも、認証済みのリモートが必要です。 `--dry-run` について詳しくは、[Syncing & recovery](/l/ja/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) を参照してください。
+すべてのモードで、認証済みのリモートが必要です。 `plan` の詳細については、[Syncing & recovery](/l/ja/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) を参照してください。
+
+<Note>
+`yarn twenty dev --once` および `yarn twenty dev --once --dry-run` は非推奨であり、それぞれ `yarn twenty apply` および `yarn twenty plan` のエイリアスです。
+</Note>
 
 ### Dev モードのオプション
 
-| フラグ                                   | 説明                                                  |
-| ------------------------------------- | --------------------------------------------------- |
-| `--once`                              | 一度ビルドと同期を実行したら終了します。                                |
-| `--dry-run`                           | `--once` を使用すると、メタデータの変更を適用せずにプレビューできます。 何も書き込みません。 |
-| `--debounceMs \<ms>` | ファイル変更のデバウンス遅延をミリ秒単位で設定します (既定値: `2000`)。           |
-| `--verbose` / `--debug`               | 詳細なビルドログ、同期リクエスト、およびエラートレースを表示します。                  |
+| フラグ                                   | 説明                                        |
+| ------------------------------------- | ----------------------------------------- |
+| `--force`                             | 確認なしで破壊的な変更（削除）を適用します。                    |
+| `--debounceMs \<ms>` | ファイル変更のデバウンス遅延をミリ秒単位で設定します (既定値: `1000`)。 |
+| `--verbose` / `--debug`               | 詳細なビルドログ、同期リクエスト、およびエラートレースを表示します。        |
 
 ## 構築できるもの
 

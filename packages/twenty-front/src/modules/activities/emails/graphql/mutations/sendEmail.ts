@@ -5,6 +5,7 @@ export const SEND_EMAIL = gql`
     sendEmail(input: $input) {
       success
       error
+      messageThreadId
     }
   }
 `;

@@ -24,7 +24,7 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
   const type = checkUrlType(absoluteUrl);
 
   if (isSocialLinkType(type)) {
-    return <SocialLink href={absoluteUrl} type={type} label={displayedValue} />;
+    return <SocialLink href={absoluteUrl} type={type} label={value.label} />;
   }
 
   return <RoundedLink href={absoluteUrl} label={displayedValue} />;

@@ -7,6 +7,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
+import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
@@ -125,8 +126,11 @@ export const generateWorkspaceSchemaDdl = (
           FieldMetadataType.TS_VECTOR,
         )
           ? deriveSearchVectorAsExpressionForTsVectorField({
-              tsVectorFieldMetadataId: flatFieldMetadata.id,
-              flatSearchFieldMetadataMaps,
+              targetSearchFieldMetadatas:
+                getTargetSearchFieldMetadatasForTsVectorField({
+                  tsVectorFieldMetadataId: flatFieldMetadata.id,
+                  flatSearchFieldMetadataMaps,
+                }),
               indexedFieldById,
             })
           : undefined,

@@ -3,10 +3,6 @@ title: MCP Server
 description: Connect AI assistants to your Twenty workspace using the Model Context Protocol.
 ---
 
-<Warning>
-MCP is currently in **alpha** and is only available on some workspaces. It may not be enabled for your workspace yet.
-</Warning>
-
 Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Claude Code, Cursor, ChatGPT, and others — can read and write your CRM data through natural language.
 
 Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoint. On Twenty Cloud, your workspace URL might be `https://{mycompany}.twenty.com` or a custom domain. The server is available at:
@@ -72,20 +68,20 @@ If your MCP client does not support OAuth, or you prefer static credentials, pas
 Your API key grants access to workspace data. Keep it out of version control and shared dotfiles.
 </Warning>
 
-To create an API key, go to **Settings > APIs & Webhooks > + Create key**. See [APIs](/developers/extend/api#create-an-api-key) for details.
+To create an API key, go to **Settings → MCP & APIs → API → + Create key**. See [APIs](/developers/extend/api#create-an-api-key) for details.
 
 ## Quick Start
 
 ### 1. Copy the config
 
-Go to **Settings > AI > More > MCP Server** in Twenty. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
+Go to **Settings → MCP & APIs → MCP** in Twenty. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
 
 | Client | Config file location |
 |--------|---------------------|
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows) |
 | **Claude Code** | `~/.claude.json` (user) or `.mcp.json` (project) |
 | **Cursor** | `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally |
-| **ChatGPT** | Turn on Developer Mode in **Settings > Apps & Connectors > Advanced settings**, then use **Create** in **Settings > Apps & Connectors** to add the MCP server |
+| **ChatGPT** | Turn on Developer Mode in **Settings → Apps & Connectors → Advanced settings**, then use **Create** in **Settings → Apps & Connectors** to add the MCP server |
 
 ### 2. Connect
 
@@ -113,7 +109,7 @@ You don't need to remember tool names. Ask your AI assistant what it can do and 
 MCP connections inherit the permissions of the authenticated user (OAuth) or the role assigned to the API key. To restrict what the MCP server can do:
 
 - **OAuth**: The user's workspace role applies.
-- **API Key**: Assign a role to the API key under **Settings > Roles**. See [Permissions](/user-guide/permissions-access/capabilities/permissions).
+- **API Key**: Assign a role to the API key under **Settings → Members → Roles**. See [Permissions](/user-guide/permissions-access/capabilities/permissions).
 
 ## Self-Hosted Configuration
 

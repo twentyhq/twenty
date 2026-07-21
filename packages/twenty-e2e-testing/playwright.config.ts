@@ -23,7 +23,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
-  timeout: 30 * 1000, // timeout can be changed
+  timeout: process.env.CI ? 60_000 : 30 * 1000, // timeout can be changed
   use: {
     baseURL: process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
     trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
@@ -32,7 +32,9 @@ export default defineConfig({
     testIdAttribute: 'data-testid', // taken from Twenty source
   },
   expect: {
-    timeout: 5000,
+    // CI runners are slow enough that post-mutation UI transitions routinely
+    // exceed 5s; locally keep the tight budget.
+    timeout: process.env.CI ? 15_000 : 5000,
   },
   reporter: [
     [process.env.CI ? 'github' : 'list'],

@@ -1,19 +1,26 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import processRecallWebhookLogicFunction, {
   processRecallWebhookHandler,
 } from 'src/logic-functions/process-recall-webhook';
 
-const handleRecallWebhookMock = vi.hoisted(() => vi.fn());
-const coreApiClientMock = vi.hoisted(() => vi.fn());
-
-vi.mock('src/logic-functions/flows/handle-recall-webhook.util', () => ({
-  handleRecallWebhook: handleRecallWebhookMock,
-}));
+const queryMock = vi.hoisted(() => vi.fn());
+const mutationMock = vi.hoisted(() => vi.fn());
+const requestArtifactImportMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: coreApiClientMock,
+  CoreApiClient: class {
+    query = queryMock;
+    mutation = mutationMock;
+  },
 }));
+
+vi.mock(
+  'src/logic-functions/data/request-call-recording-artifacts-import.util',
+  () => ({
+    requestCallRecordingArtifactsImport: requestArtifactImportMock,
+  }),
+);
 
 const buildRecordingDoneWebhookBody = () => ({
   event: 'recording.done',
@@ -31,9 +38,42 @@ const buildRecordingDoneWebhookBody = () => ({
 
 describe('process-recall-webhook', () => {
   beforeEach(() => {
-    handleRecallWebhookMock.mockReset();
-    handleRecallWebhookMock.mockResolvedValue({ status: 'updated' });
-    coreApiClientMock.mockReset();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    queryMock.mockReset();
+    queryMock.mockResolvedValue({
+      callRecordings: {
+        edges: [
+          {
+            node: {
+              id: 'call-recording-1',
+              status: 'PROCESSING',
+              externalRecordingId: 'recall-recording-1',
+              transcript: [
+                {
+                  participant: { name: 'Ada' },
+                  words: [
+                    { text: 'Hello world', start_timestamp: { relative: 0 } },
+                  ],
+                },
+              ],
+              audio: [{ fileId: 'file-audio-1' }],
+              video: [{ fileId: 'file-video-1' }],
+            },
+          },
+        ],
+      },
+    });
+    mutationMock.mockReset();
+    mutationMock.mockResolvedValue({
+      updateCallRecording: { id: 'call-recording-1' },
+    });
+    requestArtifactImportMock.mockReset();
+    requestArtifactImportMock.mockResolvedValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('declares no external trigger so it only runs when dispatched by the resolver', () => {
@@ -51,12 +91,38 @@ describe('process-recall-webhook', () => {
 
     const result = await processRecallWebhookHandler(body);
 
-    expect(coreApiClientMock).toHaveBeenCalledTimes(1);
-    expect(handleRecallWebhookMock).toHaveBeenCalledTimes(1);
-    expect(handleRecallWebhookMock).toHaveBeenCalledWith({
-      client: coreApiClientMock.mock.instances[0],
-      body,
+    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        callRecordings: expect.objectContaining({
+          __args: expect.objectContaining({
+            filter: { id: { eq: 'call-recording-1' } },
+          }),
+        }),
+      }),
+    );
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateCallRecording: {
+        __args: {
+          id: 'call-recording-1',
+          data: {
+            externalBotId: 'recall-bot-1',
+            externalRecordingId: 'recall-recording-1',
+            status: 'PROCESSING',
+          },
+        },
+        id: true,
+      },
     });
-    expect(result).toEqual({ status: 'updated' });
+    expect(requestArtifactImportMock).toHaveBeenCalledWith(
+      expect.objectContaining({ callRecordingId: 'call-recording-1' }),
+    );
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'recording.done',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'PROCESSING',
+    });
   });
 });

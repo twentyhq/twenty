@@ -66,6 +66,7 @@ const StyledStatusBadge = styled.div<{
       : status === 'error'
         ? themeCssVariables.color.red
         : themeCssVariables.font.color.secondary};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.medium};

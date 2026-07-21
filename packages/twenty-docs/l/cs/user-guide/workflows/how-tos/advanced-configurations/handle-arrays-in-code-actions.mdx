@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Uzel Code vrátí místo pole strukturovaný objekt. V následujících krocích nyní můžete ve výběru proměnných vybrat jednotlivá pole, jako `answer.firstname` a `answer.name`.
 
-<Note>
-Aktivně pracujeme na tom, aby bylo zacházení s poli v budoucích aktualizacích snazší.
-</Note>
+<Tip>
+**Chcete místo rozbalování polí iterovat přímo přes pole?** Když krok Code nebo Logic Function vrátí pole na nejvyšší úrovni, můžete ho předat přímo do [Iteratoru](/l/cs/user-guide/workflows/capabilities/use-iterator): jako vstup Iteratoru vyberte možnost kroku **Whole list** a uvnitř smyčky pak na každou položku odkazujte pomocí `{{iterator.currentItem}}`. V takovém případě nemusíte pole převádět na objekt.
+</Tip>
 
 <Tip>
 Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.

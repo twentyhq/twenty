@@ -104,4 +104,37 @@ export class WorkspaceSchemaColumnManagerService {
 
     await queryRunner.query(sql);
   }
+
+  async alterColumnNullable({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+    isNullable,
+    backfillValue,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    isNullable: boolean;
+    backfillValue?: string;
+  }): Promise<void> {
+    const tableRef = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
+    const columnRef = escapeIdentifier(columnName);
+
+    if (
+      !isNullable &&
+      backfillValue !== undefined &&
+      backfillValue !== 'NULL'
+    ) {
+      await queryRunner.query(
+        `UPDATE ${tableRef} SET ${columnRef} = ${backfillValue} WHERE ${columnRef} IS NULL`,
+      );
+    }
+
+    await queryRunner.query(
+      `ALTER TABLE ${tableRef} ALTER COLUMN ${columnRef} ${isNullable ? 'DROP NOT NULL' : 'SET NOT NULL'}`,
+    );
+  }
 }

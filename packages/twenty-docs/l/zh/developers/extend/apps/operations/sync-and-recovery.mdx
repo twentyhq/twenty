@@ -15,13 +15,17 @@ icon: compass
 | 如果你想要……            | 命令                                  | 备注                                                                                               |
 | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------ |
 | 使用实时同步进行本地迭代       | `yarn twenty dev`                   | 监视你的文件，并在每次更改时执行同步。                                                                              |
-| 同步一次后退出（CI、脚本、钩子）  | `yarn twenty dev --once`            | 执行一次构建和同步，然后退出。                                                                                  |
-| 在**不应用变更**的前提下预览更改 | `yarn twenty dev --once --dry-run`  | 计算并打印 diff；不写入任何内容。                                                                              |
+| 同步一次后退出（CI、脚本、钩子）  | `yarn twenty apply`                 | 执行一次构建和同步，然后退出。 添加 `--force` 以跳过破坏性变更确认。                                                         |
+| 在**不应用变更**的前提下预览更改 | `yarn twenty plan`                  | 计算并打印 diff；不写入任何内容。                                                                              |
 | 从工作区中移除该应用         | `yarn twenty app:uninstall`         | 添加 `--yes` 以跳过提示。                                                                                |
 | 将 tar 包发送到服务器      | `yarn twenty app:publish --private` | 需要一个**严格更高的** `package.json` 版本——参见 [Publishing](/l/zh/developers/extend/apps/operations/publishing)。 |
 | 发布到应用市场（npm）       | `yarn twenty app:publish`           | —                                                                                                |
 | 安装 / 升级已部署的版本      | `yarn twenty app:install`           | 安装当前已部署的版本。                                                                                      |
 | 清空本地服务器并重新开始       | `yarn twenty docker:reset`          | 删除**所有**本地数据——最后的手段。                                                                             |
+
+<Note>
+`yarn twenty dev --once` 和 `yarn twenty dev --once --dry-run` 仍然可以作为已弃用的别名使用，对应 `yarn twenty apply` 和 `yarn twenty plan`。
+</Note>
 
 ### 本地同步不需要提升版本号
 
@@ -29,18 +33,25 @@ icon: compass
 
 ## 阅读同步输出
 
-每次同步都会打印它实际应用的（或在使用 `--dry-run` 时将要应用的）元数据更改：
+每次同步都会打印它实际应用的（或在使用 `plan` 时将要应用的）元数据更改，Terraform 风格——每个实体一个区块，包含其属性，然后是一行总结：
 
 ```text filename="Terminal"
-Metadata changes: 2 created, 1 updated, 1 deleted
-  created objectMetadata rocket
-  created fieldMetadata timelineActivities
-  updated fieldMetadata launchedAt
-  deleted pageLayout legacyTab
-✓ Synced
+  # objectMetadata "rocket" will be created
+  + icon          = "IconRocket"
+  + labelSingular = "Rocket"
+  + ...
+
+  # fieldMetadata "launchedAt" will be updated
+  ~ isNullable = false -> true
+
+Plan: 2 to add, 1 to change, 1 to destroy.
+
+✓ Synced My App (4 files)
 ```
 
 这是你的首要诊断工具：它会准确告诉你哪些对象、字段和布局发生了变化，这样你就可以在查看 UI 之前确认同步是否按预期进行。
+
+破坏性更改（`to destroy`）会列出它们会删除的内容（例如 `objectMetadata "auditNote" — drops the table and all its rows`），并且需要交互式确认，或者在脚本中使用 `--force`。
 
 当同步在某个实体上失败时，错误信息会给出有问题的实体及其 `universalIdentifier`，例如：
 
@@ -50,39 +61,42 @@ Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337)
 
 使用该标识符在 manifest 中（以及在需要时在工作区中）定位该实体，而不是猜测哪个实体发生了冲突。
 
-## 预览更改（干跑 / dry run）
+## 预览更改（计划）
 
-`yarn twenty dev --once --dry-run` 会构建你的 manifest，向服务器请求迁移计划并打印出来——**不会实际应用任何内容**。 这是在真正执行前，以安全方式回答“这次同步会改动什么？”的办法。
+`yarn twenty plan` 会构建你的 manifest，向服务器请求迁移计划并打印出来——**不会实际应用任何内容**。 这是在真正执行前，以安全方式回答“这次同步会改动什么？”的办法。
 
 ```bash filename="Terminal"
-yarn twenty dev --once --dry-run
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
 Building manifest...
-Computing metadata diff (dry run, nothing will be applied)...
-Metadata changes: 1 created, 1 updated
-  created fieldMetadata timelineActivities
-  updated objectMetadata rocket
-✓ Dry run complete for My App — no changes were applied
+Computing metadata plan (read-only, nothing will be applied)...
+
+  # fieldMetadata "crewCapacity" will be created
+  + ...
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+✓ Plan complete for My App — no changes were applied
 ```
 
-一次 dry run：
+一个计划：
 
 * **不会写入任何内容**——不会进行元数据迁移、不会更新应用记录、不会更改默认角色/标签，也不会生成 API 客户端。
 * 返回与真实同步将要应用的**相同 diff**，这样你可以预先审查将被创建 / 更新 / 删除的实体。
 * 在执行高风险改动之前、在审查 AI 生成的改动时，或在某些如果即将落地意外变更就应当失败的脚本中，dry run 都非常有用。
 
 <Note>
-dry run 只会预览**元数据**更改，并且要求应用至少已经同步过一次（这样工作区才知道它的存在）。 如果你在一个从未同步过的应用上运行它，服务器会报告该应用尚未安装——先运行一次 `yarn twenty dev`。
+计划只会预览**元数据**更改，并且要求应用至少已经同步过一次（这样工作区才知道它的存在）。 如果你在一个从未同步过的应用上运行它，服务器会报告该应用尚未安装——先运行一次 `yarn twenty dev`。
 </Note>
 
 ## 恢复梯子
 
 当本地元数据看起来不对时，按以下顺序逐步升级，并在问题解决后立即停止。 每一步都比前一步更具破坏性。
 
-1. **重新同步。** 再次运行 `yarn twenty dev --once`。 同步是幂等的——在干净的 manifest 上重新运行是安全的，并且通常可以解决瞬时故障。
-2. **预览计划。** 运行 `yarn twenty dev --once --dry-run`，在不应用变更的前提下，准确查看下一次同步打算修改什么。
+1. **重新同步。** 再次运行 `yarn twenty apply`。 同步是幂等的——在干净的 manifest 上重新运行是安全的，并且通常可以解决瞬时故障。
+2. **预览计划。** 运行 `yarn twenty plan`，在不应用变更的前提下，准确查看下一次同步打算修改什么。
 3. **阅读具名错误。** 如果同步失败，记录消息中的元数据类型和 `universalIdentifier`（见上），并在 manifest 中定位该实体。 冲突通常指向重复或被重复使用的标识符。
 4. **卸载并重新安装。** 先执行 `yarn twenty app:uninstall`，然后再次同步（`yarn twenty dev`）。 这会在保留你工作区其余部分不变的情况下，从零重建该应用的元数据。
 5. **完全重置（最后手段）。** 执行 `yarn twenty docker:reset`，然后重新播种并重新同步。

@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -28,7 +28,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
   description:
     'Re-sync isUICreatable and isUIEditable on standard objects and isUIEditable on standard fields from the standard-application definitions',
 })
-export class SyncStandardUiCapabilityFlagsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncStandardUiCapabilityFlagsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

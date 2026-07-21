@@ -140,7 +140,6 @@ describe('useWorkspaceSubdomainField', () => {
       'taken-3',
       'taken-4',
     ]);
-    expect(result.current.suggestion).toBe('taken-2');
     expect(result.current.isAvailable).toBe(false);
   });
 

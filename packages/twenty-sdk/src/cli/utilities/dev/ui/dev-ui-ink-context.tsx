@@ -1,10 +1,11 @@
 import React from 'react';
-import type { Box, Text, Static } from 'ink';
+import type { Box, Text, Static, useInput } from 'ink';
 
 type InkComponents = {
   Box: typeof Box;
   Text: typeof Text;
   Static: typeof Static;
+  useInput: typeof useInput;
 };
 
 const InkContext = React.createContext<InkComponents | null>(null);

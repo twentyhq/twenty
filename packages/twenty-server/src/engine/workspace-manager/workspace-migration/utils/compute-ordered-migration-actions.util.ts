@@ -23,7 +23,6 @@ export const computeOrderedMigrationActions = (
     ///
 
     // Views
-    ...aggregatedOrchestratorActionsReport.view.delete,
     ...aggregatedOrchestratorActionsReport.view.create,
     ...aggregatedOrchestratorActionsReport.view.update,
     ...aggregatedOrchestratorActionsReport.viewField.delete,
@@ -44,6 +43,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewSort.create,
     ...aggregatedOrchestratorActionsReport.viewSort.update,
     ...aggregatedOrchestratorActionsReport.viewSort.delete,
+    ...aggregatedOrchestratorActionsReport.view.delete,
     ///
 
     // Logic functions

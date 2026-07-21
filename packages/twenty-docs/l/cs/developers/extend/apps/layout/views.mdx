@@ -33,17 +33,32 @@ export default defineView({
 ## Hlavní body
 
 * `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje. Může to být vlastní objekt, který jste definovali, nebo standardní objekt Twenty.
-* `key` určuje typ zobrazení — `ViewKey.INDEX` je hlavní seznamové zobrazení pro daný objekt.
-* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`.
-* Pro pokročilé konfigurace můžete také deklarovat `filters`, `filterGroups`, `groups` a `fieldGroups`.
+* `key: ViewKey.INDEX` označuje zobrazení jako hlavní seznamové zobrazení objektu (to, které se otevře po kliknutí na navigační položku `OBJECT`).
+* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`. Chcete-li odkazovat na automaticky vytvořené systémové pole, například `createdAt`, podívejte se na [Cílení na systémová pole](/l/cs/developers/extend/apps/data/system-fields).
+* Pro pokročilé konfigurace můžete také deklarovat `filters`, `filterGroups`, `sorts`, `groups` a `fieldGroups`.
 * `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
+
+## Volitelné vlastnosti
+
+| Vlastnost                                                                                                   | Hodnoty                                                                            | Popis                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`                                                                                                      | `ViewType.TABLE` (výchozí), `ViewType.KANBAN`, `ViewType.CALENDAR`                 | Jak jsou záznamy uspořádány. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` a `CALENDAR_WIDGET` také existují, ale jsou používány interně widgety rozvržení stránky.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (výchozí), `ViewVisibility.UNLISTED`                    | Zda je zobrazení viditelné v celém pracovním prostoru, nebo není dostupné ve výběrových prvcích.                                                                         |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (výchozí), `ViewOpenRecordIn.RECORD_PAGE`            | Kde se záznam otevře po kliknutí.                                                                                                                                        |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Výchozí pořadí řazení.                                                                                                                                                   |
+| `isCompact`                                                                                                 | `boolean`                                                                          | Kompaktní zobrazení řádků.                                                                                                                                               |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Seskupení záznamů (např. sloupce kanbanu) podle pole.                                                                                                                    |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Agregace a velikost sloupců v kanbanu.                                                                                                                                   |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Zobrazení kalendáře: rozvržení, datumové pole, které určuje umístění záznamů, a volitelné pole koncového data.                                                           |
+
+Všechny výše uvedené výčtové typy jsou exportovány z `twenty-sdk/define`.
 
 ## Filtry
 
 Zobrazení může být dodáno s předem aplikovanými filtry. Každý filtr má tři souřadnice: **pole**, které se filtruje, **operand** (jak porovnávat) a **hodnotu** (proti čemu porovnávat). Všechny tři musí být v souladu — použití operandu, který se nehodí k typu pole, bude při synchronizaci odmítnuto.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

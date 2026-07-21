@@ -69,16 +69,27 @@ export const RecordCalendarCardHeader = ({
       padding={themeCssVariables.spacing[1]}
     >
       <StyledRecordChipContainer>
-        <StopPropagationContainer>
+        {isCompactModeActive ? (
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={recordStore}
             variant={ChipVariant.Transparent}
             isIconHidden={true}
-            onClick={handleChipClick}
+            forceDisableClick
             triggerEvent={'CLICK'}
           />
-        </StopPropagationContainer>
+        ) : (
+          <StopPropagationContainer>
+            <RecordChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={recordStore}
+              variant={ChipVariant.Transparent}
+              isIconHidden={true}
+              onClick={handleChipClick}
+              triggerEvent={'CLICK'}
+            />
+          </StopPropagationContainer>
+        )}
       </StyledRecordChipContainer>
       <StyledCheckboxContainer className="checkbox-container">
         <StopPropagationContainer>

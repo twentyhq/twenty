@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["production", "^production"],
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "sandbox:prebuild"],
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "{projectRoot}",
@@ -47,11 +47,46 @@
         }
       }
     },
+    "sandbox:prebuild": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "generate-remote-dom-elements",
+        {
+          "target": "build:sdk",
+          "projects": "twenty-sdk"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-ui"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-shared"
+        }
+      ],
+      "inputs": [
+        "{projectRoot}/scripts/front-component-sandbox/**/*",
+        "{projectRoot}/src/remote/**/*",
+        "!{projectRoot}/src/remote/sandbox/generated/**/*",
+        "{projectRoot}/src/constants/**/*",
+        "{projectRoot}/src/polyfills/**/*",
+        "{projectRoot}/src/types/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/src/remote/sandbox/generated/frontComponentSandboxDocument.ts"
+      ],
+      "options": {
+        "cwd": "packages/twenty-front-component-renderer",
+        "command": "tsx -r tsconfig-paths/register scripts/front-component-sandbox/build-sandbox-document.ts"
+      }
+    },
     "storybook:prebuild": {
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": [
         "generate-remote-dom-elements",
+        "sandbox:prebuild",
         {
           "target": "build:sdk",
           "projects": "twenty-sdk"

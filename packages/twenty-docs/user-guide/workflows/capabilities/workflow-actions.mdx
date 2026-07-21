@@ -93,14 +93,14 @@ Creates a new record or updates an existing one based on matching criteria. This
 **Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
 
 **Configuration**:
-- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node). When a Code or Logic Function step returns a top-level array, select its **Whole list** option to loop over the entire output.
 - Define the actions to perform on each record in the loop.
 <Note>
 - You can add several actions within an iterator.
 - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
 </Note>
 
-- Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+- Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions. You can also select **Use the whole item** to pass the entire current item into a downstream step.
 
 <VimeoEmbed videoId="1146577247" title="Video demonstration" />
 
@@ -207,6 +207,8 @@ The fields cannot be made mandatory.
 ### Code
 Runs custom JavaScript within your workflow.
 
+Behind the scenes, each Code action is backed by its own **logic function** — a server-side TypeScript function that runs on the Twenty platform. When you add a Code action, Twenty creates a dedicated logic function for that step and exposes its editor inline, so the code you write lives with the workflow.
+
 **Configuration**:
 - Access variables from previous steps. You can edit the variables names dynamically.
 <VimeoEmbed videoId="1147281795" title="Video demonstration" />
@@ -224,6 +226,25 @@ If you need to use external API keys in your code, you must input them directly 
 
 <Tip>
 Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+#### Reusing a logic function across workflows
+
+The inline Code action is great for one-off logic, but the code it holds belongs to that single step. When you want to share the same logic across several workflows — or maintain it as versioned source in an app — define a **reusable logic function** instead of copy-pasting code into each Code action.
+
+A logic function is defined once in an app (using the SDK's `defineLogicFunction`) and exposed to the workflow builder by adding `workflowActionTriggerSettings`. Once your app is installed, that function appears as its own action in the workflow builder, alongside the built-in actions. Selecting it renders the input fields you declared (with variable pickers, just like other actions) and runs your shared code — no inline JavaScript required.
+
+| | Code action | Reusable logic function |
+|---|---|---|
+| **Where the code lives** | Inline editor, tied to one workflow step | Defined in an app, versioned in source control |
+| **Reuse** | Copy-pasted per step | Added as an action in any workflow |
+| **Inputs** | Variables wired in the editor | Fields rendered from your declared input schema |
+| **Best for** | Quick, workflow-specific logic | Shared logic used across multiple workflows |
+
+Both run on the same logic function runtime, so a Code action you've prototyped inline can later be promoted into a reusable logic function with minimal changes.
+
+<Tip>
+For the developer-facing reference on defining logic functions and exposing them to the workflow builder, see [Logic Functions](/developers/extend/apps/logic/logic-functions) — in particular the **Exposing a function as an AI tool or workflow action** section and `workflowActionTriggerSettings`.
 </Tip>
 
 ### HTTP Request

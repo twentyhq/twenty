@@ -39,7 +39,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
       },
       onCompleted: () =>
         enqueueSuccessSnackBar({
-          message: t`Public domain successfully deleted`,
+          message: t`Custom domain successfully deleted`,
         }),
       onError: (error) => enqueueErrorSnackBar({ apolloError: error }),
     });

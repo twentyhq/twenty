@@ -6,7 +6,7 @@
   align-items: center;
   background: var(--abtn-bg);
   border-color: var(--abtn-border-color);
-  border-radius: var(--abtn-radius, var(--t-border-radius-sm));
+  border-radius: var(--abtn-radius, var(--t-border-radius-md));
   border-style: solid;
   border-width: var(--abtn-border-width);
   box-shadow: var(--abtn-box-shadow);
@@ -48,7 +48,7 @@
 // These rules only assign the custom property so the border-radius
 // declaration stays on the flat .button class for overridability.
 .button[data-position='left'] {
-  --abtn-radius: var(--t-border-radius-sm) 0px 0px var(--t-border-radius-sm);
+  --abtn-radius: var(--t-border-radius-md) 0px 0px var(--t-border-radius-md);
 }
 
 .button[data-position='middle'] {
@@ -56,7 +56,7 @@
 }
 
 .button[data-position='right'] {
-  --abtn-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm) 0px;
+  --abtn-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md) 0px;
 }
 
 // --abtn-square-size keeps the square width declaration flat on .square.

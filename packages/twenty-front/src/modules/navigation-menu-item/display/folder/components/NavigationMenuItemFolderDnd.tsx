@@ -378,12 +378,13 @@ export const NavigationMenuItemFolderDnd = ({
               droppableId={folderContentDroppableId}
               index={navigationMenuItems.length}
               disabled={dropDisabled}
+              collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
             >
               <NavigationItemDropTarget
                 folderId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
-                compact={isCompact}
+                compact={isEditInPlace ? false : isCompact}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,

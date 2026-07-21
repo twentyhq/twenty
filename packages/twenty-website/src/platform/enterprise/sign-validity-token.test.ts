@@ -4,7 +4,7 @@ import { signValidityToken } from './sign-validity-token';
 import { verifyJwt } from './verify-jwt';
 
 const SECONDS_PER_DAY = 24 * 60 * 60;
-const DEFAULT_DURATION_DAYS = 30;
+const DEFAULT_DURATION_DAYS = 7;
 
 type ValidityClaims = {
   exp: number;
@@ -51,7 +51,7 @@ describe('signValidityToken', () => {
   });
 
   it('clamps exp down to a cancellation inside the window', () => {
-    const cancelAt = Math.floor(Date.now() / 1000) + 10 * SECONDS_PER_DAY;
+    const cancelAt = Math.floor(Date.now() / 1000) + 3 * SECONDS_PER_DAY;
     const claims = verifiedClaims(
       signValidityToken('sub_clamped', { subscriptionCancelAt: cancelAt }),
     );

@@ -40,7 +40,7 @@ runs:
           const fs = require('fs'), path = require('path'), os = require('os');
           fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
             version: 1,
-            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY } }
+            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY, accessToken: process.env.API_KEY } }
           }, null, 2));
         "
       env:

@@ -1,9 +1,10 @@
 # Fireflies for Twenty
 
-Sync [Fireflies](https://fireflies.ai) call transcripts and AI summaries onto
-the matching `CalendarEvent` in your Twenty CRM — searchable, in context, and
-ready for AI agents and workflows to act on. Plus on-demand workflow tools to
-sync, list, and search Fireflies calls from the AI chat or workflow builder.
+Sync [Fireflies](https://fireflies.ai) call transcripts and AI summaries into
+`CallRecording` records linked to the matching `CalendarEvent` in your Twenty
+CRM — searchable, in context, and ready for AI agents and workflows to act
+on. Plus on-demand workflow tools to sync, list, and search Fireflies calls
+from the AI chat or workflow builder.
 
 ## What this app does
 
@@ -13,8 +14,9 @@ sync, list, and search Fireflies calls from the AI chat or workflow builder.
    `meeting.summarized` webhook.
 3. For each event, this app fetches the relevant data via the Fireflies
    GraphQL API.
-4. It finds the matching `CalendarEvent` in Twenty and writes the content
-   into either the **Transcript** or **Summary** field on that event.
+4. It upserts a `CallRecording` record (one per Fireflies call) with the
+   diarized transcript and the AI summary, linked to the matching
+   `CalendarEvent` when one is found.
 
 Alongside the webhook, three [Workflow tools](#workflow-tools) let you
 trigger Fireflies actions from the AI chat or as steps inside a workflow,
@@ -38,18 +40,22 @@ Both identifiers are populated by Twenty's calendar drivers on every synced
 CalendarEvent, so any meeting that's been pulled in via Google / Outlook /
 CalDAV calendar sync will match exactly. The matcher does **not** fall back
 to fuzzy URL matching — if the transcript can't be tied to a synced calendar
-event, the call is treated as an orphan and skipped (see
-[Limitations](#limitations) below). This avoids silently writing transcripts
-to the wrong event.
+event, the CallRecording is still created, just without a linked calendar
+event. This avoids silently linking transcripts to the wrong event.
 
 ## What gets added to your Twenty workspace
 
-Two new fields on the standard **CalendarEvent** object:
+The app writes to the standard **CallRecording** object (no new schema):
 
-- **Transcript** — rich-text field, speaker-attributed (e.g. *"**Sarah:**
-  Hi there"*, then *"**John:** Doing well, thanks."*).
-- **Summary** — rich-text field with the Fireflies AI summary: a bullet-list
-  overview, action items grouped by speaker, topics discussed, and keywords.
+- One CallRecording per Fireflies call, with a deterministic id — the
+  `meeting.transcribed` webhook, the `meeting.summarized` webhook, and manual
+  syncs all converge on the same record.
+- **Transcript** — the diarized transcript (speaker names and sentence-level
+  timestamps) stored in the CallRecording `transcript` field.
+- **Summary** — the Fireflies AI summary (overview, action items, topics,
+  keywords) stored as rich text in the CallRecording `summary` field.
+- **Title, start/end time, external recording id, and the CalendarEvent
+  link** filled from the Fireflies call metadata.
 
 Plus three workflow tools — see [Workflow tools](#workflow-tools) below.
 
@@ -58,16 +64,16 @@ Plus three workflow tools — see [Workflow tools](#workflow-tools) below.
 Once the API key is configured, three tools become available in the workflow
 builder and the AI chat — covering the cases the webhook can't:
 
-- **Sync Fireflies Call** — *"sync the Fireflies call `01HXYZ...` onto its
-  CalendarEvent now"*. As a workflow step: provide `transcriptId`. Runs the
+- **Sync Fireflies Call** — *"sync the Fireflies call `01HXYZ...` into a
+  CallRecording now"*. As a workflow step: provide `transcriptId`. Runs the
   same pipeline as the webhook (fetch transcript + AI summary, find matching
-  CalendarEvent, write Transcript + Summary fields) on demand. Use cases:
+  CalendarEvent, upsert the CallRecording) on demand. Use cases:
   **backfilling** historical calls that happened before the app was
   installed; **recovering** from a missed webhook (e.g. the calendar event
   hadn't synced yet when Fireflies pushed); or triggering a sync from a
   workflow instead of waiting for Fireflies. Output includes
-  `calendarEventId`, `updatedFields`, and a per-field outcome breakdown so
-  partial successes are visible.
+  `callRecordingId`, `calendarEventId`, `updatedFields`, and a per-field
+  outcome breakdown so partial successes are visible.
 - **List Fireflies Calls By Participant** — *"show me my last 5 calls with
   john@acme.com"*. As a workflow step: provide `participantEmail` (and
   optional `limit`, max 50). Returns recent Fireflies calls — newest first —
@@ -82,8 +88,8 @@ builder and the AI chat — covering the cases the webhook can't:
 
 The list-by-participant and search tools return the same compact call shape:
 `id`, `title`, `date`, `durationMinutes`, `participants`, `hostEmail`,
-`transcriptUrl`, `meetingLink`. To then sync any of those calls onto its
-CalendarEvent, pass the `id` from a list result into **Sync Fireflies Call**.
+`transcriptUrl`, `meetingLink`. To then sync any of those calls into a
+CallRecording, pass the `id` from a list result into **Sync Fireflies Call**.
 
 ## Installing
 
@@ -96,24 +102,38 @@ CalendarEvent, pass the `id` from a list result into **Sync Fireflies Call**.
 > webhook, your Twenty admin needs to follow the
 > [Self-hosting setup](#self-hosting-setup-admin-only) section.
 
+## Upgrading from 0.1.x
+
+Version 0.1.x stored transcripts and summaries as two rich-text fields on
+CalendarEvent. Upgrading removes those fields **and their stored content** —
+recordings now live on the standard CallRecording object instead.
+
+The removed content is a cache of Fireflies data: any call still available
+in Fireflies can be re-ingested as a CallRecording by passing its id to
+**Sync Fireflies Call** (find ids with the list / search tools). An
+automatic history backfill on install and upgrade is planned as a follow-up.
+
 ## Limitations
 
 What this connector intentionally does **not** support in v1:
 
-- **Calls without a matching CalendarEvent (orphan calls).** Ad-hoc calls
-  that were never on anyone's synced calendar are skipped. The webhook logs
-  the skip reason; the transcript still lives in Fireflies. Synthetic event
-  creation for orphans is planned for v2.
+- **Audio / video media ingestion.** Fireflies' `audio_url` / `video_url`
+  are not downloaded yet; the CallRecording holds the transcript and summary
+  only. Media ingestion is planned for a follow-up.
 - **Fireflies sentiment, speaker analytics, transcript chapters.** Only
   the raw transcript and the AI summary (overview, action items, topics,
   keywords) are synced today.
+- **Calls without a matching CalendarEvent (orphan calls).** These are no
+  longer skipped — the CallRecording is created — but it stays unlinked
+  until the calendar event syncs; re-running **Sync Fireflies Call** after
+  the calendar sync fills the link.
 - **Per-user Fireflies accounts.** All transcripts come through one
   workspace-shared API key (set by the admin). Per-user OAuth-style
   connections require extending Twenty's connection provider system and are
   planned once we have evidence that workspace-shared is too coarse.
-- **Editing transcripts or summaries in Twenty.** The fields are writable
-  but the next Fireflies sync overwrites any manual edits — treat them as
-  read-only.
+- **Editing transcripts or summaries in Twenty.** The CallRecording fields
+  are writable but the next Fireflies sync overwrites any manual edits —
+  treat them as read-only.
 
 ## Troubleshooting
 
@@ -121,12 +141,12 @@ What this connector intentionally does **not** support in v1:
 |---|---|---|
 | Webhook returns `Fireflies is not configured` | `FIREFLIES_API_KEY` not set | Admin: paste the API key in **Settings → Applications → Fireflies → Settings** |
 | Webhook returns `Invalid webhook signature` | `FIREFLIES_WEBHOOK_SECRET` mismatch between Fireflies and Twenty | Re-copy the signing secret from the Fireflies webhook configuration and paste it into the Twenty app settings |
-| Webhook returns `skipped: No CalendarEvent matched the transcript by external ID or iCalUid` | The meeting was never on a synced calendar in Twenty, or the workspace has no Google/Outlook/CalDAV calendar connection set up | Connect the relevant calendar provider in **Settings → Accounts** so the calendar event lands in Twenty with `eventExternalId` and `iCalUid` populated. Manually-created CalendarEvents are intentionally not matched in v1 |
+| CallRecording is created but has no linked CalendarEvent | The meeting was never on a synced calendar in Twenty, or the workspace has no Google/Outlook/CalDAV calendar connection set up | Connect the relevant calendar provider in **Settings → Accounts** so the calendar event lands in Twenty with `eventExternalId` and `iCalUid` populated, then re-run **Sync Fireflies Call** for that transcript. Manually-created CalendarEvents are intentionally not matched in v1 |
 | Transcript appears empty | Fireflies returned no sentences (call too short, audio failed) | Check the call in the Fireflies dashboard; nothing this app can do |
 | Summary appears empty | Fireflies hasn't summarized the call yet, or the call was too short to summarize | Fireflies sends `meeting.summarized` separately from `meeting.transcribed` (typically a minute or two later); ensure that event is subscribed to in your Webhooks V2 config |
 | Summary is populated but Transcript isn't (or vice versa) | Only one of the two Fireflies events is subscribed to | Subscribe to both `meeting.transcribed` and `meeting.summarized` in your Fireflies Webhooks V2 configuration |
 | Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
-| **Sync Fireflies Call** reports `No fields were updated` | The Fireflies call's `calendar_id` / `cal_id` doesn't match any CalendarEvent's `iCalUid` or `eventExternalId` (orphan call), or the per-field outcomes show transient Fireflies API failures | Check the `fieldOutcomes` array in the result — `skipped` means orphan call (same limitation as the webhook); `error` means Fireflies-side failure (retry, or inspect the error message) |
+| **Sync Fireflies Call** reports `No CallRecording was written` | Fireflies returned no transcript sentences and no summary for the call, or the per-field outcomes show transient Fireflies API failures | Check the `fieldOutcomes` array in the result — `skipped` means Fireflies had no content for that field; `error` means Fireflies-side failure (retry, or inspect the error message) |
 | **List / Search** tools return `count: 0` for a contact you've definitely talked to | Email mismatch — Fireflies stores the address as the participant joined the meeting with, which may differ from the contact's primary address in Twenty (aliases, plus-addressing, work vs. personal) | Try the contact's other known email addresses; cross-check the `participants` list on a known matching call |
 
 ---
@@ -162,9 +182,9 @@ supported.
    `openssl rand -hex 32`). Save it; you'll paste it into Twenty next.
 4. Under **Events**, subscribe to **both**:
    - **`meeting.transcribed`** — fires when the transcript is ready and
-     writes it to the **Transcript** field.
+     writes it to the CallRecording's **Transcript** field.
    - **`meeting.summarized`** — fires once Fireflies finishes its AI summary
-     and writes it to the **Summary** field.
+     and writes it to the CallRecording's **Summary** field.
    Subscribing to only one is fine if you don't want the other field
    populated; the app dispatches per event.
 5. **Save** the configuration.
@@ -175,7 +195,8 @@ supported.
 2. Paste the Fireflies API key into the `FIREFLIES_API_KEY` row.
 3. Paste the signing secret into the `FIREFLIES_WEBHOOK_SECRET` row.
 
-After saving, the next time Fireflies finishes processing a recording, the
-transcript will land on the matching CalendarEvent within a few seconds;
-the summary follows once Fireflies finishes the AI summarization step
-(typically a minute or two later — Fireflies sends two separate webhooks).
+After saving, the next time Fireflies finishes processing a recording, a
+CallRecording with the transcript will appear (linked to the matching
+CalendarEvent) within a few seconds; the summary follows once Fireflies
+finishes the AI summarization step (typically a minute or two later —
+Fireflies sends two separate webhooks).

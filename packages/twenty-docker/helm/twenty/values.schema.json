@@ -3,6 +3,54 @@
   "title": "Twenty Helm Chart Values",
   "type": "object",
   "additionalProperties": true,
+  "definitions": {
+    "probe": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "properties": {
+            "httpGet": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "port": { "type": ["string", "integer"] },
+                "scheme": { "type": "string", "enum": ["HTTP", "HTTPS"] },
+                "host": { "type": "string" },
+                "httpHeaders": { "type": "array" }
+              }
+            },
+            "tcpSocket": {
+              "type": "object",
+              "properties": {
+                "port": { "type": ["string", "integer"] },
+                "host": { "type": "string" }
+              },
+              "required": ["port"]
+            },
+            "exec": {
+              "type": "object",
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" } }
+              },
+              "required": ["command"]
+            },
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "timeoutSeconds": { "type": "integer", "minimum": 1 },
+            "successThreshold": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 },
+            "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 }
+          },
+          "oneOf": [
+            { "required": ["httpGet"] },
+            { "required": ["tcpSocket"] },
+            { "required": ["exec"] }
+          ]
+        }
+      ]
+    }
+  },
   "properties": {
     "image": {
       "type": "object",
@@ -146,7 +194,10 @@
         },
         "affinity": { "type": "object" },
         "dnsPolicy": { "type": ["string", "null"], "enum": ["ClusterFirst", "ClusterFirstWithHostNet", "Default", "None", null] },
-        "dnsConfig": { "type": "object" }
+        "dnsConfig": { "type": "object" },
+        "startupProbe": { "$ref": "#/definitions/probe" },
+        "livenessProbe": { "$ref": "#/definitions/probe" },
+        "readinessProbe": { "$ref": "#/definitions/probe" }
       }
     },
 

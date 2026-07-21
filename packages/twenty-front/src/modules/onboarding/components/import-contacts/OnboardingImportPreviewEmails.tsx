@@ -8,7 +8,7 @@ import {
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
 import { IconStar } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const EMAIL_ROW_HEIGHT = 32;
 const EMAIL_CHECKBOX_SIZE = 12;
@@ -37,7 +37,7 @@ const StyledEmailRow = styled.div<{ isUnread: boolean }>`
       : themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.xs};
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
   height: ${EMAIL_ROW_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
@@ -46,7 +46,7 @@ const StyledEmailRow = styled.div<{ isUnread: boolean }>`
 
 const StyledEmailCheckbox = styled.div`
   border: 1px solid ${themeCssVariables.font.color.light};
-  border-radius: ${themeCssVariables.border.radius.xs};
+  border-radius: 1px;
   box-sizing: border-box;
   flex-shrink: 0;
   height: ${EMAIL_CHECKBOX_SIZE}px;
@@ -67,32 +67,37 @@ const StyledEmailSender = styled.span<{ isUnread: boolean }>`
 `;
 
 const StyledEmailSubject = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
-const StyledEventCard = styled.div<{ color: 'yellow' | 'blue' }>`
+const StyledEventCard = styled.div<{ color: 'orange' | 'sky' }>`
   background-color: ${({ color }) =>
-    color === 'yellow'
-      ? themeCssVariables.color.yellow3
-      : themeCssVariables.color.blue3};
+    color === 'orange'
+      ? themeCssVariables.color.orange3
+      : themeCssVariables.color.sky3};
   border-left: 2px solid
     ${({ color }) =>
-      color === 'yellow'
-        ? themeCssVariables.color.yellow8
-        : themeCssVariables.color.blue8};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-shadow: ${themeCssVariables.boxShadow.light};
+      color === 'orange'
+        ? themeCssVariables.color.orange11
+        : themeCssVariables.color.sky11};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   color: ${({ color }) =>
-    color === 'yellow'
-      ? themeCssVariables.color.yellow11
-      : themeCssVariables.color.blue11};
+    color === 'orange'
+      ? themeCssVariables.color.orange11
+      : themeCssVariables.color.sky11};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+  line-height: 1.1;
   padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   width: 160px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
 `;
 
 const StyledEventTitle = styled.span`
@@ -101,15 +106,15 @@ const StyledEventTitle = styled.span`
 `;
 
 const StyledEventTime = styled.span`
-  font-size: ${themeCssVariables.font.size.xs};
+  font-size: 10px;
 `;
 
 const EVENT_CARD_POSITIONS: Record<
   ImportContactsPreviewCalendarEvent['color'],
   { top: number; left: number; rotate: number }
 > = {
-  blue: { top: -6, left: 41, rotate: 10 },
-  yellow: { top: 150, left: 20, rotate: -7 },
+  orange: { top: 160, left: 22, rotate: -7 },
+  sky: { top: -4, left: 44, rotate: 10 },
 };
 
 const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (

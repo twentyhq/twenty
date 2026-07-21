@@ -53,7 +53,7 @@ const StyledTextAreaContainer = styled.div<{ variant: TextAreaVariant }>`
         ? 'none'
         : `1px solid ${themeCssVariables.border.color.medium}`};
     border-radius: ${({ variant }) =>
-      variant === 'transparent' ? '0' : themeCssVariables.border.radius.sm};
+      variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     display: block;

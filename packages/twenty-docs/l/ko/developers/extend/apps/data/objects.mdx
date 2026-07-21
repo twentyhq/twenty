@@ -86,6 +86,22 @@ export default defineObject({
 **기본 필드는 자동으로 추가됩니다.** 사용자 정의 개체를 정의하면 Twenty가 `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, `deletedAt`와 같은 표준 필드를 자동으로 생성합니다. 이 필드들은 `fields` 배열에 선언할 필요가 없습니다 — 사용자 정의 필드만 선언하면 됩니다. 동일한 이름으로 필드를 선언하여 기본 필드를 재정의할 수 있지만, 이는 거의 바람직하지 않습니다.
 </Note>
 
+## 필드 유형
+
+`twenty-sdk/define`에서 내보낸 `FieldType` 값의 전체 집합:
+
+| 카테고리     | 유형                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------------- |
+| 텍스트      | `TEXT`, `RICH_TEXT`, `ARRAY` (문자열 배열), `RAW_JSON`                                                                   |
+| 숫자형      | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (임의 정밀도), `RATING`, `POSITION` |
+| 날짜       | `DATE`, `DATE_TIME`                                                                                                 |
+| 선택형      | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                 |
+| 복합       | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                   |
+| 식별자 및 관계 | `UUID`, `RELATION`, `MORPH_RELATION` (자세한 내용은 [Relations](/l/ko/developers/extend/apps/data/relations)을 참조)              |
+| 시스템      | `TS_VECTOR` (서버에서 관리되는 전체 텍스트 검색 벡터)                                                                                |
+
+복합 타입은 여러 하위 필드를 저장합니다(예: `FULL_NAME` = 이름 + 성; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` 및 `MULTI_SELECT`는 위 예시와 같이 `options` 배열이 필요합니다.
+
 ## 기본값
 
 리터럴 문자열 기본값은 문자열 **내부에서** 작은따옴표로 감싸야 합니다. 즉, `defaultValue: "'Draft'"`처럼 작성해야 하며, `defaultValue: "Draft"`처럼 작성하면 안 됩니다. 그래서 위의 `status` 필드는 `` `'${PostCardStatus.DRAFT}'` ``를 사용합니다.
@@ -96,6 +112,27 @@ export default defineObject({
 * `'now'` — 현재 타임스탬프입니다 (`DATE_TIME` 필드용).
 
 동일한 규칙이 복합 기본값의 문자열 하위 필드(예: `ACTOR` 필드의 `{ source: "'MANUAL'" }`)와 `SELECT`/`MULTI_SELECT` 값에도 적용됩니다. 따옴표로 감싸지 않은 리터럴 문자열 기본값은 앱을 빌드할 때 경고를 발생시킵니다.
+
+## Null 허용 여부
+
+`isNullable`는 필드가 `NULL`을 허용하는지 여부를 제어합니다. 기본값은 `true`이며, 선택적 필드의 경우 생략하면 됩니다. 데이터베이스 수준에서 필드를 필수로 만들려면 `isNullable: false`로 설정하세요.
+
+`isNullable`에 대한 변경 사항은 기존 필드를 업데이트하는 동기화를 포함해 모든 동기화 시 적용되므로, 매니페스트를 수정하고 다시 동기화하여 필드의 Null 허용 여부를 전환할 수 있습니다.
+
+<Note>
+**기존 필드를 널 불가(non-nullable)로 변경하려면 기본값이 필요합니다.** 필드를 `isNullable: false`로 변경할 때는 널이 아닌 `defaultValue`도 함께 제공해야 합니다. 기본값은 `NOT NULL` 제약 조건이 적용되기 전에 기존의 `NULL` 행들을 모두 채웁니다. 기본값이 없으면 동기화가 실패하며 `Default value cannot be null for non-nullable fields` 오류가 발생합니다. 릴레이션 필드와 `TS_VECTOR` 필드는 항상 널 허용이므로 `isNullable` 설정이 이들 필드에는 영향을 주지 않습니다.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## 다음 단계
 

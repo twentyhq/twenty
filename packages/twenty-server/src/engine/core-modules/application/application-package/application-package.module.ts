@@ -8,14 +8,14 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { UpgradeStatusModule } from 'src/engine/core-modules/upgrade/upgrade-status.module';
 
 @Module({
   imports: [
     FileStorageModule,
     SecureHttpClientModule,
     TwentyConfigModule,
-    UpgradeModule,
+    UpgradeStatusModule,
     TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
   ],
   providers: [

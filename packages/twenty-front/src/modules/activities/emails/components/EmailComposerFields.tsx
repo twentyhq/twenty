@@ -2,9 +2,11 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
+import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
+import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
+import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { Select } from '@/ui/input/components/Select';
@@ -39,12 +41,19 @@ const StyledCcBccToggle = styled.button`
   }
 `;
 
+const StyledRecipientLimitWarning = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.xs};
+`;
+
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
+  contextRecord?: EmailComposerContextRecord | null;
 };
 
 export const EmailComposerFields = ({
   composerState,
+  contextRecord,
 }: EmailComposerFieldsProps) => {
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: { id: string; handle: string }[];
@@ -57,6 +66,12 @@ export const EmailComposerFields = ({
     })) ?? [];
 
   const hasMultipleAccounts = accountOptions.length > 1;
+
+  const allRecipientKeys = [
+    ...composerState.to,
+    ...composerState.cc,
+    ...composerState.bcc,
+  ].map((recipient) => getEmailRecipientKey(recipient.address));
 
   return (
     <StyledFieldsContainer>
@@ -71,11 +86,14 @@ export const EmailComposerFields = ({
         />
       )}
       <StyledToRow>
-        <FormMultiTextFieldInput
+        <EmailRecipientsFieldInput
           label={t`To`}
-          defaultValue={composerState.defaultTo}
-          onChange={composerState.setTo}
           placeholder={t`Recipients`}
+          recipients={composerState.to}
+          onChange={composerState.setTo}
+          onSubmit={composerState.handleSend}
+          excludedSuggestionKeys={allRecipientKeys}
+          contextRecord={contextRecord}
         />
         {!composerState.showCcBcc && (
           <StyledCcBccToggle onClick={() => composerState.setShowCcBcc(true)}>
@@ -85,28 +103,39 @@ export const EmailComposerFields = ({
       </StyledToRow>
       {composerState.showCcBcc && (
         <>
-          <FormMultiTextFieldInput
+          <EmailRecipientsFieldInput
             label={t`Cc`}
-            defaultValue=""
-            onChange={composerState.setCc}
             placeholder={t`Cc`}
+            recipients={composerState.cc}
+            onChange={composerState.setCc}
+            onSubmit={composerState.handleSend}
+            excludedSuggestionKeys={allRecipientKeys}
+            contextRecord={contextRecord}
           />
-          <FormMultiTextFieldInput
+          <EmailRecipientsFieldInput
             label={t`Bcc`}
-            defaultValue=""
-            onChange={composerState.setBcc}
             placeholder={t`Bcc`}
+            recipients={composerState.bcc}
+            onChange={composerState.setBcc}
+            onSubmit={composerState.handleSend}
+            excludedSuggestionKeys={allRecipientKeys}
+            contextRecord={contextRecord}
           />
         </>
       )}
+      {composerState.exceedsRecipientLimit && (
+        <StyledRecipientLimitWarning>
+          {t`Too many recipients (${composerState.recipientCount}/${composerState.maxRecipients}).`}
+        </StyledRecipientLimitWarning>
+      )}
       <FormTextFieldInput
         label={t`Subject`}
-        defaultValue={composerState.defaultSubject}
+        defaultValue={composerState.initialSubject}
         onChange={composerState.setSubject}
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        defaultValue={composerState.initialBody}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

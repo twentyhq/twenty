@@ -1,0 +1,150 @@
+---
+title: استهداف الحقول النظامية
+description: استدعِ الحقول النظامية التي يتم إنشاؤها تلقائيًا مثل `createdAt` أو `updatedAt` من العروض والكائنات الأخرى باستخدام `getFieldUniversalIdentifier`.
+icon: gears
+---
+
+كل كائن في Twenty يأتي مع مجموعة من **الحقول النظامية** التي لا تقوم بتعريفها بنفسك أبدًا. يتم إنشاؤها تلقائيًا بواسطة الخادم عندما يتم توفير الكائن:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+نظرًا لأنك لا تعرّف هذه الحقول باستخدام [`defineField()`](/l/ar/developers/extend/apps/data/extending-objects)، فلا يوجد ثابت `universalIdentifier` لتقوم باستيراده. فكيف تُشير إلى `createdAt` كعمود في [عرض](/l/ar/developers/extend/apps/layout/views)؟
+
+## المشكلة
+
+منذ Twenty 2.19، يتم اشتقاق المعرّف الشامل للحقل النظامي **بشكل حتمي** بواسطة الخادم من ثلاثة مُدخلات: المعرّف الشامل للتطبيق، والمعرّف الشامل للكائن، واسم الحقل. ابتكار معرّف (id) وتضمينه بشكل ثابت لن ينجح: لن يطابق أي شيء على الخادم، وسترفض المزامنة المرجع المعلّق:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## الحل
+
+<Note>
+  يتوفر `getFieldUniversalIdentifier` في `twenty-sdk` بدءًا من الإصدار 2.21 فصاعدًا.
+</Note>
+
+استخدم `getFieldUniversalIdentifier` لاشتقاق نفس القيمة تمامًا التي يستخدمها الخادم. يأخذ المُدخلات الثلاثة ويُرجِع المعرّف الشامل للحقل:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` هو معرّف تطبيقك، وهو نفسه الذي تمرّره إلى [`defineApplication()`](/l/ar/developers/extend/apps/config/application).
+* `objectUniversalIdentifier` هو معرّف الكائن الذي ينتمي إليه الحقل.
+* `name` هو اسم الحقل النظامي، وهو إحدى القيم المُدرجة أعلاه.
+
+## مثال: عمود `createdAt` في عرض
+
+الحالة النموذجية هي إضافة عمود `createdAt` إلى عرض لأحد الكائنات المخصّصة لديك. اشتقّ معرّف الحقل واستدعِه كما تستدعي أي `fieldMetadataUniversalIdentifier` آخر:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+المعرّف المُشتقّ نفسه يعمل في أي مكان يُتوقَّع فيه `fieldMetadataUniversalIdentifier`: حقول العرض، عوامل التصفية، أوامر الفرز، المجموعات، وعناصر واجهة تخطيط الصفحة.
+
+<Note>
+  اشتقّ المعرّف، ولا تقُم بتضمينه بشكل ثابت. نظرًا لأن الخادم يشتق القيمة من معرّف التطبيق، ومعرّف الكائن، واسم الحقل، فإن استدعاء
+  `getFieldUniversalIdentifier` يُبقي مرجعك صحيحًا حتى إذا تغيّرت تلك المُدخلات، ويتجنّب الانحراف إذا تطوّر أسلوب الاشتقاق في أي وقت.
+</Note>
+
+## حقول العلاقات الخاصة بالنظام
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` متوفر في `twenty-sdk`
+  بدءًا من الإصدار 2.23، ويتطلب خادم Twenty بالإصدار 2.23 أو أحدث.
+</Note>
+
+بالإضافة إلى حقول النظام البدائية المذكورة أعلاه، يوفِّر الخادم أيضًا أربعة **حقول علاقات للنظام** على كل كائن: `timelineActivities` و`attachments` و`noteTargets` و`taskTargets`، يشير كلٌّ منها إلى كائن العلاقة القياسي المطابِق.
+
+لا يتم حلّ هذه الحقول باستخدام `getFieldUniversalIdentifier`، إذ يتم اشتقاق معرّفها **بدون الاعتماد على الاسم**، من الكائن المستضيف للحقل والكائن الذي يشير إليه الحقل. وبهذه الطريقة، فإن إعادة تسمية كائن ما لا تغيِّر مطلقًا معرّفات حقول العلاقات الخاصة به.
+
+استخدم `getSystemRelationFieldUniversalIdentifier` لحلّها:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` هو الكائن الذي **يستضيف** الحقل.
+* `relationTargetObjectUniversalIdentifier` هو الكائن الذي **يشير إليه** الحقل.
+
+يتم ترميز الاتجاه من خلال ترتيب الوسيطات. لحلّ الجانب العكسي (مثلًا `attachment.targetRocket`، حقل morph الذي يُنشِئه الخادم على كائن العلاقة القياسي)، قم بمبادلة الاثنين:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+كما هو الحال مع حقول النظام القياسية (scalar)، يعمل المعرّف الناتج في أي موضع يُتوقَّع فيه `fieldMetadataUniversalIdentifier`.
+
+## الكائنات القياسية في Twenty
+
+بالنسبة إلى كائن Twenty **قياسي** (Person، Company، Opportunity، …)، لا تحتاج إلى اشتقاق أي شيء: فمعرّفات الحقول النظامية هي ثوابت مُسبقة الحساب يمكنك استيرادها مباشرة.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+الجأ إلى `getFieldUniversalIdentifier` عندما يكون الكائن واحدًا مما يعرّفه تطبيقك باستخدام [`defineObject()`](/l/ar/developers/extend/apps/data/objects)، حيث لا يوجد مثل هذا الثابت.
+
+<Note>
+  `name` حقل **افتراضي**، وليس حقلًا نظاميًا. يحتفظ بمعرّفه الشامل الثابت الخاص به ولا يتم اشتقاقه عبر
+  `getFieldUniversalIdentifier`. في الكائنات التي تعرّفها، استدعِ حقل
+  `name` باستخدام المعرّف الذي منحته له في `defineObject()`.
+</Note>

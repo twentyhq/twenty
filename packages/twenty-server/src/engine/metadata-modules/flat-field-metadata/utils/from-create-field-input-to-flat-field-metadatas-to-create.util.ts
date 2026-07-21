@@ -19,7 +19,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
-import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -77,7 +76,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
-    flatApplication,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     objectMetadataUniversalIdentifier:
       parentFlatObjectMetadata.universalIdentifier,
   });
@@ -186,17 +185,6 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ACTOR:
     case FieldMetadataType.ARRAY: {
-      const indexMetadatas: UniversalFlatIndexMetadata[] = [];
-
-      if (commonFlatFieldMetadata.isUnique) {
-        indexMetadatas.push(
-          generateIndexForFlatFieldMetadata({
-            flatFieldMetadata: commonFlatFieldMetadata,
-            flatObjectMetadata: parentFlatObjectMetadata,
-          }),
-        );
-      }
-
       return {
         status: 'success',
         result: {
@@ -206,7 +194,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
             },
           ],
-          indexMetadatas,
+          indexMetadatas: [],
         },
       };
     }

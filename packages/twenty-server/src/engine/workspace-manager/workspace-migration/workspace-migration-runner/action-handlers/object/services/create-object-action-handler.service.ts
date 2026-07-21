@@ -10,6 +10,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
+import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   FlatCreateObjectAction,
@@ -120,7 +121,13 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateObjectAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId, allFlatEntityMaps } = context;
+    const {
+      flatAction,
+      queryRunner,
+      workspaceId,
+      allFlatEntityMaps,
+      getSearchFieldMetadatasByTsVectorFieldId,
+    } = context;
     const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = flatAction;
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
@@ -145,9 +152,15 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
           FieldMetadataType.TS_VECTOR,
         )
           ? deriveSearchVectorAsExpressionForTsVectorField({
-              tsVectorFieldMetadataId: flatFieldMetadata.id,
-              flatSearchFieldMetadataMaps:
-                allFlatEntityMaps.flatSearchFieldMetadataMaps,
+              targetSearchFieldMetadatas:
+                getSearchFieldMetadatasByTsVectorFieldId?.(
+                  flatFieldMetadata.id,
+                ) ??
+                getTargetSearchFieldMetadatasForTsVectorField({
+                  tsVectorFieldMetadataId: flatFieldMetadata.id,
+                  flatSearchFieldMetadataMaps:
+                    allFlatEntityMaps.flatSearchFieldMetadataMaps,
+                }),
               indexedFieldById,
             })
           : undefined,

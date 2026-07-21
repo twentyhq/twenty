@@ -1,1 +1,1 @@
-export * from './isWorkspaceActiveOrSuspended';
+export * from './isWorkspaceProvisioned';

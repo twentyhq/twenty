@@ -24,7 +24,7 @@ const Content = styled.div`
   padding: ${spacing(4)} ${spacing(5)};
 
   ${mediaUp('md')} {
-    padding: ${spacing(5)} ${spacing(6)};
+    padding: ${spacing(6)} ${spacing(6)};
   }
 
   &[data-spotlight] {
@@ -33,7 +33,7 @@ const Content = styled.div`
 
     ${mediaUp('md')} {
       justify-content: center;
-      padding: ${spacing(8)} ${spacing(7)};
+      padding: ${spacing(6)} ${spacing(7)};
     }
   }
 `;

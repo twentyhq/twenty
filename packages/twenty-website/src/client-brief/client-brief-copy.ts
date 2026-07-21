@@ -1,0 +1,51 @@
+import { msg } from '@lingui/core/macro';
+
+export const CLIENT_BRIEF_COPY = {
+  title: msg`Tell us what you need\n*We'll find the right partner*`,
+  subtitle: msg`Share your CRM project brief and our team will match you with a certified Twenty partner.`,
+  back: msg`← Back`,
+  next: msg`Continue →`,
+  skip: msg`Skip for now`,
+  submit: msg`Submit brief`,
+  submitInFlight: msg`Submitting…`,
+  successTitle: msg`Thanks — we received your brief.`,
+  successBody: msg`Our team will review your project and follow up by email. You won't hear from partners until we've matched you.`,
+  stepProgressLabel: (current: number, total: number) =>
+    msg`Step ${current} of ${total}`,
+  validation: {
+    incompleteForm: msg`Please complete all required fields before continuing.`,
+    invalidEmail: msg`Enter a valid email address.`,
+    submitFailed: msg`We could not submit your brief. Please try again in a moment.`,
+  },
+  fields: {
+    need: msg`What do you need help with? *`,
+    needPlaceholder: msg`e.g. Migrate from HubSpot, set up pipelines, custom integrations…`,
+    requirements: msg`Requirements or constraints`,
+    requirementsPlaceholder: msg`Must-haves, integrations, compliance, languages…`,
+    hostingType: msg`Hosting preference`,
+    hostingTypePlaceholder: msg`Cloud or self-hosted?`,
+    country: msg`Country / region`,
+    countryPlaceholder: msg`e.g. France, DACH, North America…`,
+    languages: msg`Languages needed`,
+    languagesPlaceholder: msg`e.g. French, English (comma-separated)`,
+    seatCount: msg`Team size / seats`,
+    seatCountPlaceholder: msg`e.g. ~30`,
+    timeline: msg`Timeline`,
+    timelinePlaceholder: msg`e.g. Before Q4, Q1 2027…`,
+    budgetRange: msg`Budget range`,
+    budgetRangePlaceholder: msg`e.g. $10k–$25k`,
+    firstName: msg`First name *`,
+    lastName: msg`Last name`,
+    email: msg`Work email *`,
+    companyName: msg`Company name *`,
+  },
+  stepHeaders: {
+    brief: msg`Your brief`,
+    context: msg`Tell us more`,
+    identity: msg`You`,
+  },
+  hostingOptions: {
+    cloud: msg`Cloud (Twenty-hosted)`,
+    selfHosting: msg`Self-hosting`,
+  },
+};

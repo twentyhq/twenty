@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -18,7 +18,7 @@ const UUID_REGEX =
   description:
     'Migrate messageFolder parentFolderId from internal UUID references to external IDs',
 })
-export class MigrateMessageFolderParentIdToExternalIdCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigrateMessageFolderParentIdToExternalIdCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,

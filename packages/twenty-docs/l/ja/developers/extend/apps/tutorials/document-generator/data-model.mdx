@@ -1,0 +1,134 @@
+---
+title: 1. データモデル
+icon: database
+description: オブジェクト、フィールド、および関連を持つモデルドキュメントとテンプレート。
+---
+
+アプリには2つのカスタムオブジェクトが必要です: **ドキュメントテンプレート** (書き込み内容) と
+**ドキュメント** (生成された結果). 定義してみましょう
+
+CLI で各エンティティファイルをScaffold — 有効な UUID と適切な
+フォルダーを生成します。
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+```
+
+以下に完成したファイルを示します。
+
+<Note>
+すべての `*_UNIVERSAL_IDENTIFIER` 定数は
+`src/constants/universal-identifiers.ts` にあり、使用される場所で import されます。 下のスニペット
+は、簡潔にインポートするためにそれらを省略します。あなた自身のファイルに保存します。
+</Note>
+
+## テンプレートオブジェクト
+
+テンプレートには `name`、`{{placeholders}}` を含む `body`、そして Person 向けか Company 向けかを示す `target` があります。 `body` は
+`RICH_TEXT` フィールドです。したがって、20 はリッチテキストエディタを提供します。
+
+```ts filename="src/objects/document-template.object.ts"
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export default defineObject({
+  universalIdentifier: DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'documentTemplate',
+  namePlural: 'documentTemplates',
+  labelSingular: 'Document template',
+  labelPlural: 'Document templates',
+  icon: 'IconFileText',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+      defaultValue: `'PERSON'`,
+      options: [
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
+  ],
+});
+```
+
+<Warning>
+`SELECT` オプション **values** は `UPPER_CASE` (`Person`ではなく`PERSON`) でなければなりません。そして
+`defaultValue` は余分な引用符で包まれています: \`\`'PERSON'` ``` 。 `label\`は
+ユーザーが見るものです。
+</Warning>
+
+## ドキュメントオブジェクト
+
+生成されたドキュメントには、レンダリングされた `content` と `status` が保存されます。 `DRAFT` / `ジェネレータ`を`status`で選択し、同じ方法で
+を定義します。 フルファイル:
+[`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
+
+## リレーションとリンクする
+
+各ドキュメントは、それがから来たテンプレートを指す必要があります。 リレーションは
+**双方向** で、それぞれ独自のフィールドファイルで両側を定義します。
+
+```ts filename="src/fields/document-template-relation.field.ts"
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+
+// The "many" side: each document belongs to one template.
+export default defineField({
+  universalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'template',
+  label: 'Template',
+  relationTargetObjectMetadataUniversalIdentifier:
+    DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier:
+    TEMPLATE_DOCUMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'templateId',
+  },
+});
+```
+
+反対側（`template-documents-relation.field.ts`）は、逆方向を指す「ドキュメント」という名前の
+`RelationType.ONE_TO_MANY` フィールドです。
+フルパターンについては [Relations](/l/ja/developers/extend/apps/data/relations) を参照してください。
+
+## 二十日で見る
+
+`yarn tin dev` が実行されている場合は、 **Settings → Data model** を開きます。 両方のオブジェクト
+がアプリでタグ付けされて表示されます。
+
+<Frame caption="ドキュメントジェネレータアプリが所有するカスタムオブジェクトの両方。">
+  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="ドキュメントとドキュメントテンプレートを表示するデータモデルの設定" />
+</Frame>
+
+1つのテンプレートを作成してテストするには、*セールスプロポーザル*という名前を付けてください。**ターゲット**を
+*Person*に設定し、いくつかのプレースホルダーを持つ本体を貼り付けてください：
+
+```text
+Dear {{name.firstName}} {{name.lastName}},
+
+As {{jobTitle}} at {{company.name}}, we think you'll love our product.
+
+Best,
+The Team
+```
+
+<Frame caption="テンプレートレコード。 本文は、ドキュメントが生成されるまでプレースホルダを保持します。">
+  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="プレースホルダー ボディを持つ販売提案テンプレートの記録" />
+</Frame>
+
+**このステップの後:** `documentTemplate` と `document` オブジェクト、
+リレーションによってリンクされているオブジェクト、 そして生成するテンプレートが 1 つあります。 次に、それを埋めるロジック。
+
+<Card title="次へ: ドキュメントの生成 →" icon="bolt" href="/l/ja/developers/extend/apps/tutorials/document-generator/generating-documents">
+  テンプレートを満たすロジック機能を記述します。
+</Card>

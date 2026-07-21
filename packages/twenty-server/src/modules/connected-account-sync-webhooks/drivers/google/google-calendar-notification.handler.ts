@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'crypto';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,6 +8,8 @@ import { WebhookSubscriptionStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
 import {
@@ -21,13 +23,21 @@ const GOOGLE_CALENDAR_SYNC_RESOURCE_STATE = 'sync';
 
 @Injectable()
 export class GoogleCalendarNotificationHandler implements WebhookNotificationHandler<GoogleCalendarChannelNotification> {
+  private readonly logger = new Logger(GoogleCalendarNotificationHandler.name);
+
   constructor(
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async handle(request: GoogleCalendarChannelNotification): Promise<void> {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.ConnectedAccountSyncWebhookReceivedCalendar,
+      amount: 1,
+    });
+
     if (request.resourceState === GOOGLE_CALENDAR_SYNC_RESOURCE_STATE) {
       return;
     }
@@ -44,6 +54,10 @@ export class GoogleCalendarNotificationHandler implements WebhookNotificationHan
     });
 
     if (!isDefined(calendarChannel)) {
+      this.logger.warn(
+        `No calendar channel found for Google channel ${request.channelId}`,
+      );
+
       return;
     }
 
@@ -71,6 +85,10 @@ export class GoogleCalendarNotificationHandler implements WebhookNotificationHan
     await this.webhookSyncTriggerService.triggerCalendarSync(
       calendarChannel.id,
       calendarChannel.workspaceId,
+    );
+
+    this.logger.log(
+      `Triggered calendar sync for calendar channel ${calendarChannel.id} from Google notification`,
     );
   }
 }

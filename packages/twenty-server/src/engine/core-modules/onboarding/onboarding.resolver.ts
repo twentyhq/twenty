@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -58,12 +58,16 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   @UseGuards(NoPermissionGuard)
-  async skipBookOnboardingStep(
+  async triggerInstallAppsOnboardingStep(
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ name: 'universalIdentifiers', type: () => [String] })
+    universalIdentifiers: string[],
   ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.setOnboardingBookOnboardingPending({
+    await this.onboardingService.triggerInstallAppsOnboardingStep({
+      userId: user.id,
       workspaceId: workspace.id,
-      value: false,
+      universalIdentifiers,
     });
 
     return { success: true };

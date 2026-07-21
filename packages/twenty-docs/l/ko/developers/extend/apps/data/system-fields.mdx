@@ -1,0 +1,149 @@
+---
+title: 시스템 필드 대상 지정
+description: 뷰와 다른 엔티티에서 `getFieldUniversalIdentifier`를 사용하여 `createdAt` 또는 `updatedAt` 같은 자동 생성 시스템 필드를 참조하세요.
+icon: gears
+---
+
+Twenty의 모든 객체에는 여러분이 직접 선언하지 않아도 되는 **시스템 필드** 세트가 함께 제공됩니다. 이 필드들은 객체가 프로비저닝될 때 서버에 의해 자동으로 생성됩니다:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+[`defineField()`](/l/ko/developers/extend/apps/data/extending-objects)로 이러한 필드를 선언하지 않기 때문에, 가져올 수 있는 `universalIdentifier` 상수가 없습니다. 그렇다면 [view](/l/ko/developers/extend/apps/layout/views)에서 `createdAt`을 컬럼으로 어떻게 참조할 수 있을까요?
+
+## 문제
+
+Twenty 2.19부터 시스템 필드의 유니버설 식별자는 애플리케이션 유니버설 식별자, 객체 유니버설 식별자, 필드 이름이라는 세 가지 입력값으로부터 서버에서 결정론적으로 도출됩니다. id를 임의로 만들고 하드코딩해도 동작하지 않습니다. 서버에서 어떤 것과도 일치하지 않으며, 동기화에서 이러한 끊어진 참조를 거부합니다:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## 해결책
+
+<Note>
+  `getFieldUniversalIdentifier`는 `twenty-sdk` 2.21부터 사용할 수 있습니다.
+</Note>
+
+`getFieldUniversalIdentifier`를 사용해 서버가 사용하는 것과 정확히 동일한 값을 해석하세요. 이 함수는 세 가지 입력값을 받아 필드의 유니버설 식별자를 반환합니다:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier`는 [`defineApplication()`](/l/ko/developers/extend/apps/config/application)에 전달하는, 앱의 식별자입니다.
+* `objectUniversalIdentifier`는 필드가 속한 객체의 식별자입니다.
+* `name`은 시스템 필드 이름이며, 위에 나열된 값들 중 하나입니다.
+
+## 예시: 뷰의 createdAt 컬럼
+
+일반적인 사용 사례는 커스텀 객체 중 하나의 뷰에 `createdAt` 컬럼을 추가하는 것입니다. 필드 id를 해석한 다음, 다른 `fieldMetadataUniversalIdentifier`와 동일한 방식으로 참조하세요:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+이렇게 해석된 동일한 id는 `fieldMetadataUniversalIdentifier`가 필요한 모든 곳에서 사용할 수 있습니다. 예를 들어 view 필드, 필터, 정렬, 그룹, 페이지 레이아웃 위젯 등입니다.
+
+<Note>
+  id를 해석해서 사용하고, 하드코딩하지 마세요. 서버는 애플리케이션 id, 객체 id, 필드 이름으로부터 값을 도출하기 때문에,
+  `getFieldUniversalIdentifier`를 호출하면 이 입력값들이 변경되더라도 참조를 올바르게 유지할 수 있고, 도출 방식이 바뀌더라도 드리프트를 방지할 수 있습니다.
+</Note>
+
+## 시스템 관계 필드
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier`는 `twenty-sdk`
+  2.23부터 사용 가능하며, Twenty 서버 버전 2.23 이상이 필요합니다.
+</Note>
+
+위에 언급된 스칼라 시스템 필드 외에도 서버는 모든 객체에 `timelineActivities`, `attachments`, `noteTargets`, `taskTargets`라는 네 개의 **시스템 관계 필드**를 제공하며, 각각은 해당하는 표준 관계 객체를 가리킵니다.
+
+이 필드는 `getFieldUniversalIdentifier`로는 해결되지 않습니다. 이들의 식별자는 필드를 호스팅하는 객체와 필드가 가리키는 객체에서 **이름과 무관하게** 도출됩니다. 이 방식이면 객체의 이름을 변경해도 해당 객체의 관계 필드 식별자는 변경되지 않습니다.
+
+이들을 해결하려면 `getSystemRelationFieldUniversalIdentifier`를 사용하세요:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier`는 필드를 **호스팅하는** 객체입니다.
+* `relationTargetObjectUniversalIdentifier`는 필드가 **가리키는** 객체입니다.
+
+방향은 인수의 순서에 의해 인코딩됩니다. 반대쪽(예: `attachment.targetRocket`, 서버가 표준 관계 객체에 생성하는 morph 필드)을 해결하려면 두 인수의 순서를 바꾸면 됩니다:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+스칼라 시스템 필드와 마찬가지로, 해결된 ID는 `fieldMetadataUniversalIdentifier`가 필요한 곳이면 어디서든 사용할 수 있습니다.
+
+## 표준 Twenty 객체
+
+**표준** Twenty 객체(Person, Company, Opportunity 등)의 경우 어떤 것도 도출할 필요가 없습니다. 시스템 필드 식별자는 미리 계산된 상수이므로 바로 import해서 사용할 수 있습니다.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+[`defineObject()`](/l/ko/developers/extend/apps/data/objects)로 **앱에서 직접 정의한** 객체처럼, 그러한 상수가 존재하지 않는 경우에 `getFieldUniversalIdentifier`를 사용하세요.
+
+<Note>
+  `name`은 시스템 필드가 아니라 **기본(default)** 필드입니다. 이 필드는 자체 하드코딩된 유니버설 식별자를 유지하며,
+  `getFieldUniversalIdentifier`를 통해 해석되지 않습니다. 여러분이 정의한 객체에서는 `defineObject()`에서 부여한 식별자를 사용해 `name` 필드를 참조하세요.
+</Note>

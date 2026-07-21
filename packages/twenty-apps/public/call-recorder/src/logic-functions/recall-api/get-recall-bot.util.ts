@@ -1,10 +1,12 @@
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
+import { parseRecallBotSnapshot } from 'src/logic-functions/recall-api/parse-recall-bot-snapshot.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
 type GetRecallBotResult =
-  | { ok: true; bot: Record<string, unknown> }
+  | { ok: true; bot: RecallBotSnapshot }
   | RecallBotOperationFailure;
 
 export const getRecallBot = async ({
@@ -38,5 +40,5 @@ export const getRecallBot = async ({
     };
   }
 
-  return { ok: true, bot };
+  return { ok: true, bot: parseRecallBotSnapshot(bot) };
 };

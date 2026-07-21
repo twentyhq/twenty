@@ -17,6 +17,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
+  coreWorkflowVersionId: string | null;
   status: WorkflowVersionStatus;
   position: number;
   searchVector: string;

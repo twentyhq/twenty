@@ -2,11 +2,13 @@ import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscove
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
-import { SettingsMcpSetup } from '@/settings/playground/components/SettingsMcpSetup';
+import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
+import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
+import McpCoverDark from '@/settings/mcp-and-apis/assets/mcp-cover-dark.png';
+import McpCoverLight from '@/settings/mcp-and-apis/assets/mcp-cover-light.png';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import PlaygroundCoverDark from '@/settings/playground/assets/cover-dark.png';
-import PlaygroundCoverLight from '@/settings/playground/assets/cover-light.png';
+import PlaygroundCoverDark from '@/settings/mcp-and-apis/assets/cover-dark.png';
+import PlaygroundCoverLight from '@/settings/mcp-and-apis/assets/cover-light.png';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -16,9 +18,9 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandGraphql,
-  IconCode,
   IconPlus,
-  IconRobot,
+  IconPlug,
+  IconSparkle2,
   IconWebhook,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -61,14 +63,14 @@ export const SettingsApiWebhooks = () => {
 
   const tabs = [
     {
-      id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
-      title: t`API`,
-      Icon: IconCode,
-    },
-    {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
-      Icon: IconRobot,
+      Icon: IconSparkle2,
+    },
+    {
+      id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+      title: t`API`,
+      Icon: IconPlug,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
@@ -81,11 +83,13 @@ export const SettingsApiWebhooks = () => {
     (useSettingsActiveTabId(
       SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
       tabs.map((tab) => tab.id),
-    ) as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
+    ) as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP;
+
+  const isMcpTab = activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP;
 
   return (
     <SettingsPageLayout
-      title={t`APIs & Webhooks`}
+      title={t`MCP & APIs`}
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
@@ -97,29 +101,33 @@ export const SettingsApiWebhooks = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`APIs & Webhooks` },
+        { children: t`MCP & APIs` },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={PlaygroundCoverLight}
-            darkSrc={PlaygroundCoverDark}
+            lightSrc={isMcpTab ? McpCoverLight : PlaygroundCoverLight}
+            darkSrc={isMcpTab ? McpCoverDark : PlaygroundCoverDark}
             instanceIdPrefix={SETTINGS_API_HERO_INSTANCE_ID_PREFIX}
-            tabs={[
-              {
-                id: 'rest',
-                title: t`REST`,
-                Icon: IconCode,
-                vimeoId: '928786722',
-              },
-              {
-                id: 'graphql',
-                title: t`GraphQL`,
-                Icon: IconBrandGraphql,
-                vimeoId: '928786722',
-              },
-            ]}
+            tabs={
+              isMcpTab
+                ? []
+                : [
+                    {
+                      id: 'rest',
+                      title: t`REST`,
+                      Icon: IconPlug,
+                      vimeoId: '928786722',
+                    },
+                    {
+                      id: 'graphql',
+                      title: t`GraphQL`,
+                      Icon: IconBrandGraphql,
+                      vimeoId: '928786722',
+                    },
+                  ]
+            }
             playButtonAriaLabel={t`Watch API demo`}
           />
         </Section>

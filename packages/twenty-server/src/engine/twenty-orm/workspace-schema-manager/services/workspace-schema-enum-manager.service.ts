@@ -109,6 +109,22 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
+  async upsertEnumValue({
+    queryRunner,
+    schemaName,
+    enumName,
+    value,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    value: string;
+  }): Promise<void> {
+    const sql = `ALTER TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} ADD VALUE IF NOT EXISTS ${escapeLiteral(value)}`;
+
+    await queryRunner.query(sql);
+  }
+
   async renameEnumValue({
     queryRunner,
     schemaName,

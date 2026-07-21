@@ -5,10 +5,10 @@ icon: wrench
 ---
 
 * **Errores de Docker** — Asegúrate de que Docker Desktop (o el daemon) esté en ejecución antes de `yarn twenty docker:start`. El mensaje de error mostrará el comando de inicio correcto para tu sistema operativo.
-* **Versión de Node incorrecta** — Se requiere 24+. Compruébalo con `node -v`.
+* **Versión de Node incorrecta** — Se necesita la versión 24.5 o superior (`engines.node: ^24.5.0`). Compruébalo con `node -v`.
 * **Falta Yarn 4** — Ejecuta `corepack enable`.
 * **Dependencias rotas** — `rm -rf node_modules && yarn install`.
 * **Errores de `twenty-sdk` tras actualizar a la v2.8.0** — Pasó de `dependencies` a `devDependencies` en la v2.8.0. Consulta [Estructura del proyecto → Dependencias](/l/es/developers/extend/apps/getting-started/project-structure#dependencies).
-* **`twenty build` muestra una advertencia sobre `twenty-client-sdk` en `dependencies`** — Twenty lo proporciona en tiempo de ejecución, por lo que debería trasladarse a `devDependencies` junto con `twenty-sdk`. Consulta [Estructura del proyecto → Dependencias](/l/es/developers/extend/apps/getting-started/project-structure#dependencies).
+* **`twenty dev:build` muestra una advertencia sobre `twenty-client-sdk` en `dependencies`** — Twenty lo proporciona en tiempo de ejecución, por lo que debería trasladarse a `devDependencies` junto con `twenty-sdk`. Consulta [Estructura del proyecto → Dependencias](/l/es/developers/extend/apps/getting-started/project-structure#dependencies).
 
 ¿Atascado? Pide ayuda en el [Discord de Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

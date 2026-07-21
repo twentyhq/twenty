@@ -88,7 +88,7 @@ export const MultipleRecordPickerMenuItemContent = ({
             placeholderColorSeed={searchRecord.recordId}
             placeholder={displayText}
             size="md"
-            type={getAvatarType(objectMetadataItem.nameSingular) ?? 'rounded'}
+            type={getAvatarType(objectMetadataItem)}
           />
         }
         text={displayText}

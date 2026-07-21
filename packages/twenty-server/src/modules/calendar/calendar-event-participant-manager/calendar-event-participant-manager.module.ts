@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -31,8 +29,8 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
       ObjectMetadataEntity,
       FieldMetadataEntity,
       FeatureFlagEntity,
+      WorkspaceEntity,
     ]),
-    NestjsQueryTypeOrmModule.forFeature([WorkspaceEntity]),
     ContactCreationManagerModule,
     MatchParticipantModule,
     WorkspaceCacheModule,

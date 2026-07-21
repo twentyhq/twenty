@@ -150,7 +150,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       toFlatFieldMetadata,
       flatViewMaps,
       flatViewFieldMaps,
-      flatApplication,
     });
 
     if (sideEffectResult.status === 'fail') {

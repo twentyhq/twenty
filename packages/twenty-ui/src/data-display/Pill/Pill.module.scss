@@ -2,7 +2,8 @@
   align-items: center;
   background: var(--t-background-transparent-light);
   border-radius: var(--t-border-radius-pill);
-  color: var(--t-font-color-light);
+  corner-shape: round;
+  color: var(--t-font-color-tertiary);
   display: inline-flex;
   font-size: var(--t-font-size-xs);
   font-style: normal;

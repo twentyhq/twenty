@@ -112,7 +112,7 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 
 **Configurazione**:
 
-* Seleziona l'array di record da un passaggio precedente (ad es., risultati da Search Records, da un trigger Manual con disponibilità Bulk, da un nodo di codice)
+* Seleziona l'array di record da un passaggio precedente (ad es., risultati da Search Records, da un trigger Manual con disponibilità Bulk, da un nodo di codice). Quando un passaggio di tipo Code o Logic Function restituisce un array di primo livello, seleziona l'opzione **Whole list** per eseguire il loop su tutto l'output.
 * Definisci le azioni da eseguire su ciascun record nel ciclo.
 
 <Note>
@@ -120,7 +120,7 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 - Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
 </Note>
 
-* Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive.
+* Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive. Puoi anche selezionare **Use the whole item** per passare l'intero elemento corrente a un passaggio a valle.
 
 <VimeoEmbed videoId="1146577247" title="Dimostrazione video" />
 
@@ -245,6 +245,8 @@ I campi non possono essere resi obbligatori.
 
 Esegue JavaScript personalizzato all'interno del tuo workflow.
 
+In background, ogni azione Code è supportata dalla propria **logic function**, una funzione TypeScript lato server che viene eseguita sulla piattaforma Twenty. Quando aggiungi un'azione Code, Twenty crea una logic function dedicata per quel passaggio e ne espone l'editor inline, in modo che il codice che scrivi rimanga all'interno del flusso di lavoro.
+
 **Configurazione**:
 
 * Accedi alle variabili dai passaggi precedenti. Puoi modificare dinamicamente i nomi delle variabili.
@@ -265,6 +267,25 @@ Se devi utilizzare chiavi API esterne nel tuo codice, devi inserirle direttament
 
 <Tip>
 Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a schermo intero — utile poiché la larghezza predefinita dell'editor è limitata.
+</Tip>
+
+#### Riutilizzare una logic function tra i flussi di lavoro
+
+L'azione Code inline è ideale per la logica "usa e getta", ma il codice che contiene appartiene a quel singolo passaggio. Quando vuoi condividere la stessa logica tra vari flussi di lavoro o mantenerla come sorgente versionata in un'app, definisci una **reusable logic function** al posto di copiare e incollare il codice in ogni azione Code.
+
+Una logic function è definita una volta in un'app (usando l'SDK `defineLogicFunction`) ed esposta al generatore di flussi di lavoro aggiungendo `workflowActionTriggerSettings`. Una volta installata l'app, quella funzione compare come azione autonoma nel generatore di flussi di lavoro, insieme alle azioni integrate. Selezionandola, vengono mostrati i campi di input che hai dichiarato (con i selettori di variabili, proprio come per le altre azioni) e viene eseguito il tuo codice condiviso, senza bisogno di JavaScript inline.
+
+|                            | Code action                                                       | Reusable logic function                                                          |
+| -------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Dove risiede il codice** | Editor inline, legato a un singolo passaggio del flusso di lavoro | Definita in un'app, sottoposta a versionamento nel controllo del codice sorgente |
+| **Riutilizzo**             | Copiata e incollata per ogni passaggio                            | Aggiunta come azione in qualsiasi flusso di lavoro                               |
+| **Input**                  | Variabili collegate nell'editor                                   | Campi generati dallo schema di input dichiarato                                  |
+| **Ideale per**             | Logica rapida e specifica del flusso di lavoro                    | Logica condivisa usata in più flussi di lavoro                                   |
+
+Entrambe vengono eseguite sullo stesso runtime di logic function, quindi un'azione Code che hai prototipato inline può in seguito essere trasformata in una reusable logic function con modifiche minime.
+
+<Tip>
+Per le informazioni di riferimento destinate agli sviluppatori sulla definizione delle logic function e sulla loro esposizione al generatore di workflow, vedi [Logic Functions](/l/it/developers/extend/apps/logic/logic-functions), in particolare la sezione **Exposing a function as an AI tool or workflow action** e `workflowActionTriggerSettings`.
 </Tip>
 
 ### Richiesta HTTP

@@ -94,16 +94,32 @@ export const buildSearchFieldMetadataBackfillOperations = ({
       return;
     }
 
-    candidateSearchFieldMetadataKeys.add(searchFieldMetadataKey);
-
-    flatSearchFieldMetadatasToCreate.push(
-      buildFlatSearchFieldMetadataForField({
+    const universalFlatSearchFieldMetadata = buildFlatSearchFieldMetadataForField(
+      {
         flatObjectMetadata,
         flatFieldMetadata,
         tsVectorFlatFieldMetadata,
         position,
-      }),
+      },
     );
+
+    // Second dedupe layer, immune to metadata-id churn: rows created by a previous
+    // partial run of this command carry the same deterministic universal identifier
+    // (unique per workspace). The id-based check above can miss them when earlier
+    // upgrade commands recreated objects/fields under new ids.
+    if (
+      isDefined(
+        flatSearchFieldMetadataMaps.byUniversalIdentifier[
+          universalFlatSearchFieldMetadata.universalIdentifier
+        ],
+      )
+    ) {
+      return;
+    }
+
+    candidateSearchFieldMetadataKeys.add(searchFieldMetadataKey);
+
+    flatSearchFieldMetadatasToCreate.push(universalFlatSearchFieldMetadata);
   };
 
   // Standard objects: mirror exactly what provisioning/standard-sync creates.

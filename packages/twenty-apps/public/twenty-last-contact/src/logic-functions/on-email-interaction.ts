@@ -3,14 +3,18 @@ import type { DatabaseEventPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactAtIfNewer } from 'src/utils/update-person-last-contact-at';
+import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
+import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
+import { updateRelatedLastContact } from 'src/utils/update-related-last-contact';
 
 type MessageParticipantUpdate = {
   personId?: string | null;
   messageId?: string | null;
 };
 
-const handler = async (event: DatabaseEventPayload<ObjectRecordUpdateEvent<MessageParticipantUpdate>>): Promise<void> => {
+const handler = async (
+  event: DatabaseEventPayload<ObjectRecordUpdateEvent<MessageParticipantUpdate>>,
+): Promise<void> => {
   const personId = event.properties.after.personId;
   const messageId = event.properties.after.messageId;
 
@@ -20,32 +24,70 @@ const handler = async (event: DatabaseEventPayload<ObjectRecordUpdateEvent<Messa
 
   const client = new CoreApiClient();
 
-  const { message } = await client.query({
-    message: {
-      __args: { filter: { id: { eq: messageId } } },
-      id: true,
-      receivedAt: true,
+  const { messageParticipants } = await client.query({
+    messageParticipants: {
+      __args: { filter: { messageId: { eq: messageId } }, first: 200 },
+      edges: {
+        node: {
+          role: true,
+          workspaceMemberId: true,
+          message: { receivedAt: true },
+        },
+      },
     },
   });
 
-  const lastContactAt = message?.receivedAt ?? null;
+  const participants =
+    messageParticipants?.edges?.map(
+      (edge: {
+        node: {
+          role: string | null;
+          workspaceMemberId: string | null;
+          message: { receivedAt: string | null } | null;
+        };
+      }) => edge.node,
+    ) ?? [];
+  const occurredAt = participants[0]?.message?.receivedAt ?? null;
 
-  if (!lastContactAt) {
+  if (!occurredAt) {
     return;
   }
 
-  await updatePersonLastContactAtIfNewer(client, personId, lastContactAt);
+  const fromParticipant = participants.find(
+    (participant: { role: string | null; workspaceMemberId: string | null }) =>
+      participant.role === 'FROM',
+  );
+  const direction = fromParticipant?.workspaceMemberId ? 'outbound' : 'inbound';
+  const workspaceMemberId = pickContactTeamMemberId(participants, {
+    role: 'FROM',
+  });
+
+  await updatePersonForInteraction(client, {
+    personId,
+    occurredAt,
+    kind: 'email',
+    itemId: messageId,
+    workspaceMemberId,
+    direction,
+  });
+
+  await updateRelatedLastContact(client, {
+    personId,
+    occurredAt,
+    itemId: messageId,
+    kind: 'email',
+  });
 };
 
 export default defineLogicFunction({
   universalIdentifier: EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-email-interaction',
   description:
-    'Updates a person\'s last-contacted fields when a new email participant is created.',
+    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new email participant is created.",
   timeoutSeconds: 60,
   databaseEventTriggerSettings: {
     eventName: 'messageParticipant.updated',
-    updatedFields: ['personId']
+    updatedFields: ['personId'],
   },
   handler,
 });

@@ -152,9 +152,7 @@ describe('UserService', () => {
   });
 
   describe('loadWorkspaceMember', () => {
-    it('returns null when workspace is not active/suspended', async () => {
-      // isWorkspaceActiveOrSuspendedSpy.mockReturnValue(false);
-
+    it('returns null when workspace is not provisioned', async () => {
       const res = await service.loadWorkspaceMember(
         { id: 'u1' } as Pick<AuthContextUser, 'id'>,
         { id: 'w1' } as WorkspaceEntity,
@@ -194,10 +192,31 @@ describe('UserService', () => {
       });
       expect(res).toEqual({ id: 'wm1', userId: 'u1' });
     });
+
+    it('fetches from workspace member repo when workspace is created', async () => {
+      jest.spyOn(mockWorkspaceMemberRepo, 'findOne').mockResolvedValue({
+        id: 'wm1',
+        userId: 'u1',
+      } as WorkspaceMemberWorkspaceEntity);
+
+      jest
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
+        .mockResolvedValue(mockWorkspaceMemberRepo);
+
+      const res = await service.loadWorkspaceMember(
+        { id: 'u1' } as Pick<AuthContextUser, 'id'>,
+        {
+          id: 'w1',
+          activationStatus: WorkspaceActivationStatus.CREATED,
+        } as WorkspaceEntity,
+      );
+
+      expect(res).toEqual({ id: 'wm1', userId: 'u1' });
+    });
   });
 
   describe('loadWorkspaceMembers', () => {
-    it('returns [] when workspace is not active/suspended', async () => {
+    it('returns [] when workspace is not provisioned', async () => {
       const res = await service.loadWorkspaceMembers({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,
@@ -231,7 +250,7 @@ describe('UserService', () => {
   });
 
   describe('loadDeletedWorkspaceMembersOnly', () => {
-    it('returns [] when workspace is not active/suspended', async () => {
+    it('returns [] when workspace is not provisioned', async () => {
       const res = await service.loadDeletedWorkspaceMembersOnly({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,

@@ -4,6 +4,11 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import {
+  StyledTwoFactorInstructions,
+  StyledTwoFactorMainContent,
+} from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -20,36 +25,12 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const QRCode = resolveCjsModuleDefaultExport(QRCodeModule);
 
-const StyledMainContentContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
-  text-align: center;
-`;
-
-const StyledTextContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-
-  margin-bottom: ${themeCssVariables.spacing[4]};
-  max-width: 280px;
-  text-align: center;
-
-  & > a {
-    color: ${themeCssVariables.font.color.tertiary};
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
 const StyledForm = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  max-width: 100%;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledCopySetupKeyLink = styled.button`
@@ -94,13 +75,13 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
     <>
       <TwoFactorAuthenticationSetupEffect />
       <StyledForm>
-        <StyledTextContainer>
+        <StyledTwoFactorInstructions>
           <Trans>
             Use authenticator apps and browser extensions like 1Password, Authy,
             Microsoft Authenticator to generate one-time passwords
           </Trans>
-        </StyledTextContainer>
-        <StyledMainContentContainer>
+        </StyledTwoFactorInstructions>
+        <StyledTwoFactorMainContent>
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
           {qrCode && (
             <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
@@ -108,7 +89,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
               <Trans>Copy Setup Key</Trans>
             </StyledCopySetupKeyLink>
           )}
-        </StyledMainContentContainer>
+        </StyledTwoFactorMainContent>
         <MainButton
           title={t`Next`}
           onClick={handleClick}

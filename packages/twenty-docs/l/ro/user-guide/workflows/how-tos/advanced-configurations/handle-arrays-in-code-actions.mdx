@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Nodul de cod returnează un obiect structurat în locul unui tablou. În pașii următori, acum puteți selecta câmpuri individuale precum `answer.firstname` și `answer.name` din selectorul de variabile.
 
-<Note>
-Lucrăm activ pentru a simplifica gestionarea tablourilor în actualizările viitoare.
-</Note>
+<Tip>
+**Vrei să iterezi peste array în loc să extragi câmpuri?** Când un pas Code sau Logic Function returnează un array de nivel superior, îl poți trimite direct într-un [Iterator](/l/ro/user-guide/workflows/capabilities/use-iterator): selectează opțiunea pasului **Whole list** ca intrare pentru Iterator, apoi fă referire la fiecare element cu `{{iterator.currentItem}}` în interiorul buclei. În acest caz nu este nevoie să restructurezi array-ul într-un obiect.
+</Tip>
 
 <Tip>
 Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.

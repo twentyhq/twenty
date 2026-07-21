@@ -31,6 +31,7 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
     subject: true,
     text: true,
     receivedAt: true,
+    isDraft: true,
     messageThread: {
       id: true,
     },

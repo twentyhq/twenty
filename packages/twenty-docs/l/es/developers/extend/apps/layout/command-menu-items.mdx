@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## Campos de configuración
 
-| Campo                                   | Obligatorio | Descripción                                                                                                                                                                                  |
-| --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                   | Sí          | ID único estable para el comando                                                                                                                                                             |
-| `label`                                 | Sí          | Etiqueta completa mostrada en el menú de comandos (Cmd+K)                                                                                                                                    |
-| `frontComponentUniversalIdentifier`     | Sí          | El `universalIdentifier` del componente de frontend que abre este comando                                                                                                                    |
-| `shortLabel`                            | No          | Etiqueta corta mostrada en el botón de acción rápida anclado                                                                                                                                 |
-| `icon`                                  | No          | Nombre del ícono mostrado junto a la etiqueta (p. ej., 'IconBolt', 'IconSend')                                                                                                               |
-| `isPinned`                              | No          | Cuando es `true`, muestra el comando como un botón de acción rápida en la esquina superior derecha de la página                                                                              |
-| `availabilityType`                      | No          | Controla dónde aparece el comando: 'GLOBAL' (siempre disponible), 'RECORD_SELECTION' (solo cuando hay registros seleccionados) o 'FALLBACK' (se muestra cuando ningún otro comando coincide) |
-| `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                        |
-| `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                 |
+| Campo                                   | Obligatorio | Descripción                                                                                                                                                                                                                                                                                                |
+| --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sí          | ID único estable para el comando                                                                                                                                                                                                                                                                           |
+| `label`                                 | Sí          | Etiqueta completa mostrada en el menú de comandos (Cmd+K)                                                                                                                                                                                                                                                  |
+| `frontComponentUniversalIdentifier`     | Sí          | El `universalIdentifier` del componente de frontend que abre este comando                                                                                                                                                                                                                                  |
+| `shortLabel`                            | No          | Etiqueta corta mostrada en el botón de acción rápida anclado                                                                                                                                                                                                                                               |
+| `icon`                                  | No          | **Obsoleto**: se ignora en favor del icono de la aplicación; la compilación emite una advertencia si se establece                                                                                                                                                                                          |
+| `isPinned`                              | No          | Cuando es `true`, muestra el comando como un botón de acción rápida en la esquina superior derecha de la página                                                                                                                                                                                            |
+| `availabilityType`                      | No          | Controla dónde aparece el comando: `'GLOBAL'` (siempre disponible), `'GLOBAL_OBJECT_CONTEXT'` (solo en páginas con un contexto de objeto: páginas de índice y de registro), `'RECORD_SELECTION'` (solo cuando hay registros seleccionados) o `'FALLBACK'` (se muestra cuando ningún otro comando coincide) |
+| `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                                                                                                                                      |
+| `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                                                                                                                               |
 
 ## Comandos sin interfaz
 
 Un elemento del menú de comandos emparejado con un [headless front component](/l/es/developers/extend/apps/layout/front-components#headless-vs-non-headless) es la forma idónea de ofrecer una acción de un solo clic: ejecutar código, navegar o confirmar y ejecutar. La página Front Components abarca los [SDK Command components](/l/es/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) que gestionan el patrón de acción y desmontaje.
 
-Un flujo típico:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+Un flujo típico: un componente sin interfaz gráfica renderiza `<Command execute={...} />` (consulta el [ejemplo completo](/l/es/developers/extend/apps/layout/front-components#sdk-command-components)), y el elemento del menú de comandos apunta a él:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

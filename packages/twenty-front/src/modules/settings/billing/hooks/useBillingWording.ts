@@ -100,27 +100,40 @@ export const useBillingWording = () => {
 
   const confirmationModalSwitchToYearlyMessage = () => {
     if (subscriptionStatus === SubscriptionStatus.Trialing) {
-      return t`Your trial period will end, and you will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`;
+      return t`Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged $${yearlyPrice} per user per year billed annually.`;
     }
+
     return t`You will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`;
   };
 
   const confirmationModalSwitchToMonthlyMessage = () => {
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      return t`Your billing interval will switch to monthly immediately and your trial will continue. When it ends, you will be charged $${monthlyPrice} per user per month billed monthly.`;
+    }
+
     const beautifiedRenewDate = getBeautifiedRenewDate();
     return t`You will be charged $${monthlyPrice} per user per month billed monthly. The change will be applied the ${beautifiedRenewDate}.`;
   };
 
   const confirmationModalSwitchToOrganizationMessage = () => {
-    const prefix =
-      subscriptionStatus === SubscriptionStatus.Trialing
-        ? t`Your trial period will end, and `
-        : '';
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      const suffix = isYearlyPlan ? t` billed annually` : '';
+
+      return t`Your plan will switch to Organization immediately and your trial will continue. When it ends, you will be charged $${enterprisePrice} per user per month${suffix}.`;
+    }
+
     const body = t`you will be charged $${enterprisePrice} per user per month`;
     const suffix = isYearlyPlan ? t` billed annually` : '';
-    return capitalize(`${prefix}${body}${suffix}.`);
+    return capitalize(`${body}${suffix}.`);
   };
 
   const confirmationModalSwitchToProMessage = () => {
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      const suffix = isYearlyPlan ? t` billed annually` : '';
+
+      return t`Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged $${proPrice} per user per month${suffix}.`;
+    }
+
     const beautifiedRenewDate = getBeautifiedRenewDate();
     const suffix1 = isYearlyPlan ? t` billed annually` : '';
     const suffix2 = t`. The change will be applied the ${beautifiedRenewDate}.`;

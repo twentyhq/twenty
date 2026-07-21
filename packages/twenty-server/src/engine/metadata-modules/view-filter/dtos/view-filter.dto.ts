@@ -1,6 +1,4 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
@@ -13,7 +11,7 @@ registerEnumType(ViewFilterOperand, {
 
 @ObjectType('ViewFilter')
 export class ViewFilterDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: false })

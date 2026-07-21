@@ -93,11 +93,19 @@ export class LocalChildProcessRunnerService {
               if (!msg || msg.type !== 'run') return;
               try {
                 const out = await handlerFn(msg.payload);
-                process.send && process.send({ ok: true, result: out });
-                process.exit(0);
+                // Wait for the async IPC flush before exiting, otherwise results
+                // larger than the OS pipe buffer are dropped before delivery.
+                if (process.send) {
+                  process.send({ ok: true, result: out }, () => process.exit(0));
+                } else {
+                  process.exit(0);
+                }
               } catch (err) {
-                process.send && process.send({ ok: false, error: String(err), stack: err?.stack });
-                process.exit(1);
+                if (process.send) {
+                  process.send({ ok: false, error: String(err), stack: err?.stack }, () => process.exit(1));
+                } else {
+                  process.exit(1);
+                }
               }
             });
           } else {
@@ -105,17 +113,15 @@ export class LocalChildProcessRunnerService {
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
             const out = await handlerFn(payload);
-            process.stdout.write(JSON.stringify({ ok: true, result: out }));
-            process.exit(0);
+            process.stdout.write(JSON.stringify({ ok: true, result: out }), () => process.exit(0));
           }
         } catch (err) {
           const msg = String(err);
           if (process.send) {
-            process.send({ ok: false, error: msg, stack: err?.stack });
+            process.send({ ok: false, error: msg, stack: err?.stack }, () => process.exit(1));
           } else {
-            process.stdout.write(msg);
+            process.stdout.write(msg, () => process.exit(1));
           }
-          process.exit(1);
         }
       })();
     `;

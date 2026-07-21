@@ -32,8 +32,7 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
       logoBuffer,
       background,
       withRecordingStatusBadge: true,
-    })) ??
-    notRecordingImage;
+    })) ?? notRecordingImage;
 
   return {
     in_call_recording: { kind: 'jpeg', b64_data: recordingImage },

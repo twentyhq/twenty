@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -24,7 +24,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
   description:
     'Create the messageThread.subject standard field if missing and backfill it from the most recently received message in each thread',
 })
-export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -112,7 +112,7 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
@@ -221,7 +221,8 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
           universalIdentifier:
             STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
         },
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         objectMetadataUniversalIdentifier:
           messageThreadObjectMetadata.universalIdentifier,
       }),
@@ -229,7 +230,7 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

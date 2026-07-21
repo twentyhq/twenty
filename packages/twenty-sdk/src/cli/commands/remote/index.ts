@@ -1,3 +1,4 @@
+import { deriveRemoteName } from '@/cli/commands/remote/derive-remote-name';
 import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
 import { ApiService } from '@/cli/utilities/api/api-service';
@@ -8,16 +9,6 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
 import { normalizeUrl } from 'twenty-shared/utils';
-
-const deriveRemoteName = (url: string): string => {
-  try {
-    const hostname = new URL(url).hostname;
-
-    return hostname.replace(/\./g, '-');
-  } catch {
-    return 'remote';
-  }
-};
 
 type AuthMethod = 'OAuth' | 'API key';
 

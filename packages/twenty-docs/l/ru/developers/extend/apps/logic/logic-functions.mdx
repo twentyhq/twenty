@@ -411,6 +411,10 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 Функция может выбрать один, другой или оба варианта. Они идут рядом с `cronTriggerSettings`, `databaseEventTriggerSettings` и `httpRouteTriggerSettings` — тот же шаблон, та же структура.
 
+<Note>
+**Связь с действием Code рабочего процесса.** Встроенное действие **Code** в конструкторе рабочих процессов само по себе является логической функцией — Twenty создаёт по одной на каждый шаг Code и отображает его редактор встроенным образом. `workflowActionTriggerSettings` — это способ превратить разовый встроенный код в **повторно используемое** действие: определите функцию один раз в своём приложении, и она станет доступной для выбора в любом рабочем процессе, вместо копирования и вставки в каждый шаг Code. См. [действие Code](/l/ru/user-guide/workflows/capabilities/workflow-actions#code) в руководстве пользователя, чтобы увидеть, как это выглядит для конечного пользователя.
+</Note>
+
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -495,6 +499,77 @@ export default defineLogicFunction({
   },
 });
 ```
+
+##### Полный пример действия рабочего процесса
+
+`workflowActionTriggerSettings` принимает четыре поля:
+
+| Поле           | Назначение                                                                                                                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Имя, отображаемое для действия в селекторе шагов конструктора рабочих процессов. По умолчанию используется `name` функции.                                                                                    |
+| `icon`         | Иконка, отображаемая рядом с действием (имя из `tabler-icons`, например, `IconBuilding`).                                                                                                                     |
+| `inputSchema`  | Расширенная схема ввода (`InputSchema`) Twenty — то, что конструктор отображает как настраиваемые поля (с выбором переменных). Необязательно; при отсутствии выводится из обработчика.                        |
+| `outputSchema` | Определяет структуру, которую возвращает обработчик, чтобы **последующие шаги могли сопоставлять свои данные с его выходными полями**. Необязательно; без неё вывод представлен одним непрозрачным значением. |
+
+Объединяя всё вместе — функция, представленная как действие рабочего процесса, с объявленным выходом, чтобы последующие шаги могли ссылаться на `taskId`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+После установки приложения **Enrich Company** появляется в селекторе действий конструктора рабочих процессов. Конструктор отображает `companyName` и `domain` как поля ввода (каждое может получать значения из предыдущих шагов), а последующие шаги могут ссылаться на выходные значения шага `taskId` и `enriched`.
 
 <Note>
 **Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.

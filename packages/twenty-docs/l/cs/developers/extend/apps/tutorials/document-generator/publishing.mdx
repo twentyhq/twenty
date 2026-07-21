@@ -1,0 +1,137 @@
+---
+title: 6. Publikování
+icon: rocket
+description: Přidejte metadata tržiště a publikujte svou aplikaci.
+---
+
+Vaše aplikace funguje. Posledním krokem je popsat jej pro tržiště a publikovat.
+
+## Přidat metadata tržiště
+
+[application config](/l/cs/developers/extend/apps/config/application) nese
+identitu, která se objeví v tržišti: autor, kategorie, logo a podpora
+. Umístěte logo do `public/` a odkažte se na něj pomocí `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/cs/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+Výchozí role je deklarována s `defineApplicationRole()` ve svém vlastním souboru – vy
+zde již neprojdete `defaultRoleUniversalIdentifier`.
+</Tip>
+
+Přidejte také klíčové slovo `dvacet app` do `package.json` tak, aby byla aplikace nalezena:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Přidat galerii snímků obrazovky
+
+tržiště se prodává se snímky obrazovky. Vložte několik souborů PNG do
+`public/gallery/` a odkažte se na ně pomocí `galleryImages` — na stránce s výpisem se zobrazí jako
+galerie v pořadí, v jakém jsou v poli.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Lead with the payoff: make the first screenshot the finished result (generated
+document), then show how it is triggered and authored. (Automatic Copy) Použít křiklavé, vysoké rozlišení
+snímky — jsou to první věc, kterou uživatel vidí.
+</Tip>
+
+Dejte `README.md` stejné ošetření — je to přední stránka na npm a GitHub.
+Otevřete pomocí nabídky hodnot a snímku obrazovky, vyberte titulky,
+ponechte podrobnosti sestavení pod složkou.
+
+## Zkontrolovat před odesláním
+
+Spustit tytéž brány CI:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+Plán vypíše přesně to, co by se na serveru změnilo, aniž by změny provedl —
+dobrá závěrečná kontrola. Viz
+[Testing](/l/cs/developers/extend/apps/operations/testing) a
+[Synchronizace a obnovy](/l/cs/developers/extend/apps/operations/sync-and-recovery).
+
+## Publikovat
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` ve výchozím nastavení sestavuje a publikuje do npm; `--private` nahraje
+tarball do privátního registru 20 serverů. Chcete-li zobrazit publikovanou aplikaci
+v obchodě instance, spustí synchronizaci katalogu:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Úplné podrobnosti a kontrolní seznam vydání:
+[Publishing](/l/cs/developers/extend/apps/operations/publishing).
+
+## Vytvořili jste aplikaci 🎉
+
+V šesti kapitolách jste použili většinu povrchu SDK:
+
+* **Objekty, pole a vztahy** modelovat data
+* **Logická funkce** obklopená jako **nástroj AI**, **akce pracovního postupu** a **cesty HTTP**
+* **Zobrazení, navigace, příkaz a přední složka** pro UI
+* **agent + dovednost** pro generování přirozeného jazyka
+* **Metadata tržiště** a tok zveřejnění
+
+Dokončená aplikace je na
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Kde jít dál
+
+<CardGroup cols={2}>
+  <Card title="Odkaz na údaje" icon="database" href="/l/cs/developers/extend/apps/data/overview">
+    Každý typ pole, vztah a index.
+  </Card>
+  <Card title="Logický odkaz" icon="bolt" href="/l/cs/developers/extend/apps/logic/overview">
+    Cron a databázová událost, klíčový obchod, připojení OAuth.
+  </Card>
+  <Card title="Odkaz na rozložení" icon="table-columns" href="/l/cs/developers/extend/apps/layout/overview">
+    Rozvržení stránky, widgety hlavního panelu a další povrchy uživatelského rozhraní.
+  </Card>
+  <Card title="Operace" icon="rocket" href="/l/cs/developers/extend/apps/operations/overview">
+    CLI, testování, dálkové ovládání a CI.
+  </Card>
+</CardGroup>

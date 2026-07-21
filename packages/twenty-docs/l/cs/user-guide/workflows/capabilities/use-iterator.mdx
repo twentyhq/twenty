@@ -23,6 +23,12 @@ Iterátor jako vstup očekává **pole**. Poté:
 3. Přejde na další položku
 4. Opakuje, dokud nejsou zpracovány všechny položky
 
+### Výběr pole, přes které se bude iterovat
+
+Většinu zdrojů polí (Search Records, vícehodnotové pole ve webhooku, hromadný ruční spouštěč) lze vybrat přímo v nástroji pro výběr proměnných.
+
+Když krok **Code** nebo **Logic Function** vrátí *pole nejvyšší úrovně*, jeho výstup se v nástroji pro výběr proměnných zobrazí jako indexované položky (`0`, `1`, `2`, …). Chcete-li iterovat přes celé pole, vyberte u daného kroku možnost **Whole list** — Iterator pak automaticky odvodí strukturu každé položky ze seznamu.
+
 ## Základní nastavení
 
 ### Příklad: Odeslání e-mailu všem ve výsledcích hledání
@@ -76,6 +82,8 @@ Uvnitř iterátoru použijte `{{iterator.currentItem}}` pro přístup k aktuáln
 | `{{iterator.currentItem.email}}`        | Pole e-mailu                   |
 | `{{iterator.currentItem.company.name}}` | Název související společnosti  |
 | `{{iterator.index}}`                    | Aktuální pozice v poli (od 0)  |
+
+V nástroji pro výběr proměnných můžete buď přejít do konkrétního pole aktuální položky, nebo zvolit **Use the whole item** pro odkaz na celou aktuální položku (`{{iterator.currentItem}}`). Výběr celé položky je užitečný, když chcete předat celý záznam přímo do následujícího kroku, místo abyste ho znovu sestavovali pole po poli.
 
 ## Běžné vzory
 

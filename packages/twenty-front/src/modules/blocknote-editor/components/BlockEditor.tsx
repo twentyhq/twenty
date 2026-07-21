@@ -64,7 +64,7 @@ const StyledEditor = styled.div`
     backdrop-filter: ${themeCssVariables.blur.medium};
     background: ${themeCssVariables.background.transparent.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: 8px;
+    border-radius: ${themeCssVariables.border.radius.md};
     box-shadow:
       0px 2px 4px rgba(0, 0, 0, 0.04),
       2px 4px 16px rgba(0, 0, 0, 0.12);
@@ -88,7 +88,8 @@ const StyledEditor = styled.div`
   }
 
   & .bn-inline-content {
-    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   & .bn-container .bn-suggestion-menu-item:hover {
@@ -99,7 +100,7 @@ const StyledEditor = styled.div`
     backdrop-filter: ${themeCssVariables.blur.medium};
     background: ${themeCssVariables.background.transparent.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: 8px;
+    border-radius: ${themeCssVariables.border.radius.md};
     padding: 4px;
   }
 
@@ -140,7 +141,7 @@ const StyledEditor = styled.div`
   & .bn-inline-content code {
     background-color: ${themeCssVariables.background.transparent.light};
     border: 1px solid ${themeCssVariables.font.color.extraLight};
-    border-radius: 4px;
+    border-radius: ${themeCssVariables.border.radius.sm};
     color: ${themeCssVariables.font.color.danger};
     font-family: monospace;
     font-size: 0.9rem;

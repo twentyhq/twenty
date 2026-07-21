@@ -9,7 +9,7 @@ description: Twenty'nin fiyatlandırması ve faturalandırması hakkında sıkç
 <Accordion title="Twenty'yi kendi sunucumda ücretsiz kullanabilir miyim?">
 Evet, Twenty'yi kendi sunucunuzda ücretsiz kullanabilirsiniz. Çekirdek ekibimizin desteği hariç, Pro (Bulut) planına dahil olan her şeye erişebileceksiniz. Destek, Discord topluluğumuz üzerinden erişilebilir.
 
-Kendiniz barındırmak istiyor ve Premium özelliklere (SSO ve satır düzeyi izinler) ihtiyaç duyuyorsanız, ücretli Kuruluş (Kendi Barındırmalı) lisansını seçebilirsiniz. Bu ayrıca Twenty ekibinden desteği içerir ve dağıtmadan önce özel kodu açık kaynak olarak yayımlama gerekliliğini ortadan kaldırır.
+Kendiniz barındırmak istiyor ve Premium özelliklere (SSO, satır düzeyi izinler ve daha fazlası) ihtiyaç duyuyorsanız, ücretli Kuruluş (Kendi Barındırmalı) lisansını seçebilirsiniz. Bu ayrıca Twenty ekibinden desteği içerir ve dağıtmadan önce özel kodu açık kaynak olarak yayımlama gerekliliğini ortadan kaldırır.
 </Accordion>
 
 <Accordion title="Premium özellikler nelerdir?">
@@ -17,6 +17,10 @@ Premium özellikler yalnızca Kuruluş planlarında (Bulut veya Kendi Barındır
 * **SSO entegrasyonu**: Kimlik sağlayıcınızla Tek Oturum Açma
 * **Satır düzeyi izinler**: Kayıt düzeyinde ayrıntılı erişim denetimi
 * **Yapay Zeka kullanım verileri**: Çalışma alanı genelinde Yapay Zeka tüketimini takip edin
+* **Denetim günlükleri**: Her bir çalışma alanı üyesinin ne yaptığını kontrol edin
+* **E-posta kampanyaları**: Hangi e-postaların gönderileceğini planlayın (yakında kullanıma sunulacak)
+* **Sınırsız çalışma alanı**: İstediğiniz kadar çalışma alanı oluşturun (yalnızca kendi barındırmalı)
+* **Özel kaynak kodu**: Değişiklikleri herkese açık bir depoda yayımlama zorunluluğu yoktur (yalnızca kendi barındırmalı)
 </Accordion>
 
 <Accordion title="Buluttaki Organization planı ile kendi barındırmalı ortamdaki Organization planı aynı mı?">
@@ -28,19 +32,19 @@ Premium özellikler yalnızca Kuruluş planlarında (Bulut veya Kendi Barındır
 </Accordion>
 
 <Accordion title="Aboneliğimi Kuruluş planına nereden değiştirebilirim?">
-Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Yıllık'a Geç` seçeneğine tıklayın.
+Bunu `Ayarlar → Faturalama → Planlar` altında yapabilirsiniz. Ardından `Yıllık'a Geç` seçeneğine tıklayın.
 </Accordion>
 
 <Accordion title="Aboneliğimi Pro planına nereden değiştirebilirim?">
-Bu işlemi şimdilik kullanıcı arayüzü üzerinden kolayca yapmanın bir yolu yoktur, lütfen ekibimize Destek üzerinden doğrudan ulaşın.
+Bunu `Ayarlar → Faturalama → Planlar` altında yapabilirsiniz. Ardından `Pro'ya geç` seçeneğine tıklayın.
 </Accordion>
 
-<Accordion title="Aboneliğimi Yıllık'a nereden değiştirebilirim?">
-Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Kuruluşa Geç` seçeneğine tıklayın.
+<Accordion title="Aboneliğimi yıllığa nereden değiştirebilirim?">
+Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Yıllığa yükselt` seçeneğine tıklayın.
 </Accordion>
 
-<Accordion title="Aboneliğimi Aylık'a nereden değiştirebilirim?">
-Bu işlemi şimdilik kullanıcı arayüzü üzerinden kolayca yapmanın bir yolu yoktur, lütfen ekibimize Destek üzerinden doğrudan ulaşın.
+<Accordion title="Aboneliğimi aylığa nereden değiştirebilirim?">
+Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Aylığa düşür` seçeneğine tıklayın.
 </Accordion>
 
 <Accordion title="Kredi kullanımımı nerede görebilirim?">
@@ -57,13 +61,18 @@ Krediler planınıza değil, faturalandırma döngünüze göre belirlenir:
 Her iş akışı eylemi, karmaşıklığına göre kredi tüketir:
 * **Temel iç operasyonlar** (arama, kaydetme, kayıt oluşturma gibi) çok az kredi tüketir
 * **Daha karmaşık işlemler** olan kod düğümleri ve harici servis talepleri daha fazla kredi tüketir
-* **AI istemleri** (yakında geliyor!) de kullanımına göre daha fazla kredi tüketecektir
+* **Yapay zeka istemleri** de kullanıma göre daha fazla kredi tüketir
+* **Uygulamalar** da Code düğümüne benzer şekilde daha fazla kredi tüketir
 
-Krediler, iş akışları yürütülürken gerçek zamanlı olarak düşer. Kullanımınızı **Ayarlar → Faturalama** altında izleyerek tüketim ve kalan kredileri takip edebilirsiniz.
+Krediler, iş akışları veya uygulamalar yürütüldüğünde gerçek zamanlı olarak düşer. Kullanımınızı **Ayarlar → Faturalama** altında izleyerek tüketim ve kalan kredileri takip edebilirsiniz.
 </Accordion>
 
 <Accordion title="Daha fazla iş akışı kredisi satın alabilir miyim?">
 Ekstra kredileri `Ayarlar → Faturalama` altında satın alabilirsiniz.
+</Accordion>
+
+<Accordion title="Yalnızca 1 aylığına daha fazla iş akışı kredisi satın alabilir miyim?">
+Evet, `Ayarlar → Faturalama` bölümüne gidin, `Artır` düğmesine tıklayın, kaç kredi istediğinizi seçin ve onaylayın; geçerli faturalama dönemi için uygulanacaktır. Ardından tekrar `Artır` düğmesine tıklayın, değeri orijinaline geri çevirin ve onaylayın; düşürme bir sonraki faturalama döneminin başlangıcından itibaren uygulanacaktır.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Fatura detayla
 
 <Accordion title="Faturalarıma nereden erişebilirim?">
 Bunu `Ayarlar → Faturalama` altında yapabilirsiniz. Ardından `Fatura detaylarını görüntüle` seçeneğine tıklayın. Ekranın alt kısmında tüm faturalarınızı göreceksiniz.
+</Accordion>
+
+<Accordion title="Neden koltuk sayım çalışma alanımdaki kullanıcı sayısından farklı?">
+Çalışma alanı koltuk sayıları, ödeme sistemiyle her 6 saatte bir senkronize edilir; faturalar aradaki farka göre ayarlanır.
+</Accordion>
+
+<Accordion title="Yeni bir çalışma alanı üyesi için neden bir fatura aldım?">
+Çalışma alanına yeni bir çalışma alanı üyesi eklendiğinde, farkı karşılamak için bir fatura gönderilir. Bir çalışma alanı üyesi kaldırıldığında, değişiklik bir sonraki standart aylık/yıllık faturada uygulanır.
 </Accordion>
 </AccordionGroup>

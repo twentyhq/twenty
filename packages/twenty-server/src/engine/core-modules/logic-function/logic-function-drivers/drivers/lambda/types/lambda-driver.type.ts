@@ -44,6 +44,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   subhostingRole?: string;
   layerBucket: string;
   layerBucketRegion: string;
+  resourceNamespace: string;
 }
 
 export enum LambdaExecutionPhase {

@@ -1,44 +1,35 @@
 import { type DragDropProvider } from '@dnd-kit/react';
-import { useStore } from 'jotai';
-import { type ComponentProps, useCallback, useState } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
-import { resolveRecordTableHeaderDrop } from '@/object-record/record-table/record-table-header/dnd/utils/resolveRecordTableHeaderDrop';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
 import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
+import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DragStartPayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordTableHeaderDndData>
-    >['onDragStart']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
   >
 >[0];
 type DragMovePayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordTableHeaderDndData>
-    >['onDragMove']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
   >
 >[0];
 type DragEndPayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordTableHeaderDndData>
-    >['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
   >
 >[0];
 
@@ -54,8 +45,6 @@ export const useRecordTableHeaderDndKit = (): {
     onDragEnd: (event: DragEndPayload) => void;
   };
 } => {
-  const store = useStore();
-
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
   const { reorderVisibleRecordFields } =
@@ -64,10 +53,6 @@ export const useRecordTableHeaderDndKit = (): {
   const { setDragSelectionStartEnabled } = useDragSelect();
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const isRecordTableHeaderDropProcessingCallbackState =
-    useAtomComponentStateCallbackState(
-      isRecordTableHeaderDropProcessingComponentState,
-    );
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
   );
@@ -100,57 +85,53 @@ export const useRecordTableHeaderDndKit = (): {
       : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH) +
     (labelIdentifierRecordField?.size ?? 0);
 
-  const resolveDropFromPointerX = useCallback(
-    ({ pointerX, sourceIndex }: { pointerX: number; sourceIndex: number }) => {
-      const { scrollWrapperElement } = getScrollWrapperElement();
-      if (!isDefined(scrollWrapperElement)) return null;
+  const resolveDropFromPointerX = ({
+    pointerX,
+    sourceIndex,
+  }: {
+    pointerX: number;
+    sourceIndex: number;
+  }) => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+    if (!isDefined(scrollWrapperElement)) return null;
 
-      return resolveRecordTableHeaderDrop({
-        pointerX,
-        sourceIndex,
-        scrollWrapperElement,
-        nonSortableColumnsWidth,
-        recordFields: recordFieldsWithoutLabelIdentifier,
-      });
-    },
-    [
-      getScrollWrapperElement,
-      nonSortableColumnsWidth,
-      recordFieldsWithoutLabelIdentifier,
-    ],
-  );
+    return resolveDragDropColumnDrop({
+      pointerX,
+      sourceIndex,
+      scrollWrapperElement,
+      columnWidths: recordFieldsWithoutLabelIdentifier.map(
+        (recordField) => recordField.size,
+      ),
+      leadingOffset: nonSortableColumnsWidth,
+    });
+  };
 
   const handleDragStart = (_event: DragStartPayload) => {
-    store.set(isRecordTableHeaderDropProcessingCallbackState, true);
-
     setActiveDropTargetIndex(null);
   };
 
-  const handleDragMove = useCallback(
-    (event: DragMovePayload) => {
-      const { operation } = event;
-      const sourceIndex = operation.source?.data.index;
+  const handleDragMove = (event: DragMovePayload) => {
+    const { operation } = event;
+    const sourceIndex = operation.source?.data.index;
 
-      if (!isDefined(sourceIndex)) {
-        setActiveDropTargetIndex(null);
-        return;
-      }
+    if (!isDefined(sourceIndex)) {
+      setActiveDropTargetIndex(null);
+      return;
+    }
 
-      const resolvedDrop = resolveDropFromPointerX({
-        pointerX: operation.position.current.x,
-        sourceIndex,
-      });
+    const resolvedDrop = resolveDropFromPointerX({
+      pointerX: operation.position.current.x,
+      sourceIndex,
+    });
 
-      setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
-        const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
+    setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
+      const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
 
-        return currentActiveDropTargetIndex === nextActiveDropTargetIndex
-          ? currentActiveDropTargetIndex
-          : nextActiveDropTargetIndex;
-      });
-    },
-    [resolveDropFromPointerX, setActiveDropTargetIndex],
-  );
+      return currentActiveDropTargetIndex === nextActiveDropTargetIndex
+        ? currentActiveDropTargetIndex
+        : nextActiveDropTargetIndex;
+    });
+  };
 
   const handleDragEnd = (event: DragEndPayload) => {
     const { operation } = event;
@@ -158,7 +139,6 @@ export const useRecordTableHeaderDndKit = (): {
 
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
-    store.set(isRecordTableHeaderDropProcessingCallbackState, false);
 
     if (event.canceled) return;
     if (!isDefined(source)) return;

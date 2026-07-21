@@ -67,6 +67,12 @@ describe('EnterprisePlanService', () => {
   const workspaceCountMock = jest.fn();
   const userCountMock = jest.fn();
   const userWorkspaceCountMock = jest.fn();
+  const userWorkspaceGetRawOneMock = jest.fn();
+  const userWorkspaceQueryBuilderMock = {
+    select: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    getRawOne: userWorkspaceGetRawOneMock,
+  };
   const userFindOneMock = jest.fn();
 
   let originalFetch: typeof global.fetch;
@@ -119,6 +125,9 @@ describe('EnterprisePlanService', () => {
     workspaceCountMock.mockResolvedValue(0);
     userCountMock.mockResolvedValue(0);
     userWorkspaceCountMock.mockResolvedValue(0);
+    userWorkspaceQueryBuilderMock.select.mockReturnThis();
+    userWorkspaceQueryBuilderMock.where.mockReturnThis();
+    userWorkspaceGetRawOneMock.mockResolvedValue({ distinctUserCount: '0' });
     userFindOneMock.mockResolvedValue(null);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -143,7 +152,12 @@ describe('EnterprisePlanService', () => {
         },
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: { count: userWorkspaceCountMock },
+          useValue: {
+            count: userWorkspaceCountMock,
+            createQueryBuilder: jest
+              .fn()
+              .mockReturnValue(userWorkspaceQueryBuilderMock),
+          },
         },
         {
           provide: getRepositoryToken(UserEntity),
@@ -620,6 +634,39 @@ describe('EnterprisePlanService', () => {
       const result = await service.refreshValidityToken();
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('getBillableSeatCount', () => {
+    it('should count distinct users so a user in several workspaces is one seat', async () => {
+      userWorkspaceGetRawOneMock.mockResolvedValue({ distinctUserCount: '5' });
+
+      const result = await service.getBillableSeatCount();
+
+      expect(result).toBe(5);
+      expect(userWorkspaceQueryBuilderMock.select).toHaveBeenCalledWith(
+        'COUNT(DISTINCT "userWorkspace"."userId")',
+        'distinctUserCount',
+      );
+      expect(userWorkspaceQueryBuilderMock.where).toHaveBeenCalledWith(
+        '"userWorkspace"."deletedAt" IS NULL',
+      );
+    });
+
+    it('should return at least 1 when there are no active user workspaces', async () => {
+      userWorkspaceGetRawOneMock.mockResolvedValue({ distinctUserCount: '0' });
+
+      const result = await service.getBillableSeatCount();
+
+      expect(result).toBe(1);
+    });
+
+    it('should return at least 1 when the query returns no row', async () => {
+      userWorkspaceGetRawOneMock.mockResolvedValue(undefined);
+
+      const result = await service.getBillableSeatCount();
+
+      expect(result).toBe(1);
     });
   });
 

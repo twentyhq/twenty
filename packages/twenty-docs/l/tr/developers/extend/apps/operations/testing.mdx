@@ -78,6 +78,13 @@ Uygulamanızın kök dizininde bir `vitest.config.ts` oluşturun:
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-Testler çalışmadan önce sunucuya erişilebildiğini doğrulayan bir kurulum dosyası oluşturun:
+Sunucunun erişilebilir olduğunu doğrulayan, SDK için bir test yapılandırması (`~/.twenty/config.test.json`) yazan ve testler çalışmadan önce uygulamayı eşitleyen genel bir kurulum dosyası oluşturun:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## Programatik SDK API'leri
 
 `twenty-sdk/cli` alt yolu, test kodundan doğrudan çağırabileceğiniz fonksiyonları dışa aktarır:
 
-| Fonksiyon      | Açıklama                                                          |
-| -------------- | ----------------------------------------------------------------- |
-| `appBuild`     | Uygulamayı derleyin ve isteğe bağlı olarak bir tarball paketleyin |
-| `appDeploy`    | Bir tarball'ı sunucuya yükleyin                                   |
-| `appInstall`   | Uygulamayı etkin çalışma alanına yükleyin                         |
-| `appUninstall` | Uygulamayı etkin çalışma alanından kaldırın                       |
+| Fonksiyon      | Açıklama                                                                    |
+| -------------- | --------------------------------------------------------------------------- |
+| `appBuild`     | Uygulamayı derleyin ve isteğe bağlı olarak bir tarball paketleyin           |
+| `appDeploy`    | Bir tarball'ı sunucuya yükleyin                                             |
+| `appDevOnce`   | Uygulamayı bir kez oluşturun ve eşitleyin (`yarn twenty apply` ile aynıdır) |
+| `appInstall`   | Uygulamayı etkin çalışma alanına yükleyin                                   |
+| `appUninstall` | Uygulamayı etkin çalışma alanından kaldırın                                 |
 
 Her fonksiyon, `success: boolean` ile birlikte `data` veya `error` içeren bir sonuç nesnesi döndürür.
 
@@ -238,64 +253,10 @@ Ayrıca testleri çalıştırmadan uygulamanızda tip denetimi çalıştırabili
 yarn twenty dev:typecheck
 ```
 
-Bu, `tsc --noEmit` komutunu çalıştırır ve tüm tip hatalarını raporlar.
+Bu, uygulamanızın `tsconfig.json` dosyasına göre `tsc --noEmit` komutunu çalıştırır ve tüm tip hatalarını raporlar. İskelet olarak oluşturulan uygulamalar ayrıca test dosyalarını da kapsayan (`tsconfig.spec.json`) bir `yarn typecheck` betiği ile birlikte gelir.
 
 ## GitHub Actions ile CI
 
-İskelet oluşturucu, `.github/workflows/ci.yml` konumunda kullanıma hazır bir GitHub Actions iş akışı üretir. Entegrasyon testlerinizi `main` dalına yapılan her itmede ve çekme isteklerinde otomatik olarak çalıştırır.
+İskelet oluşturucu, `.github/workflows/ci.yml` konumunda kullanıma hazır bir iş akışı üretir. `main` dalına yapılan her itmede ve her çekme isteğinde, çalıştırıcı içinde geçici bir Twenty sunucusu başlatır (`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` eylemi aracılığıyla) ve ardından `yarn lint`, `yarn typecheck`, `yarn test:unit` ve `yarn test` komutlarını, `TWENTY_API_URL` / `TWENTY_API_KEY` bu sunucuyu işaret edecek şekilde çalıştırır. Herhangi bir gizli bilgi gerekmez ve iş akışının en üstündeki `TWENTY_VERSION` ortam değişkeni aracılığıyla sunucu sürümünü sabitleyebilirsiniz.
 
-İş akışı:
-
-1. Kodunuzu çalışma alanına alır
-2. `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` eylemini kullanarak geçici bir Twenty sunucusu başlatır
-3. `yarn install --immutable` ile bağımlılıkları kurar
-4. Eylem çıktılarından enjekte edilen `TWENTY_API_URL` ve `TWENTY_API_KEY` ile `yarn test` çalıştırır
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Herhangi bir gizli değişken yapılandırmanız gerekmez — `spawn-twenty-docker-image` eylemi, koşucu içinde doğrudan geçici bir Twenty sunucusu başlatır ve bağlantı ayrıntılarını çıktı olarak verir. `GITHUB_TOKEN` gizli değişkeni GitHub tarafından otomatik olarak sağlanır.
-
-`latest` yerine belirli bir Twenty sürümünü sabitlemek için iş akışının başındaki `TWENTY_VERSION` ortam değişkenini değiştirin.
+Üç iskelet iş akışının (`ci.yml`, `cd.yml` dağıtım hattı ve npm yayınlama için `publish.yml`) eksiksiz adım adım anlatımı için [Yayınlama → Otomatik CI/CD](/l/tr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) bölümüne bakın.

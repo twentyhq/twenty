@@ -28,6 +28,7 @@ const StyledStepCircleBase = styled.div<{ isInNextSteps: boolean }>`
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;
+  corner-shape: round;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;

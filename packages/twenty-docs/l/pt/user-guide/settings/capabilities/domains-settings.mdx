@@ -1,6 +1,6 @@
 ---
 title: Configurações de Domínio
-description: Configure o domínio do espaço de trabalho, os domínios de acesso aprovados e os domínios públicos.
+description: Configure o domínio do espaço de trabalho, os domínios de acesso aprovados e os domínios personalizados do aplicativo.
 ---
 
 As configurações de domínio ficam em três lugares, dependendo do que você está configurando.
@@ -37,18 +37,17 @@ Depois de configurado, qualquer pessoa com um endereço de e-mail nesse domínio
 Isso é útil para permitir que toda a sua equipe se registre por conta própria, mantendo o espaço de trabalho restrito à sua organização.
 </Note>
 
-## Domínios Públicos
+## Domínios Personalizados do Aplicativo
 
-Configure em **Configurações → Aplicativos → Desenvolvedor**.
+Configure em **Configurações → Aplicativos → seu aplicativo → Configurações → URL do Aplicativo**.
 
-Provisionar um ambiente de hospedagem completo e seguro nestes domínios. Um domínio público pode ser vinculado a um app específico — quando vinculado, somente as funções de lógica roteadas por HTTP desse app ficam acessíveis no domínio. Deixe a vinculação vazia para expor todas as rotas HTTP do workspace.
+Aplicativos que expõem rotas na web são servidos a partir de uma URL dedicada, exibida na seção **URL do Aplicativo**. Você pode, em vez disso, disponibilizar um aplicativo a partir de um domínio que você possui.
 
-### Adicionar Domínio Público
+### Adicionar Domínio Personalizado
 
-1. Clique em **Adicionar Domínio Público**
-2. Insira o domínio que você deseja usar
-3. Opcionalmente vincule-o a um app
-4. Configure as configurações de DNS conforme as instruções
-5. Verifique o domínio
+1. Clique em **Adicionar Domínio Personalizado**
+2. Insira o domínio que você deseja usar (por exemplo, `app.yourcompany.com`)
+3. Configure as configurações de DNS conforme as instruções
+4. Verifique o domínio
 
-Os certificados SSL são provisionados automaticamente para domínios públicos.
+Somente as rotas desse aplicativo ficam acessíveis nesse domínio. Os certificados SSL são provisionados automaticamente.

@@ -93,6 +93,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
       {
         externalId: 'support-message',
@@ -110,6 +111,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
       {
         externalId: 'regular-message',
@@ -127,6 +129,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
     ];
 
@@ -155,6 +158,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
     ];
 
@@ -176,6 +180,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: undefined as any,
         attachments: [],
+        isDraft: false,
       },
     ];
 
@@ -203,6 +208,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
     ];
 
@@ -236,6 +242,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
       {
         externalId: 'alias-sent-message',
@@ -258,6 +265,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
       {
         externalId: 'reply-from-john',
@@ -280,6 +288,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
       {
         externalId: 'incoming-from-noreply',
@@ -302,6 +311,7 @@ describe('filterEmails', () => {
           },
         ],
         attachments: [],
+        isDraft: false,
       },
     ];
 

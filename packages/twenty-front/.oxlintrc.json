@@ -11,6 +11,7 @@
     "src/generated-metadata",
     "src/generated-admin",
     "src/locales/generated",
+    "src/modules/onboarding/components/WelcomeOverlay/welcomeHalftoneDots.ts",
     "src/testing/mock-data",
     "**/__mocks__/**",
     "**/*.stories.ts",

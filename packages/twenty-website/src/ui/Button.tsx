@@ -76,6 +76,20 @@ const buttonClassName = css`
     --button-label-hover: ${color('white')};
   }
 
+  [data-scheme='dark'] [data-scheme='light'] &[data-variant='filled'] {
+    --button-fill: ${color('black')};
+    --button-hover-fill: ${color('black-hover')};
+    --button-label: ${color('white')};
+    --button-label-hover: ${color('white')};
+  }
+
+  [data-scheme='dark'] [data-scheme='light'] &[data-variant='outlined'] {
+    --button-stroke: ${color('black')};
+    --button-hover-fill: ${color('black')};
+    --button-label: ${color('black')};
+    --button-label-hover: ${color('black')};
+  }
+
   /* Outlined hovers are a 5% ink wash. The shape paints OPAQUE and the
      layer carries the opacity, so the wash composites once — segment
      overlaps can never double into seams, on any surface. */

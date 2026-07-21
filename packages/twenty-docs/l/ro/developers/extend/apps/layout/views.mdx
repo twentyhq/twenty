@@ -33,17 +33,32 @@ export default defineView({
 ## Puncte cheie
 
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
-* `key` determină tipul vizualizării — `ViewKey.INDEX` este principala vizualizare de listă pentru obiect.
-* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
-* Puteți declara, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații avansate.
+* `key: ViewKey.INDEX` marchează vizualizarea ca vizualizarea principală de listă a obiectului (cea pe care o deschide un element de navigare `OBJECT`).
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`. Pentru a face referire la un câmp de sistem creat automat, cum ar fi `createdAt`, consultă [Țintirea câmpurilor de sistem](/l/ro/developers/extend/apps/data/system-fields).
+* Puteți declara, de asemenea, `filters`, `filterGroups`, `sorts`, `groups` și `fieldGroups` pentru configurații avansate.
 * `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
+
+## Proprietăți opționale
+
+| Proprietate                                                                                                 | Valori                                                                             | Descriere                                                                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (implicit), `ViewType.KANBAN`, `ViewType.CALENDAR`                | Modul în care sunt dispuse înregistrările. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` și `CALENDAR_WIDGET` există, de asemenea, dar sunt folosite intern de către widget-urile de tip page-layout.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (implicit), `ViewVisibility.UNLISTED`                   | Dacă vizualizarea este listată pentru întregul spațiu de lucru sau ascunsă din selectoare.                                                                                                                 |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (implicit), `ViewOpenRecordIn.RECORD_PAGE`           | Unde se deschide o înregistrare la clic.                                                                                                                                                                   |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Ordinea implicită de sortare.                                                                                                                                                                              |
+| `isCompact`                                                                                                 | `boolean`                                                                          | Afișare compactă a rândurilor.                                                                                                                                                                             |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Gruparea înregistrărilor (de ex. coloane kanban) după un câmp.                                                                                                                                             |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Agregări și dimensionare pentru coloanele kanban.                                                                                                                                                          |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Vizualizări de tip calendar: layout, câmpul de dată care poziționează înregistrările și un câmp opțional pentru data de sfârșit.                                                                           |
+
+Toate enum-urile de mai sus sunt exportate din `twenty-sdk/define`.
 
 ## Filtre
 
 O vizualizare poate include filtre aplicate în prealabil. Fiecare filtru are trei coordonate: **câmpul** care este filtrat, **operandul** (cum se compară) și **valoarea** (față de ce se compară). Toate cele trei trebuie să se potrivească — folosirea unui operand care nu se aplică unui tip de câmp va fi respinsă în timpul sincronizării.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

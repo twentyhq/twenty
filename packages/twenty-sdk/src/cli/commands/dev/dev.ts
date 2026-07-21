@@ -9,12 +9,14 @@ import { DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 import { getVersionInfo } from '@/cli/utilities/version/get-version-info';
+import chalk from 'chalk';
 
 export type AppDevOptions = {
   appPath?: string;
   headless?: boolean;
   verbose?: boolean;
   debounceMs?: number;
+  force?: boolean;
 };
 
 export class AppDevCommand {
@@ -72,6 +74,18 @@ export class AppDevCommand {
       state: orchestratorState,
       verbose: options.verbose,
       debounceMs: options.debounceMs,
+      force: options.force,
+      interactive: !options.headless && process.stdout.isTTY === true,
+      onExit: ({ code, message }) => {
+        if (options.headless) {
+          return;
+        }
+
+        void this.close().then(() => {
+          console.log(chalk.yellow(`\n${message}`));
+          process.exit(code);
+        });
+      },
     });
 
     await this.orchestrator.start();

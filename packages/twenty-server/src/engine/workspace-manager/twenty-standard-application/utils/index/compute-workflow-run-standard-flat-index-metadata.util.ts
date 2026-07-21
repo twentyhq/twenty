@@ -48,6 +48,7 @@ export const buildWorkflowRunStandardFlatIndexMetadatas = ({
       indexName: 'searchVectorGinIndex',
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
+      hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

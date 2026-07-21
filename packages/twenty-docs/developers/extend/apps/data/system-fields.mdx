@@ -1,0 +1,153 @@
+---
+title: Targeting System Fields
+description: Reference auto-created system fields like createdAt or updatedAt from views and other entities with getFieldUniversalIdentifier.
+icon: "gears"
+---
+
+Every object in Twenty ships with a set of **system fields** that you never declare yourself. They are created automatically by the server when the object is provisioned:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Because you don't declare these fields with [`defineField()`](/developers/extend/apps/data/extending-objects), there's no `universalIdentifier` constant for you to import. So how do you reference `createdAt` as a column in a [view](/developers/extend/apps/layout/views)?
+
+## The problem
+
+Since Twenty 2.19, a system field's universal identifier is **derived deterministically** by the server from three inputs: the application universal identifier, the object universal identifier, and the field name. Inventing an id and hardcoding it won't work: it matches nothing on the server, and the sync rejects the dangling reference:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## The solution
+
+<Note>
+  `getFieldUniversalIdentifier` is available from `twenty-sdk` 2.21 onward.
+</Note>
+
+Use `getFieldUniversalIdentifier` to resolve the exact same value the server uses. It takes the three inputs and returns the field's universal identifier:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+- `applicationUniversalIdentifier` is your app's identifier, the one you pass to [`defineApplication()`](/developers/extend/apps/config/application).
+- `objectUniversalIdentifier` is the identifier of the object the field belongs to.
+- `name` is the system field name, one of the values listed above.
+
+## Example: a createdAt column in a view
+
+The typical case is adding a `createdAt` column to a view of one of your custom objects. Resolve the field id and reference it as any other `fieldMetadataUniversalIdentifier`:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+The same resolved id works anywhere a `fieldMetadataUniversalIdentifier` is expected: view fields, filters, sorts, groups, and page-layout widgets.
+
+<Note>
+  Resolve the id, don't hardcode it. Because the server derives the value from
+  the application id, the object id and the field name, calling
+  `getFieldUniversalIdentifier` keeps your reference correct even if those
+  inputs change, and avoids drift if the derivation ever evolves.
+</Note>
+
+## System relation fields
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` is available from `twenty-sdk`
+  2.23 onward and requires a Twenty server on 2.23 or later.
+</Note>
+
+Besides the scalar system fields above, the server also provisions four **system relation fields** on every object: `timelineActivities`, `attachments`, `noteTargets` and `taskTargets`, each pointing at the matching standard relation object.
+
+These fields are not resolved with `getFieldUniversalIdentifier`: their identifier is derived **name-free**, from the object hosting the field and the object the field points to. That way renaming an object never changes the identifiers of its relation fields.
+
+Use `getSystemRelationFieldUniversalIdentifier` to resolve them:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+- `objectUniversalIdentifier` is the object **hosting** the field.
+- `relationTargetObjectUniversalIdentifier` is the object the field **points to**.
+
+The direction is encoded by the argument order. To resolve the reverse side (e.g. `attachment.targetRocket`, the morph field the server creates on the standard relation object), swap the two:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+As with scalar system fields, the resolved id works anywhere a `fieldMetadataUniversalIdentifier` is expected.
+
+## Standard Twenty objects
+
+For a **standard** Twenty object (Person, Company, Opportunity, …), you don't need to derive anything: the system field identifiers are pre-computed constants you can import directly.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+Reach for `getFieldUniversalIdentifier` when the object is one **your app** defines with [`defineObject()`](/developers/extend/apps/data/objects), where no such constant exists.
+
+<Note>
+  `name` is a **default** field, not a system field. It keeps its own hardcoded
+  universal identifier and is not resolved through
+  `getFieldUniversalIdentifier`. On objects you define, reference the
+  `name` field by the identifier you gave it in `defineObject()`.
+</Note>

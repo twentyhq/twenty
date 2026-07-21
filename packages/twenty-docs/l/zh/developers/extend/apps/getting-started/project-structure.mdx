@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## 关键文件
 
-| 文件 / 文件夹                                 | 目的                        |
-| ---------------------------------------- | ------------------------- |
-| `src/application-config.ts`              | **必需。** 应用的主配置文件。         |
-| `src/default-role.ts`                    | 默认角色，用于控制你的逻辑函数可访问的内容。    |
-| `src/constants/universal-identifiers.ts` | 自动生成的 UUID 和元数据（显示名称、描述）。 |
-| `src/__tests__/`                         | 集成测试（设置 + 示例测试）。          |
-| `public/`                                | 随应用一起提供的静态资源（图像、字体）。      |
+| 文件 / 文件夹                                                                   | 目的                                      |
+| -------------------------------------------------------------------------- | --------------------------------------- |
+| `src/application-config.ts`                                                | **必需。** 应用的主配置文件。                       |
+| `src/default-role.ts`                                                      | 默认角色，用于控制你的逻辑函数可访问的内容。                  |
+| `src/constants/universal-identifiers.ts`                                   | 自动生成的 UUID 和元数据（显示名称、描述）。               |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | 一个入门欢迎页面：由独立页面布局渲染的前端组件，可从侧边栏访问。        |
+| `src/__tests__/`                                                           | 一个单元测试加一个集成测试（带有其全局设置），用于将应用与真实服务器进行同步。 |
+| `public/`                                                                  | 随应用一起提供的静态资源（图像、字体）。                    |
+| `AGENTS.md` / `CLAUDE.md`                                                  | 为在该应用上工作的 AI 编码代理提供指导。                  |
+| `CHANGELOG.md` / `SETUP.md`                                                | 显著更改的更新日志以及用于本地开发的设置说明。                 |
 
 <Note>
 **文件组织由你决定。** 上述文件夹只是约定——SDK 通过对 `export default defineEntity(...)` 调用进行 AST 分析来检测实体，而不受文件所在位置影响。
@@ -47,15 +62,18 @@ my-twenty-app/
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+脚手架工具将 `twenty-sdk` 和 `twenty-client-sdk` 固定为与自身相同的版本——升级时请保持这两者同步。
+
 * **`twenty-sdk`** 提供 `twenty` CLI 以及构建/脚手架工具。 它只在开发和构建阶段运行，且永远不会在已发布应用的运行时环境中被导入。
 * **`twenty-client-sdk`** 会被你的应用代码（`CoreApiClient`、`MetadataApiClient`、`RestApiClient`）导入，但 Twenty 会在运行时提供它——逻辑函数从生成的 SDK 层获取它，前端组件则从服务器提供的模块中解析它。 你安装的副本仅用于类型检查和部署时的构建，因此不需要被打包进已部署的 bundle 中。
 
-把任意一个软件包放在 `dependencies` 下，都会把它拉入已安装应用的运行时 bundle 中，在那里只是累赘。 当任一软件包仍然列在 `dependencies` 下时，`twenty build` 会发出警告。
+把任意一个软件包放在 `dependencies` 下，都会把它拉入已安装应用的运行时 bundle 中，在那里只是累赘。 当任一软件包仍然列在 `dependencies` 下时，`twenty dev:build` 会发出警告。
 
 像往常一样，把你的应用自身的运行时依赖项（逻辑函数在运行时实际导入的库）添加到 `dependencies` 下。

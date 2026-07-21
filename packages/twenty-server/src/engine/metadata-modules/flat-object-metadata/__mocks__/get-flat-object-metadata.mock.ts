@@ -44,7 +44,7 @@ export const getFlatObjectMetadataMock = (
     nameSingular: 'defaultflatObjectMetadataNameSingular',
     shortcut: 'shortcut',
     applicationId,
-    standardOverrides: null,
+    overrides: null,
     targetTableName: '',
     workspaceId: faker.string.uuid(),
     createdAt,
@@ -69,7 +69,7 @@ export const getStandardFlatObjectMetadataMock = (
   overrides: Omit<FlatObjectMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatObjectMetadataMock({
-    standardOverrides: {},
+    overrides: {},
     isSystem: true,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,

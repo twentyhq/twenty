@@ -76,6 +76,12 @@ export class ApiService {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
+  generateApplicationToken(
+    ...args: Parameters<ApplicationApi['generateApplicationToken']>
+  ) {
+    return this.applicationApi.generateApplicationToken(...args);
+  }
+
   syncApplication(
     manifest: Manifest,
     options?: { dryRun?: boolean },

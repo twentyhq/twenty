@@ -11,7 +11,9 @@ import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportuni
 export const MY_DEALS_VIEW_UNIVERSAL_IDENTIFIER =
   '09c9b985-6dce-43ec-a6b3-5e878e1aec74';
 
-const OPPORTUNITY_NAME_FIELD_ID = '20202020-8609-4f65-a2d9-44009eb422b5';
+const OPPORTUNITY_NAME_FIELD_ID =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.name
+    .universalIdentifier;
 const OPPORTUNITY_AMOUNT_FIELD_ID = '20202020-583e-4642-8533-db761d5fa82f';
 
 // Partner-facing list of opportunities assigned to the partner (partner relation set).

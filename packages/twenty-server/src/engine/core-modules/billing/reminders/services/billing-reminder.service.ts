@@ -11,7 +11,8 @@ import {
   BillingTrialConvertingEmail,
   BillingTrialEndingEmail,
 } from 'twenty-emails';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Between, Repository } from 'typeorm';
 
@@ -22,6 +23,7 @@ import {
   BILLING_RENEWAL_REMINDER_SENT_KEY,
   BILLING_TRIAL_REMINDER_SENT_KEY,
 } from 'src/engine/core-modules/billing/reminders/constants/billing-reminder-sent-keys.constant';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -52,6 +54,7 @@ export class BillingReminderService {
     private readonly userVarsService: UserVarsService,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   async processReminders(): Promise<void> {
@@ -235,10 +238,18 @@ export class BillingReminderService {
       const workspaceMembers =
         await this.userService.loadWorkspaceMembers(workspace);
 
+      const billingSettingsUrl = this.workspaceDomainsService
+        .buildWorkspaceURL({
+          workspace,
+          pathname: getSettingsPath(SettingsPath.Billing),
+        })
+        .toString();
+
       for (const workspaceMember of workspaceMembers) {
         await this.sendReminderEmail({
           workspaceMember,
           workspaceDisplayName: workspace.displayName,
+          billingSettingsUrl,
           reminder,
         });
       }
@@ -258,10 +269,12 @@ export class BillingReminderService {
   private async sendReminderEmail({
     workspaceMember,
     workspaceDisplayName,
+    billingSettingsUrl,
     reminder,
   }: {
     workspaceMember: WorkspaceMemberWorkspaceEntity;
     workspaceDisplayName: string | undefined;
+    billingSettingsUrl: string;
     reminder: BillingReminderEmail;
   }): Promise<void> {
     if (!isDefined(workspaceMember.userEmail)) {
@@ -276,6 +289,7 @@ export class BillingReminderService {
       reminder,
       userName,
       workspaceDisplayName,
+      billingSettingsUrl,
       locale,
     });
 
@@ -297,11 +311,13 @@ export class BillingReminderService {
     reminder,
     userName,
     workspaceDisplayName,
+    billingSettingsUrl,
     locale,
   }: {
     reminder: BillingReminderEmail;
     userName: string;
     workspaceDisplayName: string | undefined;
+    billingSettingsUrl: string;
     locale: WorkspaceMemberWorkspaceEntity['locale'];
   }) {
     switch (reminder.type) {
@@ -315,6 +331,7 @@ export class BillingReminderService {
             dataRetentionDays: this.twentyConfigService.get(
               'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
             ),
+            link: billingSettingsUrl,
             locale,
           }),
         };
@@ -326,6 +343,7 @@ export class BillingReminderService {
             workspaceDisplayName,
             trialEndsAt: reminder.trialEndsAt,
             interval: reminder.interval,
+            link: billingSettingsUrl,
             locale,
           }),
         };
@@ -336,6 +354,7 @@ export class BillingReminderService {
             userName,
             workspaceDisplayName,
             renewsAt: reminder.renewsAt,
+            link: billingSettingsUrl,
             locale,
           }),
         };

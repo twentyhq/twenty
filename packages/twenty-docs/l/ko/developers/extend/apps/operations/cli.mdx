@@ -4,7 +4,25 @@ description: "`yarn twenty`는 함수를 실행하고, 로그를 스트리밍하
 icon: terminal
 ---
 
-`dev`, `dev:build`, `dev:add`, `dev:typecheck` 외에도, `yarn twenty` CLI는 함수 실행, 로그 보기, 앱 설치 관리용 명령을 제공합니다.
+`yarn twenty` CLI는 앱과 관련된 모든 작업을 위한 인터페이스입니다. 전체 명령어 목록:
+
+| 명령                                              | 하는 일                                                          | 관련 문서                                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `dev`                                           | 소스 파일을 감시하고 변경 사항을 실시간으로 동기화합니다.                              | [빠른 시작](/l/ko/developers/extend/apps/getting-started/quick-start)                             |
+| `플랜`                                            | 변경 사항을 적용하지 않고 메타데이터 변경 내용을 미리 봅니다.                           | [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `적용`                                            | 계획을 표시한 후 메타데이터 변경 사항을 적용합니다.                                 | [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | 앱을 컴파일하고 API 클라이언트를 생성합니다 (`--tarball`을 사용하여 `.tgz`로 패키징합니다). | [게시하기](/l/ko/developers/extend/apps/operations/publishing)                                    |
+| `dev:typecheck`                                 | TypeScript 타입 검사를 실행합니다.                                      | [테스트](/l/ko/developers/extend/apps/operations/testing)                                        |
+| `dev:add`                                       | 새 엔터티를 스캐폴딩합니다.                                               | [스캐폴딩](/l/ko/developers/extend/apps/getting-started/scaffolding)                              |
+| `dev:generate-client`                           | 타입이 지정된 API 클라이언트를 다시 생성합니다.                                  | 이 페이지                                                                                    |
+| `dev:function:exec` / `dev:function:logs`       | 함수를 실행하고 해당 로그를 스트리밍합니다.                                      | 이 페이지                                                                                    |
+| `dev:translations-extract`                      | 번역 가능한 문자열을 `locales/` 카탈로그로 추출합니다.                           | [번역](/l/ko/developers/extend/apps/translations/overview)                                      |
+| `dev:catalog-sync`                              | 마켓플레이스 카탈로그 동기화를 트리거합니다.                                      | [게시하기](/l/ko/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)    |
+| `app:publish` / `app:install` / `app:uninstall` | 릴리스 라이프사이클                                                    | [게시하기](/l/ko/developers/extend/apps/operations/publishing) 및 이 페이지                            |
+| `docker:*`                                      | 로컬 Twenty 서버 컨테이너를 관리합니다.                                     | [로컬 서버](/l/ko/developers/extend/apps/getting-started/local-server)                            |
+| `remote:*`                                      | 서버 연결을 관리합니다.                                                 | 이 페이지                                                                                    |
+
+모든 명령은 기본 원격 대신 특정 원격을 대상으로 지정할 수 있도록 `-r, --remote \<name>`를 지원합니다.
 
 ## 함수 실행(`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## 함수 로그 보기(`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 자격 증명은 `~/.twenty/config.json`에 저장됩니다.

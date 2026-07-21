@@ -2,6 +2,11 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import {
+  findCompanyIdByExactName,
+  findPersonIdByPrimaryEmail,
+} from './find-or-create-company-and-person';
+
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -71,14 +76,8 @@ async function findOrCreateCompanyId(
   if (name === undefined && domain === undefined) return undefined;
 
   if (name !== undefined) {
-    const lookup = await client.query({
-      companies: {
-        __args: { filter: { name: { eq: name } }, first: 1 },
-        edges: { node: { id: true } },
-      },
-    });
-    const existing = lookup.companies?.edges?.[0]?.node;
-    if (existing) return existing.id;
+    const existing = await findCompanyIdByExactName(client, name);
+    if (existing !== undefined) return existing;
   }
 
   const companyData: CoreSchema.CompanyCreateInput = { name: name ?? domain! };
@@ -110,14 +109,8 @@ async function findOrCreatePersonId(
   if (email === undefined && firstName === '' && lastName === '') return undefined;
 
   if (email !== undefined) {
-    const lookup = await client.query({
-      people: {
-        __args: { filter: { emails: { primaryEmail: { eq: email } } }, first: 1 },
-        edges: { node: { id: true } },
-      },
-    });
-    const existing = lookup.people?.edges?.[0]?.node;
-    if (existing) return existing.id;
+    const existing = await findPersonIdByPrimaryEmail(client, email);
+    if (existing !== undefined) return existing;
   }
 
   const personData: CoreSchema.PersonCreateInput = { name: { firstName, lastName } };

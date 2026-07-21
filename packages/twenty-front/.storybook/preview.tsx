@@ -1,3 +1,10 @@
+import '@fontsource/dm-mono/400.css';
+import '@fontsource/dm-mono/500.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Preview } from '@storybook/react-vite';

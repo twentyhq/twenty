@@ -11,7 +11,7 @@ Los archivos ubicados en `public/` son:
 * **De acceso público** — una vez sincronizados con el servidor, los recursos se sirven en una URL pública. No se necesita autenticación para acceder a ellos.
 * **Disponibles en componentes de frontend** — usa las URLs de los recursos para mostrar imágenes, íconos o cualquier medio dentro de tus componentes de React.
 * **Disponibles en funciones de lógica** — referencia las URLs de los recursos en correos electrónicos, respuestas de API o cualquier lógica del lado del servidor.
-* **Usados para metadatos del marketplace** — los campos `logoUrl` y `screenshots` en `defineApplication()` referencian archivos de esta carpeta (p. ej., `public/logo.png`). Estos se muestran en el marketplace cuando se publica tu aplicación.
+* **Usados para metadatos del marketplace** — los campos `logo` y `galleryImages` en `defineApplication()` referencian archivos de esta carpeta (p. ej., `public/logo.png`). Estos se muestran en el marketplace cuando se publica tu aplicación. Las URL absolutas externas se omiten para estos campos; en su lugar, incluye las imágenes en `public/`. Cada imagen no debe superar los 10 MB.
 * **Sincronizados automáticamente en modo de desarrollo** — cuando agregas, actualizas o eliminas un archivo en `public/`, se sincroniza automáticamente con el servidor. No se necesita reiniciar.
 * **Incluidos en las compilaciones** — `yarn twenty dev:build` agrupa todos los recursos públicos en la salida de distribución.
 

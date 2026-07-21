@@ -1,6 +1,7 @@
 import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMessageList';
 import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
+import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
 import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
 import { AgentChatScrollToBottomOnMountLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnMountLayoutEffect';
@@ -54,6 +55,7 @@ export const AiChatTabMessageList = () => {
         <StyledMessageListContent>
           <AiChatNonLastMessageIdsList />
           <AiChatLastMessageWithStreamingState />
+          <AiChatPendingResponseIndicator />
           <AiChatErrorUnderMessageList />
         </StyledMessageListContent>
         <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />

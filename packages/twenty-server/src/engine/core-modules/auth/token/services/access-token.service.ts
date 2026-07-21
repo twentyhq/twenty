@@ -6,7 +6,7 @@ import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import {
@@ -72,7 +72,7 @@ export class AccessTokenService {
 
     let workspaceMemberId: string | undefined;
 
-    if (isWorkspaceActiveOrSuspended(workspace)) {
+    if (isWorkspaceProvisioned(workspace)) {
       const authContext = buildSystemAuthContext(workspaceId);
 
       workspaceMemberId =

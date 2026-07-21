@@ -73,9 +73,9 @@ export const main = async (params: {
 
 代码节点返回结构化对象而不是数组。 在随后的步骤中，您现在可以从变量选择器中选择单个字段，例如`answer.firstname` 和 `answer.name` 。
 
-<Note>
-我们正在积极努力，在未来的更新中使阵列处理更加容易。
-</Note>
+<Tip>
+**想要遍历数组而不是提取字段？** 当一个 Code 或 Logic Function 步骤返回顶层数组时，你可以将其直接传入 [Iterator](/l/zh/user-guide/workflows/capabilities/use-iterator)：在 Iterator 的输入中选择该步骤的 **Whole list** 选项，然后在循环内部使用 `{{iterator.currentItem}}` 引用每个元素。 在那种情况下，你不需要将数组重构为对象。
+</Tip>
 
 <Tip>
 点击代码编辑器右上角的方形图标在全屏显示它——因为默认编辑器宽度是有限的，所以它是有用的。

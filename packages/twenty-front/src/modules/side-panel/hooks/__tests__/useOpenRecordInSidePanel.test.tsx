@@ -7,19 +7,24 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/icon';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
@@ -203,6 +208,40 @@ describe('useOpenRecordInSidePanel', () => {
         personMockObjectMetadataItem,
       )?.name,
     });
+  });
+
+  it('should preset the record page active tab when a tab is provided', () => {
+    const { result } = renderHooks();
+
+    const recordId = 'record-123';
+    const objectNameSingular = 'person';
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId,
+        objectNameSingular,
+        tab: 'tab-emails',
+      });
+    });
+
+    const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId: getDefaultRecordPageLayoutId({
+        targetObjectNameSingular: objectNameSingular,
+      }),
+      layoutType: PageLayoutType.RECORD_PAGE,
+      targetRecordIdentifier: {
+        id: recordId,
+        targetObjectNameSingular: objectNameSingular,
+      },
+    });
+
+    expect(
+      jotaiStore.get(
+        activeTabIdComponentState.atomFamily({
+          instanceId: tabListInstanceId,
+        }),
+      ),
+    ).toBe('tab-emails');
   });
 
   it('should not open title cell when isNewRecord is false', () => {

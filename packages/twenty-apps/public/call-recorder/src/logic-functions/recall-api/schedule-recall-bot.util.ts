@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import { isUndefined } from '@sniptt/guards';
 
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
@@ -11,12 +13,14 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
+import { computeMaximumJoinAt } from 'src/logic-functions/recall-api/compute-maximum-join-at.utils';
 
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
   metadata: RecallRoutingMetadata;
   automaticVideoOutput?: RecallBotAutomaticVideoOutput;
+  idempotencyKey?: string;
 };
 
 export const scheduleRecallBot = async ({
@@ -24,6 +28,11 @@ export const scheduleRecallBot = async ({
   joinAt,
   metadata,
   automaticVideoOutput,
+  idempotencyKey = computeRecallBotCreationIdempotencyKey({
+    meetingUrl,
+    joinAt,
+    metadata,
+  }),
 }: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
@@ -37,9 +46,10 @@ export const scheduleRecallBot = async ({
     config: configResult.config,
     path: '/bot/',
     method: 'POST',
+    idempotencyKey,
     body: {
       meeting_url: meetingUrl,
-      join_at: joinAt,
+      join_at: computeMaximumJoinAt(joinAt), // We can't join in the past, so we floor this date 1s in the future
       bot_name: configResult.config.botName,
       ...(isUndefined(automaticLeave)
         ? {}
@@ -72,3 +82,19 @@ export const scheduleRecallBot = async ({
     externalBotId,
   };
 };
+
+export const computeRecallBotCreationIdempotencyKey = ({
+  meetingUrl,
+  joinAt,
+  metadata,
+}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify({
+        workspaceId: metadata.twentyWorkspaceId,
+        callRecordingId: metadata.twentyCallRecordingId,
+        meetingUrl,
+        joinAt,
+      }),
+    )
+    .digest('hex');

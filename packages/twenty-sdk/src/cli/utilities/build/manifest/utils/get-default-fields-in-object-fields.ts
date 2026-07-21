@@ -1,33 +1,52 @@
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
-import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
-import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import {
-  type FieldManifest,
+  getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-export const getDefaultFieldsInObjectFields = (
-  objectConfig: ObjectConfig,
-): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
-  const defaultObjectFields = getDefaultObjectFields(objectConfig);
-  const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
-    getDefaultRelationObjectFields(objectConfig);
+const getDefaultNameObjectField = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): ObjectFieldManifest => ({
+  name: 'name',
+  label: 'Name',
+  description: 'Name',
+  icon: 'IconAbc',
+  isNullable: true,
+  defaultValue: null,
+  type: FieldMetadataType.TEXT,
+  universalIdentifier: getFieldUniversalIdentifier({
+    applicationUniversalIdentifier,
+    objectUniversalIdentifier: objectConfig.universalIdentifier,
+    name: 'name',
+  }),
+});
 
-  const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
+export const getDefaultFieldsInObjectFields = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): { objectFields: ObjectFieldManifest[] } => {
+  const objectConfigFieldNames = (objectConfig.fields ?? []).map(
+    (field) => field.name,
+  );
 
   const objectFieldsWithDefaults = [...objectConfig.fields];
 
-  for (const defaultField of defaultObjectFields) {
-    if (!objectConfigFieldNames.includes(defaultField.name)) {
-      objectFieldsWithDefaults.push(defaultField);
-    }
+  const defaultNameObjectField = getDefaultNameObjectField({
+    objectConfig,
+    applicationUniversalIdentifier,
+  });
+
+  if (!objectConfigFieldNames.includes(defaultNameObjectField.name)) {
+    objectFieldsWithDefaults.push(defaultNameObjectField);
   }
 
-  for (const defaultRelationField of defaultRelationObjectFields) {
-    if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
-      objectFieldsWithDefaults.push(defaultRelationField);
-    }
-  }
-
-  return { objectFields: objectFieldsWithDefaults, fields: reverseFields };
+  return { objectFields: objectFieldsWithDefaults };
 };

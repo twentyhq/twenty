@@ -93,4 +93,43 @@ export class MessagingMessageOutboundService {
         );
     }
   }
+
+  public async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    switch (connectedAccount.provider) {
+      case ConnectedAccountProvider.GOOGLE:
+        return this.gmailMessageOutboundService.sendDraft(
+          draftExternalId,
+          sendMessageInput,
+          connectedAccount,
+        );
+      case ConnectedAccountProvider.MICROSOFT:
+        return this.microsoftMessageOutboundService.sendDraft(
+          draftExternalId,
+          sendMessageInput,
+          connectedAccount,
+        );
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return this.imapSmtpMessageOutboundService.sendDraft(
+          draftExternalId,
+          sendMessageInput,
+          connectedAccount,
+        );
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.APP:
+        throw new Error(
+          `Provider ${connectedAccount.provider} does not support sending drafts`,
+        );
+      default:
+        assertUnreachable(
+          connectedAccount.provider,
+          `Provider ${connectedAccount.provider} not supported for sending drafts`,
+        );
+    }
+  }
 }

@@ -26,17 +26,6 @@ export const parseMicrosoftCalendarError = (
       );
 
     case 404:
-      if (
-        message?.includes(
-          'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
-        )
-      ) {
-        return new CalendarEventImportDriverException(
-          message,
-          CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        );
-      }
-
       return new CalendarEventImportDriverException(
         message,
         CalendarEventImportDriverExceptionCode.NOT_FOUND,
@@ -68,7 +57,7 @@ export const parseMicrosoftCalendarError = (
     case 401:
       return new CalendarEventImportDriverException(
         message,
-        CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
       );
     default:
       return new CalendarEventImportDriverException(

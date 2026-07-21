@@ -1,0 +1,81 @@
+---
+title: 5. An AI agent
+icon: robot
+description: Deixe um agente gerar documentos a partir de um chat, usando sua ferramenta.
+---
+
+Porque `generate-document` é exposto como uma **ferramenta**, um agente de IA pode chamá-lo.
+Vamos adicionar um agente e uma habilidade para que os usuários possam dizer apenas *"generate a proposal for
+Jeffery Griffin"*.
+
+## A habilidade
+
+A [skill](/l/pt/developers/extend/apps/logic/skills-and-agents) é reutilizável
+instruções — conhecimento que anexa a agentes. Nós ensinamos o modelo como usar
+a ferramenta.
+
+```ts filename="src/skills/document-drafting.skill.ts"
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'document-drafting',
+  label: 'Document drafting',
+  icon: 'IconFileText',
+  content: [
+    'To generate a document, call the `generate-document` tool with:',
+    '- `templateId`: the id of the document template to use.',
+    '- `recordId`: the id of the Person or Company the document is for.',
+    '',
+    'If the user names a template or person instead of an id, find the record first,',
+    'then pass its id. Make sure the template target matches the record type.',
+  ].join('\n'),
+});
+```
+
+## O agente
+
+Um [agent](/l/pt/developers/extend/apps/logic/skills-and-agents) emparelha um prompt com um modelo
+. Defina `responseFormat` explicitamente para evitar um aviso de construção.
+
+```ts filename="src/agents/document-assistant.agent.ts"
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-assistant',
+  label: 'Document Assistant',
+  description: 'Generates documents from your templates and CRM records.',
+  icon: 'IconFileText',
+  responseFormat: { type: 'text' },
+  prompt: [
+    'You are the Document Assistant for a CRM.',
+    'You help users generate personalized documents from reusable templates',
+    'and the data already in their CRM. Use the generate-document tool, and',
+    'always confirm what you created.',
+  ].join(' '),
+});
+```
+
+<Note>
+O agente só pode chamar a ferramenta se o seu papel lhe permitir. Nós já definimos
+`canAccessAllTools: true` and `canBeAssignedToAgents: true` on the app's role in
+[Capítulo 2](/l/pt/developers/extend/apps/tutorials/document-generator/generating-documents#grant-it-access).
+</Note>
+
+## Experimente isso
+
+Abra um chat com o **Assistente de Documentos** e peça para ele redigir um documento para uma
+pessoa no seu CRM. Ele encontra o registro, chama `gerar documento` e relata
+o documento que ele criou — que agora aparece na visão **Documentos**,
+exatamente como o menu de comando e caminhos do fluxo de trabalho.
+
+Esse é o benefício de expor a lógica como uma ferramenta: **uma função, muitas portas da frente** —
+menu de comando, HTTP, passo do fluxo de trabalho e agora a linguagem natural.
+
+**Após este passo:** o aplicativo está cheio de recursos e realmente útil. Hora de
+lançar.
+
+<Card title="Próximo: publicação →" icon="rocket" href="/desenvolvedores/adicionar/apps/tutorials/document-gerador/publicação">
+  Adicionar metadados do mercado e publicar.
+</Card>

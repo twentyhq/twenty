@@ -21,16 +21,16 @@ export const StyledControlContainer = styled.div<{
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.md};
   border-bottom-right-radius: ${({ hasRightElement }) =>
-    hasRightElement ? '0' : themeCssVariables.border.radius.sm};
+    hasRightElement ? '0' : themeCssVariables.border.radius.md};
   border-right: ${({ hasRightElement }) =>
     hasRightElement
       ? 'none'
       : `1px solid ${themeCssVariables.border.color.medium}`};
-  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ hasRightElement }) =>
-    hasRightElement ? '0' : themeCssVariables.border.radius.sm};
+    hasRightElement ? '0' : themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ disabled, textAccent }) =>
     disabled

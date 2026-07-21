@@ -2,7 +2,7 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 
 const MINUTES_IN_MS = 60 * 1000;
 
@@ -17,6 +17,7 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['json', 'text'],
       reportsDirectory: './coverage/storybook',
+      exclude: [...coverageConfigDefaults.exclude, 'src/__stories__/**'],
     },
     projects: [
       {

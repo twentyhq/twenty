@@ -4,8 +4,8 @@ import { MARKETPLACE_APP_FRAGMENT } from '@/marketplace/graphql/fragments/market
 
 export const FIND_MANY_MARKETPLACE_APPS = gql`
   ${MARKETPLACE_APP_FRAGMENT}
-  query FindManyMarketplaceApps {
-    findManyMarketplaceApps {
+  query FindManyMarketplaceApps($universalIdentifiers: [String!]) {
+    findManyMarketplaceApps(universalIdentifiers: $universalIdentifiers) {
       ...MarketplaceAppFields
     }
   }

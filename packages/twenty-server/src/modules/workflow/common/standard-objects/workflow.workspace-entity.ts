@@ -17,6 +17,7 @@ export enum WorkflowStatus {
 export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   lastPublishedVersionId: string | null;
+  coreWorkflowId: string | null;
   statuses: WorkflowStatus[] | null;
   position: number;
   searchVector: string;

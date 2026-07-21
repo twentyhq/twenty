@@ -1,6 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Check,
   Column,
@@ -14,6 +12,13 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { GraphQLJSON } from 'graphql-type-json';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type ApplicationVariableOption,
+  type ApplicationVariableType,
+} from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -34,7 +39,7 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
   `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`,
 )
 export class ApplicationRegistrationVariableEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -56,6 +61,14 @@ export class ApplicationRegistrationVariableEntity {
   @Field()
   @Column({ nullable: false, type: 'boolean', default: false })
   isRequired: boolean;
+
+  @Field(() => String)
+  @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
+  type: ApplicationVariableType;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @Column({ nullable: true, type: 'jsonb', default: null })
+  options: ApplicationVariableOption[] | null;
 
   @Field()
   get isFilled(): boolean {

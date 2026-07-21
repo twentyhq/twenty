@@ -1,4 +1,4 @@
 export type UnsubscribeUrls = {
-  httpsUrl: string;
+  webUrl: string;
   mailtoUrl: string;
 };

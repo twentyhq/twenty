@@ -28,7 +28,7 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
           href={absoluteUrl}
           onClick={handleClick}
           type={type}
-          label={displayedValue}
+          label={null}
         />
       </EllipsisDisplay>
     );

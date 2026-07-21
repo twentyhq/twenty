@@ -33,17 +33,32 @@ export default defineView({
 ## Key points
 
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-- `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
-- You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
+- `key: ViewKey.INDEX` marks the view as the object's main list view (the one an `OBJECT` navigation item opens).
+- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Fields](/developers/extend/apps/data/system-fields).
+- You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
+
+## Optional properties
+
+| Property | Values | Description |
+|----------|--------|-------------|
+| `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
+| `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
+| `openRecordIn` | `ViewOpenRecordIn.SIDE_PANEL` (default), `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. |
+| `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
+| `isCompact` | `boolean` | Compact row display. |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*` | Kanban column aggregates and sizing. |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views: layout, the date field that positions records, and an optional end date field. |
+
+All enums above are exported from `twenty-sdk/define`.
 
 ## Filters
 
 A view can ship with pre-applied filters. Each filter has three coordinates: the **field** being filtered, the **operand** (how to compare), and the **value** (what to compare against). All three must line up — using an operand that doesn't apply to a field type will be rejected at sync time.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

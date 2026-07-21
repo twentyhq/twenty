@@ -60,6 +60,17 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   logo: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddLogoFileIdToApplicationFastInstanceCommand_1783062755137',
+  })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity> | null;
+
   // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;
@@ -114,7 +125,21 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   canBeUninstalled: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddAutoUpgradeToApplicationFastInstanceCommand_1784297307235',
+  })
+  autoUpgrade: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
+  })
+  sdkClientCoreChecksum: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

@@ -39,11 +39,10 @@ export const RecordBoardDragDropContext = ({
 
   const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
-    recordBoardId,
   );
 
-  const { startRecordDrag } = useStartRecordDrag(recordBoardId);
-  const { endRecordDrag } = useEndRecordDrag(recordBoardId);
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
 
   const { processBoardCardDrop } = useProcessBoardCardDrop();
 

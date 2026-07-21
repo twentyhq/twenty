@@ -1,25 +1,27 @@
-# Last contacted at
+# Last Contact
 
-A [Twenty](https://twenty.com) official application that adds a `lastContactAt` field to the standard Person object and keeps it in sync with email and calendar activity — answering the question every CRM should answer instantly: *when did we last talk to this person?*
+**Always know where every relationship stands — live on your People list, straight from your synced email and calendar.**
 
-## Why teams install it
+## ✨ What you get
 
-- **Zero manual logging** — every synced email and calendar meeting updates the field automatically, in real time.
-- **Useful from minute one** — on install, your entire email and meeting history is backfilled. No empty columns, no waiting.
-- **Spot cold relationships instantly** — sort or filter any People view by Last Contact to build follow-up lists in seconds.
-- **Meeting-aware** — a meeting counts as contact the moment it starts, not whenever someone remembers to update the CRM.
+- **Live columns on People, Companies and Opportunities** — last contact, who reached out (you or them), the owning teammate, and the exact email or meeting behind it
+- **Zero upkeep** — updates in real time from every synced email and meeting, with your full history backfilled the moment you install
+- **Follow-ups made obvious** — sort by recency to catch cold relationships and see who owes whom a reply
 
-## What it does
+## 📊 The columns
 
-- Adds a **Last Contact** (`lastContactAt`, `DATE_TIME`) field on Person, visible in the All People view.
-- Sets the field to the most recent interaction whenever a synced email or calendar event is linked to a person.
-- Counts a meeting as contact when it starts, via a cron-triggered logic function.
-- Backfills the field from existing message and calendar history right after install.
+On **People** you get:
+- **Last contact** — the most recent touch, either direction
+- **Last outbound** / **Last inbound** — when you last reached out vs. when they last did
+- **Last contact by** — the teammate connected to this person
+- **Last contact item** / **Last email** / **Last meeting** — one click to the actual record
 
-No setup, no configuration — install it, open People, and you immediately know who needs a follow-up.
+On **Companies** and **Opportunities** you also get **Last contact** and **Last contact item** columns.
 
-### Application variables
+## 💳 Billing
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `CALENDAR_CRON_INTERVAL_MINUTES` | `5` | Interval between runs of `on-calendar-event-started`. The cron scans events that started within the last interval plus a 5-minute safety overlap. |
+**Free** — no credits, no metering.
+
+## 📌 Heads up
+
+Needs a synced inbox or calendar (Google, Outlook, or CalDAV). Direction is inferred from the email's sender and the meeting's organizer; a meeting counts as both.

@@ -7,7 +7,7 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
 type CalendarEventNode = {
@@ -18,6 +18,8 @@ type CalendarEventNode = {
   endsAt?: string | null;
   iCalUid?: string | null;
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
+  location?: string | null;
+  description?: string | null;
   callRecorderPreference?: string | null;
 };
 
@@ -49,6 +51,8 @@ export const fetchCalendarEventsByFilter = async (
               conferenceLink: {
                 primaryLinkUrl: true,
               },
+              location: true,
+              description: true,
               callRecorderPreference: true,
             },
           },
@@ -68,11 +72,13 @@ export const fetchCalendarEventsByFilter = async (
     startsAt: calendarEvent.startsAt ?? undefined,
     endsAt: calendarEvent.endsAt ?? undefined,
     iCalUid: calendarEvent.iCalUid ?? undefined,
-    conferenceLinkUrl: isNonEmptyString(
-      calendarEvent.conferenceLink?.primaryLinkUrl,
-    )
-      ? calendarEvent.conferenceLink.primaryLinkUrl
-      : undefined,
+    conferenceLinkUrl: resolveConferenceLinkUrl({
+      conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl,
+      location: stripRestrictedFieldValue(calendarEvent.location ?? undefined),
+      description: stripRestrictedFieldValue(
+        calendarEvent.description ?? undefined,
+      ),
+    }),
     callRecorderPreference: isString(calendarEvent.callRecorderPreference)
       ? calendarEvent.callRecorderPreference
       : undefined,

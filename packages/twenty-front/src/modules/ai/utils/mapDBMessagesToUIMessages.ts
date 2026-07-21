@@ -9,7 +9,9 @@ export const mapDBMessagesToUIMessages = (
     id: dbMessage.id,
     role: dbMessage.role as ExtendedUIMessage['role'],
     status: dbMessage.status as 'queued' | 'sent',
-    parts: dbMessage.parts.map(mapDBPartToUIMessagePart),
+    parts: [...dbMessage.parts]
+      .sort((a, b) => a.orderIndex - b.orderIndex)
+      .map(mapDBPartToUIMessagePart),
     metadata: {
       createdAt: dbMessage.createdAt,
     },

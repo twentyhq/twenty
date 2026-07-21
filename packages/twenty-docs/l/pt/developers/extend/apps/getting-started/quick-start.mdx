@@ -6,17 +6,17 @@ description: Crie seu primeiro app do Twenty em minutos.
 
 ## Pré-requisitos
 
-* **Node.js 24+** — [Baixar](https://nodejs.org/)
+* **Node.js 24.5+** — [Baixar](https://nodejs.org/)
 * **Yarn 4** — Vem com o Node.js via Corepack. Ative-o: `corepack enable`
 * **Docker** — [Baixar](https://www.docker.com/products/docker-desktop/). Necessário para executar um servidor Twenty local. Ignore se você já tiver o Twenty em execução em outro lugar.
 
 A criação de um aplicativo Twenty tem três fases. A ferramenta de scaffolding as reúne em um único comando do fluxo ideal, mas cada fase é um conceito separado — quando algo falha, saber em que fase você está indica o que corrigir.
 
-| Fase                        | O que você faz                                     | Ferramenta                    | Resultado                             |
-| --------------------------- | -------------------------------------------------- | ----------------------------- | ------------------------------------- |
-| **1. Criar scaffolding**    | Gerar o código-fonte do aplicativo                 | `npx create-twenty-app`       | Um projeto TypeScript em disco        |
-| **2. Executar um servidor** | Iniciar um servidor Twenty para o qual sincronizar | Docker + `yarn twenty server` | Uma instância Twenty em execução      |
-| **3. Sincronizar**          | Sincronize seu código em tempo real com o servidor | `yarn twenty dev`             | Suas alterações aparecem na interface |
+| Fase                        | O que você faz                                     | Ferramenta                          | Resultado                             |
+| --------------------------- | -------------------------------------------------- | ----------------------------------- | ------------------------------------- |
+| **1. Criar scaffolding**    | Gerar o código-fonte do aplicativo                 | `npx create-twenty-app`             | Um projeto TypeScript em disco        |
+| **2. Executar um servidor** | Iniciar um servidor Twenty para o qual sincronizar | Docker + `yarn twenty docker:start` | Uma instância Twenty em execução      |
+| **3. Sincronizar**          | Sincronize seu código em tempo real com o servidor | `yarn twenty dev`                   | Suas alterações aparecem na interface |
 
 ---
 
@@ -28,7 +28,7 @@ Crie um novo aplicativo a partir do modelo:
 npx create-twenty-app@latest my-twenty-app
 ```
 
-Você será solicitado a informar um nome e uma descrição — pressione **Enter** para aceitar os valores padrão. Isso gera um projeto TypeScript em `my-twenty-app/` com um `application-config.ts` inicial, um papel padrão, um fluxo de trabalho de CI e um teste de integração.
+O gerador não é interativo: o nome do diretório se torna o nome do app. Passe `--display-name` e `--description` para personalizar os metadados gerados (você também pode editá-los depois em `src/constants/universal-identifiers.ts`). Isso gera um projeto TypeScript em `my-twenty-app/` com um `application-config.ts` inicial, um papel padrão, fluxos de trabalho de CI/CD e um teste de integração.
 
 **Após esta fase:** você tem o código-fonte de um aplicativo na sua máquina. Ele ainda não está em execução — isso é a Fase 2.
 
@@ -38,27 +38,13 @@ Você será solicitado a informar um nome e uma descrição — pressione **Ente
 
 Seu aplicativo precisa de um servidor Twenty para o qual sincronizar. O servidor é uma instância completa do Twenty — interface, API GraphQL, PostgreSQL — executando localmente no Docker. Seu código local envia suas definições para esse servidor, o que faz com que elas apareçam na interface.
 
-A ferramenta de scaffolding oferece iniciar um para você:
+O scaffolder inicia uma instância para você: com o Docker em execução, ele baixa a imagem `twentycrm/twenty-app-dev`, inicia-a na porta `2020` e autentica a CLI no workspace de demonstração pré-preenchido (`tim@apple.dev`) — sem necessidade de login.
 
-> **Você gostaria de configurar uma instância local do Twenty?**
-
-* **Sim (recomendado)** — baixa a imagem Docker `twentycrm/twenty-app-dev` e a inicia na porta `2020`. Certifique-se de que o Docker esteja em execução primeiro.
-* **Não** — escolha isto se você já tiver um servidor Twenty ao qual deseja se conectar. Você pode conectá-lo depois com `yarn twenty remote:add`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Deve iniciar instância local?" />
-</div>
-
-Quando o servidor estiver ativo, um navegador será aberto para login. Use a conta de demonstração pré-configurada:
-
-* **E-mail:** `tim@apple.dev`
-* **Senha:** `tim@apple.dev`
+Para se conectar a um servidor Twenty existente em vez disso, passe `--url \<your-server-url>`. Servidores remotos se autenticam com OAuth: um navegador é aberto para que você faça login e clique em **Authorize**, o que dá à CLI acesso ao seu workspace. (Você também pode optar por usar OAuth localmente com `--authentication-method oauth` — faça login com `tim@apple.dev` / `tim@apple.dev`.)
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Tela de login do Twenty" />
 </div>
-
-Clique em **Authorize** na próxima tela — isso dá à CLI acesso ao seu espaço de trabalho.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Tela de autorização da CLI do Twenty" />
@@ -117,27 +103,31 @@ Clique em **View installed app** para ver a instalação no espaço de trabalho.
 
 ### Sincronização única para CI e scripts
 
-Passe `--once` para executar uma única compilação + sincronização e sair — mesmo pipeline, sem watcher:
+Use `plan` e `apply` para executar o mesmo pipeline uma vez, sem watcher:
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| Comando                            | Comportamento                                                                                                                    | Quando usar                                                                      |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `yarn twenty dev`                  | Monitora e ressincroniza a cada alteração. Fica em execução até você interrompê-lo.                                              | Desenvolvimento local interativo.                                                |
-| `yarn twenty dev --once`           | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e fluxos de trabalho com script. |
-| `yarn twenty dev --once --dry-run` | Compila e imprime as alterações de metadados **sem aplicá-las**.                                                                 | Inspecionar o que uma sincronização mudaria antes de confirmá-la.                |
+| Comando             | Comportamento                                                                                                                                                                                               | Quando usar                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `yarn twenty dev`   | Monitora e ressincroniza a cada alteração. Fica em execução até você interrompê-lo.                                                                                                                         | Desenvolvimento local interativo.                                                |
+| `yarn twenty apply` | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. Pede confirmação para alterações destrutivas (passe `--force` para pular). | Scripts, CI, hooks de pre-commit, agentes de IA e fluxos de trabalho com script. |
+| `yarn twenty plan`  | Compila e imprime as alterações de metadados **sem aplicá-las**.                                                                                                                                            | Inspecionar o que uma sincronização mudaria antes de confirmá-la.                |
 
-Ambos os modos precisam de um remoto autenticado. Veja [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) para mais detalhes sobre `--dry-run`.
+Todos os modos precisam de um remoto autenticado. Veja [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) para mais detalhes sobre `plan`.
+
+<Note>
+`yarn twenty dev --once` e `yarn twenty dev --once --dry-run` são aliases obsoletos para `yarn twenty apply` e `yarn twenty plan`.
+</Note>
 
 ### Opções do modo de desenvolvimento
 
 | Opção                                 | Descrição                                                                                         |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `--once`                              | Compila e sincroniza uma vez e, em seguida, sai.                                                  |
-| `--dry-run`                           | Com `--once`, visualize as alterações de metadados sem aplicá‑las. Não grava nada.                |
-| `--debounceMs \<ms>` | Define o atraso de debounce para alterações de arquivo em milissegundos (padrão: `2000`).         |
+| `--force`                             | Aplicar alterações destrutivas (exclusões) sem confirmação.                                       |
+| `--debounceMs \<ms>` | Define o atraso de debounce para alterações de arquivo em milissegundos (padrão: `1000`).         |
 | `--verbose` / `--debug`               | Mostra registros detalhados de compilação, solicitações de sincronização e rastreamentos de erro. |
 
 ## O que você pode criar

@@ -3,13 +3,15 @@ import { Trans } from '@lingui/react/macro';
 
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCopyContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  max-width: 280px;
+  line-height: 1.4;
+  max-width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   text-align: center;
 
   & > a {

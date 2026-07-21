@@ -24,17 +24,26 @@ import {
   PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  PARTNER_CONTENTS_ON_PARTNER_FIELD_ID,
+} from 'src/fields/partner-content-partner.field';
 import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
+import {
+  PARTNER_LINKS_ON_PARTNER_FIELD_ID,
+} from 'src/fields/partner-link-partner.field';
+import {
+  PARTNER_SERVICES_ON_PARTNER_FIELD_ID,
+} from 'src/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
   'a10bf4de-0770-4bee-ae04-1ae97aa18254';
 
 // FIELDS_WIDGET view backing the Partner record page side panel. Relation fields
-// (partnerUser, company) only render in the fields widget when an explicit view
-// marks them visible — this is that view. Validation Stage and Partner Tier stay
-// listed for admins but are read-locked for the Partner role (see partner.role.ts),
-// so partners don't see them on My Profile.
+// (partnerLinks, partnerServices, partnerContents, partnerUser, company) only render
+// in the fields widget when an explicit view marks them visible — this is that view.
+// Validation Stage and Partner Tier stay listed for admins but are read-locked for
+// the Partner role (see partner.role.ts), so partners don't see them on My Profile.
 export default defineView({
   universalIdentifier: PARTNER_RECORD_PAGE_FIELDS_VIEW_ID,
   name: 'Partner Record Page Fields',
@@ -92,91 +101,109 @@ export default defineView({
     {
       universalIdentifier: 'cbd9d84c-3d71-495c-b412-08c77f2c124c',
       fieldMetadataUniversalIdentifier: PARTNER_DEPLOYMENT_EXPERTISE_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 8,
+      position: 9,
       isVisible: true,
     },
     {
       universalIdentifier: '42521613-4eeb-4a00-9a25-1d9de793d3c0',
       fieldMetadataUniversalIdentifier: PARTNER_LANGUAGES_SPOKEN_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 9,
+      position: 10,
       isVisible: true,
     },
     {
       universalIdentifier: '2d595d67-8317-4c67-aeec-fe6e030e4830',
       fieldMetadataUniversalIdentifier: PARTNER_TYPE_OF_TEAM_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 10,
+      position: 11,
       isVisible: true,
     },
     {
       universalIdentifier: 'a85dc9bc-a5f5-446e-a36c-492f1b6c0035',
       fieldMetadataUniversalIdentifier: PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 11,
+      position: 12,
       isVisible: true,
     },
     {
       universalIdentifier: '90d11276-1666-4c36-9055-00c4680c3168',
       fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 12,
+      position: 13,
       isVisible: true,
     },
     {
       universalIdentifier: '23f76380-3532-4e84-9115-55d395d6646b',
       fieldMetadataUniversalIdentifier: PARTNER_CITY_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 13,
+      position: 14,
       isVisible: true,
     },
     {
       universalIdentifier: 'cf5e9649-a3e9-4b3f-b746-e701e3db7169',
       fieldMetadataUniversalIdentifier: PARTNER_HOURLY_RATE_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 14,
+      position: 15,
       isVisible: true,
     },
     {
       universalIdentifier: '388ae22b-956c-4e5a-8b78-6f8cb0105c1a',
       fieldMetadataUniversalIdentifier: PARTNER_PROJECT_BUDGET_MIN_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 15,
+      position: 16,
       isVisible: true,
     },
     {
       universalIdentifier: '5c8727a3-6e4b-41c7-adf9-530ab6599bf9',
       fieldMetadataUniversalIdentifier: PARTNER_LINKEDIN_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 16,
+      position: 17,
       isVisible: true,
     },
     {
       universalIdentifier: 'a6ef3c3b-103b-41b7-ba85-9d93a9af3296',
       fieldMetadataUniversalIdentifier: PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 17,
+      position: 18,
       isVisible: true,
     },
     {
       universalIdentifier: '4bc68141-963f-4e42-8aa4-c081afc613c7',
       fieldMetadataUniversalIdentifier: PARTNER_CALENDAR_LINK_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 18,
+      position: 19,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '5b51f559-d78c-48df-9347-7929f87ad8d1',
+      fieldMetadataUniversalIdentifier: PARTNER_LINKS_ON_PARTNER_FIELD_ID,
+      position: 20,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: 'fe7a958a-fc56-4e65-8e37-1925014fb1ae',
+      fieldMetadataUniversalIdentifier: PARTNER_SERVICES_ON_PARTNER_FIELD_ID,
+      position: 21,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '39b34dc8-7daa-4e30-9183-2ce8f035657a',
+      fieldMetadataUniversalIdentifier: PARTNER_CONTENTS_ON_PARTNER_FIELD_ID,
+      position: 22,
       isVisible: true,
     },
     {
       universalIdentifier: '3487e2ae-0feb-41c4-ad0c-f94dff435015',
       fieldMetadataUniversalIdentifier: PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 19,
+      position: 23,
       isVisible: true,
     },
     {
       universalIdentifier: '971c79e6-381e-4346-86a4-7119de4824be',
       fieldMetadataUniversalIdentifier: PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 20,
+      position: 24,
       isVisible: true,
     },
     {
       universalIdentifier: 'ec1148d4-01ff-4128-9863-0ac42ea8eb47',
       fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
-      position: 21,
+      position: 25,
       isVisible: true,
     },
     {
       universalIdentifier: '3ec293a1-da90-4104-a22e-771c0059e9b5',
       fieldMetadataUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
-      position: 22,
+      position: 26,
       isVisible: true,
     },
   ],

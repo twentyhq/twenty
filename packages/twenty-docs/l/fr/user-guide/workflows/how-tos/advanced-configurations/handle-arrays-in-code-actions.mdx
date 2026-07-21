@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Le nœud Code renvoie un objet structuré au lieu d'un tableau. Dans les étapes suivantes, vous pouvez maintenant sélectionner des champs individuels comme `answer.firstname` et `answer.name` à partir du sélecteur de variables.
 
-<Note>
-Nous travaillons activement à faciliter la gestion des tableaux dans de futures mises à jour.
-</Note>
+<Tip>
+**Vous voulez parcourir le tableau au lieu d'extraire des champs ?** Lorsqu'une étape de fonction Code ou Logic renvoie un tableau de premier niveau, vous pouvez l'envoyer directement dans un [Iterator](/l/fr/user-guide/workflows/capabilities/use-iterator) : sélectionnez l'option **Whole list** de l'étape comme entrée de l'Iterator, puis référencez chaque élément avec `{{iterator.currentItem}}` à l'intérieur de la boucle. Dans ce cas, vous n'avez pas besoin de restructurer le tableau en un objet.
+</Tip>
 
 <Tip>
 Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.

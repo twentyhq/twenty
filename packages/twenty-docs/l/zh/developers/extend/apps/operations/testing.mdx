@@ -78,6 +78,13 @@ yarn add -D vitest vite-tsconfig-paths
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-创建一个设置文件，在测试运行前验证服务器可达：
+创建一个全局设置文件，用于验证服务器是否可访问，写入 SDK 的测试配置文件（`~/.twenty/config.test.json`），并在测试运行前同步应用：
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## 可编程的 SDK API
 
 子路径 `twenty-sdk/cli` 导出了可直接在测试代码中调用的函数：
 
-| 函数             | 描述                 |
-| -------------- | ------------------ |
-| `appBuild`     | 构建应用，并可选地打包为 tar 包 |
-| `appDeploy`    | 将 tar 包上传到服务器      |
-| `appInstall`   | 在活动工作区安装该应用        |
-| `appUninstall` | 从活动工作区卸载该应用        |
+| 函数             | 描述                                  |
+| -------------- | ----------------------------------- |
+| `appBuild`     | 构建应用，并可选地打包为 tar 包                  |
+| `appDeploy`    | 将 tar 包上传到服务器                       |
+| `appDevOnce`   | 构建并同步应用一次（与 `yarn twenty apply` 相同） |
+| `appInstall`   | 在活动工作区安装该应用                         |
+| `appUninstall` | 从活动工作区卸载该应用                         |
 
 每个函数都会返回一个结果对象，包含 `success: boolean`，以及 `data` 或 `error` 之一。
 
@@ -238,64 +253,10 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-这会运行 `tsc --noEmit` 并报告所有类型错误。
+这会针对你的应用的 `tsconfig.json` 运行 `tsc --noEmit`，并报告所有类型错误。 脚手架生成的应用还会提供一个 `yarn typecheck` 脚本，它也会覆盖测试文件（`tsconfig.spec.json`）。
 
 ## 使用 GitHub Actions 进行 CI
 
-脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的 GitHub Actions 工作流。 它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
+脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的工作流。 在每次向 `main` 推送代码以及每个拉取请求上，它都会在 runner 中启动一个临时的 Twenty 服务器（通过 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` action），然后运行 `yarn lint`、`yarn typecheck`、`yarn test:unit` 和 `yarn test`，并将 `TWENTY_API_URL` / `TWENTY_API_KEY` 指向该服务器。 无需任何机密信息，你可以在工作流顶部通过 `TWENTY_VERSION` 环境变量固定服务器版本。
 
-工作流：
-
-1. 检出你的代码
-2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` 动作启动一个临时的 Twenty 服务器
-3. 使用 `yarn install --immutable` 安装依赖
-4. 运行 `yarn test`，并从该动作的输出中注入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-你无需配置任何机密——`spawn-twenty-docker-image` 动作会在运行器中直接启动一个临时的 Twenty 服务器，并输出连接详情。 GitHub 会自动提供 `GITHUB_TOKEN` 机密。
-
-若要固定为特定的 Twenty 版本而不是 `latest`，请在工作流顶部修改 `TWENTY_VERSION` 环境变量。
+完整的三个脚手架工作流（`ci.yml`、`cd.yml` 部署流水线以及用于 npm 发布的 `publish.yml`）的详细演练说明，请参见 [发布 → 自动化 CI/CD](/l/zh/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows)。

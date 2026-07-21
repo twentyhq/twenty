@@ -286,6 +286,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
             return `NOT EXISTS ${subQuery}`;
           })
+          .andWhere('entity.workspaceId IS NOT NULL')
           .select(['entity.id', 'entity.workspaceId'])
           .withDeleted()
           .getMany();

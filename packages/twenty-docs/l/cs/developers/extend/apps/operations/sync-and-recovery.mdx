@@ -12,16 +12,20 @@ Lokální vývoj aplikací se točí kolem **synchronizace**: CLI znovu sestaví
 Pro každodenní lokální iteraci téměř vždy chcete `yarn twenty dev`. Nasazování a publikování slouží k vydávání verzí, **ne** pro lokální vývojovou smyčku.
 </Note>
 
-| Chcete…                                                   | Příkaz                              | Poznámky                                                                                                             |
-| --------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Iterujte lokálně s živou synchronizací                    | `yarn twenty dev`                   | Sleduje vaše soubory a při každé změně spustí synchronizaci.                                                         |
-| Jednorázová synchronizace a ukončení (CI, skripty, hooky) | `yarn twenty dev --once`            | Provede jedno sestavení + synchronizaci a skončí.                                                                    |
-| Náhled změn **bez jejich aplikování**                     | `yarn twenty dev --once --dry-run`  | Spočítá a vypíše rozdíly; nic nezapisuje.                                                                            |
-| Odebrat aplikaci z pracovního prostoru                    | `yarn twenty app:uninstall`         | Přidejte `--yes` pro přeskočení výzvy.                                                                               |
-| Odeslat tarball na server                                 | `yarn twenty app:publish --private` | Vyžaduje **přísně vyšší** verzi v `package.json` — viz [Publikování](/l/cs/developers/extend/apps/operations/publishing). |
-| Publikovat na marketplace (npm)                           | `yarn twenty app:publish`           | —                                                                                                                    |
-| Nainstalovat / aktualizovat nasazenou verzi               | `yarn twenty app:install`           | Nainstaluje aktuálně nasazenou verzi.                                                                                |
-| Vymazat lokální server a začít znovu                      | `yarn twenty docker:reset`          | Smaže **všechna** lokální data — krajní řešení.                                                                      |
+| Chcete…                                                   | Příkaz                              | Poznámky                                                                                                              |
+| --------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Iterujte lokálně s živou synchronizací                    | `yarn twenty dev`                   | Sleduje vaše soubory a při každé změně spustí synchronizaci.                                                          |
+| Jednorázová synchronizace a ukončení (CI, skripty, hooky) | `yarn twenty apply`                 | Provede jedno sestavení + synchronizaci a skončí. Přidejte `--force`, abyste přeskočili potvrzení destruktivní změny. |
+| Náhled změn **bez jejich aplikování**                     | `yarn twenty plan`                  | Spočítá a vypíše rozdíly; nic nezapisuje.                                                                             |
+| Odebrat aplikaci z pracovního prostoru                    | `yarn twenty app:uninstall`         | Přidejte `--yes` pro přeskočení výzvy.                                                                                |
+| Odeslat tarball na server                                 | `yarn twenty app:publish --private` | Vyžaduje **přísně vyšší** verzi v `package.json` — viz [Publikování](/l/cs/developers/extend/apps/operations/publishing).  |
+| Publikovat na marketplace (npm)                           | `yarn twenty app:publish`           | —                                                                                                                     |
+| Nainstalovat / aktualizovat nasazenou verzi               | `yarn twenty app:install`           | Nainstaluje aktuálně nasazenou verzi.                                                                                 |
+| Vymazat lokální server a začít znovu                      | `yarn twenty docker:reset`          | Smaže **všechna** lokální data — krajní řešení.                                                                       |
+
+<Note>
+`yarn twenty dev --once` a `yarn twenty dev --once --dry-run` stále fungují jako zastaralé aliasy pro `yarn twenty apply` a `yarn twenty plan`.
+</Note>
 
 ### Lokální synchronizace nevyžaduje zvýšení verze
 
@@ -29,18 +33,25 @@ Pravidlo striktně rostoucí `version` (`VERSION_ALREADY_EXISTS` při nasazení,
 
 ## Čtení výstupu synchronizace
 
-Každá synchronizace vypíše změny metadat, které aplikovala (nebo by aplikovala s `--dry-run`):
+Každá synchronizace vypíše změny metadat, které aplikovala (nebo by aplikovala s `plan`), ve stylu Terraformu — jeden blok na entitu s jejími atributy a poté souhrnný řádek:
 
 ```text filename="Terminal"
-Metadata changes: 2 created, 1 updated, 1 deleted
-  created objectMetadata rocket
-  created fieldMetadata timelineActivities
-  updated fieldMetadata launchedAt
-  deleted pageLayout legacyTab
-✓ Synced
+  # objectMetadata "rocket" will be created
+  + icon          = "IconRocket"
+  + labelSingular = "Rocket"
+  + ...
+
+  # fieldMetadata "launchedAt" will be updated
+  ~ isNullable = false -> true
+
+Plan: 2 to add, 1 to change, 1 to destroy.
+
+✓ Synced My App (4 files)
 ```
 
 To je váš první diagnostický nástroj: přesně ukazuje, které objekty, pole a rozložení se změnily, takže si můžete ověřit, že synchronizace udělala to, co jste očekávali, ještě před kontrolou v UI.
+
+Destruktivní změny (`to destroy`) jsou uvedeny s tím, co odstraňují (např. `objectMetadata "auditNote" — drops the table and all its rows`) a vyžadují interaktivní potvrzení, nebo `--force` ve skriptech.
 
 Když synchronizace selže na jedné entitě, chyba uvede problematickou entitu a její `universalIdentifier`, například:
 
@@ -50,39 +61,42 @@ Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337)
 
 Tento identifikátor použijte k nalezení entity ve vašem manifestu (a případně v pracovním prostoru) místo hádání, která je v konfliktu.
 
-## Náhled změn (dry run)
+## Náhled změn (plan)
 
-`yarn twenty dev --once --dry-run` sestaví váš manifest, požádá server o migrační plán a vypíše ho — aniž by cokoli aplikoval. Je to bezpečný způsob, jak si předem zodpovědět otázku „co by tato synchronizace změnila?“ ještě předtím, než se k ní zavážete.
+`yarn twenty plan` sestaví váš manifest, požádá server o migrační plán a vypíše ho — **aniž by cokoli aplikoval**. Je to bezpečný způsob, jak si předem zodpovědět otázku „co by tato synchronizace změnila?“ ještě předtím, než se k ní zavážete.
 
 ```bash filename="Terminal"
-yarn twenty dev --once --dry-run
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
 Building manifest...
-Computing metadata diff (dry run, nothing will be applied)...
-Metadata changes: 1 created, 1 updated
-  created fieldMetadata timelineActivities
-  updated objectMetadata rocket
-✓ Dry run complete for My App — no changes were applied
+Computing metadata plan (read-only, nothing will be applied)...
+
+  # fieldMetadata "crewCapacity" will be created
+  + ...
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+✓ Plan complete for My App — no changes were applied
 ```
 
-Spuštění nanečisto:
+Plán:
 
 * **Nic nezapisuje** — žádná migrace metadat, žádná aktualizace záznamu aplikace, žádné změny výchozí role / karty a žádná generace API klienta.
 * Vrací **stejný diff**, jaký by aplikovala skutečná synchronizace, takže můžete předem zkontrolovat vytvořené / aktualizované / smazané entity.
 * Je užitečný před rizikovou změnou, při kontrole změny vygenerované pomocí AI nebo ve skriptu, který má selhat, pokud se má provést neočekávaná změna.
 
 <Note>
-Režim dry run zobrazuje pouze náhled změn **metadat** a vyžaduje, aby byla aplikace alespoň jednou synchronizovaná (aby o ní pracovní prostor věděl). Pokud jej spustíte proti aplikaci, která nikdy nebyla synchronizovaná, server ohlásí, že aplikace není nainstalovaná — nejprve jednou spusťte `yarn twenty dev`.
+Plán zobrazuje pouze náhled změn **metadat** a vyžaduje, aby byla aplikace alespoň jednou synchronizovaná (aby o ní pracovní prostor věděl). Pokud jej spustíte proti aplikaci, která nikdy nebyla synchronizovaná, server ohlásí, že aplikace není nainstalovaná — nejprve jednou spusťte `yarn twenty dev`.
 </Note>
 
 ## Postup obnovy
 
 Když lokální metadata vypadají špatně, postupujte v tomto pořadí a zastavte se, jakmile se problém vyřeší. Každý další krok je rušivější než ten předchozí.
 
-1. **Znovu synchronizujte.** Znovu spusťte `yarn twenty dev --once`. Synchronizace jsou idempotentní — znovu spuštěný čistý manifest je bezpečný a často vyřeší přechodný problém.
-2. **Prohlédněte si plán.** Spusťte `yarn twenty dev --once --dry-run`, abyste přesně viděli, co chce další synchronizace změnit, aniž by to aplikovala.
+1. **Znovu synchronizujte.** Znovu spusťte `yarn twenty apply`. Synchronizace jsou idempotentní — znovu spuštěný čistý manifest je bezpečný a často vyřeší přechodný problém.
+2. **Prohlédněte si plán.** Spusťte `yarn twenty plan`, abyste přesně viděli, co chce další synchronizace změnit, aniž by to aplikovala.
 3. **Přečtěte si pojmenovanou chybu.** Pokud synchronizace selže, poznamenejte si typ metadat a `universalIdentifier` ve zprávě (viz výše) a tuto entitu najděte ve svém manifestu. Konflikt obvykle ukazuje na duplicitní nebo znovu použitý identifikátor.
 4. **Odinstalujte a znovu nainstalujte.** `yarn twenty app:uninstall`, poté znovu synchronizujte (`yarn twenty dev`). Tím znovu vybudujete metadata aplikace z čistého stavu, zatímco zbytek vašeho pracovního prostoru zůstane nedotčený.
 5. **Úplný reset (krajní řešení).** `yarn twenty docker:reset`, poté znovu naplňte data a synchronizujte.

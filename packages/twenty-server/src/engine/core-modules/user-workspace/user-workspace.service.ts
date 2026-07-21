@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -26,6 +25,7 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -43,7 +43,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { assert } from 'src/utils/assert';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
-export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+export class UserWorkspaceService {
   private readonly logger = new Logger(UserWorkspaceService.name);
 
   constructor(
@@ -66,8 +66,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-  ) {
-    super(userWorkspaceRepository);
+  ) {}
+
+  async findById(id: string): Promise<UserWorkspaceEntity | null> {
+    return this.userWorkspaceRepository.findOne({ where: { id } });
   }
 
   async updateUserWorkspaceLocaleForUserWorkspace({
@@ -355,27 +357,41 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       },
     });
 
+    // HIDDEN workspaces are never advertised in the root-domain picker, even to
+    // their own members — they must sign in from the workspace URL directly.
     const alreadyMemberWorkspaces = user
-      ? user.userWorkspaces.map(({ workspace }) => ({ workspace }))
+      ? user.userWorkspaces
+          .map(({ workspace }) => ({ workspace }))
+          .filter(
+            ({ workspace }) =>
+              workspace.workspaceDiscoverability !==
+              WorkspaceDiscoverability.HIDDEN,
+          )
       : [];
 
     const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
       ({ workspace }) => workspace.id,
     );
 
+    // Email-domain discovery is the only "listing" source: PUBLIC only.
     const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
         getDomainFromEmailOrThrow(email),
       )
     )
       .filter(
-        ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
+        ({ workspace }) =>
+          !alreadyMemberWorkspacesIds.includes(workspace.id) &&
+          workspace.workspaceDiscoverability ===
+            WorkspaceDiscoverability.PUBLIC,
       )
       .map(({ workspace }) => ({ workspace }));
 
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
+    // HIDDEN removes the picker convenience only; invited users can still join
+    // through the direct invitation link, which carries its own token.
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )
@@ -384,7 +400,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
           ![
             ...alreadyMemberWorkspacesIds,
             ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspace.id),
+          ].includes(workspace.id) &&
+          workspace.workspaceDiscoverability !==
+            WorkspaceDiscoverability.HIDDEN,
       )
       .map((appToken) => ({
         workspace: appToken.workspace,

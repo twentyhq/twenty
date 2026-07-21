@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 
+import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,6 +46,37 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 
+  const cacheHitRequests = new WeakSet<Request>();
+
+  const getCachedResponse = ({
+    cacheKey,
+    operationName,
+    phase,
+  }: {
+    cacheKey: string;
+    operationName: string;
+    phase: 'request' | 'response';
+  }) =>
+    Sentry.startSpan(
+      {
+        name: 'metadata GraphQL cache lookup',
+        op: 'cache.get',
+        onlyIfParent: true,
+        attributes: {
+          'cache.phase': phase,
+          'graphql.operation.name': operationName,
+          'graphql.operation.type': 'query',
+        },
+      },
+      async (span) => {
+        const cachedResponse = await config.cacheGetter(cacheKey);
+
+        span.setAttribute('cache.hit', Boolean(cachedResponse));
+
+        return cachedResponse;
+      },
+    );
+
   return {
     onRequest: async ({ endResponse, serverContext }) => {
       // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
@@ -54,17 +86,28 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      if (!config.operationsToCache.includes(getOperationName(serverContext))) {
+      const operationName = getOperationName(serverContext);
+
+      if (!config.operationsToCache.includes(operationName)) {
         return;
       }
 
+      Sentry.setTags({ operationName, operation: 'query' });
+      Sentry.getCurrentScope().setTransactionName(operationName);
+
       const cacheKey = computeCacheKey({
-        operationName: getOperationName(serverContext),
+        operationName,
         request,
       });
-      const cachedResponse = await config.cacheGetter(cacheKey);
+      const cachedResponse = await getCachedResponse({
+        cacheKey,
+        operationName,
+        phase: 'request',
+      });
 
       if (cachedResponse) {
+        cacheHitRequests.add(request);
+
         const earlyResponse = Response.json(cachedResponse);
 
         return endResponse(earlyResponse);
@@ -77,16 +120,26 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      if (!config.operationsToCache.includes(getOperationName(serverContext))) {
+      const operationName = getOperationName(serverContext);
+
+      if (!config.operationsToCache.includes(operationName)) {
+        return;
+      }
+
+      if (cacheHitRequests.delete(request)) {
         return;
       }
 
       const cacheKey = computeCacheKey({
-        operationName: getOperationName(serverContext),
+        operationName,
         request,
       });
 
-      const cachedResponse = await config.cacheGetter(cacheKey);
+      const cachedResponse = await getCachedResponse({
+        cacheKey,
+        operationName,
+        phase: 'response',
+      });
 
       if (!cachedResponse) {
         const responseBody = await response.json();

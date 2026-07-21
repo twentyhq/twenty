@@ -668,7 +668,7 @@ export class CreateAppCommand {
 
     console.log(
       chalk.gray(
-        '  Documentation: https://docs.twenty.com/developers/extend/capabilities/apps',
+        '  Documentation: https://docs.twenty.com/developers/extend/apps/getting-started/quick-start',
       ),
     );
   }

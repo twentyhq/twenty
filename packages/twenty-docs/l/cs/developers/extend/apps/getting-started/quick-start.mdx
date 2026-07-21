@@ -6,17 +6,17 @@ description: Vytvořte svou první aplikaci Twenty během několika minut.
 
 ## Předpoklady
 
-* **Node.js 24+** — [Stáhnout](https://nodejs.org/)
+* **Node.js 24.5+** — [Stáhnout](https://nodejs.org/)
 * **Yarn 4** — je součástí Node.js prostřednictvím Corepacku. Povolte jej: `corepack enable`
 * **Docker** — [Stáhnout](https://www.docker.com/products/docker-desktop/). Nutné pro spuštění lokálního serveru Twenty. Přeskočte, pokud už máte Twenty spuštěné jinde.
 
 Vytváření aplikace Twenty má tři fáze. Generátor kostry je spojuje do jediného příkazu pro ideální scénář, ale každá fáze je samostatný koncept — když se něco nepovede, znalost aktuální fáze napoví, co opravit.
 
-| Fáze                   | Co děláte                                                | Nástroj                       | Výsledek                                     |
-| ---------------------- | -------------------------------------------------------- | ----------------------------- | -------------------------------------------- |
-| **1. Vytvořit kostru** | Vygenerovat zdrojový kód aplikace                        | `npx create-twenty-app`       | Projekt v TypeScriptu na disku               |
-| **2. Spustit server**  | Spustit server Twenty, do kterého se bude synchronizovat | Docker + `yarn twenty server` | Běžící instance Twenty                       |
-| **3. Synchronizovat**  | Živě synchronizovat kód na server                        | `yarn twenty dev`             | Vaše změny se objeví v uživatelském rozhraní |
+| Fáze                   | Co děláte                                                | Nástroj                             | Výsledek                                     |
+| ---------------------- | -------------------------------------------------------- | ----------------------------------- | -------------------------------------------- |
+| **1. Vytvořit kostru** | Vygenerovat zdrojový kód aplikace                        | `npx create-twenty-app`             | Projekt v TypeScriptu na disku               |
+| **2. Spustit server**  | Spustit server Twenty, do kterého se bude synchronizovat | Docker + `yarn twenty docker:start` | Běžící instance Twenty                       |
+| **3. Synchronizovat**  | Živě synchronizovat kód na server                        | `yarn twenty dev`                   | Vaše změny se objeví v uživatelském rozhraní |
 
 ---
 
@@ -28,7 +28,7 @@ Vytvořte novou aplikaci ze šablony:
 npx create-twenty-app@latest my-twenty-app
 ```
 
-Budete vyzváni k zadání názvu a popisu — výchozí hodnoty potvrdíte klávesou **Enter**. Tím se v `my-twenty-app/` vytvoří projekt v TypeScriptu se startovacím `application-config.ts`, výchozí rolí, CI workflow a integračním testem.
+Generátor kostry je neinteraktivní: název adresáře se stane názvem aplikace. Předejte `--display-name` a `--description` pro přizpůsobení vygenerovaných metadat (později je můžete také upravit v `src/constants/universal-identifiers.ts`). Tím se v `my-twenty-app/` vytvoří projekt v TypeScriptu se startovacím `application-config.ts`, výchozí rolí, pracovními postupy CI/CD a integračním testem.
 
 **Po této fázi:** máte na svém počítači zdrojový kód aplikace. Zatím neběží — to je předmětem Fáze 2.
 
@@ -38,27 +38,13 @@ Budete vyzváni k zadání názvu a popisu — výchozí hodnoty potvrdíte klá
 
 Vaše aplikace potřebuje server Twenty, do kterého se bude synchronizovat. Server je plnohodnotná instance Twenty — UI, GraphQL API, PostgreSQL — běžící lokálně v Dockeru. Váš lokální kód nahrává své definice na tento server, díky čemuž se objeví v UI.
 
-Generátor kostry nabídne, že vám jej spustí:
+Nástroj pro vytváření projektů to spustí za vás: při spuštěném Dockeru stáhne image `twentycrm/twenty-app-dev`, spustí ji na portu `2020` a autentizuje CLI vůči předpřipravenému demo workspace (`tim@apple.dev`) — není vyžadováno žádné přihlášení.
 
-> **Chcete nastavit lokální instanci Twenty?**
-
-* **Ano (doporučeno)** — stáhne Docker image `twentycrm/twenty-app-dev` a spustí jej na portu `2020`. Nejprve se ujistěte, že Docker běží.
-* **Ne** — zvolte, pokud už máte server Twenty, ke kterému se chcete připojit. Můžete jej propojit později pomocí `yarn twenty remote:add`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Spustit lokální instanci?" />
-</div>
-
-Jakmile server běží, otevře se prohlížeč pro přihlášení. Použijte předpřipravený demo účet:
-
-* **E-mail:** `tim@apple.dev`
-* **Heslo:** `tim@apple.dev`
+Chcete-li se místo toho připojit k existujícímu serveru Twenty, předejte `--url \<your-server-url>`. Vzdálené servery se ověřují pomocí OAuth: otevře se prohlížeč, abyste se mohli přihlásit a kliknout na **Authorize**, čímž udělíte nástroji CLI přístup k vašemu pracovnímu prostoru. (Můžete se také rozhodnout pro OAuth lokálně pomocí `--authentication-method oauth` — přihlaste se pomocí `tim@apple.dev` / `tim@apple.dev`.)
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Přihlašovací obrazovka Twenty" />
 </div>
-
-Na další obrazovce klikněte na **Authorize** — tím udělíte nástroji CLI přístup k vašemu pracovnímu prostoru.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Autorizační obrazovka Twenty CLI" />
@@ -117,27 +103,31 @@ Klikněte na **View installed app**, abyste zobrazili instalaci v pracovním pro
 
 ### Jednorázová synchronizace pro CI a skripty
 
-Předejte `--once` pro provedení jednoho sestavení + synchronizace a ukončení — stejný postup, bez sledování změn:
+Použijte `plan` a `apply` ke spuštění stejné pipeline jednorázově, bez watcheru:
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| Příkaz                             | Chování                                                                            | Kdy použít                                                               |
-| ---------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `yarn twenty dev`                  | Sleduje změny a při každé změně znovu synchronizuje. Běží, dokud jej nezastavíte.  | Interaktivní lokální vývoj.                                              |
-| `yarn twenty dev --once`           | Jedno sestavení + synchronizace, ukončí se s kódem `0` při úspěchu, `1` při chybě. | CI, pre-commit hooky, AI agenti, skriptované pracovní postupy.           |
-| `yarn twenty dev --once --dry-run` | Sestaví a vypíše změny metadat **bez jejich použití**.                             | Kontrola toho, co by synchronizace změnila, ještě před jejím potvrzením. |
+| Příkaz              | Chování                                                                                                                                                                | Kdy použít                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `yarn twenty dev`   | Sleduje změny a při každé změně znovu synchronizuje. Běží, dokud jej nezastavíte.                                                                                      | Interaktivní lokální vývoj.                                              |
+| `yarn twenty apply` | Jedno sestavení + synchronizace, ukončí se s kódem `0` při úspěchu, `1` při chybě. Vyžádá si potvrzení destruktivních změn (předejte `--force`, abyste to přeskočili). | CI, pre-commit hooky, AI agenti, skriptované pracovní postupy.           |
+| `yarn twenty plan`  | Sestaví a vypíše změny metadat **bez jejich použití**.                                                                                                                 | Kontrola toho, co by synchronizace změnila, ještě před jejím potvrzením. |
 
-Oba režimy vyžadují autentizovaný vzdálený server. Více informací o `--dry-run` najdete v části [Synchronizace a obnovení](/l/cs/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run).
+Všechny režimy vyžadují autentizovaný vzdálený server. Více informací o `plan` najdete v části [Synchronizace a obnovení](/l/cs/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan).
+
+<Note>
+`yarn twenty dev --once` a `yarn twenty dev --once --dry-run` jsou zastaralé aliasy pro `yarn twenty apply` a `yarn twenty plan`.
+</Note>
 
 ### Možnosti vývojového režimu
 
 | Přepínač                              | Popis                                                                                         |
 | ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `--once`                              | Jednou sestavit a synchronizovat, poté ukončit.                                               |
-| `--dry-run`                           | Pomocí `--once` zobrazíte náhled změn metadat, aniž byste je použili. Nic nezapisuje.         |
-| `--debounceMs \<ms>` | Nastaví prodlevu pro potlačení zákmitů při změnách souborů v milisekundách (výchozí: `2000`). |
+| `--force`                             | Aplikuje destruktivní změny (mazání) bez potvrzení.                                           |
+| `--debounceMs \<ms>` | Nastaví prodlevu pro potlačení zákmitů při změnách souborů v milisekundách (výchozí: `1000`). |
 | `--verbose` / `--debug`               | Zobrazí podrobné protokoly sestavení, požadavky synchronizace a trasování chyb.               |
 
 ## Co můžete vytvořit

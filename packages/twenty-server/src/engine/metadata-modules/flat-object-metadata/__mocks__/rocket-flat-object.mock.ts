@@ -8,7 +8,7 @@ export const ROCKET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Rockets',
   description: 'A rocket',
   icon: 'IconRocket',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

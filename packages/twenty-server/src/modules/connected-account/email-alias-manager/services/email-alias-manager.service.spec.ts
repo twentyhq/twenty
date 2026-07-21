@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
@@ -19,6 +20,13 @@ describe('Email Alias Manager Service', () => {
     // @ts-expect-error legacy noImplicitAny
     update: jest.fn().mockResolvedValue((arg) => arg),
   };
+  const mockMessageChannelRepository = {
+    exists: jest.fn().mockResolvedValue(true),
+  };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,6 +43,10 @@ describe('Email Alias Manager Service', () => {
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: mockConnectedAccountRepository,
+        },
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: mockMessageChannelRepository,
         },
         {
           provide: GoogleEmailAliasManagerService,
@@ -100,6 +112,32 @@ describe('Email Alias Manager Service', () => {
           handleAliases: expectedAliases,
         },
       );
+    });
+  });
+
+  describe('Refresh handle aliases without a mailbox', () => {
+    it('Should preserve existing aliases and skip the update when the account has no message channel', async () => {
+      mockMessageChannelRepository.exists.mockResolvedValueOnce(false);
+
+      const existingAliases = ['existing@domain.com'];
+      const mockConnectedAccount: Partial<ConnectedAccountEntity> = {
+        id: 'test-id',
+        provider: ConnectedAccountProvider.GOOGLE,
+        handleAliases: existingAliases,
+      };
+
+      jest.spyOn(microsoftEmailAliasManagerService, 'getHandleAliases');
+
+      const result = await emailAliasManagerService.refreshHandleAliases(
+        mockConnectedAccount as ConnectedAccountEntity,
+        'test-workspace-id',
+      );
+
+      expect(result).toEqual(existingAliases);
+      expect(
+        microsoftEmailAliasManagerService.getHandleAliases,
+      ).not.toHaveBeenCalled();
+      expect(mockConnectedAccountRepository.update).not.toHaveBeenCalled();
     });
   });
 });

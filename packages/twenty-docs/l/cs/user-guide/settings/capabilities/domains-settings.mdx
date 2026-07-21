@@ -1,6 +1,6 @@
 ---
 title: Nastavení domén
-description: Nastavte doménu pracovního prostoru, schválené přístupové domény a veřejné domény.
+description: Nastavte doménu pracovního prostoru, schválené přístupové domény a vlastní domény aplikace.
 ---
 
 Nastavení domény se nachází na třech místech v závislosti na tom, co právě konfigurujete.
@@ -37,18 +37,17 @@ Po konfiguraci se kdokoli s e-mailovou adresou na této doméně může připoji
 To je užitečné, protože umožní celému vašemu týmu registrovat se samostatně, zatímco pracovní prostor zůstane omezen pouze na vaši organizaci.
 </Note>
 
-## Veřejné domény
+## Vlastní domény aplikace
 
-Nastavte v **Nastavení → Aplikace → Vývojář**.
+Nastavte v **Nastavení → Aplikace → vaše aplikace → Nastavení → App URL**.
 
-Zajistěte kompletní a bezpečné hostingové prostředí na těchto doménách. Veřejnou doménu lze přiřadit ke konkrétní aplikaci — pokud je přiřazená, jsou na této doméně dostupné pouze funkce aplikační logiky této aplikace směrované přes HTTP. Nechte přiřazení prázdné, aby byly zpřístupněny všechny HTTP trasy pracovního prostoru.
+Aplikace, které na webu zpřístupňují routy, jsou dostupné z vyhrazené adresy URL uvedené v části **App URL**. Aplikaci můžete místo toho provozovat na doméně, kterou vlastníte.
 
-### Přidat veřejnou doménu
+### Přidat vlastní doménu
 
-1. Klikněte na **Přidat veřejnou doménu**
-2. Zadejte doménu, kterou chcete použít
-3. Volitelně ji přiřaďte k aplikaci
-4. Nakonfigurujte nastavení DNS podle pokynů
-5. Ověřte doménu
+1. Klikněte na **Přidat vlastní doménu**
+2. Zadejte doménu, kterou chcete použít (např. `app.yourcompany.com`)
+3. Nakonfigurujte nastavení DNS podle pokynů
+4. Ověřte doménu
 
-Pro veřejné domény se certifikáty SSL zřizují automaticky.
+Na této doméně jsou dostupné pouze routy této aplikace. Certifikáty SSL jsou zřizovány automaticky.

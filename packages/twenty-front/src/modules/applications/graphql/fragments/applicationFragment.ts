@@ -22,6 +22,7 @@ export const APPLICATION_FRAGMENT = gql`
       logoUrl
     }
     canBeUninstalled
+    autoUpgrade
     defaultRoleId
     settingsCustomTabFrontComponentId
     availablePackages
@@ -31,6 +32,8 @@ export const APPLICATION_FRAGMENT = gql`
       value
       description
       isSecret
+      type
+      options
     }
     agents {
       ...AgentFields

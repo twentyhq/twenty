@@ -19,6 +19,7 @@ import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/je
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 

@@ -33,17 +33,32 @@ export default defineView({
 ## Punti chiave
 
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista. Può essere un oggetto personalizzato che hai definito o un oggetto Twenty standard.
-* `key` determina il tipo di vista — `ViewKey.INDEX` è la vista elenco principale per l'oggetto.
-* `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`.
-* Puoi anche definire `filters`, `filterGroups`, `groups` e `fieldGroups` per configurazioni più avanzate.
+* `key: ViewKey.INDEX` contrassegna la vista come vista elenco principale dell'oggetto (quella che un elemento di navigazione `OBJECT` apre).
+* `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`. Per fare riferimento a un campo di sistema creato automaticamente come `createdAt`, vedi [Targeting System Fields](/l/it/developers/extend/apps/data/system-fields).
+* Puoi anche definire `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` per configurazioni più avanzate.
 * `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
+
+## Proprietà opzionali
+
+| Proprietà                                                                                                   | Valori                                                                             | Descrizione                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (predefinito), `ViewType.KANBAN`, `ViewType.CALENDAR`             | Come sono disposti i record. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` e `CALENDAR_WIDGET` esistono anche ma sono usati internamente dai widget di layout di pagina.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (predefinito), `ViewVisibility.UNLISTED`                | Se la vista è elencata per l'intero workspace o nascosta dai selettori.                                                                                                       |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (predefinito), `ViewOpenRecordIn.RECORD_PAGE`        | Dove si apre un record quando lo si clicca.                                                                                                                                   |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Ordinamento predefinito.                                                                                                                                                      |
+| `isCompact`                                                                                                 | `boolean`                                                                          | Visualizzazione compatta delle righe.                                                                                                                                         |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Raggruppa i record (ad es. colonne kanban) per un campo.                                                                                                                      |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Aggregazioni e dimensionamento delle colonne kanban.                                                                                                                          |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Viste calendario: layout, il campo data che posiziona i record e un campo data di fine opzionale.                                                                             |
+
+Tutti gli enum sopra sono esportati da `twenty-sdk/define`.
 
 ## Filtri
 
 Una vista può essere fornita con filtri preapplicati. Ogni filtro ha tre coordinate: il **campo** che viene filtrato, l'**operando** (come confrontare) e il **valore** (con cosa confrontare). Tutti e tre devono allinearsi: l'uso di un operando che non si applica a un tipo di campo verrà rifiutato al momento della sincronizzazione.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

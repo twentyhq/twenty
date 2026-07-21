@@ -59,7 +59,7 @@ describe('Nested relation per-parent limit (e2e)', () => {
         { id: SOFT_DELETED_COMPANY_ID, name: 'Soft-deleted relation company' },
         { id: EMPTY_COMPANY_ID, name: 'Empty relation company' },
       ],
-      upsert: true,
+      upsert: false,
     });
 
     await makeGraphqlAPIRequest(createCompanies);
@@ -76,7 +76,7 @@ describe('Nested relation per-parent limit (e2e)', () => {
           companyId: SOFT_DELETED_COMPANY_ID,
         })),
       ],
-      upsert: true,
+      upsert: false,
     });
 
     await makeGraphqlAPIRequest(createPeople);

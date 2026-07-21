@@ -4,7 +4,7 @@ description: Construiți componente React care se afișează în interfața Twen
 icon: window-maximize
 ---
 
-Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
+Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Acestea rulează într-un **Web Worker** izolat folosind Remote DOM — codul se execută într-un iframe cu origine opacă, într-un mediu izolat (sandboxed), însă interfața sa se redă în continuare nativ în pagină, în loc să fie limitată la acel iframe.
 
 ## Unde pot fi utilizate componentele front-end
 
@@ -49,14 +49,13 @@ export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
-  icon: 'IconBolt',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
-După sincronizarea cu `yarn twenty dev` (sau prin rularea comenzii `yarn twenty dev --once` o singură dată), acțiunea rapidă apare în colțul din dreapta sus al paginii:
+După sincronizarea cu `yarn twenty dev` (sau prin rularea o singură dată a comenzii `yarn twenty apply`), acțiunea rapidă apare în colțul din dreapta sus al paginii:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
@@ -88,11 +87,11 @@ Componentele front-end au două moduri de randare controlate de opțiunea `isHea
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
     enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
@@ -116,19 +115,19 @@ Deoarece componenta returnează `null`, Twenty omite redarea unui container pent
 
 Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pentru componente front-end headless. Fiecare componentă execută o acțiune la montare, gestionează erorile afișând o notificare snackbar și demontează automat componenta front-end la final.
 
-Importați-le din `twenty-sdk/command`:
+Importați-le din `twenty-sdk/front-component`:
 
 * **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
 * **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Deschide o pagină din panoul lateral. Props depind de `page` — de ex. `ViewRecord` primește `recordId` + `objectNameSingular`, alte pagini primesc `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Deschide o pagină din panoul lateral. Props depind de `page` — de ex. `ViewRecord` primește `recordId` + `objectNameSingular` (plus un id `tab` opțional pentru a deschide înregistrarea într-un anumit tab), alte pagini primesc `pageTitle` + `pageIcon`.
 
 Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const RunAction = () => {
   const execute = async () => {
@@ -160,7 +159,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
@@ -169,7 +167,7 @@ export default defineCommandMenuItem({
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CommandModal } from 'twenty-sdk/command';
+import { CommandModal } from 'twenty-sdk/front-component';
 
 const DeleteDraft = () => {
   const execute = async () => {
@@ -196,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+Și un exemplu care folosește `CommandOpenSidePanelPage` pentru a deschide înregistrarea curentă în panoul lateral, pe un tab specific. `tab` este un id de tab al layout-ului paginii (layout-urile implicite folosesc id-uri precum `company-tab-emails` sau `company-tab-timeline`; layout-urile personalizate folosesc propriul id al tab-ului). Dacă id-ul nu există în layout-ul înregistrării, se deschide în schimb tab-ul implicit:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## Apelarea unei funcții logice
 
-Componentele de front rulează în browser într-un Web Worker izolat, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
+Componentele de front rulează în browser, într-un Web Worker sandboxat în interiorul unui iframe cu origine opacă, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
 
-O funcție logică declarată cu `httpRouteTriggerSettings` este accesibilă prin HTTP la ruta sa. Twenty injectează în worker URL-ul de bază de la care sunt deservite funcțiile tale ca `TWENTY_FUNCTIONS_URL`, împreună cu `TWENTY_APP_ACCESS_TOKEN` care autentifică apelul. Nu există încă un client SDK dedicat pentru apelarea propriilor funcții, așa că apelează-le cu un simplu `fetch`:
+O funcție logică declarată cu `httpRouteTriggerSettings` este accesibilă prin HTTP la ruta sa. `RestApiClient` tratează căile care încep cu `/s/` ca rute ale aplicației, le rezolvă către URL-ul de la care sunt deservite funcțiile tale și le autentifică folosind `TWENTY_APP_ACCESS_TOKEN`.
 
-> **În Twenty Cloud, funcțiile logice declanșate prin HTTP sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru** la `https://\<your-workspace-subdomain>.twenty.com\<path>` — acesta este exact URL-ul la care indică `TWENTY_FUNCTIONS_URL`. Pentru apelanții externi, copiază URL-ul exact din setările **HTTP trigger** ale funcției sau din fila **Settings** a aplicației.
-
-<Warning>
-  Ruta veche a funcției `/s/` este **depășită** și va fi **dezactivată la 2026-07-24**. Folosește în schimb `TWENTY_FUNCTIONS_URL` (mai sus) și migrează orice URL-uri `/s/` hard-codate înainte de acea dată. Ruta `/s/` rămâne disponibilă pentru self-hosting.
-</Warning>
+> **În Twenty Cloud, funcțiile logice declanșate prin HTTP sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru** la `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pentru apelanții externi, copiază URL-ul exact din setările **HTTP trigger** ale funcției sau din fila **Settings** a aplicației.
 
 O componentă de front headless poate efectua apelul la montare prin componenta `Command`, apoi se demontează automat:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
+import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -238,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-Calea adăugată la `TWENTY_FUNCTIONS_URL` este `httpRouteTriggerSettings.path` al funcției logice. Păstrează `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl generează pentru componenta ta autentifică cererea:
+Calea transmisă către `RestApiClient` este proprietatea `httpRouteTriggerSettings.path` a funcției logice, cu prefixul `/s`. Păstrează `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN` pe care Twenty îl generează pentru componenta ta autentifică cererea:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -263,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` și `TWENTY_APP_ACCESS_TOKEN` sunt injectate automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
+`TWENTY_APP_ACCESS_TOKEN` este injectat automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
 </Note>
 
 ### Apelarea API-ului REST Twenty
 
-Pentru a citi sau scrie înregistrări Twenty dintr-un front component, folosește `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași familie de clienți ca `CoreApiClient` și `MetadataApiClient`, dar vizează Twenty REST API (`/rest/...`) în locul API-ului GraphQL, citindu-și URL-ul de bază din `TWENTY_API_URL`.
+Pentru a apela rute HTTP ale aplicației sau pentru a citi și scrie înregistrări Twenty dintr-un front component, folosește `RestApiClient` din `twenty-client-sdk/rest`. Trimite căile de forma `/s/...` către URL-ul de bază al funcțiilor spațiului tău de lucru, iar orice altă cale, inclusiv `/rest/...`, către `TWENTY_API_URL`.
 
-| Metodă                            | Descriere                            |
-| --------------------------------- | ------------------------------------ |
-| `get(path, options?)`             | Trimite o cerere `GET`               |
-| `post(path, body?, options?)`     | Trimite o cerere `POST`              |
-| `put(path, body?, options?)`      | Trimite o cerere `PUT`               |
-| `patch(path, body?, options?)`    | Trimite o cerere `PATCH`             |
-| `delete(path, options?)`          | Trimite o cerere `DELETE`            |
-| `request(method, path, options?)` | Cerere generică cu orice metodă HTTP |
+| Metodă                            | Descriere                                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------- |
+| `get(path, options?)`             | Trimite o cerere `GET`                                                        |
+| `post(path, body?, options?)`     | Trimite o cerere `POST`                                                       |
+| `put(path, body?, options?)`      | Trimite o cerere `PUT`                                                        |
+| `patch(path, body?, options?)`    | Trimite o cerere `PATCH`                                                      |
+| `delete(path, options?)`          | Trimite o cerere `DELETE`                                                     |
+| `request(method, path, options?)` | Cerere generică cu orice metodă HTTP                                          |
+| `resolveUrl(path, options?)`      | Rezolvă o cale la URL-ul ei complet fără a trimite o cerere (pentru link-uri) |
 
 `options` acceptă `headers`, `query` (un „record” de parametri de query-string; valorile nule sau nedefinite sunt omise) și un `AbortSignal` prin `signal`. Un obiect `body` care nu este de tip `FormData` este serializat automat în JSON. La un `401`, clientul reîmprospătează o dată tokenul de acces prin gazdă și reîncearcă cererea.
 
@@ -316,13 +346,13 @@ try {
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   useUserId,
-  useRecordId,
+  useSelectedRecordIds,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
   const componentId = useFrontComponentId();
 
   return (
@@ -377,13 +407,26 @@ export default defineFrontComponent({
 Variabilele secrete (`isSecret: true`) **nu** sunt expuse componentelor de interfață. Acestea sunt disponibile doar în [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions), care rulează pe server. Acest lucru împiedică trimiterea către browser a valorilor sensibile, cum ar fi cheile API.
 </Warning>
 
+`getApplicationVariable` returnează întotdeauna un **string** (sau `undefined`), indiferent de `type`‑ul declarat al variabilei. Stringul este serializat în mod consecvent în funcție de tip (valorile boolean ca `"true"` / `"false"`, numerele ca stringuri zecimale, array‑urile / obiectele ca JSON), în același format folosit pentru `process.env` în funcțiile logice — parsează‑l tu însuți (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Vezi [Tipuri de variabile](/l/ro/developers/extend/apps/config/application#variable-types).
+
 Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env`:
 
-| Variabilă                 | Descriere                                                                             |
-| ------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | URL-ul de bază de la care sunt deservite funcțiile de logică HTTP ale aplicației tale |
-| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                                             |
-| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs.                              |
+| Variabilă                 | Descriere                                                |
+| ------------------------- | -------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                |
+| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs. |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty injectează, de asemenea, `TWENTY_FUNCTIONS_URL` în front components și în funcțiile logice: URL-ul de bază de la care sunt deservite funcțiile logice ale aplicației tale declanșate prin HTTP.
+
+Există deoarece acel URL nu este întotdeauna chiar serverul Twenty. În Twenty Cloud, rutele aplicației sunt deservite pe un domeniu dedicat pentru fiecare spațiu de lucru (`https://\<your-workspace-subdomain>.withtwenty.com` sau domeniul public principal al aplicației atunci când este configurat unul), astfel încât răspunsurile generate de aplicație să ruleze pe o origine izolată, nu pe originea aplicației Twenty. Instanțele self-hosted și locale deservesc rutele aplicației sub prefixul `/s` chiar pe server și este posibil să nu seteze deloc variabila. Deoarece URL-ul de bază variază în funcție de spațiul de lucru și de instanță, codul tău nu îl poate hardcoda — serverul injectează valoarea corectă la runtime.
+
+Rareori ai nevoie să o citești direct. Apelează-ți rutele prin `RestApiClient` folosind o cale prefixată cu `/s/`, iar clientul îți rezolvă URL-ul: elimină prefixul `/s` și țintește `TWENTY_FUNCTIONS_URL`, folosind `\<TWENTY_API_URL>/s` ca rezervă atunci când variabila nu este setată. Folosește `resolveUrl('/s/\<path>')` pentru a obține URL-ul absolut fără a trimite o cerere, de exemplu pentru un link. Citește variabila direct doar atunci când construiești manual un URL:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## API-ul de comunicare cu gazda
 
@@ -403,12 +446,11 @@ Iată un exemplu care folosește API-ul gazdei pentru a afișa un snackbar și a
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   const handleArchive = async () => {
     const client = new CoreApiClient();
@@ -449,10 +491,10 @@ export default defineFrontComponent({
 Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const BulkExport = () => {
   const selectedRecordIds = useSelectedRecordIds();
@@ -490,12 +532,19 @@ export default defineFrontComponent({
   name: 'bulk-export',
   description: 'Export selected records',
   component: BulkExport,
-  command: {
-    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
-    label: 'Bulk Export',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+});
+```
+
+Afișați-o cu un [element de meniu de comandă](/l/ro/developers/extend/apps/layout/command-menu-items) restricționat la selecțiile de înregistrări:
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
 
@@ -523,15 +572,43 @@ Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/con
 Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
 
 * **Stiluri inline** — `style={{ color: 'red' }}`
-* **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
+* **Componente UI Twenty** — biblioteca proprie de componente a Twenty; vezi [Folosirea componentelor UI Twenty](#using-twenty-ui-components) mai jos
 * **Emotion** — CSS-in-JS cu `@emotion/react`
 * **Styled-components** — pattern-uri `styled.div`
 * **Tailwind CSS** — clase utilitare
 * **Orice bibliotecă CSS-in-JS** compatibilă cu React
 
+## Folosirea componentelor UI Twenty
+
+Twenty livrează biblioteca sa de componente ca pachetul [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Componentele frontend îl pot folosi pentru butoane, etichete, pastile de stare, chips, avataruri, pictograme, tipografie și tokeni de temă care se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru.
+
+### Instalare
+
+Adaugă pachetul în aplicația ta, fixat la versiunea cu care este livrată instanța ta de Twenty:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` este inclus în componenta ta frontend la momentul build-ului, astfel încât trebuie să fie doar o dependență a aplicației tale — nu este nimic de configurat la runtime.
+
+### Importarea componentelor
+
+Importă din subpath-ul corespunzător, nu din rădăcina pachetului, astfel încât doar componentele pe care le folosești să ajungă în bundle-ul tău:
+
+| Subpath                     | Ce exportă                                         |
+| --------------------------- | -------------------------------------------------- |
+| `twenty-ui/input`           | `Button` și câmpuri de formular                    |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` și altele        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` și altele              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` și altele |
+| `twenty-ui/icon`            | Componente `Icon*` (de ex. `IconCheck`)            |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`               |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +626,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Pictograme
+
+Importă pictograme individuale din `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Fiecare pictogramă denumită este eliminată prin tree-shaking, astfel încât importarea câtorva adaugă foarte puțin la dimensiunea bundle-ului. Evită `IconsProvider`, `useIcons` și `iconsState` — acestea încarcă întregul set de pictograme Tabler (câțiva MB).
+
+### Teme și tokeni de temă
+
+Componentele Twenty UI se potrivesc automat cu tema luminoasă și întunecată a spațiului de lucru — renderer-ul aplică schema de culori activă pe gazdă, iar componentele își determină culorile în funcție de aceasta.
+
+Pentru a folosi aceiași tokeni de design în propriile tale stiluri inline, apelează hook-ul `useTheme()`. Acesta returnează tokenii de temă ai Twenty (spațiere, culori, raze, fonturi) conectați la tema activă, fără a necesita vreo configurare `ThemeProvider` în componenta ta:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Deoarece `useTheme()` este un hook, citești tokenii în interiorul corpului componentei, astfel încât valorile reflectă întotdeauna tema activă în timp real. Aceeași hartă de tokeni este exportată și ca o constantă `themeCssVariables`, dar preferă `useTheme()` în componentele frontend — o constantă la nivel de modul care dereferențiază `themeCssVariables` poate fi nedefinită în timp ce manifestul aplicației este extras.
+
+Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useColorScheme()` din `twenty-sdk/front-component`, care returnează `'light'` sau `'dark'`.

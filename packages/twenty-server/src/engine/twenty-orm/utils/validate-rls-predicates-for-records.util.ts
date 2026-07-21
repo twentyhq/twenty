@@ -14,6 +14,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
 
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
@@ -36,12 +37,11 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     return;
   }
 
-  const userWorkspaceId = isUserAuthContext(authContext)
-    ? authContext.userWorkspaceId
-    : undefined;
-  const roleId = userWorkspaceId
-    ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
-    : undefined;
+  const roleId = resolveRoleIdFromAuthContext({
+    authContext,
+    userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
+    apiKeyRoleMap: internalContext.apiKeyRoleMap,
+  });
 
   if (!roleId) {
     return;

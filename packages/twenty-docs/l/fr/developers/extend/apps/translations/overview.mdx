@@ -1,0 +1,125 @@
+---
+title: Traductions
+description: Publiez votre application en plusieurs langues — traduisez les libellés du manifeste et les chaînes d’interface utilisateur via un seul catalogue de locales.
+icon: language
+---
+
+Les applications Twenty sont rédigées en **anglais** : les chaînes de vos sources et de votre manifeste
+sont le texte source en anglais, `en` est la locale source à partir de laquelle vous traduisez, et
+toute locale laissée non traduite revient à celle-ci par défaut.
+
+Votre application comporte deux types de textes traduisibles, et tous deux transitent par le même
+catalogue `locales/` :
+
+* **Libellés du manifeste** — noms d’objets et de champs, titres de vues, éléments de menu et
+  autres chaînes déclarées dans les métadonnées de votre application.
+* **Chaînes de front-component** — le texte d’interface utilisateur que vos composants React front affichent.
+
+Vous marquez les chaînes traduisibles, les extrayez dans des catalogues par locale,
+traduisez ces catalogues, et le build sert la bonne langue pour
+l’utilisateur actuel — sans configuration supplémentaire.
+
+## Marquer les chaînes de front-component
+
+Importez les helpers de traduction depuis `twenty-sdk/front-component` :
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### Quand utiliser quoi
+
+* **`<Trans>…</Trans>`** — texte statique dans JSX. Utilisez les props `message` et `values`
+  pour l’interpolation (`<Trans message="Hi {name}" values={{ name }} />`) ;
+  l’interpolation directement dans les enfants n’est pas extractible statiquement.
+* **`useTranslate().t`** — chaînes dynamiques à l’intérieur d’un composant. Se réaffiche lorsque
+  l’utilisateur change de langue. À privilégier à l’intérieur du rendu.
+* **`t(...)`** (importé directement) — traduction immédiate utilisable **partout**,
+  y compris dans les gestionnaires d’événements, helpers et dans la portée du module — pas seulement dans le rendu.
+* **`msg(...)`** — un descripteur paresseux pour les chaînes déclarées comme données (constantes,
+  configuration). Résolvez-le plus tard avec `t(descriptor)`.
+
+### Contexte
+
+Passez `context` pour lever l’ambiguïté entre des chaînes source identiques qui se traduisent
+différemment :
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+## Extraction et traduction
+
+Exécutez la commande d’extraction depuis le répertoire de votre application :
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+L’extraction collecte à la fois les libellés de votre manifeste et les chaînes `t()`/`msg()`/`\<Trans>`
+provenant de votre source front-component dans `locales/\<locale>.json`, indexées par
+chaîne source. Renseignez les traductions :
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées"
+}
+```
+
+Les espaces réservés comme `{name}` sont substitués à l’exécution — conservez-les dans la
+traduction. Toute chaîne laissée vide revient au texte source.
+
+## Comment ça marche
+
+`twenty dev:build` compile les catalogues et sert la bonne langue pour
+l’utilisateur actuel : les libellés du manifeste sont résolus côté serveur, et les catalogues
+front-component sont intégrés à chaque bundle de composant. À l’exécution, un composant lit la
+locale depuis son contexte d’exécution (la langue actuelle de l’hôte) et résout
+chaque chaîne à partir de son catalogue, en revenant à la source lorsqu’une traduction
+manque. Changer la langue dans l’hôte réaffiche en direct les chaînes `\<Trans>` et
+`useTranslate().t`.
+
+Comme les catalogues sont compilés au moment de la build, mettre à jour une traduction implique
+de relancer `twenty dev:build` (et de redéployer), comme pour toute autre modification.
+
+<Note>
+Les traductions sont compilées par `twenty dev:build` (et `twenty apply`). La
+surveillance continue `twenty dev` affiche les chaînes source, donc testez la sortie localisée
+avec une build ponctuelle.
+</Note>
+
+Les enfants texte de `<Trans>` peuvent s’étendre sur plusieurs lignes — les espaces sont compressés de
+la même façon que JSX les compresse, donc `<Trans>Welcome\n  back</Trans>` et la clé extraite
+deviendront toutes deux `Welcome back`.

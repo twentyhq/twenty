@@ -6,17 +6,17 @@ description: Creați prima dvs. aplicație Twenty în câteva minute.
 
 ## Cerințe
 
-* **Node.js 24+** — [Descărcați](https://nodejs.org/)
+* **Node.js 24.5+** — [Descărcați](https://nodejs.org/)
 * **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
 * **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
 
 Crearea unei aplicații Twenty are trei faze. Generatorul le reunește într-o singură comandă pe calea optimă, dar fiecare fază este un concept separat — când ceva eșuează, dacă știți în ce fază sunteți, știți ce trebuie să corectați.
 
-| Fază                    | Ce faceți                                        | Instrument                    | Rezultat                       |
-| ----------------------- | ------------------------------------------------ | ----------------------------- | ------------------------------ |
-| **1. Creați scheletul** | Generați codul sursă al aplicației               | `npx create-twenty-app`       | Un proiect TypeScript pe disc  |
-| **2. Rulați un server** | Porniți un server Twenty cu care să sincronizați | Docker + `yarn twenty server` | O instanță Twenty care rulează |
-| **3. Sincronizați**     | Sincronizați în timp real codul cu serverul      | `yarn twenty dev`             | Modificările apar în UI        |
+| Fază                    | Ce faceți                                        | Instrument                          | Rezultat                       |
+| ----------------------- | ------------------------------------------------ | ----------------------------------- | ------------------------------ |
+| **1. Creați scheletul** | Generați codul sursă al aplicației               | `npx create-twenty-app`             | Un proiect TypeScript pe disc  |
+| **2. Rulați un server** | Porniți un server Twenty cu care să sincronizați | Docker + `yarn twenty docker:start` | O instanță Twenty care rulează |
+| **3. Sincronizați**     | Sincronizați în timp real codul cu serverul      | `yarn twenty dev`                   | Modificările apar în UI        |
 
 ---
 
@@ -28,7 +28,7 @@ Creați o nouă aplicație din șablon:
 npx create-twenty-app@latest my-twenty-app
 ```
 
-Vi se va cere un nume și o descriere — apăsați **Enter** pentru valorile implicite. Aceasta generează un proiect TypeScript în `my-twenty-app/` cu un fișier inițial `application-config.ts`, un rol implicit, un flux de lucru CI și un test de integrare.
+Generatorul este neinteractiv: numele directorului devine numele aplicației. Transmite `--display-name` și `--description` pentru a personaliza metadatele generate (le poți edita și mai târziu în `src/constants/universal-identifiers.ts`). Aceasta generează un proiect TypeScript în `my-twenty-app/` cu un fișier inițial `application-config.ts`, un rol implicit, fluxuri de lucru CI/CD și un test de integrare.
 
 **După această fază:** aveți codul sursă al aplicației pe mașina dvs. Încă nu rulează — aceasta este Faza 2.
 
@@ -38,27 +38,13 @@ Vi se va cere un nume și o descriere — apăsați **Enter** pentru valorile im
 
 Aplicația are nevoie de un server Twenty cu care să se sincronizeze. Serverul este o instanță Twenty completă — UI, API GraphQL, PostgreSQL — care rulează local în Docker. Codul local încarcă definițiile pe acel server, făcându-le să apară în UI.
 
-Generatorul de schelet vă propune să pornească unul pentru dvs.:
+Generatorul de proiecte pornește unul pentru tine: cu Docker rulând, descarcă imaginea `twentycrm/twenty-app-dev`, o pornește pe portul `2020` și autentifică CLI-ul față de spațiul de lucru demo preconfigurat (`tim@apple.dev`) — fără a fi necesară autentificarea.
 
-> **Doriți să configurați o instanță Twenty locală?**
-
-* **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
-* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote:add`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
-</div>
-
-După ce serverul pornește, se deschide un browser pentru autentificare. Folosiți contul demo preconfigurat:
-
-* **E-mail:** `tim@apple.dev`
-* **Parolă:** `tim@apple.dev`
+Pentru a te conecta în schimb la un server Twenty existent, treci argumentul `--url \<your-server-url>`. Serverele la distanță se autentifică prin OAuth: se deschide un browser astfel încât să te poți autentifica și să dai clic pe **Authorize**, ceea ce oferă CLI-ului acces la spațiul tău de lucru. (Poți opta pentru OAuth și local cu `--authentication-method oauth` — autentifică-te cu `tim@apple.dev` / `tim@apple.dev`.)
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Ecranul de autentificare Twenty" />
 </div>
-
-Faceți clic pe **Authorize** pe ecranul următor — aceasta oferă CLI-ului acces la spațiul dvs. de lucru.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Ecranul de autorizare Twenty CLI" />
@@ -117,27 +103,31 @@ Faceți clic pe **View installed app** pentru a vedea instalarea în spațiul de
 
 ### Sincronizare unică pentru CI și scripturi
 
-Adăugați `--once` pentru a rula un singur build + sync și a ieși — același flux, fără watcher:
+Folosește `plan` și `apply` pentru a rula același pipeline o singură dată, fără watcher:
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| Comandă                            | Comportament                                                                         | Când se folosește                                                                     |
-| ---------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| `yarn twenty dev`                  | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                                        |
-| `yarn twenty dev --once`           | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate.                       |
-| `yarn twenty dev --once --dry-run` | Construiește și afișează modificările de metadate **fără a le aplica**.              | Inspectarea modificărilor pe care le-ar face o sincronizare înainte de a le confirma. |
+| Comandă             | Comportament                                                                                                                                                              | Când se folosește                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `yarn twenty dev`   | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți.                                                                                      | Dezvoltare locală interactivă.                                                        |
+| `yarn twenty apply` | Un singur build + sync, iese cu `0` la succes, `1` la eșec. Solicită confirmare pentru modificările distructive (treci argumentul `--force` pentru a sări peste aceasta). | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate.                       |
+| `yarn twenty plan`  | Construiește și afișează modificările de metadate **fără a le aplica**.                                                                                                   | Inspectarea modificărilor pe care le-ar face o sincronizare înainte de a le confirma. |
 
-Ambele moduri necesită o conexiune la distanță autentificată. Vezi [Sincronizare și recuperare](/l/ro/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) pentru mai multe detalii despre `--dry-run`.
+Toate modurile necesită o conexiune la distanță autentificată. Vezi [Sincronizare și recuperare](/l/ro/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) pentru mai multe detalii despre `plan`.
+
+<Note>
+`yarn twenty dev --once` și `yarn twenty dev --once --dry-run` sunt aliasuri depreciate pentru `yarn twenty apply` și `yarn twenty plan`.
+</Note>
 
 ### Opțiuni pentru modul de dezvoltare
 
 | Opțiune                               | Descriere                                                                                        |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `--once`                              | Construiește și sincronizează o singură dată, apoi iese.                                         |
-| `--dry-run`                           | Cu `--once`, poți previzualiza modificările de metadate fără a le aplica. Nu scrie nimic.        |
-| `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
+| `--force`                             | Aplică modificările distructive (ștergeri) fără confirmare.                                      |
+| `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `1000`). |
 | `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
 
 ## Ce puteți construi

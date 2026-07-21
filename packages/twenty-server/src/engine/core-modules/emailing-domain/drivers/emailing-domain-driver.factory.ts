@@ -10,6 +10,7 @@ import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domai
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
@@ -25,6 +26,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     private readonly awsSesRegisterDomainService: AwsSesRegisterDomainService,
     private readonly awsSesSendEmailService: AwsSesSendEmailService,
     private readonly logEmailingDomainDriver: LogEmailingDomainDriver,
+    private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -79,6 +81,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
           this.awsSesHandleErrorService,
           this.awsSesRegisterDomainService,
           this.awsSesSendEmailService,
+          this.unsubscribeContentService,
         );
       }
 

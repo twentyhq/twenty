@@ -36,6 +36,14 @@
         }
       }
     },
+    "test:ci": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "jest --config ./jest.config.mjs --ci --runInBand"
+      }
+    },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {

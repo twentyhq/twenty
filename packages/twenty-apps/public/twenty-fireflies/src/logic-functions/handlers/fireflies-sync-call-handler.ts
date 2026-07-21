@@ -9,8 +9,9 @@ import {
 import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 import {
   type FirefliesSyncableField,
-  syncFirefliesFieldToCalendarEvent,
-} from 'src/logic-functions/utils/sync-fireflies-field-to-calendar-event';
+  type SyncFirefliesCallResult,
+  syncFirefliesCallToCallRecording,
+} from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
 
 const ALL_FIELDS: FirefliesSyncableField[] = ['transcript', 'summary'];
 
@@ -49,16 +50,19 @@ export const firefliesSyncCallHandler = async (
 
   const client = new CoreApiClient();
 
-  const results = await Promise.all(
-    ALL_FIELDS.map((field) =>
-      syncFirefliesFieldToCalendarEvent({
+  // Sequential: both fields upsert the same row, concurrent runs would race on the create.
+  const results: SyncFirefliesCallResult[] = [];
+
+  for (const field of ALL_FIELDS) {
+    results.push(
+      await syncFirefliesCallToCallRecording({
         apiKey: apiKeyResult.apiKey,
         client,
         transcriptId,
         field,
       }),
-    ),
-  );
+    );
+  }
 
   const fieldOutcomes: FirefliesSyncCallFieldOutcome[] = results.map(
     (result) => {
@@ -80,9 +84,10 @@ export const firefliesSyncCallHandler = async (
     .filter((outcome) => outcome.status === 'updated')
     .map((outcome) => outcome.field);
 
-  const calendarEventId = results.find(
-    (result) => result.status === 'updated',
-  )?.calendarEventId;
+  const updatedResult = results.find(
+    (result): result is Extract<SyncFirefliesCallResult, { status: 'updated' }> =>
+      result.status === 'updated',
+  );
 
   if (updatedFields.length === 0) {
     const skipReasons = fieldOutcomes
@@ -94,7 +99,7 @@ export const firefliesSyncCallHandler = async (
 
     return {
       success: false,
-      message: `No fields were updated on the matching CalendarEvent for Fireflies transcript ${transcriptId}.`,
+      message: `No CallRecording was written for Fireflies transcript ${transcriptId}.`,
       error: [...errors, ...skipReasons].join(' | ') || 'No fields updated.',
       transcriptId,
       fieldOutcomes,
@@ -111,14 +116,15 @@ export const firefliesSyncCallHandler = async (
       partialFailures.length > 0
         ? `Synced ${updatedFields.join(
             ' + ',
-          )} for Fireflies transcript ${transcriptId} (with errors on ${partialFailures
+          )} onto the CallRecording for Fireflies transcript ${transcriptId} (with errors on ${partialFailures
             .map((outcome) => outcome.field)
             .join(', ')}).`
         : `Synced ${updatedFields.join(
             ' + ',
-          )} for Fireflies transcript ${transcriptId}.`,
+          )} onto the CallRecording for Fireflies transcript ${transcriptId}.`,
     transcriptId,
-    calendarEventId,
+    callRecordingId: updatedResult?.callRecordingId,
+    calendarEventId: updatedResult?.calendarEventId,
     updatedFields,
     fieldOutcomes,
   };

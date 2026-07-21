@@ -19,49 +19,9 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Suspended Workspace"
-msgstr "Ανασταλμένος Χώρος Εργασίας"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Dear {userName},"
-msgstr "Αγαπητέ/ή {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Hello,"
-msgstr "Γεια σας,"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Φαίνεται ότι ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει ανασταλεί για {daysSinceInactive} ημέρες."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "Ο χώρος εργασίας θα απενεργοποιηθεί σε {remainingDays} {dayOrDays}, και όλα τα δεδομένα του θα διαγραφούν."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Εάν επιθυμείτε να συνεχίστε να χρησιμοποιείτε το Twenty, παρακαλούμε ενημερώστε την συνδρομή σας εντός των επόμενων {remainingDays} {dayOrDays}."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Update your subscription"
-msgstr "Ενημερώστε τη συνδρομή σας"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Επικύρωση τομέα"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας που ονομάζεται <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -69,19 +29,9 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Παρακαλώ επικυρώστε αυτόν τον τομέα για να επιτρέψετε στους χρήστες με διευθύνσεις email <1>@{domain}</1> να συμμετάσχουν στον χώρο εργασίας σας χωρίς να απαιτείται πρόσκληση."
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Δοκιμαστικό email"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας που ονομάζεται <1>{workspaceName}</1>."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Μια ενημέρωση πριν λήξει η δοκιμαστική περίοδός σας"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,8 +39,18 @@ msgid "Accept invite"
 msgstr "Αποδοχή πρόσκλησης"
 
 #. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "Προσθήκη μεθόδου πληρωμής"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr "Μετά από αυτό, ο χώρος εργασίας και όλα τα δεδομένα του θα διαγραφούν οριστικά — και δεν θα μπορούμε να τον επαναφέρουμε."
+
+#. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
+msgid "Confirm new email"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -100,28 +60,8 @@ msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
+msgid "Confirm your new email address"
 msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Επαληθεύστε το Email"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Ο κωδικός έχει ενημερωθεί"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Αυτό είναι ένα επιβεβαίωση ότι ο κωδικός για τον λογαριασμό σας ({email}) άλλαξε με επιτυχία στις {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Εάν δεν έχετε προβεί εσείς σε αυτήν την αλλαγή, παρακαλώ επικοινωνήστε άμεσα με τον ιδιοκτήτη του χώρου εργασίας σας."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -129,14 +69,124 @@ msgid "Connect to Twenty"
 msgstr "Συνδεθείτε στο Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Επαναφέρετε τον κωδικό σας 🗝"
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Αγαπητέ/ή {userName},"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Ορίστε τον κωδικό πρόσβασής σας 🗝"
+#: src/components/Footer.tsx
+msgid "Developers"
+msgstr "Προγραμματιστές"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Απενεργοποιημένο"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Ενεργοποιημένο"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Github"
+msgstr "Github"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr "Τα καλά νέα πρώτα: ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει απλώς τεθεί σε παύση — κανένα από τα δεδομένα σας δεν έχει χαθεί."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Γεια σας,"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr "Γεια σου {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Αν το Twenty σας εξυπηρετεί, είστε καλυμμένοι — δεν χρειάζεται να κάνετε τίποτα. Αν δεν είναι η κατάλληλη λύση, μπορείτε να ακυρώσετε με ένα κλικ πριν από τότε και δεν θα χρεωθείτε."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Εάν δεν έχετε προβεί εσείς σε αυτήν την αλλαγή, παρακαλώ επικοινωνήστε άμεσα με τον ιδιοκτήτη του χώρου εργασίας σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "Αν δεν κάνετε τίποτα, θα θέσουμε τον χώρο εργασίας σας σε παύση και θα κρατήσουμε τα δεδομένα σας ασφαλή για {dataRetentionDays} ημέρες σε περίπτωση που αλλάξετε γνώμη — καμία κάρτα δεν θα χρεωθεί."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Αν θελήσετε κάποια στιγμή να δώσετε στο Twenty άλλη μια ευκαιρία, μπορείτε να ξεκινήσετε έναν νέο χώρο εργασίας μέσα σε λίγα λεπτά — θα χαρούμε πολύ να σας έχουμε ξανά μαζί μας."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Είναι ένα CRM, ένα λογισμικό που βοηθά τις επιχειρήσεις να διαχειρίζονται αποτελεσματικά τα δεδομένα και τις σχέσεις με τους πελάτες τους."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Τα δεδομένα του έχουν αφαιρεθεί και δεν μπορούν πλέον να ανακτηθούν."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Για να μην υπάρξουν ποτέ δυσάρεστες εκπλήξεις, σας ενημερώνουμε εκ των προτέρων για το ετήσιο πρόγραμμά σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Διαχείριση συνδρομής"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Δεν χρειάζεται να κάνετε κάτι αν θέλετε να συνεχίσετε. Αν προτιμάτε να μην ανανεώσετε, μπορείτε να ακυρώσετε οποιαδήποτε στιγμή πριν από τότε."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Ο κωδικός έχει ενημερωθεί"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr "Επανενεργοποιήστε τον μέσα στις επόμενες {remainingDays} {dayOrDays} και θα συνεχίσετε ακριβώς από εκεί που σταματήσατε, με κάθε εγγραφή, προβολή και ρύθμιση ακριβώς εκεί που τις αφήσατε."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate workspace"
+msgstr "Επανενεργοποίηση χώρου εργασίας"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Read Twenty's user guide"
+msgstr "Διαβάστε τον οδηγό χρήστη του Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -145,8 +195,63 @@ msgstr "Επαναφορά"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Επαναφέρετε τον κωδικό σας 🗝"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "San Francisco / Paris"
+msgstr "Σαν Φρανσίσκο / Παρίσι"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Η πρόσβαση διαχειριστή διακομιστή άλλαξε"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.fullAdmin"
+msgstr "Πλήρης πρόσβαση διαχειριστή"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.impersonation"
+msgstr "Προσωποποίηση"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.summary"
+msgstr "Σύνοψη αλλαγής πρόσβασης διαχειριστή διακομιστή"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.warning"
+msgstr "Προειδοποίηση"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
 msgid "Set"
 msgstr "Ορίστε"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Ορίστε τον κωδικό πρόσβασής σας 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Ξεκινήστε έναν νέο χώρο εργασίας"
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Δοκιμαστικό email"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Αυτό είναι ένα επιβεβαίωση ότι ο κωδικός για τον λογαριασμό σας ({email}) άλλαξε με επιτυχία στις {formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -154,79 +259,9 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Αυτός ο σύνδεσμος ισχύει μόνο για τις επόμενες {duration}. Εάν ο σύνδεσμος δεν λειτουργεί, μπορείτε να χρησιμοποιήσετε τον σύνδεσμο επαλήθευσης σύνδεσης απευθείας:"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "Διαγραμμένος Χώρος Εργασίας"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "Ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει διαγραφεί καθώς η συνδρομή σας έληξε {daysSinceInactive} ημέρες πριν."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Όλα τα δεδομένα σε αυτόν τον χώρο εργασίας έχουν διαγραφεί μόνιμα."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Εάν επιθυμείτε να χρησιμοποιήσετε ξανά το Twenty, μπορείτε να δημιουργήσετε ένα νέο χώρο εργασίας."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "Δημιουργία νέου χώρου εργασίας"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Τι είναι το Twenty;"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Είναι ένα CRM, ένα λογισμικό που βοηθά τις επιχειρήσεις να διαχειρίζονται αποτελεσματικά τα δεδομένα και τις σχέσεις με τους πελάτες τους."
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Website"
-msgstr "Ιστοσελίδα"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's website"
-msgstr "Επισκεφτείτε την ιστοσελίδα του Twenty"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Github"
-msgstr "Github"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's GitHub repository"
-msgstr "Επισκεφτείτε το αποθετήριο του Twenty στο GitHub"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "User guide"
-msgstr "Οδηγός Χρήστη"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Read Twenty's user guide"
-msgstr "Διαβάστε τον οδηγό χρήστη του Twenty"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Developers"
-msgstr "Προγραμματιστές"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's developer documentation"
-msgstr "Επισκεφτείτε την τεκμηρίωση για προγραμματιστές του Twenty"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "Για να διατηρήσετε τον χώρο εργασίας σας και όλα όσα έχετε δημιουργήσει, προσθέστε μια μέθοδο πληρωμής και επιλέξτε ένα πρόγραμμα."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -235,5 +270,91 @@ msgstr "Twenty.com, Δημόσια Οφέλη Εταιρεία"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "San Francisco / Paris"
-msgstr "Σαν Φρανσίσκο / Παρίσι"
+msgid "User guide"
+msgstr "Οδηγός Χρήστη"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Επικύρωση τομέα"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Επαληθεύστε το Email"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's developer documentation"
+msgstr "Επισκεφτείτε την τεκμηρίωση για προγραμματιστές του Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's GitHub repository"
+msgstr "Επισκεφτείτε το αποθετήριο του Twenty στο GitHub"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's website"
+msgstr "Επισκεφτείτε την ιστοσελίδα του Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Δεν μας αρέσουν οι απρόσμενες χρεώσεις, οπότε σας στέλνουμε αυτή τη φιλική υπενθύμιση."
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Website"
+msgstr "Ιστοσελίδα"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Τι είναι το Twenty;"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Το ετήσιο πρόγραμμά σας για το <0>{workspaceDisplayName}</0> ανανεώνεται στις {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το ετήσιο πρόγραμμά σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το μηνιαίο πρόγραμμά σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Το πρόγραμμά σας θα ανανεωθεί σύντομα"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "Η δοκιμαστική περίοδός σας λήγει σύντομα"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει πλέον διαγραφεί οριστικά — είχε τεθεί σε παύση πριν από {daysSinceInactive} ημέρες και δεν επανενεργοποιήθηκε εγκαίρως."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Ο χώρος εργασίας σας έχει διαγραφεί"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Your workspace is paused"
+msgstr "Ο χώρος εργασίας σας έχει τεθεί σε παύση"

@@ -78,6 +78,13 @@ Vytvořte `vitest.config.ts` v kořeni vaší aplikace:
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-Vytvořte soubor nastavení, který před spuštěním testů ověří dostupnost serveru:
+Vytvořte globální soubor pro nastavení, který ověří, že je server dosažitelný, zapíše testovací konfiguraci pro SDK (`~/.twenty/config.test.json`) a před spuštěním testů provede synchronizaci aplikace:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## Programová rozhraní SDK
 
 Subcesta `twenty-sdk/cli` exportuje funkce, které můžete volat přímo z testovacího kódu:
 
-| Funkce         | Popis                                                 |
-| -------------- | ----------------------------------------------------- |
-| `appBuild`     | Sestaví aplikaci a volitelně zabalí tarball           |
-| `appDeploy`    | Nahraje tarball na server                             |
-| `appInstall`   | Nainstaluje aplikaci do aktivního pracovního prostoru |
-| `appUninstall` | Odinstaluje aplikaci z aktivního pracovního prostoru  |
+| Funkce         | Popis                                                                          |
+| -------------- | ------------------------------------------------------------------------------ |
+| `appBuild`     | Sestaví aplikaci a volitelně zabalí tarball                                    |
+| `appDeploy`    | Nahraje tarball na server                                                      |
+| `appDevOnce`   | Jednorázově sestaví a synchronizuje aplikaci (stejně jako `yarn twenty apply`) |
+| `appInstall`   | Nainstaluje aplikaci do aktivního pracovního prostoru                          |
+| `appUninstall` | Odinstaluje aplikaci z aktivního pracovního prostoru                           |
 
 Každá funkce vrací objekt výsledku se `success: boolean` a buď `data`, nebo `error`.
 
@@ -238,64 +253,10 @@ Kontrolu typů můžete spustit i na vaší aplikaci bez spuštění testů:
 yarn twenty dev:typecheck
 ```
 
-Spustí se `tsc --noEmit` a nahlásí se případné chyby typů.
+Spustí se `tsc --noEmit` proti souboru `tsconfig.json` vaší aplikace a nahlásí se případné chyby typů. Vygenerované aplikace také obsahují skript `yarn typecheck`, který pokrývá i testovací soubory (`tsconfig.spec.json`).
 
 ## CI s GitHub Actions
 
-Generátor kostry vytvoří připravený k použití workflow GitHub Actions v `.github/workflows/ci.yml`. Automaticky spouští integrační testy při každém pushi do `main` a u pull requestů.
+Generátor kostry vytvoří připravený k použití workflow v `.github/workflows/ci.yml`. Při každém pushi do `main` a při každém pull requestu spustí efemérní server Twenty v runneru (pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), poté spustí `yarn lint`, `yarn typecheck`, `yarn test:unit` a `yarn test` s `TWENTY_API_URL` / `TWENTY_API_KEY` směřujícími na tento server. Nejsou vyžadovány žádné tajné údaje a verzi serveru můžete připnout pomocí proměnné prostředí `TWENTY_VERSION` na začátku workflow.
 
-Workflow:
-
-1. Načte váš kód (checkout).
-2. Spustí dočasný server Twenty pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Nainstaluje závislosti pomocí `yarn install --immutable`
-4. Spustí `yarn test` s proměnnými `TWENTY_API_URL` a `TWENTY_API_KEY` vloženými z výstupů akce
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Není potřeba konfigurovat žádné secrets — akce `spawn-twenty-docker-image` spustí dočasný server Twenty přímo v runneru a vypíše podrobnosti připojení. Secret `GITHUB_TOKEN` je poskytován GitHubem automaticky.
-
-Chcete-li připnout konkrétní verzi Twenty místo `latest`, změňte proměnnou prostředí `TWENTY_VERSION` na začátku workflow.
+Úplný postup pro tři workflow generované kostrou (`ci.yml`, nasazovací pipeline `cd.yml` a `publish.yml` pro publikování na npm) najdete v části [Publishing → Automated CI/CD](/l/cs/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows).

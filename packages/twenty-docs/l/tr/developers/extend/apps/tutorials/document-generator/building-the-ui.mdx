@@ -1,0 +1,278 @@
+---
+title: 4. UI'yi oluşturma
+icon: table-columns
+description: Görünümler, kenar çubuğu gezinmesi, bir komut ve ön uç bileşenleri.
+---
+
+Şu anda nesnelere yalnızca Settings üzerinden erişilebiliyor. Uygulamaya UI'de gerçek bir varlık kazandıralım: liste görünümleri, kenar çubuğu girişleri, tek tıkla **Generate document** komutu, bir belgeyi **önizlemek** için kayıt sayfası ön uç bileşeni ve şablonlar için yerel zengin metin **editör** sekmesi.
+
+## Görünümler ve gezinme
+
+Bir [görünüm](/l/tr/developers/extend/apps/layout/views), belirli bir nesnenin kaydedilmiş bir listesidir.
+Bir [gezinme menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items)
+bu görünümü kenar çubuğuna yerleştirir.
+
+```ts filename="src/views/documents.view.ts"
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+export default defineView({
+  universalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All documents',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconFile',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    { universalIdentifier: DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0, isVisible: true, size: 280 },
+    { universalIdentifier: DOCUMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1, isVisible: true, size: 120 },
+    { universalIdentifier: DOCUMENTS_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2, isVisible: true, size: 200 },
+  ],
+});
+```
+
+```ts filename="src/navigation-menu-items/documents.navigation-menu-item.ts"
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  name: 'Documents',
+  icon: 'IconFile',
+  color: 'green',
+  position: 1,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Aynı çifti şablonlar için de ekleyin. İkisi de artık kenar çubuğunda görünüyor:
+
+<Frame caption="Kenar çubuğunda Documents ve Templates, oluşturulmuş belge listelenmiş şekilde.">
+  <img src="/images/docs/developers/extends/apps/document-generator/04-documents-view.png" alt="Oluşturulmuş belgeli Documents görünümü" />
+</Frame>
+
+## Bir ön uç bileşeni
+
+Bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), Twenty içinde izole edilmiş bir React bileşenidir. Bizimki seçili kaydı okur, kişi şablonlarını `CoreApiClient` aracılığıyla yükler ve bir önceki bölümdeki rotaya POST isteği gönderir.
+
+```tsx filename="src/front-components/generate-document-form.front-component.tsx"
+import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, useSelectedRecordIds } from 'twenty-sdk/front-component';
+
+const GenerateDocumentForm = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+  const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
+  const [templateId, setTemplateId] = useState('');
+
+  useEffect(() => {
+    new CoreApiClient()
+      .query({ documentTemplates: {
+        __args: { filter: { target: { eq: 'PERSON' } }, first: 100 },
+        edges: { node: { id: true, name: true } } } })
+      .then(({ documentTemplates }) => {
+        const list = documentTemplates?.edges?.map((e) => e.node) ?? [];
+        setTemplates(list);
+        if (list[0]) setTemplateId(list[0].id);
+      });
+  }, []);
+
+  const generate = async () => {
+    const res = await new RestApiClient().post<{ success: boolean }>(
+      '/s/documents/generate',
+      { templateId, recordId },
+    );
+    await enqueueSnackbar({
+      message: res.success ? 'Document generated.' : 'Generation failed.',
+      variant: res.success ? 'success' : 'error',
+    });
+  };
+
+  // ...render a <select> of templates and a Generate button
+};
+
+export default defineFrontComponent({
+  universalIdentifier: GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-form',
+  component: GenerateDocumentForm,
+});
+```
+
+<Warning>
+Değerleri `twenty-ui` içe aktarmak yerine satır içi CSS değişkenleriyle (`var(--t-color-blue)`) stillendirin. SDK, derleme sırasında bu paketi taklit eder, bu nedenle tema sabitlerinin modül düzeyindeki içe aktarımları `undefined` olur. Tam bileşene bakın:
+[full component](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+</Warning>
+
+## Onu açacak bir komut
+
+Bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) `availabilityType: 'RECORD_SELECTION'` ile, bir Person seçildiğinde görünür ve bileşeni yan panelde açar.
+
+```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
+import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: GENERATE_DOCUMENT_COMMAND_UNIVERSAL_IDENTIFIER,
+  label: 'Generate document',
+  availabilityType: 'RECORD_SELECTION',
+  availabilityObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  frontComponentUniversalIdentifier:
+    GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Tüm akışı deneyin
+
+**People**'ı açın, bir kişiyi işaretleyin ve <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> tuşlarına basın.
+"Generate document" komutu, uygulamanızla etiketlenmiş şekilde görünür:
+
+<Frame caption="Bir Person seçildiğinde komut görünür.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06-command-menu.png" alt="Generate document ile komut menüsü" />
+</Frame>
+
+Çalıştırın — bileşeniniz yan panelde açılır. Bir şablon seçin, **Generate**'a tıklayın ve **Documents** içinde yeni bir kayıt oluşur.
+
+<Frame caption="Ön uç bileşeni, şablonları yüklüyor ve tıklamayla oluşturuyor.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06b-front-component.png" alt="Generate document yan paneli" />
+</Frame>
+
+Oluşturulan her belge, uygulamanızı yazarı olarak kaydeder:
+
+<Frame caption="Document Generator tarafından oluşturuldu, durum Generated.">
+  <img src="/images/docs/developers/extends/apps/document-generator/05-document-record.png" alt="Oluşturulmuş bir belge kaydı" />
+</Frame>
+
+## Bir belgenin kayıt sayfasında önizleme
+
+Bir ön uç bileşeni sadece komut menüleri için değildir — onu bir **kayıt sayfasında sekme** olarak da bağlayabilirsiniz. Belge kaydına, Markdown gövdesini şık, yazdırılabilir bir sayfa olarak işleyen bir *Preview* sekmesi ekleyelim.
+
+Bileşen, çalışma bağlamından geçerli kayıt kimliğini okur, belgeyi yükler ve işler. Ön uç bileşenleri, yalnızca belirli bir HTML etiketleri beyaz listesine izin veren bir **sandbox** içinde çalışır — ham HTML enjeksiyonu (`dangerouslySetInnerHTML`) ve `\<style>` engellenir — bu nedenle Markdown'ı, satır içi stillerle, küçük bir [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx) yardımcısı aracılığıyla React öğeleri olarak işliyoruz.
+
+```tsx filename="src/front-components/document-viewer.front-component.tsx"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
+import { Markdown } from 'src/utils/markdown-to-react';
+
+const DocumentViewer = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  // ...load { content, file } for recordId, then derive the links:
+  const pdfUrl = document.file?.[0]?.url;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
+
+  // Render the template body, plus quick links to the web page and the PDF.
+  // Links open in a new tab so they don't navigate the embedded component.
+  return (
+    <div style={styles.scroll}>
+      <div style={styles.actions}>
+        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+          Open web page
+        </a>
+        {pdfUrl ? (
+          <a style={styles.actionLink} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            Download PDF
+          </a>
+        ) : null}
+      </div>
+      <div style={styles.paper}>
+        <div style={styles.body}>
+          <Markdown content={document.content} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-viewer',
+  component: DocumentViewer,
+});
+```
+
+Bunu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) ile bağlayın. Bir
+`RECORD_PAGE` düzeni, bir nesnenin kayıt görünümüne sekmeler ekler; `CANVAS` sekmesindeki bir `FRONT_COMPONENT` widget'ı bileşeni barındırır:
+
+```ts filename="src/page-layouts/document-record.page-layout.ts"
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'Document record page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [{
+    universalIdentifier: DOCUMENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+    title: 'Preview',
+    icon: 'IconEye',
+    position: 50,
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    widgets: [{
+      universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+      title: 'Document preview',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    }],
+  }],
+});
+```
+
+Herhangi bir belgeyi açın — **Preview** sekmesi, belgeyi paylaşılabilir web sayfasına ve PDF'e bağlantılarla birlikte, güzel bir şekilde işler:
+
+<Frame caption="Preview sekmesi, belgeyi satır içi stillerle ve hızlı bağlantılarla işler.">
+  <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Kayıt sayfası sekmesinde belge görüntüleyici ön uç bileşeni" />
+</Frame>
+
+## Zengin metin editörüyle bir şablonu düzenleme
+
+Şablonların özel bir bileşene hiç ihtiyacı yoktur. `body` bir
+`RICH_TEXT` alanı olduğu için, Twenty bunun için zaten tam özellikli bir zengin metin editörü sunar — standart Note ve Task nesnelerinin kullandığı editörün aynısı. Biz sadece onu şablon kayıt sayfasında görünür hale getiriyoruz.
+
+`FIELD` widget'lı, `EDITOR` görüntü modunda ve `fieldMetadataId` aracılığıyla `body` alanını işaret eden bir sekme ekleyin:
+
+```ts filename="src/page-layouts/template-record.page-layout.ts"
+{
+  universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Template',
+  position: 1,
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  widgets: [{
+    universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+    title: 'Template',
+    type: 'FIELD',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+    configuration: {
+      configurationType: 'FIELD',
+      fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldDisplayMode: 'EDITOR',
+    },
+  }],
+}
+```
+
+Bir `RICH_TEXT` alanı, hem editörün blok JSON'unu hem de bir Markdown izdüşümünü saklar. Oluşturma hattı bu Markdown izdüşümünü okur, böylece yer tutucular, PDF ve paylaşılabilir web sayfası hiç değişmeden çalışmaya devam eder — tam [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts) dosyasına bakın.
+Artık editörler, şablonları düzgün bir zengin metin editöründe yazıyor:
+
+<Frame caption="Template sekmesi: Twenty'nin yerel zengin metin editörü, body alanına bağlı.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Yerel zengin metin editörü sekmesine sahip şablon kaydı" />
+</Frame>
+
+**Bu adımdan sonra:** belgeler harika bir şekilde önizlenir ve şablonlar uygulama içinde düzenlenebilir. Sırada, bir AI temsilcisinin bunları bir sohbetten oluşturmasını sağlamak var.
+
+<Card title="Sırada: bir AI temsilcisi →" icon="robot" href="/l/tr/developers/extend/apps/tutorials/document-generator/ai-agent">
+  Aracınızı çağıran bir temsilci ve bir yetenek ekleyin.
+</Card>

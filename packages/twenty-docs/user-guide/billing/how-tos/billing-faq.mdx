@@ -9,7 +9,7 @@ description: Frequently asked questions about Twenty pricing and billing.
 <Accordion title="Can I use Twenty for free while self-hosting?">
 Yes, you can use Twenty for free while self-hosting. You will get access to everything included in the Pro (Cloud) plan, except the support from our core-team. Support is accessible via our Discord community.
 
-If you want to self-host and need the Premium features (SSO and row-level permissions), you can choose the paid Organization (Self-Hosted) license. This also includes support from the Twenty team and removes the requirement to publish custom code as open-source before distributing.
+If you want to self-host and need the Premium features (SSO, row-level permissions and more), you can choose the paid Organization (Self-Hosted) license. This also includes support from the Twenty team and removes the requirement to publish custom code as open-source before distributing.
 </Accordion>
 
 <Accordion title="What are the Premium features?">
@@ -17,6 +17,10 @@ Premium features are only available on the Organization plans (Cloud or Self-Hos
 - **SSO integration**: Single Sign-On with your identity provider
 - **Row-level permissions**: Fine-grained access control at the record level
 - **AI usage data**: Track AI consumption across the workspace
+- **Audit logs**: Check what each workspace member has been doing
+- **Email campaigns**: Plan which emails should be sent (available soon)
+- **Unlimited workspaces**: Create as many workspaces as you want (self-hosted only)
+- **Private source code**: No requirement to publish changes to publicly available repository (self-hosted only)
 </Accordion>
 
 <Accordion title="Is Organization plan on cloud and Organization plan on self-hosted the same?">
@@ -28,19 +32,19 @@ We do not offer free seats. Pricing is per user and each user needs a licence to
 </Accordion>
 
 <Accordion title="Where can I switch my subscription to the Organization plan?">
-You can do so under `Settings → Billing`. Then click on `Switch to Organization`.
+You can do so under `Settings → Billing → Plans`. Then click on `Switch to Organization`.
 </Accordion>
 
 <Accordion title="Where can I switch my subscription to the Pro plan?">
-Please reach out to our team directly via the Support, there is no easy way to do this using the UI at the moment.
+You can do so under `Settings → Billing → Plans`. Then click on `Switch to Pro`.
 </Accordion>
 
-<Accordion title="Where can I switch my subscription to Yearly?">
-You can do so under `Settings → Billing`. Then click on `Switch to Yearly`.
+<Accordion title="Where can I switch my subscription to yearly?">
+You can do so under `Settings → Billing`. Then click on `Upgrade to yearly`.
 </Accordion>
 
-<Accordion title="Where can I switch my subscription to Monthly?">
-Please reach out to our team directly via the Support, there is no easy way to do this using the UI at the moment.
+<Accordion title="Where can I switch my subscription to monthly?">
+You can do so under `Settings → Billing`. Then click on `Downgrade to monthly`.
 </Accordion>
 
 <Accordion title="Where can I see my credit usage?">
@@ -57,13 +61,18 @@ The number of credits depends on your billing cycle, not your plan:
 Each workflow action consumes credits based on its complexity:
 - **Basic internal operations** (such as search, update, create records) consume very few credits
 - **More complex operations** like code nodes and requests to external services consume more credits
-- **AI prompts** (coming soon!) will also consume more credits based on usage
+- **AI prompts** also consume more credits based on usage
+- **Apps** also consume more credits similarly to Code node
 
-Credits are deducted in real-time when workflows execute. You can monitor your usage in **Settings → Billing** to track consumption and remaining credits.
+Credits are deducted in real-time when workflows or apps execute. You can monitor your usage in **Settings → Billing** to track consumption and remaining credits.
 </Accordion>
 
 <Accordion title="Can I buy more workflow credits?">
 You can buy additional credits under `Settings → Billing`.
+</Accordion>
+
+<Accordion title="Can I buy more workflow credits only for 1 month?">
+Yes, go to `Settings → Billing`, click `Increase` button, choose how many credits you want and confirm, they'll be applied for current billing period. Then click `Increase` button again, change value back to original and confirm, downgrade will be applied starting next billing period.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ You can do so under `Settings → Billing`. Then click on `View billing details`
 
 <Accordion title="Where can I access my invoices?">
 You can do so under `Settings → Billing`. Then click on `View billing details`. You'll see all your invoices at the bottom of the screen.
+</Accordion>
+
+<Accordion title="Why are my seats different from the number of users in my workspace?">
+Workspace seat counts are synchronized with the payment system every 6 hours; invoices are adjusted based on the difference.
+</Accordion>
+
+<Accordion title="Why did I get an invoice for a new workspace member?">
+When a new workspace member is added to workspace, an invoice is sent to cover the difference. When a workspace member is removed, the change is applied in the next standard monthly/yearly invoice.
 </Accordion>
 </AccordionGroup>

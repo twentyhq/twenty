@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## Konfigurační pole
 
-| Pole                                    | Povinné | Popis                                                                                                                                                                                   |
-| --------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                   | Ano     | Stabilní jedinečné ID pro příkaz                                                                                                                                                        |
-| `label`                                 | Ano     | Plný popisek zobrazený v příkazovém menu (Cmd+K)                                                                                                                                        |
-| `frontComponentUniversalIdentifier`     | Ano     | `universalIdentifier` frontendové komponenty, kterou tento příkaz otevírá                                                                                                               |
-| `shortLabel`                            | Ne      | Kratší popisek zobrazený na připnutém tlačítku rychlé akce                                                                                                                              |
-| `icon`                                  | Ne      | Název ikony zobrazený vedle popisku (např. `'IconBolt'`, `'IconSend'`)                                                                                                                  |
-| `isPinned`                              | Ne      | Pokud je `true`, zobrazí příkaz jako tlačítko rychlé akce v pravém horním rohu stránky                                                                                                  |
-| `availabilityType`                      | Ne      | Určuje, kde se příkaz zobrazuje: `'GLOBAL'` (vždy dostupné), `'RECORD_SELECTION'` (pouze když jsou vybrány záznamy) nebo `'FALLBACK'` (zobrazeno, když neodpovídají žádné jiné příkazy) |
-| `availabilityObjectUniversalIdentifier` | Ne      | Omezí příkaz na stránky konkrétního typu objektu (např. pouze u záznamů Company)                                                                                                        |
-| `conditionalAvailabilityExpression`     | Ne      | Logický výraz, který dynamicky řídí viditelnost (viz níže)                                                                                                                              |
+| Pole                                    | Povinné | Popis                                                                                                                                                                                                                                                                                      |
+| --------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Ano     | Stabilní jedinečné ID pro příkaz                                                                                                                                                                                                                                                           |
+| `label`                                 | Ano     | Plný popisek zobrazený v příkazovém menu (Cmd+K)                                                                                                                                                                                                                                           |
+| `frontComponentUniversalIdentifier`     | Ano     | `universalIdentifier` frontendové komponenty, kterou tento příkaz otevírá                                                                                                                                                                                                                  |
+| `shortLabel`                            | Ne      | Kratší popisek zobrazený na připnutém tlačítku rychlé akce                                                                                                                                                                                                                                 |
+| `icon`                                  | Ne      | **Zastaralé** — ignorováno ve prospěch ikony aplikace; pokud je nastaveno, sestavení vypíše varování                                                                                                                                                                                       |
+| `isPinned`                              | Ne      | Pokud je `true`, zobrazí příkaz jako tlačítko rychlé akce v pravém horním rohu stránky                                                                                                                                                                                                     |
+| `availabilityType`                      | Ne      | Určuje, kde se příkaz zobrazuje: `'GLOBAL'` (vždy dostupné), `'GLOBAL_OBJECT_CONTEXT'` (pouze na stránkách s kontextem objektu — indexové a záznamové stránky), `'RECORD_SELECTION'` (pouze když jsou vybrány záznamy) nebo `'FALLBACK'` (zobrazeno, když neodpovídají žádné jiné příkazy) |
+| `availabilityObjectUniversalIdentifier` | Ne      | Omezí příkaz na stránky konkrétního typu objektu (např. pouze u záznamů Company)                                                                                                                                                                                                           |
+| `conditionalAvailabilityExpression`     | Ne      | Logický výraz, který dynamicky řídí viditelnost (viz níže)                                                                                                                                                                                                                                 |
 
 ## Příkazy bez rozhraní
 
 Položka příkazového menu spárovaná s [front komponentou bez rozhraní](/l/cs/developers/extend/apps/layout/front-components#headless-vs-non-headless) je idiomatický způsob, jak dodat akci na jedno kliknutí — spustit kód, přejít na stránku nebo potvrdit a provést. Stránka Front Components popisuje [SDK Command komponenty](/l/cs/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), které obsluhují pattern akce-a-unmount.
 
-Typický průběh:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+Typický průběh: bezhlavá komponenta vykreslí `<Command execute={...} />` (viz [úplný příklad](/l/cs/developers/extend/apps/layout/front-components#sdk-command-components)) a položka v nabídce příkazů na ni ukazuje:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

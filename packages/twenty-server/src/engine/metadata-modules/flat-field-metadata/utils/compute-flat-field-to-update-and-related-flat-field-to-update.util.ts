@@ -44,7 +44,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   flatObjectMetadata,
   isSystemBuild,
 }: ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs): ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType => {
-  const { standardOverrides, updatedEditableFieldProperties } =
+  const { overrides, updatedEditableFieldProperties } =
     sanitizeRawUpdateFieldInput({
       existingFlatFieldMetadata: fromFlatFieldMetadata,
       rawUpdateFieldInput,
@@ -62,7 +62,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
         ],
       update: updatedEditableFieldProperties,
     }),
-    standardOverrides,
+    overrides,
   };
 
   if (updatedEditableFieldProperties.settings !== undefined) {
@@ -161,7 +161,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
             properties: relatedMorphPropertiesToUpdateTo,
             update: updatedEditableFieldProperties,
           }),
-          standardOverrides,
+          overrides,
         };
 
         return {

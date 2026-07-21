@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -75,11 +76,9 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
         setCurrentWorkspace(null);
         setCurrentUserWorkspace(null);
         if (
-          !isMatchingLocation(locationRef.current, AppPath.Verify) &&
-          !isMatchingLocation(locationRef.current, AppPath.VerifyV2) &&
-          !isMatchingLocation(locationRef.current, AppPath.SignInUp) &&
-          !isMatchingLocation(locationRef.current, AppPath.Invite) &&
-          !isMatchingLocation(locationRef.current, AppPath.ResetPassword)
+          ![...ONGOING_USER_CREATION_PATHS, AppPath.ResetPassword].some(
+            (path) => isMatchingLocation(locationRef.current, path),
+          )
         ) {
           const path = `${locationRef.current.pathname}${locationRef.current.search}${locationRef.current.hash}`;
 

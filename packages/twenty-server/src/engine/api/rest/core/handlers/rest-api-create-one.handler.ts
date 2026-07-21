@@ -27,6 +27,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
@@ -46,6 +47,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatIndexMaps,
             objectIdByNameSingular,
           },
         );

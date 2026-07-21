@@ -11,7 +11,6 @@ const meta: Meta<typeof SocialLink> = {
   decorators: [ComponentWithRouterDecorator],
   args: {
     href: 'https://twenty.com',
-    label: 'Social Link',
   },
 };
 
@@ -22,7 +21,6 @@ const clickJestFn = fn();
 export const LinkedIn: Story = {
   args: {
     href: 'https://www.linkedin.com/in/johndoe',
-    label: 'LinkedIn',
     onClick: clickJestFn,
     type: LinkType.LinkedIn,
   },
@@ -31,7 +29,6 @@ export const LinkedIn: Story = {
 export const Twitter: Story = {
   args: {
     href: 'https://twitter.com/johndoe',
-    label: 'Twitter',
     onClick: clickJestFn,
     type: LinkType.Twitter,
   },
@@ -49,7 +46,6 @@ export const Twitter: Story = {
 export const X: Story = {
   args: {
     href: 'https://x.com/johndoe',
-    label: 'X',
     onClick: clickJestFn,
     type: LinkType.Twitter,
   },
@@ -58,7 +54,6 @@ export const X: Story = {
 export const Facebook: Story = {
   args: {
     href: 'https://www.facebook.com/johndoe',
-    label: 'Facebook',
     onClick: clickJestFn,
     type: LinkType.Facebook,
   },
@@ -67,7 +62,6 @@ export const Facebook: Story = {
 export const Instagram: Story = {
   args: {
     href: 'https://www.instagram.com/johndoe',
-    label: 'Instagram',
     onClick: clickJestFn,
     type: LinkType.Instagram,
   },
@@ -76,7 +70,6 @@ export const Instagram: Story = {
 export const TikTok: Story = {
   args: {
     href: 'https://www.tiktok.com/@johndoe',
-    label: 'TikTok',
     onClick: clickJestFn,
     type: LinkType.TikTok,
   },
@@ -85,8 +78,23 @@ export const TikTok: Story = {
 export const Bluesky: Story = {
   args: {
     href: 'https://bsky.app/profile/johndoe.bsky.social',
-    label: 'Bluesky',
     onClick: clickJestFn,
     type: LinkType.Bluesky,
+  },
+};
+
+export const WithCustomLabel: Story = {
+  args: {
+    href: 'https://www.instagram.com/cristiano',
+    label: 'Cristiano Ronaldo Official',
+    onClick: clickJestFn,
+    type: LinkType.Instagram,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByText('Cristiano Ronaldo Official'),
+    ).toBeInTheDocument();
   },
 };

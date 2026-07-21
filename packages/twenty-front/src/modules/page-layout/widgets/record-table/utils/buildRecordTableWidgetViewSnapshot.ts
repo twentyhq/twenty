@@ -3,6 +3,7 @@ import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/record-table/utils/filterFieldsForRecordTableViewCreation';
+import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
 import { v4 } from 'uuid';
 import {
@@ -46,15 +47,19 @@ export const buildRecordTableWidgetViewSnapshot = (
     ),
   );
 
-  const flatViewFields: FlatViewField[] = sortedFields.map((field, index) => ({
-    id: v4(),
-    viewId: newViewId,
-    fieldMetadataId: field.id,
-    position: index,
-    size: DEFAULT_VIEW_FIELD_SIZE,
-    isVisible: index < INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET,
-    isActive: true,
-  }));
+  const flatViewFields: FlatViewField[] = normalizeRecordTableWidgetViewFields({
+    viewFields: sortedFields.map((field, index) => ({
+      id: v4(),
+      viewId: newViewId,
+      fieldMetadataId: field.id,
+      position: index,
+      size: DEFAULT_VIEW_FIELD_SIZE,
+      isVisible: index < INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET,
+      isActive: true,
+    })),
+    labelIdentifierFieldMetadataId:
+      objectMetadataItem.labelIdentifierFieldMetadataId,
+  });
 
   return {
     view: flatView,
@@ -62,5 +67,6 @@ export const buildRecordTableWidgetViewSnapshot = (
     viewFilters: [],
     viewFilterGroups: [],
     viewSorts: [],
+    viewGroups: [],
   };
 };

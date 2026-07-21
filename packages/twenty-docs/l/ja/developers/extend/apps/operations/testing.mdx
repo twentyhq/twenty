@@ -78,6 +78,13 @@ yarn add -D vitest vite-tsconfig-paths
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-テストを実行する前にサーバーに到達可能であることを検証するセットアップファイルを作成します：
+サーバーに到達可能であることを検証し、SDK 用のテスト設定（`~/.twenty/config.test.json`）を書き込み、テストの実行前にアプリを同期するグローバルセットアップファイルを作成します。
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## プログラム用 SDK API
 
 `twenty-sdk/cli` サブパスは、テストコードから直接呼び出せる関数をエクスポートします：
 
-| 関数             | 説明                              |
-| -------------- | ------------------------------- |
-| `appBuild`     | アプリをビルドし、必要に応じて tarball にパッケージ化 |
-| `appDeploy`    | tarball をサーバーにアップロード            |
-| `appInstall`   | アクティブなワークスペースにアプリをインストール        |
-| `appUninstall` | アクティブなワークスペースからアプリをアンインストール     |
+| 関数             | 説明                                           |
+| -------------- | -------------------------------------------- |
+| `appBuild`     | アプリをビルドし、必要に応じて tarball にパッケージ化              |
+| `appDeploy`    | tarball をサーバーにアップロード                         |
+| `appDevOnce`   | アプリを 1 回ビルドして同期します（`yarn twenty apply` と同じ）。 |
+| `appInstall`   | アクティブなワークスペースにアプリをインストール                     |
+| `appUninstall` | アクティブなワークスペースからアプリをアンインストール                  |
 
 各関数は、`success: boolean` と `data` または `error` のいずれかを含む結果オブジェクトを返します。
 
@@ -238,64 +253,10 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-これは `tsc --noEmit` を実行し、型エラーを報告します。
+これは、あなたのアプリの `tsconfig.json` に対して `tsc --noEmit` を実行し、型エラーを報告します。 スキャフォルドされたアプリには、テストファイル（`tsconfig.spec.json`）も対象とする `yarn typecheck` スクリプトも同梱されています。
 
 ## GitHub Actions による CI
 
-スキャフォルダーは、すぐに使える GitHub Actions ワークフローを `.github/workflows/ci.yml` に生成します。 `main` へのプッシュやプルリクエストのたびに、統合テストを自動実行します。
+スキャフォルダーは、すぐに使えるワークフローを `.github/workflows/ci.yml` に生成します。 `main` へのすべてのプッシュおよびすべてのプルリクエスト時に、ランナー内で一時的な Twenty サーバーを起動（`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` アクション経由）し、そのサーバーを指すように `TWENTY_API_URL` / `TWENTY_API_KEY` を設定した上で、`yarn lint`、`yarn typecheck`、`yarn test:unit`、`yarn test` を実行します。 シークレットは一切不要で、ワークフローの先頭にある `TWENTY_VERSION` 環境変数を通じてサーバーバージョンを固定できます。
 
-ワークフローの内容:
-
-1. コードをチェックアウトする
-2. `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` アクションを使って一時的な Twenty サーバーを起動する
-3. `yarn install --immutable` で依存関係をインストールする
-4. アクションの出力から注入された `TWENTY_API_URL` と `TWENTY_API_KEY` を用いて `yarn test` を実行する
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-シークレットを設定する必要はありません。`spawn-twenty-docker-image` アクションがランナー内で一時的な Twenty サーバーを直接起動し、接続情報を出力します。 `GITHUB_TOKEN` シークレットは GitHub によって自動的に提供されます。
-
-`latest` の代わりに特定の Twenty バージョンを固定するには、ワークフローの先頭にある `TWENTY_VERSION` 環境変数を変更します。
+スキャフォルドされた 3 つのワークフロー（`ci.yml`、`cd.yml` デプロイパイプライン、npm パブリッシング用の `publish.yml`）の詳細な手順については、[Publishing → Automated CI/CD](/l/ja/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) を参照してください。

@@ -3,6 +3,7 @@
 exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record gql fields from object 1`] = `
 {
   "accountOwner": {
+    "avatarUrl": true,
     "id": true,
     "name": true,
   },

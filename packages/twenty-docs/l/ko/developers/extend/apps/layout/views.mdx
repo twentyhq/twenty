@@ -33,17 +33,32 @@ export default defineView({
 ## 핵심 요점
 
 * `objectUniversalIdentifier`는 이 뷰가 적용되는 객체를 지정합니다. 이 객체는 사용자가 정의한 커스텀 객체일 수도 있고, 표준 Twenty 객체일 수도 있습니다.
-* `key`는 보기 유형을 결정합니다. `ViewKey.INDEX`는 해당 객체의 기본 목록 보기입니다.
-* `fields`는 어떤 열을 어떤 순서로 표시할지를 제어합니다. 각 필드는 `fieldMetadataUniversalIdentifier`를 참조합니다.
-* 또한 더 고급 구성을 위해 `filters`, `filterGroups`, `groups`, `fieldGroups`를 선언할 수 있습니다.
+* `key: ViewKey.INDEX`는 뷰를 객체의 기본 목록 보기( `OBJECT` 내비게이션 항목이 여는 보기)로 표시합니다.
+* `fields`는 어떤 열을 어떤 순서로 표시할지를 제어합니다. 각 필드는 `fieldMetadataUniversalIdentifier`를 참조합니다. 자동 생성된 시스템 필드(예: `createdAt`)를 참조하는 방법은 [시스템 필드 대상으로 지정하기](/l/ko/developers/extend/apps/data/system-fields)를 참조하세요.
+* 또한 더 고급 구성을 위해 `filters`, `filterGroups`, `sorts`, `groups`, `fieldGroups`를 선언할 수 있습니다.
 * `position`은 동일한 객체에 여러 뷰가 있을 때의 정렬 순서를 제어합니다.
+
+## 선택적 속성
+
+| 속성                                                                                                          | 값                                                                                  | 설명                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`                                                                                                      | `ViewType.TABLE`(기본값), `ViewType.KANBAN`, `ViewType.CALENDAR`                      | 레코드가 어떻게 배치되는지에 대한 설정입니다. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, 및 `CALENDAR_WIDGET`도 존재하지만, 페이지 레이아웃 위젯에서 내부적으로 사용됩니다.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE`(기본값), `ViewVisibility.UNLISTED`                         | 워크스페이스 전체에 대해 뷰가 목록에 표시되는지, 선택기에서 숨겨지는지 여부입니다.                                                                                       |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL`(기본값), `ViewOpenRecordIn.RECORD_PAGE`                 | 레코드를 클릭했을 때 어디에서 열리는지에 대한 설정입니다.                                                                                                     |
+| `정렬`                                                                                                        | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | 기본 정렬 순서입니다.                                                                                                                         |
+| `isCompact`                                                                                                 | `boolean`                                                                          | 행을 압축 형태로 표시합니다.                                                                                                                     |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 레코드를 필드별로 그룹화합니다(예: 칸반 열).                                                                                                           |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 칸반 열의 집계 및 크기 설정입니다.                                                                                                                 |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 캘린더 뷰: 레이아웃, 레코드의 위치를 결정하는 날짜 필드, 그리고 선택적인 종료 날짜 필드입니다.                                                                              |
+
+위의 모든 enum은 `twenty-sdk/define`에서 내보내집니다.
 
 ## 필터
 
 뷰는 미리 적용된 필터와 함께 제공될 수 있습니다. 각 필터에는 세 가지 요소가 있습니다: 필터링할 **필드**, **연산자**(어떻게 비교할지), 그리고 **값**(무엇과 비교할지). 세 가지가 모두 맞아야 하며, 필드 유형에 적용되지 않는 연산자를 사용하면 동기화 시 거부됩니다.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

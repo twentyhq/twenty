@@ -28,3 +28,9 @@ export const OBJECT_RECORD_COUNTS = gql`
     }
   }
 `;
+
+export const MOSTLY_EMPTY_FIELD_METADATA_IDS = gql`
+  query MostlyEmptyFieldMetadataIds($objectMetadataId: UUID!) {
+    mostlyEmptyFieldMetadataIds(objectMetadataId: $objectMetadataId)
+  }
+`;

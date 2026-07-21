@@ -57,6 +57,13 @@ export class ServerRouteTriggerService {
       );
     }
 
+    if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} requires authentication and cannot be dispatched through the public server route`,
+        ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+      );
+    }
+
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
 
@@ -105,18 +112,22 @@ export class ServerRouteTriggerService {
   }: {
     logicFunctionUniversalIdentifier: string;
   }): Promise<LogicFunctionEntity | null> {
-    const candidates = await this.logicFunctionRepository.find({
-      where: { universalIdentifier: logicFunctionUniversalIdentifier },
-      relations: { application: { applicationRegistration: true } },
-    });
-
     return (
-      candidates.find(
-        (candidate) =>
-          isDefined(candidate.application?.applicationRegistration) &&
-          candidate.workspaceId ===
-            candidate.application.applicationRegistration.ownerWorkspaceId,
-      ) ?? null
+      (await this.logicFunctionRepository
+        .createQueryBuilder('logicFunction')
+        .innerJoinAndSelect('logicFunction.application', 'application')
+        .innerJoinAndSelect(
+          'application.applicationRegistration',
+          'applicationRegistration',
+        )
+        .where('logicFunction.universalIdentifier = :universalIdentifier', {
+          universalIdentifier: logicFunctionUniversalIdentifier,
+        })
+        .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+        .andWhere(
+          'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+        )
+        .getOne()) ?? null
     );
   }
 

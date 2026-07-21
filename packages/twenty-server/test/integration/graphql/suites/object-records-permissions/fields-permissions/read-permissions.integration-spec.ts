@@ -449,6 +449,38 @@ describe('Field permissions restrictions', () => {
     expect(response.body.data.companies.edges[0].node.id).toBeDefined();
   });
 
+  it('should reject filters on fields without read permission', async () => {
+    await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: personObjectId,
+          fieldMetadataId: restrictedPersonFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: null,
+        },
+      ],
+    });
+
+    const graphqlOperation = {
+      query: gql`
+        query People($filter: PersonFilterInput) {
+          people(filter: $filter, first: 0) {
+            totalCount
+          }
+        }
+      `,
+      variables: {
+        filter: { jobTitle: { like: 'Par%' } },
+      },
+    };
+
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+
+    expectPermissionDeniedError(response);
+  });
+
   describe('Aggregate operations', () => {
     it('1. should allow aggregate over a restricted field', async () => {
       await restrictAccessToCompanyEmployee(

@@ -4,7 +4,6 @@ import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/au
 type ApplicationAuthContextInput = {
   workspace: NonNullable<RawAuthContext['workspace']>;
   application: NonNullable<RawAuthContext['application']>;
-  workspaceMetadataVersion?: string;
 };
 
 export const buildApplicationAuthContext = (
@@ -14,6 +13,5 @@ export const buildApplicationAuthContext = (
     type: 'application',
     workspace: input.workspace,
     application: input.application,
-    workspaceMetadataVersion: input.workspaceMetadataVersion,
   };
 };

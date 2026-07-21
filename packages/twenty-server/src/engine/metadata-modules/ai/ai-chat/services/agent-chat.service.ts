@@ -1,6 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  type AskQuestionAnswer,
+  type AskQuestionItem,
+  type AskQuestionsToolResult,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -260,15 +266,87 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
-  async hasAssistantMessageForTurn({
+  async upsertAssistantMessage({
+    id,
+    threadId,
+    turnId,
+    parts,
+    workspaceId,
+  }: {
+    id: string;
+    threadId: string;
+    turnId: string;
+    parts: ExtendedUIMessage['parts'];
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.upsert(
+      workspaceId,
+      {
+        id,
+        threadId,
+        turnId,
+        role: AgentMessageRole.ASSISTANT,
+        processedAt: new Date(),
+      },
+      ['id'],
+    );
+
+    await this.messagePartRepository.delete(workspaceId, { messageId: id });
+
+    const dbParts = mapUIMessagePartsToDBParts(
+      finalizeDanglingToolParts(parts),
+      id,
+      workspaceId,
+    );
+
+    if (dbParts.length > 0) {
+      await this.messagePartRepository.insert(
+        workspaceId,
+        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+      );
+    }
+  }
+
+  async findLatestSentUserMessage({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<Pick<AgentMessageEntity, 'id' | 'turnId'> | null> {
+    return this.messageRepository.findOne(workspaceId, {
+      where: {
+        threadId,
+        role: AgentMessageRole.USER,
+        status: AgentMessageStatus.SENT,
+      },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      select: ['id', 'turnId'],
+    });
+  }
+
+  async deleteAssistantMessagesForTurn({
     turnId,
     workspaceId,
   }: {
     turnId: string;
     workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, {
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+    });
+  }
+
+  async hasMessageById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
   }): Promise<boolean> {
     const existingMessage = await this.messageRepository.findOne(workspaceId, {
-      where: { turnId, role: AgentMessageRole.ASSISTANT },
+      where: { id },
       select: ['id'],
     });
 
@@ -371,6 +449,19 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
+  async hasQueuedMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      status: AgentMessageStatus.QUEUED,
+    });
+  }
+
   async getQueuedMessages({
     threadId,
     workspaceId,
@@ -448,6 +539,172 @@ export class AgentChatService {
     }
 
     return savedTurnId;
+  }
+
+  async resolvePendingQuestion({
+    threadId,
+    messageId,
+    answers,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    answers: AskQuestionAnswer[];
+    streamId: string;
+    workspaceId: string;
+  }): Promise<{
+    turnId: string | null;
+    rollback: { partId: string; previousOutput: Record<string, unknown> };
+  }> {
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: { id: messageId, threadId },
+      relations: ['parts'],
+    });
+
+    if (!message) {
+      throw new AiException(
+        'Question message not found',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    const pendingPart = (message.parts ?? []).find(
+      (part) =>
+        part.toolName === ASK_QUESTIONS_TOOL_NAME &&
+        (part.toolOutput as { result?: AskQuestionsToolResult } | null)?.result
+          ?.status === 'pending',
+    );
+
+    if (!pendingPart) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    const previousOutput =
+      (pendingPart.toolOutput as Record<string, unknown> | null) ?? {};
+    const previousResult = previousOutput.result as
+      | AskQuestionsToolResult
+      | undefined;
+    const questions = previousResult?.questions ?? [];
+
+    this.validateQuestionAnswers(answers, questions);
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null, activeStreamId: streamId },
+    );
+
+    if ((claim.affected ?? 0) === 0) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
+
+    try {
+      await this.messagePartRepository.update(
+        workspaceId,
+        { id: pendingPart.id },
+        {
+          toolOutput: {
+            ...previousOutput,
+            success: true,
+            message: 'User answered the questions.',
+            result: {
+              questions,
+              status: 'answered',
+              answers,
+            },
+          },
+        },
+      );
+    } catch (error) {
+      await this.threadRepository
+        .update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+        .catch(() => {});
+      throw error;
+    }
+
+    return {
+      turnId: message.turnId,
+      rollback: { partId: pendingPart.id, previousOutput },
+    };
+  }
+
+  async restorePendingQuestion({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+    rollback,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+    rollback: { partId: string; previousOutput: Record<string, unknown> };
+  }): Promise<void> {
+    await this.messagePartRepository
+      .update(
+        workspaceId,
+        { id: rollback.partId },
+        { toolOutput: rollback.previousOutput },
+      )
+      .catch(() => {});
+
+    await this.threadRepository
+      .update(
+        workspaceId,
+        { id: threadId, activeStreamId: streamId },
+        { pendingQuestionMessageId: messageId, activeStreamId: null },
+      )
+      .catch(() => {});
+  }
+
+  private validateQuestionAnswers(
+    answers: AskQuestionAnswer[],
+    questions: AskQuestionItem[],
+  ): void {
+    for (const answer of answers) {
+      const question = questions[answer.questionIndex];
+
+      if (!isDefined(question)) {
+        throw new AiException(
+          'Answer references an unknown question.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      const hasInvalidOption = answer.selectedOptionIndices.some(
+        (optionIndex) =>
+          optionIndex < 0 || optionIndex >= question.options.length,
+      );
+
+      if (hasInvalidOption) {
+        throw new AiException(
+          'Answer references an unknown option.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+
+      if (
+        question.allowMultiSelect !== true &&
+        answer.selectedOptionIndices.length > 1
+      ) {
+        throw new AiException(
+          'This question allows only one selection.',
+          AiExceptionCode.INVALID_QUESTION_ANSWER,
+        );
+      }
+    }
   }
 
   async updateThreadTitle({

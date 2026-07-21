@@ -59,7 +59,7 @@ export class InstanceCommandRunnerService {
       await command.up(queryRunner);
 
       const workspaceIds =
-        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
+        await this.workspaceVersionService.getProvisionedWorkspaceIds({
           queryRunner,
         });
 
@@ -83,7 +83,7 @@ export class InstanceCommandRunnerService {
       }
 
       const workspaceIds =
-        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+        await this.workspaceVersionService.getProvisionedWorkspaceIds();
 
       await this.upgradeMigrationService.recordUpgradeMigration({
         name,
@@ -149,7 +149,7 @@ export class InstanceCommandRunnerService {
         this.logger.log(`${name} data migration completed`);
       } catch (error) {
         const workspaceIds =
-          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+          await this.workspaceVersionService.getProvisionedWorkspaceIds();
 
         await this.upgradeMigrationService.recordUpgradeMigration({
           name,

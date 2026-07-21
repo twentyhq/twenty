@@ -2,7 +2,9 @@
   align-items: center;
   border: none;
   background-color: transparent;
-  border-radius: var(--t-border-radius-xs);
+  // Concentric with the IconButtonGroup sm container: its radius minus the
+  // 2px padding and 1px border.
+  border-radius: calc(var(--t-border-radius-sm) - 3px);
   color: var(--t-font-color-tertiary);
   cursor: pointer;
   display: flex;

@@ -14,6 +14,7 @@ import onEmailInteraction from '../on-email-interaction';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const MESSAGE_ID = '22222222-2222-2222-2222-222222222222';
+const MEMBER_ID = '33333333-3333-3333-3333-333333333333';
 const RECEIVED_AT = '2026-06-10T09:00:00.000Z';
 
 const handler = onEmailInteraction.config.handler as (
@@ -37,7 +38,7 @@ const buildEvent = ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [] });
+  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
 describe('on-email-interaction definition', () => {
@@ -51,28 +52,40 @@ describe('on-email-interaction definition', () => {
 });
 
 describe('on-email-interaction handler', () => {
-  it('should update the person with the triggering message receivedAt', async () => {
-    queryMock.mockResolvedValue({
-      message: { id: MESSAGE_ID, receivedAt: RECEIVED_AT },
-    });
+  it('sets interaction, owner, item, contacted and lastEmail for an outbound email', async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        messageParticipants: {
+          edges: [
+            {
+              node: {
+                role: 'TO',
+                workspaceMemberId: null,
+                message: { receivedAt: RECEIVED_AT },
+              },
+            },
+            {
+              node: {
+                role: 'FROM',
+                workspaceMemberId: MEMBER_ID,
+                message: { receivedAt: RECEIVED_AT },
+              },
+            },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({ person: null });
 
     await handler(buildEvent({ personId: PERSON_ID, messageId: MESSAGE_ID }));
 
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(queryMock).toHaveBeenCalledWith({
-      message: {
-        __args: { filter: { id: { eq: MESSAGE_ID } } },
-        id: true,
-        receivedAt: true,
-      },
-    });
-    expect(mutationMock).toHaveBeenCalledTimes(1);
-    const mutationArgs = mutationMock.mock.calls[0][0];
-    expect(mutationArgs.updatePeople.__args.data).toEqual({
+    const data = mutationMock.mock.calls[0][0].updatePeople.__args.data;
+    expect(data).toEqual({
       lastContactAt: RECEIVED_AT,
-    });
-    expect(mutationArgs.updatePeople.__args.filter.and).toContainEqual({
-      id: { eq: PERSON_ID },
+      lastContactById: MEMBER_ID,
+      lastContactItemMessageId: MESSAGE_ID,
+      lastContactItemCalendarEventId: null,
+      lastOutboundAt: RECEIVED_AT,
+      lastEmailId: MESSAGE_ID,
     });
   });
 
@@ -92,7 +105,17 @@ describe('on-email-interaction handler', () => {
 
   it('should not update the person when the message has no receivedAt', async () => {
     queryMock.mockResolvedValue({
-      message: { id: MESSAGE_ID, receivedAt: null },
+      messageParticipants: {
+        edges: [
+          {
+            node: {
+              role: 'FROM',
+              workspaceMemberId: MEMBER_ID,
+              message: { receivedAt: null },
+            },
+          },
+        ],
+      },
     });
 
     await handler(buildEvent({ personId: PERSON_ID, messageId: MESSAGE_ID }));

@@ -4,6 +4,7 @@ import { SettingsPath } from 'twenty-shared/types';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { useGetAddedRelativeDateDescription } from '@/settings/hooks/useGetAddedRelativeDateDescription';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
@@ -12,14 +13,11 @@ import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconAt, IconMailCog } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledLinkContainer = styled.div`
   > a {
@@ -30,7 +28,8 @@ const StyledLinkContainer = styled.div`
 export const SettingsApprovedAccessDomainsListCard = () => {
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { getAddedRelativeDateDescription } =
+    useGetAddedRelativeDateDescription();
 
   const [approvedAccessDomains, setApprovedAccessDomains] = useAtomState(
     approvedAccessDomainsState,
@@ -52,14 +51,6 @@ export const SettingsApprovedAccessDomainsListCard = () => {
 
   useSnackBarOnQueryError(domainsError);
 
-  const getItemDescription = (createdAt: string) => {
-    const beautifyPastDateRelative = beautifyPastDateRelativeToNow(
-      createdAt,
-      localeCatalog,
-    );
-    return t`Added ${beautifyPastDateRelative}`;
-  };
-
   return loading || !approvedAccessDomains.length ? (
     <StyledLinkContainer>
       <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
@@ -75,7 +66,9 @@ export const SettingsApprovedAccessDomainsListCard = () => {
       <SettingsListCard
         items={approvedAccessDomains}
         getItemLabel={({ domain }) => domain}
-        getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
+        getItemDescription={({ createdAt }) =>
+          getAddedRelativeDateDescription(createdAt)
+        }
         RowIcon={IconAt}
         RowRightComponent={({ item: approvedAccessDomain }) => (
           <>

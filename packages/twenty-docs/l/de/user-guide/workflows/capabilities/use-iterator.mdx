@@ -23,6 +23,12 @@ Iterator erwartet ein **Array** als Eingabe. Dann:
 3. Wechselt zum nächsten Element
 4. Wiederholt sich, bis alle Elemente verarbeitet sind
 
+### Auswählen des Arrays, über das iteriert werden soll
+
+Die meisten Array-Quellen (Search Records, ein Webhook-Array-Feld, ein Bulk Manual Trigger) können direkt im Variablen-Auswahldialog ausgewählt werden.
+
+Wenn ein **Code**- oder **Logic Function**-Schritt ein *Top-Level-Array* zurückgibt, erscheint dessen Ausgabe im Variablen-Auswahldialog als indizierte Einträge (`0`, `1`, `2`, …). Um über das Array als Ganzes zu iterieren, wähle für diesen Schritt die Option **Whole list** – der Iterator leitet dann die Struktur jedes Elements automatisch aus der Liste ab.
+
 ## Grundlegende Einrichtung
 
 ### Beispiel: E-Mail an alle in den Suchergebnissen
@@ -76,6 +82,8 @@ Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Daten
 | `{{iterator.currentItem.email}}`        | E-Mail-Feld                                       |
 | `{{iterator.currentItem.company.name}}` | Name des zugehörigen Unternehmens                 |
 | `{{iterator.index}}`                    | Aktuelle Position im Array (0-basiert)            |
+
+Im Variablen-Auswahldialog kannst du entweder in ein bestimmtes Feld des aktuellen Elements hineinnavigieren oder **Use the whole item** auswählen, um auf das gesamte aktuelle Element zu verweisen (`{{iterator.currentItem}}`). Das Auswählen des gesamten Elements ist praktisch, wenn du einen vollständigen Datensatz direkt an einen nachgelagerten Schritt übergeben möchtest, anstatt ihn Feld für Feld neu aufzubauen.
 
 ## Häufige Muster
 

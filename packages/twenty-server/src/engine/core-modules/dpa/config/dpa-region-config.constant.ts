@@ -21,7 +21,7 @@ export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
     region: DpaRegion.US,
     sccSectionActive: true,
     values: {
-      PROCESSOR_ENTITY: 'Twenty, Inc.',
+      PROCESSOR_ENTITY: 'Twenty.com PBC',
       PROCESSOR_LEGAL_FORM:
         'a public benefit corporation under the laws of Delaware, USA',
       // Registered office is the Delaware registered agent; the SF notices

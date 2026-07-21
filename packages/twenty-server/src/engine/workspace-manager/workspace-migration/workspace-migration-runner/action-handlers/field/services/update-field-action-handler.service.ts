@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -17,12 +18,14 @@ import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metad
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-field-related-index.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
+import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -72,6 +75,13 @@ type DefaultValueUpdateHandlerArgs<
   T extends FieldMetadataType = FieldMetadataType,
 > = UpdateFieldPropertyHandlerArgs<T> & {
   toDefaultValue: FlatFieldMetadata['defaultValue'];
+};
+
+type NullableUpdateHandlerArgs = Omit<
+  UpdateFieldPropertyHandlerArgs,
+  'update'
+> & {
+  toIsNullable: boolean;
 };
 
 type OptionsUpdateHandlerArgs<T extends FieldMetadataType = FieldMetadataType> =
@@ -144,8 +154,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     // isUnique is derived from IndexMetadata at cache build time and has
     // no underlying column on fieldMetadata. It travels in the update
     // payload only so per-type validators (e.g. FILES rejection) can run
-    // — the actual state change is handled by the side-effect index
-    // create/delete in handleIndexChangesDuringFieldUpdate.
+    // — the actual state change is handled by the metadata side-effect
+    // engine, which owns the backing unique index lifecycle.
     const { isUnique: _droppedIsUnique, ...persistedUpdate } = update;
 
     if (Object.keys(persistedUpdate).length === 0) {
@@ -168,8 +178,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatSearchFieldMetadataMaps,
+        flatIndexMaps,
       },
       workspaceId,
+      getSearchFieldMetadatasByTsVectorFieldId,
     } = context;
     const { entityId, update } = flatAction;
 
@@ -243,6 +255,19 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
         optimisticFlatFieldMetadata.defaultValue = update.defaultValue;
       }
+    }
+
+    if (update.isNullable !== undefined) {
+      const toIsNullable = update.isNullable ?? true;
+
+      await this.handleFieldNullableUpdate({
+        queryRunner,
+        schemaName,
+        tableName,
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        toIsNullable,
+      });
+      optimisticFlatFieldMetadata.isNullable = toIsNullable;
     }
 
     if (isDefined(update.settings)) {
@@ -344,8 +369,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       const searchVectorAsExpression =
         deriveSearchVectorAsExpressionForTsVectorField({
-          tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
-          flatSearchFieldMetadataMaps,
+          targetSearchFieldMetadatas:
+            getSearchFieldMetadatasByTsVectorFieldId?.(
+              optimisticFlatFieldMetadata.id,
+            ) ??
+            getTargetSearchFieldMetadatasForTsVectorField({
+              tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
+              flatSearchFieldMetadataMaps,
+            }),
           indexedFieldById,
         });
 
@@ -368,6 +399,23 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         tableName,
         columnDefinitions,
       });
+
+      const [searchVectorFlatIndexMetadata] = findFieldRelatedIndexes({
+        flatFieldMetadata: optimisticFlatFieldMetadata,
+        flatObjectMetadata,
+        flatIndexMaps,
+      });
+
+      if (isDefined(searchVectorFlatIndexMetadata)) {
+        await createIndexInWorkspaceSchema({
+          flatIndexMetadata: searchVectorFlatIndexMetadata,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+          queryRunner,
+          workspaceId,
+        });
+      }
     }
   }
 
@@ -525,6 +573,86 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         defaultValue: serializedNewDefaultValue,
       },
     );
+  }
+
+  private async handleFieldNullableUpdate({
+    flatFieldMetadata,
+    queryRunner,
+    schemaName,
+    tableName,
+    toIsNullable,
+  }: NullableUpdateHandlerArgs) {
+    if (
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
+      isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
+    ) {
+      return;
+    }
+
+    if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+
+      for (const property of compositeType.properties) {
+        if (isMorphOrRelationFieldMetadataType(property.type)) {
+          throw new WorkspaceMigrationActionExecutionException({
+            message:
+              'Relation field metadata in composite type is not supported yet',
+            code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+          });
+        }
+
+        const compositeColumnName = computeCompositeColumnName(
+          flatFieldMetadata.name,
+          property,
+        );
+        const propertyIsNullable = toIsNullable || !property.isRequired;
+        const fieldDefaultValue = flatFieldMetadata.defaultValue;
+        // @ts-expect-error - composite default value is keyed by property name
+        const compositeDefaultValue = fieldDefaultValue?.[property.name];
+
+        await this.workspaceSchemaManagerService.columnManager.alterColumnNullable(
+          {
+            queryRunner,
+            schemaName,
+            tableName,
+            columnName: compositeColumnName,
+            isNullable: propertyIsNullable,
+            backfillValue: propertyIsNullable
+              ? undefined
+              : serializeDefaultValue({
+                  columnName: compositeColumnName,
+                  schemaName,
+                  tableName,
+                  columnType: fieldMetadataTypeToColumnType(
+                    property.type,
+                  ) as ColumnType,
+                  defaultValue: compositeDefaultValue,
+                }),
+          },
+        );
+      }
+
+      return;
+    }
+
+    await this.workspaceSchemaManagerService.columnManager.alterColumnNullable({
+      queryRunner,
+      schemaName,
+      tableName,
+      columnName: flatFieldMetadata.name,
+      isNullable: toIsNullable,
+      backfillValue: toIsNullable
+        ? undefined
+        : serializeDefaultValue({
+            columnName: flatFieldMetadata.name,
+            schemaName,
+            tableName,
+            columnType: fieldMetadataTypeToColumnType(
+              flatFieldMetadata.type,
+            ) as ColumnType,
+            defaultValue: flatFieldMetadata.defaultValue,
+          }),
+    });
   }
 
   private async handleFieldOptionsUpdate({

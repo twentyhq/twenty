@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -16,7 +16,7 @@ const EDIT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   name: 'upgrade:1-21:update-edit-layout-command-menu-item-label',
   description: 'Update Edit Page Layout command menu item label to Edit Layout',
 })
-export class UpdateEditLayoutCommandMenuItemLabelCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class UpdateEditLayoutCommandMenuItemLabelCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectDataSource()

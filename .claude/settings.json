@@ -2,6 +2,19 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "attribution": {
     "commit": "",
-    "pr": ""
+    "pr": "",
+    "sessionUrl": false
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat <<'EOF'\nInstructions for this session:\n- Do NOT add any signature, footer, co-author tag, session link, \"Generated with Claude\" or \"Co-Authored-By\" mention in commits, GitHub PR descriptions, PR or issue comments, reviews, or files.\n- Be concise. Get to the point, no preamble or unnecessary recap.\n- Write like a human: natural, direct tone, no marketing language or overwrought phrasing.\n- No weird punctuation: never use em dashes, no emojis unless explicitly asked, standard punctuation only.\n- Do NOT add code comments unless strictly necessary, such as TypeScript directives or a short \"why\" comment for non-obvious business logic. Code should be as self-explanatory as possible.\nEOF"
+          }
+        ]
+      }
+    ]
   }
 }

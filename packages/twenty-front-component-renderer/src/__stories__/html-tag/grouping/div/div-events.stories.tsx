@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
@@ -70,6 +70,56 @@ export const MouseEnterLeave: Story = runFrontComponentStory({
 
     await userEvent.unhover(subject);
     await expectEventLogged({ canvas, matcher: { type: 'mouseleave' } });
+  },
+});
+
+export const DragDrop: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-drag-drop',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expectFrontComponentMounted(canvas);
+
+    const subject = await canvas.findByTestId('subject');
+    const dropZone = await canvas.findByTestId('drop-zone');
+
+    subject.dispatchEvent(
+      new DragEvent('dragstart', { bubbles: true, cancelable: true }),
+    );
+    await expectEventLogged({ canvas, matcher: { type: 'dragstart' } });
+
+    await waitFor(() => {
+      const dragOverEvent = new DragEvent('dragover', {
+        bubbles: true,
+        cancelable: true,
+      });
+      dropZone.dispatchEvent(dragOverEvent);
+      expect(dragOverEvent.defaultPrevented).toBe(true);
+    });
+    await expectEventLogged({ canvas, matcher: { type: 'dragover' } });
+
+    dropZone.dispatchEvent(
+      new DragEvent('drop', { bubbles: true, cancelable: true }),
+    );
+    await expectEventLogged({ canvas, matcher: { type: 'drop' } });
+  },
+});
+
+export const FocusInOut: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-focus-in-out',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expectFrontComponentMounted(canvas);
+    await expectFrontComponentValue({ canvas, expected: 'ready' });
+
+    const subject = await canvas.findByTestId('subject');
+
+    await userEvent.click(subject);
+    await expectEventLogged({ canvas, matcher: { type: 'focusin' } });
+
+    subject.blur();
+    await expectEventLogged({ canvas, matcher: { type: 'focusout' } });
   },
 });
 

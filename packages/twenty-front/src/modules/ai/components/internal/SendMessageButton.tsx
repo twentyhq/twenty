@@ -1,5 +1,6 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -29,12 +30,16 @@ export const SendMessageButton = ({
     agentChatIsStreamingComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
 
   const handleStopClick = () => {
     dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
   };
 
-  if (agentChatIsStreaming) {
+  if (agentChatIsStreaming || agentChatIsAwaitingFirstChunk) {
     return (
       <RoundedIconButton
         Icon={IconPlayerStop}

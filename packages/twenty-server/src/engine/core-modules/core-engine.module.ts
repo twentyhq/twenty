@@ -6,7 +6,6 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
@@ -57,6 +56,7 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -98,6 +98,7 @@ import { FileModule } from './file/file.module';
     FileModule,
     RowLevelPermissionModule,
     OpenApiModule,
+    WellKnownModule,
     ApplicationRegistrationModule,
     ApplicationOAuthModule,
     ApplicationModule,
@@ -105,7 +106,6 @@ import { FileModule } from './file/file.module';
     ApplicationUpgradeModule,
     ApplicationDevelopmentModule,
     MarketplaceModule,
-    AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
     UserModule,

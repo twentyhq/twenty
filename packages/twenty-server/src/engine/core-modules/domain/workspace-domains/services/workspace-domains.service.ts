@@ -31,10 +31,12 @@ export class WorkspaceDomainsService {
     workspace,
     pathname,
     searchParams,
+    hash,
   }: {
     workspace: WorkspaceDomainConfig;
     pathname?: string;
     searchParams?: Record<string, string | number | boolean>;
+    hash?: string;
   }) {
     const workspaceUrls = this.getWorkspaceUrls(workspace);
 
@@ -42,6 +44,7 @@ export class WorkspaceDomainsService {
       baseUrl: new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl),
       pathname,
       searchParams,
+      hash,
     });
 
     return url;

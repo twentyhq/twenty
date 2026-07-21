@@ -21,7 +21,7 @@ const StyledIconAndButtonContainer = styled.button`
   align-items: center;
   background: inherit;
   border: 1px solid transparent;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;

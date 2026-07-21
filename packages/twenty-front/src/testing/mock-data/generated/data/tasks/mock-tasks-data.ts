@@ -11,6 +11,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -102,6 +103,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -193,6 +195,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -284,6 +287,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -375,6 +379,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -466,6 +471,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -557,6 +563,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -648,6 +655,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -739,6 +747,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -830,6 +839,7 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
       "name": {
         "__typename": "FullName",

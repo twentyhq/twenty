@@ -182,7 +182,7 @@ export const ConfirmationModal = ({
 
       <StyledCenteredButton
         onClick={handleConfirmClick}
-        variant="secondary"
+        variant="primary"
         accent={confirmButtonAccent}
         title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}

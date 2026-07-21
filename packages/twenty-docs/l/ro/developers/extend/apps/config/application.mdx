@@ -36,6 +36,60 @@ Notițe:
 * Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
 * Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
 * Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
+* `serverVariables` sunt configurări și secrete la nivel de instanță (de ex. chei API). Spre deosebire de `applicationVariables`, ele nu declară nicio valoare în manifest — operatorul spațiului de lucru le completează din setările aplicației și sunt injectate în funcțiile de logică doar după ce au fost setate.
+
+## Tipuri de variabile
+
+Atât `applicationVariables`, cât și `serverVariables` acceptă un câmp opțional `type` (și, pentru `SELECT` / `MULTI_SELECT`, o listă `options`). Tipuri acceptate: `TEXT` (implicit), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    MAX_POSTCARDS: {
+      universalIdentifier: '5f4497e4-9030-4085-85eb-2c48b8d53713',
+      description: 'Maximum postcards per batch',
+      type: FieldType.NUMBER,
+      value: 10,
+    },
+    DEFAULT_REGION: {
+      universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
+      description: 'Default shipping region',
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Europe', value: 'eu' },
+        { label: 'United States', value: 'us' },
+      ],
+      value: 'eu',
+    },
+  },
+});
+```
+
+Proprietatea `type` afectează doar **prezentarea și validarea** — selectează câmpul de intrare corespunzător în interfața de setări a spațiului de lucru (un comutator, câmp numeric, listă derulantă, selector de dată, editor JSON, …) și permite build‑ului să valideze configurația (de exemplu, `SELECT` / `MULTI_SELECT` trebuie să declare o listă `options` negoală). Nu modifică **deloc** modul în care valoarea ajunge în codul tău.
+
+Valorile sunt **întotdeauna injectate ca stringuri** — acest lucru este inerent pentru variabilele de mediu (`process.env.*` este doar string). Când rulează funcția ta de logică, executorul serializează fiecare valoare în funcție de `type`‑ul declarat în timp ce construiește `process.env`, astfel încât formatul stringului este consecvent indiferent de modul în care a fost setată valoarea (valoare implicită din manifest, interfața de setări sau o versiune anterioară):
+
+| Tip                                   | string `process.env`                    |
+| ------------------------------------- | --------------------------------------- |
+| `TEXT`, `SELECT`, `DATE`, `DATE_TIME` | valoarea brută (`"eu"`, `"2026-01-01"`) |
+| `BOOLEAN`                             | `"true"` / `"false"`                    |
+| `NUMBER`, `NUMERIC`                   | string zecimal (`"10"`, `"2.5"`)        |
+| `MULTI_SELECT`, `ARRAY`               | array JSON (`'["email","postcard"]'`)   |
+| `RAW_JSON`, `RICH_TEXT`               | obiect JSON (`'{"retries":3}'`)         |
+
+Parsează stringul înapoi în tipul pe care îl aștepți:
+
+```ts
+const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10
+const enabled = process.env.ENABLE_TRACKING === 'true'; // "true" -> true
+const channels = JSON.parse(process.env.ENABLED_CHANNELS ?? '[]'); // '["email"]' -> ["email"]
+const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3}' -> { retries: 3 }
+```
+
+Același lucru se aplică și componentelor de interfață care citesc valori prin `getApplicationVariable('VARIABLE_NAME')` — valoarea returnată este un string; parseaz-o după cum este necesar.
 
 ## Rol implicit pentru funcții
 
@@ -55,10 +109,14 @@ Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/op
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | `author`           | Numele autorului sau al companiei                                                                                              |
 | `category`         | Categoria aplicației pentru filtrarea în marketplace                                                                           |
-| `logoUrl`          | Calea către logo-ul aplicației (de ex., `public/logo.png`)                                                                     |
-| `screenshots`      | Array de căi către capturi de ecran (de ex., `public/screenshot-1.png`)                                                        |
+| `logo`             | Calea către logo-ul aplicației tale inclus în `public/` (de ex., `public/logo.png`)                                            |
+| `galleryImages`    | Array de căi către imaginile din galerie incluse în `public/` (de ex., `public/screenshot-1.png`)                              |
 | `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
 | `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
 | `termsUrl`         | Link către termenii de serviciu                                                                                                |
 | `emailSupport`     | Adresă de e-mail pentru suport                                                                                                 |
 | `issueReportUrl`   | Link către sistemul de urmărire a problemelor                                                                                  |
+
+<Note>
+`logoUrl` și `screenshots` sunt aliasuri învechite pentru `logo` și `galleryImages`. URL-urile absolute externe (`http://` sau `https://`) nu sunt acceptate pentru aceste câmpuri: ele sunt eliminate cu un avertisment în timpul build-ului. În schimb, include imaginile în folderul `public/` al aplicației tale.
+</Note>

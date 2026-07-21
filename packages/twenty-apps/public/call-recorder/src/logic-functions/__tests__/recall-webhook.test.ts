@@ -1,20 +1,11 @@
 import { createHmac } from 'crypto';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/process-recall-webhook-logic-function-universal-identifier';
 import recallWebhookLogicFunction, {
   recallWebhookRouteHandler,
 } from 'src/logic-functions/recall-webhook';
-
-const getApplicationVariableValueMock = vi.hoisted(() => vi.fn());
-
-vi.mock(
-  'src/logic-functions/utils/get-application-variable-value.util',
-  () => ({
-    getApplicationVariableValue: getApplicationVariableValueMock,
-  }),
-);
 
 const SECRET_BYTES = Buffer.from('entry-test-secret');
 const SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
@@ -65,8 +56,11 @@ const buildRecordingDoneWebhookBody = () => ({
 
 describe('recallWebhookRouteHandler', () => {
   beforeEach(() => {
-    getApplicationVariableValueMock.mockReset();
-    getApplicationVariableValueMock.mockReturnValue(SECRET);
+    vi.stubEnv('RECALL_WEBHOOK_SECRET', SECRET);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('declares a server route trigger that forwards the webhook signature headers', () => {
@@ -97,7 +91,7 @@ describe('recallWebhookRouteHandler', () => {
   });
 
   it('throws when the webhook secret is not configured', () => {
-    getApplicationVariableValueMock.mockReturnValue(undefined);
+    vi.stubEnv('RECALL_WEBHOOK_SECRET', '');
 
     expect(() =>
       recallWebhookRouteHandler(buildRoutePayload({ rawBody: '{}', body: {} })),

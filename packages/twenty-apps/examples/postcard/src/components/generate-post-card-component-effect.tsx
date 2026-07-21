@@ -7,7 +7,6 @@ import {
   useRecordId,
 } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SYSTEM_PROMPT =
   'You are a postcard writing assistant. Write a short, warm postcard message ' +
@@ -106,19 +105,13 @@ const GeneratePostCardEffect = () => {
   return null;
 };
 
+export const GENERATE_POST_CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  'bd7649c0-7540-4267-ac4b-f062fbd635a3';
+
 export default defineFrontComponent({
-  universalIdentifier: 'bd7649c0-7540-4267-ac4b-f062fbd635a3',
+  universalIdentifier: GENERATE_POST_CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Generate Post Card',
   description: 'Generates postcard content using AI',
   isHeadless: true,
   component: GeneratePostCardEffect,
-  command: {
-    universalIdentifier: '0f795c1c-8e25-44da-8962-80bef9602ee2',
-    label: 'Generate post card content',
-    shortLabel: 'Generate content',
-    icon: 'IconSparkles',
-    isPinned: true,
-    availabilityType: 'RECORD_SELECTION',
-    availabilityObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-  },
 });

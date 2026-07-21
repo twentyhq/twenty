@@ -35,6 +35,8 @@ export default defineNavigationMenuItem({
 
 * `position` controla el orden en la barra lateral.
 
+* El enum también contiene `NavigationMenuItemType.RECORD`, que se usa internamente para los favoritos de registros creados por el usuario; no se puede usar desde un manifiesto de aplicación (no hay ningún campo para hacer referencia a un registro).
+
 * `icon` y `color` son opcionales y personalizan el aspecto de la entrada.
 
 * `folderUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`.

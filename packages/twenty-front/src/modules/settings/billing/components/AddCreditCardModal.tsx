@@ -34,9 +34,10 @@ export const AddCreditCardModal = ({
   const { t } = useLingui();
   const { closeModal } = useModal();
 
+  // Close only after activation so the form keeps its loading state visible
   const handlePaymentMethodAdded = async () => {
-    closeModal(modalInstanceId);
     await onPaymentMethodAdded();
+    closeModal(modalInstanceId);
   };
 
   return (

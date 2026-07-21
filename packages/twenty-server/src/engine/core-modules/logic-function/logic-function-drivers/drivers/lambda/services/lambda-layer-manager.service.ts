@@ -32,7 +32,10 @@ export class LambdaLayerManagerService {
   private readonly logger = new Logger(LambdaLayerManagerService.name);
 
   constructor(
-    private readonly options: Pick<LambdaDriverOptions, 'layerBucket'>,
+    private readonly options: Pick<
+      LambdaDriverOptions,
+      'layerBucket' | 'resourceNamespace'
+    >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly toolFunctions: LambdaToolFunctionsService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
@@ -40,7 +43,10 @@ export class LambdaLayerManagerService {
   ) {}
 
   async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const layerName = getLambdaDepsLayerName(context.flatApplication);
+    const layerName = getLambdaDepsLayerName({
+      flatApplication: context.flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
 
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
@@ -128,7 +134,10 @@ export class LambdaLayerManagerService {
       return false;
     }
 
-    const depsLayerName = getLambdaDepsLayerName(flatApplication);
+    const depsLayerName = getLambdaDepsLayerName({
+      flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
     const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,

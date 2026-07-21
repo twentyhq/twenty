@@ -1,7 +1,13 @@
-import { createReadStream, existsSync, realpathSync } from 'fs';
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  realpathSync,
+} from 'fs';
 import * as fs from 'fs/promises';
 import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -64,18 +70,18 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async writeFile(params: {
-    filePath: string;
-    sourceFile: Buffer | Uint8Array | string;
-    mimeType: string | undefined;
-  }): Promise<void> {
-    const filePath = path.resolve(this.options.storagePath, params.filePath);
-    const folderPath = dirname(filePath);
+  // Resolves the on-disk path for a write, creating the parent folder and
+  // enforcing storage containment + symlink rejection.
+  private async resolveWritableRealPathOrThrow(
+    filePath: string,
+  ): Promise<string> {
+    const resolvedPath = path.resolve(this.options.storagePath, filePath);
+    const folderPath = dirname(resolvedPath);
 
     await this.createFolder(folderPath);
 
     const realFolderPath = realpathSync(folderPath);
-    const realFilePath = path.join(realFolderPath, path.basename(filePath));
+    const realFilePath = path.join(realFolderPath, path.basename(resolvedPath));
 
     this.assertRealPathIsWithinStorage(realFilePath);
 
@@ -94,7 +100,65 @@ export class LocalDriver implements StorageDriver {
       }
     }
 
+    return realFilePath;
+  }
+
+  async writeFile(params: {
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    const realFilePath = await this.resolveWritableRealPathOrThrow(
+      params.filePath,
+    );
+
     await fs.writeFile(realFilePath, params.sourceFile);
+  }
+
+  async writeFileStream(params: {
+    filePath: string;
+    stream: Readable;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    const realFilePath = await this.resolveWritableRealPathOrThrow(
+      params.filePath,
+    );
+
+    try {
+      await pipeline(params.stream, createWriteStream(realFilePath));
+    } catch (error) {
+      // Remove the partial file so a failed upload can be retried cleanly
+      await fs.rm(realFilePath, { force: true });
+
+      throw error;
+    }
+  }
+
+  async getFileMetadata(params: {
+    filePath: string;
+  }): Promise<{ size: number } | null> {
+    const joinedPath = join(this.options.storagePath, params.filePath);
+    let filePath: string;
+
+    try {
+      filePath = realpathSync(path.resolve(joinedPath));
+    } catch {
+      return null;
+    }
+
+    this.assertRealPathIsWithinStorage(filePath);
+
+    try {
+      const stats = await fs.stat(filePath);
+
+      return { size: stats.size };
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async downloadFile(params: {
@@ -301,6 +365,12 @@ export class LocalDriver implements StorageDriver {
   }
 
   async getPresignedUrl(): Promise<string | null> {
+    return null;
+  }
+
+  // Local storage has no external endpoint to upload to: the caller falls
+  // back to the server-side streaming upload endpoint.
+  async getPresignedUploadUrl(): Promise<string | null> {
     return null;
   }
 

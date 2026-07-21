@@ -7,13 +7,15 @@ import { FileFolder } from 'twenty-shared/types';
 import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -62,6 +64,7 @@ export class FileService {
       where: {
         path: `${fileFolder}/${filepath}`,
         applicationId,
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -90,6 +93,7 @@ export class FileService {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -151,6 +155,7 @@ export class FileService {
       where: {
         id: params.fileId,
         path: Like(`${params.fileFolder}/%`),
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -209,6 +214,8 @@ export class FileService {
       ),
       responseContentType: mimeType,
       responseContentDisposition: getContentDisposition(mimeType),
+      responseCacheControl:
+        fileFolderConfigs[fileFolder].cacheControl ?? undefined,
     });
 
     if (presignedUrl) {
@@ -244,6 +251,7 @@ export class FileService {
       where: {
         id: fileId,
         path: Like(`${fileFolder}/%`),
+        status: FILE_STATUS.UPLOADED,
       },
     });
 

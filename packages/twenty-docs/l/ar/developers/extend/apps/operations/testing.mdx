@@ -78,6 +78,13 @@ yarn add -D vitest vite-tsconfig-paths
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-أنشئ ملف إعداد يتحقّق من إمكانية الوصول إلى الخادم قبل تشغيل الاختبارات:
+أنشئ ملف إعداد عام يتحقق من إمكانية الوصول إلى الخادم، ويكتب ملف إعداد اختبار لـ SDK (`~/.twenty/config.test.json`)، ويزامن التطبيق قبل تشغيل الاختبارات:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## واجهات SDK البرمجية
 
 يُصدِّر المسار الفرعي `twenty-sdk/cli` دوالًا يمكنك استدعاؤها مباشرةً من شيفرة الاختبار:
 
-| دالة           | الوصف                                     |
-| -------------- | ----------------------------------------- |
-| `appBuild`     | بناء التطبيق واختياريًا حزم ملف tarball   |
-| `appDeploy`    | رفع ملف tarball إلى الخادم                |
-| `appInstall`   | تثبيت التطبيق على مساحة العمل النشطة      |
-| `appUninstall` | إلغاء تثبيت التطبيق من مساحة العمل النشطة |
+| دالة           | الوصف                                                               |
+| -------------- | ------------------------------------------------------------------- |
+| `appBuild`     | بناء التطبيق واختياريًا حزم ملف tarball                             |
+| `appDeploy`    | رفع ملف tarball إلى الخادم                                          |
+| `appDevOnce`   | بناء التطبيق ومزامنته مرة واحدة (نفس الأمر مثل `yarn twenty apply`) |
+| `appInstall`   | تثبيت التطبيق على مساحة العمل النشطة                                |
+| `appUninstall` | إلغاء تثبيت التطبيق من مساحة العمل النشطة                           |
 
 تُرجع كل دالة كائن نتيجة يحتوي على `success: boolean` وعلى إمّا `data` أو `error`.
 
@@ -238,64 +253,10 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-يشغِّل هذا الأمر `tsc --noEmit` ويبلغ عن أي أخطاء في الأنواع.
+يشغِّل هذا الأمر `tsc --noEmit` على ملف `tsconfig.json` الخاص بتطبيقك ويبلغ عن أي أخطاء في الأنواع. كما تتضمن التطبيقات المُنشأة بالهيكل برنامج نصي `yarn typecheck` يشمل ملفات الاختبار (`tsconfig.spec.json`) أيضًا.
 
 ## التكامل المستمر (CI) باستخدام GitHub Actions
 
-تولّد أداة إنشاء الهيكل سير عمل GitHub Actions جاهزًا للاستخدام في `.github/workflows/ci.yml`. يشغّل اختبارات التكامل لديك تلقائيًا عند كل دفع إلى `main` وعلى طلبات السحب.
+تولّد أداة إنشاء الهيكل سير عمل جاهزًا للاستخدام في `.github/workflows/ci.yml`. عند كل دفع إلى الفرع `main` وكل طلب سحب، تُنشئ الأداة خادم Twenty مؤقتًا في بيئة التشغيل (عبر الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`)، ثم تشغِّل الأوامر `yarn lint` و`yarn typecheck` و`yarn test:unit` و`yarn test` مع ضبط المتغيرين `TWENTY_API_URL` و`TWENTY_API_KEY` للإشارة إلى ذلك الخادم. لا تُطلَب أي أسرار، ويمكنك تثبيت إصدار الخادم عبر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.
 
-سير العمل:
-
-1. يجلب الشيفرة الخاصة بك
-2. يشغّل خادم Twenty مؤقتًا باستخدام الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. يثبّت التبعيات باستخدام `yarn install --immutable`
-4. يشغّل `yarn test` مع حقن `TWENTY_API_URL` و`TWENTY_API_KEY` من مخرجات الإجراء
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-لا تحتاج إلى تهيئة أي أسرار — إذ يبدأ إجراء `spawn-twenty-docker-image` خادم Twenty عابرًا مباشرة في المشغّل ويُخرِج تفاصيل الاتصال. يتم توفير السر `GITHUB_TOKEN` تلقائيًا من قِبل GitHub.
-
-لتثبيت إصدار محدّد من Twenty بدلًا من `latest`، غيّر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.
+راجع قسم [النشر → التكامل/التسليم المستمران الآليان](/l/ar/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) للاطلاع على شرح كامل لثلاثة مسارات العمل التي تم إنشاؤها تلقائياً (`ci.yml`، وخط أنابيب النشر `cd.yml`، و`publish.yml` للنشر على npm).

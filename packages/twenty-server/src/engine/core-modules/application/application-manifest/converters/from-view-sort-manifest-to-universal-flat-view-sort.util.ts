@@ -20,6 +20,7 @@ export const fromViewSortManifestToUniversalFlatViewSort = ({
       viewSortManifest.fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     direction: viewSortManifest.direction,
+    subFieldName: viewSortManifest.subFieldName ?? null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

@@ -1,13 +1,12 @@
-export type SdkClientUrls = {
-  core: string;
-  metadata: string;
-};
+import { type SdkClientSources } from '@/types/SdkClientSources';
 
 export type HostToWorkerRenderContext = {
   componentUrl: string;
+  componentSource: string;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
-  sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
+  hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
 };

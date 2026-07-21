@@ -13,6 +13,10 @@ export const definePageLayout: DefineEntity<PageLayoutConfig> = (config) => {
     errors.push('PageLayout must have a name');
   }
 
+  if (!config.type) {
+    errors.push('PageLayout must have a type');
+  }
+
   if (config.tabs) {
     for (const tab of config.tabs) {
       if (!tab.universalIdentifier) {

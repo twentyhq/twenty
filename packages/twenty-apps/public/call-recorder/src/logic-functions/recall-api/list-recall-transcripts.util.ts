@@ -3,18 +3,16 @@ import { isArray, isUndefined } from '@sniptt/guards';
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
+import {
+  fetchRecallListPages,
+  type RecallListResponse,
+} from 'src/logic-functions/recall-api/fetch-recall-list-pages.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
-import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 
 type ListRecallTranscriptsResult =
   | { ok: true; transcripts: RecallTranscriptSummary[] }
   | RecallBotOperationFailure;
-
-type RecallTranscriptListResponse = {
-  next?: unknown;
-  results?: unknown;
-};
 
 const RECALL_TRANSCRIPT_LIST_MAX_PAGES = 10;
 
@@ -29,41 +27,22 @@ export const listRecallTranscripts = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
-  const transcripts: RecallTranscriptSummary[] = [];
-  let path: string | undefined = buildListRecallTranscriptsPath({
-    externalRecordingId,
+  const searchParams = new URLSearchParams({
+    recording_id: externalRecordingId,
+  });
+  const result = await fetchRecallListPages({
+    config: configResult.config,
+    initialPath: `/transcript/?${searchParams.toString()}`,
+    maxPages: RECALL_TRANSCRIPT_LIST_MAX_PAGES,
+    extractPageItems: extractRecallTranscriptSummaries,
+    malformedErrorMessage: 'Recall API returned malformed transcript list',
   });
 
-  for (
-    let pageIndex = 0;
-    !isUndefined(path) && pageIndex < RECALL_TRANSCRIPT_LIST_MAX_PAGES;
-    pageIndex++
-  ) {
-    const result = await recallBotApiRequest<RecallTranscriptListResponse>({
-      config: configResult.config,
-      path,
-      method: 'GET',
-    });
-
-    if (!result.ok) {
-      return result;
-    }
-
-    const pageTranscripts = extractRecallTranscriptSummaries(result.data);
-
-    if (isUndefined(pageTranscripts)) {
-      return {
-        ok: false,
-        status: result.status,
-        errorMessage: 'Recall API returned malformed transcript list',
-      };
-    }
-
-    transcripts.push(...pageTranscripts);
-    path = extractNextPath(result.data, configResult.config.baseUrl);
+  if (!result.ok) {
+    return result;
   }
 
-  if (!isUndefined(path)) {
+  if (result.truncated) {
     return {
       ok: false,
       status: null,
@@ -71,23 +50,11 @@ export const listRecallTranscripts = async ({
     };
   }
 
-  return { ok: true, transcripts };
-};
-
-const buildListRecallTranscriptsPath = ({
-  externalRecordingId,
-}: {
-  externalRecordingId: string;
-}): string => {
-  const searchParams = new URLSearchParams({
-    recording_id: externalRecordingId,
-  });
-
-  return `/transcript/?${searchParams.toString()}`;
+  return { ok: true, transcripts: result.items };
 };
 
 const extractRecallTranscriptSummaries = (
-  response: RecallTranscriptListResponse | undefined,
+  response: RecallListResponse | undefined,
 ): RecallTranscriptSummary[] | undefined => {
   if (!isArray(response?.results)) {
     return undefined;
@@ -125,17 +92,4 @@ const extractRecallTranscriptSummary = (
     statusCode: getString(status?.code),
     statusSubCode: getString(status?.sub_code),
   };
-};
-
-const extractNextPath = (
-  response: RecallTranscriptListResponse | undefined,
-  baseUrl: string,
-): string | undefined => {
-  const nextPage = getString(response?.next);
-
-  if (isUndefined(nextPage) || !nextPage.startsWith(baseUrl)) {
-    return undefined;
-  }
-
-  return nextPage.slice(baseUrl.length);
 };

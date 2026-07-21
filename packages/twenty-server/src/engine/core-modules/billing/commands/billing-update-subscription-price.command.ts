@@ -3,9 +3,13 @@
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import {
+  type RunOnWorkspaceArgs,
+  WorkspaceCommandRunner,
+} from 'src/database/commands/command-runners/workspace.command-runner';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 
@@ -13,7 +17,7 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
   name: 'billing:update-subscription-price',
   description: 'Update subscription price',
 })
-export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BillingUpdateSubscriptionPriceCommand extends WorkspaceCommandRunner {
   private stripePriceIdToUpdate: string;
   private newStripePriceId: string;
   private clearUsage = false;
@@ -23,7 +27,10 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {
-    super(workspaceIteratorService);
+    super(workspaceIteratorService, [
+      WorkspaceActivationStatus.ACTIVE,
+      WorkspaceActivationStatus.SUSPENDED,
+    ]);
   }
 
   @Option({

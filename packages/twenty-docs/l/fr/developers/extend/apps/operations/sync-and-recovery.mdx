@@ -15,13 +15,17 @@ Pour l'itération locale au quotidien, vous voudrez presque toujours `yarn twent
 | Vous souhaitez…                                         | Commande                            | Notes                                                                                                                                   |
 | ------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | Itérer localement avec la synchronisation en direct     | `yarn twenty dev`                   | Surveille vos fichiers et synchronise à chaque modification.                                                                            |
-| Synchroniser une fois puis quitter (CI, scripts, hooks) | `yarn twenty dev --once`            | Effectue une compilation + synchronisation, puis quitte.                                                                                |
-| Prévisualiser les changements **sans les appliquer**    | `yarn twenty dev --once --dry-run`  | Calcule et affiche le diff ; n'écrit rien.                                                                                              |
+| Synchroniser une fois puis quitter (CI, scripts, hooks) | `yarn twenty apply`                 | Effectue une compilation + synchronisation, puis quitte. Ajoutez `--force` pour ignorer la confirmation des changements destructifs.    |
+| Prévisualiser les changements **sans les appliquer**    | `yarn twenty plan`                  | Calcule et affiche le diff ; n'écrit rien.                                                                                              |
 | Retirer l'application de l'espace de travail            | `yarn twenty app:uninstall`         | Ajoutez `--yes` pour ignorer la confirmation.                                                                                           |
 | Envoyer une archive tarball vers un serveur             | `yarn twenty app:publish --private` | Nécessite une version de `package.json` **strictement supérieure** — voir [Publication](/l/fr/developers/extend/apps/operations/publishing). |
 | Publier sur la place de marché (npm)                    | `yarn twenty app:publish`           | —                                                                                                                                       |
 | Installer / mettre à niveau une version déployée        | `yarn twenty app:install`           | Installe la version actuellement déployée.                                                                                              |
 | Effacer le serveur local et repartir de zéro            | `yarn twenty docker:reset`          | Supprime **toutes** les données locales — en dernier recours.                                                                           |
+
+<Note>
+`yarn twenty dev --once` et `yarn twenty dev --once --dry-run` fonctionnent toujours comme alias obsolètes de `yarn twenty apply` et `yarn twenty plan`.
+</Note>
 
 ### La synchronisation locale n'a pas besoin d'un incrément de version
 
@@ -29,18 +33,25 @@ La règle de `version` strictement croissante (`VERSION_ALREADY_EXISTS` lors du 
 
 ## Lire la sortie de synchronisation
 
-Chaque synchronisation affiche les changements de métadonnées qu'elle a appliqués (ou appliquerait, avec `--dry-run`) :
+Chaque synchronisation affiche les changements de métadonnées qu'elle a appliqués (ou qu'elle appliquerait, avec `plan`), à la manière de Terraform — un bloc par entité avec ses attributs, puis une ligne récapitulative :
 
 ```text filename="Terminal"
-Metadata changes: 2 created, 1 updated, 1 deleted
-  created objectMetadata rocket
-  created fieldMetadata timelineActivities
-  updated fieldMetadata launchedAt
-  deleted pageLayout legacyTab
-✓ Synced
+  # objectMetadata "rocket" will be created
+  + icon          = "IconRocket"
+  + labelSingular = "Rocket"
+  + ...
+
+  # fieldMetadata "launchedAt" will be updated
+  ~ isNullable = false -> true
+
+Plan: 2 to add, 1 to change, 1 to destroy.
+
+✓ Synced My App (4 files)
 ```
 
 C'est votre premier diagnostic : il vous indique exactement quels objets, champs et mises en page ont changé, afin que vous puissiez confirmer qu'une synchronisation a fait ce que vous attendiez avant de vérifier l'interface utilisateur.
+
+Les changements destructifs (`to destroy`) sont listés avec ce qu'ils suppriment (par ex. `objectMetadata "auditNote" — drops the table and all its rows`) et nécessitent une confirmation interactive, ou `--force` dans les scripts.
 
 Lorsqu'une synchronisation échoue sur une seule entité, l'erreur nomme l'entité en cause et son `universalIdentifier`, par exemple :
 
@@ -50,39 +61,42 @@ Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337)
 
 Utilisez cet identifiant pour trouver l'entité dans votre manifeste (et, si nécessaire, dans l'espace de travail) plutôt que de deviner laquelle est en conflit.
 
-## Prévisualiser les changements (dry run)
+## Prévisualiser les changements (plan)
 
-`yarn twenty dev --once --dry-run` construit votre manifeste, demande au serveur le plan de migration et l'affiche — **sans rien appliquer**. C'est le moyen sûr de répondre « que changerait cette synchronisation ? » avant de s'y engager.
+`yarn twenty plan` construit votre manifeste, demande au serveur le plan de migration et l'affiche — **sans rien appliquer**. C'est le moyen sûr de répondre « que changerait cette synchronisation ? » avant de s'y engager.
 
 ```bash filename="Terminal"
-yarn twenty dev --once --dry-run
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
 Building manifest...
-Computing metadata diff (dry run, nothing will be applied)...
-Metadata changes: 1 created, 1 updated
-  created fieldMetadata timelineActivities
-  updated objectMetadata rocket
-✓ Dry run complete for My App — no changes were applied
+Computing metadata plan (read-only, nothing will be applied)...
+
+  # fieldMetadata "crewCapacity" will be created
+  + ...
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+✓ Plan complete for My App — no changes were applied
 ```
 
-Un dry run :
+Un plan :
 
 * **N'écrit rien** — aucune migration de métadonnées, aucune mise à jour de l'enregistrement d'application, aucun changement de rôle/onglet par défaut, et aucune génération de client d'API.
 * Renvoie le **même diff** qu'une synchronisation réelle appliquerait, afin que vous puissiez examiner à l'avance les entités créées/mises à jour/supprimées.
 * Est utile avant un changement risqué, lors de la révision d'un changement généré par une IA, ou dans un script qui doit échouer si un changement inattendu est sur le point d'être appliqué.
 
 <Note>
-Un dry run ne prévisualise que les changements de **métadonnées**, et il nécessite que l'application ait été synchronisée au moins une fois (pour que l'espace de travail la connaisse). Si vous l'exécutez sur une application qui n'a jamais été synchronisée, le serveur indique que l'application n'est pas installée — exécutez d'abord une fois `yarn twenty dev`.
+Un plan ne prévisualise que les changements de **métadonnées**, et il nécessite que l'application ait été synchronisée au moins une fois (pour que l'espace de travail la connaisse). Si vous l'exécutez sur une application qui n'a jamais été synchronisée, le serveur indique que l'application n'est pas installée — exécutez d'abord une fois `yarn twenty dev`.
 </Note>
 
 ## Échelle de récupération
 
 Lorsque les métadonnées locales semblent incorrectes, augmentez le niveau de manière progressive dans cet ordre et arrêtez-vous dès que vous êtes débloqué. Chaque étape est plus perturbatrice que la précédente.
 
-1. **Resynchroniser.** Exécutez à nouveau `yarn twenty dev --once`. Les synchronisations sont idempotentes — réexécuter un manifeste propre est sûr et résout souvent un incident passager.
-2. **Prévisualiser le plan.** Exécutez `yarn twenty dev --once --dry-run` pour voir exactement ce que la prochaine synchronisation compte changer, sans l'appliquer.
+1. **Resynchroniser.** Exécutez à nouveau `yarn twenty apply`. Les synchronisations sont idempotentes — réexécuter un manifeste propre est sûr et résout souvent un incident passager.
+2. **Prévisualiser le plan.** Exécutez `yarn twenty plan` pour voir exactement ce que la prochaine synchronisation compte changer, sans l'appliquer.
 3. **Lire l'erreur nommée.** Si une synchronisation échoue, relevez le type de métadonnées et l'`universalIdentifier` dans le message (voir ci-dessus) et localisez cette entité dans votre manifeste. Un conflit pointe généralement vers un identifiant dupliqué ou réutilisé.
 4. **Désinstaller et réinstaller.** `yarn twenty app:uninstall`, puis synchronisez à nouveau (`yarn twenty dev`). Cette opération reconstruit les métadonnées de l'application à partir d'une base saine tout en gardant le reste de votre espace de travail intact.
 5. **Réinitialisation complète (en dernier recours).** `yarn twenty docker:reset`, puis réinjectez des données et resynchronisez.

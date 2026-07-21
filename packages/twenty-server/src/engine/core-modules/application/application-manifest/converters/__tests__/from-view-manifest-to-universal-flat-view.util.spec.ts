@@ -114,6 +114,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     ).toBeNull();
     expect(result.calendarLayout).toBeNull();
     expect(result.calendarFieldMetadataUniversalIdentifier).toBeNull();
+    expect(result.calendarEndFieldMetadataUniversalIdentifier).toBeNull();
     expect(result.anyFieldFilterValue).toBeNull();
   });
 
@@ -126,6 +127,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         type: ViewType.CALENDAR,
         calendarLayout: ViewCalendarLayout.WEEK,
         calendarFieldMetadataUniversalIdentifier: 'field-uuid-date',
+        calendarEndFieldMetadataUniversalIdentifier: 'field-uuid-end-date',
       },
       applicationUniversalIdentifier,
       now,
@@ -134,6 +136,9 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.calendarLayout).toBe(ViewCalendarLayout.WEEK);
     expect(result.calendarFieldMetadataUniversalIdentifier).toBe(
       'field-uuid-date',
+    );
+    expect(result.calendarEndFieldMetadataUniversalIdentifier).toBe(
+      'field-uuid-end-date',
     );
   });
 

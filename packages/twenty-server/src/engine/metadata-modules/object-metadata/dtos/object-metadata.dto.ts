@@ -12,7 +12,7 @@ import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/wo
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 
 @ObjectType('Object')
 @Authorize({
@@ -53,8 +53,8 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon?: string;
 
-  @Field(() => ObjectStandardOverridesDTO, { nullable: true })
-  standardOverrides?: ObjectStandardOverridesDTO;
+  @HideField()
+  overrides?: ObjectMetadataOverrides | null;
 
   @Field({ nullable: true })
   shortcut?: string;

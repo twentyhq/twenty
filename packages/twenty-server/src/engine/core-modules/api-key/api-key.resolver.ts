@@ -43,6 +43,13 @@ export class ApiKeyResolver {
     return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
   }
 
+  @Query(() => [RoleDTO])
+  async getApiKeyRoles(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RoleDTO[]> {
+    return this.apiKeyRoleService.getApiKeyAssignableRoles(workspace.id);
+  }
+
   @Query(() => ApiKeyEntity, { nullable: true })
   async apiKey(
     @Args('input') input: GetApiKeyInput,

@@ -5,13 +5,15 @@
   width: var(--t-spacing-3);
   height: var(--t-spacing-4);
   border: 1px solid var(--color-sample-border-color);
-  border-radius: 60px;
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   background-color: var(--color-sample-color);
 }
 
 .circle {
   width: var(--t-spacing-4);
   border-radius: 50%;
+  corner-shape: round;
 }
 
 .pipeline {
@@ -25,6 +27,7 @@
     width: var(--t-spacing-1);
     height: var(--t-spacing-1);
     border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
     background-color: var(--color-sample-color);
     content: '';
   }

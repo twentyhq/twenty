@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "开始使用"
             },
+            "appsTutorial": {
+              "label": "教程"
+            },
             "appsConfig": {
               "label": "配置"
             },
@@ -174,6 +177,9 @@
             },
             "appsOperations": {
               "label": "操作"
+            },
+            "appsTranslations": {
+              "label": "翻译"
             }
           }
         },

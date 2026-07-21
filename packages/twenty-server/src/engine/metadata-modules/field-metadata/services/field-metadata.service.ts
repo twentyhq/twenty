@@ -94,7 +94,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -103,7 +102,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'flatIndexMaps',
           'flatFieldMetadataMaps',
           'flatPageLayoutWidgetMaps',
-          'flatSearchFieldMetadataMaps',
         ],
       },
     );
@@ -112,13 +110,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatFieldMetadatasToDelete,
       flatIndexesToDelete,
       flatIndexesToUpdate,
-      searchFieldMetadatasToDelete,
     } = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
       deleteOneFieldInput,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     });
 
     const deletedFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
@@ -166,11 +162,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: searchFieldMetadatasToDelete,
-              flatEntityToUpdate: [],
             },
             ...(flatPageLayoutWidgetsToDelete.length > 0
               ? {

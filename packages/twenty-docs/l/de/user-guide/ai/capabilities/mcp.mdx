@@ -3,10 +3,6 @@ title: MCP-Server
 description: Verbinden Sie KI-Assistenten mit Ihrem Twenty-Workspace über das Model Context Protocol.
 ---
 
-<Warning>
-MCP befindet sich derzeit in **alpha** und ist nur in einigen Workspaces verfügbar. Möglicherweise ist es für Ihren Workspace noch nicht aktiviert.
-</Warning>
-
 Twenty stellt einen [MCP](https://modelcontextprotocol.io/)-Server bereit, damit KI-Assistenten — Claude Desktop, Claude Code, Cursor, ChatGPT und andere — Ihre CRM-Daten in natürlicher Sprache lesen und schreiben können.
 
 Verwenden Sie Ihre **Workspace-URL** (die URL, mit der Sie auf Twenty zugreifen) als MCP-Endpunkt. In Twenty Cloud kann Ihre Workspace-URL `https://{mycompany}.twenty.com` oder eine benutzerdefinierte Domain sein. Der Server ist verfügbar unter:
@@ -72,20 +68,20 @@ Wenn Ihr MCP-Client OAuth nicht unterstützt oder Sie statische Anmeldeinformati
 Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie es von der Versionskontrolle und von gemeinsam genutzten Dotfiles fern.
 </Warning>
 
-Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings > APIs & Webhooks > + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api#create-an-api-key).
+Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings → MCP & APIs → API → + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api#create-an-api-key).
 
 ## Schnellstart
 
 ### 1. Konfiguration kopieren
 
-Gehen Sie in Twenty zu **Settings > AI > More > MCP Server**. Wählen Sie Ihre Authentifizierungsmethode (OAuth oder API-Schlüssel), kopieren Sie das JSON-Snippet (es verwendet bereits Ihre Workspace-URL) und fügen Sie es in die Konfigurationsdatei Ihres MCP-Clients ein.
+Gehen Sie in Twenty zu **Settings → MCP & APIs → MCP**. Wählen Sie Ihre Authentifizierungsmethode (OAuth oder API-Schlüssel), kopieren Sie das JSON-Snippet (es verwendet bereits Ihre Workspace-URL) und fügen Sie es in die Konfigurationsdatei Ihres MCP-Clients ein.
 
 | Client             | Speicherort der Konfigurationsdatei                                                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) oder `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                           |
 | **Claude Code**    | `~/.claude.json` (Benutzer) oder `.mcp.json` (Projekt)                                                                                                                                           |
 | **Cursor**         | `.cursor/mcp.json` in Ihrem Projekt oder `~/.cursor/mcp.json` global                                                                                                                             |
-| **ChatGPT**        | Aktivieren Sie den Entwicklermodus in **Settings > Apps & Connectors > Advanced settings** und verwenden Sie dann **Create** in **Settings > Apps & Connectors**, um den MCP-Server hinzuzufügen |
+| **ChatGPT**        | Aktivieren Sie den Entwicklermodus in **Settings → Apps & Connectors → Advanced settings** und verwenden Sie dann **Create** in **Settings → Apps & Connectors**, um den MCP-Server hinzuzufügen |
 
 ### 2. Verbinden
 
@@ -113,7 +109,7 @@ Sie müssen sich die Tool-Namen nicht merken. Fragen Sie Ihren KI-Assistenten, w
 MCP-Verbindungen erben die Berechtigungen des authentifizierten Benutzers (OAuth) oder die dem API-Schlüssel zugewiesene Rolle. So beschränken Sie, was der MCP-Server tun darf:
 
 * **OAuth**: Es gilt die Workspace-Rolle des Benutzers.
-* **API-Schlüssel**: Weisen Sie dem API-Schlüssel unter **Settings > Roles** eine Rolle zu. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions).
+* **API-Schlüssel**: Weisen Sie dem API-Schlüssel unter **Settings → Members → Roles** eine Rolle zu. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions).
 
 ## Selbstgehostete Konfiguration
 

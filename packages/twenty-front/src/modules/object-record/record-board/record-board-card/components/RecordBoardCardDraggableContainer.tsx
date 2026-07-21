@@ -1,6 +1,7 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { createPortal } from 'react-dom';
 
 import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -64,27 +65,40 @@ export const RecordBoardCardDraggableContainer = ({
         index={rowIndex}
         isDragDisabled={isRecordBoardDropProcessing}
       >
-        {(draggableProvided) => (
-          <StyledDraggableContainer
-            isDragDisabled={isRecordBoardDropProcessing}
-            id={`record-board-card-${columnIndex}-${rowIndex}`}
-            ref={draggableProvided?.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.dragHandleProps}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getCssCompatibleDraggableProps(
-              draggableProvided.draggableProps,
-            )}
-            data-selectable-id={recordId}
-            data-select-disable
-          >
-            <DragAndDropLibraryLegacyReRenderBreaker memoizationId={recordId}>
-              {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
-              <RecordBoardCard />
-              <RecordBoardCardMultiDragPreview />
-            </DragAndDropLibraryLegacyReRenderBreaker>
-          </StyledDraggableContainer>
-        )}
+        {(draggableProvided, draggableSnapshot) => {
+          const draggableContent = (
+            <StyledDraggableContainer
+              isDragDisabled={isRecordBoardDropProcessing}
+              id={`record-board-card-${columnIndex}-${rowIndex}`}
+              ref={draggableProvided?.innerRef}
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...draggableProvided?.dragHandleProps}
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...getCssCompatibleDraggableProps(
+                draggableProvided.draggableProps,
+              )}
+              data-selectable-id={recordId}
+              data-select-disable
+            >
+              <DragAndDropLibraryLegacyReRenderBreaker memoizationId={recordId}>
+                {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
+                <RecordBoardCard />
+                <RecordBoardCardMultiDragPreview />
+              </DragAndDropLibraryLegacyReRenderBreaker>
+            </StyledDraggableContainer>
+          );
+
+          // The drag clone is position: fixed, which resolves against the
+          // nearest transformed ancestor — dashboard widgets are translated
+          // by react-grid-layout, offsetting the clone from the pointer.
+          // Portal it to the body while dragging so the viewport stays its
+          // containing block.
+          if (draggableSnapshot.isDragging) {
+            return createPortal(draggableContent, document.body);
+          }
+
+          return draggableContent;
+        }}
       </Draggable>
     </RecordBoardCardContext.Provider>
   );

@@ -35,6 +35,8 @@ export default defineNavigationMenuItem({
 
 * `position` はサイドバーでの表示順を制御します。
 
+* enum には、ユーザーが作成したレコードのお気に入りを内部的に扱うために使用される `NavigationMenuItemType.RECORD` も含まれています。これはアプリのマニフェストからは使用できません（レコードを参照するフィールドが存在しません）。
+
 * `icon` と `color` は任意で、エントリの見た目をカスタマイズします。
 
 * `folderUniversalIdentifier` は、任意の項目で利用でき、その項目を `FOLDER` タイプの親の内側にネストするために使用します。

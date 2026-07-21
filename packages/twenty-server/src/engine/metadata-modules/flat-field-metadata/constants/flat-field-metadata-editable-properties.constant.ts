@@ -27,3 +27,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
   'standard' | 'custom',
   MetadataEntityPropertyName<'fieldMetadata'>[]
 >;
+
+export const FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES = [
+  'isActive',
+] as const satisfies MetadataEntityPropertyName<'fieldMetadata'>[];

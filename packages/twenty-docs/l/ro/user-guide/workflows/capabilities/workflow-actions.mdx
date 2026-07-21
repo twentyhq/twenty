@@ -112,7 +112,7 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 
 **Configurare**:
 
-* Selectați array-ul de înregistrări dintr-un pas anterior (de ex., rezultate din Search Records, dintr-un declanșator Manual cu disponibilitate Bulk, dintr-un nod de cod)
+* Selectați array-ul de înregistrări dintr-un pas anterior (de ex., rezultate din Search Records, dintr-un declanșator Manual cu disponibilitate Bulk, dintr-un nod de cod). Când un pas de tip Cod sau funcție logică returnează un array de nivel superior, selectează opțiunea **Whole list** pentru a itera peste întregul rezultat.
 * Definiți acțiunile de efectuat pe fiecare înregistrare în buclă.
 
 <Note>
@@ -120,7 +120,7 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 - Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
 </Note>
 
-* Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare.
+* Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare. Poți, de asemenea, să selectezi **Use the whole item** pentru a trimite întregul element curent într-un pas ulterior.
 
 <VimeoEmbed videoId="1146577247" title="Demonstrație video" />
 
@@ -245,6 +245,8 @@ Câmpurile nu pot fi făcute obligatorii.
 
 Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
 
+În fundal, fiecare acțiune de cod este susținută de propria **funcție logică** — o funcție TypeScript pe server, care rulează pe platforma Twenty. Când adaugi o acțiune de cod, Twenty creează o funcție logică dedicată pentru acel pas și îi afișează editorul inline, astfel încât codul pe care îl scrii rămâne asociat cu workflow-ul.
+
 **Configurare**:
 
 * Accesați variabilele din pașii anteriori. Puteți edita dinamic numele variabilelor.
@@ -265,6 +267,25 @@ Dacă trebuie să utilizați chei API externe în codul dvs., trebuie să le int
 
 <Tip>
 Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
+</Tip>
+
+#### Reutilizarea unei funcții logice între workflow-uri
+
+Acțiunea de cod inline este excelentă pentru logică ad-hoc, dar codul pe care îl conține aparține acelui singur pas. Când vrei să partajezi aceeași logică între mai multe workflow-uri — sau să o menții ca sursă versionată într-o aplicație — definește o **funcție logică reutilizabilă** în loc să copiezi și să lipești cod în fiecare acțiune de cod.
+
+O funcție logică este definită o singură dată într-o aplicație (folosind `defineLogicFunction` din SDK) și expusă în constructorul de workflow prin adăugarea `workflowActionTriggerSettings`. După ce aplicația ta este instalată, acea funcție apare ca acțiune separată în constructorul de workflow, alături de acțiunile încorporate. Selectarea acesteia afișează câmpurile de intrare pe care le-ai declarat (cu selectoare de variabile, la fel ca alte acțiuni) și rulează codul tău partajat — fără a fi necesar JavaScript inline.
+
+|                                    | Acțiune de cod                                         | Funcție logică reutilizabilă                                           |
+| ---------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Locul în care „trăiește” codul** | Editor inline, legat de un singur pas al workflow-ului | Definită într-o aplicație, versionată în sistemul de control al sursei |
+| **Reutilizare**                    | Copiat și lipit pentru fiecare pas                     | Adăugată ca acțiune în orice workflow                                  |
+| **Intrări**                        | Variabile conectate în editor                          | Câmpuri afișate pe baza schemei de intrare declarate                   |
+| **Cel mai potrivit pentru**        | Logică rapidă, specifică workflow-ului                 | Logică partajată, folosită în mai multe workflow-uri                   |
+
+Ambele rulează pe același runtime pentru funcții logice, astfel încât o acțiune de cod pe care ai prototipat-o inline poate fi ulterior promovată într-o funcție logică reutilizabilă cu modificări minime.
+
+<Tip>
+Pentru documentația destinată dezvoltatorilor privind definirea funcțiilor logice și expunerea lor în constructorul de workflow, consultă [Logic Functions](/l/ro/developers/extend/apps/logic/logic-functions) — în special secțiunea **Exposing a function as an AI tool or workflow action** și `workflowActionTriggerSettings`.
 </Tip>
 
 ### Solicitare HTTP

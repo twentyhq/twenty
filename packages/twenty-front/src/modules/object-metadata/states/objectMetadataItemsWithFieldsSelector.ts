@@ -83,6 +83,7 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
         ...flatObject,
         fields,
         indexMetadatas,
+        searchFieldMetadatas: flatObject.searchFieldMetadatas ?? [],
         readableFields: fields.filter(
           (field) => !nonReadableFieldMetadataIds.includes(field.id),
         ),

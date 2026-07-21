@@ -8,7 +8,7 @@ export const ensureAppRegistration = async (
   app: { name: string; universalIdentifier: string },
 ): Promise<{
   clientId: string;
-  clientSecret: string;
+  clientSecret?: string;
   isNewRegistration: boolean;
 }> => {
   const createResult = await apiService.createApplicationRegistration({
@@ -68,18 +68,12 @@ export const ensureAppRegistration = async (
     appRefreshToken: undefined,
   });
 
-  const rotateResult =
-    await apiService.rotateApplicationRegistrationClientSecret(registration.id);
-
-  if (!rotateResult.success || !rotateResult.data) {
-    throw new Error(
-      `Failed to rotate client secret for registration ${registration.id}`,
-    );
-  }
-
+  // The registration may be a catalog-synced npm app owned by another (or no)
+  // workspace, so rotating its shared client secret is neither allowed nor
+  // desirable. Dev mode mints workspace-scoped app tokens via the
+  // generateApplicationToken mutation instead.
   return {
     clientId: registration.oAuthClientId,
-    clientSecret: rotateResult.data.clientSecret,
     isNewRegistration: false,
   };
 };

@@ -32,10 +32,11 @@ import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
   GetApiKeyDocument,
-  GetRolesDocument,
+  GetApiKeyRolesDocument,
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 const StyledInfo = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -99,9 +100,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
   }, [apiKeyData]);
 
-  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
+  const { data: rolesData, loading: rolesLoading } = useQuery(
+    GetApiKeyRolesDocument,
+  );
 
-  const roles = rolesData?.getRoles ?? [];
+  const roles = rolesData?.getApiKeyRoles ?? [];
 
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');
@@ -145,7 +148,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       if (redirect) {
-        navigate(SettingsPath.ApiWebhooks);
+        navigate(
+          SettingsPath.ApiWebhooks,
+          undefined,
+          undefined,
+          undefined,
+          SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+        );
       }
     } catch {
       enqueueErrorSnackBar({ message: t`Error deleting api key.` });
@@ -249,8 +258,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.General),
             },
             {
-              children: t`APIs & Webhooks`,
-              href: getSettingsPath(SettingsPath.ApiWebhooks),
+              children: t`MCP & APIs`,
+              href: getSettingsPath(
+                SettingsPath.ApiWebhooks,
+                undefined,
+                undefined,
+                SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+              ),
             },
             { children: apiKey.name || t`Unnamed API Key` },
           ]}

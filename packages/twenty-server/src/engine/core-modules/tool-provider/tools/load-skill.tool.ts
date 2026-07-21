@@ -58,7 +58,7 @@ export const createLoadSkillTool = (
         label: skill.label,
         content: skill.content,
       })),
-      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}`,
+      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}.`,
     };
   },
 });

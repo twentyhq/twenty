@@ -136,6 +136,15 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         );
       }
 
+      if (fieldDisplayMode === FieldDisplayMode.TABLE) {
+        return (
+          <FieldWidgetRelationTable
+            fieldDefinition={fieldDefinition}
+            recordId={targetRecord.id}
+          />
+        );
+      }
+
       return (
         <FieldWidgetJunctionRelationField
           fieldDefinition={fieldDefinition}

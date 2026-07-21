@@ -1,0 +1,2 @@
+export const CREATE_WORKFLOW_CORE_TABLE_UPGRADE_COMMAND_NAME =
+  '2.20.0_CreateWorkflowCoreTableFastInstanceCommand_1783603454479';

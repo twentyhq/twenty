@@ -12,6 +12,7 @@ import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain
 import { AWS_SES_EVENT_BUS_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-event-bus-name.constant';
 import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
 
 type ProvisionWorkspaceInput = {
   tenantName: string;
@@ -22,7 +23,10 @@ type ProvisionWorkspaceInput = {
 export class AwsSesRegisterDomainService {
   private readonly logger = new Logger(AwsSesRegisterDomainService.name);
 
-  constructor(private readonly awsSesClientProvider: AwsSesClientProvider) {}
+  constructor(
+    private readonly awsSesClientProvider: AwsSesClientProvider,
+    private readonly awsSesObservabilityService: AwsSesObservabilityService,
+  ) {}
 
   async provisionWorkspaceResources(
     input: ProvisionWorkspaceInput,
@@ -88,6 +92,10 @@ export class AwsSesRegisterDomainService {
           throw error;
         }
       });
+
+    await this.awsSesObservabilityService.addEventDestination(
+      input.configurationSetName,
+    );
 
     this.logger.log(
       `Provisioned workspace resources for tenant ${input.tenantName}`,

@@ -1,4 +1,4 @@
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import { playgroundApiKeyState } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';

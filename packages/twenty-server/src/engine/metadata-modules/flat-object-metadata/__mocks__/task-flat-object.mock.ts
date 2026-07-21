@@ -12,7 +12,7 @@ export const TASK_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Tasks',
   description: 'A task',
   icon: 'IconCheckbox',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

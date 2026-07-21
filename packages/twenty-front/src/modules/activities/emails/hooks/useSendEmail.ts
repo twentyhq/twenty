@@ -12,6 +12,11 @@ import {
   type SendEmailMutationVariables,
 } from '~/generated-metadata/graphql';
 
+type SendEmailResult = {
+  success: boolean;
+  messageThreadId: string | null;
+};
+
 type SendEmailParams = {
   connectedAccountId: string;
   to: string;
@@ -20,6 +25,7 @@ type SendEmailParams = {
   subject: string;
   body: string;
   inReplyTo?: string;
+  draftMessageId?: string;
   files?: EmailAttachment[];
 };
 
@@ -34,7 +40,7 @@ export const useSendEmail = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const sendEmail = useCallback(
-    async (params: SendEmailParams): Promise<boolean> => {
+    async (params: SendEmailParams): Promise<SendEmailResult> => {
       try {
         const result = await sendEmailMutation({
           variables: {
@@ -46,6 +52,7 @@ export const useSendEmail = () => {
               subject: params.subject,
               body: params.body,
               inReplyTo: params.inReplyTo,
+              draftMessageId: params.draftMessageId,
               files: params.files,
             },
           },
@@ -65,20 +72,23 @@ export const useSendEmail = () => {
             ],
           });
 
-          return true;
+          return {
+            success: true,
+            messageThreadId: result.data.sendEmail.messageThreadId ?? null,
+          };
         }
 
         enqueueErrorSnackBar({
           message: result.data?.sendEmail.error ?? t`Failed to send email`,
         });
 
-        return false;
+        return { success: false, messageThreadId: null };
       } catch {
         enqueueErrorSnackBar({
           message: t`Failed to send email`,
         });
 
-        return false;
+        return { success: false, messageThreadId: null };
       }
     },
     [

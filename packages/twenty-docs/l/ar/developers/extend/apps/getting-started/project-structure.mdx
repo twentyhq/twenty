@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## الملفات الرئيسية
 
-| ملف / مجلد                               | الغرض                                                               |
-| ---------------------------------------- | ------------------------------------------------------------------- |
-| `src/application-config.ts`              | **مطلوب.** ملف الإعداد الرئيسي لتطبيقك.                             |
-| `src/default-role.ts`                    | دور افتراضي يتحكّم بما يمكن لدوال المنطق الوصول إليه.               |
-| `src/constants/universal-identifiers.ts` | معرّفات UUID وبيانات تعريف يتم توليدها تلقائيًا (اسم العرض، الوصف). |
-| `src/__tests__/`                         | اختبارات تكامل (إعداد + اختبار مثال).                               |
-| `public/`                                | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                           |
+| ملف / مجلد                                                                 | الغرض                                                                                                        |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `src/application-config.ts`                                                | **مطلوب.** ملف الإعداد الرئيسي لتطبيقك.                                                                      |
+| `src/default-role.ts`                                                      | دور افتراضي يتحكّم بما يمكن لدوال المنطق الوصول إليه.                                                        |
+| `src/constants/universal-identifiers.ts`                                   | معرّفات UUID وبيانات تعريف يتم توليدها تلقائيًا (اسم العرض، الوصف).                                          |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | صفحة ترحيب مبدئية: مكوّن واجهة أمامية يتم تقديمه بواسطة مخطط صفحة مستقل، يمكن الوصول إليه من الشريط الجانبي. |
+| `src/__tests__/`                                                           | اختبار وحدة بالإضافة إلى اختبار تكامل (مع إعداده العام) يقوم بمزامنة التطبيق مع خادم حقيقي.                  |
+| `public/`                                                                  | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                                                                    |
+| `AGENTS.md` / `CLAUDE.md`                                                  | إرشادات لوكلاء برمجة الذكاء الاصطناعي الذين يعملون على التطبيق.                                              |
+| `CHANGELOG.md` / `SETUP.md`                                                | سجل بأبرز التغييرات وتعليمات الإعداد للتطوير المحلي.                                                         |
 
 <Note>
 **تنظيم الملفات متروك لك.** المجلدات المذكورة أعلاه هي أعراف متَّبعة — يكتشف SDK الكيانات عبر تحليل AST على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف.
@@ -47,15 +62,18 @@ my-twenty-app/
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+تقوم أداة إنشاء الهيكل بتثبيت الحزمتين `twenty-sdk` و `twenty-client-sdk` على إصدارها الخاص — حافظ على تزامنهما عند الترقية.
+
 * توفّر **`twenty-sdk`** أداة `twenty` CLI وأدوات البناء/إنشاء الهياكل (scaffolding). يعمل فقط أثناء التطوير ووقت البناء، ولا يتم استيراده أبدًا في وقت تشغيل تطبيقك المنشور.
 * يتم استيراد **`twenty-client-sdk`** بواسطة كود تطبيقك (`CoreApiClient`، `MetadataApiClient`، `RestApiClient`)؛ لكن Twenty توفّره في وقت التشغيل — حيث تحصل عليه دوال المنطق من طبقة SDK مُولَّدة، وتحصل عليه مكوّنات الواجهة من وحدات يتم تقديمها من الخادم. يُستخدَم الإصدار المثبّت لديك فقط لفحص الأنواع (typechecking) ولبناء النشر (deploy-time build)، لذا لا يلزم أبدًا أن يتم تضمينه في حزمة النشر.
 
-الاحتفاظ بأي من الحزمتين ضمن `dependencies` يؤدي إلى سحبها داخل حزمة وقت تشغيل التطبيق المثبّت، حيث تكون عبئًا زائدًا بلا فائدة. يُطلق `twenty build` تحذيرًا عندما تكون أيٌّ منهما ما تزال مدرجة ضمن `dependencies`.
+الاحتفاظ بأي من الحزمتين ضمن `dependencies` يؤدي إلى سحبها داخل حزمة وقت تشغيل التطبيق المثبّت، حيث تكون عبئًا زائدًا بلا فائدة. يُطلق `twenty dev:build` تحذيرًا عندما تكون أيٌّ منهما ما تزال مدرجة ضمن `dependencies`.
 
 أضِف تبعيات وقت التشغيل الخاصة بتطبيقك (المكتبات التي تستوردها دوال المنطق لديك فعلًا في وقت التشغيل) ضمن `dependencies` كالمعتاد.

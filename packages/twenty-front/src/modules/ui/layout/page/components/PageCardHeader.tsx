@@ -31,7 +31,9 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   column-gap: ${themeCssVariables.spacing[2]};
   display: grid;
   grid-template-columns: ${({ centerTitle }) =>
-    centerTitle ? 'minmax(0, 1fr) auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto'};
+    centerTitle
+      ? 'minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)'
+      : 'minmax(0, auto) minmax(0, 1fr)'};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
@@ -61,8 +63,9 @@ const StyledTitle = styled.div<{ titleColor?: string }>`
 const StyledCenteredTitle = styled(StyledTitle)`
   grid-column: 2;
   justify-content: center;
-  justify-self: center;
+  justify-self: stretch;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
 `;
 

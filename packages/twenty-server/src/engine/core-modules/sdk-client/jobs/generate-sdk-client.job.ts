@@ -19,6 +19,7 @@ export class GenerateSdkClientJob {
       workspaceId: data.workspaceId,
       applicationId: data.applicationId,
       applicationUniversalIdentifier: data.applicationUniversalIdentifier,
+      trigger: data.trigger,
     });
   }
 }

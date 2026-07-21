@@ -6,8 +6,9 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
-import { fetchLiveMarketplacePartners } from '@/partners-marketplace/fetch-live-marketplace-partners';
+import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
 import { MarketplaceClient } from '@/partners-marketplace/MarketplaceClient';
+import { MarketplaceListSkeleton } from '@/partners-marketplace/MarketplaceListSkeleton';
 import { MarketplaceHeader } from '@/partners-marketplace/MarketplaceHeader';
 import {
   buildBreadcrumbListJsonLd,
@@ -28,7 +29,7 @@ export default async function PartnersMarketplacePage({
   const [, communityStats, partners] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
-    fetchLiveMarketplacePartners(),
+    getMarketplacePartners(),
   ]);
   const locale = resolveLocaleParam((await params).locale);
 
@@ -47,7 +48,7 @@ export default async function PartnersMarketplacePage({
       <Menu communityStats={communityStats} scheme="light" />
       <main>
         <MarketplaceHeader />
-        <Suspense fallback={null}>
+        <Suspense fallback={<MarketplaceListSkeleton />}>
           <MarketplaceClient partners={partners} />
         </Suspense>
       </main>

@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Klíčové soubory
 
-| Soubor / Složka                          | Účel                                                                    |
-| ---------------------------------------- | ----------------------------------------------------------------------- |
-| `src/application-config.ts`              | **Povinné.** Hlavní konfigurační soubor vaší aplikace.                  |
-| `src/default-role.ts`                    | Výchozí role, která řídí, k čemu mohou vaše logické funkce přistupovat. |
-| `src/constants/universal-identifiers.ts` | Automaticky generovaná UUID a metadata (zobrazovaný název, popis).      |
-| `src/__tests__/`                         | Integrační testy (nastavení + ukázkový test).                           |
-| `public/`                                | Statické soubory (obrázky, písma) doručované vaší aplikací.             |
+| Soubor / Složka                                                            | Účel                                                                                                                       |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Povinné.** Hlavní konfigurační soubor vaší aplikace.                                                                     |
+| `src/default-role.ts`                                                      | Výchozí role, která řídí, k čemu mohou vaše logické funkce přistupovat.                                                    |
+| `src/constants/universal-identifiers.ts`                                   | Automaticky generovaná UUID a metadata (zobrazovaný název, popis).                                                         |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Výchozí uvítací stránka: frontendová komponenta vykreslená samostatným rozložením stránky, dostupná z postranního panelu.  |
+| `src/__tests__/`                                                           | Jednotkový test plus integrační test (s jeho globálním nastavením), který synchronizuje aplikaci proti skutečnému serveru. |
+| `public/`                                                                  | Statické soubory (obrázky, písma) doručované vaší aplikací.                                                                |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Pokyny pro agenty AI pro psaní kódu, kteří pracují na aplikaci.                                                            |
+| `CHANGELOG.md` / `SETUP.md`                                                | Seznam významných změn a pokyny k nastavení pro lokální vývoj.                                                             |
 
 <Note>
 **Uspořádání souborů je na vás.** Výše uvedené složky jsou konvence — SDK detekuje entity pomocí analýzy AST u volání `export default defineEntity(...)` bez ohledu na to, kde se soubor nachází.
@@ -47,15 +62,18 @@ Oba balíčky Twenty SDK patří pod `devDependencies`, ne pod `dependencies`:
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+Nástroj pro scaffolding připne `twenty-sdk` a `twenty-client-sdk` ke své vlastní verzi — při aktualizaci udržujte tyto dva balíčky synchronizované.
+
 * **`twenty-sdk`** dodává `twenty` CLI a nástroje pro sestavení/scaffolding. Běží pouze při vývoji a sestavování a nikdy není importován za běhu zveřejněné aplikace.
 * **`twenty-client-sdk`** je importován kódem vaší aplikace (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), ale Twenty ho poskytuje za běhu — logické funkce ho získávají z vygenerované SDK vrstvy a front-endové komponenty ho načítají z modulů poskytovaných serverem. Vaše nainstalovaná kopie se používá pouze pro kontrolu typů a build v době nasazení, takže ji nikdy není potřeba přibalit do nasazeného balíčku.
 
-Ponechání kteréhokoli balíčku pod `dependencies` ho vtáhne do runtime balíčku nainstalované aplikace, kde je jen mrtvou vahou. `twenty build` vypíše varování, pokud je kterýkoli z nich stále uveden pod `dependencies`.
+Ponechání kteréhokoli balíčku pod `dependencies` ho vtáhne do runtime balíčku nainstalované aplikace, kde je jen mrtvou vahou. `twenty dev:build` vypíše varování, pokud je kterýkoli z nich stále uveden pod `dependencies`.
 
 Vlastní runtime závislosti vaší aplikace (knihovny, které vaše logické funkce skutečně importují za běhu) přidejte jako obvykle pod `dependencies`.

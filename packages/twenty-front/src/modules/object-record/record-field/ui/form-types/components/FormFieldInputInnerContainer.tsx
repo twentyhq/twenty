@@ -20,16 +20,16 @@ const StyledFormFieldInputInnerContainer = styled.div<
   align-items: ${({ multiline }) => (multiline ? 'flex-start' : 'center')};
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.md};
   border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
+    multiline || !hasRightElement ? themeCssVariables.border.radius.md : '0'};
   border-right: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement
       ? `1px solid ${themeCssVariables.border.color.medium}`
       : 'none'};
-  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
+    multiline || !hasRightElement ? themeCssVariables.border.radius.md : '0'};
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;

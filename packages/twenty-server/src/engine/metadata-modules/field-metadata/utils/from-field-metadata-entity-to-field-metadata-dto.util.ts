@@ -17,7 +17,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   label: entity.label,
   description: entity.description ?? undefined,
   icon: entity.icon ?? undefined,
-  standardOverrides: entity.standardOverrides ?? undefined,
+  overrides: entity.overrides ?? undefined,
   isActive: entity.isActive,
   isSystem: entity.isSystem,
   isUIEditable: entity.isUIEditable,

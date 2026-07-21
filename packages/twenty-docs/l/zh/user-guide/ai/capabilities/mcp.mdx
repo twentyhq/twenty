@@ -3,10 +3,6 @@ title: MCP服务器
 description: 使用 Model Context Protocol 将 AI 助手连接到你的 Twenty 工作区。
 ---
 
-<Warning>
-MCP 目前处于**alpha**阶段，并且仅在部分工作区可用。 它可能尚未在你的工作区启用。
-</Warning>
-
 Twenty 提供一个 [MCP](https://modelcontextprotocol.io/) 服务器，使 AI 助手——Claude Desktop、Claude Code、Cursor、ChatGPT 等——能够通过自然语言读取和写入您的 CRM 数据。
 
 将您的**工作区 URL**（用于访问 Twenty 的 URL）用作 MCP 端点。 在 Twenty Cloud 上，您的工作区 URL 可能是 `https://{mycompany}.twenty.com`，也可能是自定义域名。 服务器可通过以下地址访问：
@@ -72,20 +68,20 @@ OAuth 需要支持[MCP 授权规范](https://modelcontextprotocol.io/specificati
 您的 API 密钥可访问工作区数据。 请不要将其纳入版本控制，也不要放入共享的 dotfiles。
 </Warning>
 
-要创建 API 密钥，请前往 **Settings > APIs & Webhooks > + Create key**。 详见[API](/l/zh/developers/extend/api#create-an-api-key)。
+要创建 API 密钥，请前往 **Settings → MCP & APIs → API → + Create key**。 详见[API](/l/zh/developers/extend/api#create-an-api-key)。
 
 ## 快速开始
 
 ### 1. 复制配置
 
-在 Twenty 中前往 **Settings > AI > More > MCP Server**。 选择您的身份验证方式（OAuth 或 API 密钥），复制 JSON 片段（其中已包含您的工作区 URL），并将其粘贴到 MCP 客户端的配置文件中。
+在 Twenty 中前往 **Settings → MCP & APIs → MCP**。 选择您的身份验证方式（OAuth 或 API 密钥），复制 JSON 片段（其中已包含您的工作区 URL），并将其粘贴到 MCP 客户端的配置文件中。
 
 | 客户端                | 配置文件位置                                                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) 或 `%APPDATA%\Claude\claude_desktop_config.json` (Windows) |
 | **Claude Code**    | `~/.claude.json` (用户) 或 `.mcp.json` (项目)                                                                                            |
 | **Cursor**         | 在您的项目中为 `.cursor/mcp.json`，或全局为 `~/.cursor/mcp.json`                                                                                |
-| **ChatGPT**        | 在 **Settings > Apps & Connectors > Advanced settings** 中开启开发者模式，然后在 **Settings > Apps & Connectors** 中使用 **Create** 添加 MCP 服务器      |
+| **ChatGPT**        | 在 **Settings → Apps & Connectors → Advanced settings** 中开启开发者模式，然后在 **Settings → Apps & Connectors** 中使用 **Create** 添加 MCP 服务器      |
 
 ### 2. 连接
 
@@ -113,7 +109,7 @@ OAuth 需要支持[MCP 授权规范](https://modelcontextprotocol.io/specificati
 MCP 连接将继承已通过身份验证的用户（OAuth）的权限，或继承分配给 API 密钥的角色。 要限制 MCP 服务器的操作范围：
 
 * **OAuth**：生效的是该用户在工作区中的角色。
-* **API 密钥**：在 **Settings > Roles** 下为该 API 密钥分配角色。 参见[权限](/l/zh/user-guide/permissions-access/capabilities/permissions)。
+* **API 密钥**：在 **Settings → Members → Roles** 下为该 API 密钥分配角色。 参见[权限](/l/zh/user-guide/permissions-access/capabilities/permissions)。
 
 ## 自托管配置
 

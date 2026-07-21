@@ -17,6 +17,11 @@ export const CAMPAIGN_STATUS = {
 
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
+export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
+
+export const CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS = 10_000;
+export const CAMPAIGN_STATS_REFRESH_DELAY_MS =
+  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
 
 export const MAX_CAMPAIGN_RECIPIENTS = 10000;
 

@@ -1,18 +1,17 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
-import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
 
 const failedFaviconUrls = new Set<string>();
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
@@ -34,7 +33,7 @@ const StyledMainIconWrapper = styled.div<{
     $noBackgroundOrBorder || !$borderColor
       ? 'none'
       : `1px solid ${$borderColor}`};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   inset: 0;

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -11,6 +12,7 @@ import { MicrosoftMessagingNotificationHandler } from 'src/modules/connected-acc
 
 @Module({
   imports: [
+    MetricsModule,
     TwentyConfigModule,
     WebhookSubscriptionModule,
     TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),

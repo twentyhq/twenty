@@ -1,4 +1,3 @@
-import { AuthModal } from '@/auth/components/AuthModal';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -9,19 +8,9 @@ import { LayoutCustomizationBar } from '@/layout-customization/components/Layout
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { PageDragDropProvider } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProvider';
-import { BackgroundMockNavigationDrawer } from '@/sign-in-background-mock/components/BackgroundMockNavigationDrawer';
-import { Suspense, lazy } from 'react';
-
-const BackgroundMockPage = lazy(() =>
-  import('@/sign-in-background-mock/components/BackgroundMockPage').then(
-    (module) => ({ default: module.BackgroundMockPage }),
-  ),
-);
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
-import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
@@ -36,7 +25,7 @@ const StyledLayout = styled.div`
   width: 100%;
 
   *::-webkit-scrollbar-thumb {
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 
   @media print {
@@ -85,7 +74,6 @@ const StyledMainContainer = styled.div`
 
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
-  const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
 
   return (
@@ -97,41 +85,20 @@ export const DefaultLayout = () => {
             <LayoutCustomizationBar />
             <StyledPageContainer>
               <PageDragDropProvider>
-                {!showAuthModal && <KeyboardShortcutMenu />}
-                {showAuthModal ? (
-                  <StyledNavigationDrawerWrapper>
-                    <BackgroundMockNavigationDrawer />
-                  </StyledNavigationDrawerWrapper>
-                ) : useShowFullScreen ? null : (
+                <KeyboardShortcutMenu />
+                {useShowFullScreen ? null : (
                   <StyledNavigationDrawerWrapper>
                     <AppNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
                 )}
-                {showAuthModal ? (
-                  <>
-                    <StyledMainContainer>
-                      <Suspense fallback={null}>
-                        <BackgroundMockPage />
-                      </Suspense>
-                    </StyledMainContainer>
-                    <AnimatePresence mode="wait">
-                      <LayoutGroup>
-                        <AuthModal>
-                          <Outlet />
-                        </AuthModal>
-                      </LayoutGroup>
-                    </AnimatePresence>
-                  </>
-                ) : (
-                  <StyledMainContainer>
-                    <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                      <Outlet />
-                    </AppErrorBoundary>
-                  </StyledMainContainer>
-                )}
+                <StyledMainContainer>
+                  <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                    <Outlet />
+                  </AppErrorBoundary>
+                </StyledMainContainer>
               </PageDragDropProvider>
             </StyledPageContainer>
-            {isMobile && !showAuthModal && <MobileNavigationBar />}
+            {isMobile && <MobileNavigationBar />}
           </AppErrorBoundary>
         </StyledLayout>
       </FileUploadProvider>

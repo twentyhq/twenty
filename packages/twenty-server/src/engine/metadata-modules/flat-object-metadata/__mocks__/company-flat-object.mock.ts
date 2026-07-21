@@ -12,7 +12,7 @@ export const COMPANY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Companies',
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

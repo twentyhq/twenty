@@ -1,0 +1,149 @@
+---
+title: Sistem Alanlarını Hedefleme
+description: "`createdAt` veya `updatedAt` gibi otomatik oluşturulan sistem alanlarına görünümlerden ve diğer varlıklardan `getFieldUniversalIdentifier` ile referans verin."
+icon: gears
+---
+
+Twenty içindeki her nesne, kendiniz asla tanımlamadığınız bir dizi **sistem alanı** ile birlikte gelir. Bunlar, nesne sağlandığında sunucu tarafından otomatik olarak oluşturulur:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Bu alanları [`defineField()`](/l/tr/developers/extend/apps/data/extending-objects) ile tanımlamadığınız için, içe aktarabileceğiniz bir `universalIdentifier` sabiti yoktur. Peki bir [görünümde](/l/tr/developers/extend/apps/layout/views) `createdAt` alanına sütun olarak nasıl referans verirsiniz?
+
+## Sorun
+
+Twenty 2.19'dan beri, bir sistem alanının evrensel tanımlayıcısı, sunucu tarafından üç girdiden **deterministik olarak türetilir**: uygulama evrensel tanımlayıcısı, nesne evrensel tanımlayıcısı ve alan adı. Rastgele bir id uydurup onu hardcode etmek işe yaramaz: sunucudaki hiçbir şeyle eşleşmez ve senkronizasyon, askıda kalan referansı reddeder:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## Çözüm
+
+<Note>
+  `getFieldUniversalIdentifier`, `twenty-sdk` 2.21 sürümünden itibaren kullanılabilir.
+</Note>
+
+Sunucunun kullandığıyla tamamen aynı değeri elde etmek için `getFieldUniversalIdentifier` kullanın. Üç girdiyi alır ve alanın evrensel tanımlayıcısını döndürür:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier`, uygulamanızın tanımlayıcısıdır; [`defineApplication()`](/l/tr/developers/extend/apps/config/application) çağrısına aktardığınız tanımlayıcı.
+* `objectUniversalIdentifier`, alanın ait olduğu nesnenin tanımlayıcısıdır.
+* `name`, sistem alan adıdır; yukarıda listelenen değerlerden biridir.
+
+## Örnek: bir görünümde createdAt sütunu
+
+Tipik durum, özel nesnelerinizden birinin görünümüne bir `createdAt` sütunu eklemektir. Alan id'sini çözümleyin ve ona, herhangi bir `fieldMetadataUniversalIdentifier` gibi referans verin:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Aynı çözümlenen id, bir `fieldMetadataUniversalIdentifier` beklendiği her yerde çalışır: görünüm alanları, filtreler, sıralamalar, gruplar ve sayfa düzeni bileşenleri.
+
+<Note>
+  Id'yi çözümleyin, hardcode etmeyin. Sunucu değeri uygulama id'si, nesne id'si ve alan adından
+  türettiği için, `getFieldUniversalIdentifier` çağrısı, bu girdiler değişse bile referansınızı doğru tutar ve türetme zaman içinde gelişirse sapmayı önler.
+</Note>
+
+## Sistem ilişki alanları
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` 2.23 sürümünden itibaren `twenty-sdk` içinde kullanılabilir ve Twenty sunucusunun 2.23 veya daha yeni bir sürümünü gerektirir.
+</Note>
+
+Yukarıdaki skaler sistem alanlarının yanı sıra, sunucu her nesne üzerinde dört **sistem ilişki alanı** da sağlar: `timelineActivities`, `attachments`, `noteTargets` ve `taskTargets`. Bunların her biri, karşılık gelen standart ilişki nesnesini işaret eder.
+
+Bu alanlar `getFieldUniversalIdentifier` ile çözümlenmez: tanımlayıcıları, alanı barındıran nesne ve alanın işaret ettiği nesneden **isimden bağımsız** olarak türetilir. Bu sayede bir nesnenin adını değiştirmek, ilişki alanlarının tanımlayıcılarını asla değiştirmez.
+
+Bunları çözümlemek için `getSystemRelationFieldUniversalIdentifier` kullanın:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier`, alanın **barındırıldığı** nesnedir.
+* `relationTargetObjectUniversalIdentifier`, alanın **işaret ettiği** nesnedir.
+
+Yön, argüman sırasına göre kodlanır. Ters tarafı çözümlemek için (örneğin, `attachment.targetRocket`, sunucunun standart ilişki nesnesi üzerinde oluşturduğu morph alanı), ikisini değiştirin:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Skaler sistem alanlarında olduğu gibi, çözümlenen kimlik, `fieldMetadataUniversalIdentifier` beklendiği her yerde çalışır.
+
+## Standart Twenty nesneleri
+
+**Standart** bir Twenty nesnesi (Person, Company, Opportunity, …) için hiçbir şey türetmeniz gerekmez: sistem alanı tanımlayıcıları, doğrudan içe aktarabileceğiniz önceden hesaplanmış sabitlerdir.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+[`defineObject()`](/l/tr/developers/extend/apps/data/objects) ile **uygulamanızın** tanımladığı, böyle bir sabitin olmadığı nesnelerde `getFieldUniversalIdentifier` yöntemine başvurun.
+
+<Note>
+  `name`, bir sistem alanı değil, bir **varsayılan** alandır. Kendi hardcode edilmiş
+  evrensel tanımlayıcısını korur ve
+  `getFieldUniversalIdentifier` ile çözülmez. Tanımladığınız nesnelerde, `name` alanına `defineObject()` içinde ona verdiğiniz tanımlayıcı ile referans verin.
+</Note>

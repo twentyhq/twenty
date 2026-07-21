@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 const StyledPanel = styled.div`
   background: ${themeCssVariables.grayScale.gray1};
   border: 1px solid ${themeCssVariables.grayScale.gray5};
-  border-radius: 8px;
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -85,7 +85,7 @@ const StyledButton = styled.button`
   align-items: center;
   background: ${themeCssVariables.grayScale.gray1};
   border: 1px solid ${themeCssVariables.grayScale.gray5};
-  border-radius: 8px;
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.grayScale.gray12};
   cursor: pointer;
   display: flex;

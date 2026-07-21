@@ -38,7 +38,19 @@ const setupQueryMock = ({
       return Promise.resolve({ calendarEvents: remainingEventsPages.shift() });
     }
 
-    if (query.calendarEventParticipants.__args.filter.calendarEventId) {
+    if (query.person) {
+      return Promise.resolve({ person: null });
+    }
+
+    const filter = query.calendarEventParticipants.__args.filter;
+
+    if (filter.calendarEventId && filter.workspaceMemberId) {
+      return Promise.resolve({
+        calendarEventParticipants: { edges: [] },
+      });
+    }
+
+    if (filter.calendarEventId) {
       return Promise.resolve({
         calendarEventParticipants: remainingParticipantsPages.shift(),
       });
@@ -70,7 +82,7 @@ const singlePage = (nodes: Record<string, unknown>[]): Page => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [] });
+  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
 describe('on-calendar-event-started definition', () => {
@@ -139,7 +151,8 @@ describe('on-calendar-event-started handler', () => {
 
     const participantsByEventCalls = queryMock.mock.calls.filter(
       ([query]) =>
-        query.calendarEventParticipants?.__args.filter.calendarEventId,
+        query.calendarEventParticipants?.__args.filter.calendarEventId &&
+        !query.calendarEventParticipants?.__args.filter.workspaceMemberId,
     );
     expect(participantsByEventCalls).toHaveLength(2);
     expect(
@@ -155,7 +168,9 @@ describe('on-calendar-event-started handler', () => {
           query.calendarEventParticipants.__args.filter.personId.eq,
       ),
     ).toEqual([PERSON_ID_1, PERSON_ID_2]);
-    expect(mutationMock).toHaveBeenCalledTimes(2);
+    expect(
+      mutationMock.mock.calls.filter(([mutation]) => mutation.updatePeople),
+    ).toHaveLength(2);
   });
 
   it('should do nothing when no event started in the time window', async () => {

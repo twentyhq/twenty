@@ -7,11 +7,9 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import {
-  ApplicationRegistrationSourceType,
-  type Application,
-} from '~/generated-metadata/graphql';
+import { type Application } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -37,14 +35,14 @@ export const SettingsApplicationVersionContainer = ({
   const currentVersion = application?.version;
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
+  const isUpgradableApp = isUpgradableApplicationSourceType(sourceType);
 
-  const latestVersion = isNpmApp
+  const latestVersion = isUpgradableApp
     ? (latestAvailableVersion ?? currentVersion)
     : currentVersion;
 
   const hasUpdate =
-    isNpmApp &&
+    isUpgradableApp &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
@@ -74,7 +72,7 @@ export const SettingsApplicationVersionContainer = ({
         />
       ),
     },
-    ...(isNpmApp
+    ...(isUpgradableApp
       ? [
           {
             Icon: IconStatusChange,

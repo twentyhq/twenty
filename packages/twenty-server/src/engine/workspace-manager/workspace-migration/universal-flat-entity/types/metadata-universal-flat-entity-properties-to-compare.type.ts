@@ -36,11 +36,12 @@ type Assertions = [
       | 'description'
       | 'isActive'
       | 'defaultValue'
-      | 'standardOverrides'
+      | 'overrides'
       | 'options'
       | 'isUnique'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'isNullable'
       | 'universalSettings'
     >
   >,
@@ -60,6 +61,7 @@ type Assertions = [
       | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
+      | 'calendarEndFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'kanbanColumnWidth'

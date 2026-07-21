@@ -11,6 +11,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const COMPANY_ID = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a'),
 }));
 

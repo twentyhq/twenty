@@ -1,7 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { resolvePartnerPictureUrl } from './profile-picture';
+import {
+  mapPartnerForMarketplace,
+  type MarketplaceProfilePartner,
+} from './map-partner-for-marketplace';
 
 export const GET_PARTNER_BY_SLUG_LOGIC_FUNCTION_ID =
   '5e3e7b88-2cf2-4f56-9a4a-46c4c1d6b0bb';
@@ -33,6 +36,41 @@ const queryPartnerBySlug = (client: CoreApiClient, slug: string) =>
           hourlyRate: { amountMicros: true, currencyCode: true },
           projectBudgetMin: { amountMicros: true, currencyCode: true },
           linkedin: { primaryLinkUrl: true },
+          website: { primaryLinkUrl: true },
+          partnerLinks: {
+            edges: {
+              node: {
+                url: { primaryLinkUrl: true },
+                sortOrder: true,
+                position: true,
+              },
+            },
+          },
+          partnerServices: {
+            edges: {
+              node: {
+                title: true,
+                description: true,
+                sortOrder: true,
+                position: true,
+              },
+            },
+          },
+          partnerContents: {
+            edges: {
+              node: {
+                contentType: true,
+                status: true,
+                clientName: true,
+                headline: true,
+                body: { markdown: true },
+                coverImage: { url: true },
+                coverImageUrl: true,
+                caseStudyLink: { primaryLinkUrl: true },
+                position: true,
+              },
+            },
+          },
           // profilePicture is the legacy LINKS url; profilePictureFile is the
           // new FILES upload (its items expose `url`). Display prefers the file.
           profilePicture: { primaryLinkUrl: true },
@@ -49,15 +87,23 @@ type PartnerRaw = NonNullable<
   Awaited<ReturnType<typeof queryPartnerBySlug>>['partners']
 >['edges'][number]['node'];
 
-type Partner = Omit<PartnerRaw, 'profilePicture' | 'profilePictureFile'> & {
-  profilePicture: { primaryLinkUrl: string | null };
-};
-
 type GetPartnerBySlugResult =
-  | { ok: true; partner: Partner }
+  | { ok: true; partner: MarketplaceProfilePartner }
   | { ok: false; reason: 'NOT_FOUND' | string };
 
-const handler = async (input: {
+const mapProfilePartner = (node: PartnerRaw): MarketplaceProfilePartner => {
+  const mapped = mapPartnerForMarketplace(node, 'profile');
+
+  if (!('projectBudgetTypical' in mapped)) {
+    throw new Error(
+      'get-partner-by-slug received list payload from profile mapper',
+    );
+  }
+
+  return mapped;
+};
+
+export const handler = async (input: {
   queryStringParameters?: { slug?: string };
 }): Promise<GetPartnerBySlugResult> => {
   const slug = input?.queryStringParameters?.slug;
@@ -74,16 +120,7 @@ const handler = async (input: {
       return { ok: false, reason: 'NOT_FOUND' };
     }
 
-    const { profilePictureFile, ...rest } = rawNode;
-    const partner: Partner = {
-      ...rest,
-      profilePicture: {
-        primaryLinkUrl: resolvePartnerPictureUrl(
-          profilePictureFile,
-          rawNode.profilePicture?.primaryLinkUrl,
-        ),
-      },
-    };
+    const partner = mapProfilePartner(rawNode);
 
     return { ok: true, partner };
   } catch (err) {

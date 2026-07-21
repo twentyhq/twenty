@@ -12,7 +12,7 @@ export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   labelPlural: 'Timeline Activities',
   description: 'Aggregated / filtered event to be displayed on the timeline',
   icon: 'IconTimelineEvent',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
   isRemote: false,
   isActive: true,

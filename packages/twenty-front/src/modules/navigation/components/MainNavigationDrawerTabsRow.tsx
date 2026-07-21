@@ -42,6 +42,7 @@ const StyledTabsPill = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[0.5]};
@@ -59,6 +60,7 @@ const StyledTabWrapper = styled.div<{ isActive: boolean }>`
     isActive
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   flex: 1;
@@ -95,6 +97,7 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[6]};

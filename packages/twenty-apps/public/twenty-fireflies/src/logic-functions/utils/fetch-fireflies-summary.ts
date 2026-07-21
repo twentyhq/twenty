@@ -9,6 +9,7 @@ const SUMMARY_QUERY = `
     transcript(id: $transcriptId) {
       id
       title
+      date
       duration
       meeting_link
       participants

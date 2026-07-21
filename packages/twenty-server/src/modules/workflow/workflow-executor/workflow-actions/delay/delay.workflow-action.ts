@@ -18,6 +18,7 @@ import { RESUME_DELAYED_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
 import { ResumeDelayedWorkflowJobData } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/resume-delayed-workflow-job-data.type';
 import { WorkflowDelayActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-input.type';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 
 @Injectable()
 export class DelayWorkflowAction implements WorkflowAction {
@@ -105,6 +106,7 @@ export class DelayWorkflowAction implements WorkflowAction {
         stepId: currentStepId,
       },
       {
+        ...buildRunWorkflowJobOptions(runInfo.workflowRunId),
         delay: delayInMs,
       },
     );

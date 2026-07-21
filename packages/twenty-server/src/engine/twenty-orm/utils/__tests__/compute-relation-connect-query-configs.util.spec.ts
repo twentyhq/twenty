@@ -232,7 +232,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       updatedAt: new Date(),
       shortcut: null,
       description: null,
-      standardOverrides: null,
+      overrides: null,
       isUIEditable: true,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,

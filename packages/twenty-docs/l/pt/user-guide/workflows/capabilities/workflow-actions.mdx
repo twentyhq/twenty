@@ -112,7 +112,7 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 
 **Configuração**:
 
-* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk, de um nó de código)
+* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk, de um nó de código). Quando uma etapa de código ou de função lógica retorna um array de nível superior, selecione a opção **Whole list** para iterar por toda a saída.
 * Defina as ações a serem realizadas em cada registro no loop.
 
 <Note>
@@ -120,7 +120,7 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 - Ao usar ramificações dentro de um iterador, certifique-se de que a última etapa de cada ramificação se conecte de volta ao iterador para fechar o loop.
 </Note>
 
-* Acesse os campos de `Current Item`: para usar campos do registro que está sendo processado no momento, clique na etapa **Iterator** e, em seguida, selecione **Current item**. A lista de campos disponíveis desse registro será exibida e poderá ser selecionada para uso em ações subsequentes.
+* Acesse os campos de `Current Item`: para usar campos do registro que está sendo processado no momento, clique na etapa **Iterator** e, em seguida, selecione **Current item**. A lista de campos disponíveis desse registro será exibida e poderá ser selecionada para uso em ações subsequentes. Você também pode selecionar **Use the whole item** para passar o item atual inteiro para uma etapa posterior.
 
 <VimeoEmbed videoId="1146577247" title="Demonstração em vídeo" />
 
@@ -245,6 +245,8 @@ Os campos não podem ser tornados obrigatórios.
 
 Executa JavaScript personalizado dentro do seu fluxo de trabalho.
 
+Nos bastidores, cada ação de código é respaldada por sua própria **função lógica** — uma função TypeScript do lado do servidor que é executada na plataforma Twenty. Quando você adiciona uma ação de código, o Twenty cria uma função lógica dedicada para essa etapa e exibe seu editor em linha, de modo que o código que você escreve fica junto com o fluxo de trabalho.
+
 **Configuração**:
 
 * Acesse variáveis de etapas anteriores. Você pode editar os nomes das variáveis dinamicamente.
@@ -265,6 +267,25 @@ Se você precisar usar chaves de API externas em seu código, deverá inseri-las
 
 <Tip>
 Clique no ícone quadrado no canto superior direito do editor de código para exibi-lo em tela cheia — útil, já que a largura padrão do editor é limitada.
+</Tip>
+
+#### Reutilizar uma função lógica em vários fluxos de trabalho
+
+A ação de código em linha é ótima para lógica pontual, mas o código que ela contém pertence apenas àquela etapa. Quando você quiser compartilhar a mesma lógica em vários fluxos de trabalho — ou mantê-la como código-fonte versionado em um aplicativo — defina uma **função lógica reutilizável** em vez de copiar e colar código em cada ação de código.
+
+Uma função lógica é definida uma vez em um aplicativo (usando o `defineLogicFunction` do SDK) e exposta ao construtor de fluxos de trabalho ao adicionar `workflowActionTriggerSettings`. Depois que seu aplicativo é instalado, essa função aparece como uma ação própria no construtor de fluxos de trabalho, ao lado das ações nativas. Ao selecioná-la, são renderizados os campos de entrada que você declarou (com seletores de variáveis, assim como outras ações) e o seu código compartilhado é executado — sem necessidade de JavaScript inline.
+
+|                        | Ação de código                                              | Função lógica reutilizável                                           |
+| ---------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Onde o código fica** | Editor em linha, vinculado a uma etapa do fluxo de trabalho | Definida em um app, versionada no controle de código-fonte           |
+| **Reutilização**       | Copiada e colada em cada etapa                              | Adicionada como uma ação em qualquer fluxo de trabalho               |
+| **Entradas**           | Variáveis conectadas no editor                              | Campos renderizados a partir do esquema de entrada que você declarou |
+| **Melhor para**        | Lógica rápida e específica do fluxo de trabalho             | Lógica compartilhada usada em vários fluxos de trabalho              |
+
+Ambas são executadas no mesmo tempo de execução da função lógica; portanto, uma ação de código que você prototipou em linha pode posteriormente ser promovida a uma função lógica reutilizável com mudanças mínimas.
+
+<Tip>
+Para a documentação de referência voltada para desenvolvedores sobre como definir funções lógicas e expô-las no construtor de fluxos de trabalho, consulte [Logic Functions](/l/pt/developers/extend/apps/logic/logic-functions) — em particular a seção **Exposing a function as an AI tool or workflow action** e `workflowActionTriggerSettings`.
 </Tip>
 
 ### Requisição HTTP

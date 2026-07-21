@@ -86,6 +86,22 @@ export default defineObject({
 **Basisfelder werden automatisch hinzugefügt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, erstellt Twenty Standardfelder wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt` für Sie. Sie müssen diese nicht in Ihrem `fields`-Array deklarieren – nur Ihre benutzerdefinierten Felder. Sie können ein Standardfeld überschreiben, indem Sie eines mit demselben Namen deklarieren, aber das ist nur selten eine gute Idee.
 </Note>
 
+## Feldtypen
+
+Die vollständige Menge von `FieldType`-Werten, exportiert aus `twenty-sdk/define`:
+
+| Kategorie               | Typen                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Text                    | `TEXT`, `RICH_TEXT`, `ARRAY` (von Zeichenketten), `RAW_JSON`                                                                       |
+| Numerisch               | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (beliebige Genauigkeit), `RATING`, `POSITION` |
+| Datumsangaben           | `DATE`, `DATE_TIME`                                                                                                                |
+| Auswahl                 | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                |
+| Zusammengesetzt         | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                  |
+| Bezeichner & Relationen | `UUID`, `RELATION`, `MORPH_RELATION` (siehe [Relationen](/l/de/developers/extend/apps/data/relations))                                  |
+| System                  | `TS_VECTOR` (Volltext-Suchvektor, vom Server verwaltet)                                                                            |
+
+Zusammengesetzte Typen speichern mehrere Unterfelder (z. B. `FULL_NAME` = Vorname + Nachname; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` und `MULTI_SELECT` erfordern ein `options`-Array wie im obigen Beispiel.
+
 ## Standardwerte
 
 Wörtliche Zeichenfolgen-Standardwerte müssen in einfache Anführungszeichen **innerhalb** der Zeichenfolge eingeschlossen werden — `defaultValue: "'Draft'"`, nicht `defaultValue: "Draft"`. Deshalb verwendet das `status`-Feld oben `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Nicht in Anführungszeichen gesetzte Zeichenfolgen sind für berechnete Standard
 * `'now'` — der aktuelle Zeitstempel (für `DATE_TIME`-Felder)
 
 Dieselbe Konvention gilt für Zeichenketten-Unterfelder zusammengesetzter Standardwerte (z. B. `{ source: "'MANUAL'" }` in einem `ACTOR`-Feld) und für `SELECT`-/`MULTI_SELECT`-Werte. Ein wörtlicher Zeichenfolgen-Standardwert, der nicht in Anführungszeichen gesetzt ist, löst beim Build deiner App eine Warnung aus.
+
+## Nullbarkeit
+
+`isNullable` steuert, ob ein Feld `NULL` akzeptiert. Standardmäßig ist es `true` – lasse es für optionale Felder weg. Setze `isNullable: false`, um ein Feld auf Datenbankebene erforderlich zu machen.
+
+Änderungen an `isNullable` werden bei jedem Sync angewendet, einschließlich Syncs, die ein vorhandenes Feld aktualisieren – so kannst du die Nullbarkeit eines Feldes ändern, indem du das Manifest bearbeitest und erneut synchronisierst.
+
+<Note>
+**Das Ändern eines vorhandenen Feldes in nicht nullbar erfordert einen Standardwert.** Wenn du ein Feld auf `isNullable: false` änderst, musst du auch einen `defaultValue` angeben, der nicht `NULL` ist. Der Standardwert füllt alle vorhandenen `NULL`-Zeilen auf, bevor die `NOT NULL`-Einschränkung angewendet wird; ohne ihn schlägt die Synchronisierung mit `Default value cannot be null for non-nullable fields` fehl. Relationsfelder und `TS_VECTOR`-Felder sind immer nullbar, daher hat `isNullable` keine Auswirkung auf sie.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## Was kommt als Nächstes
 

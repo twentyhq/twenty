@@ -10,6 +10,7 @@ import {
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 import { type ScheduleRecallBotArgs } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
+import { computeMaximumJoinAt } from 'src/logic-functions/recall-api/compute-maximum-join-at.utils';
 
 type RescheduleRecallBotArgs = ScheduleRecallBotArgs & {
   externalBotId: string;
@@ -35,7 +36,7 @@ export const rescheduleRecallBot = async ({
     method: 'PATCH',
     body: {
       meeting_url: meetingUrl,
-      join_at: joinAt,
+      join_at: computeMaximumJoinAt(joinAt), // We can't join in the past, so we floor this date 1s in the future
       bot_name: configResult.config.botName,
       ...(isUndefined(automaticLeave)
         ? {}

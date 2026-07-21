@@ -4,12 +4,17 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { Readable } from 'stream';
 import { pipeline } from 'node:stream/promises';
 
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
 
 jest.mock('node:stream/promises', () => ({
   pipeline: jest.fn(),
 }));
 
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import {
   FileException,
   FileExceptionCode,
@@ -45,6 +50,7 @@ const mockPipeline = jest.mocked(pipeline);
 describe('FileController', () => {
   let controller: FileController;
   let fileService: FileService;
+  let serverFileStorageService: ServerFileStorageService;
   const mock_FileByIdGuard: CanActivate = { canActivate: jest.fn(() => true) };
   const mock_PublicEndpointGuard: CanActivate = {
     canActivate: jest.fn(() => true),
@@ -65,6 +71,12 @@ describe('FileController', () => {
             getFilePresignedUrlOrStreamById: jest.fn(),
           },
         },
+        {
+          provide: ServerFileStorageService,
+          useValue: {
+            readServerFile: jest.fn(),
+          },
+        },
       ],
     })
       .overrideGuard(FileByIdGuard)
@@ -79,6 +91,9 @@ describe('FileController', () => {
 
     controller = module.get<FileController>(FileController);
     fileService = module.get<FileService>(FileService);
+    serverFileStorageService = module.get<ServerFileStorageService>(
+      ServerFileStorageService,
+    );
 
     // Default to a resolved pipeline so happy-path tests don't have to wire it up.
     mockPipeline.mockResolvedValue(undefined);
@@ -150,6 +165,10 @@ describe('FileController', () => {
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Disposition',
         'inline',
+      );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, max-age=86400, immutable',
       );
       expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
@@ -297,6 +316,138 @@ describe('FileController', () => {
         mockRequest,
         FileFolder.CorePicture,
         'file-123',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getApplicationRegistrationAsset', () => {
+    const createAssetRequest = (path: string[] = ['images', 'logo.png']) =>
+      ({ params: { path } }) as any;
+
+    it('should stream the file with public cache headers', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      const mockResponse = createMockResponse() as any;
+
+      await controller.getApplicationRegistrationAsset(
+        mockResponse,
+        createAssetRequest(),
+        'registration-id',
+      );
+
+      expect(serverFileStorageService.readServerFile).toHaveBeenCalledWith({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'images/logo.png',
+      });
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Type',
+        'image/png',
+      );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'public, max-age=3600',
+      );
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
+    });
+
+    it('should throw FILE_NOT_FOUND when the file does not exist', async () => {
+      jest
+        .spyOn(serverFileStorageService, 'readServerFile')
+        .mockRejectedValue(
+          new FileStorageException(
+            'Server file not found',
+            FileStorageExceptionCode.FILE_NOT_FOUND,
+          ),
+        );
+
+      const mockResponse = createMockResponse() as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(['missing.png']),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException('File not found', FileExceptionCode.FILE_NOT_FOUND),
+      );
+
+      expect(mockPipeline).not.toHaveBeenCalled();
+    });
+
+    it('should throw FILE_NOT_FOUND when the path is rejected by validation', async () => {
+      jest
+        .spyOn(serverFileStorageService, 'readServerFile')
+        .mockRejectedValue(
+          new FileStorageException(
+            'Invalid file path',
+            FileStorageExceptionCode.ACCESS_DENIED,
+          ),
+        );
+
+      const mockResponse = createMockResponse() as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(['..', 'escape.png']),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException('File not found', FileExceptionCode.FILE_NOT_FOUND),
+      );
+
+      expect(mockPipeline).not.toHaveBeenCalled();
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: createMockStream(),
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: createMockStream(),
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      await controller.getApplicationRegistrationAsset(
+        mockResponse,
+        createAssetRequest(),
+        'registration-id',
       );
 
       expect(mockResponse.destroy).toHaveBeenCalledTimes(1);

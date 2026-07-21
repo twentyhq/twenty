@@ -17,12 +17,13 @@ type Assertions = [
       | 'description'
       | 'isActive'
       | 'defaultValue'
-      | 'standardOverrides'
+      | 'overrides'
       | 'options'
       | 'settings'
       | 'isUnique'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'isNullable'
       | 'universalSettings'
     >
   >,
@@ -42,7 +43,7 @@ type Assertions = [
       | 'color'
       | 'description'
       | 'isActive'
-      | 'standardOverrides'
+      | 'overrides'
       | 'isLabelSyncedWithName'
       | 'nameSingular'
       | 'namePlural'

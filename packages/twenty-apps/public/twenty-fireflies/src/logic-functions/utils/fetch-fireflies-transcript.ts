@@ -9,6 +9,7 @@ const TRANSCRIPT_QUERY = `
     transcript(id: $transcriptId) {
       id
       title
+      date
       duration
       meeting_link
       participants
@@ -20,6 +21,7 @@ const TRANSCRIPT_QUERY = `
         speaker_name
         text
         start_time
+        end_time
       }
     }
   }

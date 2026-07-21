@@ -108,28 +108,26 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       },
     ];
 
-    if (isDefined(ownerWorkspace?.displayName)) {
-      items.push({
-        Icon: IconTag,
-        label: t`Owner`,
-        value: (
-          <Chip
-            size={ChipSize.Large}
-            variant={ChipVariant.Highlighted}
-            clickable={false}
-            leftComponent={
-              <AvatarOrIcon
-                avatarType="rounded"
-                avatarUrl={getAbsoluteImageUrl(
-                  ownerWorkspace?.logo ?? undefined,
-                )}
-              />
-            }
-            label={ownerWorkspace.displayName}
-          />
-        ),
-      });
-    }
+    items.push({
+      Icon: IconTag,
+      label: t`Owner`,
+      value: isDefined(ownerWorkspace?.displayName) ? (
+        <Chip
+          size={ChipSize.Large}
+          variant={ChipVariant.Highlighted}
+          clickable={false}
+          leftComponent={
+            <AvatarOrIcon
+              avatarType="rounded"
+              avatarUrl={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+            />
+          }
+          label={ownerWorkspace.displayName}
+        />
+      ) : (
+        <Tag color="orange" text={t`Unclaimed`} />
+      ),
+    });
 
     switch (registration.sourceType) {
       case ApplicationRegistrationSourceType.NPM:

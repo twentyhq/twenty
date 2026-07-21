@@ -53,6 +53,7 @@ export const Modal = ({
   smallBorderRadius,
   narrowWidth,
   autoHeight,
+  width,
   modalZIndex = DEFAULT_MODAL_Z_INDEX,
   backdropZIndex = DEFAULT_BACKDROP_Z_INDEX,
   backdropTestId = 'modal-backdrop',
@@ -113,6 +114,7 @@ export const Modal = ({
                 style={
                   {
                     '--modal-z-index': modalZIndex,
+                    width: isMobile ? undefined : width,
                     gap:
                       gap !== undefined ? `var(--t-spacing-${gap})` : undefined,
                   } as React.CSSProperties

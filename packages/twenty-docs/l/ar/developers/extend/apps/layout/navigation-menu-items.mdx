@@ -35,6 +35,8 @@ export default defineNavigationMenuItem({
 
 * `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
 
+* يحتوي التعداد أيضًا على `NavigationMenuItemType.RECORD`، ويُستخدم داخليًا للمفضّلات التي ينشئها المستخدم للسجلات — ولا يمكن استخدامه من بيان التطبيق (app manifest) لعدم وجود حقل للإشارة إلى سجل.
+
 * `icon` و`color` اختياريان ويخصّصان مظهر الإدخال.
 
 * `folderUniversalIdentifier` متاح أيضًا على أي عنصر لوضعه متداخلًا داخل عنصر أب من النوع `FOLDER`.

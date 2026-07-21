@@ -43,7 +43,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       namePlural: 'defaultflatObjectMetadataNamePlural',
       nameSingular: 'defaultflatObjectMetadataNameSingular',
       shortcut: 'shortcut',
-      standardOverrides: null,
+      overrides: null,
       targetTableName: '',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -63,6 +63,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
+      calendarEndViewUniversalIdentifiers: [viewUniversalIdentifier],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -82,7 +83,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       isUIEditable: true,
       isLabelSyncedWithName: false,
       isSystem: false,
-      standardOverrides: null,
+      overrides: null,
       relationTargetObjectMetadataUniversalIdentifier: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
     };
@@ -95,6 +96,8 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier,
       calendarFieldMetadataUniversalIdentifier:
+        fieldMetadataUniversalIdentifier,
+      calendarEndFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -185,6 +188,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
 
     expect(updatedFieldMetadata).toMatchObject({
       calendarViewUniversalIdentifiers: [],
+      calendarEndViewUniversalIdentifiers: [],
     });
   });
 });

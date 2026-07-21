@@ -20,7 +20,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
       ? themeCssVariables.background.secondary
       : themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: content-box;
   color: ${themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};

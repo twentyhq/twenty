@@ -8,8 +8,15 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { type FieldManifest, type Manifest } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  type FieldManifest,
+  getSystemRelationFieldUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
+import {
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,6 +26,7 @@ const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'ticket',
   namePlural: 'tickets',
   labelSingular: 'Ticket',
@@ -167,11 +175,153 @@ describe('syncApplication', () => {
     });
   }, 60000);
 
+  // The snapshot masks every identifier as Any<String>, so it cannot catch a
+  // regression in the deterministic universal identifiers of the default
+  // relations. This test recomputes them and asserts the emitted migration
+  // actions carry them exactly, on both sides of each relation.
+  it('should provision the four engine-owned default relations on initial sync', async () => {
+    const NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR = {
+      timelineActivity: 'timelineActivities',
+      attachment: 'attachments',
+      noteTarget: 'noteTargets',
+      taskTarget: 'taskTargets',
+    } as const;
+
+    const { data: syncData } = await syncApplication({
+      manifest: buildManifest(),
+      expectToFail: false,
+    });
+
+    type FlatFieldEntity = {
+      universalIdentifier: string;
+      name?: string;
+      type?: string;
+      isSystem?: boolean;
+      isSystemSideEffect?: boolean;
+      morphId?: string | null;
+      objectMetadataUniversalIdentifier?: string;
+      relationTargetObjectMetadataUniversalIdentifier?: string | null;
+      relationTargetFieldMetadataUniversalIdentifier?: string | null;
+      universalSettings?: { joinColumnName?: string } | null;
+      universalFlatIndexFieldMetadatas?: {
+        fieldMetadataUniversalIdentifier: string;
+      }[];
+    };
+    type FlatEntityAction = {
+      type: string;
+      metadataName: string;
+      flatEntity: FlatFieldEntity;
+      // A relation field create action carries its reverse field inline.
+      relatedUniversalFlatFieldMetadata?: FlatFieldEntity;
+    };
+
+    const actions = (
+      syncData as {
+        syncApplication: { actions: FlatEntityAction[] };
+      }
+    ).syncApplication.actions;
+
+    const fieldCreateActionByUniversalIdentifier = Object.fromEntries(
+      actions
+        .filter(
+          (action) =>
+            action.metadataName === 'fieldMetadata' && action.type === 'create',
+        )
+        .map((action) => [action.flatEntity.universalIdentifier, action]),
+    );
+    const indexCreateActions = actions.filter(
+      (action) => action.metadataName === 'index' && action.type === 'create',
+    );
+
+    for (const standardObjectNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+      const standardObjectUniversalIdentifier =
+        STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier;
+      const standardObjectNamePlural =
+        NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR[
+          standardObjectNameSingular
+        ];
+
+      const forwardUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            standardObjectUniversalIdentifier,
+        });
+      const reverseUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier: standardObjectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            TEST_OBJECT.universalIdentifier,
+        });
+
+      // Forward RELATION field on the ticket, named after the standard
+      // object's namePlural, under the name-free universal identifier.
+      const forwardCreateAction =
+        fieldCreateActionByUniversalIdentifier[forwardUniversalIdentifier];
+
+      expect(forwardCreateAction?.flatEntity).toMatchObject({
+        name: standardObjectNamePlural,
+        type: FieldMetadataType.RELATION,
+        // Engine-owned (isSystemSideEffect) but not isSystem: the engine
+        // rename/delete cascades must pass the validator system-field gates.
+        isSystem: false,
+        isSystemSideEffect: true,
+        objectMetadataUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+        relationTargetObjectMetadataUniversalIdentifier:
+          standardObjectUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier:
+          reverseUniversalIdentifier,
+      });
+
+      // Reverse MORPH_RELATION field on the standard object, carried inline on
+      // the forward create action, under the name-free deterministic universal
+      // identifier, with the engine-pinned targetMorphId and the join column.
+      expect(
+        forwardCreateAction?.relatedUniversalFlatFieldMetadata,
+      ).toMatchObject({
+        name: 'targetTicket',
+        type: FieldMetadataType.MORPH_RELATION,
+        isSystem: false,
+        isSystemSideEffect: true,
+        universalIdentifier: reverseUniversalIdentifier,
+        morphId:
+          STANDARD_OBJECTS[standardObjectNameSingular].morphIds.targetMorphId
+            .morphId,
+        objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+        relationTargetObjectMetadataUniversalIdentifier:
+          TEST_OBJECT.universalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier:
+          forwardUniversalIdentifier,
+        universalSettings: expect.objectContaining({
+          joinColumnName: 'targetTicketId',
+        }),
+      });
+
+      // Engine-owned join-column index backing the reverse field.
+      const reverseJoinColumnIndexAction = indexCreateActions.find((action) =>
+        action.flatEntity.universalFlatIndexFieldMetadatas?.some(
+          (indexFieldMetadata) =>
+            indexFieldMetadata.fieldMetadataUniversalIdentifier ===
+            reverseUniversalIdentifier,
+        ),
+      );
+
+      expect(reverseJoinColumnIndexAction).toBeDefined();
+      expect(reverseJoinColumnIndexAction?.flatEntity).toMatchObject({
+        isSystemSideEffect: true,
+        objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+      });
+    }
+  }, 60000);
+
   it('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
     const originalFieldId = uuidv4();
     const updatedFieldId = uuidv4();
 
     const testObject = buildDefaultObjectManifest({
+      applicationUniversalIdentifier: TEST_APP_ID,
       nameSingular: 'ticket',
       namePlural: 'tickets',
       labelSingular: 'Ticket',

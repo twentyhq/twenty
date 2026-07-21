@@ -11,10 +11,13 @@ import { RecordCalendarCardComponentInstanceContext } from '@/object-record/reco
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
@@ -36,6 +39,12 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+  );
+
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+
   const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
@@ -57,6 +66,14 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   );
 
   const { openDropdown } = useOpenDropdown();
+
+  const handleCardClick = () => {
+    if (isDraggingRecord) {
+      return;
+    }
+
+    openRecordFromIndexView({ recordId });
+  };
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -88,6 +105,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
             <RecordCard
               data-selected={isRecordCalendarCardSelected}
               data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
+              onClick={isCompactModeActive ? handleCardClick : undefined}
             >
               <RecordCalendarCardHeader recordId={recordId} />
               <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>

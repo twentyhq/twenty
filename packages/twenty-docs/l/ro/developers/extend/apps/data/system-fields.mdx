@@ -1,0 +1,152 @@
+---
+title: Țintirea câmpurilor de sistem
+description: Folosind `getFieldUniversalIdentifier`, poți face referire la câmpuri de sistem create automat, precum `createdAt` sau `updatedAt`, din vizualizări și alte entități.
+icon: gears
+---
+
+Fiecare obiect din Twenty este livrat cu un set de **câmpuri de sistem** pe care nu le declari tu însuți. Acestea sunt create automat de server atunci când obiectul este provizionat:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Deoarece nu declari aceste câmpuri cu [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects), nu există niciun `universalIdentifier` constant pe care să-l imporți. Deci cum faci referire la `createdAt` ca o coloană într-o [vizualizare](/l/ro/developers/extend/apps/layout/views)?
+
+## Problema
+
+Începând cu Twenty 2.19, identificatorul universal al unui câmp de sistem este **derivat deterministic** de server din trei intrări: identificatorul universal al aplicației, identificatorul universal al obiectului și numele câmpului. Inventarea unui id și hardcodarea lui nu va funcționa: acesta nu se potrivește cu nimic de pe server, iar sincronizarea respinge referința rămasă în aer:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## Soluția
+
+<Note>
+  `getFieldUniversalIdentifier` este disponibil începând cu `twenty-sdk` 2.21.
+</Note>
+
+Folosește `getFieldUniversalIdentifier` pentru a obține exact aceeași valoare pe care o folosește serverul. Aceasta primește cele trei intrări și returnează identificatorul universal al câmpului:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` este identificatorul aplicației tale, cel pe care îl transmiți către [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+* `objectUniversalIdentifier` este identificatorul obiectului căruia îi aparține câmpul.
+* `name` este numele câmpului de sistem, una dintre valorile listate mai sus.
+
+## Exemplu: o coloană createdAt într-o vizualizare
+
+Cazul tipic este adăugarea unei coloane `createdAt` la o vizualizare a unuia dintre obiectele tale personalizate. Calculează id-ul câmpului și fă referire la el ca la orice alt `fieldMetadataUniversalIdentifier`:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Același id calculat funcționează oriunde este așteptat un `fieldMetadataUniversalIdentifier`: câmpuri de vizualizare, filtre, sortări, grupări și widget-uri de tip page-layout.
+
+<Note>
+  Calculează id-ul, nu îl hardcoda. Deoarece serverul derivă valoarea din
+  id-ul aplicației, id-ul obiectului și numele câmpului, apelarea
+  `getFieldUniversalIdentifier` menține referința corectă chiar dacă aceste
+  intrări se schimbă și evită divergența dacă metoda de derivare evoluează vreodată.
+</Note>
+
+## Câmpuri de relație de sistem
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` este disponibil începând cu versiunea 2.23 a `twenty-sdk` și necesită un server Twenty pe versiunea 2.23 sau o versiune ulterioară.
+</Note>
+
+Pe lângă câmpurile scalare de sistem de mai sus, serverul mai pune la dispoziție patru **câmpuri de relație de sistem** pentru fiecare obiect: `timelineActivities`, `attachments`, `noteTargets` și `taskTargets`, fiecare indicând către obiectul de relație standard corespunzător.
+
+Aceste câmpuri nu sunt rezolvate cu `getFieldUniversalIdentifier`: identificatorul lor este derivat **independent de nume**, din obiectul care găzduiește câmpul și obiectul către care indică acest câmp. Astfel, redenumirea unui obiect nu modifică niciodată identificatorii câmpurilor sale de relație.
+
+Folosește `getSystemRelationFieldUniversalIdentifier` pentru a le rezolva:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` este obiectul care **găzduiește** câmpul.
+* `relationTargetObjectUniversalIdentifier` este obiectul către care **indică** câmpul.
+
+Direcția este codificată prin ordinea argumentelor. Pentru a rezolva partea inversă (de ex. `attachment.targetRocket`, câmpul morfic pe care serverul îl creează pe obiectul de relație standard), inversează-le pe cele două:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Ca și în cazul câmpurilor de sistem scalare, id-ul rezolvat funcționează oriunde este așteptat un `fieldMetadataUniversalIdentifier`.
+
+## Obiecte standard Twenty
+
+Pentru un obiect Twenty **standard** (Person, Company, Opportunity, …), nu trebuie să derivezi nimic: identificatorii câmpurilor de sistem sunt constante pre-calculate pe care le poți importa direct.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+Apelează la `getFieldUniversalIdentifier` atunci când obiectul este unul pe care **aplicația ta** îl definește cu [`defineObject()`](/l/ro/developers/extend/apps/data/objects), unde nu există o astfel de constantă.
+
+<Note>
+  `name` este un câmp **implicit**, nu un câmp de sistem. Acesta își păstrează propriul identificator universal
+  hardcodat și nu este obținut prin
+  `getFieldUniversalIdentifier`. În obiectele pe care le definești, fă referire la câmpul
+  `name` prin identificatorul pe care i l-ai dat în `defineObject()`.
+</Note>

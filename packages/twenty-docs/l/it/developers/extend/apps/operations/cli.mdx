@@ -4,7 +4,25 @@ description: Comandi di `yarn twenty` per eseguire funzioni, eseguire lo streami
 icon: terminal
 ---
 
-Oltre a `dev`, `dev:build`, `dev:add` e `dev:typecheck`, la CLI `yarn twenty` fornisce comandi per eseguire funzioni, visualizzare i log e gestire le installazioni delle app.
+La CLI `yarn twenty` è la tua interfaccia per tutto ciò che riguarda le app. Elenco completo dei comandi:
+
+| Comando                                         | Cosa fa                                                                 | Documentato in                                                                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Monitora i file sorgente e sincronizza in tempo reale le modifiche      | [Guida rapida](/l/it/developers/extend/apps/getting-started/quick-start)                                           |
+| `piano`                                         | Visualizza in anteprima le modifiche ai metadati senza applicarle       | [Sincronizzazione e ripristino](/l/it/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `applica`                                       | Applica le modifiche ai metadati dopo aver mostrato il piano            | [Sincronizzazione e ripristino](/l/it/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Compila l'app e genera il client API (`--tarball` per creare un `.tgz`) | [Pubblicazione](/l/it/developers/extend/apps/operations/publishing)                                                |
+| `dev:typecheck`                                 | Esegui il controllo dei tipi TypeScript                                 | [Test](/l/it/developers/extend/apps/operations/testing)                                                            |
+| `dev:add`                                       | Genera lo scaffold per una nuova entità                                 | [Scaffolding](/l/it/developers/extend/apps/getting-started/scaffolding)                                            |
+| `dev:generate-client`                           | Rigenera il client API tipizzato                                        | questa pagina                                                                                                 |
+| `dev:function:exec` / `dev:function:logs`       | Esegui le funzioni e trasmetti in streaming i relativi log              | questa pagina                                                                                                 |
+| `dev:translations-extract`                      | Estrai le stringhe traducibili nei cataloghi in `locales/`              | [Traduzioni](/l/it/developers/extend/apps/translations/overview)                                                   |
+| `dev:catalog-sync`                              | Attiva la sincronizzazione del catalogo del marketplace                 | [Pubblicazione](/l/it/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                |
+| `app:publish` / `app:install` / `app:uninstall` | Ciclo di vita delle release                                             | [Pubblicazione](/l/it/developers/extend/apps/operations/publishing) e questa pagina                                |
+| `docker:*`                                      | Gestisci il container del server Twenty locale                          | [Server locale](/l/it/developers/extend/apps/getting-started/local-server)                                         |
+| `remote:*`                                      | Gestisci le connessioni al server                                       | questa pagina                                                                                                 |
+
+Ogni comando accetta `-r, --remote \<name>` per puntare a un remoto specifico anziché a quello predefinito.
 
 ## Esecuzione delle funzioni (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## Visualizzazione dei log delle funzioni (`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Le tue credenziali sono archiviate in `~/.twenty/config.json`.

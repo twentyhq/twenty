@@ -1,7 +1,12 @@
 import { Section } from 'twenty-ui/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown, IconPinned, IconReload } from 'twenty-ui/icon';
+import {
+  IconArrowBarToDown,
+  IconPinned,
+  IconReload,
+  IconShield,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
@@ -106,6 +111,24 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         </Card>
         <Card rounded fullWidth>
           <SettingsOptionCardContentToggle
+            Icon={IconShield}
+            title={t`Vetted`}
+            description={t`Mark this app as reviewed and approved`}
+            checked={registration.isVetted}
+            onChange={(checked) =>
+              updateRegistration({
+                variables: {
+                  input: {
+                    id: registration.id,
+                    update: { isVetted: checked },
+                  },
+                },
+              })
+            }
+          />
+        </Card>
+        <Card rounded fullWidth>
+          <SettingsOptionCardContentToggle
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}
             description={t`Automatically install this app on every newly created workspace`}
@@ -127,7 +150,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <StyledButtonWrapper id={BACKFILL_BUTTON_ID}>
           <Button
             Icon={IconReload}
-            title={t`Install latest version on all workspaces`}
+            title={t`Install on all workspaces`}
             variant="secondary"
             onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
             disabled={isBackfilling || !registration.isPreInstalled}
@@ -146,10 +169,10 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
       </StyledBackfillContainer>
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
-        title={t`Backfill installation`}
-        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?`}
+        title={t`Install on all workspaces`}
+        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?`}
         onConfirmClick={handleBackfill}
-        confirmButtonText={t`Backfill`}
+        confirmButtonText={t`Install`}
         confirmButtonAccent="blue"
         loading={isBackfilling}
       />

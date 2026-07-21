@@ -23,6 +23,12 @@ Iterator si aspetta un **array** come input. Quindi:
 3. Passa all'elemento successivo
 4. Ripete finché tutti gli elementi non sono stati elaborati
 
+### Selezionare l'array su cui iterare
+
+La maggior parte delle origini di array (Search Records, un campo array di un webhook, un trigger manuale Bulk) può essere selezionata direttamente nel selettore di variabili.
+
+Quando uno step **Code** o **Logic Function** restituisce un *array di primo livello*, il relativo output viene visualizzato nel selettore di variabili come voci indicizzate (`0`, `1`, `2`, …). Per iterare sull'intero array, seleziona l'opzione **Whole list** per quello step — l'Iterator deduce quindi automaticamente la struttura di ciascun elemento dall'elenco.
+
 ## Configurazione di base
 
 ### Esempio: inviare un'email a tutti nei risultati della ricerca
@@ -76,6 +82,8 @@ All'interno di Iterator, usa `{{iterator.currentItem}}` per accedere al record c
 | `{{iterator.currentItem.email}}`        | Campo email                                           |
 | `{{iterator.currentItem.company.name}}` | Nome dell'azienda correlata                           |
 | `{{iterator.index}}`                    | Posizione corrente nell'array (indice a partire da 0) |
+
+Nel selettore di variabili, puoi esplorare un campo specifico dell'elemento corrente oppure scegliere **Use the whole item** per fare riferimento all'intero elemento corrente (`{{iterator.currentItem}}`). Selezionare l'intero elemento è utile quando vuoi passare un record completo direttamente a uno step a valle invece di ricostruirlo campo per campo.
 
 ## Modelli comuni
 

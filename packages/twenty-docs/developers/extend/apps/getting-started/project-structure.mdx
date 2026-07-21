@@ -14,15 +14,27 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Key files
@@ -32,8 +44,11 @@ my-twenty-app/
 | `src/application-config.ts` | **Required.** The main configuration file for your app. |
 | `src/default-role.ts` | Default role controlling what your logic functions can access. |
 | `src/constants/universal-identifiers.ts` | Auto-generated UUIDs and metadata (display name, description). |
-| `src/__tests__/` | Integration tests (setup + example test). |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | A starter welcome page: a front component rendered by a standalone page layout, reachable from the sidebar. |
+| `src/__tests__/` | A unit test plus an integration test (with its global setup) that syncs the app against a real server. |
 | `public/` | Static assets (images, fonts) served with your app. |
+| `AGENTS.md` / `CLAUDE.md` | Guidance for AI coding agents working on the app. |
+| `CHANGELOG.md` / `SETUP.md` | Changelog of notable changes and setup instructions for local development. |
 
 <Note>
 **File organization is up to you.** The folders above are conventions — the SDK detects entities via AST analysis on `export default defineEntity(...)` calls regardless of where the file lives.
@@ -47,15 +62,18 @@ Both Twenty SDK packages belong under `devDependencies`, not `dependencies`:
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+The scaffolder pins `twenty-sdk` and `twenty-client-sdk` to its own version — keep the two in sync when upgrading.
+
 - **`twenty-sdk`** ships the `twenty` CLI and the build/scaffolding tooling. It only runs at development and build time and is never imported by your published app's runtime.
 - **`twenty-client-sdk`** _is_ imported by your app code (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), but Twenty provides it at runtime — logic functions get it from a generated SDK layer, and front components resolve it from server-served modules. Your installed copy is only used for typechecking and the deploy-time build, so it never needs to ship in the deployed bundle.
 
-Keeping either package under `dependencies` pulls it into the installed app's runtime bundle, where it is dead weight. `twenty build` emits a warning when either is still listed under `dependencies`.
+Keeping either package under `dependencies` pulls it into the installed app's runtime bundle, where it is dead weight. `twenty dev:build` emits a warning when either is still listed under `dependencies`.
 
 Add your app's own runtime dependencies (libraries your logic functions actually import at runtime) under `dependencies` as usual.

@@ -78,6 +78,13 @@ Crie um `vitest.config.ts` na raiz do seu aplicativo:
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-Crie um arquivo de configuração que verifique se o servidor está acessível antes da execução dos testes:
+Crie um arquivo de configuração global que verifique se o servidor está acessível, escreva uma configuração de teste para o SDK (`~/.twenty/config.test.json`) e sincronize o app antes da execução dos testes:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## APIs programáticas do SDK
 
 O subcaminho `twenty-sdk/cli` exporta funções que você pode chamar diretamente a partir do código de teste:
 
-| Função         | Descrição                                                    |
-| -------------- | ------------------------------------------------------------ |
-| `appBuild`     | Compilar o aplicativo e, opcionalmente, empacotar um tarball |
-| `appDeploy`    | Enviar um tarball para o servidor                            |
-| `appInstall`   | Instalar o aplicativo no espaço de trabalho ativo            |
-| `appUninstall` | Desinstalar o aplicativo do espaço de trabalho ativo         |
+| Função         | Descrição                                                        |
+| -------------- | ---------------------------------------------------------------- |
+| `appBuild`     | Compilar o aplicativo e, opcionalmente, empacotar um tarball     |
+| `appDeploy`    | Enviar um tarball para o servidor                                |
+| `appDevOnce`   | Compila e sincroniza o app uma vez (igual a `yarn twenty apply`) |
+| `appInstall`   | Instalar o aplicativo no espaço de trabalho ativo                |
+| `appUninstall` | Desinstalar o aplicativo do espaço de trabalho ativo             |
 
 Cada função retorna um objeto de resultado com `success: boolean` e `data` ou `error`.
 
@@ -238,64 +253,10 @@ Você também pode executar a verificação de tipos no seu aplicativo sem execu
 yarn twenty dev:typecheck
 ```
 
-Isso executa `tsc --noEmit` e informa quaisquer erros de tipo.
+Isso executa `tsc --noEmit` no `tsconfig.json` do seu app e informa quaisquer erros de tipo. Os apps criados pelo scaffold também incluem um script `yarn typecheck` que também cobre arquivos de teste (`tsconfig.spec.json`).
 
 ## CI com GitHub Actions
 
-O gerador de scaffold cria um workflow do GitHub Actions pronto para uso em `.github/workflows/ci.yml`. Ele executa seus testes de integração automaticamente a cada push para `main` e em pull requests.
+O gerador de scaffold cria um workflow pronto para uso em `.github/workflows/ci.yml`. A cada push para `main` e a cada pull request, ele inicia um servidor Twenty efêmero no runner (por meio da action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`) e então executa `yarn lint`, `yarn typecheck`, `yarn test:unit` e `yarn test` com `TWENTY_API_URL` / `TWENTY_API_KEY` apontando para esse servidor. Nenhum secret é necessário e você pode fixar a versão do servidor por meio da variável de ambiente `TWENTY_VERSION` no topo do workflow.
 
-O workflow:
-
-1. Faz checkout do seu código
-2. Inicializa um servidor Twenty temporário usando a ação `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Instala as dependências com `yarn install --immutable`
-4. Executa `yarn test` com `TWENTY_API_URL` e `TWENTY_API_KEY` injetados a partir das saídas da ação
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Você não precisa configurar nenhum segredo — a ação `spawn-twenty-docker-image` inicia um servidor Twenty efêmero diretamente no runner e fornece os detalhes de conexão. O segredo `GITHUB_TOKEN` é fornecido automaticamente pelo GitHub.
-
-Para fixar uma versão específica do Twenty em vez de `latest`, altere a variável de ambiente `TWENTY_VERSION` no topo do workflow.
+Consulte [Publicação → CI/CD automatizado](/l/pt/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) para um passo a passo completo dos três workflows criados pelo scaffold (`ci.yml`, o pipeline de deploy `cd.yml` e `publish.yml` para publicação no npm).

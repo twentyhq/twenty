@@ -98,6 +98,22 @@ export const SettingsAccountsConnectionForm = ({
       <H2Title title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
+          name="name"
+          control={control}
+          render={({ field, fieldState }) => (
+            <SettingsTextInput
+              instanceId="name-connection-form"
+              label={t`Name`}
+              placeholder={t`John Doe`}
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+              required={false}
+            />
+          )}
+        />
+
+        <Controller
           name="handle"
           control={control}
           render={({ field, fieldState }) => (

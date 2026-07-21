@@ -11,7 +11,8 @@ export type FirefliesWebhookResult =
   | {
       action: 'updated';
       field: FirefliesSyncedField;
-      calendarEventId: string;
+      callRecordingId: string;
+      calendarEventId?: string;
       meetingId: string;
     }
   | { skipped: true; reason: string; meetingId?: string }

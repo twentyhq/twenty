@@ -2,6 +2,7 @@ export type FirefliesTranscriptSentence = {
   speaker_name: string | null;
   text: string;
   start_time: number | null;
+  end_time?: number | null;
 };
 
 export type FirefliesSummary = {

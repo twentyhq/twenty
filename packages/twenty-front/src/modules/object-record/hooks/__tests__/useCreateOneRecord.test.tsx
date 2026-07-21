@@ -12,6 +12,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const PERSON_ID = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'a7286b9a-c039-4a89-9567-2dfa7953cda9'),
 }));
 

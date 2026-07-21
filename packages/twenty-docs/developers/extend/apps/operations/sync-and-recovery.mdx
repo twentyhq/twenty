@@ -15,13 +15,17 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | You want to… | Command | Notes |
 | --- | --- | --- |
 | Iterate locally with live sync | `yarn twenty dev` | Watches your files and syncs on every change. |
-| Sync once and exit (CI, scripts, hooks) | `yarn twenty dev --once` | One build + sync, then exits. |
-| Preview changes **without applying them** | `yarn twenty dev --once --dry-run` | Computes and prints the diff; writes nothing. |
+| Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
+| Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
 | Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
 | Install / upgrade a deployed version | `yarn twenty app:install` | Installs the version currently deployed. |
 | Wipe the local server and start clean | `yarn twenty docker:reset` | Deletes **all** local data — last resort. |
+
+<Note>
+`yarn twenty dev --once` and `yarn twenty dev --once --dry-run` still work as deprecated aliases for `yarn twenty apply` and `yarn twenty plan`.
+</Note>
 
 ### Local sync does not need a version bump
 
@@ -29,18 +33,25 @@ The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP
 
 ## Reading the sync output
 
-Every sync prints the metadata changes it applied (or would apply, with `--dry-run`):
+Every sync prints the metadata changes it applied (or would apply, with `plan`), Terraform-style — one block per entity with its attributes, then a summary line:
 
 ```text filename="Terminal"
-Metadata changes: 2 created, 1 updated, 1 deleted
-  created objectMetadata rocket
-  created fieldMetadata timelineActivities
-  updated fieldMetadata launchedAt
-  deleted pageLayout legacyTab
-✓ Synced
+  # objectMetadata "rocket" will be created
+  + icon          = "IconRocket"
+  + labelSingular = "Rocket"
+  + ...
+
+  # fieldMetadata "launchedAt" will be updated
+  ~ isNullable = false -> true
+
+Plan: 2 to add, 1 to change, 1 to destroy.
+
+✓ Synced My App (4 files)
 ```
 
 This is your first diagnostic: it tells you exactly which objects, fields, and layouts changed, so you can confirm a sync did what you expected before checking the UI.
+
+Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
 
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
 
@@ -50,39 +61,42 @@ Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337)
 
 Use that identifier to find the entity in your manifest (and, if needed, in the workspace) instead of guessing which one conflicts.
 
-## Previewing changes (dry run)
+## Previewing changes (plan)
 
-`yarn twenty dev --once --dry-run` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
+`yarn twenty plan` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
 
 ```bash filename="Terminal"
-yarn twenty dev --once --dry-run
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
 Building manifest...
-Computing metadata diff (dry run, nothing will be applied)...
-Metadata changes: 1 created, 1 updated
-  created fieldMetadata timelineActivities
-  updated objectMetadata rocket
-✓ Dry run complete for My App — no changes were applied
+Computing metadata plan (read-only, nothing will be applied)...
+
+  # fieldMetadata "crewCapacity" will be created
+  + ...
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+✓ Plan complete for My App — no changes were applied
 ```
 
-A dry run:
+A plan:
 
 - **Writes nothing** — no metadata migration, no application record update, no default role/tab changes, and no API client generation.
 - Returns the **same diff** a real sync would apply, so you can review created/updated/deleted entities up front.
 - Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
 
 <Note>
-A dry run only previews **metadata** changes, and it requires the app to have been synced at least once (so the workspace knows about it). If you run it against an app that was never synced, the server reports that the app is not installed — run `yarn twenty dev` once first.
+A plan only previews **metadata** changes, and it requires the app to have been synced at least once (so the workspace knows about it). If you run it against an app that was never synced, the server reports that the app is not installed — run `yarn twenty dev` once first.
 </Note>
 
 ## Recovery ladder
 
 When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
 
-1. **Re-sync.** Run `yarn twenty dev --once` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
-2. **Preview the plan.** Run `yarn twenty dev --once --dry-run` to see exactly what the next sync intends to change, without applying it.
+1. **Re-sync.** Run `yarn twenty apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
+2. **Preview the plan.** Run `yarn twenty plan` to see exactly what the next sync intends to change, without applying it.
 3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
 4. **Uninstall and reinstall.** `yarn twenty app:uninstall`, then sync again (`yarn twenty dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
 5. **Full reset (last resort).** `yarn twenty docker:reset`, then re-seed and re-sync.

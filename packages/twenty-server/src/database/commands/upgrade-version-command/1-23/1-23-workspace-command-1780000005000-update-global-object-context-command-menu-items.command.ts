@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -26,7 +26,7 @@ const UNIVERSAL_IDENTIFIERS_TO_FIX = new Set<string>([
   description:
     'Update command menu items that require object context from GLOBAL to GLOBAL_OBJECT_CONTEXT',
 })
-export class UpdateGlobalObjectContextCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class UpdateGlobalObjectContextCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -110,7 +110,7 @@ export class UpdateGlobalObjectContextCommandMenuItemsCommand extends ActiveOrSu
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

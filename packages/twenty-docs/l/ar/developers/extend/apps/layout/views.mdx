@@ -33,17 +33,32 @@ export default defineView({
 ## النقاط الرئيسية
 
 * `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض. يمكن أن يكون كائنًا مخصصًا قمتَ بتعريفه أو كائن Twenty قياسيًا.
-* يحدّد `key` نوع العرض — يمثّل `ViewKey.INDEX` عرض القائمة الرئيسي للكائن.
-* يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
-* يمكنك أيضًا تعريف `filters` و`filterGroups` و`groups` و`fieldGroups` لتكوينات أكثر تقدمًا.
+* `key: ViewKey.INDEX` يحدد العرض بوصفه عرض القائمة الرئيسي للكائن (ذلك الذي يفتحه عنصر التنقل `OBJECT`).
+* يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`. للإشارة إلى حقل نظام يتم إنشاؤه تلقائيًا مثل `createdAt`، راجع قسم [استهداف حقول النظام](/l/ar/developers/extend/apps/data/system-fields).
+* يمكنك أيضًا تعريف `filters` و`filterGroups` و`sorts` و`groups` و`fieldGroups` لتكوينات أكثر تقدمًا.
 * يتحكّم `position` في الترتيب عند وجود عدة عروض لنفس الكائن.
+
+## الخصائص الاختيارية
+
+| الخاصية                                                                                                     | القيم                                                                              | الوصف                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (الوضع الافتراضي)، `ViewType.KANBAN`، `ViewType.CALENDAR`         | كيفية ترتيب السجلات في الواجهة. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, و `CALENDAR_WIDGET` موجودة أيضًا ولكن يتم استخدامها داخليًا بواسطة عناصر واجهة تخطيط الصفحة.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (الوضع الافتراضي)، `ViewVisibility.UNLISTED`            | ما إذا كان العرض مُدرجًا على مستوى مساحة العمل بالكامل أو مخفيًا من أدوات الاختيار.                                                                                              |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (الوضع الافتراضي)، `ViewOpenRecordIn.RECORD_PAGE`    | المكان الذي يتم فتح السجل فيه عند النقر عليه.                                                                                                                                    |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | ترتيب الفرز الافتراضي.                                                                                                                                                           |
+| `isCompact`                                                                                                 | `boolean`                                                                          | عرض الصفوف بشكل مضغوط.                                                                                                                                                           |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | تجميع السجلات (مثل أعمدة كانبان) حسب حقل معيّن.                                                                                                                                  |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | تجميعات وأحجام أعمدة كانبان.                                                                                                                                                     |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | عروض التقويم: التخطيط، حقل التاريخ الذي يحدد موضع السجلات، وحقل تاريخ انتهاء اختياري.                                                                                            |
+
+يتم تصدير جميع التعدادات أعلاه من `twenty-sdk/define`.
 
 ## الفلاتر
 
 يمكن أن تأتي طريقة العرض مع عوامل تصفية مُطبَّقة مسبقًا. لكل عامل تصفية ثلاثة مكونات: **الحقل** الذي تُطبَّق عليه التصفية، و**المعامل** (كيفية المقارنة)، و**القيمة** (ما تتم المقارنة به). يجب أن تتطابق العناصر الثلاثة جميعًا — حيث سيتم رفض استخدام معامل لا ينطبق على نوع الحقل في وقت المزامنة.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

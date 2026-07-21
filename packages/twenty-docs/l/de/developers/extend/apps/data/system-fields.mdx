@@ -1,0 +1,151 @@
+---
+title: Systemfelder ansprechen
+description: Referenzieren Sie automatisch erstellte Systemfelder wie createdAt oder updatedAt aus Ansichten und anderen Entitäten mit getFieldUniversalIdentifier.
+icon: gears
+---
+
+Jedes Objekt in Twenty wird mit einem Satz von **Systemfeldern** ausgeliefert, die Sie nie selbst deklarieren. Sie werden automatisch vom Server erstellt, wenn das Objekt bereitgestellt wird:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Da Sie diese Felder nicht mit [`defineField()`](/l/de/developers/extend/apps/data/extending-objects) deklarieren, gibt es keine `universalIdentifier`-Konstante, die Sie importieren könnten. Wie referenzieren Sie also `createdAt` als Spalte in einer [Ansicht](/l/de/developers/extend/apps/layout/views)?
+
+## Das Problem
+
+Seit Twenty 2.19 wird die universelle Kennung eines Systemfelds **deterministisch abgeleitet** vom Server aus drei Eingaben: der universellen Kennung der Applikation, der universellen Kennung des Objekts und dem Feldnamen. Sich eine ID auszudenken und sie hart zu codieren, funktioniert nicht: Sie stimmt mit nichts auf dem Server überein, und die Synchronisierung lehnt die lose Referenz ab:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## Die Lösung
+
+<Note>
+  `getFieldUniversalIdentifier` ist ab `twenty-sdk` 2.21 verfügbar.
+</Note>
+
+Verwenden Sie `getFieldUniversalIdentifier`, um genau denselben Wert aufzulösen, den der Server verwendet. Die Funktion nimmt die drei Eingaben entgegen und gibt die universelle Kennung des Feldes zurück:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` ist die Kennung Ihrer App, diejenige, die Sie an [`defineApplication()`](/l/de/developers/extend/apps/config/application) übergeben.
+* `objectUniversalIdentifier` ist die Kennung des Objekts, zu dem das Feld gehört.
+* `name` ist der Name des Systemfelds, einer der oben aufgeführten Werte.
+
+## Beispiel: eine createdAt-Spalte in einer Ansicht
+
+Der typische Anwendungsfall ist das Hinzufügen einer `createdAt`-Spalte zu einer Ansicht eines Ihrer benutzerdefinierten Objekte. Lösen Sie die Feld-ID auf und referenzieren Sie sie wie jeden anderen `fieldMetadataUniversalIdentifier`:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Dieselbe aufgelöste ID funktioniert überall dort, wo ein `fieldMetadataUniversalIdentifier` erwartet wird: Ansichtsfelder, Filter, Sortierungen, Gruppierungen und Page-Layout-Widgets.
+
+<Note>
+  Lösen Sie die ID auf, statt sie hart zu codieren. Da der Server den Wert aus der Applikations-ID, der Objekt-ID und dem Feldnamen ableitet, hält ein Aufruf von
+  `getFieldUniversalIdentifier` Ihre Referenz korrekt, selbst wenn sich diese
+  Eingaben ändern, und verhindert Abweichungen, falls sich die Ableitung jemals weiterentwickelt.
+</Note>
+
+## System-Relationsfelder
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` ist ab Version 2.23 von `twenty-sdk` verfügbar und erfordert einen Twenty-Server in Version 2.23 oder höher.
+</Note>
+
+Zusätzlich zu den oben genannten skalaren Systemfeldern stellt der Server für jedes Objekt vier **System-Relationsfelder** bereit: `timelineActivities`, `attachments`, `noteTargets` und `taskTargets`, die jeweils auf das passende Standard-Relationsobjekt verweisen.
+
+Diese Felder werden nicht mit `getFieldUniversalIdentifier` aufgelöst: Ihre Kennung wird **namenunabhängig** abgeleitet, aus dem Objekt, das das Feld enthält, und dem Objekt, auf das das Feld verweist. Auf diese Weise ändert das Umbenennen eines Objekts niemals die Kennungen seiner Relationsfelder.
+
+Verwende `getSystemRelationFieldUniversalIdentifier`, um sie aufzulösen:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` ist das Objekt, das das Feld **enthält**.
+* `relationTargetObjectUniversalIdentifier` ist das Objekt, auf das das Feld **zeigt**.
+
+Die Richtung wird durch die Reihenfolge der Argumente codiert. Um die umgekehrte Seite aufzulösen (z. B. `attachment.targetRocket`, das Morph-Feld, das der Server auf dem Standard-Relationsobjekt erstellt), vertausche die beiden:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Wie bei skalaren Systemfeldern funktioniert die aufgelöste ID überall dort, wo ein `fieldMetadataUniversalIdentifier` erwartet wird.
+
+## Standardobjekte von Twenty
+
+Für ein **Standard**-Twenty-Objekt (Person, Company, Opportunity, …) müssen Sie nichts ableiten: Die Systemfeld-Kennungen sind vorab berechnete Konstanten, die Sie direkt importieren können.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+Greifen Sie zu `getFieldUniversalIdentifier`, wenn es sich um ein Objekt handelt, das **Ihre App** mit [`defineObject()`](/l/de/developers/extend/apps/data/objects) definiert, für das es keine solche Konstante gibt.
+
+<Note>
+  `name` ist ein **Standard**-Feld, kein Systemfeld. Es behält seine eigene hart codierte
+  universelle Kennung und wird nicht über
+  `getFieldUniversalIdentifier` aufgelöst. Für Objekte, die Sie definieren, referenzieren Sie das
+  `name`-Feld über die Kennung, die Sie ihm in `defineObject()` gegeben haben.
+</Note>

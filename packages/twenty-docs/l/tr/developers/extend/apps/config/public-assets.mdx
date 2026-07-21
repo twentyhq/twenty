@@ -11,7 +11,7 @@ Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır
 * **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
 * **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
 * **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
-* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
+* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logo` ve `galleryImages` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir. Bu alanlar için harici mutlak URL'ler yok sayılır — bunun yerine görselleri `public/` içine paketleyin. Her görüntü 10 MB'ı geçmemelidir.
 * **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
 * **Derlemelere dahil edilir** — `yarn twenty dev:build`, tüm genel varlıkları dağıtım çıktısına paketler.
 

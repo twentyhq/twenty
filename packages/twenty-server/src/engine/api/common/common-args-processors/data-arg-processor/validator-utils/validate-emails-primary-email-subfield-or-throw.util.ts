@@ -2,7 +2,7 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
-import { z } from 'zod';
+import { emailSchema } from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
@@ -25,10 +25,7 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (
-    !z.email({ pattern: z.regexes.unicodeEmail }).safeParse(value).success &&
-    isNonEmptyString(value)
-  ) {
+  if (!emailSchema.safeParse(value).success && isNonEmptyString(value)) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(

@@ -36,12 +36,16 @@ export const getSeedFrontComponentIds = (workspaceId: string) => ({
     `${workspaceId}:seed-front-component:show-notification`,
     SEED_FRONT_COMPONENT_ID_NAMESPACE,
   ),
+  listCompaniesId: uuidv5(
+    `${workspaceId}:seed-front-component:list-companies`,
+    SEED_FRONT_COMPONENT_ID_NAMESPACE,
+  ),
 });
 
 export const getSeedFrontComponentDefinitions = (
   workspaceId: string,
 ): SeedFrontComponentDefinition[] => {
-  const { helloWorldId, showNotificationId } =
+  const { helloWorldId, showNotificationId, listCompaniesId } =
     getSeedFrontComponentIds(workspaceId);
 
   return [
@@ -73,13 +77,27 @@ export const getSeedFrontComponentDefinitions = (
       usesSdkClient: false,
       seedProjectSubdir: 'show-notification',
     },
+    {
+      id: listCompaniesId,
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-uid:list-companies`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
+      name: 'List Companies',
+      description:
+        'A sample visual front component that queries companies through the SDK client',
+      componentName: 'ListCompanies',
+      isHeadless: false,
+      usesSdkClient: true,
+      seedProjectSubdir: 'list-companies',
+    },
   ];
 };
 
 export const getSeedFrontComponentCommandMenuItemDefinitions = (
   workspaceId: string,
 ): SeedFrontComponentCommandMenuItemDefinition[] => {
-  const { helloWorldId, showNotificationId } =
+  const { helloWorldId, showNotificationId, listCompaniesId } =
     getSeedFrontComponentIds(workspaceId);
 
   return [
@@ -117,6 +135,16 @@ export const getSeedFrontComponentCommandMenuItemDefinitions = (
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
       ),
+    },
+    {
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-command:list-companies`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
+      frontComponentId: listCompaniesId,
+      label: 'List Companies',
+      icon: 'IconBuildingSkyscraper',
+      position: 203,
     },
   ];
 };

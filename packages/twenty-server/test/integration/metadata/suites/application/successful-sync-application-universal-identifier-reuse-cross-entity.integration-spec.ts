@@ -13,6 +13,7 @@ const TEST_ROLE_ID = uuidv4();
 const REUSABLE_UID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   universalIdentifier: REUSABLE_UID,
   nameSingular: 'ephemeral',
   namePlural: 'ephemerals',

@@ -36,6 +36,60 @@ export default defineApplication({
 * 默认角色会根据使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 标记的角色文件自动检测——你不需要在 `defineApplication()` 中引用它。
 * 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
 * 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。
+* `serverVariables` 是实例级的配置和机密信息（例如 API 密钥）。 与 `applicationVariables` 不同，它们不会在 manifest 中声明具体值——工作区运维人员会在应用设置中填写这些值，并且它们只有在被设置后才会被注入到逻辑函数中。
+
+## 变量类型
+
+`applicationVariables` 和 `serverVariables` 都接受一个可选的 `type`（且对于 `SELECT` / `MULTI_SELECT`，还可以接受一个 `options` 列表）。 支持的类型：`TEXT`（默认）、`BOOLEAN`、`NUMBER`、`NUMERIC`、`DATE`、`DATE_TIME`、`SELECT`、`MULTI_SELECT`、`ARRAY`、`RAW_JSON`、`RICH_TEXT`。
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    MAX_POSTCARDS: {
+      universalIdentifier: '5f4497e4-9030-4085-85eb-2c48b8d53713',
+      description: 'Maximum postcards per batch',
+      type: FieldType.NUMBER,
+      value: 10,
+    },
+    DEFAULT_REGION: {
+      universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
+      description: 'Default shipping region',
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Europe', value: 'eu' },
+        { label: 'United States', value: 'us' },
+      ],
+      value: 'eu',
+    },
+  },
+});
+```
+
+`type` 只影响**展示和校验**——它会在工作区设置界面中选择匹配的输入控件（开关、数字字段、下拉框、日期选择器、JSON 编辑器等）。 并让构建过程校验你的配置（例如，`SELECT` / `MULTI_SELECT` 必须声明非空的 `options`）。 它**不会**改变该值到达你代码的方式。
+
+值**始终以字符串注入**——这是环境变量固有的特性（`process.env.*` 只能是字符串）。 当你的逻辑函数运行时，执行器会在构建 `process.env` 时按声明的 `type` 序列化每个值，因此无论该值是如何设置的（清单默认值、设置界面或先前的版本），字符串格式都是一致的：
+
+| 类型                                 | `process.env` 字符串                 |
+| ---------------------------------- | --------------------------------- |
+| `TEXT`、`SELECT`、`DATE`、`DATE_TIME` | 原始值（`"eu"`、`"2026-01-01"`）        |
+| `BOOLEAN`                          | `"true"` / `"false"`              |
+| `NUMBER`、`NUMERIC`                 | 十进制字符串（`"10"`、`"2.5"`）            |
+| `MULTI_SELECT`、`ARRAY`             | JSON 数组（`'["email","postcard"]'`） |
+| `RAW_JSON`、`RICH_TEXT`             | JSON 对象（`'{"retries":3}'`）        |
+
+将该字符串再解析回你所期望的类型：
+
+```ts
+const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10
+const enabled = process.env.ENABLE_TRACKING === 'true'; // "true" -> true
+const channels = JSON.parse(process.env.ENABLED_CHANNELS ?? '[]'); // '["email"]' -> ["email"]
+const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3}' -> { retries: 3 }
+```
+
+同样适用于通过 `getApplicationVariable('VARIABLE_NAME')` 读取值的前端组件——返回值是字符串；按需进行解析。
 
 ## 默认函数角色
 
@@ -55,10 +109,14 @@ export default defineApplication({
 | ------------------ | -------------------------------------------------------------- |
 | `作者`               | 作者或公司名称                                                        |
 | `类别`               | 用于应用市场筛选的应用类别                                                  |
-| `logoUrl`          | 应用徽标的路径（例如 `public/logo.png`）                                  |
-| `screenshots`      | 截图路径数组（例如 `public/screenshot-1.png`）                           |
+| `logo`             | 捆绑在`public/`中的应用徽标的路径(例如`public/logo.png`)                     |
+| `galleryImages`    | 在`public/`中捆绑的相册图像路径数组(例如`public/screenshot-1.png`)            |
 | `aboutDescription` | 用于“关于”选项卡的更长的 Markdown 描述。 如果省略，市场将使用该软件包在 npm 上的 `README.md`。 |
 | `websiteUrl`       | 你的网站链接                                                         |
 | `termsUrl`         | 服务条款链接                                                         |
 | `emailSupport`     | 支持电子邮件地址                                                       |
 | `issueReportUrl`   | 问题跟踪器链接                                                        |
+
+<Note>
+`logoUrl`和`screshots`被废弃的 `logo` 和 `GalleryImages` 的别名。 这些字段不支持外部绝对链接 (`http://` 或 `https://`) 。它们会在构建时被丢弃，并附有警告。 将图像捆绑在你的应用的 "public/" 文件夹中。
+</Note>

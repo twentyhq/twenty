@@ -4,7 +4,7 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'label',
   'description',
   'isActive',
-  'standardOverrides',
+  'overrides',
   'icon',
   'name',
   'universalSettings',

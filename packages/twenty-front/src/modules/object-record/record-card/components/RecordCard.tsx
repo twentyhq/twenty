@@ -6,7 +6,9 @@ const StyledBoardCard = styled.div<{
   isSecondaryDragged?: boolean;
   isPrimaryMultiDrag?: boolean;
 }>`
-  background-color: ${themeCssVariables.background.secondary};
+  --record-card-background-color: ${themeCssVariables.background.secondary};
+
+  background-color: var(--record-card-background-color);
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
@@ -16,15 +18,16 @@ const StyledBoardCard = styled.div<{
   width: 100%;
 
   &[data-selected='true'] {
-    background-color: ${themeCssVariables.accent.quaternary};
+    --record-card-background-color: ${themeCssVariables.accent.quaternary};
   }
 
   &[data-focused='true'] {
-    background-color: ${themeCssVariables.background.tertiary};
+    --record-card-background-color: ${themeCssVariables.background.tertiary};
   }
 
   &[data-active='true'] {
-    background-color: ${themeCssVariables.accent.quaternary};
+    --record-card-background-color: ${themeCssVariables.accent.quaternary};
+
     border: 1px solid ${themeCssVariables.color.blue7};
   }
 

@@ -8,13 +8,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconShare, IconTrash } from 'twenty-ui/icon';
+import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   type ApplicationRegistration,
+  ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
@@ -34,6 +35,9 @@ const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
 const TRANSFER_OWNERSHIP_MODAL_ID =
   'transfer-application-registration-ownership-modal';
+
+const CLAIM_OWNERSHIP_MODAL_ID =
+  'claim-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 
@@ -56,9 +60,12 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
   const [transferSubdomain, setTransferSubdomain] = useState('');
 
   const applicationRegistrationId = registration.id;
+
+  const isUnclaimed = !isDefined(registration.ownerWorkspaceId);
 
   const { data: statsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
@@ -82,6 +89,13 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   const [transferOwnership] = useMutation(
     TransferApplicationRegistrationOwnershipDocument,
+    {
+      refetchQueries: [FindManyApplicationRegistrationsDocument],
+    },
+  );
+
+  const [claimOwnership] = useMutation(
+    ClaimApplicationRegistrationOwnershipDocument,
     {
       refetchQueries: [FindManyApplicationRegistrationsDocument],
     },
@@ -153,6 +167,25 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
     }
   };
 
+  const handleClaimOwnership = async () => {
+    setIsClaiming(true);
+    try {
+      await claimOwnership({
+        variables: { applicationRegistrationId },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Ownership claimed successfully`,
+      });
+      closeModal(CLAIM_OWNERSHIP_MODAL_ID);
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to claim ownership.`,
+      });
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
   const confirmationValue = t`yes`;
 
   return (
@@ -182,13 +215,25 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
               delay={TooltipDelay.shortDelay}
             />
           )}
-          <Button
-            accent="default"
-            variant="secondary"
-            title={t`Transfer ownership`}
-            Icon={IconShare}
-            onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
-          />
+          {isUnclaimed
+            ? fromAdmin && (
+                <Button
+                  accent="default"
+                  variant="secondary"
+                  title={t`Claim ownership`}
+                  Icon={IconUserPlus}
+                  onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
+                />
+              )
+            : !isUnclaimed && (
+                <Button
+                  accent="default"
+                  variant="secondary"
+                  title={t`Transfer ownership`}
+                  Icon={IconShare}
+                  onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+                />
+              )}
         </StyledDangerButtonGroup>
       </Section>
 
@@ -207,6 +252,21 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
         loading={isLoading}
+      />
+
+      <ConfirmationModal
+        modalInstanceId={CLAIM_OWNERSHIP_MODAL_ID}
+        title={t`Claim ownership`}
+        subtitle={
+          <Trans>
+            This app has no owner workspace. Claiming it will assign ownership
+            to your current workspace, and you will be able to manage it.
+          </Trans>
+        }
+        onConfirmClick={handleClaimOwnership}
+        confirmButtonText={t`Claim`}
+        confirmButtonAccent="blue"
+        loading={isClaiming}
       />
 
       <StyledAppModal

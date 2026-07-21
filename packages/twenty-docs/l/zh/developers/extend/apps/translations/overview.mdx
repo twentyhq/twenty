@@ -1,0 +1,102 @@
+---
+title: 翻译
+description: 以多种语言发布你的应用——通过一个 locales 目录翻译 manifest 标签和 UI 字符串。
+icon: language
+---
+
+Twenty 应用均以**英文**编写：你的源码和 manifest 中的字符串
+是英文源文本，`en` 是你进行翻译时的源语言环境，任何未被翻译的语言环境都会回退到它。
+
+你的应用有两类可翻译文本，并且它们都通过同一个
+`locales/` 目录：
+
+* **Manifest labels** —— 对象和字段名称、视图标题、菜单项，以及
+  在应用元数据中声明的其他字符串。
+* **前端组件字符串** —— 你的 React 前端组件渲染的 UI 文本。
+
+你标记可翻译字符串，将它们提取到按语言环境划分的目录中，翻译这些目录，然后构建过程会为当前用户提供正确的语言——无需额外配置。
+
+## 标记前端组件字符串
+
+从 `twenty-sdk/front-component` 中导入翻译辅助函数：
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### 何时使用哪一种
+
+* **`<Trans>…</Trans>`** —— JSX 中的静态文本。 使用 `message` 和 `values` 属性进行插值（`<Trans message="Hi {name}" values={{ name }} />`）；直接在子节点中插值无法被静态提取。
+* **`useTranslate().t`** —— 组件内部的动态字符串。 当用户切换语言时会重新渲染。 在渲染逻辑中优先使用这个。
+* **`t(...)`**（直接导入）—— 可在**任何地方**使用的即时翻译，包括事件处理函数、辅助函数和模块作用域——不仅仅在渲染逻辑中。
+* **`msg(...)`** —— 以数据形式（常量、配置）声明字符串的惰性描述符。 在之后通过 `t(descriptor)` 来解析它。
+
+### 上下文
+
+传入 `context` 以区分那些源字符串相同但译法不同的情况：
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+## 提取和翻译
+
+在你的应用目录中运行提取命令：
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+提取会收集你的 manifest 标签以及前端组件源码中的 `t()`/`msg()`/`\<Trans>` 字符串，并将它们放入 `locales/\<locale>.json` 中，以源字符串作为键。 填写翻译：
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées"
+}
+```
+
+像 `{name}` 这样的占位符会在运行时被替换——请在翻译中保留它们。 任何留空的字符串都会回退到源文本。
+
+## 运行方式
+
+`twenty dev:build` 会编译目录并为当前用户提供正确的语言：manifest 标签在服务端解析，前端组件目录被打包进每个组件 bundle 中。 在运行时，组件会从其执行上下文（宿主的当前语言）中读取语言环境，并将每个字符串在其目录中解析，当翻译缺失时回退到源文本。 在宿主中切换语言会实时重新渲染 `\<Trans>` 和 `useTranslate().t` 的字符串。
+
+由于目录在构建时被编译，更新翻译意味着需要重新运行 `twenty dev:build`（并重新部署），这和其他任何更改一样。
+
+<Note>
+翻译由 `twenty dev:build`（以及 `twenty apply`）编译。 持续运行的 `twenty dev` 监视会显示源字符串，因此请使用一次性构建来测试本地化输出。
+</Note>
+
+`<Trans>` 的文本子节点可以跨多行——空白会以与 JSX 相同的方式被折叠，因此 `<Trans>Welcome\n  back</Trans>` 和提取出的键都会变成 `Welcome back`。

@@ -9,11 +9,23 @@
 
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
+export type {
+  KnownApplicationCategory,
+  ApplicationCategory,
+} from './applicationCategoryType';
+export {
+  APPLICATION_CATEGORIES,
+  isKnownApplicationCategory,
+} from './applicationCategoryType';
 export type { ApplicationManifest } from './applicationType';
 export type {
+  ApplicationVariableType,
+  ApplicationVariableOption,
+  ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
+export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
@@ -63,6 +75,7 @@ export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
+export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
 export { getViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-view-field-group-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
 export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
@@ -122,6 +135,10 @@ export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
+export {
+  serializeApplicationVariableValue,
+  deserializeApplicationVariableValue,
+} from './utils/applicationVariableValueSerialization';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

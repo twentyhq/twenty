@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
@@ -10,6 +12,8 @@ const makeFlatVariable = (
   value: 'value' as EncryptedString,
   description: '',
   isSecret: false,
+  type: FieldMetadataType.TEXT,
+  options: null,
   applicationId: 'app-1',
   workspaceId: '00000000-0000-0000-0000-000000000000',
   universalIdentifier: '00000000-0000-0000-0000-000000000000',

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  serializeApplicationVariableValue,
+} from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
@@ -36,7 +40,6 @@ import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/a
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -111,19 +114,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatFieldMetadataMaps,
         });
-
-        if (flatFieldMetadata.isUnique) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatIndexMaps,
-            },
-          );
-        }
       }
     }
 
@@ -139,27 +129,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
-
-      if (flatFieldMetadata.isUnique) {
-        const flatObjectMetadata =
-          allUniversalFlatEntityMaps.flatObjectMetadataMaps
-            .byUniversalIdentifier[
-            flatFieldMetadata.objectMetadataUniversalIdentifier
-          ];
-
-        if (isDefined(flatObjectMetadata)) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: generateIndexForFlatFieldMetadata({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatIndexMaps,
-            },
-          );
-        }
-      }
     }
 
     const indexCountByObjectUniversalIdentifier = new Map<string, number>();
@@ -604,13 +573,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
+      const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
+
       const plaintextValue =
         'value' in applicationVariableManifest
-          ? applicationVariableManifest.value
-          : undefined;
+          ? serializeApplicationVariableValue(
+              applicationVariableManifest.value,
+              type,
+            )
+          : '';
 
       const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : (plaintextValue ?? '');
+      const rawValue = isSecret ? '' : plaintextValue;
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -624,6 +598,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             ),
             description: applicationVariableManifest.description,
             isSecret,
+            type,
+            options: applicationVariableManifest.options,
             applicationUniversalIdentifier,
             now,
           }),

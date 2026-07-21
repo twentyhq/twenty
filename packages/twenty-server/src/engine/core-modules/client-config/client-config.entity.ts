@@ -211,11 +211,11 @@ export class ApiConfig {
 export class OnboardingConfig {
   importContactsCreditsReward: number;
 
-  inviteTeamMaxCreditsReward: number;
-
   inviteTeamCreditsRewardPerUser: number;
 
   upgradeCreditsReward: number;
+
+  installAppsCreditsRewardPerApp: number;
 }
 
 @ObjectType()
@@ -344,6 +344,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => String)
+  enterpriseInstanceType: string;
 
   @Field(() => ClientConfigMaintenanceMode, { nullable: true })
   maintenance?: ClientConfigMaintenanceMode;

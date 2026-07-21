@@ -10,4 +10,28 @@ describe('buildRecordTableWidgetViewSnapshot', () => {
 
     expect(view.visibility).toBe(ViewVisibility.WORKSPACE);
   });
+
+  it('should keep the label identifier view field visible and in the lowest position', () => {
+    const { viewFields } =
+      buildRecordTableWidgetViewSnapshot(objectMetadataItem);
+
+    const labelIdentifierViewField = viewFields.find(
+      (viewField) =>
+        viewField.fieldMetadataId ===
+        objectMetadataItem.labelIdentifierFieldMetadataId,
+    );
+
+    expect(labelIdentifierViewField).toMatchObject({
+      isVisible: true,
+      position: 0,
+    });
+    expect(
+      viewFields.every(
+        (viewField) =>
+          viewField.fieldMetadataId ===
+            objectMetadataItem.labelIdentifierFieldMetadataId ||
+          viewField.position > 0,
+      ),
+    ).toBe(true);
+  });
 });

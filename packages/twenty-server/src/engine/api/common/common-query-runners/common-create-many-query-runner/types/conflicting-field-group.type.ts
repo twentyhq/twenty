@@ -1,9 +1,11 @@
+export type ConflictingFieldValue = string | number | boolean;
+
 export type ConflictingProperty = {
   fullPath: string;
   column: string;
 };
 
 export type ConflictingFieldGroup = {
-  baseField: string;
+  baseFields: string[];
   conflictingProperties: ConflictingProperty[];
 };

@@ -6,17 +6,17 @@ description: 몇 분 만에 첫 번째 Twenty 앱을 만들어 보세요.
 
 ## 사전 준비
 
-* **Node.js 24+** — [여기에서 다운로드](https://nodejs.org/)
+* **Node.js 24.5+** — [여기에서 다운로드](https://nodejs.org/)
 * **Yarn 4** — Corepack을 통해 Node.js와 함께 제공됩니다. 활성화하려면: `corepack enable`
 * **Docker** — [여기에서 다운로드](https://www.docker.com/products/docker-desktop/). 로컬 Twenty 서버를 실행하려면 필요합니다. 이미 다른 곳에서 Twenty가 실행 중이라면 건너뛰세요.
 
 Twenty 앱을 빌드하는 과정은 세 단계로 이루어집니다. 스캐폴더는 이를 단일 해피 패스 명령으로 합쳐 주지만, 각 단계는 별개의 개념입니다 — 문제가 발생했을 때 현재 단계가 어디인지 알면 무엇을 고쳐야 하는지 파악할 수 있습니다.
 
-| 단계           | 하는 일                      | 도구                            | 결과                   |
-| ------------ | ------------------------- | ----------------------------- | -------------------- |
-| **1. 스캐폴딩**  | 앱의 소스 코드를 생성              | `npx create-twenty-app`       | 디스크에 TypeScript 프로젝트 |
-| **2. 서버 실행** | 동기화 대상으로 사용할 Twenty 서버 시작 | Docker + `yarn twenty server` | 실행 중인 Twenty 인스턴스    |
-| **3. 동기화**   | 코드를 서버와 실시간 동기화           | `yarn twenty dev`             | 변경 사항이 UI에 표시됨       |
+| 단계           | 하는 일                      | 도구                                  | 결과                   |
+| ------------ | ------------------------- | ----------------------------------- | -------------------- |
+| **1. 스캐폴딩**  | 앱의 소스 코드를 생성              | `npx create-twenty-app`             | 디스크에 TypeScript 프로젝트 |
+| **2. 서버 실행** | 동기화 대상으로 사용할 Twenty 서버 시작 | Docker + `yarn twenty docker:start` | 실행 중인 Twenty 인스턴스    |
+| **3. 동기화**   | 코드를 서버와 실시간 동기화           | `yarn twenty dev`                   | 변경 사항이 UI에 표시됨       |
 
 ---
 
@@ -28,7 +28,7 @@ Twenty 앱을 빌드하는 과정은 세 단계로 이루어집니다. 스캐폴
 npx create-twenty-app@latest my-twenty-app
 ```
 
-이름과 설명을 묻는 프롬프트가 표시됩니다 — 기본값을 사용하려면 **Enter**를 누르세요. 이 명령은 `my-twenty-app/`에 시작용 `application-config.ts`, 기본 역할, CI 워크플로, 통합 테스트가 포함된 TypeScript 프로젝트를 생성합니다.
+스캐폴더는 비대화식입니다. 디렉터리 이름이 앱 이름이 됩니다. 생성되는 메타데이터를 사용자 지정하려면 `--display-name` 및 `--description`을(를) 전달합니다(나중에 `src/constants/universal-identifiers.ts`에서 수정할 수도 있습니다). 이 명령은 `my-twenty-app/`에 시작용 `application-config.ts`, 기본 역할, CI/CD 워크플로, 통합 테스트가 포함된 TypeScript 프로젝트를 생성합니다.
 
 **이 단계를 마치면:** 로컬 머신에 앱의 소스 코드가 준비됩니다. 아직 실행되지는 않았습니다 — 그건 2단계에서 진행합니다.
 
@@ -38,27 +38,13 @@ npx create-twenty-app@latest my-twenty-app
 
 앱은 동기화할 Twenty 서버가 필요합니다. 이 서버는 Docker에서 로컬로 실행되는 완전한 Twenty 인스턴스입니다 — UI, GraphQL API, PostgreSQL을 포함합니다. 로컬 코드가 해당 서버로 정의를 업로드하면 UI에 표시됩니다.
 
-스캐폴더가 서버 시작 여부를 묻습니다:
+Scaffolder가 이를 대신 시작합니다. Docker가 실행 중이면 `twentycrm/twenty-app-dev` 이미지를 pull 하고, 포트 `2020`에서 시작한 다음, 미리 시드된 데모 워크스페이스(`tim@apple.dev`)에 대해 CLI를 인증합니다. 별도의 로그인은 필요하지 않습니다.
 
-> **로컬 Twenty 인스턴스를 설정하시겠습니까?**
-
-* **Yes(권장)** — `twentycrm/twenty-app-dev` Docker 이미지를 가져와 포트 `2020`에서 시작합니다. 먼저 Docker가 실행 중인지 확인하세요.
-* **No** — 이미 연결하려는 Twenty 서버가 있는 경우 선택하세요. `yarn twenty remote:add`로 나중에 연결할 수 있습니다.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="로컬 인스턴스를 시작할까요?" />
-</div>
-
-서버가 올라오면 로그인할 수 있도록 브라우저가 열립니다. 미리 준비된 데모 계정을 사용하세요:
-
-* **이메일:** `tim@apple.dev`
-* **비밀번호:** `tim@apple.dev`
+대신 기존 Twenty 서버에 연결하려면 `--url \<your-server-url>`을 전달하세요. 원격 서버는 OAuth로 인증합니다. 브라우저가 열리면 로그인한 뒤 **Authorize**를 클릭해 워크스페이스에 대한 CLI 액세스를 허용하면 됩니다. (로컬에서도 `--authentication-method oauth`로 OAuth를 선택할 수 있습니다. `tim@apple.dev` / `tim@apple.dev`로 로그인하세요.)
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty 로그인 화면" />
 </div>
-
-다음 화면에서 **Authorize**를 클릭하세요 — 그러면 CLI가 워크스페이스에 접근할 수 있게 됩니다.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI 권한 부여 화면" />
@@ -117,28 +103,32 @@ yarn twenty dev
 
 ### CI 및 스크립트를 위한 1회성 동기화
 
-`--once`를 전달하면 한 번만 빌드 + 동기화를 실행하고 종료합니다 — 파이프라인은 동일하고, 워처는 없습니다:
+워처 없이 동일한 파이프라인을 한 번만 실행하려면 `plan`과 `apply`를 사용하세요:
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| 명령                                 | 동작                                               | 사용 시점                                  |
-| ---------------------------------- | ------------------------------------------------ | -------------------------------------- |
-| `yarn twenty dev`                  | 소스 파일을 감시하고 변경될 때마다 다시 동기화합니다. 중지할 때까지 계속 실행됩니다. | 대화형 로컬 개발.                             |
-| `yarn twenty dev --once`           | 한 번만 빌드 + 동기화를 수행하고, 성공 시 `0`, 실패 시 `1`로 종료합니다.  | CI, pre-commit 훅, AI 에이전트, 스크립트형 워크플로. |
-| `yarn twenty dev --once --dry-run` | 메타데이터 변경 사항을 **실제로 적용하지 않고** 빌드하고 출력합니다.         | 커밋하기 전에 동기화가 어떤 변경을 수행할지 살펴봅니다.        |
+| 명령                  | 동작                                                                                                | 사용 시점                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `yarn twenty dev`   | 소스 파일을 감시하고 변경될 때마다 다시 동기화합니다. 중지할 때까지 계속 실행됩니다.                                                  | 대화형 로컬 개발.                             |
+| `yarn twenty apply` | 한 번만 빌드 + 동기화를 수행하고, 성공 시 `0`, 실패 시 `1`로 종료합니다. 파괴적인 변경 사항에 대해 확인을 요청합니다(건너뛰려면 `--force`를 전달하세요). | CI, pre-commit 훅, AI 에이전트, 스크립트형 워크플로. |
+| `yarn twenty plan`  | 메타데이터 변경 사항을 **실제로 적용하지 않고** 빌드하고 출력합니다.                                                          | 커밋하기 전에 동기화가 어떤 변경을 수행할지 살펴봅니다.        |
 
-두 모드 모두 인증된 리모트가 필요합니다. `--dry-run`에 대한 자세한 내용은 [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run)를 참고하세요.
+모든 모드에는 인증된 리모트가 필요합니다. `plan`에 대한 자세한 내용은 [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan)를 참고하세요.
+
+<Note>
+`yarn twenty dev --once` 및 `yarn twenty dev --once --dry-run`은 `yarn twenty apply` 및 `yarn twenty plan`의 사용 중단된 별칭입니다.
+</Note>
 
 ### 개발 모드 옵션
 
-| 플래그                                   | 설명                                                                   |
-| ------------------------------------- | -------------------------------------------------------------------- |
-| `--once`                              | 한 번만 빌드하고 동기화한 다음 종료합니다.                                             |
-| `--dry-run`                           | `--once`를 사용하면 메타데이터 변경 사항을 실제로 적용하지 않고 미리 볼 수 있습니다. 아무것도 기록하지 않습니다. |
-| `--debounceMs \<ms>` | 파일 변경 디바운스 지연 시간을 밀리초 단위로 설정합니다(기본값: `2000`).                        |
-| `--verbose` / `--debug`               | 자세한 빌드 로그, 동기화 요청, 오류 추적을 표시합니다.                                     |
+| 플래그                                   | 설명                                            |
+| ------------------------------------- | --------------------------------------------- |
+| `--force`                             | 확인 없이 파괴적인 변경 사항(삭제)을 적용합니다.                  |
+| `--debounceMs \<ms>` | 파일 변경 디바운스 지연 시간을 밀리초 단위로 설정합니다(기본값: `1000`). |
+| `--verbose` / `--debug`               | 자세한 빌드 로그, 동기화 요청, 오류 추적을 표시합니다.              |
 
 ## 만들 수 있는 것
 

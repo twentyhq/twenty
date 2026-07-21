@@ -18,6 +18,8 @@ export const VIEW_TYPE_LABELS = {
   [ViewType.CALENDAR]: msg`Calendar`,
   [ViewType.FIELDS_WIDGET]: msg`Fields widget`,
   [ViewType.TABLE_WIDGET]: msg`Table widget`,
+  [ViewType.KANBAN_WIDGET]: msg`Kanban widget`,
+  [ViewType.CALENDAR_WIDGET]: msg`Calendar widget`,
 } satisfies Record<ViewTypeLabelKey, MessageDescriptor>;
 
 export const getViewTypeLabel = (

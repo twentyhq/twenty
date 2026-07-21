@@ -13,6 +13,7 @@ import {
 
 import { ADD_UNIVERSAL_IDENTIFIER_AND_APPLICATION_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-16/add-universal-identifier-and-application-id-to-search-field-metadata-upgrade-command-name.constant';
 import { ADD_TS_VECTOR_FIELD_METADATA_ID_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-18/add-ts-vector-field-metadata-id-to-search-field-metadata-upgrade-command-name.constant';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/add-is-system-side-effect-to-search-field-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -68,6 +69,13 @@ export class SearchFieldMetadataEntity extends SyncableEntity {
 
   @Column({ nullable: false, type: 'float' })
   position: number;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_SYSTEM_SIDE_EFFECT_TO_SEARCH_FIELD_METADATA_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: true, type: 'boolean' })
+  isSystemSideEffect: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

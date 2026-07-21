@@ -4,7 +4,25 @@ description: Comandos de `yarn twenty` para ejecutar funciones, transmitir regis
 icon: terminal
 ---
 
-Más allá de `dev`, `dev:build`, `dev:add` y `dev:typecheck`, la CLI de `yarn twenty` proporciona comandos para ejecutar funciones, ver registros y gestionar instalaciones de aplicaciones.
+La CLI de `yarn twenty` es tu interfaz para todo lo relacionado con la aplicación. Lista completa de comandos:
+
+| Comando                                         | Qué hace                                                                                      | Documentado en                                                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Supervisar archivos fuente y sincronizar en vivo los cambios                                  | [Inicio rápido](/l/es/developers/extend/apps/getting-started/quick-start)                                          |
+| `plan`                                          | Previsualizar cambios de metadatos sin aplicarlos                                             | [Sincronización y recuperación](/l/es/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `apply`                                         | Aplicar cambios de metadatos después de mostrar el plan                                       | [Sincronización y recuperación](/l/es/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Compilar la aplicación y generar el cliente de la API (`--tarball` para empaquetar un `.tgz`) | [Publicación](/l/es/developers/extend/apps/operations/publishing)                                                  |
+| `dev:typecheck`                                 | Ejecutar la comprobación de tipos de TypeScript                                               | [Pruebas](/l/es/developers/extend/apps/operations/testing)                                                         |
+| `dev:add`                                       | Generar una nueva entidad                                                                     | [Generación de entidades](/l/es/developers/extend/apps/getting-started/scaffolding)                                |
+| `dev:generate-client`                           | Regenerar el cliente de API tipado                                                            | esta página                                                                                                   |
+| `dev:function:exec` / `dev:function:logs`       | Ejecutar funciones y transmitir sus registros                                                 | esta página                                                                                                   |
+| `dev:translations-extract`                      | Extraer cadenas traducibles en catálogos de `locales/`                                        | [Traducciones](/l/es/developers/extend/apps/translations/overview)                                                 |
+| `dev:catalog-sync`                              | Activar la sincronización del catálogo del marketplace                                        | [Publicación](/l/es/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                  |
+| `app:publish` / `app:install` / `app:uninstall` | Ciclo de vida de la publicación                                                               | [Publicación](/l/es/developers/extend/apps/operations/publishing) y esta página                                    |
+| `docker:*`                                      | Administrar el contenedor del servidor local de Twenty                                        | [Servidor local](/l/es/developers/extend/apps/getting-started/local-server)                                        |
+| `remote:*`                                      | Administrar conexiones de servidor                                                            | esta página                                                                                                   |
+
+Todos los comandos aceptan `-r, --remote \<name>` para dirigirse a un remoto específico en lugar del predeterminado.
 
 ## Ejecutar funciones (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## Ver registros de funciones (`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Tus credenciales se almacenan en `~/.twenty/config.json`.

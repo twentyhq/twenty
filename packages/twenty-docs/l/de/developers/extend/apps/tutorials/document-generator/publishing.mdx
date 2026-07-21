@@ -1,0 +1,137 @@
+---
+title: 6. Veröffentlichen
+icon: rocket
+description: Fügen Sie Marktplatz-Metadaten hinzu und veröffentlichen Sie Ihre App.
+---
+
+Ihre App funktioniert. Der letzte Schritt ist, es für den Marktplatz zu beschreiben und zu veröffentlichen.
+
+## Marktplatz-Metadaten hinzufügen
+
+Die [Anwendung config](/l/de/developers/extend/apps/config/application) trägt die
+Identität, die im Marktplatz erscheint: Autor, Kategorie, Logo und Unterstützung von
+Links. Lege ein Logo in `public/` ein und verweise es mit `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/de/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+Die Standardrolle wird mit `defineApplicationRole()` in der eigenen Datei deklariert — Sie
+geben hier nicht mehr den `defaultRoleUniversalIdentifier` an.
+</Tip>
+
+Füge auch das Schlüsselwort "twenty-app" zu "package.json" hinzu, damit die App entdeckt werden kann:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Galerie Screenshots hinzufügen
+
+Ein Marktplatz-Listing verkauft sich mit Screenshots. Lege ein paar PNGs in
+`public/gallery/` und verweise sie mit `galleryImages` — sie rendern als
+Galerie auf der Listenseite, in Array-Reihenfolge.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Lead with the payoff: make the first screenshot the finished result (a generated
+document), then show how it triggered and authored. Verwende scharfe, hochauflösende
+Aufnahmen – sie sind das Erste, was ein Benutzer sieht.
+</Tip>
+
+Gib `README.md` die gleiche Behandlung — es ist die Titelseite auf npm und GitHub.
+Öffnen Sie mit dem Wertvorschlag und einem Screenshot, führen Sie die Überschrift auf,
+und halten Sie dann die Baudetails unter dem Ordner.
+
+## Vor dem Versand prüfen
+
+Führe die gleichen Tore CI aus:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+Der Plan gibt genau aus, was sich auf dem Server ändern würde, ohne die Änderungen anzuwenden —
+eine gute abschließende Plausibilitätsprüfung. Siehe
+[Testing](/l/de/developers/extend/apps/operations/testing) und
+[Synchronisieren & Wiederherstellen](/l/de/developers/extend/apps/operations/sync-and-recovery).
+
+## Veröffentlichen
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` baut und veröffentlicht standardmäßig in npm ; `--private` lädt stattdessen einen
+Tarball in die private Registry eines Zwanzig Servers hoch. Um eine veröffentlichte App
+auf dem Marktplatz einer Instanz aufzudecken, löst eine Katalog-Synchronisation aus:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Vollständige Details und die Freigabe-Checkliste:
+[Publishing](/l/de/developers/extend/apps/operations/publishing).
+
+## Du hast eine App :party_popper erstellt:
+
+In sechs Kapiteln hast du den Großteil der SDK-Oberfläche verwendet:
+
+* **Objekte, Felder und eine Relation** um die Daten zu modellieren
+* Eine **Logikfunktion** als **AI-Tool**, eine **Workflow-Aktion** und **HTTP-Routen**
+* **Ansichten, Navigation, Befehl und Frontkomponent** für die Benutzeroberfläche
+* Ein **Agent + Fertigkeit** für die Erzeugung natürlicher Sprache
+* **Marketplace-Metadaten** und der Veröffentlichungsfluss
+
+Die fertige App ist bei
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Wohin Sie weiter gehen
+
+<CardGroup cols={2}>
+  <Card title="Datenreferenz" icon="database" href="/l/de/developers/extend/apps/data/overview">
+    Jeder Feldtyp, Relation und Index-Option.
+  </Card>
+  <Card title="Logische Referenz" icon="bolt" href="/l/de/developers/extend/apps/logic/overview">
+    Cron- und Datenbankereignis-Trigger, der Schlüsselwert-Store, OAuth Verbindungen.
+  </Card>
+  <Card title="Layout-Referenz" icon="table-columns" href="/l/de/developers/extend/apps/layout/overview">
+    Seitenlayouts, Dashboard-Widgets und mehr UI-Oberflächen.
+  </Card>
+  <Card title="Operationen" icon="rocket" href="/l/de/developers/extend/apps/operations/overview">
+    CLI, Tests, Fernbedienungen und CI.
+  </Card>
+</CardGroup>

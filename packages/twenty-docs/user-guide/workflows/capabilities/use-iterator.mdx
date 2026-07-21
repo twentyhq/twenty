@@ -23,6 +23,12 @@ Iterator expects an **array** as input. It then:
 3. Moves to the next item
 4. Repeats until all items are processed
 
+### Selecting the array to loop over
+
+Most array sources (Search Records, a webhook array field, a Bulk manual trigger) can be selected directly in the variable picker.
+
+When a **Code** or **Logic Function** step returns a *top-level array*, its output appears in the variable picker as indexed entries (`0`, `1`, `2`, …). To loop over the array as a whole, select the **Whole list** option for that step — the Iterator then infers the shape of each item from the list automatically.
+
 ## Basic Setup
 
 ### Example: Email Everyone in Search Results
@@ -75,6 +81,8 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 | `{{iterator.currentItem.email}}` | Email field |
 | `{{iterator.currentItem.company.name}}` | Related company name |
 | `{{iterator.index}}` | Current position in array (0-based) |
+
+In the variable picker, you can either drill into a specific field of the current item, or pick **Use the whole item** to reference the entire current item (`{{iterator.currentItem}}`). Selecting the whole item is handy when you want to pass a full record straight into a downstream step rather than rebuilding it field by field.
 
 ## Common Patterns
 

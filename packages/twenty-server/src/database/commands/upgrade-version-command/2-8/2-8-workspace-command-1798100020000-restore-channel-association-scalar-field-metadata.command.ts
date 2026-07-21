@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -76,7 +76,7 @@ const SCALAR_FIELDS_TO_RESTORE: ScalarFieldToRestore[] = [
   description:
     'Re-register the calendarChannelId/messageChannelId/messageFolderId scalar field metadata on the surviving association objects, over their already-existing physical columns, for workspaces where 2-8 drop-channel-standard-objects cascade-removed them',
 })
-export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class RestoreChannelAssociationScalarFieldMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

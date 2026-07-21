@@ -11,13 +11,14 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
+import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
-import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
@@ -96,6 +97,7 @@ export const buildManifest = async (
   const warnings: string[] = [];
 
   let applicationConfig: ApplicationConfig | undefined;
+  const objectConfigs: ObjectConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -172,31 +174,7 @@ export const buildManifest = async (
           filePath,
         });
 
-        const {
-          objectFields: objectFieldsWithDefaults,
-          fields: reverseRelationFields,
-        } = getDefaultFieldsInObjectFields(extract.config);
-
-        const labelIdentifierFieldMetadataUniversalIdentifier =
-          extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
-          objectFieldsWithDefaults.find((field) => field.name === 'name')
-            ?.universalIdentifier;
-
-        if (!labelIdentifierFieldMetadataUniversalIdentifier) {
-          errors.push(
-            `No label identifier field found for object ${extract.config.nameSingular}. Please add a field with name "name" to your object.`,
-          );
-          break;
-        }
-
-        const objectManifest: ObjectManifest = {
-          ...extract.config,
-          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
-          labelIdentifierFieldMetadataUniversalIdentifier,
-        };
-
-        objects.push(objectManifest);
-        fields.push(...reverseRelationFields);
+        objectConfigs.push(extract.config);
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -522,6 +500,36 @@ export const buildManifest = async (
     );
   }
 
+  if (applicationConfig) {
+    for (const objectConfig of objectConfigs) {
+      const { objectFields: objectFieldsWithDefaults } =
+        getDefaultFieldsInObjectFields({
+          objectConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        });
+
+      const labelIdentifierFieldMetadataUniversalIdentifier =
+        objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
+        objectFieldsWithDefaults.find((field) => field.name === 'name')
+          ?.universalIdentifier;
+
+      if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+        errors.push(
+          `No label identifier field found for object ${objectConfig.nameSingular}. Please add a field with name "name" to your object.`,
+        );
+        continue;
+      }
+
+      const objectManifest: ObjectManifest = {
+        ...objectConfig,
+        fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
+        labelIdentifierFieldMetadataUniversalIdentifier,
+      };
+
+      objects.push(objectManifest);
+    }
+  }
+
   if (postInstallLogicFunctions.length > 1) {
     errors.push(
       'Only one post install logic function is allowed per application',
@@ -560,20 +568,31 @@ export const buildManifest = async (
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
-      ? {
-          ...applicationConfig,
-          defaultRoleUniversalIdentifier:
-            resolvedDefaultRoleUniversalIdentifier,
-          aboutDescription: readmeContent,
-          yarnLockChecksum: null,
-          packageJsonChecksum: null,
-          ...(postInstallLogicFunctions.length >= 1
-            ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
-            : {}),
-          ...(preInstallLogicFunctions.length >= 1
-            ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
-            : {}),
-        }
+      ? (() => {
+          const {
+            logoUrl: _logoUrl,
+            screenshots: _screenshots,
+            ...applicationConfigRest
+          } = applicationConfig;
+
+          return {
+            ...applicationConfigRest,
+            logo: applicationConfig.logo,
+            galleryImages: applicationConfig.galleryImages ?? [],
+            defaultRoleUniversalIdentifier:
+              resolvedDefaultRoleUniversalIdentifier,
+            aboutDescription: readmeContent,
+            yarnLockChecksum: null,
+            packageJsonChecksum: null,
+            requiredServerVersionRange: getEngineVersionRange(appPath),
+            ...(postInstallLogicFunctions.length >= 1
+              ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+              : {}),
+            ...(preInstallLogicFunctions.length >= 1
+              ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+              : {}),
+          };
+        })()
       : undefined;
 
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>

@@ -1,12 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const getFunctionsBaseUrl = ({
+  serverBaseUrl,
   publicFunctionDomain,
   workspaceSubdomain,
 }: {
+  serverBaseUrl: string;
   publicFunctionDomain?: string | null;
   workspaceSubdomain?: string | null;
-}): string | undefined => {
+}): string => {
   if (
     isNonEmptyString(publicFunctionDomain) &&
     isNonEmptyString(workspaceSubdomain)
@@ -14,7 +16,7 @@ export const getFunctionsBaseUrl = ({
     return `https://${workspaceSubdomain}.${publicFunctionDomain}`;
   }
 
-  return undefined;
+  return `${serverBaseUrl}/s`;
 };
 
 export const getLogicFunctionHttpUrl = ({
@@ -31,13 +33,10 @@ export const getLogicFunctionHttpUrl = ({
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
 
   const functionsBaseUrl = getFunctionsBaseUrl({
+    serverBaseUrl,
     publicFunctionDomain,
     workspaceSubdomain,
   });
 
-  if (isNonEmptyString(functionsBaseUrl)) {
-    return `${functionsBaseUrl}${normalizedPath}`;
-  }
-
-  return `${serverBaseUrl}/s${normalizedPath}`;
+  return `${functionsBaseUrl}${normalizedPath}`;
 };

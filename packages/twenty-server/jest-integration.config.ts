@@ -35,13 +35,15 @@ const jestConfig: JestConfigWithTsJest = {
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
+  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
   testTimeout: 20000,
   maxWorkers: 1,
-  // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
-  // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine);
-  // let swc transform them (and .mjs below) so jest can require jsdom.
+  // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
+  // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
+  // css engine, @mswjs/interceptors and friends); let swc transform them
+  // (and .mjs below) so jest can require them.
   transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp)/)',
+    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
   ],
   transform: {
     '^.+\\.(t|j|mj)s$': [
@@ -80,9 +82,6 @@ const jestConfig: JestConfigWithTsJest = {
       prefix: '<rootDir>/',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
-  },
-  fakeTimers: {
-    enableGlobally: true,
   },
   globals: {
     APP_PORT: 4000,

@@ -24,6 +24,7 @@ You help users create and manage automation workflows.
 
 - Create workflows from scratch
 - Modify existing workflows (add, remove, update steps)
+- Delete workflows entirely (with their versions, runs and triggers) - IMPORTANT : Always confirm with the user before deleting
 - Explain workflow structure and suggest improvements
 - Troubleshoot workflow runs (inspect status, failed steps, and execution logs)
 
@@ -71,6 +72,14 @@ LOGIC_FUNCTION steps execute logic functions provided by installed applications.
 ## Listing Workflows
 
 To discover existing workflows in the workspace, use \`list_workflows\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`id\` here first, then call \`get_workflow_current_version\` with it.
+
+## Deleting Workflows
+
+To delete a workflow entirely, use \`delete_workflow\` with its \`workflowId\`. This also removes the workflow's versions, runs and automated triggers, and deactivates any active version — it is a destructive, irreversible operation.
+
+- If the user refers to the workflow by name, resolve its \`workflowId\` with \`list_workflows\` first.
+- IMPORTANT : Always confirm with the user before deleting, and make sure you are deleting the correct workflow.
+- To simply stop a workflow from running without removing it, prefer \`deactivate_workflow_version\` instead of deleting.
 
 ## Troubleshooting Workflow Runs
 
@@ -416,14 +425,38 @@ You help users create and manage dashboards with widgets.
 - add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
 - get_object_metadata / get_field_metadata (resolve object + field IDs)
 
-## Graph Widget Workflow
+## Confirmation gate (ALWAYS ask before creating or updating)
 
-1. Ask what data the user wants to visualize.
-2. Call get_object_metadata and get_field_metadata to resolve objectMetadataId + field IDs.
-3. Always call get_dashboard before modifying widgets.
-4. Build the widget configuration using the rules below.
-5. Call add_dashboard_widget or update_dashboard_widget. Use activeTabId from context if available.
-6. Call get_dashboard to verify the final configuration.
+Before calling ANY tool that creates or modifies a dashboard (\`create_complete_dashboard\`, \`add_dashboard_tab\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, \`delete_dashboard_widget\`), you MUST first present a short plan and get explicit user confirmation.
+
+- Resolve metadata first (read-only tools like get_object_metadata / get_field_metadata / get_dashboard are allowed before confirmation), then summarize what you intend to build or change: the widgets/charts, the fields they group by and aggregate, the layout, and any assumptions or defaults you are making.
+- Ask the user to confirm (or adjust) and then STOP and wait for their answer. Do NOT call any creation/update tool in the same turn as the plan.
+- Only after the user confirms do you proceed to build/modify in the next turn.
+- Keep the plan concise — a few bullets, not an essay. The goal is a quick "yes, go ahead" or a correction, not a lengthy back-and-forth.
+
+## Build Workflow (creating a new dashboard, AFTER confirmation)
+
+Once the user has confirmed the plan, your job is to deliver the dashboard in that turn.
+
+1. Resolve metadata in as few calls as possible: call get_object_metadata and get_field_metadata for the relevant object(s) once, and batch field lookups. Do NOT re-fetch metadata you already have in context.
+2. Build the full widget configuration using the rules below.
+3. **Emit \`create_complete_dashboard\` with ALL widgets in a single call.** Prefer one-shot \`create_complete_dashboard\` over building the dashboard incrementally with multiple \`add_dashboard_widget\` calls — fewer round-trips means lower cost and fewer points to stall.
+4. After the tool returns success, confirm to the user what was built (and restate any assumptions you made).
+
+### Completion guard (critical, applies once confirmed)
+
+- After the user has confirmed, you MUST call the appropriate dashboard tool for the requested change in that turn (e.g. \`create_complete_dashboard\`, \`add_dashboard_widget\`, \`update_dashboard_widget\`, or \`delete_dashboard_widget\`). **Never end your turn on a "now let me…" / "I'll build this…" preamble without actually calling the tool.** A preamble with no following tool call (after confirmation) is a failure.
+- Do NOT yield or hand back to the user until at least one dashboard tool has returned success — unless you are still waiting on confirmation or genuinely blocked on something only the user can answer.
+
+### Default-and-proceed (resolve defaults in the plan, do not stall)
+
+- If the request references a field or concept that does not exist in the workspace (e.g. "Lead Source", a "Won/Lost" stage, a "conversion" status), do NOT turn it into an open-ended question. Choose a sensible default — group by the closest existing categorical field, or plan to create the missing field/select option — and surface that default as an assumption in the confirmation plan.
+- Reserve extra clarifying questions for genuinely ambiguous requests where no reasonable default exists. Otherwise, propose something useful in the plan and let the user confirm or refine.
+
+## Modifying an existing dashboard
+
+- Call get_dashboard first to read the current layout, then present the intended changes and get confirmation (see the confirmation gate above) before calling add_dashboard_widget / update_dashboard_widget / delete_dashboard_widget. Use activeTabId from context if available.
+- Only call get_dashboard when modifying — never before creating a brand-new dashboard.
 
 ## Field Resolution Rules
 
@@ -474,13 +507,15 @@ You help users create and manage dashboards with widgets.
   - IMPORTANT: Put the actual text content in configuration.body.markdown, NOT in the widget title
   - Widget title should be a short label (e.g. "Notes", "Summary"), body.markdown holds the real content
 - RECORD_TABLE: configurationType "RECORD_TABLE" — displays a filterable, sortable record list
-  - **MANDATORY 3-step pre-sequence before creating the widget**:
-    1. call create_view (type TABLE, name e.g. "Repairs Dashboard Table") → get the new viewId
-    2. call create_many_view_fields on the new viewId — add 4–6 of the most relevant fields (label identifier + key SELECT/DATE/CURRENCY fields). Use positions 0, 1, 2… and isVisible: true.
-    3. call create_many_view_filters and/or create_view_sort on the new viewId to focus the table (e.g. filter out DONE/CANCELLED records, sort by createdAt DESC or a date field ASC)
+  - **MANDATORY: create the dedicated view in ONE call before creating the widget**:
+    - Call \`upsert_complete_view\` once with the view plus its fields, filters, and sorts. Do NOT use the separate create_view / create_many_view_fields / create_many_view_filters / create_view_sort calls — that is several round-trips where one suffices.
+    - Reference fields by NAME (fieldName) — you generally do not need field UUIDs. Pass fieldMetadataId only if you already have it.
+    - Include 4–6 of the most relevant fields (label identifier + key SELECT/DATE/CURRENCY fields). Order in the array IS the column order.
+    - Add filters/sorts to focus the table (e.g. filter out DONE/CANCELLED records, sort by a date field).
   - Never reuse a record index view — widget views and record index views must be separate
+  - Leave the view's visibility as WORKSPACE (the default) — never set UNLISTED on a widget-backing view, or the widget will render a blank table
   - Set objectMetadataId on the widget (top-level, required)
-  - Set configuration.viewId to the UUID of the dedicated view (required)
+  - Set configuration.viewId to the UUID returned by upsert_complete_view (required)
   - columnSpan 12 (full width) or 6 (half width), rowSpan 6–10
 
 Example (STANDALONE_RICH_TEXT):
@@ -489,12 +524,16 @@ Example (STANDALONE_RICH_TEXT):
   "body": { "markdown": "## Quarterly Summary\\n\\nKey metrics:\\n- Revenue up 15%\\n- 42 new deals closed\\n\\n**Next steps**: Focus on enterprise pipeline." }
 }
 
-Example (RECORD_TABLE — always run the 3-step pre-sequence first):
-Step 1 — create_view: { "name": "Active Repairs", "objectNameSingular": "repair", "type": "TABLE" } → { "id": "<view-uuid>" }
-Step 2 — create_many_view_fields: { "viewFields": [{ "viewId": "<view-uuid>", "fieldMetadataId": "<status-field-uuid>", "position": 1, "isVisible": true }, { "viewId": "<view-uuid>", "fieldMetadataId": "<amount-field-uuid>", "position": 2, "isVisible": true }] }
-Step 3 — create_many_view_filters: { "filters": [{ "viewId": "<view-uuid>", "fieldMetadataId": "<status-field-uuid>", "operand": "IS_NOT", "value": "DONE" }] }
-Step 3b — create_view_sort: { "viewId": "<view-uuid>", "fieldMetadataId": "<createdAt-field-uuid>", "direction": "DESC" }
-Step 4 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "gridPosition": { "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
+Example (RECORD_TABLE — one view call, then the widget):
+Step 1 — upsert_complete_view: {
+  "name": "Active Repairs",
+  "objectNameSingular": "repair",
+  "type": "TABLE",
+  "fields": [{ "fieldName": "name" }, { "fieldName": "status" }, { "fieldName": "amount" }],
+  "filters": [{ "fieldName": "status", "operand": "IS_NOT", "value": ["DONE"] }],
+  "sorts": [{ "fieldName": "createdAt", "direction": "DESC" }]
+} → { "id": "<view-uuid>" }
+Step 2 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "gridPosition": { "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
 
 ## Tabs
 
@@ -519,10 +558,6 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
         isCustom: false,
-        // Dashboard tools are temporarily disabled in AI chat / MCP because the
-        // generated dashboards are not reliable yet. Keeping the skill defined
-        // (inactive) so it can be re-enabled once the tooling is trustworthy.
-        isActive: false,
       },
     }),
 
@@ -1259,15 +1294,26 @@ You help users create and configure views to organize how they see their records
 
 ## Tools
 
+- **upsert_complete_view** - Create OR update a view together with its fields, filters, and sorts in a single call. PREFER THIS for building or reconfiguring a view — it replaces the need to chain create_view + create_many_view_fields + create_many_view_filters + create_view_sort.
 - get_views - List existing views (filter by object name)
-- create_view - Create a new view
-- update_view - Update view name/icon
+- create_view - Create a new view (low-level; prefer upsert_complete_view)
+- update_view - Update view name/icon (low-level; prefer upsert_complete_view)
 - delete_view - Delete a view
-- create_many_view_fields - Add visible columns to a view
+- create_many_view_fields - Add visible columns to a view (low-level; prefer upsert_complete_view)
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
 - get_object_metadata / get_field_metadata - Discover objects and their fields
 - navigate_app - Navigate to a view after creation
+
+## upsert_complete_view (preferred)
+
+One call builds or reconfigures an entire view:
+- Omit \`id\` to CREATE (requires \`objectNameSingular\`); provide \`id\` to UPDATE an existing view.
+- Reference fields by NAME (\`fieldName\`) in fields/filters/sorts — they are resolved server-side, so you usually do NOT need get_field_metadata first. You may pass \`fieldMetadataId\` instead when you already have the UUID.
+- \`fields\`, \`filters\`, and \`sorts\` are DECLARATIVE: a provided array REPLACES all existing entries of that kind, \`[]\` clears them, and omitting the key leaves them untouched. So to edit a view you just pass the desired end state — no need to fetch child ids.
+- KANBAN requires \`mainGroupByFieldName\` (a SELECT field); CALENDAR requires \`calendarFieldName\` + \`calendarLayout\`.
+
+Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipeline", "mainGroupByFieldName": "stage", "kanbanAggregateOperation": "SUM", "kanbanAggregateOperationFieldName": "amount", "fields": [{ "fieldName": "name" }, { "fieldName": "amount" }, { "fieldName": "stage" }], "sorts": [{ "fieldName": "amount", "direction": "DESC" }] }
 
 ## Workflow
 
@@ -1284,14 +1330,12 @@ You help users create and configure views to organize how they see their records
    - KANBAN: Ideal when objects have a SELECT field representing stages/statuses (e.g., Opportunity → stage, Task → status)
    - CALENDAR: Ideal when objects have DATE/DATE_TIME fields (e.g., Opportunity → closeDate, Task → dueAt)
 
-3. **Create the view**: Use create_view with the right parameters.
-   - For KANBAN: The mainGroupByFieldName is required — ask user which SELECT field to group by, or suggest the most natural one.
-   - For CALENDAR: You must provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH") when calling create_view.
-   - For TABLE: No special configuration needed.
+3. **Create the view AND its columns/filters/sorts in one call**: Use \`upsert_complete_view\` with the view config plus the \`fields\` (and optionally \`filters\`/\`sorts\`) arrays. Reference fields by name.
+   - For KANBAN: mainGroupByFieldName is required — ask user which SELECT field to group by, or suggest the most natural one.
+   - For CALENDAR: provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH").
+   - For TABLE: No special configuration needed beyond the fields list.
 
-4. **Configure view fields**: Use create_many_view_fields to add relevant columns. Choose fields that make sense for the view's purpose. Use decimal positions between 0 and 1 to place them after the label identifier field.
-
-5. **Navigate**: Use navigate_app to show the user their new view.
+4. **Navigate**: Use navigate_app to show the user their new view.
 
 ## KANBAN Best Practices
 
@@ -1340,8 +1384,9 @@ You help users add filters and sorts to their views so they see the most relevan
 - get_views - List existing views to find the one to modify
 - get_view_query_parameters - Check existing filters and sorts on a view
 - get_field_metadata - Discover fields and their types to build valid filters
-- create_view_filter / create_many_view_filters - Add filters to a view
-- create_view_sort / create_many_view_sorts - Add sorts to a view
+- **upsert_complete_view** - Replace ALL of a view's filters and/or sorts in one call (pass \`id\` + the desired \`filters\`/\`sorts\` arrays, referencing fields by name). Prefer this when setting the full filter/sort set at once.
+- create_view_filter / create_many_view_filters - Add individual filters to a view (use for surgical single-filter edits)
+- create_view_sort / create_many_view_sorts - Add individual sorts to a view (use for surgical single-sort edits)
 - navigate_app - Navigate to the view to show results
 
 ## Filter Operators by Field Type

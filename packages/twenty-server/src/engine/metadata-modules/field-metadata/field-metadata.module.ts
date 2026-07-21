@@ -30,7 +30,6 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -47,13 +46,13 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     TokenModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([
           FieldMetadataEntity,
           ObjectMetadataEntity,
         ]),
-        WorkspaceMetadataVersionModule,
         WorkspaceCacheStorageModule,
         ObjectMetadataModule,
         TypeORMModule,

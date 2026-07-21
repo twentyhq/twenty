@@ -1,7 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewSortDirection } from 'twenty-shared/types';
 
@@ -9,7 +7,7 @@ registerEnumType(ViewSortDirection, { name: 'ViewSortDirection' });
 
 @ObjectType('ViewSort')
 export class ViewSortDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: false })

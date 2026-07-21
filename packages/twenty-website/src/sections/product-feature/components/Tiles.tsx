@@ -73,13 +73,13 @@ const SpotlightContent = styled.div`
 const SpotlightVisual = styled.div`
   border: 1px solid ${color('black-20')};
   border-radius: ${radius(2)};
-  margin: ${spacing(4)};
+  margin: ${spacing(4)} ${spacing(4)} 0;
   min-height: 300px;
   overflow: hidden;
 
   ${mediaUp('md')} {
-    margin: ${spacing(5)};
-    min-height: 420px;
+    margin: ${spacing(5)} ${spacing(5)} 0;
+    min-height: 340px;
   }
 `;
 

@@ -48,8 +48,8 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
     position === 'right' ? 'none' : 'solid'};
   border-radius: ${({ position }) =>
     position === 'left'
-      ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
-      : `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`};
+      ? `${themeCssVariables.border.radius.md} 0 0 ${themeCssVariables.border.radius.md}`
+      : `0 ${themeCssVariables.border.radius.md} ${themeCssVariables.border.radius.md} 0`};
   border-right-style: ${({ position }) =>
     position === 'left' ? 'none' : 'solid'};
   box-sizing: border-box;
@@ -103,10 +103,10 @@ const StyledInput = styled.input<
 
   border-radius: ${({ leftAdornment, rightAdornment }) =>
     leftAdornment
-      ? `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`
+      ? `0 ${themeCssVariables.border.radius.md} ${themeCssVariables.border.radius.md} 0`
       : rightAdornment
-        ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
-        : themeCssVariables.border.radius.sm};
+        ? `${themeCssVariables.border.radius.md} 0 0 ${themeCssVariables.border.radius.md}`
+        : themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;

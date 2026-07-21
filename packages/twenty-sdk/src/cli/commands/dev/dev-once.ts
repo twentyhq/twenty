@@ -1,18 +1,22 @@
 import { appDevOnce } from '@/cli/operations/dev-once';
+import { APP_ERROR_CODES } from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { confirmDestructiveApply } from '@/cli/utilities/dev/confirm-destructive-apply';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
 export type AppDevOnceCommandOptions = {
   appPath?: string;
   verbose?: boolean;
-  dryRun?: boolean;
+  apply?: boolean;
+  force?: boolean;
 };
 
 export class AppDevOnceCommand {
   async execute(options: AppDevOnceCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+    const apply = options.apply ?? false;
 
     await checkSdkVersionCompatibility(appPath);
 
@@ -20,7 +24,7 @@ export class AppDevOnceCommand {
 
     console.log(
       chalk.blue(
-        `${options.dryRun ? 'Previewing application diff' : 'Syncing application'} on ${remoteName}...`,
+        `${apply ? 'Applying application manifest' : 'Planning application apply'} on ${remoteName}...`,
       ),
     );
     console.log(chalk.gray(`App path: ${appPath}\n`));
@@ -28,19 +32,28 @@ export class AppDevOnceCommand {
     const result = await appDevOnce({
       appPath,
       verbose: options.verbose,
-      dryRun: options.dryRun,
+      apply,
+      force: options.force,
       onProgress: (message) => console.log(chalk.gray(message)),
+      onPlan: (text) => console.log(`\n${text}\n`),
+      confirmApply: (deleteCount) =>
+        confirmDestructiveApply(deleteCount, { force: options.force }),
     });
 
     if (!result.success) {
+      if (result.error.code === APP_ERROR_CODES.APPLY_ABORTED) {
+        console.log(chalk.yellow(result.error.message));
+        process.exit(1);
+      }
+
       console.error(chalk.red(result.error.message));
       process.exit(1);
     }
 
-    if (options.dryRun) {
+    if (!apply) {
       console.log(
         chalk.green(
-          `\n✓ Dry run complete for ${result.data.applicationDisplayName} — no changes were applied`,
+          `\n✓ Plan complete for ${result.data.applicationDisplayName} — no changes were applied`,
         ),
       );
 

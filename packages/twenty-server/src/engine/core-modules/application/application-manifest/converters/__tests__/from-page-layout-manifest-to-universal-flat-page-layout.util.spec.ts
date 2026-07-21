@@ -5,11 +5,12 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
   const now = '2026-01-01T00:00:00.000Z';
   const applicationUniversalIdentifier = 'app-uuid-1';
 
-  it('should convert a minimal page layout manifest', () => {
+  it('should convert a standalone page layout manifest', () => {
     const result = fromPageLayoutManifestToUniversalFlatPageLayout({
       pageLayoutManifest: {
         universalIdentifier: 'pl-uuid-1',
         name: 'My Page Layout',
+        type: PageLayoutType.STANDALONE_PAGE,
       },
       applicationUniversalIdentifier,
       now,
@@ -20,7 +21,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
       applicationUniversalIdentifier,
     );
     expect(result.name).toBe('My Page Layout');
-    expect(result.type).toBe(PageLayoutType.RECORD_PAGE);
+    expect(result.type).toBe(PageLayoutType.STANDALONE_PAGE);
     expect(result.objectMetadataUniversalIdentifier).toBeNull();
     expect(
       result.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
@@ -28,10 +29,27 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     expect(result.tabUniversalIdentifiers).toEqual([]);
   });
 
-  it('should convert a fully specified page layout manifest', () => {
+  it('should convert a record page layout manifest', () => {
     const result = fromPageLayoutManifestToUniversalFlatPageLayout({
       pageLayoutManifest: {
         universalIdentifier: 'pl-uuid-2',
+        name: 'Record Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectUniversalIdentifier: 'obj-uuid-1',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.name).toBe('Record Layout');
+    expect(result.type).toBe(PageLayoutType.RECORD_PAGE);
+    expect(result.objectMetadataUniversalIdentifier).toBe('obj-uuid-1');
+  });
+
+  it('should convert a fully specified page layout manifest', () => {
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest: {
+        universalIdentifier: 'pl-uuid-3',
         name: 'Dashboard Layout',
         type: PageLayoutType.DASHBOARD,
         objectUniversalIdentifier: 'obj-uuid-1',

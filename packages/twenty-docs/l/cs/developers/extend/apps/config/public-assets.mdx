@@ -11,7 +11,7 @@ Soubory umístěné v `public/` jsou:
 * **Veřejně přístupné** — po synchronizaci na server jsou prostředky dostupné na veřejné URL. K přístupu k nim není potřeba žádná autentizace.
 * **Dostupné ve frontendových komponentách** — použijte URL prostředků k zobrazení obrázků, ikon či jiných médií uvnitř komponent Reactu.
 * **Dostupné v logických funkcích** — odkazujte na URL prostředků v e-mailech, odpovědích API či jiné serverové logice.
-* **Používány pro metadata Marketplace** — pole `logoUrl` a `screenshots` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Zobrazují se v Marketplace, když je vaše aplikace zveřejněna.
+* **Používány pro metadata Marketplace** — pole `logo` a `galleryImages` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Zobrazují se v Marketplace, když je vaše aplikace zveřejněna. Pro tato pole jsou externí absolutní adresy URL ignorovány — místo toho přibalte obrázky do `public/`. Každý obrázek nesmí přesáhnout velikost 10 MB.
 * **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restartovat.
 * **Zahrnuté do buildů** — `yarn twenty dev:build` zabalí všechny veřejné prostředky do distribučního výstupu.
 

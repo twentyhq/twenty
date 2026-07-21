@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## Yapılandırma alanları
 
-| Alan                                    | Zorunlu | Açıklama                                                                                                                                                                                              |
-| --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                   | Evet    | Komut için kalıcı benzersiz kimlik                                                                                                                                                                    |
-| `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                         |
-| `frontComponentUniversalIdentifier`     | Evet    | Bu komutun açtığı ön bileşenin `universalIdentifier` değeri                                                                                                                                           |
-| `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                      |
-| `icon`                                  | Hayır   | Etiketin yanında görüntülenen simge adı (örn. `'IconBolt'`, `'IconSend'`)                                                                                                                             |
-| `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                           |
-| `availabilityType`                      | Hayır   | Komutun nerede görüneceğini kontrol eder: `'GLOBAL'` (her zaman kullanılabilir), `'RECORD_SELECTION'` (yalnızca kayıtlar seçiliyken) veya `'FALLBACK'` (başka hiçbir komut eşleşmediğinde gösterilir) |
-| `availabilityObjectUniversalIdentifier` | Hayır   | Komutu belirli bir nesne türünün sayfalarıyla sınırlandırın (örn. yalnızca Company kayıtlarında)                                                                                                      |
-| `conditionalAvailabilityExpression`     | Hayır   | Görünürlüğü dinamik olarak kontrol eden bir boolean ifade (aşağıya bakın)                                                                                                                             |
+| Alan                                    | Zorunlu | Açıklama                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Evet    | Komut için kalıcı benzersiz kimlik                                                                                                                                                                                                                                                                        |
+| `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                                                                                                                             |
+| `frontComponentUniversalIdentifier`     | Evet    | Bu komutun açtığı ön bileşenin `universalIdentifier` değeri                                                                                                                                                                                                                                               |
+| `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                                                                                                                          |
+| `icon`                                  | Hayır   | **Kullanımdan kaldırıldı** — uygulama simgesi tercih edildiği için yok sayılır; ayarlanırsa oluşturma sırasında bir uyarı verir                                                                                                                                                                           |
+| `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                                                                                                                               |
+| `availabilityType`                      | Hayır   | Komutun nerede görüneceğini kontrol eder: `'GLOBAL'` (her zaman kullanılabilir), `'GLOBAL_OBJECT_CONTEXT'` (yalnızca bir nesne bağlamı olan sayfalarda — indeks ve kayıt sayfaları), `'RECORD_SELECTION'` (yalnızca kayıtlar seçiliyken) veya `'FALLBACK'` (başka hiçbir komut eşleşmediğinde gösterilir) |
+| `availabilityObjectUniversalIdentifier` | Hayır   | Komutu belirli bir nesne türünün sayfalarıyla sınırlandırın (örn. yalnızca Company kayıtlarında)                                                                                                                                                                                                          |
+| `conditionalAvailabilityExpression`     | Hayır   | Görünürlüğü dinamik olarak kontrol eden bir boolean ifade (aşağıya bakın)                                                                                                                                                                                                                                 |
 
 ## Arayüzsüz komutlar
 
 Bir [arayüzsüz ön bileşen](/l/tr/developers/extend/apps/layout/front-components#headless-vs-non-headless) ile eşleştirilmiş bir komut menüsü öğesi, tek tıklamayla bir eylem sunmanın — kod çalıştırma, gezinme veya onaylayıp yürütme — yaygın kullanılan biçimidir. Ön Bileşenler sayfası, eylem-ve-kaldırma modelini yöneten [SDK Command bileşenlerini](/l/tr/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) kapsar.
 
-Tipik bir akış:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+Tipik bir akış: başsız bir bileşen `<Command execute={...} />` oluşturur (bkz. [tam örnek](/l/tr/developers/extend/apps/layout/front-components#sdk-command-components)) ve komut menüsü öğesi ona işaret eder:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

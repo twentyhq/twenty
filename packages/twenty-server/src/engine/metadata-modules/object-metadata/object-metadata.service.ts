@@ -42,6 +42,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
@@ -482,22 +483,30 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ?? workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
+    const { flatObjectMetadataToCreate, flatFieldMetadataToCreateOnObject } =
+      fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+        createObjectInput,
+        flatApplication: resolvedOwnerFlatApplication,
+      });
 
-    const {
-      flatObjectMetadataToCreate,
-      flatIndexMetadataToCreate,
-      flatSearchFieldMetadataToCreate,
-      flatFieldMetadataToCreateOnObject,
-      relationTargetFlatFieldMetadataToCreate,
-    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-      createObjectInput,
-      flatApplication: resolvedOwnerFlatApplication,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+    // Default view fields reference the caller-provided fields (reused as-is from
+    // the transpiler output) plus the engine-owned reserved system fields, whose
+    // deterministic identifiers we re-derive here (searchVector is never shown).
+    // TODO: remove once default view fields move to the metadata side effect engine.
+    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
+      [
+        ...flatFieldMetadataToCreateOnObject,
+        ...Object.values(
+          buildReservedSystemFlatFieldMetadatasForCustomObject({
+            flatObjectMetadata: {
+              applicationUniversalIdentifier:
+                resolvedOwnerFlatApplication.universalIdentifier,
+              universalIdentifier:
+                flatObjectMetadataToCreate.universalIdentifier,
+            },
+          }),
+        ),
+      ];
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
@@ -506,7 +515,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
       flatApplication: resolvedOwnerFlatApplication,
-      objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+      objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
       labelIdentifierFieldMetadataUniversalIdentifier:
         flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
       viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
@@ -549,7 +558,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const flatRecordPageFieldsViewFieldsToCreate =
       computeFlatViewFieldsToCreate({
         flatApplication: resolvedOwnerFlatApplication,
-        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+        objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
         labelIdentifierFieldMetadataUniversalIdentifier:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
         viewUniversalIdentifier:
@@ -574,6 +583,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            fieldMetadata: {
+              flatEntityToCreate: [...flatFieldMetadataToCreateOnObject],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            index: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
             view: {
               flatEntityToCreate: [
                 flatDefaultViewToCreate,
@@ -587,19 +606,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 ...flatDefaultViewFieldsToCreate,
                 ...flatRecordPageFieldsViewFieldsToCreate,
               ],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            fieldMetadata: {
-              flatEntityToCreate: [
-                ...flatFieldMetadataToCreateOnObject,
-                ...relationTargetFlatFieldMetadataToCreate,
-              ],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            index: {
-              flatEntityToCreate: flatIndexMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -623,11 +629,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             pageLayoutWidget: {
               flatEntityToCreate:
                 flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: flatSearchFieldMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -700,6 +701,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: true,
       anyFieldFilterValue: null,
       calendarFieldMetadataUniversalIdentifier: null,
+      calendarEndFieldMetadataUniversalIdentifier: null,
       calendarLayout: null,
       isCompact: false,
       shouldHideEmptyGroups: false,
@@ -989,12 +991,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,
   ): Promise<FlatObjectMetadata[]> {
+    const whereWithWorkspaceId = Array.isArray(options?.where)
+      ? options.where.map((whereCondition) => ({
+          ...whereCondition,
+          workspaceId,
+        }))
+      : {
+          ...options?.where,
+          workspaceId,
+        };
+
     const objectMetadataEntities = await this.objectMetadataRepository.find({
       ...options,
-      where: {
-        ...options?.where,
-        workspaceId,
-      },
+      where: whereWithWorkspaceId,
       order: {
         ...options?.order,
       },

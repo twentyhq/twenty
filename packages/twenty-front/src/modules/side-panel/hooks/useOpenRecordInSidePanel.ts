@@ -14,6 +14,7 @@ import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorF
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
+import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import {
   ContextStorePageType,
   CoreObjectNameSingular,
@@ -41,14 +42,25 @@ export const useOpenRecordInSidePanel = () => {
     ({
       recordId,
       objectNameSingular,
+      tab,
       isNewRecord = false,
       resetNavigationStack = false,
     }: {
       recordId: string;
       objectNameSingular: string;
+      tab?: string;
       isNewRecord?: boolean;
       resetNavigationStack?: boolean;
     }) => {
+      if (isDefined(tab)) {
+        setRecordPageActiveTabId({
+          recordId,
+          objectNameSingular,
+          tabId: tab,
+          store,
+        });
+      }
+
       const navigationStack = store.get(sidePanelNavigationStackState.atom);
 
       const currentNavigationStackItem = navigationStack.at(-1);

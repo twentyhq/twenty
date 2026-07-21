@@ -3,6 +3,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 
 import {
+  getEnterpriseConfigError,
   getLicenseeFromStripeCustomer,
   getStripeClient,
   signEnterpriseKey,
@@ -29,18 +30,18 @@ function isSecretValid(providedSecret: string): boolean {
 }
 
 export async function POST(request: Request) {
-  if (
-    !process.env.STRIPE_SECRET_KEY ||
-    !process.env.ENTERPRISE_JWT_PRIVATE_KEY ||
-    !process.env.ENTERPRISE_ADMIN_API_SECRET
-  ) {
-    console.error(
-      '[enterprise-reissue] 503 — STRIPE_SECRET_KEY, ENTERPRISE_JWT_PRIVATE_KEY and/or ENTERPRISE_ADMIN_API_SECRET are not configured',
-    );
-    return NextResponse.json(
-      { error: 'Enterprise key reissue is not configured.' },
-      { status: 503 },
-    );
+  const configError = getEnterpriseConfigError({
+    route: 'enterprise-reissue',
+    feature: 'Enterprise key reissue',
+    requiredEnvVars: [
+      'STRIPE_SECRET_KEY',
+      'ENTERPRISE_JWT_PRIVATE_KEY',
+      'ENTERPRISE_ADMIN_API_SECRET',
+    ],
+  });
+
+  if (configError) {
+    return configError;
   }
 
   try {

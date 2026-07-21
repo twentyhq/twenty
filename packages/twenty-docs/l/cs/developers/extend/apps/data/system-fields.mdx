@@ -1,0 +1,153 @@
+---
+title: Cílení na systémová pole
+description: Odkazujte na automaticky vytvářená systémová pole, jako jsou createdAt nebo updatedAt, ve zobrazeních a dalších entitách pomocí getFieldUniversalIdentifier.
+icon: gears
+---
+
+Každý objekt v Twenty je dodáván se sadou **systémových polí**, která sami nikdy nedefinujete. Tato pole jsou automaticky vytvářena serverem při zřízení objektu:
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Protože tato pole nedefinujete pomocí [`defineField()`](/l/cs/developers/extend/apps/data/extending-objects), neexistuje žádná konstanta `universalIdentifier`, kterou byste mohli importovat. Jak tedy odkážete na `createdAt` jako na sloupec ve [zobrazení](/l/cs/developers/extend/apps/layout/views)?
+
+## Problém
+
+Od Twenty 2.19 je univerzální identifikátor systémového pole **deterministicky odvozován** serverem ze tří vstupů: univerzálního identifikátoru aplikace, univerzálního identifikátoru objektu a názvu pole. Vymyslet si id a natvrdo ho zapsat nebude fungovat: neshoduje se s ničím na serveru a synchronizace zamítne osiřelý odkaz:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## Řešení
+
+<Note>
+  `getFieldUniversalIdentifier` je k dispozici od `twenty-sdk` verze 2.21 a vyšší.
+</Note>
+
+Použijte `getFieldUniversalIdentifier` k odvození přesně stejné hodnoty, jakou používá server. Funkce přijímá tři vstupy a vrací univerzální identifikátor pole:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` je identifikátor vaší aplikace, ten, který předáváte do [`defineApplication()`](/l/cs/developers/extend/apps/config/application).
+* `objectUniversalIdentifier` je identifikátor objektu, ke kterému pole patří.
+* `name` je název systémového pole, jedna z výše uvedených hodnot.
+
+## Příklad: sloupec createdAt v zobrazení
+
+Typickým případem je přidání sloupce `createdAt` do zobrazení některého z vašich vlastních objektů. Odvoďte identifikátor pole a odkažte na něj stejně jako na jakýkoli jiný `fieldMetadataUniversalIdentifier`:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Tentýž odvozený identifikátor funguje všude tam, kde se očekává `fieldMetadataUniversalIdentifier`: pole zobrazení, filtry, řazení, seskupování a widgety rozložení stránky.
+
+<Note>
+  Identifikátor odvozujte, neukládejte ho natvrdo. Protože server odvozuje hodnotu z
+  ID aplikace, ID objektu a názvu pole, volání
+  `getFieldUniversalIdentifier` udržuje odkaz správný i v případě, že se tyto
+  vstupy změní, a předchází odchylkám, pokud se samotný způsob odvozování někdy změní.
+</Note>
+
+## Systémová relační pole
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` je k dispozici od verze `twenty-sdk`
+  2.23 a vyžaduje server Twenty ve verzi 2.23 nebo novější.
+</Note>
+
+Kromě výše uvedených skalárních systémových polí server také na každém objektu poskytuje čtyři **systémová relační pole**: `timelineActivities`, `attachments`, `noteTargets` a `taskTargets`, z nichž každé ukazuje na odpovídající standardní relační objekt.
+
+Tato pole nejsou řešena pomocí `getFieldUniversalIdentifier`: jejich identifikátor je odvozen **bez ohledu na název** z objektu, který pole obsahuje, a z objektu, na který pole odkazuje. Tím pádem přejmenování objektu nikdy nezmění identifikátory jeho relačních polí.
+
+Použijte `getSystemRelationFieldUniversalIdentifier` k jejich vyřešení:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` je objekt, který toto pole **obsahuje**.
+* `relationTargetObjectUniversalIdentifier` je objekt, na který toto pole **ukazuje**.
+
+Směr je zakódovaný pořadím argumentů. Pro vyřešení opačné strany (např. `attachment.targetRocket`, morph pole, které server vytvoří na standardním relačním objektu), je prohoďte:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Stejně jako u skalárních systémových polí funguje vyřešené ID všude tam, kde je očekáváno `fieldMetadataUniversalIdentifier`.
+
+## Standardní objekty Twenty
+
+U **standardního** objektu Twenty (Person, Company, Opportunity, …) nemusíte nic odvozovat: identifikátory systémových polí jsou předpočítané konstanty, které můžete přímo importovat.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+Použijte `getFieldUniversalIdentifier` v případě, kdy je objekt definován **vaší aplikací** pomocí [`defineObject()`](/l/cs/developers/extend/apps/data/objects) a žádná taková konstanta neexistuje.
+
+<Note>
+  `name` je **výchozí** pole, nikoli systémové pole. Má svůj vlastní natvrdo daný
+  univerzální identifikátor a neodvozuje se pomocí
+  `getFieldUniversalIdentifier`. U objektů, které definujete, odkazujte na pole
+  `name` pomocí identifikátoru, který jste mu dali v `defineObject()`.
+</Note>

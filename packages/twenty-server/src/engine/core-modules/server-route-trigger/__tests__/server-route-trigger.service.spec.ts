@@ -46,14 +46,46 @@ const buildRequest = (body: object | null = {}): Request =>
     body,
   }) as unknown as Request;
 
+type QueryBuilderMock = {
+  innerJoinAndSelect: jest.Mock;
+  where: jest.Mock;
+  andWhere: jest.Mock;
+  getOne: jest.Mock;
+};
+
+const buildResolverRow = () => ({
+  id: 'resolver-id',
+  universalIdentifier: RESOLVER_UID,
+  workspaceId: 'owner-ws',
+  serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
+  application: {
+    applicationRegistration: { id: 'reg-1', ownerWorkspaceId: 'owner-ws' },
+  },
+});
+
 describe('ServerRouteTriggerService', () => {
   let service: ServerRouteTriggerService;
-  let logicFunctionRepository: jest.Mocked<
-    Pick<Repository<LogicFunctionEntity>, 'find' | 'findOne'>
-  >;
+  let logicFunctionRepository: {
+    createQueryBuilder: jest.Mock;
+    findOne: jest.Mock;
+  };
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
   >;
+
+  let resolverRow: unknown;
+  let queryBuilder: QueryBuilderMock;
+
+  const buildQueryBuilderMock = (): QueryBuilderMock => {
+    const qb: QueryBuilderMock = {
+      innerJoinAndSelect: jest.fn(() => qb),
+      where: jest.fn(() => qb),
+      andWhere: jest.fn(() => qb),
+      getOne: jest.fn(() => Promise.resolve(resolverRow)),
+    };
+
+    return qb;
+  };
 
   const handle = () =>
     service.handle({
@@ -61,20 +93,12 @@ describe('ServerRouteTriggerService', () => {
       resolverLogicFunctionUniversalIdentifier: RESOLVER_UID,
     });
 
-  const buildResolverRow = (overrides: Record<string, unknown> = {}) => ({
-    id: 'resolver-id',
-    universalIdentifier: RESOLVER_UID,
-    workspaceId: 'owner-ws',
-    serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-test'] },
-    application: {
-      applicationRegistration: { id: 'reg-1', ownerWorkspaceId: 'owner-ws' },
-    },
-    ...overrides,
-  });
-
   beforeEach(() => {
+    resolverRow = buildResolverRow();
+    queryBuilder = buildQueryBuilderMock();
+
     logicFunctionRepository = {
-      find: jest.fn().mockResolvedValue([buildResolverRow()]),
+      createQueryBuilder: jest.fn(() => queryBuilder),
       findOne: jest
         .fn()
         // resolver lookup inside runFunction
@@ -129,68 +153,56 @@ describe('ServerRouteTriggerService', () => {
     );
   });
 
-  it('throws LOGIC_FUNCTION_NOT_FOUND when no row matches the universalIdentifier', async () => {
-    logicFunctionRepository.find.mockResolvedValue([]);
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-    });
-  });
-
-  it('throws LOGIC_FUNCTION_NOT_FOUND when only non-owner-workspace copies exist', async () => {
-    logicFunctionRepository.find.mockResolvedValue([
-      buildResolverRow({
-        workspaceId: 'other-ws',
-        application: {
-          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
-        },
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ] as any);
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-    });
-  });
-
-  it('picks the owner-workspace copy when multiple workspaces installed the app', async () => {
-    logicFunctionRepository.find.mockResolvedValue([
-      buildResolverRow({
-        id: 'tenant-copy',
-        workspaceId: 'tenant-ws',
-        application: {
-          applicationRegistration: {
-            id: 'reg-1',
-            ownerWorkspaceId: 'owner-ws',
-          },
-        },
-      }),
-      buildResolverRow({
-        id: 'owner-copy',
-        workspaceId: 'owner-ws',
-        application: {
-          applicationRegistration: {
-            id: 'reg-1',
-            ownerWorkspaceId: 'owner-ws',
-          },
-        },
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ] as any);
-
+  it('queries the resolver by universalIdentifier and joins the application registration chain', async () => {
     await handle();
 
-    // runFunction's internal findOne is called with the
-    // (universalIdentifier, workspaceId) of the owner-workspace copy.
-    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        where: expect.objectContaining({
-          universalIdentifier: RESOLVER_UID,
-          workspaceId: 'owner-ws',
-        }),
-      }),
+    expect(logicFunctionRepository.createQueryBuilder).toHaveBeenCalledWith(
+      'logicFunction',
     );
+    expect(queryBuilder.innerJoinAndSelect).toHaveBeenCalledWith(
+      'logicFunction.application',
+      'application',
+    );
+    expect(queryBuilder.innerJoinAndSelect).toHaveBeenCalledWith(
+      'application.applicationRegistration',
+      'applicationRegistration',
+    );
+    expect(queryBuilder.where).toHaveBeenCalledWith(
+      'logicFunction.universalIdentifier = :universalIdentifier',
+      { universalIdentifier: RESOLVER_UID },
+    );
+  });
+
+  it('restricts the resolver query to server-route-exposed, owner-workspace functions', async () => {
+    await handle();
+
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      'logicFunction.serverRouteTriggerSettings IS NOT NULL',
+    );
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+    );
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND and executes nothing when the query returns no server-route resolver', async () => {
+    resolverRow = null;
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+    expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
+  });
+
+  it('rejects and executes nothing when the resolver requires authentication', async () => {
+    resolverRow = {
+      ...buildResolverRow(),
+      httpRouteTriggerSettings: { isAuthRequired: true },
+    };
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+    });
+    expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
   });
 
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
@@ -232,11 +244,7 @@ describe('ServerRouteTriggerService', () => {
     logicFunctionRepository.findOne.mockReset();
     logicFunctionRepository.findOne
       // resolver lookup succeeds
-      .mockResolvedValueOnce({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        id: 'resolver-id',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      .mockResolvedValueOnce({ id: 'resolver-id' })
       // target lookup returns null
       .mockResolvedValueOnce(null);
 
@@ -286,23 +294,6 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('looks up the resolver by universalIdentifier and loads the application registration chain', async () => {
-    await handle();
-
-    const findArgs = logicFunctionRepository.find.mock.calls[0][0];
-
-    expect(findArgs?.where).toEqual(
-      expect.objectContaining({ universalIdentifier: RESOLVER_UID }),
-    );
-    expect(findArgs?.relations).toEqual(
-      expect.objectContaining({
-        application: expect.objectContaining({
-          applicationRegistration: true,
-        }),
-      }),
-    );
-  });
-
   it('maps a LogicFunctionExecutionException(RATE_LIMIT_EXCEEDED) to the server-route rate-limit code', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockRejectedValue(
@@ -330,21 +321,6 @@ describe('ServerRouteTriggerService', () => {
         }),
       }),
     );
-  });
-
-  it('throws LOGIC_FUNCTION_NOT_FOUND when the resolver is not linked to an application registration', async () => {
-    logicFunctionRepository.find.mockResolvedValue([
-      buildResolverRow({
-        application: {
-          applicationRegistration: { ownerWorkspaceId: 'owner-ws' },
-        },
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ] as any);
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-    });
   });
 
   it('does not leak the raw executor error message to the caller', async () => {

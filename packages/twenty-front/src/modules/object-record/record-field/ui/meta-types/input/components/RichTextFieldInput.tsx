@@ -64,7 +64,7 @@ const LoadingSkeleton = () => {
     <SkeletonTheme
       baseColor={theme.background.tertiary}
       highlightColor={theme.background.transparent.lighter}
-      borderRadius={theme.border.radius.sm}
+      borderRadius={themeCssVariables.border.radius.md}
     >
       <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
     </SkeletonTheme>

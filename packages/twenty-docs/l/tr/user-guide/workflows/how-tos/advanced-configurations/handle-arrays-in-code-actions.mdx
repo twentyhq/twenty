@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Code düğümü bir dizi yerine yapılandırılmış bir nesne döndürür. Sonraki adımlarda, değişken seçiciden `answer.firstname` ve `answer.name` gibi tekil alanları artık seçebilirsiniz.
 
-<Note>
-Gelecek güncellemelerde diziyle çalışmayı kolaylaştırmak için aktif olarak çalışıyoruz.
-</Note>
+<Tip>
+**Dizinin alanlarını çıkarmak yerine dizi üzerinde döngü yapmak mı istiyorsunuz?** Bir Code veya Logic Function adımı en üst düzeyde bir dizi döndürdüğünde, bunu doğrudan bir [Iterator](/l/tr/user-guide/workflows/capabilities/use-iterator) içine verebilirsiniz: Iterator'ın girdisi olarak adımın **Whole list** seçeneğini belirleyin ve ardından döngü içinde her bir öğeye `{{iterator.currentItem}}` ile başvurun. Bu durumda diziyi bir nesneye yeniden yapılandırmanız gerekmez.
+</Tip>
 
 <Tip>
 Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.

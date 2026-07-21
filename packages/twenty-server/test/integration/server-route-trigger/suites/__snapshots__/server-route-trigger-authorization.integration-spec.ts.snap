@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServerRouteTrigger authorization (integration) POST /webhooks/server/:universalIdentifier (public, unauthenticated) rejects a server-route-exposed resolver that requires authentication before executing it 1`] = `
+{
+  "body": {
+    "code": "RESOLVER_REQUIRES_AUTHENTICATION",
+    "error": "Error",
+    "messages": [
+      "Server resolver function 3c3f983f-5c1a-4c60-a3c8-7d0e2a4a33c3 requires authentication and cannot be dispatched through the public server route",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`ServerRouteTrigger authorization (integration) POST /webhooks/server/:universalIdentifier (public, unauthenticated) rejects an owner-workspace function without serverRouteTriggerSettings before executing it 1`] = `
+{
+  "body": {
+    "code": "LOGIC_FUNCTION_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "Server resolver function 1a1f983f-5c1a-4c60-a3c8-7d0e2a4a11a1 not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;

@@ -11,7 +11,7 @@ export const isMatchingMultiSelectFilter = ({
     case multiSelectFilter.containsAny !== undefined: {
       return (
         Array.isArray(value) &&
-        multiSelectFilter.containsAny.every((item) => value.includes(item))
+        multiSelectFilter.containsAny.some((item) => value.includes(item))
       );
     }
     case multiSelectFilter.isEmptyArray !== undefined: {

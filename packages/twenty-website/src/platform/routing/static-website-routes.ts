@@ -13,6 +13,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Twenty | #1 Open Source CRM`,
   },
   {
+    changeFrequency: 'weekly',
+    description: msg`Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
+    id: 'apps',
+    indexed: true,
+    path: '/apps',
+    priority: 0.8,
+    title: msg`Twenty Apps — Vetted Apps for the Open Source CRM`,
+  },
+  {
     changeFrequency: 'monthly',
     description: msg`Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use.`,
     id: 'product',
@@ -58,6 +67,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     path: '/partners/apply',
     priority: 0.3,
     title: msg`Become a Twenty Partner — Apply`,
+  },
+  {
+    changeFrequency: 'yearly',
+    description: msg`Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation.`,
+    id: 'partnersBrief',
+    indexed: false,
+    path: '/partners/brief',
+    priority: 0.3,
+    title: msg`Submit a Client Brief — Twenty Partners`,
   },
   {
     changeFrequency: 'monthly',

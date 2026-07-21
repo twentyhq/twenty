@@ -33,17 +33,32 @@ export default defineView({
 ## 关键点
 
 * `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
-* `key` 决定视图类型——`ViewKey.INDEX` 是该对象的主列表视图。
-* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
-* 你还可以声明 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* `key: ViewKey.INDEX` 将该视图标记为对象的主列表视图（`OBJECT` 导航项打开的那个）。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。 若要引用自动创建的系统字段（例如 `createdAt`），请参阅[定位系统字段](/l/zh/developers/extend/apps/data/system-fields)。
+* 你还可以声明 `filters`、`filterGroups`、`sorts`、`groups` 和 `fieldGroups` 以进行更高级的配置。
 * 当同一对象存在多个视图时，`position` 控制其排序。
+
+## 可选属性
+
+| 属性                                                                                                          | 值                                                                                  | 描述                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE`（默认），`ViewType.KANBAN`，`ViewType.CALENDAR`                         | 记录的排布方式。 （`FIELDS_WIDGET`、`TABLE_WIDGET`、`KANBAN_WIDGET` 和 `CALENDAR_WIDGET` 也存在，但由页面布局小部件在内部使用。） |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE`（默认），`ViewVisibility.UNLISTED`                           | 视图是对整个工作区可见，还是在选择器中隐藏。                                                                            |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL`（默认），`ViewOpenRecordIn.RECORD_PAGE`                   | 点击记录时在何处打开该记录。                                                                                    |
+| `排序`                                                                                                        | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | 默认排序顺序。                                                                                           |
+| `isCompact`                                                                                                 | `boolean`                                                                          | 紧凑的行显示。                                                                                           |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 按字段对记录进行分组（例如看板列）。                                                                                |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 看板列聚合和列宽设置。                                                                                       |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 日历视图：布局、用于定位记录的日期字段，以及可选的结束日期字段。                                                                  |
+
+上述所有枚举都从 `twenty-sdk/define` 导出。
 
 ## 过滤器
 
 视图可以附带预先应用的过滤器。 每个过滤器有三个坐标：被筛选的**字段**、**运算符**（如何比较）以及**值**（与之比较的内容）。 这三者必须全部对齐——在同步时，使用不适用于字段类型的运算符将会被拒绝。
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

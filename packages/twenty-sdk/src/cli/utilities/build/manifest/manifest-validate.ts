@@ -1,7 +1,19 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
-import { type FieldManifest, type Manifest } from 'twenty-shared/application';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  type FieldManifest,
+  type Manifest,
+  type PageLayoutWidgetManifest,
+} from 'twenty-shared/application';
+import {
+  FieldMetadataType,
+  GRAPH_WIDGET_CONFIGURATION_TYPES,
+  type GraphWidgetConfigurationType,
+  type PageLayoutWidgetUniversalConfiguration,
+  RelationType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const MIN_UUID_VERSION = 4;
 
@@ -14,6 +26,22 @@ const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,
   RelationType.ONE_TO_MANY,
 ];
+
+const RAW_AGGREGATE_FIELD_METADATA_ID_KEY = 'aggregateFieldMetadataId';
+
+type GraphPageLayoutWidgetUniversalConfiguration = Extract<
+  PageLayoutWidgetUniversalConfiguration,
+  { configurationType: GraphWidgetConfigurationType }
+>;
+
+const isGraphWidgetConfiguration = (
+  configuration: PageLayoutWidgetUniversalConfiguration | null | undefined,
+): configuration is GraphPageLayoutWidgetUniversalConfiguration =>
+  isDefined(configuration) &&
+  GRAPH_WIDGET_CONFIGURATION_TYPES.some(
+    (configurationType) =>
+      configurationType === configuration.configurationType,
+  );
 
 const extractDuplicates = (values: string[]): string[] => {
   const seen = new Set<string>();
@@ -102,6 +130,50 @@ const validateRelationFields = (
   return errors;
 };
 
+const collectPageLayoutWidgets = (
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+): PageLayoutWidgetManifest[] => {
+  const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
+    (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
+  );
+
+  const widgetsFromStandaloneTabs = manifest.pageLayoutTabs.flatMap(
+    (tab) => tab.widgets ?? [],
+  );
+
+  return [...widgetsFromPageLayouts, ...widgetsFromStandaloneTabs];
+};
+
+const validateGraphWidgets = (
+  widgets: PageLayoutWidgetManifest[],
+): string[] => {
+  const errors: string[] = [];
+
+  for (const widget of widgets) {
+    const configuration = widget.configuration;
+
+    if (!isGraphWidgetConfiguration(configuration)) {
+      continue;
+    }
+
+    if (
+      !isNonEmptyString(configuration.aggregateFieldMetadataUniversalIdentifier)
+    ) {
+      const usedRawKey = RAW_AGGREGATE_FIELD_METADATA_ID_KEY in configuration;
+
+      const hint = usedRawKey
+        ? ` Reference the aggregate field with "aggregateFieldMetadataUniversalIdentifier" (not "${RAW_AGGREGATE_FIELD_METADATA_ID_KEY}").`
+        : '';
+
+      errors.push(
+        `Graph widget "${widget.title}" is missing aggregateFieldMetadataUniversalIdentifier.${hint}`,
+      );
+    }
+  }
+
+  return errors;
+};
+
 const invalidUniversalIdentifierVersions = (
   identifiers: string[],
 ): string[] => {
@@ -162,6 +234,8 @@ export const manifestValidate = (manifest: Manifest) => {
   ];
 
   errors.push(...validateRelationFields(allFields));
+
+  errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

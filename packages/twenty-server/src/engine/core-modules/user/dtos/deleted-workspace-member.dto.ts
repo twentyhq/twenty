@@ -1,13 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FullNameDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 
 @ObjectType('DeletedWorkspaceMember')
 export class DeletedWorkspaceMemberDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => FullNameDTO)

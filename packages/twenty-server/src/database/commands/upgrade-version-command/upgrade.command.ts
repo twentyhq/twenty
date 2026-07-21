@@ -63,7 +63,7 @@ export class UpgradeCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description:
-      'workspace id. Command runs on all active/suspended workspaces if not provided.',
+      'workspace id. Command runs on all provisioned workspaces if not provided.',
     required: false,
   })
   parseWorkspaceId(val: string, previous?: Set<string>): Set<string> {

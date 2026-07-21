@@ -73,9 +73,9 @@ export const main = async (params: {
 
 この Code ノードは、配列ではなく構造化オブジェクトを返します。 以降のステップでは、変数ピッカーから `answer.firstname` や `answer.name` のような個別フィールドを選択できるようになります。
 
-<Note>
-将来のアップデートで配列の扱いをより簡単にできるよう、積極的に改善を進めています。
-</Note>
+<Tip>
+**配列からフィールドを取り出す代わりに、配列自体をループ処理したいですか？** Code ステップまたは Logic Function ステップがトップレベルの配列を返す場合は、それをそのまま [Iterator](/l/ja/user-guide/workflows/capabilities/use-iterator) に渡せます。Iterator の入力としてそのステップの **Whole list** オプションを選択し、ループ内では `{{iterator.currentItem}}` を使って各要素を参照します。 その場合、配列をオブジェクトに再構成する必要はありません。
+</Tip>
 
 <Tip>
 コードエディタ右上の四角いアイコンをクリックすると全画面表示になります — デフォルトのエディタ幅には制限があるため便利です。

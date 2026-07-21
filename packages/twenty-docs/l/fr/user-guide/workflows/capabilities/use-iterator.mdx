@@ -23,6 +23,12 @@ L'itérateur attend un **tableau** en entrée. Il va ensuite :
 3. Passe à l'élément suivant
 4. Répète jusqu'à ce que tous les éléments soient traités
 
+### Sélection du tableau à parcourir
+
+La plupart des sources de tableaux (Search Records, un champ de tableau de webhook, un déclencheur manuel Bulk) peuvent être sélectionnées directement dans le sélecteur de variables.
+
+Lorsqu’une étape **Code** ou **Logic Function** renvoie un *tableau de premier niveau*, sa sortie apparaît dans le sélecteur de variables sous forme d’entrées indexées (`0`, `1`, `2`, …). Pour effectuer une boucle sur le tableau dans son ensemble, sélectionnez l’option **Whole list** pour cette étape — l’Iterator en déduit alors automatiquement la structure de chaque élément à partir de la liste.
+
 ## Configuration de base
 
 ### Exemple : envoyer un e-mail à toutes les personnes dans les résultats de recherche
@@ -76,6 +82,8 @@ Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregi
 | `{{iterator.currentItem.email}}`        | Champ e-mail                                              |
 | `{{iterator.currentItem.company.name}}` | Nom de l'entreprise associée                              |
 | `{{iterator.index}}`                    | Position actuelle dans le tableau (indexé à partir de 0)  |
+
+Dans le sélecteur de variables, vous pouvez soit explorer un champ spécifique de l’élément courant, soit choisir **Use the whole item** pour référencer l’intégralité de l’élément courant (`{{iterator.currentItem}}`). Sélectionner l’élément entier est pratique lorsque vous voulez transmettre un enregistrement complet directement à une étape en aval plutôt que de le reconstruire champ par champ.
 
 ## Modèles courants
 

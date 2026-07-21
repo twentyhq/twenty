@@ -31,6 +31,7 @@ const StyledContainer = styled.div`
 
 const StyledItemsContainer = styled.div`
   display: flex;
+  flex-direction: row-reverse;
   gap: ${PINNED_COMMAND_MENU_ITEMS_GAP}px;
   max-width: 100%;
   overflow: hidden;
@@ -72,7 +73,6 @@ export const PinnedCommandMenuItemButtons = () => {
               {pinnedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}
-                  layout
                   initial={{ width: 0, opacity: 0 }}
                   animate={{ width: 'unset', opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}

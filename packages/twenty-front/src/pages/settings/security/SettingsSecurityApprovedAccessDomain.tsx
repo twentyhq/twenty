@@ -132,7 +132,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           <Section>
             <H2Title
               title={t`Email verification`}
-              description={t`We will send your a link to verify domain ownership`}
+              description={t`We will send you a link to verify domain ownership`}
             />
             <Controller
               name="email"

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainResolver } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.resolver';
@@ -15,7 +14,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceDomainsModule,
     FileModule,
     JwtModule,
-    NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomainEntity]),
+    TypeOrmModule.forFeature([ApprovedAccessDomainEntity]),
     PermissionsModule,
   ],
   exports: [ApprovedAccessDomainService],

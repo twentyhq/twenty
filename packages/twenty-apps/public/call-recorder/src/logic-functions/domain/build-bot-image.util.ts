@@ -107,13 +107,9 @@ const composeJpeg = ({
     .jpeg({ quality, mozjpeg: true })
     .toBuffer();
 
-const buildRecordingStatusBadge = (
-  sharp: SharpFactory,
-): Promise<Buffer> => {
-  const badgeCornerRadius =
-    RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
-  const recordingDotCenter =
-    RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
+const buildRecordingStatusBadge = (sharp: SharpFactory): Promise<Buffer> => {
+  const badgeCornerRadius = RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
+  const recordingDotCenter = RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
   const recordingDotRadius =
     RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_DOT_DIAMETER / 2;
   const recordingStatusTextBaseline =

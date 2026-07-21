@@ -1,4 +1,4 @@
-import { type UIMessage } from 'ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
 
@@ -10,7 +10,9 @@ const buildFilePart = (mediaType: string, filename = 'file.bin') => ({
   fileId: 'file-id',
 });
 
-const buildUserMessage = (parts: UIMessage['parts']): UIMessage => ({
+const buildUserMessage = (
+  parts: ExtendedUIMessage['parts'],
+): ExtendedUIMessage => ({
   id: 'message-id',
   role: 'user',
   parts,
@@ -65,7 +67,7 @@ describe('replaceUnsupportedFileParts', () => {
   });
 
   it('does not touch non-user messages', () => {
-    const assistantMessage: UIMessage = {
+    const assistantMessage: ExtendedUIMessage = {
       id: 'assistant-id',
       role: 'assistant',
       parts: [{ type: 'text', text: 'hello' }],

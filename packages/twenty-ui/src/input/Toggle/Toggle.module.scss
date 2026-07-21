@@ -4,7 +4,8 @@
   flex-shrink: 0;
   align-items: center;
   align-self: flex-start;
-  border-radius: 10px;
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   background-color: var(--t-background-transparent-medium);
   cursor: pointer;
   transition: background-color duration(normal) ease;
@@ -39,6 +40,7 @@
   left: 0;
   display: block;
   border-radius: 50%;
+  corner-shape: round;
   background-color: var(--t-background-primary);
   transition: transform duration(normal) ease;
 }

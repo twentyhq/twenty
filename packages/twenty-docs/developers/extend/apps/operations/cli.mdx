@@ -4,7 +4,25 @@ description: yarn twenty commands for executing functions, streaming logs, manag
 icon: "terminal"
 ---
 
-Beyond `dev`, `dev:build`, `dev:add`, and `dev:typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+The `yarn twenty` CLI is your interface to everything app-related. Full command list:
+
+| Command | What it does | Documented in |
+|---------|--------------|---------------|
+| `dev` | Watch source files and live-sync changes | [Quick Start](/developers/extend/apps/getting-started/quick-start) |
+| `plan` | Preview metadata changes without applying them | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `apply` | Apply metadata changes after showing the plan | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) |
+| `dev:build` | Compile the app and generate the API client (`--tarball` to pack a `.tgz`) | [Publishing](/developers/extend/apps/operations/publishing) |
+| `dev:typecheck` | Run TypeScript type checking | [Testing](/developers/extend/apps/operations/testing) |
+| `dev:add` | Scaffold a new entity | [Scaffolding](/developers/extend/apps/getting-started/scaffolding) |
+| `dev:generate-client` | Regenerate the typed API client | this page |
+| `dev:function:exec` / `dev:function:logs` | Execute functions and stream their logs | this page |
+| `dev:translations-extract` | Extract translatable strings into `locales/` catalogs | [Translations](/developers/extend/apps/translations/overview) |
+| `dev:catalog-sync` | Trigger a marketplace catalog sync | [Publishing](/developers/extend/apps/operations/publishing#how-marketplace-discovery-works) |
+| `app:publish` / `app:install` / `app:uninstall` | Release lifecycle | [Publishing](/developers/extend/apps/operations/publishing) and this page |
+| `docker:*` | Manage the local Twenty server container | [Local Server](/developers/extend/apps/getting-started/local-server) |
+| `remote:*` | Manage server connections | this page |
+
+Every command accepts `-r, --remote <name>` to target a specific remote instead of the default one.
 
 ## Executing functions (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## Viewing function logs (`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Your credentials are stored in `~/.twenty/config.json`.

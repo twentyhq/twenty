@@ -25,9 +25,9 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   StandardPermissionFlagMetadata
 > = {
   [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: {
-    label: 'API Keys & Webhooks',
-    description: 'Manage API keys and webhooks',
-    icon: 'IconCode',
+    label: 'MCP & APIs',
+    description: 'Manage MCP, API keys, and webhooks',
+    icon: 'IconPlug',
   },
   [PermissionFlagType.WORKSPACE]: {
     label: 'Workspace',

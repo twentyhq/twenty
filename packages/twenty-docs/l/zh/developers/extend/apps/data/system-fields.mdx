@@ -1,0 +1,151 @@
+---
+title: 定位系统字段
+description: 在视图和其他实体中，使用 getFieldUniversalIdentifier 引用自动创建的系统字段，例如 createdAt 或 updatedAt。
+icon: gears
+---
+
+Twenty 中的每个对象都带有一组你无需自行声明的**系统字段**。 这些字段在对象初始化时由服务器自动创建：
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+由于你不会使用 [`defineField()`](/l/zh/developers/extend/apps/data/extending-objects) 来声明这些字段，因此也没有可供你导入的 `universalIdentifier` 常量。 那么，如何在[视图](/l/zh/developers/extend/apps/layout/views)中将 `createdAt` 作为一列来引用呢？
+
+## 问题
+
+从 Twenty 2.19 起，系统字段的通用标识符由服务器根据三个输入**确定性派生**：应用通用标识符、对象通用标识符以及字段名称。 自行构造一个 id 并将其硬编码是行不通的：它在服务器上不会匹配任何内容，同步时会拒绝这个悬空引用：
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## 解决方案
+
+<Note>
+  `getFieldUniversalIdentifier` 从 `twenty-sdk` 2.21 版本开始可用。
+</Note>
+
+使用 `getFieldUniversalIdentifier` 来解析与服务器使用的值完全相同的字段标识符。 它接收这三个输入，并返回字段的通用标识符：
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` 是你的应用标识符，也就是你传递给 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 的那个。
+* `objectUniversalIdentifier` 是该字段所属对象的标识符。
+* `name` 是系统字段名称，为上面列出的值之一。
+
+## 示例：视图中的 createdAt 列
+
+典型场景是：为你某个自定义对象的视图添加一列 `createdAt`。 解析字段 id，并像引用其他 `fieldMetadataUniversalIdentifier` 一样引用它：
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+同一个解析得到的 id 可在任何需要 `fieldMetadataUniversalIdentifier` 的地方使用：视图字段、筛选器、排序、分组以及页面布局挂件。
+
+<Note>
+  解析 id，而不是将其硬编码。 由于服务器是根据应用 id、对象 id 和字段名来派生该值的，调用
+  `getFieldUniversalIdentifier` 能在这些输入发生变化时仍保持引用正确，并在派生逻辑演进时避免偏差。
+</Note>
+
+## 系统关系字段
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` 可在 `twenty-sdk`
+  2.23 及更高版本中使用，并且需要 Twenty 服务器版本为 2.23 或更高。
+</Note>
+
+除了上面的标量系统字段之外，服务器还会在每个对象上预置四个**系统关系字段**：`timelineActivities`、`attachments`、`noteTargets` 和 `taskTargets`，它们各自指向相应的标准关系对象。
+
+这些字段不会通过 `getFieldUniversalIdentifier` 解析：其标识符不依赖名称，而是由承载该字段的对象和该字段指向的对象推导而来。 通过这种方式，重命名对象永远不会改变其关系字段的标识符。
+
+使用 `getSystemRelationFieldUniversalIdentifier` 来解析它们：
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` 是**承载**该字段的对象。
+* `relationTargetObjectUniversalIdentifier` 是该字段**指向**的对象。
+
+方向由参数的顺序编码。 要解析反向端（例如 `attachment.targetRocket`，即服务器在标准关系对象上创建的 morph 字段），交换这两个参数：
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+与标量系统字段一样，解析得到的 id 可在任何需要 `fieldMetadataUniversalIdentifier` 的地方使用。
+
+## 标准 Twenty 对象
+
+对于**标准** Twenty 对象（Person、Company、Opportunity 等），你不需要进行任何派生：系统字段标识符是预先计算好的常量，你可以直接导入。
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+当对象是由**你的应用**使用 [`defineObject()`](/l/zh/developers/extend/apps/data/objects) 定义、且不存在此类常量时，再使用 `getFieldUniversalIdentifier`。
+
+<Note>
+  `name` 是一个**默认**字段，而不是系统字段。 它保留自己的硬编码
+  通用标识符，而不是通过
+  `getFieldUniversalIdentifier` 解析。 在你定义的对象上，请使用你在 `defineObject()` 中赋予它的标识符来引用
+  `name` 字段。
+</Note>

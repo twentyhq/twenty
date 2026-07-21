@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Fichiers clés
 
-| Fichier / Dossier                        | Objectif                                                                                     |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `src/application-config.ts`              | **Requis.** Le fichier de configuration principal de votre application.                      |
-| `src/default-role.ts`                    | Rôle par défaut qui contrôle ce à quoi vos fonctions de logique peuvent accéder.             |
-| `src/constants/universal-identifiers.ts` | UUID générés automatiquement et métadonnées de l’application (nom d’affichage, description). |
-| `src/__tests__/`                         | Tests d’intégration (configuration + test d’exemple).                                        |
-| `public/`                                | Ressources statiques (images, polices) servies avec votre application.                       |
+| Fichier / Dossier                                                          | Objectif                                                                                                                         |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Requis.** Le fichier de configuration principal de votre application.                                                          |
+| `src/default-role.ts`                                                      | Rôle par défaut qui contrôle ce à quoi vos fonctions de logique peuvent accéder.                                                 |
+| `src/constants/universal-identifiers.ts`                                   | UUID générés automatiquement et métadonnées de l’application (nom d’affichage, description).                                     |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Une page d’accueil de démarrage : un composant frontal rendu par une mise en page autonome, accessible depuis la barre latérale. |
+| `src/__tests__/`                                                           | Un test unitaire plus un test d’intégration (avec sa configuration globale) qui synchronise l’application avec un serveur réel.  |
+| `public/`                                                                  | Ressources statiques (images, polices) servies avec votre application.                                                           |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Consignes pour les agents IA de programmation travaillant sur l’application.                                                     |
+| `CHANGELOG.md` / `SETUP.md`                                                | Journal des modifications notables et instructions de configuration pour le développement local.                                 |
 
 <Note>
 **L’organisation des fichiers vous revient.** Les dossiers ci-dessus sont des conventions — le SDK détecte les entités via une analyse AST sur les appels à `export default defineEntity(...)` quel que soit l’emplacement du fichier.
@@ -47,15 +62,18 @@ Les deux packages du SDK Twenty doivent être placés dans `devDependencies`, et
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+Le générateur de projet fige `twenty-sdk` et `twenty-client-sdk` sur sa propre version — gardez les deux synchronisés lors de la mise à niveau.
+
 * **`twenty-sdk`** fournit le CLI `twenty` ainsi que les outils de build et de scaffolding. Il ne s’exécute qu’au moment du développement et du build et n’est jamais importé par le runtime de l’application que vous publiez.
 * **`twenty-client-sdk`** *est* importé par le code de votre application (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), mais Twenty le fournit au moment de l’exécution : les fonctions de logique l’obtiennent à partir d’une couche SDK générée, et les composants front le résolvent à partir de modules servis par le serveur. La copie que vous avez installée est uniquement utilisée pour la vérification de type et le build au moment du déploiement, elle n’a donc jamais besoin d’être incluse dans le bundle déployé.
 
-Conserver l’un ou l’autre package dans `dependencies` l’intègre dans le bundle runtime de l’application installée, où il ne fait que l’alourdir inutilement. `twenty build` émet un avertissement lorsque l’un ou l’autre est encore répertorié dans `dependencies`.
+Conserver l’un ou l’autre package dans `dependencies` l’intègre dans le bundle runtime de l’application installée, où il ne fait que l’alourdir inutilement. `twenty dev:build` émet un avertissement lorsque l’un ou l’autre est encore répertorié dans `dependencies`.
 
 Ajoutez les dépendances runtime propres à votre application (les bibliothèques que vos fonctions logiques importent réellement à l’exécution) dans `dependencies` comme d’habitude.

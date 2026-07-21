@@ -1,0 +1,124 @@
+---
+title: Traduzioni
+description: Distribuisci la tua app in più lingue — traduci le etichette del manifest e le stringhe dell'interfaccia utente tramite un unico catalogo delle localizzazioni.
+icon: language
+---
+
+Le app di Twenty sono scritte in **inglese**: le stringhe nel tuo sorgente e nel manifest
+sono il testo sorgente in inglese, `en` è la locale di origine da cui traduci e
+qualsiasi locale lasciato non tradotto usa quella come fallback.
+
+La tua app ha due tipi di testo traducibile, e entrambi passano attraverso lo stesso
+catalogo `locales/`:
+
+* **Etichette del manifest** — nomi di oggetti e campi, titoli delle viste, voci di menu e
+  altre stringhe dichiarate nei metadati della tua app.
+* **String dei front-component** — il testo dell’interfaccia utente renderizzato dai tuoi front component React.
+
+Contrassegni le stringhe traducibili, le estrai in cataloghi per locale,
+traduci tali cataloghi e la build serve la lingua corretta per l’utente
+corrente — senza cablaggi aggiuntivi.
+
+## Contrassegnare le stringhe dei front-component
+
+Importa gli helper di traduzione da `twenty-sdk/front-component`:
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### Quando usare cosa
+
+* **`<Trans>…</Trans>`** — testo statico in JSX. Usa le prop `message` e `values`
+  per l’interpolazione (`<Trans message="Hi {name}" values={{ name }} />`);
+  l’interpolazione direttamente nei children non è estraibile staticamente.
+* **`useTranslate().t`** — stringhe dinamiche all’interno di un componente. Esegue il re-render quando
+  l’utente cambia lingua. Preferiscilo all’interno del render.
+* **`t(...)`** (importato direttamente) — traduzione eager utilizzabile **ovunque**,
+  inclusi gestori di eventi, helper e nello scope del modulo — non solo all’interno del render.
+* **`msg(...)`** — un descrittore lazy per stringhe dichiarate come dati (costanti,
+  configurazione). Risolvilo in un secondo momento con `t(descriptor)`.
+
+### Contesto
+
+Passa `context` per distinguere stringhe sorgente identiche che si traducono
+in modo diverso:
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+## Estrazione e traduzione
+
+Esegui il comando di estrazione dalla directory della tua app:
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+L’estrazione raccoglie sia le etichette del manifest sia le stringhe `t()`/`msg()`/`\<Trans>`
+dal sorgente dei tuoi front-component in `locales/\<locale>.json`, con chiave
+la stringa sorgente. Compila le traduzioni:
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées"
+}
+```
+
+I segnaposto come `{name}` vengono sostituiti a runtime — mantienili nella
+traduzione. Qualsiasi stringa lasciata vuota fa fallback al testo sorgente.
+
+## Come viene eseguito
+
+`twenty dev:build` compila i cataloghi e serve la lingua corretta per l’utente
+corrente: le etichette del manifest vengono risolte lato server e i cataloghi dei
+front-component vengono inclusi in ogni bundle di componente. A runtime un componente legge la
+locale dal proprio contesto di esecuzione (la lingua corrente dell’host) e risolve
+ogni stringa rispetto al proprio catalogo, facendo fallback alla sorgente quando
+una traduzione manca. Il cambio di lingua nell’host esegue il re-render delle stringhe `\<Trans>` e
+`useTranslate().t` in tempo reale.
+
+Poiché i cataloghi vengono compilati in fase di build, aggiornare una traduzione significa
+eseguire nuovamente `twenty dev:build` (e ridistribuire), come per qualsiasi altra modifica.
+
+<Note>
+Le traduzioni vengono compilate da `twenty dev:build` (e `twenty apply`). La modalità watch continua di `twenty dev` mostra le stringhe sorgente, quindi testa l’output localizzato
+con una build una tantum.
+</Note>
+
+I figli di testo di `<Trans>` possono estendersi su più righe — gli spazi bianchi vengono compressi
+nello stesso modo in cui JSX li comprime, quindi `<Trans>Welcome\n  back</Trans>` e la chiave estratta
+diventano entrambi `Welcome back`.

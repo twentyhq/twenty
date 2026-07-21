@@ -28,6 +28,7 @@ const StyledContainer = styled.div`
 
 const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: ${({ hasUsage }) => (hasUsage ? 'pointer' : 'default')};
   display: flex;
   height: 24px;

@@ -18,8 +18,9 @@ const ActivityRichTextEditor = lazy(() =>
 
 const StyledShowPageActivityContainer = styled.div`
   box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[6]};
-  padding-inline: 44px;
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -37,7 +38,7 @@ const LoadingSkeleton = () => {
       <SkeletonTheme
         baseColor={theme.background.tertiary}
         highlightColor={theme.background.transparent.lighter}
-        borderRadius={theme.border.radius.sm}
+        borderRadius={themeCssVariables.border.radius.md}
       >
         <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </SkeletonTheme>

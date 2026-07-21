@@ -18,6 +18,8 @@ const INTRODUCE_STEP = '2.7.0_Introduce_1800000000000';
 @WasIntroducedInUpgrade({ upgradeCommandName: INTRODUCE_STEP })
 class UnavailableEntity {}
 
+class EntityWithHiddenColumn {}
+
 describe('wrapRepositoryWithUpgradeAwareProxy', () => {
   it('short-circuits find() to an empty array when the entity is unavailable', async () => {
     const metadata = {
@@ -70,5 +72,80 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
     await expect(wrapped.find()).resolves.toEqual([]);
     expect(find).not.toHaveBeenCalled();
+  });
+
+  it('strips hidden columns from an array select while preserving unknown keys', async () => {
+    const find = jest.fn().mockResolvedValue([]);
+    const repository = {
+      find,
+      metadata: {
+        relations: [],
+        targetName: EntityWithHiddenColumn.name,
+      },
+    } as unknown as Repository<EntityWithHiddenColumn>;
+    const state = {
+      getHiddenColumnPropertyNames: jest
+        .fn()
+        .mockReturnValue(new Set(['introducedColumn'])),
+      isEntityAvailable: jest.fn().mockReturnValue(true),
+    } as unknown as UpgradeAwareRepositoryState;
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
+      repository,
+      entityClass: EntityWithHiddenColumn,
+      state,
+    });
+
+    await (
+      wrapped.find as unknown as (options: {
+        select: string[];
+      }) => Promise<unknown>
+    )({
+      select: ['id', 'introducedColumn', 'unknownTypo'],
+    });
+
+    expect(find).toHaveBeenCalledWith({
+      select: ['id', 'unknownTypo'],
+    });
+  });
+
+  it('strips hidden columns from an object select while preserving unknown keys', async () => {
+    const find = jest.fn().mockResolvedValue([]);
+    const repository = {
+      find,
+      metadata: {
+        relations: [],
+        targetName: EntityWithHiddenColumn.name,
+      },
+    } as unknown as Repository<EntityWithHiddenColumn>;
+    const state = {
+      getHiddenColumnPropertyNames: jest
+        .fn()
+        .mockReturnValue(new Set(['introducedColumn'])),
+      isEntityAvailable: jest.fn().mockReturnValue(true),
+    } as unknown as UpgradeAwareRepositoryState;
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
+      repository,
+      entityClass: EntityWithHiddenColumn,
+      state,
+    });
+
+    await (
+      wrapped.find as unknown as (options: {
+        select: Record<string, boolean>;
+      }) => Promise<unknown>
+    )({
+      select: {
+        id: true,
+        introducedColumn: true,
+        unknownTypo: true,
+      },
+    });
+
+    expect(find).toHaveBeenCalledWith({
+      select: {
+        id: true,
+        unknownTypo: true,
+      },
+    });
   });
 });

@@ -3,4 +3,5 @@ export type VerificationRecord = {
   key: string;
   value: string;
   priority?: number;
+  status?: string;
 };

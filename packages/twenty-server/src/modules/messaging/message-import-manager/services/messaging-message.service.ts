@@ -24,6 +24,7 @@ type MessageAccumulator = {
     | 'receivedAt'
     | 'text'
     | 'messageThreadId'
+    | 'isDraft'
   >;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
@@ -56,6 +57,7 @@ export class MessagingMessageService {
       string,
       string
     >;
+    messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -168,6 +170,7 @@ export class MessagingMessageService {
               receivedAt: message.receivedAt,
               text: message.text,
               messageThreadId,
+              isDraft: message.isDraft,
             };
 
             messageAccumulator.messageToCreate = messageToCreate;
@@ -271,6 +274,7 @@ export class MessagingMessageService {
         const messageExternalIdsAndIdsMap = new Map<string, string>();
         const messageExternalIdToMessageChannelMessageAssociationIdMap =
           new Map<string, string>();
+        const messageExternalIdToMessageThreadIdMap = new Map<string, string>();
 
         for (const [
           externalId,
@@ -287,6 +291,17 @@ export class MessagingMessageService {
             messageExternalIdsAndIdsMap.set(
               externalId,
               accumulator.existingMessageInDB.id,
+            );
+          }
+
+          const messageThreadId =
+            accumulator.messageToCreate?.messageThreadId ??
+            accumulator.existingMessageInDB?.messageThreadId;
+
+          if (isDefined(messageThreadId)) {
+            messageExternalIdToMessageThreadIdMap.set(
+              externalId,
+              messageThreadId,
             );
           }
 
@@ -308,6 +323,7 @@ export class MessagingMessageService {
           createdMessages: messagesToCreate,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
+          messageExternalIdToMessageThreadIdMap,
         };
       },
       authContext,

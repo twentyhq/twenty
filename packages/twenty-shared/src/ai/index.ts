@@ -10,6 +10,7 @@
 export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
+export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
@@ -28,6 +29,12 @@ export type {
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
+export type { AskQuestionItem } from './types/AskQuestionItem';
+export type { AskQuestionOption } from './types/AskQuestionOption';
+export type { AskQuestionsToolInput } from './types/AskQuestionsToolInput';
+export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
+export type { AskQuestionsToolStatus } from './types/AskQuestionsToolStatus';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,

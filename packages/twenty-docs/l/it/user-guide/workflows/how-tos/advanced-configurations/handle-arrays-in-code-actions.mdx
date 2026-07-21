@@ -73,9 +73,9 @@ export const main = async (params: {
 
 Il nodo Code restituisce un oggetto strutturato invece di un array. Nei passaggi successivi, ora puoi selezionare campi individuali come `answer.firstname` e `answer.name` dal selettore delle variabili.
 
-<Note>
-Stiamo lavorando attivamente per rendere la gestione degli array più semplice nei prossimi aggiornamenti.
-</Note>
+<Tip>
+**Vuoi iterare sull'array invece di estrarre i campi?** Quando uno step di Code o Logic Function restituisce un array di primo livello, puoi passarlo direttamente a un [Iterator](/l/it/user-guide/workflows/capabilities/use-iterator): seleziona l'opzione **Whole list** dello step come input dell'Iterator, quindi fai riferimento a ciascun elemento con `{{iterator.currentItem}}` all'interno del ciclo. In quel caso non è necessario ristrutturare l'array in un oggetto.
+</Tip>
 
 <Tip>
 Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a tutto schermo — utile poiché la larghezza predefinita dell'editor è limitata.

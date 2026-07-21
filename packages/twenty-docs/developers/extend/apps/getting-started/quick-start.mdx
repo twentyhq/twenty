@@ -6,7 +6,7 @@ description: Create your first Twenty app in minutes.
 
 ## Prerequisites
 
-- **Node.js 24+** — [Download](https://nodejs.org/)
+- **Node.js 24.5+** — [Download](https://nodejs.org/)
 - **Yarn 4** — bundled with Node via Corepack. Enable it: `corepack enable`
 - **Docker** — [Download](https://www.docker.com/products/docker-desktop/). Needed to run a local Twenty server. Skip if you already have Twenty running elsewhere.
 
@@ -15,7 +15,7 @@ Building a Twenty app has three phases. The scaffolder collapses them into one h
 | Phase | What you do | Tool | Result |
 |---|---|---|---|
 | **1. Scaffold** | Generate the app's source code | `npx create-twenty-app` | A TypeScript project on disk |
-| **2. Run a server** | Start a Twenty server to sync into | Docker + `yarn twenty server` | A running Twenty instance |
+| **2. Run a server** | Start a Twenty server to sync into | Docker + `yarn twenty docker:start` | A running Twenty instance |
 | **3. Sync** | Live-sync your code to the server | `yarn twenty dev` | Your changes appear in the UI |
 
 ---
@@ -28,7 +28,7 @@ Create a new app from the template:
 npx create-twenty-app@latest my-twenty-app
 ```
 
-You'll be prompted for a name and description — press **Enter** for the defaults. This generates a TypeScript project in `my-twenty-app/` with a starter `application-config.ts`, a default role, a CI workflow, and an integration test.
+The scaffolder is non-interactive: the directory name becomes the app name. Pass `--display-name` and `--description` to customize the generated metadata (you can also edit it later in `src/constants/universal-identifiers.ts`). This generates a TypeScript project in `my-twenty-app/` with a starter `application-config.ts`, a default role, CI/CD workflows, and an integration test.
 
 **After this phase:** you have an app's source code on your machine. It isn't running yet — that's Phase 2.
 
@@ -38,27 +38,13 @@ You'll be prompted for a name and description — press **Enter** for the defaul
 
 Your app needs a Twenty server to sync into. The server is a full Twenty instance — UI, GraphQL API, PostgreSQL — running locally in Docker. Your local code uploads its definitions to that server, which makes them appear in the UI.
 
-The scaffolder offers to start one for you:
+The scaffolder starts one for you: with Docker running, it pulls the `twentycrm/twenty-app-dev` image, starts it on port `2020`, and authenticates the CLI against the pre-seeded demo workspace (`tim@apple.dev`) — no sign-in required.
 
-> **Would you like to set up a local Twenty instance?**
-
-- **Yes (recommended)** — pulls the `twentycrm/twenty-app-dev` Docker image and starts it on port `2020`. Make sure Docker is running first.
-- **No** — choose this if you already have a Twenty server you want to connect to. You can wire it up later with `yarn twenty remote:add`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Should start local instance?" />
-</div>
-
-Once the server is up, a browser opens for sign-in. Use the pre-seeded demo account:
-
-- **Email:** `tim@apple.dev`
-- **Password:** `tim@apple.dev`
+To connect to an existing Twenty server instead, pass `--url <your-server-url>`. Remote servers authenticate with OAuth: a browser opens so you can sign in and click **Authorize**, which gives the CLI access to your workspace. (You can also opt into OAuth locally with `--authentication-method oauth` — sign in with `tim@apple.dev` / `tim@apple.dev`.)
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty login screen" />
 </div>
-
-Click **Authorize** on the next screen — this gives the CLI access to your workspace.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI authorization screen" />
@@ -117,27 +103,31 @@ Click **View installed app** to see the workspace install. The **About** tab sho
 
 ### One-shot sync for CI and scripts
 
-Pass `--once` to run a single build + sync and exit — same pipeline, no watcher:
+Use `plan` and `apply` to run the same pipeline once, without a watcher:
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
 | Command | Behavior | When to use |
 |---------|----------|-------------|
 | `yarn twenty dev` | Watches and re-syncs on every change. Runs until you stop it. | Interactive local development. |
-| `yarn twenty dev --once` | Single build + sync, exits `0` on success, `1` on failure. | CI, pre-commit hooks, AI agents, scripted workflows. |
-| `yarn twenty dev --once --dry-run` | Builds and prints the metadata changes **without applying them**. | Inspecting what a sync would change before committing to it. |
+| `yarn twenty apply` | Single build + sync, exits `0` on success, `1` on failure. Asks for confirmation on destructive changes (pass `--force` to skip). | CI, pre-commit hooks, AI agents, scripted workflows. |
+| `yarn twenty plan` | Builds and prints the metadata changes **without applying them**. | Inspecting what a sync would change before committing to it. |
 
-Both modes need an authenticated remote. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) for more on `--dry-run`.
+All modes need an authenticated remote. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) for more on `plan`.
+
+<Note>
+`yarn twenty dev --once` and `yarn twenty dev --once --dry-run` are deprecated aliases for `yarn twenty apply` and `yarn twenty plan`.
+</Note>
 
 ### Dev mode options
 
 | Flag | Description |
 |------|-------------|
-| `--once` | Build and sync once, then exit. |
-| `--dry-run` | With `--once`, preview the metadata changes without applying them. Writes nothing. |
-| `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `2000`). |
+| `--force` | Apply destructive changes (deletes) without confirmation. |
+| `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `1000`). |
 | `--verbose` / `--debug` | Show detailed build logs, sync requests, and error traces. |
 
 ## What you can build

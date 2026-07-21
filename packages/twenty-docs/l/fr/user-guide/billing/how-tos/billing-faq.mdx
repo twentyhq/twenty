@@ -9,7 +9,7 @@ description: Foire aux questions sur les tarifs et la facturation de Twenty.
 <Accordion title="Puis-je utiliser Twenty gratuitement tout en l'hébergeant moi-même ?">
 Oui, vous pouvez utiliser Twenty gratuitement tout en l'hébergeant vous-même. Vous aurez accès à tout ce qui est inclus dans le plan Pro (Cloud), sauf l'assistance de notre équipe centrale. Le support est accessible via notre communauté Discord.
 
-Si vous souhaitez vous auto-héberger et avez besoin des fonctionnalités Premium (SSO et autorisations au niveau des lignes), vous pouvez choisir la licence Organization (Self-Hosted) payante. Cela inclut également l'assistance de l'équipe Twenty et supprime l'obligation de publier le code personnalisé en open source avant de le distribuer.
+Si vous souhaitez vous auto-héberger et que vous avez besoin des fonctionnalités Premium (SSO, autorisations au niveau des lignes et plus encore), vous pouvez choisir la licence Organization (Self-Hosted) payante. Cela inclut également l'assistance de l'équipe Twenty et supprime l'obligation de publier le code personnalisé en open source avant de le distribuer.
 </Accordion>
 
 <Accordion title="Quelles sont les fonctionnalités Premium ?">
@@ -17,6 +17,10 @@ Les fonctionnalités Premium ne sont disponibles que sur les plans Organization 
 * **Intégration SSO** : Authentification unique avec votre fournisseur d'identité
 * **Autorisations au niveau des lignes** : Contrôle d'accès granulaire au niveau des enregistrements
 * **Données d'utilisation de l'IA** : Suivez la consommation d'IA dans votre espace de travail
+* **Journaux d’audit** : vérifiez ce que chaque membre de l’espace de travail a fait
+* **Campagnes d’e-mails** : planifiez quels e-mails doivent être envoyés (bientôt disponible)
+* **Espaces de travail illimités** : créez autant d'espaces de travail que vous le souhaitez (auto-hébergé uniquement)
+* **Code source privé** : aucune obligation de publier les modifications dans un dépôt public (auto-hébergé uniquement)
 </Accordion>
 
 <Accordion title="L'offre Organization sur le cloud et l'offre Organization en auto-hébergement sont-elles identiques ?">
@@ -28,19 +32,19 @@ Nous n'offrons pas de sièges gratuits. La tarification se fait par utilisateur 
 </Accordion>
 
 <Accordion title="Où puis-je passer à l'abonnement Organisation ?">
-Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Passer à Organisation`.
+Vous pouvez le faire dans `Settings → Billing → Plans`. Puis cliquez sur `Passer à Organisation`.
 </Accordion>
 
 <Accordion title="Où puis-je passer à l'abonnement Pro ?">
-Veuillez contacter notre équipe directement via le Support, il n'est pas facile de le faire via l'interface utilisateur pour le moment.
+Vous pouvez le faire dans `Settings → Billing → Plans`. Puis cliquez sur `Switch to Pro`.
 </Accordion>
 
-<Accordion title="Où puis-je passer à l'abonnement Annuel ?">
-Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Passer à Annuel`.
+<Accordion title="Où puis-je passer à l'abonnement annuel ?">
+Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Upgrade to yearly`.
 </Accordion>
 
-<Accordion title="Où puis-je passer à l'abonnement Mensuel ?">
-Veuillez contacter notre équipe directement via le Support, il n'est pas facile de le faire via l'interface utilisateur pour le moment.
+<Accordion title="Où puis-je passer à l'abonnement mensuel ?">
+Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Downgrade to monthly`.
 </Accordion>
 
 <Accordion title="Où puis-je voir ma consommation de crédits ?">
@@ -57,13 +61,18 @@ Le nombre de crédits dépend de votre cycle de facturation, et non de votre pla
 Chaque action du flux de travail consomme des crédits en fonction de sa complexité :
 * **Les opérations internes de base** (comme la recherche, la mise à jour, la création d'enregistrements) consomment très peu de crédits
 * **Les opérations plus complexes** comme les nœuds de code et les requêtes vers des services externes consomment plus de crédits
-* **Prompts d'IA** (bientôt disponible !) consommeront également plus de crédits en fonction de l'utilisation
+* Les **prompts IA** consomment également plus de crédits en fonction de l'utilisation
+* Les **Apps** consomment également plus de crédits, de manière similaire au nœud Code
 
-Les crédits sont déduits en temps réel lorsque les flux de travail s'exécutent. Vous pouvez suivre votre utilisation dans **Paramètres → Facturation** pour suivre la consommation et les crédits restants.
+Les crédits sont déduits en temps réel lorsque les flux de travail ou les apps s'exécutent. Vous pouvez suivre votre utilisation dans **Paramètres → Facturation** pour suivre la consommation et les crédits restants.
 </Accordion>
 
 <Accordion title="Puis-je acheter plus de crédits de workflow ?">
 Vous pouvez acheter des crédits supplémentaires dans `Paramètres → Facturation`.
+</Accordion>
+
+<Accordion title="Puis-je acheter plus de crédits de flux de travail uniquement pour 1 mois ?">
+Oui, allez dans `Settings → Billing`, cliquez sur le bouton `Increase`, choisissez le nombre de crédits que vous souhaitez et confirmez, ils seront appliqués pour la période de facturation en cours. Cliquez à nouveau sur le bouton `Increase`, remettez la valeur d'origine et confirmez ; la réduction sera appliquée à partir de la prochaine période de facturation.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Voir 
 
 <Accordion title="Où puis-je accéder à mes factures ?">
 Vous pouvez le faire dans `Paramètres → Facturation`. Puis cliquez sur `Voir les détails de facturation`. Vous verrez toutes vos factures en bas de l'écran.
+</Accordion>
+
+<Accordion title="Pourquoi mon nombre de sièges est-il différent du nombre d'utilisateurs dans mon espace de travail ?">
+Le nombre de sièges de l'espace de travail est synchronisé avec le système de paiement toutes les 6 heures ; les factures sont ajustées en fonction de la différence.
+</Accordion>
+
+<Accordion title="Pourquoi ai-je reçu une facture pour un nouveau membre de l'espace de travail ?">
+Lorsqu'un nouveau membre est ajouté à l'espace de travail, une facture est envoyée pour couvrir la différence. Lorsqu'un membre de l'espace de travail est supprimé, la modification est appliquée sur la prochaine facture mensuelle/annuelle standard.
 </Accordion>
 </AccordionGroup>

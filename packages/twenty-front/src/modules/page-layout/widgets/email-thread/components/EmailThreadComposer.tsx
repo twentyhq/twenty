@@ -4,11 +4,15 @@ import { useCallback, useMemo } from 'react';
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp, IconSend, IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -34,6 +38,7 @@ type EmailThreadComposerProps = {
   isInSidePanel: boolean;
   isComposerOpen: boolean;
   setIsComposerOpen: (open: boolean) => void;
+  draftPrefill?: EmailDraftPrefill | null;
 };
 
 export const EmailThreadComposer = ({
@@ -41,13 +46,27 @@ export const EmailThreadComposer = ({
   isInSidePanel,
   isComposerOpen,
   setIsComposerOpen,
+  draftPrefill,
 }: EmailThreadComposerProps) => {
-  const handleReplySent = useCallback(() => {
-    setIsComposerOpen(false);
-  }, [setIsComposerOpen]);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+
+  const handleReplySent = useCallback(
+    (messageThreadId: string | null) => {
+      setIsComposerOpen(false);
+
+      if (isDefined(messageThreadId)) {
+        openRecordInSidePanel({
+          recordId: messageThreadId,
+          objectNameSingular: CoreObjectNameSingular.MessageThread,
+        });
+      }
+    },
+    [setIsComposerOpen, openRecordInSidePanel],
+  );
 
   const composerState = useEmailComposerState({
     connectedAccountId: replyContext.connectedAccountId,
+    draftPrefill,
     defaultTo: replyContext.to,
     defaultSubject: replyContext.subject,
     defaultInReplyTo: replyContext.inReplyTo,

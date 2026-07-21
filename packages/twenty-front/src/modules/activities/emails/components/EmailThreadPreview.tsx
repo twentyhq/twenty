@@ -5,9 +5,10 @@ import { EmailThreadNotShared } from '@/activities/emails/components/EmailThread
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useContext } from 'react';
 
+import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
@@ -173,6 +174,9 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
+            {thread.lastMessageIsDraft && (
+              <Tag color="orange" text={t`Draft`} />
+            )}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>

@@ -15,6 +15,8 @@ config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { backfillPartnerUserOnChildren } from './backfill-partner-user-on-children';
+
 const requireEnv = (name: string): string => {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name} env var`);
@@ -22,6 +24,162 @@ const requireEnv = (name: string): string => {
 };
 
 const CAL = 'https://calendly.com/placeholder';
+const PRIMARY_DEMO_PARTNER_SLUG = 'nine-dots-ventures';
+const PRIMARY_DEMO_BUDGET_USD = 15000;
+const PRIMARY_DEMO_DESCRIPTION_MARKDOWN = `## About Nine Dots Ventures
+
+Nine Dots helps scaling teams launch Twenty as an operational system of record, not just a CRM.
+
+### What we typically deliver
+
+- Discovery workshops to align sales, operations, and leadership.
+- End-to-end pipeline design with custom lifecycle stages.
+- Migration plans that preserve historical activities and account context.
+- Team onboarding with adoption dashboards and weekly office hours.
+
+### Why clients pick us
+
+We combine CRM architecture, workflow automation, and enablement so teams ship quickly and keep improving after go-live.`;
+
+const ELEVATE_DESCRIPTION_MARKDOWN = `## About Elevate Consulting
+
+Elevate is a revenue-operations studio for **B2B SaaS teams** moving from seed to Series C. We replace brittle CRM setups with Twenty pipelines your GTM team actually maintains.
+
+### Typical engagement
+
+1. **Audit week** — map objects, stages, and reporting gaps across sales, CS, and finance.
+2. **Migration sprint** — Salesforce or HubSpot cutover with dedupe rules and activity history preserved.
+3. **RevOps handoff** — manager dashboards, forecast cadences, and playbooks your team owns.
+
+### Focus areas
+
+- Pipeline design for PLG + sales-assist motions
+- Lead routing, SLAs, and lifecycle automation
+- Executive reporting without a separate BI stack
+
+> Most clients go live in four weeks with a phased rollout that keeps reps selling during migration.`;
+
+const MERIDIAN_DESCRIPTION_MARKDOWN = `## About Meridian Craft
+
+Meridian Craft is an **APAC implementation studio** for fintech and logistics operators running high-volume customer workflows on Twenty.
+
+### What we build
+
+- Multi-entity data models with strict permission boundaries
+- Throughput-tuned deployments for **self-hosted** and cloud workspaces
+- Custom integrations with banking, KYC, and carrier APIs
+
+### Delivery model
+
+| Phase | Output |
+| --- | --- |
+| Discovery | Architecture memo + cutover plan |
+| Build | Configured workspace, integrations, QA scripts |
+| Launch | Runbooks, on-call handoff, performance baseline |
+
+Our senior engineers have shipped regulated workloads across Singapore, Hong Kong, and Kuala Lumpur — we know where CRM projects break at scale.`;
+
+type DemoPartnerService = {
+  title: string;
+  description: string;
+  position: number;
+};
+
+const PRIMARY_DEMO_PARTNER_SERVICES: DemoPartnerService[] = [
+  {
+    title: 'CRM architecture and implementation',
+    description:
+      'Designs the full object model, lifecycle stages, and permissions so teams can run on Twenty with clean data from day one.',
+    position: 0,
+  },
+  {
+    title: 'Data migration and quality hardening',
+    description:
+      'Migrates legacy CRM data with mapping validation, deduplication rules, and QA checkpoints before cutover.',
+    position: 1,
+  },
+  {
+    title: 'Workflow automation and integrations',
+    description:
+      'Builds automations for lead routing, follow-ups, and third-party syncs with finance, support, and communications systems.',
+    position: 2,
+  },
+  {
+    title: 'Enablement and revenue operations coaching',
+    description:
+      'Runs role-based onboarding, manager cadences, and KPI reviews to drive long-term adoption after launch.',
+    position: 3,
+  },
+];
+
+type DemoPartnerContent = {
+  name: string;
+  status: 'WIP' | 'APPROVED';
+  clientName: string;
+  headline: string;
+  bodyMarkdown: string;
+  caseStudyUrl: string;
+  position: number;
+};
+
+const PRIMARY_DEMO_PARTNER_CASE_STUDIES: DemoPartnerContent[] = [
+  {
+    name: 'Nine Dots - Acme rollout',
+    status: 'APPROVED',
+    clientName: 'Acme Real Estate',
+    headline: 'Unified tenant and broker operations in one workspace',
+    bodyMarkdown:
+      'Migrated sales and account-management teams from two CRMs into Twenty, reducing pipeline update lag from days to hours.',
+    caseStudyUrl: 'https://ninedots.example.com/case-studies/acme-rollout',
+    position: 0,
+  },
+  {
+    name: 'Nine Dots - Sunrise expansion',
+    status: 'WIP',
+    clientName: 'Sunrise Logistics',
+    headline: 'Standardizing regional handoffs across APAC and LATAM',
+    bodyMarkdown:
+      'In progress: rebuilding qualification and renewal workflows so cross-region teams share a single opportunity timeline.',
+    caseStudyUrl:
+      'https://ninedots.example.com/case-studies/sunrise-expansion',
+    position: 1,
+  },
+  {
+    name: 'Nine Dots - Helix reporting',
+    status: 'APPROVED',
+    clientName: 'Helix Bio',
+    headline: 'Board-ready reporting with faster forecast updates',
+    bodyMarkdown:
+      'Implemented a custom forecasting flow and weekly pipeline reviews, giving leadership reliable stage-by-stage visibility.',
+    caseStudyUrl: 'https://ninedots.example.com/case-studies/helix-reporting',
+    position: 2,
+  },
+];
+
+type DemoPartnerLink = {
+  name: string;
+  url: string;
+  position: number;
+};
+
+const PRIMARY_DEMO_PARTNER_LINKS: DemoPartnerLink[] = [
+  {
+    name: 'Company website',
+    url: 'https://ninedots.example.com',
+    position: 0,
+  },
+  {
+    name: 'Customer stories',
+    url: 'https://ninedots.example.com/case-studies',
+    position: 1,
+  },
+  {
+    name: 'Implementation playbook',
+    url: 'https://ninedots.example.com/playbook',
+    position: 2,
+  },
+];
+
 const usd = (dollars: number) => ({
   amountMicros: dollars * 1_000_000,
   currencyCode: 'USD',
@@ -110,6 +268,12 @@ const QUOTES: Quote[] = [
 
 const nodes = (r: any, key: string): any[] => (r?.[key]?.edges ?? []).map((e: any) => e.node);
 
+const withPartnerUserId = (
+  data: Record<string, unknown>,
+  partnerUserId: string | null,
+): Record<string, unknown> =>
+  partnerUserId ? { ...data, partnerUserId } : data;
+
 async function main() {
   const client = new CoreApiClient({
     url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
@@ -188,10 +352,258 @@ async function main() {
   }
   console.log(`[seed] opportunities: ${oppIdByName.size}`);
 
+  // -- Primary demo partner marketplace-rich profile --
+  const primaryDemoPartner = await client.query({
+    partners: {
+      __args: {
+        filter: { slug: { eq: PRIMARY_DEMO_PARTNER_SLUG } },
+        first: 1,
+      },
+      edges: {
+        node: {
+          id: true,
+          partnerUserId: true,
+          projectBudgetMin: { amountMicros: true },
+        },
+      },
+    },
+  });
+  const primaryDemoPartnerNode = nodes(primaryDemoPartner, 'partners')[0] as {
+    id?: string;
+    partnerUserId?: string | null;
+    projectBudgetMin?: { amountMicros?: number | null } | null;
+  };
+
+  if (primaryDemoPartnerNode?.id) {
+    const primaryDemoPartnerId = primaryDemoPartnerNode.id;
+    const primaryDemoPartnerUserId = primaryDemoPartnerNode.partnerUserId ?? null;
+
+    const primaryDemoPartnerData: Record<string, unknown> = {
+      introduction: PRIMARY_DEMO_DESCRIPTION_MARKDOWN,
+    };
+
+    const hasProjectBudgetMin =
+      (primaryDemoPartnerNode.projectBudgetMin?.amountMicros ?? 0) > 0;
+
+    if (!hasProjectBudgetMin) {
+      primaryDemoPartnerData.projectBudgetMin = usd(PRIMARY_DEMO_BUDGET_USD);
+    }
+
+    await client.mutation({
+      updatePartner: {
+        __args: {
+          id: primaryDemoPartnerId,
+          data: primaryDemoPartnerData,
+        },
+        id: true,
+      },
+    });
+
+    for (const service of PRIMARY_DEMO_PARTNER_SERVICES) {
+      const existing = nodes(
+        await client.query({
+          partnerServices: {
+            __args: {
+              filter: {
+                title: { eq: service.title },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
+              first: 1,
+            },
+            edges: { node: { id: true } },
+          },
+        }),
+        'partnerServices',
+      );
+
+      const data = withPartnerUserId(
+        {
+          title: service.title,
+          description: service.description,
+          sortOrder: service.position,
+          position: service.position,
+          partnerId: primaryDemoPartnerId,
+        },
+        primaryDemoPartnerUserId,
+      );
+
+      if (existing[0]?.id) {
+        await client.mutation({
+          updatePartnerService: {
+            __args: { id: existing[0].id, data },
+            id: true,
+          },
+        });
+      } else {
+        await client.mutation({
+          createPartnerService: {
+            __args: {
+              data,
+            },
+            id: true,
+          },
+        });
+      }
+    }
+
+    for (const content of PRIMARY_DEMO_PARTNER_CASE_STUDIES) {
+      const existing = nodes(
+        await client.query({
+          partnerContents: {
+            __args: {
+              filter: {
+                name: { eq: content.name },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
+              first: 1,
+            },
+            edges: { node: { id: true } },
+          },
+        }),
+        'partnerContents',
+      );
+
+      const data = withPartnerUserId(
+        {
+          name: content.name,
+          contentType: ['CASE_STUDY'],
+          status: content.status,
+          clientName: content.clientName,
+          headline: content.headline,
+          body: { markdown: content.bodyMarkdown },
+          caseStudyLink: { primaryLinkUrl: content.caseStudyUrl },
+          position: content.position,
+          partnerId: primaryDemoPartnerId,
+        },
+        primaryDemoPartnerUserId,
+      );
+
+      if (existing[0]?.id) {
+        await client.mutation({
+          updatePartnerContent: {
+            __args: { id: existing[0].id, data },
+            id: true,
+          },
+        });
+      } else {
+        await client.mutation({
+          createPartnerContent: {
+            __args: {
+              data,
+            },
+            id: true,
+          },
+        });
+      }
+    }
+
+    for (const link of PRIMARY_DEMO_PARTNER_LINKS) {
+      const existing = nodes(
+        await client.query({
+          partnerLinks: {
+            __args: {
+              filter: {
+                name: { eq: link.name },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
+              first: 1,
+            },
+            edges: { node: { id: true } },
+          },
+        }),
+        'partnerLinks',
+      );
+
+      const data = withPartnerUserId(
+        {
+          name: link.name,
+          url: { primaryLinkUrl: link.url },
+          sortOrder: link.position,
+          position: link.position,
+          partnerId: primaryDemoPartnerId,
+        },
+        primaryDemoPartnerUserId,
+      );
+
+      if (existing[0]?.id) {
+        await client.mutation({
+          updatePartnerLink: {
+            __args: { id: existing[0].id, data },
+            id: true,
+          },
+        });
+      } else {
+        await client.mutation({
+          createPartnerLink: {
+            __args: {
+              data,
+            },
+            id: true,
+          },
+        });
+      }
+    }
+  }
+
+  // -- Marketplace profile copy (rich markdown on a few list-visible partners) --
+  const marketplaceDescriptions: Record<string, string> = {
+    'elevate-consulting': ELEVATE_DESCRIPTION_MARKDOWN,
+    'meridian-craft': MERIDIAN_DESCRIPTION_MARKDOWN,
+  };
+
+  for (const [slug, markdown] of Object.entries(marketplaceDescriptions)) {
+    const partnerId = partnerIdBySlug.get(slug);
+    if (!partnerId) {
+      continue;
+    }
+
+    await client.mutation({
+      updatePartner: {
+        __args: {
+          id: partnerId,
+          data: { introduction: markdown },
+        },
+        id: true,
+      },
+    });
+  }
+
   // -- Partner quotes (upsert by name) --
+  const partnerUserIdBySlug = new Map<string, string>(
+    nodes(
+      await client.query({
+        partners: {
+          __args: { first: 200 },
+          edges: {
+            node: { slug: true, partnerUserId: true },
+          },
+        },
+      }),
+      'partners',
+    )
+      .filter(
+        (partner: { slug: string; partnerUserId: string | null }) =>
+          partner.partnerUserId,
+      )
+      .map((partner: { slug: string; partnerUserId: string }) => [
+        partner.slug,
+        partner.partnerUserId,
+      ]),
+  );
+
   let quoteCount = 0;
   for (const q of QUOTES) {
-    const data = { name: q.name, status: q.status, contentType: q.contentType, partnerId: partnerIdBySlug.get(q.partnerSlug) };
+    const partnerId = partnerIdBySlug.get(q.partnerSlug);
+    const partnerUserId = partnerUserIdBySlug.get(q.partnerSlug) ?? null;
+    const data = withPartnerUserId(
+      {
+        name: q.name,
+        status: q.status,
+        contentType: q.contentType,
+        partnerId,
+      },
+      partnerUserId,
+    );
     const existing = nodes(await client.query({ partnerContents: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerContents');
     if (existing[0]?.id) {
       await client.mutation({ updatePartnerContent: { __args: { id: existing[0].id, data }, id: true } } as any);
@@ -201,6 +613,9 @@ async function main() {
     quoteCount++;
   }
   console.log(`[seed] partner quotes: ${quoteCount}`);
+
+  const backfillCount = await backfillPartnerUserOnChildren(client);
+  console.log(`[seed] backfilled partnerUserId on ${backfillCount} child record(s)`);
 }
 
 main().catch((err) => {

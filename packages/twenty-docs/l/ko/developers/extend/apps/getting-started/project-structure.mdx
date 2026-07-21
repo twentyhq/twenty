@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## 주요 파일
 
-| 파일 / 폴더                                  | 목적                               |
-| ---------------------------------------- | -------------------------------- |
-| `src/application-config.ts`              | **필수.** 앱의 기본 구성 파일입니다.          |
-| `src/default-role.ts`                    | 로직 함수가 접근할 수 있는 범위를 제어하는 기본 역할   |
-| `src/constants/universal-identifiers.ts` | 자동 생성된 UUID와 앱 메타데이터(표시 이름, 설명). |
-| `src/__tests__/`                         | 통합 테스트(설정 + 예제 테스트).             |
-| `public/`                                | 앱과 함께 제공되는 정적 에셋(이미지, 폰트).       |
+| 파일 / 폴더                                                                    | 목적                                                                |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **필수.** 앱의 기본 구성 파일입니다.                                           |
+| `src/default-role.ts`                                                      | 로직 함수가 접근할 수 있는 범위를 제어하는 기본 역할                                    |
+| `src/constants/universal-identifiers.ts`                                   | 자동 생성된 UUID와 앱 메타데이터(표시 이름, 설명).                                  |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | 시작용 환영 페이지: 사이드바에서 접근할 수 있는, 독립적인 페이지 레이아웃에 의해 렌더링되는 프런트 컴포넌트입니다. |
+| `src/__tests__/`                                                           | 실제 서버와 앱을 동기화하는 통합 테스트(글로벌 설정 포함)와 단위 테스트입니다.                     |
+| `public/`                                                                  | 앱과 함께 제공되는 정적 에셋(이미지, 폰트).                                        |
+| `AGENTS.md` / `CLAUDE.md`                                                  | 앱에서 작업하는 AI 코딩 에이전트를 위한 안내서입니다.                                   |
+| `CHANGELOG.md` / `SETUP.md`                                                | 주요 변경 로그와 로컬 개발을 위한 설정 지침입니다.                                     |
 
 <Note>
 **파일 구성은 사용자의 선택입니다.** 위 폴더들은 관례일 뿐이며, SDK는 파일 위치와 관계없이 `export default defineEntity(...)` 호출에 대한 AST 분석을 통해 엔티티를 감지합니다.
@@ -47,15 +62,18 @@ my-twenty-app/
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+스캐폴더는 `twenty-sdk`와 `twenty-client-sdk`를 자체 버전에 고정합니다. 업그레이드할 때 두 패키지의 버전을 동기화된 상태로 유지하세요.
+
 * \*\*`twenty-sdk`\*\*는 `twenty` CLI와 빌드/스캐폴딩 도구를 제공합니다. 이 패키지는 개발 및 빌드 시점에만 실행되며, 배포된 앱의 런타임에서는 전혀 임포트되지 않습니다.
 * \*\*`twenty-client-sdk`\*\*는 앱 코드(`CoreApiClient`, `MetadataApiClient`, `RestApiClient`)에서 임포트되지만, 런타임에는 Twenty가 이를 제공합니다. 로직 함수는 생성된 SDK 레이어에서 이를 가져오고, 프런트엔드 컴포넌트는 서버에서 제공되는 모듈에서 이를 해석하여 가져옵니다. 설치된 사본은 타입 검사와 배포 시점 빌드에만 사용되므로, 배포된 번들에 포함되어 함께 제공될 필요가 없습니다.
 
-어느 한 패키지라도 `dependencies` 아래에 두면, 설치된 앱의 런타임 번들에 포함되어 쓸모없는 부하가 됩니다. `twenty build`는 둘 중 하나라도 여전히 `dependencies` 아래에 나열되어 있으면 경고를 출력합니다.
+어느 한 패키지라도 `dependencies` 아래에 두면, 설치된 앱의 런타임 번들에 포함되어 쓸모없는 부하가 됩니다. `twenty dev:build`는 둘 중 하나라도 여전히 `dependencies` 아래에 나열되어 있으면 경고를 출력합니다.
 
 앱의 실제 런타임 의존성(로직 함수가 런타임에 실제로 임포트하는 라이브러리)은 평소와 같이 `dependencies` 아래에 추가하세요.

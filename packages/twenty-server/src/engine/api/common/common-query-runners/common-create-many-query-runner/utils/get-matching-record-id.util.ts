@@ -50,16 +50,28 @@ export const getMatchingRecordId = (
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
-      .flatMap((group) => group.conflictingProperties)
-      .map((conflictingProperty) => {
-        const value = getValueFromPath(record, conflictingProperty.fullPath);
+      .map((group) => {
+        const values = group.conflictingProperties
+          .map((conflictingProperty) => {
+            const value = getValueFromPath(
+              record,
+              conflictingProperty.fullPath,
+            );
 
-        return isDefined(value)
-          ? `${conflictingProperty.fullPath}: ${value}`
-          : undefined;
+            return isDefined(value)
+              ? `${conflictingProperty.fullPath}: ${value}`
+              : undefined;
+          })
+          .filter(isDefined);
+
+        if (values.length === 0) {
+          return undefined;
+        }
+
+        return `${group.baseFields.join(', ')} (${values.join(', ')})`;
       })
       .filter(isDefined)
-      .join(', ');
+      .join('; ');
 
     throw new CommonQueryRunnerException(
       `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,

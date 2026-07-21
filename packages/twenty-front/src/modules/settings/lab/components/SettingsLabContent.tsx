@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import {
+  IconCalendarWeek,
   IconRelationManyToMany,
   IconSparkles,
   type IconComponent,
@@ -29,6 +30,7 @@ const StyledImage = styled.img`
 `;
 
 const labFeatureFlagIcons: Partial<Record<FeatureFlagKey, IconComponent>> = {
+  [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: IconCalendarWeek,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: IconRelationManyToMany,
   [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: IconSparkles,
 };

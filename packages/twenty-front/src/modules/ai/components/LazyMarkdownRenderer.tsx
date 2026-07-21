@@ -1,62 +1,26 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
-  parseRecordReference,
-  RECORD_REFERENCE_REGEX,
-  RecordLink,
-} from '@/ai/components/RecordLink';
-import {
   StyledMarkdownContainer,
   StyledParagraph,
   StyledSkeletonContainer,
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
+import { TextWithRecordLinks } from '@/ai/components/TextWithRecordLinks';
+import { protectRecordReferencesForMarkdown } from '@/ai/utils/protectRecordReferencesForMarkdown';
+import { marked } from 'marked';
 import {
   cloneElement,
   isValidElement,
   lazy,
+  memo,
   Suspense,
   useContext,
+  useMemo,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-
-const TextWithRecordLinks = ({ text }: { text: string }) => {
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-
-  RECORD_REFERENCE_REGEX.lastIndex = 0;
-
-  let match;
-
-  while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
-    }
-
-    const parsed = parseRecordReference(match[0]);
-
-    if (isDefined(parsed)) {
-      parts.push(
-        <RecordLink
-          key={match.index}
-          objectNameSingular={parsed.objectNameSingular}
-          recordId={parsed.recordId}
-          displayName={parsed.displayName}
-        />,
-      );
-    }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-
-  return <>{parts}</>;
-};
 
 const processChildrenForRecordLinks = (
   children: React.ReactNode,
@@ -203,19 +167,38 @@ const LoadingSkeleton = () => {
   );
 };
 
+const MemoizedMarkdownBlock = memo(
+  ({ blockText }: { blockText: string }) => (
+    <MarkdownRenderer
+      TableScrollContainer={StyledTableScrollContainer}
+      ParagraphComponent={StyledParagraph}
+    >
+      {blockText}
+    </MarkdownRenderer>
+  ),
+  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
+);
+
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
+  const protectedText = useMemo(
+    () => protectRecordReferencesForMarkdown(text),
+    [text],
+  );
+
+  const markdownBlocks = useMemo(
+    () => marked.lexer(protectedText).map((token) => token.raw),
+    [protectedText],
+  );
+
   return (
     <StyledMarkdownContainer
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
       <Suspense fallback={<LoadingSkeleton />}>
-        <MarkdownRenderer
-          TableScrollContainer={StyledTableScrollContainer}
-          ParagraphComponent={StyledParagraph}
-        >
-          {text}
-        </MarkdownRenderer>
+        {markdownBlocks.map((blockText, blockIndex) => (
+          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
+        ))}
       </Suspense>
     </StyledMarkdownContainer>
   );

@@ -15,8 +15,8 @@ import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-meta
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
-import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -80,33 +80,31 @@ export class MinimalMetadataService {
       .map((flatObjectMetadata) => {
         const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
 
-        const objectMetadataForOverride = {
-          labelPlural: flatObjectMetadata.labelPlural,
-          labelSingular: flatObjectMetadata.labelSingular,
-          description: flatObjectMetadata.description ?? undefined,
-          icon: flatObjectMetadata.icon ?? undefined,
-          color: flatObjectMetadata.color ?? undefined,
-          standardOverrides: flatObjectMetadata.standardOverrides ?? undefined,
+        const overrides = flatObjectMetadata.overrides ?? undefined;
+        const i18nContext = {
+          locale: safeLocale,
+          i18nInstance,
+          isStandardApp,
         };
 
         return {
           id: flatObjectMetadata.id,
           nameSingular: flatObjectMetadata.nameSingular,
           namePlural: flatObjectMetadata.namePlural,
-          labelSingular: resolveObjectMetadataStandardOverride(
-            objectMetadataForOverride,
-            'labelSingular',
-            safeLocale,
-            i18nInstance,
-            isStandardApp,
-          ),
-          labelPlural: resolveObjectMetadataStandardOverride(
-            objectMetadataForOverride,
-            'labelPlural',
-            safeLocale,
-            i18nInstance,
-            isStandardApp,
-          ),
+          labelSingular: resolveEffectiveEntityProperty({
+            metadataName: 'objectMetadata',
+            baseValue: flatObjectMetadata.labelSingular,
+            overrides,
+            property: 'labelSingular',
+            i18nContext,
+          }),
+          labelPlural: resolveEffectiveEntityProperty({
+            metadataName: 'objectMetadata',
+            baseValue: flatObjectMetadata.labelPlural,
+            overrides,
+            property: 'labelPlural',
+            i18nContext,
+          }),
           icon: flatObjectMetadata.icon ?? undefined,
           isActive: flatObjectMetadata.isActive,
           isSystem: flatObjectMetadata.isSystem,

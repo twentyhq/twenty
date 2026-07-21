@@ -78,6 +78,11 @@ const buildService = ({
   const emailService = { send: emailSend };
   const i18nService = { getI18nInstance: () => ({ _: () => 'subject' }) };
   const twentyConfigService = { get: (key: string) => CONFIG[key] };
+  const workspaceDomainsService = {
+    buildWorkspaceURL: jest.fn(
+      () => new URL('https://acme.twenty.com/settings/billing'),
+    ),
+  };
 
   const service = new BillingReminderService(
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -94,6 +99,8 @@ const buildService = ({
     emailService as any,
     // oxlint-disable-next-line typescript/no-explicit-any
     i18nService as any,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    workspaceDomainsService as any,
   );
 
   return { service, emailSend, userVarsSet };
@@ -121,7 +128,11 @@ describe('BillingReminderService', () => {
 
     expect(BillingTrialEndingEmail).toHaveBeenCalledTimes(1);
     expect(BillingTrialEndingEmail).toHaveBeenCalledWith(
-      expect.objectContaining({ trialEndsAt: trialEnd, dataRetentionDays: 14 }),
+      expect.objectContaining({
+        trialEndsAt: trialEnd,
+        dataRetentionDays: 14,
+        link: 'https://acme.twenty.com/settings/billing',
+      }),
     );
     expect(BillingTrialConvertingEmail).not.toHaveBeenCalled();
     expect(emailSend).toHaveBeenCalledTimes(1);

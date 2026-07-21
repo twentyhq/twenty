@@ -41,9 +41,6 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
       case ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND:
         throw error;
-      case ObjectMetadataExceptionCode.MISSING_SYSTEM_FIELD:
-      case ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD:
-        throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
       }

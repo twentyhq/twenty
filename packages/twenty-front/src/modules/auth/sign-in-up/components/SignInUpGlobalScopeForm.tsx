@@ -8,6 +8,7 @@ import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -156,64 +157,76 @@ export const SignInUpGlobalScopeForm = () => {
     );
   };
 
+  const availableWorkspacesList = [
+    ...availableWorkspaces.availableWorkspacesForSignIn,
+    ...availableWorkspaces.availableWorkspacesForSignUp,
+  ];
+
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
         <StyledOnboardingContentContainer>
           <StyledWorkspaceContainer>
-            {[
-              ...availableWorkspaces.availableWorkspacesForSignIn,
-              ...availableWorkspaces.availableWorkspacesForSignUp,
-            ].map((availableWorkspace) => (
-              <UndecoratedLink
+            {availableWorkspacesList.map((availableWorkspace, index) => (
+              <OnboardingStepAnimatedItem
                 key={availableWorkspace.id}
-                to={getAvailableWorkspaceUrl(availableWorkspace)}
+                index={index}
               >
-                <StyledWorkspaceItem>
+                <UndecoratedLink
+                  to={getAvailableWorkspaceUrl(availableWorkspace)}
+                >
+                  <StyledWorkspaceItem>
+                    <StyledWorkspaceContent>
+                      <Avatar
+                        placeholder={availableWorkspace.displayName || ''}
+                        avatarUrl={getAbsoluteImageUrl(
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        )}
+                        size="lg"
+                      />
+                      <StyledWorkspaceTextContainer>
+                        <StyledWorkspaceName>
+                          {availableWorkspace.displayName ||
+                            availableWorkspace.id}
+                        </StyledWorkspaceName>
+                        <StyledWorkspaceUrl>
+                          {
+                            new URL(
+                              getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                            ).hostname
+                          }
+                        </StyledWorkspaceUrl>
+                      </StyledWorkspaceTextContainer>
+                      <StyledChevronIcon>
+                        <IconChevronRight size={theme.icon.size.md} />
+                      </StyledChevronIcon>
+                    </StyledWorkspaceContent>
+                  </StyledWorkspaceItem>
+                </UndecoratedLink>
+              </OnboardingStepAnimatedItem>
+            ))}
+            {!isDDLLocked && (
+              <OnboardingStepAnimatedItem
+                index={availableWorkspacesList.length}
+              >
+                <StyledWorkspaceItem
+                  onClick={() =>
+                    setSignInUpStep(SignInUpStep.WorkspaceCreation)
+                  }
+                >
                   <StyledWorkspaceContent>
-                    <Avatar
-                      placeholder={availableWorkspace.displayName || ''}
-                      avatarUrl={getAbsoluteImageUrl(
-                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                      )}
-                      size="lg"
-                    />
+                    <StyledWorkspaceLogo>
+                      <IconPlus size={theme.icon.size.lg} />
+                    </StyledWorkspaceLogo>
                     <StyledWorkspaceTextContainer>
-                      <StyledWorkspaceName>
-                        {availableWorkspace.displayName ||
-                          availableWorkspace.id}
-                      </StyledWorkspaceName>
-                      <StyledWorkspaceUrl>
-                        {
-                          new URL(
-                            getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                          ).hostname
-                        }
-                      </StyledWorkspaceUrl>
+                      <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
                     </StyledWorkspaceTextContainer>
                     <StyledChevronIcon>
                       <IconChevronRight size={theme.icon.size.md} />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
                 </StyledWorkspaceItem>
-              </UndecoratedLink>
-            ))}
-            {!isDDLLocked && (
-              <StyledWorkspaceItem
-                onClick={() => setSignInUpStep(SignInUpStep.WorkspaceCreation)}
-              >
-                <StyledWorkspaceContent>
-                  <StyledWorkspaceLogo>
-                    <IconPlus size={theme.icon.size.lg} />
-                  </StyledWorkspaceLogo>
-                  <StyledWorkspaceTextContainer>
-                    <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-                  </StyledWorkspaceTextContainer>
-                  <StyledChevronIcon>
-                    <IconChevronRight size={theme.icon.size.md} />
-                  </StyledChevronIcon>
-                </StyledWorkspaceContent>
-              </StyledWorkspaceItem>
+              </OnboardingStepAnimatedItem>
             )}
           </StyledWorkspaceContainer>
         </StyledOnboardingContentContainer>
@@ -233,7 +246,9 @@ export const SignInUpGlobalScopeForm = () => {
             />
           )}
           {(authProviders.google || authProviders.microsoft) && (
-            <HorizontalSeparator />
+            <HorizontalSeparator
+              color={themeCssVariables.background.transparent.light}
+            />
           )}
           {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...form}>

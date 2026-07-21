@@ -75,7 +75,7 @@ Supported create-time options are `--name`, `--display-name`, `--description`, `
 
 When the scaffolder completes, the app is fully created, synced, and installed. The job is done.
 
-Do not run any follow-up validation commands after scaffolding unless the user asks for them. Do not run `yarn twenty dev --once`, `yarn test`, `yarn lint`, or other validation just to prove the scaffold worked; the scaffolder already performed the initial sync. If the user asks to run tests later, switch to `develop-app` or `manage-app` guidance and run the full suite against the isolated test instance with `TWENTY_API_URL=http://localhost:2021`.
+Do not run any follow-up validation commands after scaffolding unless the user asks for them. Do not run `yarn twenty apply`, `yarn test`, `yarn lint`, or other validation just to prove the scaffold worked; the scaffolder already performed the initial sync. If the user asks to run tests later, switch to `develop-app` or `manage-app` guidance and run the full suite against the isolated test instance with `TWENTY_API_URL=http://localhost:2021`.
 
 Report to the user that the app was created successfully and is ready for development. Then stop. Wait for the user to ask for the next action.
 
@@ -95,4 +95,4 @@ Only proceed to these when the user explicitly asks:
 
 - Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
 - Use `references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
-- When the user later makes changes to app entities, use `yarn twenty dev --once` to sync those changes. See the `manage-app` skill for sync workflow.
+- When the user later makes changes to app entities, use `yarn twenty apply` to sync those changes. See the `manage-app` skill for sync workflow.

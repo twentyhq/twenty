@@ -206,10 +206,12 @@ export class DirectExecutionService {
         graphQLResolverNameMap,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
       } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'graphQLResolverNameMap',
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
+        'flatIndexMaps',
       ]);
 
       const { idByNameSingular: objectIdByNameSingular } =
@@ -235,6 +237,7 @@ export class DirectExecutionService {
                 entry,
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
+                flatIndexMaps,
                 objectIdByNameSingular,
               );
 

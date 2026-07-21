@@ -78,6 +78,13 @@ Creați un `vitest.config.ts` în rădăcina aplicației:
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-Creați un fișier de configurare care verifică faptul că serverul este accesibil înainte de rularea testelor:
+Creează un fișier global de configurare inițială care verifică faptul că serverul este accesibil, scrie un fișier de configurare de test pentru SDK (`~/.twenty/config.test.json`) și sincronizează aplicația înainte ca testele să ruleze:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## API-uri SDK programatice
 
 Subcalea `twenty-sdk/cli` exportă funcții pe care le puteți apela direct din codul de test:
 
-| Funcție        | Descriere                                                 |
-| -------------- | --------------------------------------------------------- |
-| `appBuild`     | Construiți aplicația și, opțional, împachetați un tarball |
-| `appDeploy`    | Încărcați un tarball pe server                            |
-| `appInstall`   | Instalați aplicația în spațiul de lucru activ             |
-| `appUninstall` | Dezinstalați aplicația din spațiul de lucru activ         |
+| Funcție        | Descriere                                                                              |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `appBuild`     | Construiți aplicația și, opțional, împachetați un tarball                              |
+| `appDeploy`    | Încărcați un tarball pe server                                                         |
+| `appDevOnce`   | Construiește și sincronizează aplicația o singură dată (la fel ca `yarn twenty apply`) |
+| `appInstall`   | Instalați aplicația în spațiul de lucru activ                                          |
+| `appUninstall` | Dezinstalați aplicația din spațiul de lucru activ                                      |
 
 Fiecare funcție returnează un obiect rezultat cu `success: boolean` și fie `data`, fie `error`.
 
@@ -238,64 +253,10 @@ Puteți rula și verificarea tipurilor pe aplicație fără a rula testele:
 yarn twenty dev:typecheck
 ```
 
-Aceasta rulează `tsc --noEmit` și raportează orice erori de tip.
+Aceasta rulează `tsc --noEmit` pe fișierul `tsconfig.json` al aplicației și raportează orice erori de tip. Aplicațiile create cu scaffolderul includ, de asemenea, un script `yarn typecheck` care acoperă și fișierele de test (`tsconfig.spec.json`).
 
 ## CI cu GitHub Actions
 
-Scaffolderul generează un workflow GitHub Actions gata de utilizare în `.github/workflows/ci.yml`. Rulează automat testele de integrare la fiecare push pe `main` și la pull request-uri.
+Scaffolderul generează un workflow gata de utilizare la `.github/workflows/ci.yml`. La fiecare push pe `main` și la fiecare pull request, acesta pornește un server Twenty efemer în runner (prin acțiunea `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), apoi rulează `yarn lint`, `yarn typecheck`, `yarn test:unit` și `yarn test` cu `TWENTY_API_URL` / `TWENTY_API_KEY` îndreptate către acel server. Nu sunt necesare secrete și poți fixa versiunea serverului prin variabila de mediu `TWENTY_VERSION` din partea de sus a workflow-ului.
 
-Workflow-ul:
-
-1. Preia codul
-2. Pornește un server Twenty temporar folosind acțiunea `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Instalează dependențele cu `yarn install --immutable`
-4. Rulează `yarn test` cu `TWENTY_API_URL` și `TWENTY_API_KEY` injectate din rezultatele acțiunii
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Nu trebuie să configurați niciun secret — acțiunea `spawn-twenty-docker-image` pornește un server Twenty efemer direct în runner și oferă detaliile de conectare. Secretul `GITHUB_TOKEN` este furnizat automat de GitHub.
-
-Pentru a fixa o versiune Twenty specifică în loc de `latest`, modificați variabila de mediu `TWENTY_VERSION` din partea de sus a workflow-ului.
+Vezi [Publicare → CI/CD automatizat](/l/ro/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) pentru un ghid complet al celor trei workflow-uri create cu scaffolderul (`ci.yml`, pipeline-ul de deploy `cd.yml` și `publish.yml` pentru publicare pe npm).

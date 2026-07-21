@@ -1,0 +1,67 @@
+---
+title: "Tutorial: Dokumentgenerator"
+icon: wand-magic-sparkles
+description: Erstellen Sie eine echte Twenty-App, die personalisierte Dokumente aus Ihren CRM-Daten generiert.
+---
+
+In diesem Tutorial erstellen Sie **Document Generator** – eine App, die wiederverwendbare Vorlagen in personalisierte Dokumente umwandelt, indem sie die bereits in Ihrem CRM vorhandenen Daten nutzt.
+
+Schreiben Sie eine Vorlage einmal mit `{{placeholders}}` und generieren Sie dann mit einem Klick ein ausgefülltes Dokument für jede Person oder jedes Unternehmen – über das Befehlsmenü, über einen KI-Agenten oder über einen Workflow.
+
+<Frame caption="Eine Vorlage, die für eine bestimmte Person generiert wurde und als druckbare Seite geöffnet ist.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Ein generiertes Verkaufsangebot" />
+</Frame>
+
+## Was Sie lernen werden
+
+Jedes Kapitel fügt eine Funktion hinzu. Am Ende haben Sie den Großteil des SDK kennengelernt.
+
+| Kapitel                                                                                              | Funktion                                                                                                                            | Referenz                                                            |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [1. Datenmodell](/l/de/developers/extend/apps/tutorials/document-generator/data-model)                    | Objekte, Felder und eine Relation                                                                                                   | [Daten](/l/de/developers/extend/apps/data/overview)                      |
+| [2. Dokumente generieren](/l/de/developers/extend/apps/tutorials/document-generator/generating-documents) | Eine Logikfunktion (KI-Tool + Workflow-Aktion), die eine Markdown-Vorlage ausfüllt und ein fertiges PDF anhängt                     | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
+| [3. HTTP-Routen](/l/de/developers/extend/apps/tutorials/document-generator/http-routes)                   | Ausliefern von JSON und einer teilbaren HTML-Seite über Routen                                                                      | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
+| [4. Die UI erstellen](/l/de/developers/extend/apps/tutorials/document-generator/building-the-ui)          | Ansichten, Navigation, Befehlsmenü und Frontend-Komponenten, die eine Vorschau eines Dokuments anzeigen und eine Vorlage bearbeiten | [Layout](/l/de/developers/extend/apps/layout/overview)                   |
+| [5. Ein KI-Agent](/l/de/developers/extend/apps/tutorials/document-generator/ai-agent)                     | Agent + Skill                                                                                                                       | [Skills & Agenten](/l/de/developers/extend/apps/logic/skills-and-agents) |
+| [6. Veröffentlichen](/l/de/developers/extend/apps/tutorials/document-generator/publishing)                | In den Marketplace veröffentlichen                                                                                                  | [Veröffentlichen](/l/de/developers/extend/apps/operations/publishing)    |
+
+## Voraussetzungen
+
+Sie sollten den [Quick Start](/l/de/developers/extend/apps/getting-started/quick-start) abgeschlossen haben:
+einen lokalen Twenty-Server, der auf Port `2020` läuft, und die CLI, die damit authentifiziert ist.
+
+Falls nicht, erstellen und starten Sie jetzt einen:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+Lesen Sie lieber den fertigen Code? Die vollständige App befindet sich unter
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Jedes der folgenden Codebeispiele ist daraus kopiert.
+</Note>
+
+## Wie die App zusammenpasst
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Eine Vorlage mit Platzhaltern wird in ein fertiges Dokument mit PDF generiert, ausgelöst über das Befehlsmenü, einen KI-Agenten, einen Workflow oder einen teilbaren Link" />
+</Frame>
+
+Sie schreiben eine **Vorlage** einmal in einem Rich-Text-Editor mit `{{placeholders}}`. Die Auswahl einer
+Vorlage und eines CRM-Datensatzes füllt die Platzhalter aus und speichert ein fertiges
+**Dokument** (mit einer PDF-Datei). Alles andere – das Befehlsmenü, der KI-Agent,
+der Workflow-Schritt, der teilbare Link – ist nur eine andere Möglichkeit, denselben
+Generator auszulösen.
+
+## Diesen Kreislauf am Laufen halten
+
+Lassen Sie `yarn twenty dev` während des gesamten Tutorials in einem Terminal laufen. Jedes Mal, wenn
+Sie eine Datei unter `src/` hinzufügen oder bearbeiten, wird sie innerhalb weniger
+Sekunden mit Ihrem Server synchronisiert, sodass Sie beobachten können, wie jede Funktion in der UI erscheint, während Sie sie entwickeln.
+
+<Card title="Beginnen Sie mit der Entwicklung →" icon="database" href="/l/de/developers/extend/apps/tutorials/document-generator/data-model">
+  Kapitel 1: Dokumente und Vorlagen modellieren.
+</Card>

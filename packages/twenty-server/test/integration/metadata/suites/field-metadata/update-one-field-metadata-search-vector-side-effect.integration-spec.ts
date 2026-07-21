@@ -8,10 +8,27 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 // ISO search surface: renaming an indexed field (the name field, the default search field of a
 // custom object) must rebuild the searchVector column so global search keeps working,
 // since the generated expression embeds the field's column name.
+const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+
+const findSearchVectorGinIndexDefinitions = async (
+  tableName: string,
+): Promise<string[]> => {
+  const rows: { indexdef: string }[] = await global.testDataSource.query(
+    `SELECT indexdef FROM pg_indexes
+     WHERE schemaname = $1 AND tablename = $2
+       AND indexdef ILIKE '%using gin%'
+       AND indexdef ILIKE '%searchVector%'`,
+    [TEST_SCHEMA_NAME, tableName],
+  );
+
+  return rows.map((row) => row.indexdef);
+};
+
 describe('Field metadata update - search vector rename rebuild', () => {
   let testObjectMetadataId: string;
   let nameFieldMetadataId: string;
@@ -19,6 +36,7 @@ describe('Field metadata update - search vector rename rebuild', () => {
 
   const OBJECT_NAME_SINGULAR = 'searchVectorRenameObject';
   const OBJECT_NAME_PLURAL = 'searchVectorRenameObjects';
+  const OBJECT_TABLE_NAME = computeTableName(OBJECT_NAME_SINGULAR, true);
   const RENAMED_NAME_FIELD = 'searchableLabelColumn';
   const RECORD_NAME_VALUE = 'RenameRecomputeSearchToken33';
 
@@ -89,6 +107,11 @@ describe('Field metadata update - search vector rename rebuild', () => {
   });
 
   it('should rebuild the search vector and keep search working when the indexed name field is renamed', async () => {
+    const ginIndexesBeforeRename =
+      await findSearchVectorGinIndexDefinitions(OBJECT_TABLE_NAME);
+
+    expect(ginIndexesBeforeRename.length).toBe(1);
+
     await updateOneFieldMetadata({
       input: {
         idToUpdate: nameFieldMetadataId,
@@ -116,5 +139,10 @@ describe('Field metadata update - search vector rename rebuild', () => {
     expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
       OBJECT_NAME_SINGULAR,
     );
+
+    const ginIndexesAfterRename =
+      await findSearchVectorGinIndexDefinitions(OBJECT_TABLE_NAME);
+
+    expect(ginIndexesAfterRename).toEqual(ginIndexesBeforeRename);
   });
 });

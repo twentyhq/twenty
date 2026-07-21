@@ -46,6 +46,22 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+// Error codes returned by the renewToken mutation when the server
+// definitively rejects the refresh token (expired, revoked or unknown).
+const TOKEN_RENEWAL_REJECTION_CODES = [
+  'UNAUTHENTICATED',
+  'FORBIDDEN',
+  'BAD_USER_INPUT',
+];
+
+const isTokenRenewalRejection = (error: unknown): boolean =>
+  CombinedGraphQLErrors.is(error) &&
+  error.errors.some((graphQLError) =>
+    TOKEN_RENEWAL_REJECTION_CODES.includes(
+      graphQLError.extensions?.code as string,
+    ),
+  );
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -182,7 +198,7 @@ export class ApolloFactory implements ApolloManager {
         forward: ApolloLink.ForwardFunction,
         error: ErrorLike,
       ) => {
-        if (!getTokenPair()) {
+        if (!getTokenPair()?.refreshToken?.token) {
           onUnauthenticatedError?.();
 
           return throwError(() => error);
@@ -191,12 +207,21 @@ export class ApolloFactory implements ApolloManager {
         if (!renewalPromise) {
           renewalPromise = attemptTokenRenewal()
             .then(() => true)
-            .catch(() => {
-              // oxlint-disable-next-line no-console
-              console.log(
-                'Failed to renew token after retries, triggering unauthenticated error',
-              );
-              onUnauthenticatedError?.();
+            .catch((renewalError) => {
+              if (isTokenRenewalRejection(renewalError)) {
+                // oxlint-disable-next-line no-console
+                console.log(
+                  'Refresh token rejected by the server, triggering unauthenticated error',
+                  renewalError,
+                );
+                onUnauthenticatedError?.();
+              } else {
+                // oxlint-disable-next-line no-console
+                console.log(
+                  'Token renewal failed transiently, keeping session for retry',
+                  renewalError,
+                );
+              }
 
               return false;
             })

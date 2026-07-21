@@ -70,6 +70,13 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
+    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+      return this.errorResponse(
+        'invalid_client',
+        'Client authentication required for confidential clients',
+      );
+    }
+
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
         applicationRegistration,

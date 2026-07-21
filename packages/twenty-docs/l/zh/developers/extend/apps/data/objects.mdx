@@ -86,6 +86,22 @@ export default defineObject({
 **基础字段会自动添加。** 当你定义自定义对象时，Twenty 会为你创建标准字段，例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。 你无需在 `fields` 数组中声明这些字段——只需声明你的自定义字段。 你可以通过声明一个同名字段来覆盖默认字段，但这么做通常并不是一个好主意。
 </Note>
 
+## 字段类型
+
+从 `twenty-sdk/define` 导出的完整 `FieldType` 值集合：
+
+| 类别     | 类型                                                                                                          |
+| ------ | ----------------------------------------------------------------------------------------------------------- |
+| 文本     | `TEXT`、`RICH_TEXT`、`ARRAY`（字符串数组）、`RAW_JSON`                                                                |
+| 数值     | `NUMBER`（`universalSettings.dataType`：`'float'` / `'int'` / `'bigint'`）、`NUMERIC`（任意精度）、`RATING`、`POSITION` |
+| 日期     | `DATE`, `DATE_TIME`                                                                                         |
+| 选项     | `BOOLEAN`、`SELECT`、`MULTI_SELECT`                                                                           |
+| 复合     | `FULL_NAME`、`ADDRESS`、`EMAILS`、`PHONES`、`LINKS`、`CURRENCY`、`ACTOR`、`FILES`                                  |
+| 标识符和关联 | `UUID`、`RELATION`、`MORPH_RELATION`（参见 [Relations](/l/zh/developers/extend/apps/data/relations)）                  |
+| 系统     | `TS_VECTOR`（全文搜索向量，由服务器管理）                                                                                  |
+
+复合类型会存储多个子字段（例如，`FULL_NAME` = 名 + 姓；`CURRENCY` = `amountMicros` + `currencyCode`）。 `SELECT` 和 `MULTI_SELECT` 需要一个如上示例所示的 `options` 数组。
+
 ## 默认值
 
 字面量字符串默认值必须在字符串**内部**用单引号包裹——应写成 `defaultValue: "'Draft'"`，而不是 `defaultValue: "Draft"`。 这就是上面的 `status` 字段使用 `` `'${PostCardStatus.DRAFT}'` `` 的原因。
@@ -96,6 +112,27 @@ export default defineObject({
 * `'now'` — 当前时间戳（用于 `DATE_TIME` 字段）
 
 同样的约定也适用于复合默认值的字符串子字段（例如 `ACTOR` 字段上的 `{ source: "'MANUAL'" }`）以及 `SELECT`/`MULTI_SELECT` 值。 在构建应用时，未加引号的字面字符串默认值会触发警告。
+
+## 可空性
+
+`isNullable` 控制字段是否接受 `NULL`。 它默认是 `true` —— 对可选字段可以省略。 将 `isNullable` 设为 `false`，可在数据库层面将字段设为必填。
+
+对 `isNullable` 的更改会在每次同步时应用，包括更新现有字段的同步——因此你可以通过编辑 manifest 并重新同步来切换字段的可空性。
+
+<Note>
+**将现有字段改为不可为空时需要提供默认值。** 当你将字段更改为 `isNullable: false` 时，还必须提供一个非空的 `defaultValue`。 在应用 `NOT NULL` 约束之前，默认值会为所有现有的 `NULL` 行进行回填；如果没有默认值，同步将失败，并出现错误：`Default value cannot be null for non-nullable fields`。 关系字段和 `TS_VECTOR` 字段始终可为空，因此 `isNullable` 对它们不起作用。
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## 接下来
 

@@ -1,14 +1,13 @@
-import { type UIMessage } from 'ai';
-import { isExtendedFileUIPart } from 'twenty-shared/ai';
+import { type ExtendedUIMessage, isExtendedFileUIPart } from 'twenty-shared/ai';
 
 import { CODE_INTERPRETER_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-chat/constants/code-interpreter-mime-types.constant';
 import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-native-mime-types-for-modalities.util';
 
 export const replaceUnsupportedFileParts = (
-  messages: UIMessage[],
+  messages: ExtendedUIMessage[],
   modalities: string[] = [],
   isCodeInterpreterEnabled: boolean,
-): UIMessage[] => {
+): ExtendedUIMessage[] => {
   const nativeMimeTypes = getNativeMimeTypesForModalities(modalities);
 
   return messages.map((message) => {

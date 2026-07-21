@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should surface a human error on flat-entity map conflicts should fail with an installation error naming the field when two fields of an object share a universalIdentifier 1`] = `
+{
+  "eventId": Any<String>,
+  "extensions": {
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "exceptionEventId": Any<String>,
+    "subCode": "APPLICATION_INSTALLATION_FAILED",
+    "userFriendlyMessage": "We couldn't install "Test Application". Its field "Due Date" could not be applied to your workspace.",
+  },
+  "message": "Installing application 'Test Application' failed [field: Due Date]: addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: b1b2c3d4-0004-4000-a000-000000000004)",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should surface a human error on flat-entity map conflicts should fail with an installation error naming the object when two objects share a universalIdentifier 1`] = `
+{
+  "eventId": Any<String>,
+  "extensions": {
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "exceptionEventId": Any<String>,
+    "subCode": "APPLICATION_INSTALLATION_FAILED",
+    "userFriendlyMessage": "We couldn't install "Test Application". Its object "Invoice" could not be applied to your workspace.",
+  },
+  "message": "Installing application 'Test Application' failed [object: Invoice]: addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: b1b2c3d4-0003-4000-a000-000000000003)",
+  "name": "GraphQLError",
+}
+`;

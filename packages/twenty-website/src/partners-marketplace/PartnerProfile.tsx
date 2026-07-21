@@ -5,27 +5,25 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   color,
   EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
   GRADIENT,
   mediaUp,
   radius,
   REDUCED_MOTION,
-  semanticColor,
   spacing,
 } from '@/tokens';
 import { GuideCrosshair, SectionShell } from '@/ui';
 
 import { BackToMarketplaceLink } from './BackToMarketplaceLink';
 import { type MarketplacePartner } from './marketplace-partner';
-import { PartnerFactsList } from './PartnerFactsList';
+import { PartnerCoverageSection } from './PartnerCoverageSection';
 import { PartnerProfileCtas } from './PartnerProfileCtas';
 import { PartnerProfileHeader } from './PartnerProfileHeader';
-import { PartnerProfileIntro } from './PartnerProfileIntro';
+import { PartnerProfileAbout } from './PartnerProfileAbout';
 import { PartnerProfilePhoto } from './PartnerProfilePhoto';
+import { PartnerReachFacts } from './PartnerReachFacts';
+import { PartnerSelectedWork } from './PartnerSelectedWork';
+import { PartnerServices } from './PartnerServices';
 import { PartnerRatesPanel } from './PartnerRatesPanel';
-import { ProfileEyebrow } from './ProfileEyebrow';
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
@@ -36,7 +34,7 @@ const GradientBackdrop = styled.div`
 // A detail page reads tighter than the full 1440 grid — capped like a measure.
 const ProfileInner = styled.div`
   margin-inline: auto;
-  max-width: 1100px;
+  max-width: 1240px;
   width: 100%;
 `;
 
@@ -46,35 +44,25 @@ const ContentGrid = styled.div`
   gap: ${spacing(10)};
 
   ${mediaUp('md')} {
+    column-gap: ${spacing(9)};
     display: grid;
-    gap: 0;
-    grid-template-columns: 7fr 1fr 4fr;
+    grid-template-columns: minmax(0, 1fr) minmax(18.5rem, 21rem);
+  }
+
+  ${mediaUp('lg')} {
+    column-gap: ${spacing(10)};
   }
 `;
 
 const MainColumn = styled.div`
   display: flex;
   flex-direction: column;
-
-  & > * + * {
-    margin-top: ${spacing(10)};
-  }
+  gap: ${spacing(10)};
+  min-width: 0;
 
   ${mediaUp('md')} {
+    gap: ${spacing(14)};
     grid-column: 1;
-
-    & > * + * {
-      margin-top: ${spacing(14)};
-    }
-  }
-`;
-
-const GutterColumn = styled.div`
-  display: none;
-
-  ${mediaUp('md')} {
-    display: block;
-    grid-column: 2;
   }
 `;
 
@@ -88,8 +76,15 @@ const RailColumn = styled.aside`
   display: flex;
   flex-direction: column;
   gap: ${spacing(6)};
+  min-width: 0;
   padding: ${spacing(6)};
   position: relative;
+  width: 100%;
+
+  ${mediaUp('md')} {
+    gap: ${spacing(7.5)};
+    padding: ${spacing(7.5)};
+  }
 
   @keyframes profileRailEnter {
     from {
@@ -107,41 +102,10 @@ const RailColumn = styled.aside`
   }
 
   ${mediaUp('md')} {
-    grid-column: 3;
+    grid-column: 2;
+    position: sticky;
+    top: ${spacing(20)};
   }
-`;
-
-const Block = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  & > * + * {
-    margin-top: ${spacing(4)};
-  }
-`;
-
-const SkillsRow = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(2)};
-  list-style: none;
-  padding: 0;
-`;
-
-const SkillChip = styled.li`
-  background-color: ${color('blue-5')};
-  border-radius: ${radius(2)};
-  color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4)};
-  font-weight: ${FONT_WEIGHT.medium};
-  padding: ${spacing(2)} ${spacing(4)};
-`;
-
-const Divider = styled.hr`
-  background-color: ${semanticColor.line};
-  border: none;
-  height: 1px;
 `;
 
 export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
@@ -158,28 +122,14 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
           <MainColumn>
             <BackToMarketplaceLink />
             <PartnerProfileHeader partner={partner} />
-            <PartnerProfileIntro introduction={partner.introduction} />
-            {partner.skills.length > 0 && (
-              <Block>
-                <ProfileEyebrow>{i18n._(msg`What they do`)}</ProfileEyebrow>
-                <SkillsRow aria-label={i18n._(msg`Skills`)}>
-                  {partner.skills.map((skill) => (
-                    <SkillChip key={skill}>{skill}</SkillChip>
-                  ))}
-                </SkillsRow>
-              </Block>
-            )}
-            <Divider aria-hidden="true" />
-            <Block>
-              <ProfileEyebrow>{i18n._(msg`Where & how`)}</ProfileEyebrow>
-              <PartnerFactsList
-                region={partner.region}
-                languagesSpoken={partner.languagesSpoken}
-                partnerScope={partner.partnerScope}
-              />
-            </Block>
+            <PartnerProfileAbout description={partner.description} />
+            <PartnerCoverageSection
+              partnerScope={partner.partnerScope}
+              skills={partner.skills}
+            />
+            <PartnerSelectedWork portfolio={partner.portfolio} />
+            <PartnerServices services={partner.services} />
           </MainColumn>
-          <GutterColumn />
           <RailColumn aria-label={i18n._(msg`Partner facts and contact`)}>
             <GuideCrosshair
               crossX={`calc(100% - ${spacing(3)})`}
@@ -192,13 +142,16 @@ export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
             />
             <PartnerProfileCtas
               calendarLink={partner.calendarLink}
-              linkedinUrl={partner.linkedinUrl}
-              partnerName={partner.name}
+              links={partner.links}
+              linkUrls={partner.linkUrls}
             />
             <PartnerRatesPanel
               hourlyRateUsd={partner.hourlyRateUsd}
               projectBudgetMinUsd={partner.projectBudgetMinUsd}
-              projectBudgetTypicalUsd={partner.projectBudgetTypicalUsd}
+            />
+            <PartnerReachFacts
+              languagesSpoken={partner.languagesSpoken}
+              region={partner.region}
             />
           </RailColumn>
         </ContentGrid>

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type FileFolder } from 'twenty-shared/types';
+import { type FileFolder, type ServerFileFolder } from 'twenty-shared/types';
 
 import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
 import { type ResourcePathValidationResult } from 'src/engine/core-modules/file-storage/types/resource-path-validation-result.type';
@@ -10,7 +10,7 @@ export const validateFileExtension = ({
   fileFolder,
 }: {
   resourcePath: string;
-  fileFolder: FileFolder;
+  fileFolder: FileFolder | ServerFileFolder;
 }): ResourcePathValidationResult => {
   const allowedExtensions =
     ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[

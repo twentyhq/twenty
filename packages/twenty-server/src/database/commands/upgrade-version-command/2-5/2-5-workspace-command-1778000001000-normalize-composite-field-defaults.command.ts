@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -25,7 +25,7 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-me
   description:
     'Normalize composite field default values: remove empty-string values from metadata and backfill workspace data with NULL.',
 })
-export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class NormalizeCompositeFieldDefaultsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -171,7 +171,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       }));
 
       const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: {

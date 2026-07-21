@@ -24,6 +24,32 @@ export class CacheStorageService {
     return this.cache.set(this.getKey(key), value, ttl);
   }
 
+  async setIfAbsent<T>(
+    key: string,
+    value: T,
+    ttl: Milliseconds,
+  ): Promise<boolean> {
+    if (this.isRedisCache()) {
+      const result = await (this.cache as RedisCache).store.client.set(
+        this.getKey(key),
+        JSON.stringify(value),
+        ttl > 0 ? { NX: true, PX: ttl } : { NX: true },
+      );
+
+      return result === 'OK';
+    }
+
+    const existingValue = await this.get(key);
+
+    if (existingValue !== undefined) {
+      return false;
+    }
+
+    await this.set(key, value, ttl);
+
+    return true;
+  }
+
   async del(key: string) {
     return this.cache.del(this.getKey(key));
   }

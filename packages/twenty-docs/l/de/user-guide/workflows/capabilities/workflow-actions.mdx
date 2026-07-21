@@ -112,7 +112,7 @@ Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Ü
 
 **Konfiguration**:
 
-* Wählen Sie ein Array von Datensätzen aus einem vorherigen Schritt (z.B. Ergebnisse von Suchdatensätzen, aus einem manuellen Trigger mit Bulk-Verfügbarkeit, von einem Codeknoten)
+* Wählen Sie das Array von Datensätzen aus einem vorherigen Schritt aus (z. B. Ergebnisse aus Search Records, aus einem manuellen Auslöser mit Bulk-Verfügbarkeit, aus einem Code-Node). Wenn ein Code- oder Logikfunktions-Schritt ein Top-Level-Array zurückgibt, wählen Sie die Option **Whole list**, um über die gesamte Ausgabe zu iterieren.
 * Definieren Sie die Aktionen, die für jeden Datensatz in der Schleife ausgeführt werden sollen.
 
 <Note>
@@ -120,7 +120,7 @@ Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Ü
 - Wenn Sie Zweige innerhalb eines Iterators verwenden, stellen Sie sicher, dass sich der letzte Schritt jedes Zweiges mit dem Iterator verbindet, um die Schleife zu schließen.
 </Note>
 
-* Zugriff auf `Aktuelle Item` Felder: Um Felder aus dem aktuell verarbeiteten Datensatz zu verwenden, klicke auf den **Iterator** Schritt, dann wähle **Aktuelles Iterator**. Die Liste der verfügbaren Felder aus diesem Datensatz wird angezeigt und kann für die Verwendung in folgenden Aktionen ausgewählt werden.
+* Zugriff auf `Aktuelle Item` Felder: Um Felder aus dem aktuell verarbeiteten Datensatz zu verwenden, klicke auf den **Iterator** Schritt, dann wähle **Aktuelles Iterator**. Die Liste der verfügbaren Felder aus diesem Datensatz wird angezeigt und kann für die Verwendung in folgenden Aktionen ausgewählt werden. Sie können auch **Use the whole item** auswählen, um das gesamte aktuelle Element an einen nachgelagerten Schritt zu übergeben.
 
 <VimeoEmbed videoId="1146577247" title="Video-Demo" />
 
@@ -245,6 +245,8 @@ Die Felder können nicht obligatorisch gemacht werden.
 
 Führt benutzerdefiniertes JavaScript in Ihrem Workflow aus.
 
+Im Hintergrund wird jede Code-Aktion von ihrer eigenen **Logikfunktion** unterstützt – einer serverseitigen TypeScript-Funktion, die auf der Twenty-Plattform ausgeführt wird. Wenn Sie eine Code-Aktion hinzufügen, erstellt Twenty eine dedizierte Logikfunktion für diesen Schritt und stellt deren Editor inline bereit, sodass der von Ihnen geschriebene Code zusammen mit dem Workflow gespeichert wird.
+
 **Konfiguration**:
 
 * Greifen Sie auf Variablen aus vorherigen Schritten zu. Sie können die Namen der Variablen dynamisch bearbeiten.
@@ -265,6 +267,25 @@ Wenn Sie externe API-Schlüssel in Ihrem Code verwenden müssen, müssen Sie die
 
 <Tip>
 Klicken Sie auf das quadratische Symbol oben rechts im Code-Editor, um es im Vollbildmodus anzuzeigen – hilfreich, da die Standardbreite des Editors begrenzt ist.
+</Tip>
+
+#### Eine Logikfunktion in mehreren Workflows wiederverwenden
+
+Die Inline-Code-Aktion ist ideal für einmalige Logik, aber der darin enthaltene Code gehört zu genau diesem einen Schritt. Wenn Sie dieselbe Logik über mehrere Workflows hinweg teilen oder sie als versionierten Quellcode in einer App pflegen möchten, definieren Sie eine **wiederverwendbare Logikfunktion**, anstatt Code in jede Code-Aktion zu kopieren und einzufügen.
+
+Eine Logikfunktion wird einmal in einer App definiert (mithilfe des SDK-Befehls `defineLogicFunction`) und durch Hinzufügen von `workflowActionTriggerSettings` im Workflow-Builder verfügbar gemacht. Sobald Ihre App installiert ist, erscheint diese Funktion als eigene Aktion im Workflow-Builder, neben den eingebauten Aktionen. Wenn Sie sie auswählen, werden die von Ihnen deklarierten Eingabefelder angezeigt (mit Variablen-Auswahl, genau wie bei anderen Aktionen) und Ihr geteilter Code wird ausgeführt – kein Inline-JavaScript erforderlich.
+
+|                            | Code-Aktion                                                 | Wiederverwendbare Logikfunktion                                    |
+| -------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Wo der Code liegt**      | Inline-Editor, an einen einzelnen Workflow-Schritt gebunden | In einer App definiert, im Versionskontrollsystem versioniert      |
+| **Wiederverwendung**       | Pro Schritt kopiert und eingefügt                           | Als Aktion in jedem Workflow hinzugefügt                           |
+| **Eingaben**               | Variablen, die im Editor verdrahtet werden                  | Felder, die aus Ihrem deklarierten Eingabe-Schema gerendert werden |
+| **Am besten geeignet für** | Schnelle, Workflow-spezifische Logik                        | Gemeinsam genutzte Logik, die in mehreren Workflows verwendet wird |
+
+Beide laufen auf derselben Logikfunktions-Laufzeit, sodass eine Code-Aktion, die Sie inline prototypisiert haben, später mit minimalen Änderungen in eine wiederverwendbare Logikfunktion überführt werden kann.
+
+<Tip>
+Die entwicklerorientierte Referenz zur Definition von Logikfunktionen und deren Bereitstellung im Workflow-Builder finden Sie unter [Logic Functions](/l/de/developers/extend/apps/logic/logic-functions) – insbesondere im Abschnitt **Exposing a function as an AI tool or workflow action** und bei `workflowActionTriggerSettings`.
 </Tip>
 
 ### HTTP-Anfrage

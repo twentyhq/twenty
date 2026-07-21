@@ -36,6 +36,7 @@ const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: 48px;
   transform: ${({ isHovered, isActive }) =>
     isHovered || isActive ? 'scaleY(1.2)' : 'scaleY(1)'};

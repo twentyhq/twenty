@@ -26,6 +26,7 @@ import {
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type UseWebhookFormProps = {
   webhookId?: string;
@@ -109,6 +110,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       navigate(
         createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
+        undefined,
+        undefined,
+        createdWebhook
+          ? undefined
+          : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
       enqueueErrorSnackBar({
@@ -197,7 +203,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         message: t`Webhook deleted successfully`,
       });
 
-      navigate(SettingsPath.ApiWebhooks);
+      navigate(
+        SettingsPath.ApiWebhooks,
+        undefined,
+        undefined,
+        undefined,
+        SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+      );
     } catch (error) {
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,

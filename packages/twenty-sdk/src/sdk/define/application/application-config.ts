@@ -4,6 +4,7 @@ export type ApplicationConfig = Omit<
   ApplicationManifest,
   | 'packageJsonChecksum'
   | 'yarnLockChecksum'
+  | 'requiredServerVersionRange'
   | 'postInstallLogicFunction'
   | 'preInstallLogicFunction'
   | 'defaultRoleUniversalIdentifier'

@@ -8,6 +8,7 @@ export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
       provider
       userWorkspaceId
       connectionParameters {
+        name
         IMAP {
           host
           port

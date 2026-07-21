@@ -33,17 +33,32 @@ export default defineView({
 ## 主なポイント
 
 * `objectUniversalIdentifier` は、このビューを適用するオブジェクトを指定します。 定義したカスタムオブジェクトでも、Twenty の標準オブジェクトでも可能です。
-* `key` はビューの種類を決定します。`ViewKey.INDEX` は、そのオブジェクトのメインのリストビューです。
-* `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。
-* さらに高度な構成のために、`filters`、`filterGroups`、`groups`、`fieldGroups` も定義できます。
+* `key: ViewKey.INDEX` は、そのビューがオブジェクトのメイン一覧ビュー（`OBJECT` ナビゲーション項目を開いたときに表示されるビュー）であることを示します。
+* `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。 `createdAt` などの自動作成システムフィールドの参照方法については、[システムフィールドのターゲット指定](/l/ja/developers/extend/apps/data/system-fields)を参照してください。
+* さらに高度な構成のために、`filters`、`filterGroups`、`sorts`、`groups`、`fieldGroups` も定義できます。
 * 同じオブジェクトに複数のビューがある場合、`position` が表示順を制御します。
+
+## オプションのプロパティ
+
+| プロパティ                                                                                                       | 値                                                                                  | 説明                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (デフォルト), `ViewType.KANBAN`, `ViewType.CALENDAR`                   | レコードのレイアウト方法。 （`FIELDS_WIDGET`、`TABLE_WIDGET`、`KANBAN_WIDGET`、`CALENDAR_WIDGET` も存在しますが、ページレイアウトウィジェットによって内部的に使用されます。） |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (デフォルト), `ViewVisibility.UNLISTED`                      | ビューがワークスペース全体で一覧表示されるか、ピッカーから非表示にされるか。                                                                                 |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (デフォルト), `ViewOpenRecordIn.RECORD_PAGE`              | レコードをクリックしたときに、どこで開くか。                                                                                                 |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | デフォルトのソート順。                                                                                                            |
+| `isCompact`                                                                                                 | `boolean`                                                                          | 行のコンパクト表示。                                                                                                             |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | レコードをフィールドでグループ化します（例: かんばんのカラム）。                                                                                      |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | かんばんカラムの集計とサイズ設定。                                                                                                      |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | カレンダービュー: レイアウト、レコードの位置を決める日付フィールド、オプションの終了日フィールド。                                                                     |
+
+上記のすべての enum は `twenty-sdk/define` からエクスポートされています。
 
 ## フィルター
 
 ビューには、あらかじめフィルターを適用した状態で提供できます。 各フィルターには 3 つの要素があります: フィルタリング対象の**フィールド**、**オペランド**（どのように比較するか）、**値**（何と比較するか）。 この 3 つがすべてそろっている必要があります — フィールドの型に適用できないオペランドを使用すると、同期時に拒否されます。
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## 設定フィールド
 
-| フィールド                                   | 必須  | 説明                                                                                               |
-| --------------------------------------- | --- | ------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | はい  | コマンドの安定した一意の ID                                                                                  |
-| `label`                                 | はい  | コマンドメニュー（Cmd+K）に表示されるフルラベル                                                                       |
-| `frontComponentUniversalIdentifier`     | はい  | このコマンドが開くフロントコンポーネントの `universalIdentifier`                                                      |
-| `shortLabel`                            | いいえ | ピン留めされたクイックアクションボタンに表示される短いラベル                                                                   |
-| `icon`                                  | いいえ | ラベルの横に表示するアイコン名（例：'IconBolt'、'IconSend'）                                                         |
-| `isPinned`                              | いいえ | `true` の場合、ページ右上にクイックアクションボタンとして表示します                                                            |
-| `availabilityType`                      | いいえ | コマンドの表示場所を制御します：'GLOBAL'（常に利用可能）、'RECORD_SELECTION'（レコード選択時のみ）、または 'FALLBACK'（他のコマンドが一致しないときに表示） |
-| `availabilityObjectUniversalIdentifier` | いいえ | コマンドを特定のオブジェクトタイプのページに制限します（例：Company レコードのみ）                                                    |
-| `conditionalAvailabilityExpression`     | いいえ | 表示可否を動的に制御するブール式（下記参照）                                                                           |
+| フィールド                                   | 必須  | 説明                                                                                                                                                                           |
+| --------------------------------------- | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | はい  | コマンドの安定した一意の ID                                                                                                                                                              |
+| `label`                                 | はい  | コマンドメニュー（Cmd+K）に表示されるフルラベル                                                                                                                                                   |
+| `frontComponentUniversalIdentifier`     | はい  | このコマンドが開くフロントコンポーネントの `universalIdentifier`                                                                                                                                  |
+| `shortLabel`                            | いいえ | ピン留めされたクイックアクションボタンに表示される短いラベル                                                                                                                                               |
+| `icon`                                  | いいえ | **非推奨** — アプリケーションアイコンが優先されるため無視されます。設定されている場合は、ビルド時に警告が出力されます。                                                                                                              |
+| `isPinned`                              | いいえ | `true` の場合、ページ右上にクイックアクションボタンとして表示します                                                                                                                                        |
+| `availabilityType`                      | いいえ | コマンドの表示場所を制御します：`'GLOBAL'`（常に利用可能）、`'GLOBAL_OBJECT_CONTEXT'`（オブジェクトコンテキストを持つページ上のみ ― インデックスページおよびレコードページ）、`'RECORD_SELECTION'`（レコード選択時のみ）、または`'FALLBACK'`（他のコマンドが一致しないときに表示） |
+| `availabilityObjectUniversalIdentifier` | いいえ | コマンドを特定のオブジェクトタイプのページに制限します（例：Company レコードのみ）                                                                                                                                |
+| `conditionalAvailabilityExpression`     | いいえ | 表示可否を動的に制御するブール式（下記参照）                                                                                                                                                       |
 
 ## ヘッドレスコマンド
 
 [ヘッドレスフロントコンポーネント](/l/ja/developers/extend/apps/layout/front-components#headless-vs-non-headless)とペアになったコマンドメニュー項目は、ワンクリックアクション（コードの実行、ナビゲーション、確認と実行）を提供するための一般的な方法です。 Front Components のページでは、アクション実行後にアンマウントするパターンを処理する [SDK Command components](/l/ja/developers/extend/apps/layout/front-components#sdk-command-components)（`Command`、`CommandLink`、`CommandModal`、`CommandOpenSidePanelPage`）について説明しています。
 
-一般的なフロー：
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+一般的なフロー：ヘッドレスコンポーネントが `<Command execute={...} />` をレンダーし（[完全なサンプル](/l/ja/developers/extend/apps/layout/front-components#sdk-command-components)を参照）、コマンドメニュー項目がそれを指すようにします：
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

@@ -32,6 +32,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_DATA_OVERVIEW: '/developers/extend/apps/data/overview',
   DEVELOPERS_EXTEND_APPS_DATA_RELATIONS:
     '/developers/extend/apps/data/relations',
+  DEVELOPERS_EXTEND_APPS_DATA_SYSTEM_FIELDS:
+    '/developers/extend/apps/data/system-fields',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
@@ -75,6 +77,22 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
+  DEVELOPERS_EXTEND_APPS_TRANSLATIONS_OVERVIEW:
+    '/developers/extend/apps/translations/overview',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_AI_AGENT:
+    '/developers/extend/apps/tutorials/document-generator/ai-agent',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_BUILDING_THE_UI:
+    '/developers/extend/apps/tutorials/document-generator/building-the-ui',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_DATA_MODEL:
+    '/developers/extend/apps/tutorials/document-generator/data-model',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_GENERATING_DOCUMENTS:
+    '/developers/extend/apps/tutorials/document-generator/generating-documents',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_HTTP_ROUTES:
+    '/developers/extend/apps/tutorials/document-generator/http-routes',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_OVERVIEW:
+    '/developers/extend/apps/tutorials/document-generator/overview',
+  DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_PUBLISHING:
+    '/developers/extend/apps/tutorials/document-generator/publishing',
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',

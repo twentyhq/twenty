@@ -1,0 +1,1 @@
+export const ONBOARDING_MOTION_SLIDE_OFFSET = 12;

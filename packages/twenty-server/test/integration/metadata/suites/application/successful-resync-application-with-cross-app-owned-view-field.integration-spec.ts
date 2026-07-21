@@ -29,6 +29,7 @@ const INITIAL_ANY_FIELD_FILTER_VALUE = 'arm';
 const UPDATED_ANY_FIELD_FILTER_VALUE = 'tail';
 
 const HUMAN_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'human',
   namePlural: 'humans',
   labelSingular: 'Human',

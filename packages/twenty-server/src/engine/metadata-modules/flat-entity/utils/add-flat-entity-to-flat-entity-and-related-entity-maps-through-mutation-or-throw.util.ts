@@ -128,8 +128,17 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${String(flatEntityForeignKeyAggregator)}`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${String(flatEntityForeignKeyAggregator)} (metadataName: ${metadataName}, universalIdentifier: ${flatEntity.universalIdentifier})`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+          {
+            context: {
+              id: flatEntity.id,
+              universalIdentifier: flatEntity.universalIdentifier,
+              metadataName,
+              relatedMetadataName,
+              operation: 'add',
+            },
+          },
         );
       }
 

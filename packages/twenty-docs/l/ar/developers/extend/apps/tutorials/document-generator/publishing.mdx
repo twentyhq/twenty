@@ -1,0 +1,137 @@
+---
+title: 6. النشر
+icon: rocket
+description: إضافة بيانات التعريف للسوق ونشر التطبيق الخاص بك.
+---
+
+تطبيقك يعمل. والخطوة الأخيرة هي وصف ذلك للسوق والنشر.
+
+## إضافة بيانات التعريف للسوق
+
+[config](/l/ar/developers/extend/apps/config/application) يحمل الهوية
+التي تظهر في السوق: روابط المؤلف والفئة والشعار والدعم
+. ضع شعارًا في `public/` وارجع إليه باستخدام `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/ar/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+يتم الإعلان عن الدور الافتراضي مع 'defineApplicationRole()' في ملفه الخاص - أنت
+لا تتجاوز 'defaultRoleUniversalIdentifier' هنا بعد الآن.
+</Tip>
+
+أضف أيضا الكلمة المفتاحية `٢٢app` إلى `package.json` حتى يكون التطبيق قابلا للاكتشاف:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## إضافة لقطات شاشة معرض الصور
+
+قائمة السوق تبيع نفسها مع لقطات شاشة. ضع بعض ملفات PNG في
+`public/gallery/` وارجع إليها باستخدام `galleryImages` — حيث يتم عرضها كمعرض
+على صفحة القائمة، بحسب ترتيبها في المصفوفة.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+الرصاص مع الدفع: اجعل أول لقطة للشاشة النتيجة النهائية (وثيقة
+تم إنشاؤها)، ثم اظهر كيف تم تشغيلها وكتابتها. استخدم التقاط
+عالي الدقة - إنها أول شيء يراه المستخدم.
+</Tip>
+
+إعطاء العلاج نفسه 'README.md' - إنها الصفحة الأولى على npm و GitHub.
+افتح مع اقتراح القيمة و لقطة شاشة، قائمة بميزات العنوان،
+ثم ابقي تفاصيل البناء تحت الطبع.
+
+## تحقق قبل الشحن
+
+تشغيل نفس البوابات CI :
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+تعرض الخطة بالضبط ما سيتغيّر على الخادم من دون تطبيقه —
+وهي فحص نهائي جيّد للسلامة. انظر
+[Testing](/l/ar/developers/extend/apps/operations/testing) و
+[المزامنة والاسترداد](/l/ar/developers/extend/apps/operations/sync-and-recovery).
+
+## النشر
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+'app:publish' يبني وينشر إلى npm بشكل افتراضي؛ '--private' يرفع قاعدة
+tarball إلى السجل الخاص لخادم 20 بدلا من ذلك. لتظهر تطبيق منشور
+في سوق مثيل ما، قم بتفعيل مزامنة الكتالوج:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+التفاصيل الكاملة وقائمة التحقق من الإصدار:
+[Publishing](/l/ar/developers/extend/apps/operations/publishing).
+
+## قمت ببناء تطبيق 🎉
+
+في ستة فصول استخدمت معظم سطح SDK:
+
+* **الكائنات، الحقول و العلاقة** لنموذج البيانات
+* **دالة منطقية** مكشوفة كأداة \*\*AI \*\*، و **سير العمل**، و **مسارات HTTP**
+* **مشاهدات, تصفح, أمر و مكون أمامي** لواجهة المستخدم
+* **وكيل + مهارة** لتوليد اللغة الطبيعية
+* \*\*البيانات الوصفية للسوق \*\* وتدفق النشر
+
+التطبيق النهائي هو في
+[`packages/XXapps/examples/document-Generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## من أين تذهب بعد
+
+<CardGroup cols={2}>
+  <Card title="مرجع البيانات" icon="database" href="/l/ar/developers/extend/apps/data/overview">
+    كل نوع من أنواع الحقول والعلاقة وخيارات الفهرس.
+  </Card>
+  <Card title="مرجع منطقي" icon="bolt" href="/l/ar/developers/extend/apps/logic/overview">
+    مشغلات أحداث Cron وقاعدة البيانات، ومتجر القيمة المفتاح، واتصالات OAuth.
+  </Card>
+  <Card title="مرجع التخطيط" icon="table-columns" href="/l/ar/developers/extend/apps/layout/overview">
+    مخططات الصفحة، ودويدات لوحة المعلومات، ومزيد من أسطح واجهة المستخدم.
+  </Card>
+  <Card title="العمليات" icon="rocket" href="/l/ar/developers/extend/apps/operations/overview">
+    () CLI، والاختبار، وعمليات الإزالة، وCI.
+  </Card>
+</CardGroup>

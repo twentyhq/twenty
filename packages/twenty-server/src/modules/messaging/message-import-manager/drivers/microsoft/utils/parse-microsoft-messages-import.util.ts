@@ -4,6 +4,9 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { isDefined } from 'twenty-shared/utils';
 
+const MICROSOFT_MAILBOX_NOT_ENABLED_FOR_REST_API_ERROR_CODE =
+  'MailboxNotEnabledForRESTAPI';
+
 export const parseMicrosoftMessagesImportError = (
   error: {
     statusCode: number;
@@ -30,26 +33,22 @@ export const parseMicrosoftMessagesImportError = (
 
   if (error.statusCode === 401) {
     return new MessageImportDriverException(
-      'Unauthorized access to Microsoft Graph API',
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      `Unauthorized access to Microsoft Graph API - code:${error.code} ${error.message}`,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause },
     );
   }
 
   if (error.statusCode === 403) {
     return new MessageImportDriverException(
-      'Forbidden access to Microsoft Graph API',
+      `Forbidden access to Microsoft Graph API - code:${error.code} ${error.message}`,
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       { cause: options?.cause },
     );
   }
 
   if (error.statusCode === 404) {
-    if (
-      error.message?.includes(
-        'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
-      )
-    ) {
+    if (error.code === MICROSOFT_MAILBOX_NOT_ENABLED_FOR_REST_API_ERROR_CODE) {
       return new MessageImportDriverException(
         `Disabled, deleted, inactive or no licence Microsoft account - code:${error.code}`,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,

@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
+
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useEffect } from 'react';
 
 export const AiChatThreadsListFocusEffect = ({
   focusId,
@@ -19,6 +20,9 @@ export const AiChatThreadsListFocusEffect = ({
         type: FocusComponentType.SIDE_PANEL,
         instanceId: focusId,
       },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
     });
 
     return () => {
@@ -26,5 +30,5 @@ export const AiChatThreadsListFocusEffect = ({
     };
   }, [pushFocusItemToFocusStack, removeFocusItemFromFocusStackById, focusId]);
 
-  return <></>;
+  return null;
 };

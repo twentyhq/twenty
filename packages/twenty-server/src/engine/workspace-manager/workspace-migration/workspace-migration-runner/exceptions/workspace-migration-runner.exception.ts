@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
+import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
@@ -65,6 +66,7 @@ type WorkspaceMigrationRunnerExceptionConstructorArgs =
       message: string;
       code: (typeof WorkspaceMigrationRunnerExceptionCodeOtherCode)[keyof typeof WorkspaceMigrationRunnerExceptionCodeOtherCode];
       userFriendlyMessage?: MessageDescriptor;
+      context?: FlatEntityMapsExceptionContext;
     }
   | {
       action: AllUniversalWorkspaceMigrationAction;
@@ -78,6 +80,7 @@ export class WorkspaceMigrationRunnerException extends CustomError {
   userFriendlyMessage: MessageDescriptor;
   action?: AllUniversalWorkspaceMigrationAction;
   errors?: WorkspaceMigrationRunnerExecutionErrors;
+  context?: FlatEntityMapsExceptionContext;
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {
     if (args.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED) {
@@ -97,6 +100,7 @@ export class WorkspaceMigrationRunnerException extends CustomError {
       super(args.message);
 
       this.code = args.code;
+      this.context = args.context;
     }
 
     this.userFriendlyMessage =

@@ -23,6 +23,24 @@ export class ValidatedStorageDriver implements StorageDriver {
     return this.delegate.writeFile(params);
   }
 
+  async writeFileStream(params: {
+    filePath: string;
+    stream: Readable;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.writeFileStream(params);
+  }
+
+  async getFileMetadata(params: {
+    filePath: string;
+  }): Promise<{ size: number } | null> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.getFileMetadata(params);
+  }
+
   async downloadFolder(params: {
     onStoragePath: string;
     localPath: string;
@@ -104,10 +122,22 @@ export class ValidatedStorageDriver implements StorageDriver {
     expiresInSeconds?: number;
     responseContentType?: string;
     responseContentDisposition?: string;
+    responseCacheControl?: string;
   }): Promise<string | null> {
     assertStoragePathIsSafe(params.filePath);
 
     return this.delegate.getPresignedUrl(params);
+  }
+
+  async getPresignedUploadUrl(params: {
+    filePath: string;
+    contentType: string;
+    contentLength: number;
+    expiresInSeconds?: number;
+  }): Promise<string | null> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.getPresignedUploadUrl(params);
   }
 
   async checkFileExists(params: { filePath: string }): Promise<boolean> {

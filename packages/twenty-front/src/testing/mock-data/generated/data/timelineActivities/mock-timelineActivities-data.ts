@@ -36,6 +36,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "goo.gle",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a305-41e7-8c72-ba44072a4c58",
       "name": "Google"
     },
@@ -76,6 +82,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -114,6 +121,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "microsoft.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a225-4b3d-a89c-7f6c30df998a",
       "name": "Microsoft"
     },
@@ -154,6 +167,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -192,6 +206,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "metacareers.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a8b0-422c-8fcf-5b7496f94975",
       "name": "Meta"
     },
@@ -232,6 +252,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -270,6 +291,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "slb.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-aaf7-41d6-87a9-7add07bebfd8",
       "name": "SLB"
     },
@@ -310,6 +337,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -348,6 +376,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "cisco.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a19d-422b-9cb2-5f8382a56877",
       "name": "Cisco"
     },
@@ -388,6 +422,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -426,6 +461,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "uber.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a39c-4644-867d-e8e1851b3ee8",
       "name": "Uber"
     },
@@ -466,6 +507,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -504,6 +546,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "salesforce.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a0eb-4c51-aa03-c4cd2423d7cb",
       "name": "Salesforce"
     },
@@ -544,6 +592,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -582,6 +631,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "amdocs.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a9b5-48ec-97c0-dbbfcbe8df1b",
       "name": "Amdocs"
     },
@@ -622,6 +677,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -660,6 +716,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "vmware.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a89d-44f9-ac9c-25e462460cb0",
       "name": "VMware"
     },
@@ -700,6 +762,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -738,6 +801,12 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "targetCompany": {
       "__typename": "Company",
+      "domainName": {
+        "__typename": "Links",
+        "primaryLinkUrl": "globallogic.com",
+        "primaryLinkLabel": "",
+        "secondaryLinks": []
+      },
       "id": "20202020-a377-4693-a2d9-89dc9188a1dc",
       "name": "GlobalLogic"
     },
@@ -778,6 +847,7 @@ export const mockedTimelineActivityRecords: ObjectRecord[] =
     },
     "workspaceMember": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",

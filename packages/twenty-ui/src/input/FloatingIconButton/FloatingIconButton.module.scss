@@ -9,7 +9,7 @@
   backdrop-filter: none;
   background: var(--t-background-primary);
   border: 1px solid var(--t-border-color-strong);
-  border-radius: var(--floating-icon-button-radius, var(--t-border-radius-sm));
+  border-radius: var(--floating-icon-button-radius, var(--t-border-radius-md));
   box-shadow: none;
   box-sizing: border-box;
   color: var(--t-font-color-tertiary);
@@ -47,9 +47,13 @@
   width: 28px;
 }
 
+// Grouped edges stay concentric with the FloatingIconButtonGroup container:
+// its sm radius minus the 2px padding. The group container uses sm (not md)
+// because at these sizes (24-32px) md would exceed 50% of the box, clamp to a
+// full squircle, and break concentricity — see the group stylesheet.
 .button[data-position='left'] {
-  --floating-icon-button-radius: var(--t-border-radius-sm) 0px 0px
-    var(--t-border-radius-sm);
+  --floating-icon-button-radius: calc(var(--t-border-radius-sm) - 2px) 0px 0px
+    calc(var(--t-border-radius-sm) - 2px);
 }
 
 .button[data-position='middle'] {
@@ -57,8 +61,8 @@
 }
 
 .button[data-position='right'] {
-  --floating-icon-button-radius: 0px var(--t-border-radius-sm)
-    var(--t-border-radius-sm) 0px;
+  --floating-icon-button-radius: 0px calc(var(--t-border-radius-sm) - 2px)
+    calc(var(--t-border-radius-sm) - 2px) 0px;
 }
 
 .button[data-apply-blur] {

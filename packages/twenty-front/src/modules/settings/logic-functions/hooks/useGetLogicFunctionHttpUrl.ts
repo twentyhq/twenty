@@ -2,7 +2,10 @@ import { useCallback } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { getLogicFunctionHttpUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import {
+  getFunctionsBaseUrl,
+  getLogicFunctionHttpUrl,
+} from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -23,9 +26,14 @@ export const useGetLogicFunctionHttpUrl = () => {
     [publicFunctionDomain, workspaceSubdomain],
   );
 
-  return {
-    getLogicFunctionHttpUrl: getHttpUrl,
+  const functionsBaseUrl = getFunctionsBaseUrl({
+    serverBaseUrl: REACT_APP_SERVER_BASE_URL,
     publicFunctionDomain,
     workspaceSubdomain,
+  });
+
+  return {
+    getLogicFunctionHttpUrl: getHttpUrl,
+    functionsBaseUrl,
   };
 };

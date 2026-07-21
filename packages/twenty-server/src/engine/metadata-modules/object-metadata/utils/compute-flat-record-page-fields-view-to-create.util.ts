@@ -31,6 +31,7 @@ export const computeFlatRecordPageFieldsViewToCreate = ({
     isCustom: true,
     anyFieldFilterValue: null,
     calendarFieldMetadataUniversalIdentifier: null,
+    calendarEndFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,
     isCompact: false,
     shouldHideEmptyGroups: false,

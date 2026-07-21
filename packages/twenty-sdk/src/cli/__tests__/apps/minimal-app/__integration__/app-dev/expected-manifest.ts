@@ -1,10 +1,6 @@
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
@@ -12,97 +8,18 @@ export const EXPECTED_MANIFEST: Manifest = {
     universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000001',
     displayName: 'Root App',
     description: 'An app with all entities at root level',
+    galleryImages: [],
     defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
     packageJsonChecksum: '[checksum]',
     yarnLockChecksum: '[checksum]',
+    requiredServerVersionRange: null,
   },
   permissionFlags: [],
   skills: [],
   agents: [],
   publicAssets: [],
   indexes: [],
-  fields: [
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
-      icon: 'IconTimelineEvent',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
-      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
-      relationTargetFieldMetadataUniversalIdentifier:
-        '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
-    },
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
-      icon: 'IconFileImport',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
-      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
-      relationTargetFieldMetadataUniversalIdentifier:
-        '56a872c8-7a1e-563d-8772-3978c2c5c220',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
-    },
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
-      icon: 'IconCheckbox',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
-      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
-      relationTargetFieldMetadataUniversalIdentifier:
-        '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
-    },
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
-      icon: 'IconCheckbox',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
-      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
-    },
-  ],
+  fields: [],
   objects: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000030',
@@ -122,16 +39,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           name: 'title',
         },
         {
-          defaultValue: 'uuid',
-          description: 'Id',
-          icon: 'Icon123',
-          isNullable: false,
-          label: 'Id',
-          name: 'id',
-          type: FieldMetadataType.UUID,
-          universalIdentifier: '5bdb4f57-a349-56d0-b421-845fd55b3026',
-        },
-        {
           defaultValue: null,
           description: 'Name',
           icon: 'IconAbc',
@@ -139,147 +46,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Name',
           name: 'name',
           type: FieldMetadataType.TEXT,
-          universalIdentifier: '86cc7b06-26de-5b7b-bf4a-31fa246dfd90',
-        },
-        {
-          defaultValue: 'now',
-          description: 'Creation date',
-          icon: 'IconCalendar',
-          isNullable: false,
-          label: 'Creation date',
-          name: 'createdAt',
-          type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: 'abe3bc69-1a51-5814-a722-74f5a025e92a',
-        },
-        {
-          defaultValue: 'now',
-          description: 'Last time the record was changed',
-          icon: 'IconCalendarClock',
-          isNullable: false,
-          label: 'Last update',
-          name: 'updatedAt',
-          type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: 'c296d408-9720-5a86-8586-3490fbf04b86',
-        },
-        {
-          defaultValue: null,
-          description: 'Deletion date',
-          icon: 'IconCalendarClock',
-          isNullable: true,
-          label: 'Deleted at',
-          name: 'deletedAt',
-          type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: '488333a2-f4ff-5790-88ef-21f07f8f1985',
-        },
-        {
-          defaultValue: {
-            name: "''",
-            source: "'MANUAL'",
-          },
-          description: 'The creator of the record',
-          icon: 'IconCreativeCommonsSa',
-          isNullable: false,
-          label: 'Created by',
-          name: 'createdBy',
-          type: FieldMetadataType.ACTOR,
-          universalIdentifier: 'fba6e01b-6579-554e-ad64-a676003c8e68',
-        },
-        {
-          defaultValue: {
-            name: "''",
-            source: "'MANUAL'",
-          },
-          description: 'The workspace member who last updated the record',
-          icon: 'IconUserCircle',
-          isNullable: false,
-          label: 'Updated by',
-          name: 'updatedBy',
-          type: FieldMetadataType.ACTOR,
-          universalIdentifier: 'fa60f87d-15c8-5ff7-9da0-191fa14a922f',
-        },
-        {
-          defaultValue: 0,
-          description: 'Position',
-          icon: 'IconHierarchy2',
-          isNullable: false,
-          label: 'Position',
-          name: 'position',
-          type: FieldMetadataType.POSITION,
-          universalIdentifier: '4a5d7791-ddc9-53ee-bc46-699da7373290',
-        },
-        {
-          defaultValue: null,
-          description: 'Search vector',
-          icon: 'IconSearch',
-          isNullable: true,
-          label: 'Search vector',
-          name: 'searchVector',
-          type: FieldMetadataType.TS_VECTOR,
-          universalIdentifier: '0f00bc3b-f313-5206-8496-842af20a538a',
-        },
-        {
-          name: 'timelineActivities',
-          label: 'Timeline Activities',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-6736-4337-b5c4-8b39fae325a5',
-        },
-        {
-          name: 'attachments',
-          label: 'Attachments',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: '56a872c8-7a1e-563d-8772-3978c2c5c220',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-bd3d-4c60-8dca-571c71d4447a',
-        },
-        {
-          name: 'noteTargets',
-          label: 'Note Targets',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-fff0-4b44-be82-bda313884400',
-        },
-        {
-          name: 'taskTargets',
-          label: 'Task Targets',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: 'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-5a9a-44e8-95df-771cd06d0fb1',
+          universalIdentifier: '9a7f457a-6c15-581e-8f28-e2c680f75f97',
         },
       ],
     },

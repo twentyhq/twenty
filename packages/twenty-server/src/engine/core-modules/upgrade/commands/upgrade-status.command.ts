@@ -132,7 +132,7 @@ export class UpgradeStatusCommand extends CommandRunner {
     const lines: string[] = [chalk.bold.underline('Workspace')];
 
     if (upToDate.length === 0 && behind.length === 0 && failed.length === 0) {
-      lines.push(chalk.dim('  No active/suspended workspaces found'));
+      lines.push(chalk.dim('  No provisioned workspaces found'));
 
       return lines;
     }

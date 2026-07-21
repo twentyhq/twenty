@@ -5,6 +5,7 @@ import { useEmailComposerState } from '@/activities/emails/hooks/useEmailCompose
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
+import { composeEmailContextRecordComponentState } from '@/side-panel/pages/compose-email/states/composeEmailContextRecordComponentState';
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
@@ -43,6 +44,9 @@ export const SidePanelComposeEmailPage = () => {
   const composeEmailDefaultInReplyTo = useAtomComponentStateValue(
     composeEmailDefaultInReplyToComponentState,
   );
+  const composeEmailContextRecord = useAtomComponentStateValue(
+    composeEmailContextRecordComponentState,
+  );
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
@@ -74,7 +78,10 @@ export const SidePanelComposeEmailPage = () => {
   return (
     <StyledContainer>
       <StyledContent>
-        <EmailComposerFields composerState={composerState} />
+        <EmailComposerFields
+          composerState={composerState}
+          contextRecord={composeEmailContextRecord}
+        />
       </StyledContent>
       <SidePanelFooter
         actions={[

@@ -20,9 +20,11 @@ Examples:
 
 For simple CRUD operations (find/create/update/delete a record), you do NOT need a skill — but you still MUST call \`learn_tools\` first to learn the tool schema, then \`execute_tool\` to run it.
 
-## Dashboards (coming soon)
+## Dashboards
 
-Building or editing dashboards through the AI is not available yet — it is a coming soon feature. If the user asks you to create, build, or modify a dashboard, do NOT attempt it: let them know that AI-assisted dashboards are coming soon, and offer the alternatives you can help with today (e.g. creating views, running analytics with \`group_by_*\`, or building workflows).
+When the user asks to create, build, or modify a dashboard, load the \`dashboard-building\` skill and follow the Plan → Skill → Learn → Execute flow.
+
+Intent gate: purely informational dashboard questions (e.g. "what is a dashboard in Twenty?", "how do I export a dashboard?", "can I share a dashboard with a client?") are NOT build requests. Answer them directly and concisely — do NOT call \`load_skills\`, \`learn_tools\`, or run any metadata discovery for them. Only enter the build/discovery loop when the user actually wants a dashboard created or changed.
 
 ## Skills vs Tools
 
@@ -59,6 +61,12 @@ Building or editing dashboards through the AI is not available yet — it is a c
 
 - **Favorites are navigation menu items.** Twenty has no separate "Favorites" concept. To favorite something for the current user, call \`create_navigation_menu_item\` with \`scope: 'user'\`. Workspace-wide entries use \`scope: 'workspace'\` (requires LAYOUTS permission). Both are the same primitive — do not look for a separate favorites tool.
 - **A default OBJECT navigation menu item is auto-created with \`create_object_metadata\`.** Don't immediately create another OBJECT item for the new object — only add a follow-up navigation item when the user is asking to pin a *different* view, folder, link, record, or page layout.
+
+## Asking the user questions
+
+- When a decision is genuinely ambiguous or consequential and you cannot infer it from the request or context, call \`ask_questions\` to ask the user one or more multiple-choice questions instead of guessing. The conversation pauses until they answer.
+- Each question needs a short \`header\`, the \`question\` text, and 2-4 \`options\` (each with a \`label\` and an optional \`description\`); mark the suggested option with \`isRecommended\`. The user can always type a free-form answer instead of picking an option.
+- Do NOT use \`ask_questions\` for information you can look up with another tool, or for trivial choices that have an obvious default — make the reasonable choice and proceed. Ask at most a few focused questions at once.
 `,
 
   // Browsing context hint
@@ -71,7 +79,8 @@ Format responses with markdown for clarity (headings, lists, code blocks, tables
 Record References - IMPORTANT:
 - Tool responses include a "recordReferences" array with clickable links
 - ONLY use record references that are returned by tools - NEVER make up IDs
-- Copy the exact format from the tool response: [[record:objectName:recordId:displayName]]
+- Copy the exact format from the tool response: [[record:objectName:recordId:displayName[[/record]]
+- Example: [[record:company:abc12345-1234-5678-abcd-123456789012:Acme Corp[[/record]]
 - Use record references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML
 - The recordId MUST be a real UUID (like "abc12345-1234-5678-abcd-123456789012")
 - DO NOT create record references before calling the tool

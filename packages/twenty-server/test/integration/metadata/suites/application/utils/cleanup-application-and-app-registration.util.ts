@@ -15,6 +15,13 @@ export const cleanupApplicationAndAppRegistration = async ({
   }
 
   await globalThis.testDataSource.query(
+    `UPDATE core."application"
+     SET "packageJsonFileId" = NULL, "yarnLockFileId" = NULL
+     WHERE "universalIdentifier" = $1`,
+    [applicationUniversalIdentifier],
+  );
+
+  await globalThis.testDataSource.query(
     `DELETE FROM core."file" WHERE "applicationId" IN (
       SELECT id FROM core."application" WHERE "universalIdentifier" = $1
     )`,

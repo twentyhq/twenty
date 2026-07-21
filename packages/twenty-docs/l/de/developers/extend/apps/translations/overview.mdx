@@ -1,0 +1,119 @@
+---
+title: Übersetzungen
+description: Veröffentlichen Sie Ihre App in mehreren Sprachen – übersetzen Sie Manifest-Labels und UI-Zeichenketten über einen einzigen Locale-Katalog.
+icon: language
+---
+
+Twenty-Apps werden auf **Englisch** erstellt: Die Zeichenketten in Ihrem Quellcode und im Manifest
+sind der englische Ausgangstext, `en` ist das Quell‑Locale, aus dem Sie übersetzen, und
+jedes Locale, das unübersetzt bleibt, fällt darauf zurück.
+
+Ihre App enthält zwei Arten von übersetzbarem Text, und beide laufen durch denselben
+`locales/`-Katalog:
+
+* **Manifest-Labels** – Objekt- und Feldnamen, Sichtetitel, Menüpunkte und
+  andere Zeichenketten, die in den Metadaten Ihrer App deklariert sind.
+* **Front-Komponenten-Zeichenketten** – der UI-Text, den Ihre React-Front-Komponenten rendern.
+
+Sie markieren die übersetzbaren Zeichenketten, extrahieren sie in sprachspezifische Kataloge,
+übersetzen diese Kataloge, und der Build stellt die richtige Sprache für den
+aktuellen Benutzer bereit – ohne zusätzlichen Aufwand.
+
+## Markieren von Front-Komponenten-Zeichenketten
+
+Importieren Sie die Übersetzungshelfer aus `twenty-sdk/front-component`:
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### Wann Sie welches verwenden sollten
+
+* **`<Trans>…</Trans>`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
+  zur Interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
+  eine direkte Interpolation in den Children ist nicht statisch extrahierbar.
+* **`useTranslate().t`** – dynamische Zeichenketten innerhalb einer Komponente. Wird neu gerendert, wenn der
+  Benutzer die Sprache wechselt. Bevorzugen Sie dies innerhalb von Render-Funktionen.
+* **`t(...)`** (direkt importiert) – sofortige Übersetzung, die **überall** verwendet werden kann,
+  einschließlich Event-Handlern, Helfern und im Modul-Scope – nicht nur innerhalb von Render-Funktionen.
+* **`msg(...)`** – ein Lazy-Descriptor für Zeichenketten, die als Daten (Konstanten,
+  Konfiguration) deklariert werden. Lösen Sie ihn später mit `t(descriptor)` auf.
+
+### Kontext
+
+Übergeben Sie `context`, um identische Quellzeichenketten zu unterscheiden,
+die sich unterschiedlich übersetzen lassen:
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+## Extrahieren und Übersetzen
+
+Führen Sie den Extract-Befehl aus Ihrem App-Verzeichnis aus:
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`\<Trans>`-Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées"
+}
+```
+
+Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
+Übersetzung bei. Jede Zeichenkette, die leer bleibt, fällt auf den Quelltext zurück.
+
+## Wie es ausgeführt wird
+
+`twenty dev:build` kompiliert die Kataloge und stellt die richtige Sprache für den aktuellen Benutzer bereit: Manifest-Labels werden serverseitig aufgelöst und Front-Komponenten-Kataloge werden in jedes Komponenten-Bundle eingebunden. Zur Laufzeit liest eine Komponente die
+Locale aus ihrem Ausführungskontext (der aktuellen Sprache des Hosts) und löst
+jede Zeichenkette gegen ihren Katalog auf, wobei auf die Quelle zurückgegriffen
+wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `\<Trans>`- und
+`useTranslate().t`-Zeichenketten live neu.
+
+Da Kataloge zur Build-Zeit kompiliert werden, bedeutet das Aktualisieren einer Übersetzung,
+`twenty dev:build` erneut auszuführen (und erneut bereitzustellen), genau wie bei jeder anderen Änderung.
+
+<Note>
+Übersetzungen werden durch `twenty dev:build` (und `twenty apply`) kompiliert. Der
+kontinuierliche `twenty dev`-Watch zeigt Quellzeichenketten an, daher sollten Sie die lokalisierte Ausgabe
+mit einem einmaligen Build testen.
+</Note>
+
+`<Trans>`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass sowohl `<Trans>Welcome\n  back</Trans>` als auch der extrahierte Schlüssel zu `Welcome back` werden.

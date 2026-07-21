@@ -132,12 +132,12 @@ export class KeyValuePairService<
       key,
     };
 
-    if (queryRunner) {
-      await queryRunner.manager
-        .getRepository(KeyValuePairEntity)
-        .delete(deleteConditions);
-    } else {
-      await this.keyValuePairRepository.delete(deleteConditions);
-    }
+    const { affected } = queryRunner
+      ? await queryRunner.manager
+          .getRepository(KeyValuePairEntity)
+          .delete(deleteConditions)
+      : await this.keyValuePairRepository.delete(deleteConditions);
+
+    return affected;
   }
 }

@@ -1,0 +1,147 @@
+---
+title: システムフィールドのターゲット指定
+description: ビューやその他のエンティティから `createdAt` や `updatedAt` のような自動作成されるシステムフィールドを、`getFieldUniversalIdentifier` を使って参照します。
+icon: gears
+---
+
+Twenty のすべてのオブジェクトには、あなたが自分で宣言する必要のない **システムフィールド** のセットがあらかじめ用意されています。 これらは、オブジェクトがプロビジョニングされるときにサーバーによって自動的に作成されます。
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+[`defineField()`](/l/ja/developers/extend/apps/data/extending-objects) でこれらのフィールドを宣言しないため、インポートできる `universalIdentifier` 定数は存在しません。 では、[view](/l/ja/developers/extend/apps/layout/views) で `createdAt` をカラムとしてどのように参照すればよいのでしょうか。
+
+## 問題
+
+Twenty 2.19 以降、システムフィールドのユニバーサル識別子は、アプリケーションのユニバーサル識別子、オブジェクトのユニバーサル識別子、およびフィールド名という 3 つの入力からサーバーによって **決定的に導出** されます。 id を独自に作成してハードコードしても機能しません。サーバー上のどの値とも一致せず、同期時にそのぶら下がった参照は拒否されます。
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+## 解決策
+
+<Note>
+  `getFieldUniversalIdentifier` は `twenty-sdk` 2.21 以降で利用可能です。
+</Note>
+
+`getFieldUniversalIdentifier` を使用して、サーバーが使用するものとまったく同じ値を解決します。 この関数は 3 つの入力を受け取り、フィールドのユニバーサル識別子を返します。
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` はあなたのアプリの識別子であり、[`defineApplication()`](/l/ja/developers/extend/apps/config/application) に渡すものです。
+* `objectUniversalIdentifier` は、そのフィールドが属するオブジェクトの識別子です。
+* `name` はシステムフィールド名であり、上に挙げた値のいずれかです。
+
+## 例: ビュー内の createdAt カラム
+
+典型的なケースは、カスタムオブジェクトの 1 つのビューに `createdAt` カラムを追加することです。 フィールド id を解決し、他の `fieldMetadataUniversalIdentifier` と同様にそれを参照します。
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+同じように解決された id は、`fieldMetadataUniversalIdentifier` が必要とされるあらゆる場所、すなわちビューのフィールド、フィルター、ソート、グループ、ページレイアウトウィジェットでそのまま使用できます。
+
+<Note>
+  id は解決して、ハードコードしないでください。 サーバーはその値をアプリケーション id、オブジェクト id、フィールド名から導出するため、`getFieldUniversalIdentifier` を呼び出すことで、それらの入力が変更された場合でも参照を正しい状態に保ち、導出方法が将来変わった場合のずれも防ぐことができます。
+</Note>
+
+## システムリレーションフィールド
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` は `twenty-sdk`
+  2.23 以降で利用可能であり、バージョン 2.23 以降の Twenty サーバーが必要です。
+</Note>
+
+上記のスカラー型システムフィールドに加えて、サーバーはすべてのオブジェクトに対して 4 つの**システムリレーションフィールド**を提供します。`timelineActivities`、`attachments`、`noteTargets`、`taskTargets` であり、それぞれが対応する標準リレーションオブジェクトを参照します。
+
+これらのフィールドは `getFieldUniversalIdentifier` では解決されません。フィールドを保持しているオブジェクトと、そのフィールドが参照するオブジェクトから、**名前に依存せず**識別子が導出されます。 この方法により、オブジェクトの名称を変更しても、そのリレーションフィールドの識別子は決して変わりません。
+
+それらを解決するには、`getSystemRelationFieldUniversalIdentifier` を使用します。
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` は、そのフィールドを **保持している** オブジェクトです。
+* `relationTargetObjectUniversalIdentifier` は、そのフィールドが **参照している** オブジェクトです。
+
+方向は引数の順序によってエンコードされます。 逆方向（例: `attachment.targetRocket`。これは、標準リレーションオブジェクト上でサーバーが作成する morph フィールド）を解決するには、2 つを入れ替えます。
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+スカラーのシステムフィールドと同様に、解決された ID は `fieldMetadataUniversalIdentifier` が想定されるあらゆる場所で使用できます。
+
+## 標準の Twenty オブジェクト
+
+**標準** の Twenty オブジェクト（Person、Company、Opportunity など）の場合、何も導出する必要はありません。システムフィールドの識別子はあらかじめ計算された定数として用意されており、直接インポートできます。
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+```
+
+[`defineObject()`](/l/ja/developers/extend/apps/data/objects) で **あなたのアプリ** が定義するオブジェクトのように、そのような定数が存在しない場合にこそ、`getFieldUniversalIdentifier` を使用してください。
+
+<Note>
+  `name` はシステムフィールドではなく、**デフォルト** フィールドです。 このフィールドは独自のハードコードされたユニバーサル識別子を持ち、`getFieldUniversalIdentifier` で解決されることはありません。 あなたが定義したオブジェクトでは、`name` フィールドは `defineObject()` で与えた識別子で参照してください。
+</Note>

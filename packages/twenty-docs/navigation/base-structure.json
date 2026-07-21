@@ -383,6 +383,19 @@
               ]
             },
             {
+              "key": "appsTutorial",
+              "label": "Tutorial",
+              "pages": [
+                "developers/extend/apps/tutorials/document-generator/overview",
+                "developers/extend/apps/tutorials/document-generator/data-model",
+                "developers/extend/apps/tutorials/document-generator/generating-documents",
+                "developers/extend/apps/tutorials/document-generator/http-routes",
+                "developers/extend/apps/tutorials/document-generator/building-the-ui",
+                "developers/extend/apps/tutorials/document-generator/ai-agent",
+                "developers/extend/apps/tutorials/document-generator/publishing"
+              ]
+            },
+            {
               "key": "appsConfig",
               "label": "Config",
               "pages": [
@@ -400,6 +413,7 @@
                 "developers/extend/apps/data/overview",
                 "developers/extend/apps/data/objects",
                 "developers/extend/apps/data/extending-objects",
+                "developers/extend/apps/data/system-fields",
                 "developers/extend/apps/data/relations"
               ]
             },
@@ -435,6 +449,13 @@
                 "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
                 "developers/extend/apps/operations/publishing"
+              ]
+            },
+            {
+              "key": "appsTranslations",
+              "label": "Translations",
+              "pages": [
+                "developers/extend/apps/translations/overview"
               ]
             }
           ]

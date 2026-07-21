@@ -1,7 +1,7 @@
 import { Tag } from '@ui/data-display';
 import { type IconComponent } from '@ui/icon';
-import { Checkbox, CheckboxShape, CheckboxSize } from '@ui/input';
 import { type ThemeColor } from '@ui/theme';
+import { MenuItemMultiSelectCheckbox } from '@ui/navigation/MenuItem/parts/MenuItemMultiSelectCheckbox';
 import {
   StyledMenuItemBase,
   StyledMenuItemLeftContent,
@@ -33,10 +33,10 @@ export const MenuItemMultiSelectTag = ({
       className={className}
     >
       <StyledMenuItemLeftContent>
-        <Checkbox
-          size={CheckboxSize.Small}
-          shape={CheckboxShape.Squared}
-          checked={selected}
+        <MenuItemMultiSelectCheckbox
+          selected={selected}
+          onSelectChange={() => onClick?.()}
+          ariaLabel={text}
         />
         <Tag color={color} text={text} Icon={Icon} />
       </StyledMenuItemLeftContent>

@@ -6,10 +6,14 @@ export type CallRecordingRecord = {
   title?: string;
   status?: string;
   recordingRequestStatus?: CallRecordingRequestStatus;
+  createdAt?: string;
+  updatedAt?: string;
   startedAt?: string;
   endedAt?: string;
   calendarEventId?: string;
   externalBotId?: string;
+  botScheduleAttemptedAt?: string;
+  botScheduleIdempotencyKey?: string;
   externalRecordingId?: string;
   callRecorderFailureReason?: string;
 };

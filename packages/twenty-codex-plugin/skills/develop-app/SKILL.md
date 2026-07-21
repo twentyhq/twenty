@@ -86,10 +86,10 @@ Once all edits for the change are complete, run lint and typecheck once at the e
 ```bash
 yarn twenty dev:typecheck
 yarn lint
-yarn twenty dev --once
+yarn twenty apply
 ```
 
-`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty dev --once` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
+`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty apply` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 

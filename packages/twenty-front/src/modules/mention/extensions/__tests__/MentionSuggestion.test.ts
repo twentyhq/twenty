@@ -82,7 +82,7 @@ describe('MentionSuggestion', () => {
 
     const text = editor.getText();
 
-    expect(text).toContain('[[record:company:test-id:Acme]]');
+    expect(text).toContain('[[record:company:test-id:Acme[[/record]]');
   });
 
   it('should accept @ character in editor content', () => {

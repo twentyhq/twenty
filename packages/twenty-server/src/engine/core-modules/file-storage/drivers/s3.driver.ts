@@ -20,6 +20,7 @@ import {
   S3,
   type S3ClientConfig,
 } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -110,6 +111,47 @@ export class S3Driver implements StorageDriver {
     });
 
     await this.s3Client.send(command);
+  }
+
+  async writeFileStream(params: {
+    filePath: string;
+    stream: Readable;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    // Upload streams the body with bounded memory (multipart under the hood),
+    // unlike PutObjectCommand which requires the whole payload upfront.
+    const upload = new Upload({
+      client: this.s3Client,
+      params: {
+        Bucket: this.bucketName,
+        Key: params.filePath,
+        Body: params.stream,
+        ContentType: params.mimeType,
+      },
+    });
+
+    await upload.done();
+  }
+
+  async getFileMetadata(params: {
+    filePath: string;
+  }): Promise<{ size: number } | null> {
+    try {
+      const head = await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: params.filePath,
+        }),
+      );
+
+      return { size: head.ContentLength ?? 0 };
+    } catch (error) {
+      if (error instanceof NotFound) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   private async createFolder(path: string) {
@@ -385,6 +427,7 @@ export class S3Driver implements StorageDriver {
     expiresInSeconds?: number;
     responseContentType?: string;
     responseContentDisposition?: string;
+    responseCacheControl?: string;
   }): Promise<string | null> {
     if (!this.presignClient) {
       return null;
@@ -395,10 +438,36 @@ export class S3Driver implements StorageDriver {
       Key: params.filePath,
       ResponseContentType: params.responseContentType,
       ResponseContentDisposition: params.responseContentDisposition,
+      ResponseCacheControl: params.responseCacheControl,
     });
 
     return getSignedUrl(this.presignClient, command, {
       expiresIn: params.expiresInSeconds ?? 900,
+    });
+  }
+
+  async getPresignedUploadUrl(params: {
+    filePath: string;
+    contentType: string;
+    contentLength: number;
+    expiresInSeconds?: number;
+  }): Promise<string | null> {
+    if (!this.presignClient) {
+      return null;
+    }
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: params.filePath,
+      ContentType: params.contentType,
+      ContentLength: params.contentLength,
+    });
+
+    // Content-Type and Content-Length are part of the signature so the client
+    // cannot upload a payload of a different type or size than declared.
+    return getSignedUrl(this.presignClient, command, {
+      expiresIn: params.expiresInSeconds ?? 900,
+      signableHeaders: new Set(['content-type', 'content-length']),
     });
   }
 

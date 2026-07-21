@@ -33,17 +33,32 @@ export default defineView({
 ## Hauptpunkte
 
 * `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird. Es kann sich um ein von Ihnen definiertes benutzerdefiniertes Objekt oder ein Standardobjekt von Twenty handeln.
-* `key` bestimmt den Ansichtstyp – `ViewKey.INDEX` ist die Hauptlistenansicht für das Objekt.
-* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
-* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` deklarieren.
+* `key: ViewKey.INDEX` markiert die Ansicht als die Hauptlistenansicht des Objekts (diejenige, die von einem `OBJECT`-Navigationselement geöffnet wird).
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`. Informationen zum Verweisen auf ein automatisch erstelltes Systemfeld wie `createdAt` finden Sie unter [Systemfelder ansteuern](/l/de/developers/extend/apps/data/system-fields).
+* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `sorts`, `groups` und `fieldGroups` deklarieren.
 * `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
+
+## Optionale Eigenschaften
+
+| Eigenschaft                                                                                                 | Werte                                                                              | Beschreibung                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (Standard), `ViewType.KANBAN`, `ViewType.CALENDAR`                | Wie Datensätze angeordnet werden. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` und `CALENDAR_WIDGET` existieren ebenfalls, werden aber intern von Page-Layout-Widgets verwendet.) |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (Standard), `ViewVisibility.UNLISTED`                   | Ob die Ansicht für den gesamten Workspace aufgelistet oder in Auswahlelementen verborgen ist.                                                                                          |
+| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (Standard), `ViewOpenRecordIn.RECORD_PAGE`           | Wo ein Klick auf einen Datensatz diesen öffnet.                                                                                                                                        |
+| `sortierungen`                                                                                              | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Standard-Sortierreihenfolge.                                                                                                                                                           |
+| `isCompact`                                                                                                 | `boolean`                                                                          | Kompakte Zeilenanzeige.                                                                                                                                                                |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Datensätze (z. B. Kanban-Spalten) nach einem Feld gruppieren.                                                                                                                          |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Aggregationen und Größen von Kanban-Spalten.                                                                                                                                           |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Kalenderansichten: Layout, das Datumsfeld, das die Position der Datensätze bestimmt, und ein optionales Enddatumsfeld.                                                                 |
+
+Alle oben genannten Enums werden aus `twenty-sdk/define` exportiert.
 
 ## Filter
 
 Eine Ansicht kann mit vorab angewendeten Filtern ausgeliefert werden. Jeder Filter hat drei Koordinaten: das **Feld**, das gefiltert wird, der **Operand** (wie verglichen wird) und der **Wert** (womit verglichen wird). Alle drei müssen übereinstimmen — die Verwendung eines Operanden, der nicht auf einen Feldtyp anwendbar ist, wird bei der Synchronisierung zurückgewiesen.
 
 ```ts
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-sdk/define';
 
 filters: [
   {

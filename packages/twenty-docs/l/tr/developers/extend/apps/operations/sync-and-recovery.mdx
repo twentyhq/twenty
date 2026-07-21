@@ -15,13 +15,17 @@ Günlük yerel yinelemelerde neredeyse her zaman `yarn twenty dev` kullanmak ist
 | Şunu yapmak istiyorsunuz…                                  | Komut                               | Notlar                                                                                                                                      |
 | ---------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | Canlı senkronizasyonla yerelde yineleyin                   | `yarn twenty dev`                   | Dosyalarınızı izler ve her değişiklikte senkronize eder.                                                                                    |
-| Bir kez senkronize et ve çık (CI, betikler, kancalar)      | `yarn twenty dev --once`            | Tek bir derleme + senkronizasyon yapar ve ardından çıkar.                                                                                   |
-| Değişiklikleri **uygulamadan** önizleyin                   | `yarn twenty dev --once --dry-run`  | Farkı hesaplar ve yazdırır; hiçbir şey yazmaz.                                                                                              |
+| Bir kez senkronize et ve çık (CI, betikler, kancalar)      | `yarn twenty apply`                 | Tek bir derleme + senkronizasyon yapar ve ardından çıkar. Yıkıcı değişiklik onayını atlamak için `--force` ekleyin.                         |
+| Değişiklikleri **uygulamadan** önizleyin                   | `yarn twenty plan`                  | Farkı hesaplar ve yazdırır; hiçbir şey yazmaz.                                                                                              |
 | Uygulamayı çalışma alanından kaldırın                      | `yarn twenty app:uninstall`         | İstemi atlamak için `--yes` ekleyin.                                                                                                        |
 | Bir tarball'ı sunucuya gönderin                            | `yarn twenty app:publish --private` | `package.json` içinde **kesin olarak daha yüksek** bir sürüm gerektirir — bkz. [Publishing](/l/tr/developers/extend/apps/operations/publishing). |
 | Pazaryerine (npm) yayımlayın                               | `yarn twenty app:publish`           | —                                                                                                                                           |
 | Dağıtılmış bir sürümü yükleyin / yükseltin                 | `yarn twenty app:install`           | Şu anda dağıtılmış olan sürümü yükler.                                                                                                      |
 | Yerel sunucuyu silin ve temiz bir şekilde yeniden başlatın | `yarn twenty docker:reset`          | Yerel verilerin **tamamını** siler — son çare.                                                                                              |
+
+<Note>
+`yarn twenty dev --once` ve `yarn twenty dev --once --dry-run`, `yarn twenty apply` ve `yarn twenty plan` için kullanımdan kaldırılmış takma adlar olsalar da hâlâ çalışırlar.
+</Note>
 
 ### Yerel senkronizasyon için sürüm artırmaya gerek yoktur
 
@@ -29,18 +33,25 @@ Sıkı artan `version` kuralı (dağıtımda `VERSION_ALREADY_EXISTS`, yüklemed
 
 ## Senkronizasyon çıktısını okuma
 
-Her senkronizasyon, uyguladığı (veya `--dry-run` ile uygulayacağı) üst veri değişikliklerini yazdırır:
+Her senkronizasyon, uyguladığı (veya `plan` ile uygulayacağı) üst veri değişikliklerini, Terraform tarzında — varlık başına bir blok olacak şekilde, öznitelikleriyle birlikte ve ardından bir özet satırıyla yazdırır:
 
 ```text filename="Terminal"
-Metadata changes: 2 created, 1 updated, 1 deleted
-  created objectMetadata rocket
-  created fieldMetadata timelineActivities
-  updated fieldMetadata launchedAt
-  deleted pageLayout legacyTab
-✓ Synced
+  # objectMetadata "rocket" will be created
+  + icon          = "IconRocket"
+  + labelSingular = "Rocket"
+  + ...
+
+  # fieldMetadata "launchedAt" will be updated
+  ~ isNullable = false -> true
+
+Plan: 2 to add, 1 to change, 1 to destroy.
+
+✓ Synced My App (4 files)
 ```
 
 Bu, ilk tanı aracınızdır: tam olarak hangi nesnelerin, alanların ve düzenlerin değiştiğini size bildirir; böylece bir senkronizasyonun beklediğiniz gibi davranıp davranmadığını, arayüzü kontrol etmeden önce doğrulayabilirsiniz.
+
+Yıkıcı değişiklikler (`to destroy`), neyi kaldırdıklarıyla birlikte listelenir (ör. `objectMetadata "auditNote" — drops the table and all its rows`) ve etkileşimli onay gerektirir ya da betiklerde `--force` kullanılmasını gerektirir.
 
 Bir senkronizasyon tek bir varlıkta başarısız olduğunda, hata mesajı sorunlu varlığı ve onun `universalIdentifier` değerini adlandırır, örneğin:
 
@@ -50,39 +61,42 @@ Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337)
 
 Bu tanımlayıcıyı, çakışanın hangisi olduğunu tahmin etmek yerine, manifestinizdeki (ve gerekirse çalışma alanındaki) varlığı bulmak için kullanın.
 
-## Değişiklikleri önizleme (dry run)
+## Değişiklikleri önizleme (plan)
 
-`yarn twenty dev --once --dry-run`, manifestinizi derler, sunucudan geçiş planını ister ve onu yazdırır — **hiçbir şeyi uygulamadan**. Bu, ona taahhüt etmeden önce "Bu senkronizasyon neyi değiştirir?" sorusunu yanıtlamanın güvenli yoludur.
+`yarn twenty plan`, manifestinizi derler, sunucudan geçiş planını ister ve onu — **hiçbir şeyi uygulamadan** — yazdırır. Bu, ona taahhüt etmeden önce "Bu senkronizasyon neyi değiştirir?" sorusunu yanıtlamanın güvenli yoludur.
 
 ```bash filename="Terminal"
-yarn twenty dev --once --dry-run
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
 Building manifest...
-Computing metadata diff (dry run, nothing will be applied)...
-Metadata changes: 1 created, 1 updated
-  created fieldMetadata timelineActivities
-  updated objectMetadata rocket
-✓ Dry run complete for My App — no changes were applied
+Computing metadata plan (read-only, nothing will be applied)...
+
+  # fieldMetadata "crewCapacity" will be created
+  + ...
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+✓ Plan complete for My App — no changes were applied
 ```
 
-Bir dry run şunları yapar:
+Bir plan:
 
 * **Hiçbir şey yazmaz** — üst veri geçişi, uygulama kaydı güncellemesi, varsayılan rol/sekme değişiklikleri ve API istemcisi oluşturma işlemleri yapılmaz.
 * Gerçek bir senkronizasyonun uygulayacağı **aynı farkı** döndürür; böylece oluşturulan/güncellenen/silinen varlıkları en baştan inceleyebilirsiniz.
 * Riskli bir değişiklikten önce, bir yapay zekâ tarafından oluşturulan değişikliği gözden geçirirken veya beklenmedik bir değişiklik gerçekleşmek üzereyse betiğin başarısız olması gereken durumlarda kullanışlıdır.
 
 <Note>
-Bir dry run yalnızca **üst veri** değişikliklerini önizler ve uygulamanın en az bir kez senkronize edilmiş olmasını gerektirir (böylece çalışma alanı ondan haberdar olur). Hiç senkronize edilmemiş bir uygulamaya karşı çalıştırırsanız, sunucu uygulamanın yüklü olmadığını bildirir — önce bir kez `yarn twenty dev` çalıştırın.
+Bir plan yalnızca **üst veri** değişikliklerini önizler ve uygulamanın en az bir kez senkronize edilmiş olmasını gerektirir (böylece çalışma alanı ondan haberdar olur). Hiç senkronize edilmemiş bir uygulamaya karşı çalıştırırsanız, sunucu uygulamanın yüklü olmadığını bildirir — önce bir kez `yarn twenty dev` çalıştırın.
 </Note>
 
 ## Kurtarma merdiveni
 
 Yerel üst veriler hatalı görünüyorsa, bu adımları sırayla uygulayın ve engeliniz kalkar kalkmaz durun. Her adım bir öncekinden daha yıkıcıdır.
 
-1. **Yeniden senkronize edin.** `yarn twenty dev --once` komutunu tekrar çalıştırın. Senkronizasyonlar idempotenttir — temiz bir manifesti yeniden çalıştırmak güvenlidir ve çoğu zaman geçici bir aksaklığı giderir.
-2. **Planı önizleyin.** Bir sonraki senkronizasyonun tam olarak neyi değiştirmeyi amaçladığını, uygulamadan görmek için `yarn twenty dev --once --dry-run` çalıştırın.
+1. **Yeniden senkronize edin.** `yarn twenty apply` komutunu tekrar çalıştırın. Senkronizasyonlar idempotenttir — temiz bir manifesti yeniden çalıştırmak güvenlidir ve çoğu zaman geçici bir aksaklığı giderir.
+2. **Planı önizleyin.** Bir sonraki senkronizasyonun tam olarak neyi değiştirmeyi amaçladığını, uygulamadan görmek için `yarn twenty plan` komutunu çalıştırın.
 3. **Adlandırılmış hatayı okuyun.** Bir senkronizasyon başarısız olursa, iletideki üst veri türünü ve `universalIdentifier` değerini not alın (yukarıya bakın) ve manifestinizdeki o varlığı bulun. Bir çakışma genellikle yinelenen veya tekrar kullanılan bir tanımlayıcıya işaret eder.
 4. **Kaldırın ve yeniden yükleyin.** `yarn twenty app:uninstall` komutunu çalıştırın, ardından yeniden senkronize edin (`yarn twenty dev`). Bu, uygulamanın üst verilerini temiz bir başlangıçtan yeniden oluşturur ve çalışma alanınızın geri kalanını olduğu gibi bırakır.
 5. **Tam sıfırlama (son çare).** `yarn twenty docker:reset` komutunu çalıştırın, ardından yeniden tohumlayın ve yeniden senkronize edin.

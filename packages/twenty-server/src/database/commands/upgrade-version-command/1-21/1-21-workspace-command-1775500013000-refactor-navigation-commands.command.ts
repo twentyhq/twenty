@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import {
   type RunOnWorkspaceArgs,
@@ -68,7 +68,7 @@ const SETTINGS_NAVIGATION_ITEM_KEYS = [
   description:
     'Replace GO_TO_* command menu items with unified NAVIGATION engine key and payload',
 })
-export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectDataSource()
@@ -290,7 +290,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

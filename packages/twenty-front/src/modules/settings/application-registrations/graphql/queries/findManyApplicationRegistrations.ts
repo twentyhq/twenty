@@ -1,12 +1,20 @@
 import { gql } from '@apollo/client';
 
-import { APPLICATION_REGISTRATION_FRAGMENT } from '@/settings/application-registrations/graphql/fragments/applicationRegistrationFragment';
+export const APPLICATION_REGISTRATION_LIST_ITEM_FRAGMENT = gql`
+  fragment ApplicationRegistrationListItem on ApplicationRegistration {
+    id
+    universalIdentifier
+    name
+    sourceType
+    logoUrl
+  }
+`;
 
 export const FIND_MANY_APPLICATION_REGISTRATIONS = gql`
   query FindManyApplicationRegistrations {
     findManyApplicationRegistrations {
-      ...ApplicationRegistrationFragment
+      ...ApplicationRegistrationListItem
     }
   }
-  ${APPLICATION_REGISTRATION_FRAGMENT}
+  ${APPLICATION_REGISTRATION_LIST_ITEM_FRAGMENT}
 `;

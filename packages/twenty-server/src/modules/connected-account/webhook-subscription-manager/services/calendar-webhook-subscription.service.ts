@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  FeatureFlagKey,
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
@@ -11,7 +10,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
@@ -25,7 +23,6 @@ export class CalendarWebhookSubscriptionService {
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -33,15 +30,6 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const isWebhookEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED,
-      workspaceId,
-    );
-
-    if (!isWebhookEnabled) {
-      return;
-    }
-
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: { id: calendarChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -73,11 +61,12 @@ export class CalendarWebhookSubscriptionService {
       connectedAccount.provider,
     );
 
-    if (isDefined(calendarChannel.webhookSubscriptionExternalId)) {
-      await driver
-        .deleteSubscription(this.toContext(calendarChannel))
-        .catch(() => undefined);
-    }
+    // Keep any existing watch live until the replacement is created, then stop it.
+    const previousSubscription = isDefined(
+      calendarChannel.webhookSubscriptionExternalId,
+    )
+      ? this.toContext(calendarChannel)
+      : null;
 
     try {
       const result = await driver.createSubscription(
@@ -103,18 +92,43 @@ export class CalendarWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
+
+      throw error;
+    }
+
+    if (isDefined(previousSubscription)) {
+      await driver
+        .deleteSubscription(previousSubscription)
+        .catch(() => undefined);
     }
   }
 
-  async renewSubscription(
-    calendarChannel: CalendarChannelEntity,
-  ): Promise<void> {
-    const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: {
-        id: calendarChannel.connectedAccountId,
-        workspaceId: calendarChannel.workspaceId,
-      },
+  async renewSubscription({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const calendarChannel = await this.calendarChannelRepository.findOne({
+      where: { id: calendarChannelId, workspaceId },
+      relations: ['connectedAccount'],
     });
+
+    if (!isDefined(calendarChannel)) {
+      return;
+    }
+
+    if (
+      calendarChannel.webhookSubscriptionStatus !==
+      WebhookSubscriptionStatus.ACTIVE
+    ) {
+      await this.createSubscription(calendarChannelId, workspaceId);
+
+      return;
+    }
+
+    const { connectedAccount } = calendarChannel;
 
     if (!isDefined(connectedAccount)) {
       return;
@@ -143,6 +157,8 @@ export class CalendarWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },
       });
+
+      throw error;
     }
   }
 

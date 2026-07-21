@@ -42,6 +42,10 @@ export const GET_CHAT_MESSAGES = gql`
     chatStreamCatchupChunks(threadId: $threadId) {
       chunks
       maxSeq
+      error {
+        code
+        message
+      }
     }
   }
 `;

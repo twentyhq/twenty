@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail on unique index side-effect collision should fail when a declared index reuses the reserved deterministic identifier of the engine-owned unique backing index 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER",
+              "message": "Universal identifier is reserved for system-managed metadata",
+              "userFriendlyMessage": "This identifier is reserved by the system",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_UNIQUE_790b15e5a08e02973ecff530bce",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 index",
+    "summary": {
+      "index": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This identifier is reserved by the system",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

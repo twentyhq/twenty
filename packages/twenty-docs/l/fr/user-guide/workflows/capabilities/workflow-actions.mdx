@@ -112,7 +112,7 @@ Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonc
 
 **Configuration**:
 
-* Sélectionnez le tableau d'enregistrements depuis une étape précédente (par ex., résultats de Rechercher des enregistrements, d'un déclencheur manuel avec exécution par lots, d'un nœud de code)
+* Sélectionnez le tableau d'enregistrements depuis une étape précédente (par ex., résultats de Rechercher des enregistrements, d'un déclencheur manuel avec exécution par lots, d'un nœud de code). Lorsqu’une étape Code ou fonction logique renvoie un tableau de premier niveau, sélectionnez l’option **Whole list** pour itérer sur l’intégralité de la sortie.
 * Définissez les actions à effectuer sur chaque enregistrement dans la boucle.
 
 <Note>
@@ -120,7 +120,7 @@ Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonc
 - Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
 </Note>
 
-* Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes.
+* Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes. Vous pouvez également sélectionner **Use the whole item** pour transmettre l’intégralité de l’élément en cours à une étape en aval.
 
 <VimeoEmbed videoId="1146577247" title="Démonstration vidéo" />
 
@@ -245,6 +245,8 @@ Les champs ne peuvent pas être rendus obligatoires.
 
 Exécute du JavaScript personnalisé dans votre flux de travail.
 
+En arrière-plan, chaque action de code est prise en charge par sa propre **fonction logique** — une fonction TypeScript côté serveur qui s’exécute sur la plateforme Twenty. Lorsque vous ajoutez une action de code, Twenty crée une fonction logique dédiée pour cette étape et affiche son éditeur en ligne, de sorte que le code que vous écrivez soit associé au workflow.
+
 **Configuration**:
 
 * Accédez aux variables des étapes précédentes. Vous pouvez modifier dynamiquement les noms des variables.
@@ -265,6 +267,25 @@ Si vous devez utiliser des clés d'API externes dans votre code, vous devez les 
 
 <Tip>
 Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
+</Tip>
+
+#### Réutiliser une fonction logique dans plusieurs workflows
+
+L’action de code en ligne est idéale pour de la logique ponctuelle, mais le code qu’elle contient est propre à cette seule étape. Lorsque vous voulez partager la même logique entre plusieurs workflows — ou la maintenir comme code source versionné dans une application — définissez une **fonction logique réutilisable** au lieu de copier-coller du code dans chaque action de code.
+
+Une fonction logique est définie une seule fois dans une application (à l’aide de `defineLogicFunction` du SDK) et exposée au concepteur de workflows en ajoutant `workflowActionTriggerSettings`. Une fois votre application installée, cette fonction apparaît comme une action à part entière dans le concepteur de workflows, à côté des actions intégrées. La sélectionner affiche les champs d’entrée que vous avez déclarés (avec des sélecteurs de variables, comme pour les autres actions) et exécute votre code mutualisé — aucun JavaScript en ligne n’est requis.
+
+|                           | Action de code                                | Fonction logique réutilisable                                                   |
+| ------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Où le code est stocké** | Éditeur en ligne, lié à une étape de workflow | Définie dans une application, versionnée dans un système de contrôle de version |
+| **Réutilisation**         | Copié-collé par étape                         | Ajoutée comme action dans n’importe quel workflow                               |
+| **Entrées**               | Variables connectées dans l’éditeur           | Champs générés à partir de votre schéma d’entrée déclaré                        |
+| **Idéal pour**            | Logique rapide, spécifique à un workflow      | Logique partagée utilisée dans plusieurs workflows                              |
+
+Les deux s’exécutent sur le même environnement d’exécution des fonctions logiques, de sorte qu’une action de code que vous avez prototypée en ligne peut ensuite être promue en fonction logique réutilisable avec des modifications minimales.
+
+<Tip>
+Pour la documentation destinée aux développeurs sur la définition des fonctions logiques et leur exposition dans le concepteur de workflows, consultez [Logic Functions](/l/fr/developers/extend/apps/logic/logic-functions) — en particulier la section **Exposing a function as an AI tool or workflow action** et `workflowActionTriggerSettings`.
 </Tip>
 
 ### Requête HTTP

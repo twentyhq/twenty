@@ -8,6 +8,7 @@ import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamRe
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { captureException } from '@sentry/react';
 import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
@@ -47,18 +48,20 @@ export const SSEQuerySubscribeEffect = () => {
         const extensions = getGraphqlErrorExtensionsFromError(error);
 
         if (
-          isGracefullyHandledEventStreamError({
+          !isGracefullyHandledEventStreamError({
             subCode: extensions?.subCode,
             code: extensions?.code,
           })
         ) {
-          store.set(activeQueryListenersState.atom, []);
-          store.set(shouldDestroyEventStreamState.atom, true);
-
-          return;
+          captureException(
+            new Error(`Unhandled error for event stream: ${error.message}`, {
+              cause: error,
+            }),
+          );
         }
 
-        throw new Error(`Unhandled error for event stream: ${error.message}`);
+        store.set(activeQueryListenersState.atom, []);
+        store.set(shouldDestroyEventStreamState.atom, true);
       }
     },
     [store],

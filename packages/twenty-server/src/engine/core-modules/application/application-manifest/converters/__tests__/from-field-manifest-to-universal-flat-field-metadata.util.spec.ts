@@ -106,6 +106,23 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     });
   });
 
+  describe('system flags', () => {
+    it('never derives isSystem or isSystemSideEffect, even for reserved system field names', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type: FieldMetadataType.DATE_TIME,
+          name: 'createdAt',
+          label: 'Creation date',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isSystem).toBe(false);
+      expect(result.isSystemSideEffect).toBe(false);
+    });
+  });
+
   describe('isUIEditable', () => {
     it('defaults to true when omitted from the manifest', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({

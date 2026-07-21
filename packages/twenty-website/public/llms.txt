@@ -1,0 +1,22 @@
+# Twenty
+
+> Twenty is an open-source CRM. AI assistants and agents can read and write CRM data through the Model Context Protocol (MCP) server or the REST/GraphQL API.
+
+Every endpoint is workspace-scoped: replace `{your-workspace-url}` with your workspace host (e.g. `mycompany.twenty.com` or a custom domain). The MCP server is at `https://{your-workspace-url}/mcp` (transport: streamable-http; auth: OAuth 2.1 or an API-key Bearer token). The REST base is `https://{your-workspace-url}/rest`, with per-workspace OpenAPI at `/rest/open-api/core` and `/rest/open-api/metadata` (send an `Authorization: Bearer <token>` header). GraphQL is at `/graphql` and `/metadata`.
+
+Twenty is multi-tenant, so there is no single global API host: each workspace has its own base URL, and the REST OpenAPI is generated per workspace, so it includes any custom objects and fields you have created. Prefer the MCP server for agents — it exposes typed tools with header-based auth and discovers your workspace's tools at runtime, so it does not depend on the per-workspace OpenAPI document.
+
+## Connect an AI assistant
+
+- [MCP server guide](https://docs.twenty.com/user-guide/ai/capabilities/mcp): connect Claude, Cursor, ChatGPT and others.
+- [MCP server card](https://twenty.com/.well-known/mcp/server-card.json): machine-readable MCP metadata.
+
+## APIs
+
+- [API guide](https://docs.twenty.com/developers/extend/api): REST and GraphQL, generated from your workspace schema.
+- [API catalog](https://twenty.com/.well-known/api-catalog): RFC 9727 index of the API surfaces.
+
+## Docs
+
+- [Developer documentation](https://docs.twenty.com/developers/introduction)
+- [Source code](https://github.com/twentyhq/twenty)

@@ -1,28 +1,26 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
+import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { TranscriptSpeakerChip } from 'src/front-components/components/TranscriptSpeakerChip';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
 import {
   type TranscriptEntry,
   type TranscriptWord,
 } from 'src/front-components/types/transcript-entry.type';
-import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
+import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
 
 const StyledEntry = styled.div<{ $isActive: boolean }>`
   align-items: flex-start;
   background: ${({ $isActive }) =>
-    $isActive
-      ? recordingThemeCssVariables.background.transparentBlue
-      : 'transparent'};
-  border-radius: ${recordingThemeCssVariables.border.radiusSm};
+    $isActive ? themeCssVariables.background.transparent.blue : 'transparent'};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[2]};
   justify-content: center;
-  padding: ${recordingThemeCssVariables.spacing[2]};
+  padding: ${() => themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -30,21 +28,21 @@ const StyledEntryHeader = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
-  gap: ${recordingThemeCssVariables.spacing[2]};
-  min-height: ${recordingThemeCssVariables.spacing[6]};
+  gap: ${() => themeCssVariables.spacing[2]};
+  min-height: ${() => themeCssVariables.spacing[6]};
   min-width: 0;
 `;
 
 const StyledTimestamp = styled.span`
-  color: ${recordingThemeCssVariables.font.colorTertiary};
-  font-size: ${recordingThemeCssVariables.font.sizeXs};
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.xs};
   line-height: 1.4;
 `;
 
 const StyledEntryText = styled.p`
   align-self: stretch;
-  color: ${recordingThemeCssVariables.font.colorSecondary};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+  color: ${() => themeCssVariables.font.color.secondary};
+  font-size: ${() => themeCssVariables.font.size.sm};
   line-height: 1.4;
   margin: 0;
 `;
@@ -52,8 +50,8 @@ const StyledEntryText = styled.p`
 const StyledWord = styled.span<{ $isSpoken: boolean }>`
   color: ${({ $isSpoken }) =>
     $isSpoken
-      ? recordingThemeCssVariables.font.colorPrimary
-      : recordingThemeCssVariables.font.colorSecondary};
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.secondary};
   line-height: 1.4;
   transition: color 0.15s ease;
 `;
@@ -77,16 +75,27 @@ export const TranscriptEntryListItem = ({
   return (
     <StyledEntry $isActive={isActive}>
       <StyledEntryHeader>
-        <TranscriptSpeakerChip
-          speakerName={speakerDisplayName}
-          avatarUrl={calendarEventParticipant?.avatarUrl}
-          placeholderColorSeed={
-            calendarEventParticipant?.placeholderColorSeed ?? speakerDisplayName
+        <Chip
+          clickable={false}
+          isBold
+          label={speakerDisplayName}
+          variant={ChipVariant.Transparent}
+          leftComponent={
+            <Avatar
+              avatarUrl={calendarEventParticipant?.avatarUrl}
+              placeholder={speakerDisplayName}
+              placeholderColorSeed={
+                calendarEventParticipant?.placeholderColorSeed ??
+                speakerDisplayName
+              }
+              size="md"
+              type="rounded"
+            />
           }
         />
         {!isUndefined(entry.startSeconds) && (
           <StyledTimestamp>
-            {formatTranscriptTimestamp(entry.startSeconds)}
+            {formatSecondsAsClockTimestamp(entry.startSeconds)}
           </StyledTimestamp>
         )}
       </StyledEntryHeader>

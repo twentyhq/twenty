@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Wichtige Dateien
 
-| Datei / Ordner                           | Zweck                                                                           |
-| ---------------------------------------- | ------------------------------------------------------------------------------- |
-| `src/application-config.ts`              | **Erforderlich.** Die Hauptkonfigurationsdatei für Ihre App.                    |
-| `src/default-role.ts`                    | Standardrolle, die steuert, worauf Ihre Logikfunktionen zugreifen können.       |
-| `src/constants/universal-identifiers.ts` | Automatisch erzeugte UUIDs und Metadaten (Anzeigename, Beschreibung).           |
-| `src/__tests__/`                         | Integrationstests (Setup + Beispieltest).                                       |
-| `public/`                                | Statische Assets (Bilder, Schriftarten), die mit Ihrer App ausgeliefert werden. |
+| Datei / Ordner                                                             | Zweck                                                                                                                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/application-config.ts`                                                | **Erforderlich.** Die Hauptkonfigurationsdatei für Ihre App.                                                                                           |
+| `src/default-role.ts`                                                      | Standardrolle, die steuert, worauf Ihre Logikfunktionen zugreifen können.                                                                              |
+| `src/constants/universal-identifiers.ts`                                   | Automatisch erzeugte UUIDs und Metadaten (Anzeigename, Beschreibung).                                                                                  |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Eine Willkommens-Startseite: eine Front-Komponente, die von einem eigenständigen Seitenlayout gerendert wird und über die Seitenleiste erreichbar ist. |
+| `src/__tests__/`                                                           | Ein Unit-Test plus ein Integrationstest (mit seinem globalen Setup), der die App mit einem echten Server synchronisiert.                               |
+| `public/`                                                                  | Statische Assets (Bilder, Schriftarten), die mit Ihrer App ausgeliefert werden.                                                                        |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Leitfaden für KI-Coding-Agenten, die an der App arbeiten.                                                                                              |
+| `CHANGELOG.md` / `SETUP.md`                                                | Changelog mit wichtigen Änderungen und Einrichtungsanweisungen für die lokale Entwicklung.                                                             |
 
 <Note>
 **Die Dateiorganisation liegt bei Ihnen.** Die oben genannten Ordner sind Konventionen – das SDK erkennt Entitäten über eine AST-Analyse von `export default defineEntity(...)`-Aufrufen, unabhängig davon, wo sich die Datei befindet.
@@ -47,15 +62,18 @@ Beide Twenty-SDK-Pakete gehören unter `devDependencies`, nicht unter `dependenc
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+Das Scaffolding-Tool fixiert `twenty-sdk` und `twenty-client-sdk` auf seine eigene Version – halte beide beim Aktualisieren synchron.
+
 * **`twenty-sdk`** stellt die `twenty`-CLI sowie die Build-/Scaffolding-Tools bereit. Es läuft nur während der Entwicklung und beim Build und wird zur Laufzeit der veröffentlichten App niemals importiert.
 * **`twenty-client-sdk`** *wird* hingegen von deinem App-Code importiert (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), aber Twenty stellt es zur Laufzeit bereit – Logikfunktionen beziehen es aus einer generierten SDK-Schicht, und Frontend-Komponenten lösen es aus serverseitig ausgelieferten Modulen auf. Deine installierte Kopie wird nur für die Typprüfung und den Build zum Zeitpunkt des Deployments verwendet, daher muss sie niemals im ausgelieferten Bundle enthalten sein.
 
-Wenn eines der Pakete unter `dependencies` bleibt, wird es in das Runtime-Bundle der installierten App gezogen, wo es nur Ballast ist. `twenty build` gibt eine Warnung aus, wenn eines von beiden weiterhin unter `dependencies` aufgeführt ist.
+Wenn eines der Pakete unter `dependencies` bleibt, wird es in das Runtime-Bundle der installierten App gezogen, wo es nur Ballast ist. `twenty dev:build` gibt eine Warnung aus, wenn eines von beiden weiterhin unter `dependencies` aufgeführt ist.
 
 Füge die eigenen Runtime-Abhängigkeiten deiner App (Bibliotheken, die deine Logikfunktionen zur Laufzeit tatsächlich importieren) wie gewohnt unter `dependencies` hinzu.

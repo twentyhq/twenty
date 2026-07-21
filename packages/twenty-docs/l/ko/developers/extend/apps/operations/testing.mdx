@@ -78,6 +78,13 @@ yarn add -D vitest vite-tsconfig-paths
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +95,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-테스트 실행 전에 서버에 접근 가능한지 확인하는 설정 파일을 생성하세요:
+서버에 연결할 수 있는지 확인하고, SDK용 테스트 구성 파일(`~/.twenty/config.test.json`)을 작성한 다음, 테스트 실행 전에 앱을 동기화하는 글로벌 설정 파일을 생성합니다:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## 프로그래매틱 SDK API
 
 `twenty-sdk/cli` 서브 경로는 테스트 코드에서 직접 호출할 수 있는 함수를 내보냅니다:
 
-| 함수             | 설명                    |
-| -------------- | --------------------- |
-| `appBuild`     | 앱을 빌드하고 필요하면 타르볼로 패키징 |
-| `appDeploy`    | 타르볼을 서버로 업로드          |
-| `appInstall`   | 활성 워크스페이스에 앱 설치       |
-| `appUninstall` | 활성 워크스페이스에서 앱 제거      |
+| 함수             | 설명                                            |
+| -------------- | --------------------------------------------- |
+| `appBuild`     | 앱을 빌드하고 필요하면 타르볼로 패키징                         |
+| `appDeploy`    | 타르볼을 서버로 업로드                                  |
+| `appDevOnce`   | 앱을 한 번만 빌드하고 동기화합니다(`yarn twenty apply`와 동일). |
+| `appInstall`   | 활성 워크스페이스에 앱 설치                               |
+| `appUninstall` | 활성 워크스페이스에서 앱 제거                              |
 
 각 함수는 `success: boolean`과 `data` 또는 `error`를 포함한 결과 객체를 반환합니다.
 
@@ -238,64 +253,10 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-이는 `tsc --noEmit`를 실행하고 모든 타입 오류를 보고합니다.
+이는 앱의 `tsconfig.json`에 대해 `tsc --noEmit`를 실행하고 모든 타입 오류를 보고합니다. 스캐폴딩된 앱에는 테스트 파일(`tsconfig.spec.json`)도 검사하는 `yarn typecheck` 스크립트가 함께 제공됩니다.
 
 ## GitHub Actions로 CI
 
-스캐폴더가 `.github/workflows/ci.yml`에 바로 사용할 수 있는 GitHub Actions 워크플로를 생성합니다. `main`으로의 푸시와 풀 리퀘스트마다 통합 테스트를 자동으로 실행합니다.
+스캐폴더는 `.github/workflows/ci.yml`에 바로 사용할 수 있는 워크플로를 생성합니다. `main`으로의 모든 푸시와 모든 풀 리퀘스트마다, 러너에서 임시 Twenty 서버를 실행하고(`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` 액션을 통해), 그 서버를 가리키도록 설정된 `TWENTY_API_URL` / `TWENTY_API_KEY`와 함께 `yarn lint`, `yarn typecheck`, `yarn test:unit`, `yarn test`를 실행합니다. 시크릿은 필요 없으며, 워크플로 상단의 `TWENTY_VERSION` 환경 변수로 서버 버전을 고정할 수 있습니다.
 
-워크플로:
-
-1. 코드를 체크아웃합니다
-2. `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` 액션을 사용해 임시 Twenty 서버를 구동합니다
-3. `yarn install --immutable`로 종속성을 설치합니다
-4. 액션 출력에서 주입된 `TWENTY_API_URL` 및 `TWENTY_API_KEY`로 `yarn test`를 실행합니다
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-별도의 시크릿을 구성할 필요가 없습니다 — `spawn-twenty-docker-image` 액션이 러너 내에서 일시적인 Twenty 서버를 직접 시작하고 연결 정보를 출력합니다. `GITHUB_TOKEN` 시크릿은 GitHub에서 자동으로 제공됩니다.
-
-`latest` 대신 특정 Twenty 버전을 고정하려면 워크플로 상단의 `TWENTY_VERSION` 환경 변수를 변경하세요.
+스캐폴딩된 세 워크플로(`ci.yml`, `cd.yml` 배포 파이프라인, npm 게시용 `publish.yml`)에 대한 전체 단계별 안내는 [Publishing → Automated CI/CD](/l/ko/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows)를 참고하세요.

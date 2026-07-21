@@ -23,6 +23,10 @@ export type {
 } from '@/sdk/define/fields/composite-fields';
 export { defineField } from '@/sdk/define/fields/define-field';
 export { FieldType } from '@/sdk/define/fields/field-type';
+export {
+  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';
@@ -109,7 +113,6 @@ export { defineConnectionProvider } from '@/sdk/define/connection-providers/defi
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';
-export { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 export {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -175,6 +178,7 @@ export {
   NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,

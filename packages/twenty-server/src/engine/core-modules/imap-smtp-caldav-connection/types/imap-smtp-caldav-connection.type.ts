@@ -27,6 +27,7 @@ export type AccountType = (typeof ACCOUNT_TYPES)[number];
 export { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 
 export type ImapSmtpCaldavParams<Pwd extends string = string> = {
+  name?: string | null;
   IMAP?: ConnectionParameters<Pwd>;
   SMTP?: ConnectionParameters<Pwd>;
   CALDAV?: ConnectionParameters<Pwd>;

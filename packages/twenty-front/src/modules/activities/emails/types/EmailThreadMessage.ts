@@ -10,5 +10,6 @@ export type EmailThreadMessage = {
   messageThreadId: string;
   messageParticipants: EmailThreadMessageParticipant[];
   messageThread: MessageThread;
+  isDraft: boolean;
   __typename: 'EmailThreadMessage';
 };

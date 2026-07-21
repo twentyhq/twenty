@@ -10,6 +10,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
@@ -257,6 +258,85 @@ describe('BillingSubscriptionUpdateService', () => {
       expect(
         stripeSubscriptionScheduleService.updateSchedule,
       ).not.toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
+    });
+
+    it('should update from PRO to ENTERPRISE during trial without immediate invoicing', async () => {
+      arrangeBillingSubscriptionRepositoryFindOneOrFail(
+        billingSubscriptionRepository,
+        {
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
+          seats: 1,
+          status: SubscriptionStatus.Trialing,
+        },
+      );
+
+      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
+        [LICENSE_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
+          stripePriceId: LICENSE_PRICE_PRO_MONTH_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          isMetered: false,
+        }),
+        [METER_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
+          stripePriceId: METER_PRICE_PRO_MONTH_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          isMetered: true,
+          tiers: buildDefaultMeteredTiers(),
+        }),
+      });
+
+      arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule(
+        stripeSubscriptionScheduleService,
+        {},
+      );
+
+      arrangeBillingProductServiceGetProductPrices(billingProductService, [
+        buildBillingPriceEntity({
+          stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+          planKey: BillingPlanKey.ENTERPRISE,
+          interval: SubscriptionInterval.Month,
+          isMetered: false,
+        }) as BillingPriceEntity,
+        buildBillingPriceEntity({
+          stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          planKey: BillingPlanKey.ENTERPRISE,
+          interval: SubscriptionInterval.Month,
+          isMetered: true,
+          tiers: buildDefaultMeteredTiers(),
+        }) as BillingPriceEntity,
+      ]);
+
+      await service.updateSubscription('ws_1', 'sub_db_1', {
+        type: SubscriptionUpdateType.PLAN,
+        newPlan: BillingPlanKey.ENTERPRISE,
+      });
+
+      expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalledWith(
+        'sub_1',
+        {
+          items: [
+            {
+              id: 'si_licensed',
+              price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              quantity: 1,
+            },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_ENTERPRISE_MONTH_ID,
+              quantity: 1,
+            },
+          ],
+          proration_behavior: 'none',
+          metadata: { plan: BillingPlanKey.ENTERPRISE },
+        },
+      );
       expect(
         billingSubscriptionService.syncSubscriptionToDatabase,
       ).toHaveBeenCalled();
@@ -677,6 +757,84 @@ describe('BillingSubscriptionUpdateService', () => {
           ],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
+        },
+      );
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
+    });
+
+    it('should change interval from monthly to yearly during trial without resetting billing anchor', async () => {
+      arrangeBillingSubscriptionRepositoryFindOneOrFail(
+        billingSubscriptionRepository,
+        {
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
+          seats: 1,
+          status: SubscriptionStatus.Trialing,
+        },
+      );
+
+      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
+        [LICENSE_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
+          stripePriceId: LICENSE_PRICE_PRO_MONTH_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          isMetered: false,
+        }),
+        [METER_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
+          stripePriceId: METER_PRICE_PRO_MONTH_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Month,
+          isMetered: true,
+          tiers: buildDefaultMeteredTiers(),
+        }),
+      });
+
+      arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule(
+        stripeSubscriptionScheduleService,
+        {},
+      );
+
+      arrangeBillingProductServiceGetProductPrices(billingProductService, [
+        buildBillingPriceEntity({
+          stripePriceId: LICENSE_PRICE_PRO_YEAR_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Year,
+          isMetered: false,
+        }) as BillingPriceEntity,
+        buildBillingPriceEntity({
+          stripePriceId: METER_PRICE_PRO_YEAR_ID,
+          planKey: BillingPlanKey.PRO,
+          interval: SubscriptionInterval.Year,
+          isMetered: true,
+          tiers: buildDefaultMeteredTiers(),
+        }) as BillingPriceEntity,
+      ]);
+
+      await service.updateSubscription('ws_1', 'sub_db_1', {
+        type: SubscriptionUpdateType.INTERVAL,
+        newInterval: SubscriptionInterval.Year,
+      });
+
+      expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalledWith(
+        'sub_1',
+        {
+          items: [
+            {
+              id: 'si_licensed',
+              price: LICENSE_PRICE_PRO_YEAR_ID,
+              quantity: 1,
+            },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_PRO_YEAR_ID,
+              quantity: 1,
+            },
+          ],
+          proration_behavior: 'none',
         },
       );
       expect(
@@ -1380,6 +1538,32 @@ describe('BillingSubscriptionUpdateService', () => {
       expect(
         billingSubscriptionService.syncSubscriptionToDatabase,
       ).toHaveBeenCalled();
+    });
+  });
+
+  describe('shouldUpdateAtSubscriptionPeriodEnd', () => {
+    it('should update plan changes immediately during trial', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          { status: SubscriptionStatus.Trialing } as BillingSubscriptionEntity,
+          {
+            type: SubscriptionUpdateType.PLAN,
+            newPlan: BillingPlanKey.PRO,
+          },
+        ),
+      ).resolves.toBe(false);
+    });
+
+    it('should update interval changes immediately during trial', async () => {
+      await expect(
+        service.shouldUpdateAtSubscriptionPeriodEnd(
+          { status: SubscriptionStatus.Trialing } as BillingSubscriptionEntity,
+          {
+            type: SubscriptionUpdateType.INTERVAL,
+            newInterval: SubscriptionInterval.Month,
+          },
+        ),
+      ).resolves.toBe(false);
     });
   });
 });

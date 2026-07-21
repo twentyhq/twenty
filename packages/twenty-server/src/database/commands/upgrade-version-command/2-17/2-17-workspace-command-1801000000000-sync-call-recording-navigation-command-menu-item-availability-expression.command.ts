@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildCallRecordingNavigationCommandMenuItemAvailabilityExpressionSyncOperations } from 'src/database/commands/upgrade-version-command/2-17/utils/build-call-recording-navigation-command-menu-item-availability-expression-sync-operations.util';
@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   description:
     'Remove the retired call recording feature-flag gate from existing CallRecording navigation command menu items',
 })
-export class SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -71,7 +71,7 @@ export class SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCom
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,

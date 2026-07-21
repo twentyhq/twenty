@@ -1,16 +1,23 @@
 import { msg } from '@lingui/core/macro';
+import {
+  FieldMetadataType,
+  type ChartRecordFilter,
+  type ViewFilterOperand,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
@@ -45,6 +52,45 @@ const validateGroupByFieldAsChartFieldOrThrow = (
 
     throw buildChartFieldValidationException(error.message, widgetTitle);
   }
+};
+
+const validateSelectFilterOptionsOrThrow = ({
+  recordFilter,
+  filterField,
+  widgetTitle,
+}: {
+  recordFilter: ChartRecordFilter;
+  filterField: FlatFieldMetadata<
+    FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
+  >;
+  widgetTitle?: string | null;
+}): void => {
+  if (!isDefined(recordFilter.value)) {
+    return;
+  }
+
+  const invalidValues = getInvalidSelectFilterOptionValues({
+    fieldMetadata: filterField,
+    operand: recordFilter.operand as ViewFilterOperand,
+    value: recordFilter.value,
+  });
+
+  if (invalidValues.length === 0) {
+    return;
+  }
+
+  const invalidValuesText = invalidValues
+    .map((value) => `"${value}"`)
+    .join(', ');
+  const allowedValuesText = filterField.options
+    ?.map((option) => option.value)
+    .map((optionValue) => `"${optionValue}"`)
+    .join(', ');
+
+  throw buildChartFieldValidationException(
+    `Filter on "${filterField.label}" uses option(s) ${invalidValuesText} that do not exist. Allowed values: ${allowedValuesText}.`,
+    widgetTitle,
+  );
 };
 
 export const validateChartConfigurationFieldReferencesOrThrow = ({
@@ -210,6 +256,17 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
           `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${widgetObjectMetadataId}".`,
           widgetTitle,
         );
+      }
+
+      if (
+        isFlatFieldMetadataOfType(filterField, FieldMetadataType.SELECT) ||
+        isFlatFieldMetadataOfType(filterField, FieldMetadataType.MULTI_SELECT)
+      ) {
+        validateSelectFilterOptionsOrThrow({
+          recordFilter,
+          filterField,
+          widgetTitle,
+        });
       }
     }
   }

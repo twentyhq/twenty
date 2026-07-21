@@ -7,6 +7,7 @@ import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { AiChatThreadsListFocusEffect } from '@/ai/components/AiChatThreadsListFocusEffect';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
+import { AI_CHAT_THREADS_LIST_FOCUS_ID } from '@/ai/constants/AiChatThreadsListFocusId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -51,12 +52,10 @@ const StyledButtonsContainer = styled.div`
 export const AiChatThreadsList = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
 
-  const focusId = 'threads-list';
-
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     callback: () => switchToNewChat(),
-    focusId,
+    focusId: AI_CHAT_THREADS_LIST_FOCUS_ID,
     dependencies: [switchToNewChat],
   });
 
@@ -79,7 +78,7 @@ export const AiChatThreadsList = () => {
 
   return (
     <>
-      <AiChatThreadsListFocusEffect focusId={focusId} />
+      <AiChatThreadsListFocusEffect focusId={AI_CHAT_THREADS_LIST_FOCUS_ID} />
       <StyledContainer>
         <StyledThreadsContainer>
           {shouldRenderDateGroups ? (

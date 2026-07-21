@@ -5,8 +5,8 @@ import { type FirefliesWebhookResult } from 'src/logic-functions/types/fireflies
 import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 import {
   type FirefliesSyncableField,
-  syncFirefliesFieldToCalendarEvent,
-} from 'src/logic-functions/utils/sync-fireflies-field-to-calendar-event';
+  syncFirefliesCallToCallRecording,
+} from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
 
 const TRANSCRIPT_READY_EVENT = 'meeting.transcribed';
 const SUMMARY_READY_EVENT = 'meeting.summarized';
@@ -47,7 +47,7 @@ export const firefliesWebhookHandler = async ({
     return { error: apiKeyResult.error, meetingId };
   }
 
-  const syncResult = await syncFirefliesFieldToCalendarEvent({
+  const syncResult = await syncFirefliesCallToCallRecording({
     apiKey: apiKeyResult.apiKey,
     client: new CoreApiClient(),
     transcriptId: meetingId,
@@ -65,6 +65,7 @@ export const firefliesWebhookHandler = async ({
   return {
     action: 'updated',
     field: syncResult.field,
+    callRecordingId: syncResult.callRecordingId,
     calendarEventId: syncResult.calendarEventId,
     meetingId,
   };

@@ -1,0 +1,1 @@
+export const ONBOARDING_MOTION_STAGGER_DELAY = 0.07;
