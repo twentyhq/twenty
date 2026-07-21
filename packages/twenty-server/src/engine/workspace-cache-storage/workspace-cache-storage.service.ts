@@ -200,7 +200,6 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion?: number,
   ): Promise<void> {
-    // MetadataVersion is stored without a metadata version suffix
     const { MetadataVersion, ...versionedCacheKeys } =
       METADATA_VERSIONED_WORKSPACE_CACHE_KEY;
 
@@ -212,7 +211,6 @@ export class WorkspaceCacheStorageService {
               this.cacheStorageService.del(
                 `${key}:${workspaceId}:${metadataVersion}`,
               ),
-              // covers applicationId-suffixed keys ({key}:{workspaceId}:{metadataVersion}:{applicationId})
               this.cacheStorageService.flushByPattern(
                 `${key}:${workspaceId}:${metadataVersion}:*`,
               ),
