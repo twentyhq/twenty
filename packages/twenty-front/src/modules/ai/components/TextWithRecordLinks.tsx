@@ -1,42 +1,36 @@
-import {
-  parseRecordReference,
-  RECORD_REFERENCE_REGEX,
-  RecordLink,
-} from '@/ai/components/RecordLink';
+import { RecordLink } from '@/ai/components/RecordLink';
+import { findRecordReferences } from '@/ai/utils/findRecordReferences';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type TextWithRecordLinksProps = {
   text: string;
 };
 
 export const TextWithRecordLinks = ({ text }: TextWithRecordLinksProps) => {
+  const references = findRecordReferences(text);
+
+  if (references.length === 0) {
+    return <>{text}</>;
+  }
+
   const parts: ReactNode[] = [];
   let lastIndex = 0;
 
-  RECORD_REFERENCE_REGEX.lastIndex = 0;
-
-  let match;
-
-  while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+  for (const reference of references) {
+    if (reference.index > lastIndex) {
+      parts.push(text.slice(lastIndex, reference.index));
     }
 
-    const parsed = parseRecordReference(match[0]);
+    parts.push(
+      <RecordLink
+        key={reference.index}
+        objectNameSingular={reference.objectNameSingular}
+        recordId={reference.recordId}
+        displayName={reference.displayName}
+      />,
+    );
 
-    if (isDefined(parsed)) {
-      parts.push(
-        <RecordLink
-          key={match.index}
-          objectNameSingular={parsed.objectNameSingular}
-          recordId={parsed.recordId}
-          displayName={parsed.displayName}
-        />,
-      );
-    }
-
-    lastIndex = match.index + match[0].length;
+    lastIndex = reference.index + reference.fullMatch.length;
   }
 
   if (lastIndex < text.length) {
