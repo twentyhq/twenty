@@ -205,7 +205,7 @@ export class RelationNestedQueries {
           const recordToConnect = recordsToConnect.filter((record) =>
             connectQueryConfig.recordToConnectConditionByEntityIndex[
               index
-            ].every(([field, value]) => record[field] === value),
+            ].every(([field, value]) => String(record[field]) === String(value)),
           );
 
           if (recordToConnect.length !== 1) {
