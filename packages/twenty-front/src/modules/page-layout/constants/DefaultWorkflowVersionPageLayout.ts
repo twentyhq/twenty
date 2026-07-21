@@ -79,7 +79,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       title: 'Flow',
       icon: 'IconSettings',
       position: 200,
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -102,8 +102,9 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
             columnSpan: 12,
           },
           position: {
-            __typename: 'PageLayoutWidgetCanvasPosition',
-            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
