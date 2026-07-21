@@ -56,14 +56,10 @@ export default defineView({
     { universalIdentifier: '730dfb73-0ff7-429a-a70b-fefc6080b537', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlSex, position: 36, isVisible: true },
     { universalIdentifier: '1620bf1d-0b12-4f69-ad0e-ba7dd1d8aa44', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlBirthDate, position: 37, isVisible: true },
     { universalIdentifier: '029770cb-9353-4b5f-8395-b217cc95402e', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlBirthYear, position: 38, isVisible: true },
-    // TODO: derive these with getSystemRelationFieldUniversalIdentifier once
-    // the next twenty-sdk is released. The system relation field universal
-    // identifiers were re-derived name-free in twenty v2.23 and the pinned
-    // twenty-sdk still embeds the old values.
-    { universalIdentifier: 'ef6e496c-de6c-47ed-bd44-886736f942ec', fieldMetadataUniversalIdentifier: '1c0e0dfe-a01f-58d6-8948-08b93164d03c', position: 39, isVisible: true }, // person.noteTargets
-    { universalIdentifier: '3758ed96-f76d-49a0-b37b-7c5c9aa4c1c1', fieldMetadataUniversalIdentifier: 'ddea86e6-5766-5798-ac32-14fbab6089f6', position: 40, isVisible: true }, // person.taskTargets
-    { universalIdentifier: 'a5bf7046-8fc9-4704-91a5-ba6c1b0f4b58', fieldMetadataUniversalIdentifier: '54dd92e1-67bf-5381-86f3-c747976dcdaf', position: 41, isVisible: true }, // person.attachments
-    { universalIdentifier: 'f6ed39c3-aff2-4ccf-b4e8-57de72b64cdd', fieldMetadataUniversalIdentifier: '32d7483f-6227-528b-bc65-62d9cf858cd8', position: 42, isVisible: true }, // person.timelineActivities
+    { universalIdentifier: 'ef6e496c-de6c-47ed-bd44-886736f942ec', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.noteTargets.universalIdentifier, position: 39, isVisible: true },
+    { universalIdentifier: '3758ed96-f76d-49a0-b37b-7c5c9aa4c1c1', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.taskTargets.universalIdentifier, position: 40, isVisible: true },
+    { universalIdentifier: 'a5bf7046-8fc9-4704-91a5-ba6c1b0f4b58', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.attachments.universalIdentifier, position: 41, isVisible: true },
+    { universalIdentifier: 'f6ed39c3-aff2-4ccf-b4e8-57de72b64cdd', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.timelineActivities.universalIdentifier, position: 42, isVisible: true },
     { universalIdentifier: '45159f0c-bac0-439c-ad8d-c7e4fce4b457', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.createdBy.universalIdentifier, position: 43, isVisible: true },
     { universalIdentifier: '8a5f1742-317f-4b01-b0c1-5d0866f78fa9', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedBy.universalIdentifier, position: 44, isVisible: true },
     { universalIdentifier: '1614c9fb-3566-481f-9dfb-bbba37b1c8aa', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.createdAt.universalIdentifier, position: 45, isVisible: true },

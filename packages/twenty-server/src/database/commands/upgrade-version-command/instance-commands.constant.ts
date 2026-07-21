@@ -114,6 +114,8 @@ import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/data
 import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2-22-instance-command-slow-1784106205000-add-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
+import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626405-add-kanban-and-calendar-widget-view-types';
+import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddAutoUpgradeToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784297307235-add-auto-upgrade-to-application';
 
 export const INSTANCE_COMMANDS = [
@@ -231,5 +233,7 @@ export const INSTANCE_COMMANDS = [
   AddCreatedWorkspaceActivationStatusSlowInstanceCommand,
   UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand,
   BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand,
+  AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand,
+  WidenViewCalendarIntegrityConstraintFastInstanceCommand,
   AddAutoUpgradeToApplicationFastInstanceCommand,
 ];
