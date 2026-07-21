@@ -220,8 +220,8 @@ export default defineFrontComponent({
 ```
 
 Mount it with a [page layout](/developers/extend/apps/layout/page-layouts). A
-`RECORD_PAGE` layout adds tabs to an object's record view; a `FRONT_COMPONENT`
-widget in a `CANVAS` tab hosts the component:
+`RECORD_PAGE` layout adds tabs to an object's record view; a tab with a single
+`FRONT_COMPONENT` widget hosts the component full-bleed:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -236,7 +236,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
