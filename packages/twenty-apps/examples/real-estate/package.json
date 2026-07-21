@@ -1,6 +1,6 @@
 {
   "name": "real-estate",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
