@@ -261,6 +261,16 @@ describe('upsertViewWidget view settings', () => {
   });
 
   it('should reject a non-month calendar layout on a CALENDAR_WIDGET view', async () => {
+    // This suite shares its workspace with the rest of the shard, and the
+    // "allow non-month" test below flips IS_CALENDAR_WEEK_VIEW_ENABLED on. Pin
+    // it off here so the rejection path is exercised deterministically, whatever
+    // the test/retry ordering leaves behind in the workspace.
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
     const { errors } = await upsertViewWidget({
       expectToFail: true,
       input: {
