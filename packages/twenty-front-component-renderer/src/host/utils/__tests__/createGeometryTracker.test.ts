@@ -51,6 +51,22 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('should never push while nothing is observed', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', stub.node);
+    flushFrames(5);
+
+    expect(pushGeometryUpdates).not.toHaveBeenCalled();
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
   it('should push a batch containing only observed nodes', () => {
     const { tracker, pushGeometryUpdates } = createArmedTracker();
     const observed = geometryGlobals.createStubNode({

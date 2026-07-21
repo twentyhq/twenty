@@ -70,7 +70,11 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     const enrolledRemoteElementId = enrolledRemoteElementIds.get(element);
 
     if (isDefined(enrolledRemoteElementId)) {
-      return elementSnapshots.get(enrolledRemoteElementId) ?? null;
+      if (observedRemoteElementIds.has(enrolledRemoteElementId)) {
+        return elementSnapshots.get(enrolledRemoteElementId) ?? null;
+      }
+
+      enrolledRemoteElementIds.delete(element);
     }
 
     if (!isElementUnderRemoteRoot(element, rootElement)) {
@@ -106,6 +110,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     if (isDefined(batch.removedRemoteElementIds)) {
       for (const remoteElementId of batch.removedRemoteElementIds) {
         elementSnapshots.delete(remoteElementId);
+        observedRemoteElementIds.delete(remoteElementId);
+        pendingObservationIds.delete(remoteElementId);
       }
     }
   };

@@ -202,6 +202,48 @@ describe('createWorkerGeometryStore', () => {
     expect(warn).toHaveBeenCalledWith(GEOMETRY_OBSERVATION_LIMIT_WARNING);
   });
 
+  it('should free observation capacity when removedRemoteElementIds prunes ids', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    for (let index = 0; index < 500; index += 1) {
+      store.resolveElementSnapshot({ parentNode: rootElement });
+    }
+    await flushMicrotasks();
+
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    await flushMicrotasks();
+    expect(observeElementGeometry).toHaveBeenCalledTimes(1);
+
+    store.applyGeometryBatch({ removedRemoteElementIds: ['0', '1'] });
+
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).toHaveBeenCalledTimes(2);
+  });
+
+  it('should re-enroll an element whose id was pruned by a removal', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+    await flushMicrotasks();
+
+    store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
+
+    store.resolveElementSnapshot(element);
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).toHaveBeenCalledTimes(2);
+    expect(observeElementGeometry).toHaveBeenLastCalledWith(['0']);
+  });
+
   it('should report an element under the remote root as mirrored', () => {
     const { store, rootElement } = createRootedStore();
 
