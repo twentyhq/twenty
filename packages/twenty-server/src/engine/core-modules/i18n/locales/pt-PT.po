@@ -2062,11 +2062,6 @@ msgstr "Painéis"
 msgid "Data structure is invalid."
 msgstr "Estrutura de dados inválida."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Incompatibilidade de versão dos dados. Atualize e tente novamente."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

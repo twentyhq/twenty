@@ -2062,11 +2062,6 @@ msgstr "ダッシュボード"
 msgid "Data structure is invalid."
 msgstr "データ構造が無効です。"
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "データバージョンが一致しません。更新してもう一度お試しください。"
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

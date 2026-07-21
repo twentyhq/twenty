@@ -2062,11 +2062,6 @@ msgstr "Πίνακες Ελέγχου"
 msgid "Data structure is invalid."
 msgstr "Η δομή δεδομένων δεν είναι έγκυρη."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Ασυμφωνία έκδοσης δεδομένων. Ανανεώστε και δοκιμάστε ξανά."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

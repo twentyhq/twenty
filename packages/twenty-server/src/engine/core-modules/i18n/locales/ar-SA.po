@@ -2062,11 +2062,6 @@ msgstr "لوحات القيادة"
 msgid "Data structure is invalid."
 msgstr "بنية البيانات غير صالحة."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "عدم تطابق في إصدار البيانات. يرجى التحديث والمحاولة مرة أخرى."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

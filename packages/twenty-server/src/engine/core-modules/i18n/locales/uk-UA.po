@@ -2062,11 +2062,6 @@ msgstr "Інформаційні панелі"
 msgid "Data structure is invalid."
 msgstr "Некоректна структура даних."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Невідповідність версії даних. Оновіть сторінку й спробуйте ще раз."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
