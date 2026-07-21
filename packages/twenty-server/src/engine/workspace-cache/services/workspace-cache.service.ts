@@ -1,7 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
+import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
+import { performance } from 'node:perf_hooks';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -185,16 +187,36 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.memoizer.clearKeys(`${workspaceId}-`);
+    return Sentry.startSpan(
+      {
+        name: 'invalidate and recompute workspace metadata cache',
+        op: 'cache.invalidate',
+        onlyIfParent: true,
+        attributes: { 'cache.key_count': cacheKeyNames.length },
+      },
+      async () => {
+        const startedAt = performance.now();
 
-    await this.flush(workspaceId, cacheKeyNames);
-    await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-      strategy: 'mint',
-    });
+        try {
+          await this.memoizer.clearKeys(`${workspaceId}-`);
 
-    // Clear memoizer again after recomputation to evict any stale entries
-    // cached by concurrent getOrRecompute calls during the flush window.
-    await this.memoizer.clearKeys(`${workspaceId}-`);
+          await this.flush(workspaceId, cacheKeyNames);
+          await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
+            strategy: 'mint',
+          });
+
+          // Clear memoizer again after recomputation to evict any stale entries
+          // cached by concurrent getOrRecompute calls during the flush window.
+          await this.memoizer.clearKeys(`${workspaceId}-`);
+        } finally {
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.WorkspaceMetadataCacheInvalidationDurationMs,
+            value: performance.now() - startedAt,
+            unit: 'ms',
+          });
+        }
+      },
+    );
   }
 
   public async getCacheHashes(
@@ -366,7 +388,33 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
-      const data = await provider.computeForCache(workspaceId);
+      const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
+      const data = await Sentry.startSpan(
+        {
+          name: 'compute workspace metadata cache entry from provider',
+          op: 'cache.recompute',
+          onlyIfParent: true,
+          attributes: {
+            'cache.key_name': keyName,
+            'cache.recompute.strategy': hashResolution.strategy,
+            'cache.local_data_only': isLocalDataOnly,
+          },
+        },
+        async () => {
+          const startedAt = performance.now();
+
+          try {
+            return await provider.computeForCache(workspaceId);
+          } finally {
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
+              value: performance.now() - startedAt,
+              unit: 'ms',
+              attributes: { cache_key: keyName },
+            });
+          }
+        },
+      );
 
       if (hashResolution.strategy === 'mint') {
         return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };

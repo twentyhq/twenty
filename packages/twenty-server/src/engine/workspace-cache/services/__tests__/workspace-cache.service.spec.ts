@@ -1,17 +1,24 @@
 import { DiscoveryService, Reflector } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import * as Sentry from '@sentry/node';
+
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+jest.mock('@sentry/node', () => ({
+  startSpan: jest.fn(),
+}));
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
@@ -44,10 +51,14 @@ describe('WorkspaceCacheService', () => {
   let cacheStorageService: jest.Mocked<CacheStorageService>;
   let discoveryService: jest.Mocked<DiscoveryService>;
   let reflector: jest.Mocked<Reflector>;
+  let metricsService: jest.Mocked<MetricsService>;
   let mockProvider: MockFeatureFlagsCacheProvider;
 
   beforeEach(async () => {
     jest.useFakeTimers();
+    jest
+      .mocked(Sentry.startSpan)
+      .mockImplementation((_options, callback) => callback({} as never));
 
     mockProvider = new MockFeatureFlagsCacheProvider();
 
@@ -79,6 +90,7 @@ describe('WorkspaceCacheService', () => {
           provide: MetricsService,
           useValue: {
             incrementCounterBy: jest.fn(),
+            recordHistogram: jest.fn(),
           },
         },
         {
@@ -94,6 +106,7 @@ describe('WorkspaceCacheService', () => {
     cacheStorageService = module.get(CacheStorageNamespace.EngineWorkspace);
     discoveryService = module.get(DiscoveryService);
     reflector = module.get(Reflector);
+    metricsService = module.get(MetricsService);
   });
 
   afterEach(() => {
@@ -186,6 +199,25 @@ describe('WorkspaceCacheService', () => {
       });
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
       expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(Sentry.startSpan).toHaveBeenCalledWith(
+        {
+          name: 'compute workspace metadata cache entry from provider',
+          op: 'cache.recompute',
+          onlyIfParent: true,
+          attributes: {
+            'cache.key_name': 'featureFlagsMap',
+            'cache.recompute.strategy': 'recover',
+            'cache.local_data_only': false,
+          },
+        },
+        expect.any(Function),
+      );
+      expect(metricsService.recordHistogram).toHaveBeenCalledWith({
+        key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
+        value: expect.any(Number),
+        unit: 'ms',
+        attributes: { cache_key: 'featureFlagsMap' },
+      });
     });
 
     it('should return data from redis when available', async () => {
@@ -203,6 +235,11 @@ describe('WorkspaceCacheService', () => {
       ]);
 
       expect(result).toEqual({ featureFlagsMap: cachedData });
+      expect(metricsService.recordHistogram).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
+        }),
+      );
     });
 
     it('should use local cache when within TTL staleness window', async () => {
@@ -295,6 +332,20 @@ describe('WorkspaceCacheService', () => {
       ]);
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
       expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(Sentry.startSpan).toHaveBeenCalledWith(
+        {
+          name: 'invalidate and recompute workspace metadata cache',
+          op: 'cache.invalidate',
+          onlyIfParent: true,
+          attributes: { 'cache.key_count': 1 },
+        },
+        expect.any(Function),
+      );
+      expect(metricsService.recordHistogram).toHaveBeenCalledWith({
+        key: MetricsKeys.WorkspaceMetadataCacheInvalidationDurationMs,
+        value: expect.any(Number),
+        unit: 'ms',
+      });
     });
 
     it('should invalidate multiple cache keys at once', async () => {
