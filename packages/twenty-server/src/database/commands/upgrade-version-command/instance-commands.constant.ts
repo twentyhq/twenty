@@ -125,7 +125,7 @@ import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from
 import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784897347051-repair-key-value-pair-application-id';
 import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
-import { SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784540930631-set-packaged-application-logic-function-execution-mode';
+import { SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand } from './2-25/2-25-instance-command-slow-1784921879702-set-packaged-application-logic-function-execution-mode';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
