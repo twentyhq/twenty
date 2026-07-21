@@ -31,6 +31,8 @@ const DELETE_APP_KEY_VALUE_MUTATION = `
   }
 `;
 
+const DEFAULT_APP_KEY_VALUE_SCOPE: AppKeyValueScope = 'INSTALL';
+
 type KvOptions = {
   scope?: AppKeyValueScope;
 };
@@ -45,7 +47,7 @@ export const kv = {
       { appKeyValue: AppKeyValue | null }
     >({
       query: GET_APP_KEY_VALUE_QUERY,
-      variables: { key, scope: options?.scope ?? 'INSTALL' },
+      variables: { key, scope: options?.scope ?? DEFAULT_APP_KEY_VALUE_SCOPE },
       caller: 'kv.get',
     });
 
@@ -65,7 +67,11 @@ export const kv = {
     >({
       query: SET_APP_KEY_VALUE_MUTATION,
       variables: {
-        input: { key, value, scope: options?.scope ?? 'INSTALL' },
+        input: {
+          key,
+          value,
+          scope: options?.scope ?? DEFAULT_APP_KEY_VALUE_SCOPE,
+        },
       },
       caller: 'kv.set',
     });
@@ -77,7 +83,7 @@ export const kv = {
       { deleteAppKeyValue: boolean }
     >({
       query: DELETE_APP_KEY_VALUE_MUTATION,
-      variables: { key, scope: options?.scope ?? 'INSTALL' },
+      variables: { key, scope: options?.scope ?? DEFAULT_APP_KEY_VALUE_SCOPE },
       caller: 'kv.delete',
     });
 
