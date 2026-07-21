@@ -52,6 +52,7 @@ export enum MetricsKeys {
   JobWebhookCallCompleted = 'job/webhook-call-completed',
   SignUpSuccess = 'sign-up/success',
   CommonApiQueryRateLimited = 'common-api-query/rate-limited',
+  CommonApiApplicationQueryRateLimited = 'common-api-query/application-rate-limited',
   JobCompleted = 'job/completed',
   JobFailed = 'job/failed',
   JobStalled = 'job/stalled',

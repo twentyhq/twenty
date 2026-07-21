@@ -35,6 +35,7 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -348,6 +349,37 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
+    await this.throttleApiKeyQueryExecution(authContext);
+    await this.throttleApplicationQueryExecution(authContext);
+  }
+
+  private async throttleApplicationQueryExecution(
+    authContext: WorkspaceAuthContext,
+  ) {
+    if (!isApplicationAuthContext(authContext)) return;
+
+    try {
+      // Keyed on universalIdentifier without workspaceId: the budget is shared
+      // by every installation of the application on the instance.
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `api:throttler:application:${authContext.application.universalIdentifier}`,
+        1,
+        this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_LIMIT'),
+        this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_TTL_IN_MS'),
+      );
+    } catch (error) {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.CommonApiApplicationQueryRateLimited,
+        shouldStoreInCache: false,
+      });
+
+      throw error;
+    }
+  }
+
+  private async throttleApiKeyQueryExecution(
+    authContext: WorkspaceAuthContext,
+  ) {
     try {
       if (!isApiKeyAuthContext(authContext)) return;
 
