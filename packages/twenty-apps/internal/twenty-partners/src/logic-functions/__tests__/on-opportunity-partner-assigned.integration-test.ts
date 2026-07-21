@@ -1,7 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import onOpportunityPartnerAssigned from '../on-opportunity-partner-assigned';
+import onOpportunityPartnerAssigned from '../on-opportunity-partner-assigned.logic-function';
 
 // defineLogicFunction wraps the handler in a ValidationResult; the fn is on config.handler.
 const handler = onOpportunityPartnerAssigned.config.handler;

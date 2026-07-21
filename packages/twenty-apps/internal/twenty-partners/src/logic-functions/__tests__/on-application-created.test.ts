@@ -11,7 +11,7 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
-import { handler } from '../on-application-created';
+import { handler } from '../on-application-created.logic-function';
 
 const MEMBER_ID = 'aaaaaaaa-1111-1111-1111-111111111111';
 const PARTNER_ID = 'bbbbbbbb-2222-2222-2222-222222222222';

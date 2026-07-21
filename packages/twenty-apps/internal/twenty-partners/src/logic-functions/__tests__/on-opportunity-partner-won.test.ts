@@ -10,7 +10,7 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
-import { handler } from '../on-opportunity-partner-won';
+import { handler } from '../on-opportunity-partner-won.logic-function';
 
 const OPP = 'aaaaaaaa-0000-0000-0000-000000000001';
 const P_WIN = 'bbbbbbbb-0000-0000-0000-000000000001';

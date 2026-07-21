@@ -11,7 +11,7 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
-import { handler } from '../on-application-set-name';
+import { handler } from '../on-application-set-name.logic-function';
 
 const event = (after: Record<string, unknown>, updatedFields: string[]) =>
   ({ properties: { after, updatedFields } }) as never;
