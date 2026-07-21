@@ -9,7 +9,7 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
-  ViewCalendarLayout,
+  type ViewCalendarLayout,
   ViewType,
 } from '~/generated-metadata/graphql';
 
