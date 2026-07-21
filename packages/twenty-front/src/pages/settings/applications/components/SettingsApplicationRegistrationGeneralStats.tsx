@@ -51,11 +51,11 @@ export const SettingsApplicationRegistrationGeneralStats = ({
     { client: apolloAdminClient },
   );
 
-  const parsedBatchSize = Number.parseInt(batchSizeInput, 10);
+  const parsedBatchSize = Number(batchSizeInput);
   const batchSize =
-    Number.isNaN(parsedBatchSize) || parsedBatchSize < 1
-      ? DEFAULT_UPGRADE_BATCH_SIZE
-      : parsedBatchSize;
+    Number.isInteger(parsedBatchSize) && parsedBatchSize > 0
+      ? parsedBatchSize
+      : DEFAULT_UPGRADE_BATCH_SIZE;
 
   const handleUpgrade = async () => {
     setIsUpgrading(true);

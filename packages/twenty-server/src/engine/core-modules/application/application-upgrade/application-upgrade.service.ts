@@ -22,6 +22,7 @@ const npmPackageMetadataSchema = z.object({
 });
 
 const UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE = 5;
+const UPGRADE_APPLICATIONS_MAX_BATCH_SIZE = 50;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -141,7 +142,10 @@ export class ApplicationUpgradeService {
       (application) => application.version !== targetVersion,
     );
 
-    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+    const sanitizedBatchSize = Math.min(
+      Math.max(1, Math.floor(batchSize)),
+      UPGRADE_APPLICATIONS_MAX_BATCH_SIZE,
+    );
 
     for (
       let batchStart = 0;
