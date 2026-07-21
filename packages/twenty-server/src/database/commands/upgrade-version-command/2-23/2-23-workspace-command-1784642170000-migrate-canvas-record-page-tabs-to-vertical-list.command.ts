@@ -12,7 +12,7 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.23.0', 1784600000000)
+@RegisteredWorkspaceCommand('2.23.0', 1784642170000)
 @Command({
   name: 'upgrade:2-23:migrate-canvas-record-page-tabs-to-vertical-list',
   description:
