@@ -1,0 +1,211 @@
+import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
+import { createWorkerGeometryStore } from '../createWorkerGeometryStore';
+
+const remoteElementIdsByElement = new WeakMap<object, string>();
+let nextRemoteElementId = 0;
+
+jest.mock('@remote-dom/core/elements', () => ({
+  remoteId: (element: object) => {
+    const existingRemoteElementId = remoteElementIdsByElement.get(element);
+
+    if (existingRemoteElementId !== undefined) {
+      return existingRemoteElementId;
+    }
+
+    const remoteElementId = String(nextRemoteElementId);
+    nextRemoteElementId += 1;
+    remoteElementIdsByElement.set(element, remoteElementId);
+
+    return remoteElementId;
+  },
+}));
+
+const createSnapshot = (width: number) => ({
+  x: 0,
+  y: 0,
+  width,
+  height: 0,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  offsetTop: 0,
+  offsetLeft: 0,
+  clientWidth: 0,
+  clientHeight: 0,
+  clientTop: 0,
+  clientLeft: 0,
+  scrollWidth: 0,
+  scrollHeight: 0,
+  scrollTop: 0,
+  scrollLeft: 0,
+});
+
+const createViewport = (innerWidth: number) => ({
+  innerWidth,
+  innerHeight: 0,
+  devicePixelRatio: 1,
+  scrollX: 0,
+  scrollY: 0,
+  rootContainerX: 0,
+  rootContainerY: 0,
+  rootContainerWidth: 0,
+  rootContainerHeight: 0,
+  rootContainerClientWidth: 0,
+  rootContainerClientHeight: 0,
+  defaultFontShorthand: '400 13px sans-serif',
+});
+
+const flushMicrotasks = () => Promise.resolve();
+
+const createRootedStore = () => {
+  const store = createWorkerGeometryStore();
+  const rootElement = { parentNode: null };
+  store.setRootElement(rootElement);
+
+  return { store, rootElement };
+};
+
+describe('createWorkerGeometryStore', () => {
+  beforeEach(() => {
+    nextRemoteElementId = 0;
+    jest.restoreAllMocks();
+  });
+
+  it('should return null for an element outside the remote root', () => {
+    const { store } = createRootedStore();
+
+    expect(store.resolveElementSnapshot({ parentNode: null })).toBeNull();
+  });
+
+  it('should not mint a remote id for an element outside the remote root', async () => {
+    const { store } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+
+    store.resolveElementSnapshot({ parentNode: null });
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).not.toHaveBeenCalled();
+  });
+
+  it('should enroll an element under the remote root and observe it once', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+    store.resolveElementSnapshot(element);
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).toHaveBeenCalledTimes(1);
+    expect(observeElementGeometry).toHaveBeenCalledWith(['0']);
+  });
+
+  it('should coalesce a synchronous burst of enrollments into one call', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    await flushMicrotasks();
+
+    expect(observeElementGeometry).toHaveBeenCalledTimes(1);
+    expect(observeElementGeometry).toHaveBeenCalledWith(['0', '1', '2']);
+  });
+
+  it('should retain enrollments and flush them when the transport connects later', async () => {
+    const { store, rootElement } = createRootedStore();
+
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    await flushMicrotasks();
+
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+
+    expect(observeElementGeometry).toHaveBeenCalledWith(['0']);
+  });
+
+  it('should return the snapshot after a batch writes it', () => {
+    const { store, rootElement } = createRootedStore();
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(42) } });
+
+    expect(store.resolveElementSnapshot(element)?.width).toBe(42);
+  });
+
+  it('should merge successive batches rather than replacing the element map', () => {
+    const { store, rootElement } = createRootedStore();
+    const first = { parentNode: rootElement };
+    const second = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(first);
+    store.resolveElementSnapshot(second);
+
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(1) } });
+    store.applyGeometryBatch({ elements: { '1': createSnapshot(2) } });
+
+    expect(store.resolveElementSnapshot(first)?.width).toBe(1);
+    expect(store.resolveElementSnapshot(second)?.width).toBe(2);
+  });
+
+  it('should delete entries listed in removedRemoteElementIds', () => {
+    const { store, rootElement } = createRootedStore();
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(5) } });
+    store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
+
+    expect(store.resolveElementSnapshot(element)).toBeNull();
+  });
+
+  it('should replace the viewport snapshot on each batch that carries one', () => {
+    const { store } = createRootedStore();
+
+    expect(store.getViewportSnapshot()).toBeNull();
+
+    store.applyGeometryBatch({ viewport: createViewport(800) });
+    expect(store.getViewportSnapshot()?.innerWidth).toBe(800);
+
+    store.applyGeometryBatch({ viewport: createViewport(1200) });
+    expect(store.getViewportSnapshot()?.innerWidth).toBe(1200);
+  });
+
+  it('should stop enrolling once the observation limit is reached', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({ observeElementGeometry });
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    for (let index = 0; index < 600; index += 1) {
+      store.resolveElementSnapshot({ parentNode: rootElement });
+    }
+    await flushMicrotasks();
+
+    expect(observeElementGeometry.mock.calls[0][0]).toHaveLength(500);
+  });
+
+  it('should warn exactly once about the observation limit', () => {
+    const { store, rootElement } = createRootedStore();
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    for (let index = 0; index < 600; index += 1) {
+      store.resolveElementSnapshot({ parentNode: rootElement });
+    }
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith(GEOMETRY_OBSERVATION_LIMIT_WARNING);
+  });
+
+  it('should report an element under the remote root as mirrored', () => {
+    const { store, rootElement } = createRootedStore();
+
+    expect(store.isElementMirrored({ parentNode: rootElement })).toBe(true);
+    expect(store.isElementMirrored({ parentNode: null })).toBe(false);
+  });
+});

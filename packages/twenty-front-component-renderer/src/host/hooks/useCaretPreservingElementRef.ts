@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
@@ -12,23 +12,27 @@ export const useCaretPreservingElementRef = (
   const latestComposedElementRefRef = useRef(composedElementRef);
   latestComposedElementRefRef.current = composedElementRef;
 
-  const latestValueRef = useRef(value);
-  latestValueRef.current = value;
+  const attachedElementRef = useRef<Element | null>(null);
 
   const [caretPreservingElementRef] = useState(
     () => (element: Element | null) => {
+      attachedElementRef.current = element;
       latestComposedElementRefRef.current?.(element);
-
-      if (!isDefined(element) || !isNonEmptyString(latestValueRef.current)) {
-        return;
-      }
-
-      syncValuePreservingCaret(
-        element as HTMLInputElement | HTMLTextAreaElement,
-        latestValueRef.current,
-      );
     },
   );
+
+  useLayoutEffect(() => {
+    const attachedElement = attachedElementRef.current;
+
+    if (!isDefined(attachedElement) || !isNonEmptyString(value)) {
+      return;
+    }
+
+    syncValuePreservingCaret(
+      attachedElement as HTMLInputElement | HTMLTextAreaElement,
+      value,
+    );
+  });
 
   return caretPreservingElementRef;
 };
