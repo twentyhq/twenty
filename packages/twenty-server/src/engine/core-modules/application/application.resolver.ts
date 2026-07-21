@@ -36,12 +36,14 @@ export class ApplicationResolver {
 
     const application = flatApplicationMaps.byId[applicationId];
 
-    return isDefined(application?.sdkClientCoreChecksum)
-      ? {
-          core: application.sdkClientCoreChecksum,
-          metadata: (await getInstalledSdkMetadataModule()).checksum,
-        }
-      : null;
+    if (!isDefined(application)) {
+      return null;
+    }
+
+    return {
+      core: application.sdkClientCoreChecksum,
+      metadata: (await getInstalledSdkMetadataModule()).checksum,
+    };
   }
 
   // Resolves the display url of the logo bundled in the installed

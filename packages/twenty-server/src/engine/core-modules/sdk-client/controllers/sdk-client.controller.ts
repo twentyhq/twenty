@@ -34,6 +34,23 @@ export class SdkClientController {
     private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {}
 
+  @Get(['metadata', 'metadata/:checksum'])
+  @UseGuards(NoPermissionGuard)
+  async getInstanceSdkMetadataModule(
+    @Res() res: Response,
+    @Param('checksum') checksum?: string,
+  ) {
+    const { moduleBuffer, checksum: servedModuleChecksum } =
+      await getInstalledSdkMetadataModule();
+
+    this.sendSdkModule({
+      res,
+      moduleBuffer,
+      servedModuleChecksum,
+      requestedChecksum: checksum,
+    });
+  }
+
   @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
   @UseGuards(NoPermissionGuard)
   async getSdkModule(
@@ -76,8 +93,28 @@ export class SdkClientController {
             checksum: application.sdkClientCoreChecksum,
           };
 
+    this.sendSdkModule({
+      res,
+      moduleBuffer,
+      servedModuleChecksum,
+      requestedChecksum: checksum,
+    });
+  }
+
+  private sendSdkModule({
+    res,
+    moduleBuffer,
+    servedModuleChecksum,
+    requestedChecksum,
+  }: {
+    res: Response;
+    moduleBuffer: Buffer;
+    servedModuleChecksum: string | null;
+    requestedChecksum?: string;
+  }) {
     const isChecksumMatch =
-      isDefined(checksum) && checksum === servedModuleChecksum;
+      isDefined(requestedChecksum) &&
+      requestedChecksum === servedModuleChecksum;
 
     res.setHeader('Content-Type', 'application/javascript');
     res.setHeader('X-Content-Type-Options', 'nosniff');

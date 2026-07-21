@@ -6,14 +6,18 @@ export const getSdkClientUrls = (
   applicationId: string,
   checksums?: Pick<SdkClientChecksums, 'core' | 'metadata'> | null,
 ) => {
-  const baseUrl = `${REST_API_BASE_URL}/sdk-client/${applicationId}`;
+  const applicationBaseUrl = `${REST_API_BASE_URL}/sdk-client/${applicationId}`;
+  const metadataBaseUrl = `${REST_API_BASE_URL}/sdk-client/metadata`;
+
+  const coreChecksum = checksums?.core;
+  const metadataChecksum = checksums?.metadata;
 
   return {
-    core: isDefined(checksums)
-      ? `${baseUrl}/core/${checksums.core}`
-      : `${baseUrl}/core`,
-    metadata: isDefined(checksums)
-      ? `${baseUrl}/metadata/${checksums.metadata}`
-      : `${baseUrl}/metadata`,
+    core: isDefined(coreChecksum)
+      ? `${applicationBaseUrl}/core/${coreChecksum}`
+      : `${applicationBaseUrl}/core`,
+    metadata: isDefined(metadataChecksum)
+      ? `${metadataBaseUrl}/${metadataChecksum}`
+      : metadataBaseUrl,
   };
 };

@@ -1751,7 +1751,6 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
-  IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_CALENDAR_WEEK_VIEW_ENABLED = 'IS_CALENDAR_WEEK_VIEW_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -5060,7 +5059,7 @@ export enum SsoIdentityProviderStatus {
 
 export type SdkClientChecksums = {
   __typename?: 'SdkClientChecksums';
-  core: Scalars['String']['output'];
+  core?: Maybe<Scalars['String']['output']>;
   metadata: Scalars['String']['output'];
 };
 
@@ -7219,7 +7218,7 @@ export type GetApplicationSdkClientChecksumsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationSdkClientChecksumsQuery = { __typename?: 'Query', applicationSdkClientChecksums?: { __typename?: 'SdkClientChecksums', core: string, metadata: string } | null };
+export type GetApplicationSdkClientChecksumsQuery = { __typename?: 'Query', applicationSdkClientChecksums?: { __typename?: 'SdkClientChecksums', core?: string | null, metadata: string } | null };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, executionMode: LogicFunctionExecutionMode, sourceHandlerPath: string, handlerName: string, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, toolTriggerSettings?: any | null, workflowActionTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string };
 

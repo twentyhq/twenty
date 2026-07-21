@@ -82,6 +82,65 @@ describe('SdkClientController', () => {
     controller = module.get<SdkClientController>(SdkClientController);
   });
 
+  describe('instance-wide metadata route', () => {
+    const INSTALLED_METADATA_BUFFER = Buffer.from('installed metadata module');
+    const INSTALLED_METADATA_CHECKSUM = 'a'.repeat(64);
+
+    beforeEach(() => {
+      mockGetInstalledSdkMetadataModule.mockResolvedValue({
+        moduleBuffer: INSTALLED_METADATA_BUFFER,
+        checksum: INSTALLED_METADATA_CHECKSUM,
+      });
+    });
+
+    it('serves the installed metadata module without touching workspace caches', async () => {
+      await controller.getInstanceSdkMetadataModule(
+        response as unknown as Response,
+      );
+
+      expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
+      expect(
+        sdkClientArchiveService.getClientModuleFromArchive,
+      ).not.toHaveBeenCalled();
+      expect(response.send).toHaveBeenCalledWith(INSTALLED_METADATA_BUFFER);
+    });
+
+    it('opts out of caching on the bare url', async () => {
+      await controller.getInstanceSdkMetadataModule(
+        response as unknown as Response,
+      );
+
+      expect(response.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
+      );
+    });
+
+    it('serves fingerprinted urls as immutable when the checksum matches the installed module', async () => {
+      await controller.getInstanceSdkMetadataModule(
+        response as unknown as Response,
+        INSTALLED_METADATA_CHECKSUM,
+      );
+
+      expect(response.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        SDK_CLIENT_MODULE_CACHE_CONTROL,
+      );
+    });
+
+    it('opts out of caching when the fingerprint does not match the installed module', async () => {
+      await controller.getInstanceSdkMetadataModule(
+        response as unknown as Response,
+        'c'.repeat(64),
+      );
+
+      expect(response.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
+      );
+    });
+  });
+
   it('serves the metadata module from the installed package, not the archive', async () => {
     const installedModuleBuffer = Buffer.from('installed metadata module');
 
