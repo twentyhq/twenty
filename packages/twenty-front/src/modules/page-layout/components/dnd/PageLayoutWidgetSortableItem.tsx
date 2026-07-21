@@ -20,14 +20,6 @@ const StyledSortableRoot = styled.div<{ isDragging: boolean }>`
   transition: background 0.1s ease;
 `;
 
-// Sits in the gap above the widget so the drop line does not shift layout.
-const StyledDropLineContainer = styled.div`
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: calc(-1 * ${themeCssVariables.spacing[2]});
-`;
-
 type PageLayoutWidgetSortableItemProps = {
   widgetId: string;
   tabId: string;
@@ -63,11 +55,7 @@ export const PageLayoutWidgetSortableItem = ({
 
   return (
     <StyledSortableRoot ref={ref} isDragging={isDragging}>
-      {isDropTarget && (
-        <StyledDropLineContainer>
-          <PageLayoutWidgetDropLine />
-        </StyledDropLineContainer>
-      )}
+      {isDropTarget && <PageLayoutWidgetDropLine />}
       {children}
     </StyledSortableRoot>
   );
