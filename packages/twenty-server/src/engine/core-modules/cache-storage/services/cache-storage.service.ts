@@ -102,68 +102,6 @@ export class CacheStorageService {
     );
   }
 
-  async msetIfUnchanged({
-    guardKey,
-    expectedGuardValue,
-    entries,
-    ttl,
-  }: {
-    guardKey: string;
-    expectedGuardValue: unknown;
-    entries: Array<{ key: string; value: unknown }>;
-    ttl: Milliseconds;
-  }): Promise<boolean> {
-    if (entries.length === 0) {
-      return true;
-    }
-
-    if (this.isRedisCache()) {
-      const redisClient = (this.cache as RedisCache).store.client;
-      const script = `
-local current = redis.call('GET', KEYS[1])
-if ARGV[1] == '1' then
-  if current then return 0 end
-elseif current ~= ARGV[2] then
-  return 0
-end
-for index = 2, #KEYS do
-  if tonumber(ARGV[3]) > 0 then
-    redis.call('PSETEX', KEYS[index], ARGV[3], ARGV[index + 2])
-  else
-    redis.call('SET', KEYS[index], ARGV[index + 2])
-  end
-end
-return 1`;
-      const result = await redisClient.eval(script, {
-        keys: [guardKey, ...entries.map(({ key }) => key)].map((key) =>
-          this.getKey(key),
-        ),
-        arguments: [
-          expectedGuardValue === undefined ? '1' : '0',
-          expectedGuardValue === undefined
-            ? ''
-            : JSON.stringify(expectedGuardValue),
-          String(ttl),
-          ...entries.map(({ value }) => JSON.stringify(value)),
-        ],
-      });
-
-      return result === 1;
-    }
-
-    const currentGuardValue = await this.get(guardKey);
-
-    if (
-      JSON.stringify(currentGuardValue) !== JSON.stringify(expectedGuardValue)
-    ) {
-      return false;
-    }
-
-    await this.mset(entries.map((entry) => ({ ...entry, ttl })));
-
-    return true;
-  }
-
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
     if (value.length === 0) {
       return;

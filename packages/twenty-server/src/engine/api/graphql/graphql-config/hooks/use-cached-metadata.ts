@@ -23,7 +23,6 @@ export type CacheMetadataPluginConfig = {
     ttlMilliseconds?: number,
   ) => Promise<boolean>;
   operationConfigs: Record<string, CacheMetadataOperationConfig>;
-  cacheKeySalt?: string;
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
@@ -57,7 +56,6 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       .update(
         JSON.stringify({
           cacheGeneration,
-          cacheKeySalt: config.cacheKeySalt,
           locale: operationConfig.variesByLocale
             ? (request.locale ?? null)
             : undefined,

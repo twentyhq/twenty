@@ -64,7 +64,6 @@ export const metadataModuleFactory = async (
             value,
             ttlMilliseconds ?? cacheStorageTtlMilliseconds,
           ),
-        cacheKeySalt: twentyConfigService.get('APP_VERSION') ?? 'development',
         operationConfigs: {
           ObjectMetadataItems: {
             variesByLocale: true,

@@ -142,44 +142,6 @@ describe('PromiseMemoizer', () => {
       expect(result2).toBe('test-value');
       expect(mockFactory).toHaveBeenCalledTimes(1);
     });
-
-    it('should not cache a pending result invalidated by clearKeys', async () => {
-      let resolveStaleFactory!: (value: string) => void;
-      let markStaleFactoryAsStarted!: () => void;
-      const staleFactoryPromise = new Promise<string>((resolve) => {
-        resolveStaleFactory = resolve;
-      });
-      const staleFactoryStarted = new Promise<void>((resolve) => {
-        markStaleFactoryAsStarted = resolve;
-      });
-      const staleFactory = jest.fn().mockImplementation(() => {
-        markStaleFactoryAsStarted();
-
-        return staleFactoryPromise;
-      });
-      const freshFactory = jest.fn().mockResolvedValue('fresh-value');
-      const cachedFactory = jest.fn().mockResolvedValue('unexpected-value');
-
-      const staleResultPromise = memoizer.memoizePromiseAndExecute(
-        'test-key-1',
-        staleFactory,
-      );
-
-      await staleFactoryStarted;
-      await memoizer.clearKeys('test-key');
-
-      await expect(
-        memoizer.memoizePromiseAndExecute('test-key-1', freshFactory),
-      ).resolves.toBe('fresh-value');
-
-      resolveStaleFactory('stale-value');
-      await expect(staleResultPromise).resolves.toBe('stale-value');
-      await expect(
-        memoizer.memoizePromiseAndExecute('test-key-1', cachedFactory),
-      ).resolves.toBe('fresh-value');
-
-      expect(cachedFactory).not.toHaveBeenCalled();
-    });
   });
 
   describe('clearKey', () => {

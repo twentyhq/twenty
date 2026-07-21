@@ -9,11 +9,7 @@ const ONE_HOUR_IN_MS = 3600_000;
 
 export class PromiseMemoizer<T> {
   private cache = new Map<CacheKey, { value: T; expiresAt: number }>();
-  private pending = new Map<
-    CacheKey,
-    { promise: Promise<T | null>; token: object }
-  >();
-  private invalidatedPendingTokens = new WeakSet<object>();
+  private pending = new Map<CacheKey, Promise<T | null>>();
   private ttlMs: number;
 
   constructor(ttlMs: Milliseconds = ONE_HOUR_IN_MS) {
@@ -36,15 +32,14 @@ export class PromiseMemoizer<T> {
     const existingPromise = this.pending.get(cacheKey);
 
     if (existingPromise) {
-      return existingPromise.promise;
+      return existingPromise;
     }
 
-    const pendingToken = {};
     const newPromise = (async () => {
       try {
         const value = await factory();
 
-        if (value && !this.invalidatedPendingTokens.has(pendingToken)) {
+        if (value) {
           this.cache.set(cacheKey, {
             value,
             expiresAt: Date.now() + this.ttlMs,
@@ -53,16 +48,11 @@ export class PromiseMemoizer<T> {
 
         return value;
       } finally {
-        if (this.pending.get(cacheKey)?.token === pendingToken) {
-          this.pending.delete(cacheKey);
-        }
+        this.pending.delete(cacheKey);
       }
     })();
 
-    this.pending.set(cacheKey, {
-      promise: newPromise,
-      token: pendingToken,
-    });
+    this.pending.set(cacheKey, newPromise);
 
     return newPromise;
   }
@@ -83,59 +73,34 @@ export class PromiseMemoizer<T> {
   ): Promise<void> {
     const cachedValue = this.cache.get(cacheKey);
 
-    this.cache.delete(cacheKey);
-    this.invalidatePending(cacheKey);
-
     if (isDefined(cachedValue)) {
       await onDelete?.(cachedValue.value);
     }
+    this.cache.delete(cacheKey);
   }
 
   async clearKeys(
     cacheKeyPrefix: CacheKey,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<void> {
-    const cacheKeys = new Set([...this.cache.keys(), ...this.pending.keys()]);
-    const deletedValues: T[] = [];
-
-    for (const cacheKey of cacheKeys) {
+    for (const cacheKey of [...this.cache.keys()]) {
       if (cacheKey.startsWith(cacheKeyPrefix)) {
-        const cachedValue = this.cache.get(cacheKey);
-
-        this.cache.delete(cacheKey);
-        this.invalidatePending(cacheKey);
-
-        if (isDefined(cachedValue)) {
-          deletedValues.push(cachedValue.value);
-        }
+        await this.clearKey(cacheKey, onDelete);
       }
     }
 
-    for (const deletedValue of deletedValues) {
-      await onDelete?.(deletedValue);
+    for (const cacheKey of [...this.pending.keys()]) {
+      if (cacheKey.startsWith(cacheKeyPrefix)) {
+        this.pending.delete(cacheKey);
+      }
     }
   }
 
   async clearAll(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
-    const deletedValues = [...this.cache.values()].map((entry) => entry.value);
-
-    for (const cacheKey of [...this.pending.keys()]) {
-      this.invalidatePending(cacheKey);
+    for (const [, entry] of this.cache.entries()) {
+      await onDelete?.(entry.value);
     }
 
     this.cache.clear();
-
-    for (const deletedValue of deletedValues) {
-      await onDelete?.(deletedValue);
-    }
-  }
-
-  private invalidatePending(cacheKey: CacheKey): void {
-    const pendingEntry = this.pending.get(cacheKey);
-
-    if (isDefined(pendingEntry)) {
-      this.invalidatedPendingTokens.add(pendingEntry.token);
-      this.pending.delete(cacheKey);
-    }
   }
 }
