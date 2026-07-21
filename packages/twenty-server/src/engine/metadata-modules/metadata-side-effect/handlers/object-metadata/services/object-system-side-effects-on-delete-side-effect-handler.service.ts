@@ -17,7 +17,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectSystemSideEffectsOnDelete',
     description:
-      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, every system index (including the GIN searchVector index), and its searchFieldMetadata rows. These entities are excluded from manifest deletion inference, so the cascade must be explicit. Caller-provided defaults (name, default relations) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
+      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), and its searchFieldMetadata rows. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes, and manifest deletion inference excludes these entities entirely. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
   },
 ) {
   buildSideEffects({

@@ -235,7 +235,10 @@ export const SettingsApplicationDetails = () => {
         applicationHasHttpTriggeredFunctions(application);
       const canShowFunctionDomain = hasHttpTriggeredFunctions;
       const hasNothingToConfigure =
-        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
+        !hasVariables &&
+        !hasConnectionProviders &&
+        !canShowFunctionDomain &&
+        !isUpgradableApplicationSourceType(sourceType);
 
       return {
         id: 'settings',

@@ -23,6 +23,7 @@ import { PartnerAvatar } from './PartnerAvatar';
 import { PartnerChipRow } from './PartnerChipRow';
 import { PartnerMoneyRow } from './PartnerMoneyRow';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
+import { richTextExcerpt } from './rich-text-excerpt';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';
 import { titleCaseFallback } from './title-case-fallback';
@@ -171,7 +172,12 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
     .filter(Boolean)
     .join(', ');
 
-  const linkedinSafe = isSafeHttpUrl(partner.linkedinUrl);
+  const linkedinHref =
+    partner.links.linkedin !== null && isSafeHttpUrl(partner.links.linkedin)
+      ? partner.links.linkedin
+      : null;
+
+  const descriptionExcerpt = richTextExcerpt(partner.description);
 
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
@@ -186,20 +192,22 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
             <PartnerName id={headingId}>
               <NameLink href={profileHref}>{partner.name}</NameLink>
             </PartnerName>
-            {linkedinSafe && (
+            {linkedinHref !== null && (
               <LinkedinIconLink
-                href={partner.linkedinUrl}
+                href={linkedinHref}
                 aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
               >
                 <IconBrandLinkedin size={16} aria-hidden="true" />
               </LinkedinIconLink>
             )}
           </NameRow>
-          <LocationEyebrow>{locationLine}</LocationEyebrow>
+          {locationLine.length > 0 && (
+            <LocationEyebrow>{locationLine}</LocationEyebrow>
+          )}
         </HeaderText>
       </CardHeader>
 
-      <Introduction>{partner.introduction}</Introduction>
+      <Introduction>{descriptionExcerpt}</Introduction>
 
       <Divider aria-hidden="true" />
 

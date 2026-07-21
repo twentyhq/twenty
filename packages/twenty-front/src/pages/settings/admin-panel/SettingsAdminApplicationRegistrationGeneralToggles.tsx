@@ -150,7 +150,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <StyledButtonWrapper id={BACKFILL_BUTTON_ID}>
           <Button
             Icon={IconReload}
-            title={t`Install latest version on all workspaces`}
+            title={t`Install on all workspaces`}
             variant="secondary"
             onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
             disabled={isBackfilling || !registration.isPreInstalled}
@@ -169,10 +169,10 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
       </StyledBackfillContainer>
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
-        title={t`Backfill installation`}
-        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?`}
+        title={t`Install on all workspaces`}
+        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?`}
         onConfirmClick={handleBackfill}
-        confirmButtonText={t`Backfill`}
+        confirmButtonText={t`Install`}
         confirmButtonAccent="blue"
         loading={isBackfilling}
       />

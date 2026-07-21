@@ -61,11 +61,12 @@ export class MessagingWebhookSubscriptionService {
       connectedAccount.provider,
     );
 
-    if (isDefined(messageChannel.webhookSubscriptionExternalId)) {
-      await driver
-        .deleteSubscription(this.toContext(messageChannel))
-        .catch(() => undefined);
-    }
+    // Keep any existing watch live until the replacement is created, then stop it.
+    const previousSubscription = isDefined(
+      messageChannel.webhookSubscriptionExternalId,
+    )
+      ? this.toContext(messageChannel)
+      : null;
 
     try {
       const result = await driver.createSubscription(
@@ -93,15 +94,40 @@ export class MessagingWebhookSubscriptionService {
 
       throw error;
     }
+
+    if (isDefined(previousSubscription)) {
+      await driver
+        .deleteSubscription(previousSubscription)
+        .catch(() => undefined);
+    }
   }
 
-  async renewSubscription(messageChannel: MessageChannelEntity): Promise<void> {
-    const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: {
-        id: messageChannel.connectedAccountId,
-        workspaceId: messageChannel.workspaceId,
-      },
+  async renewSubscription({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const messageChannel = await this.messageChannelRepository.findOne({
+      where: { id: messageChannelId, workspaceId },
+      relations: ['connectedAccount'],
     });
+
+    if (!isDefined(messageChannel)) {
+      return;
+    }
+
+    if (
+      messageChannel.webhookSubscriptionStatus !==
+      WebhookSubscriptionStatus.ACTIVE
+    ) {
+      await this.createSubscription(messageChannelId, workspaceId);
+
+      return;
+    }
+
+    const { connectedAccount } = messageChannel;
 
     if (!isDefined(connectedAccount)) {
       return;
@@ -129,6 +155,8 @@ export class MessagingWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: messageChannel.workspaceId },
       });
+
+      throw error;
     }
   }
 

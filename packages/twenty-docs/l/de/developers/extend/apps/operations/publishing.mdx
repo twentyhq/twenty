@@ -69,7 +69,7 @@ So veröffentlichen Sie ein Update:
 
 1. Erhöhen Sie das Feld `version` in Ihrer `package.json` (z. B. `1.2.3` → `1.2.4`, `1.3.0` oder `2.0.0`).
 2. Führen Sie `yarn twenty app:publish --private` aus (oder `yarn twenty app:publish --private --remote production`)
-3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
+3. Arbeitsbereiche, in denen die App installiert ist und bei denen die automatische Aktualisierung (im Tab „Einstellungen“ der App) aktiviert wurde, werden im Hintergrund automatisch aktualisiert; bei den anderen wird die Aktualisierung in deren Einstellungen als verfügbar angezeigt
 
 <Note>
 Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst eine gültige semver-Zeichenfolge sein.
@@ -112,7 +112,7 @@ Der Server ist die maßgebliche Prüfinstanz — er validiert `engines.twenty` s
 
 ## Automatisiertes CI/CD (vorgefertigte Workflows)
 
-Apps, die mit `create-twenty-app` erzeugt wurden, enthalten von Haus aus zwei GitHub-Actions-Workflows unter `.github/workflows/`. Sie sind einsatzbereit, sobald Sie das Repository zu GitHub pushen — für CI ist keine zusätzliche Einrichtung erforderlich, und für CD ist nur ein einziges Secret nötig.
+Apps, die mit `create-twenty-app` erzeugt wurden, enthalten von Haus aus drei GitHub-Actions-Workflows unter `.github/workflows/`. CI läuft ohne Einrichtung, CD erfordert ein einziges Secret, und das Veröffentlichen auf npm erfordert eine einmalige Einrichtung als npm Trusted Publisher.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ Der Standardwert von `TWENTY_DEPLOY_URL` (`http://localhost:3000`) ist ein Platz
 
 Fügen Sie einem Pull Request das Label `deploy` hinzu. Die `if:`-Bedingung in `cd.yml` führt den Job für diesen PR mit dem Head-Commit des PR aus, sodass Sie eine Änderung auf dem Zielserver vor dem Mergen validieren können.
 
+### Veröffentlichen — `publish.yml`
+
+Veröffentlicht Ihre App mit Herkunftsnachweis auf npm, wenn Sie ein Versions-Tag pushen (z. B. `v1.0.0`), oder wenn Sie den Workflow manuell über den Actions-Tab ausführen.
+
+**Was sie macht:**
+
+1. Checken Sie Ihre App aus, richten Sie Node.js ein und aktualisieren Sie npm (Trusted Publishing erfordert npm 11.5.1 oder neuer).
+2. Führt `yarn twenty app:publish` aus, wodurch die App gebaut und `.twenty/output` auf npm veröffentlicht wird. In CI werden automatisch `--provenance` und `--access public` hinzugefügt, sodass im Workflow keine Flags benötigt werden.
+
+**Einmalige Einrichtung:**
+
+Öffnen Sie auf npmjs.com Ihr Paket > **Settings → Trusted Publisher** und registrieren Sie dieses Repository mit dem `publish.yml`-Workflow (siehe die [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Das Veröffentlichen mit Provenance bestätigt, welches GitHub-Repository das Paket gebaut hat; zugleich beanspruchen Sie damit die Inhaberschaft Ihrer App in einem Twenty-Marktplatz.
+
 ### Fixieren der wiederverwendbaren Actions
 
-Beide Workflows verweisen auf wiederverwendbare Actions mit `@main`, sodass Aktualisierungen der Actions im Repository `twentyhq/twenty` automatisch übernommen werden. Wenn Sie deterministische Builds möchten, ersetzen Sie `@main` in jeder `uses:`-Zeile durch eine Commit-SHA oder einen Release-Tag.
+Die Workflows `ci.yml` und `cd.yml` verweisen auf wiederverwendbare Actions mit `@main`, sodass Aktualisierungen der Actions im Repository `twentyhq/twenty` automatisch übernommen werden. Wenn Sie deterministische Builds möchten, ersetzen Sie `@main` in jeder `uses:`-Zeile durch eine Commit-SHA oder einen Release-Tag.
 
 ## Auf npm veröffentlichen
 
@@ -241,37 +254,12 @@ Wenn Ihre App keine `aboutDescription` in `defineApplication()` definiert, verwe
 
 ### CI-Veröffentlichung
 
-Verwenden Sie diesen GitHub-Actions-Workflow, um bei jedem Release automatisch zu veröffentlichen (verwendet [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Der oben beschriebene, erzeugte `publish.yml`-Workflow veröffentlicht mit Provenance bei Versions-Tags automatisch auf npm. Da `yarn twenty app:publish` beim Ausführen in CI `--provenance` und `--access public` für Sie hinzufügt, benötigt der Workflow keine npm-Flags – nur die einmalige Trusted-Publisher-Einrichtung.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `yarn twenty dev:build` und anschließend `npm publish` aus `.twenty/output`.
+Für andere CI-Systeme (GitLab CI, CircleCI usw.) führen Sie zuerst `yarn install` und dann `yarn twenty app:publish` aus. Provenance wird ausgegeben, wenn die Umgebung ein OIDC-Token erstellen kann, und andernfalls automatisch übersprungen.
 
 <Note>
-**npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Einrichtungshinweise.
+**npm-Provenance** fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Damit können Sie außerdem die Inhaberschaft Ihrer App in einem Twenty-Marktplatz beanspruchen. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Details.
 </Note>
 
 ## Apps installieren
