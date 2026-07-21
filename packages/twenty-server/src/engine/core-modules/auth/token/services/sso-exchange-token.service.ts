@@ -18,9 +18,11 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
-import { hashToken } from 'src/engine/core-modules/auth/utils/hash-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+
+const hashSSOExchangeToken = (ssoExchangeToken: string) =>
+  crypto.createHash('sha256').update(ssoExchangeToken).digest('hex');
 
 // DELETE ... RETURNING yields driver rows, not hydrated entities
 type ClaimedSSOExchangeTokenRow = {
@@ -65,7 +67,7 @@ export class SSOExchangeTokenService {
         userId,
         expiresAt,
         type: AppTokenType.SSOExchangeToken,
-        value: hashToken(plainToken),
+        value: hashSSOExchangeToken(plainToken),
         context: { authProvider },
       }),
     );
@@ -85,7 +87,9 @@ export class SSOExchangeTokenService {
       .createQueryBuilder()
       .delete()
       .from(AppTokenEntity)
-      .where('value = :value', { value: hashToken(ssoExchangeToken) })
+      .where('value = :value', {
+        value: hashSSOExchangeToken(ssoExchangeToken),
+      })
       .andWhere('type = :type', { type: AppTokenType.SSOExchangeToken })
       .returning('*')
       .execute();

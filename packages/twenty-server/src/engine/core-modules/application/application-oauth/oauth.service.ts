@@ -19,7 +19,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { hashToken } from 'src/engine/core-modules/auth/utils/hash-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
@@ -89,7 +88,10 @@ export class OAuthService {
       }
     }
 
-    const hashedAuthorizationCode = hashToken(authorizationCode);
+    const hashedAuthorizationCode = crypto
+      .createHash('sha256')
+      .update(authorizationCode)
+      .digest('hex');
 
     const authCodeToken = await this.appTokenRepository.findOne({
       where: {

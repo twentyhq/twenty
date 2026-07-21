@@ -47,7 +47,6 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
-import { hashToken } from 'src/engine/core-modules/auth/utils/hash-token.util';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
@@ -616,7 +615,10 @@ export class AuthService {
     }
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');
-    const hashedAuthorizationCode = hashToken(authorizationCode);
+    const hashedAuthorizationCode = crypto
+      .createHash('sha256')
+      .update(authorizationCode)
+      .digest('hex');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
 
