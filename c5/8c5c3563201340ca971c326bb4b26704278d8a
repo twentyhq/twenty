@@ -1,0 +1,20 @@
+packages/twenty-server/src/modules/emailing/services/campaign-send-quota.service.ts
+  s_11e59742733dbd::t_5adeaa12c09dc5 1,6,23
+  s_11e59742733dbd::t_2c225e0a7ccc6c 103-119,121-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "c58c5c3563201340ca971c326bb4b26704278d8a",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
