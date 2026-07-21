@@ -48,53 +48,38 @@ export const RecordTableCalendarLayoutDropdownContent = ({
     closeDropdown();
   };
 
+  const calendarLayoutOptions = [
+    { value: ViewCalendarLayout.DAY, label: t`Day`, Icon: IconCalendarEvent },
+    { value: ViewCalendarLayout.WEEK, label: t`Week`, Icon: IconCalendarWeek },
+    {
+      value: ViewCalendarLayout.MONTH,
+      label: t`Month`,
+      Icon: IconCalendarMonth,
+    },
+  ];
+
   return (
     <DropdownMenuItemsContainer>
       <SelectableList
         selectableListInstanceId={dropdownId}
-        selectableItemIdArray={[
-          ViewCalendarLayout.DAY,
-          ViewCalendarLayout.WEEK,
-          ViewCalendarLayout.MONTH,
-        ]}
+        selectableItemIdArray={calendarLayoutOptions.map(({ value }) => value)}
         focusId={dropdownId}
       >
-        <SelectableListItem
-          itemId={ViewCalendarLayout.DAY}
-          onEnter={() => handleSelect(ViewCalendarLayout.DAY)}
-        >
-          <MenuItemSelect
-            text={t`Day`}
-            LeftIcon={IconCalendarEvent}
-            selected={currentCalendarLayout === ViewCalendarLayout.DAY}
-            focused={selectedItemId === ViewCalendarLayout.DAY}
-            onClick={() => handleSelect(ViewCalendarLayout.DAY)}
-          />
-        </SelectableListItem>
-        <SelectableListItem
-          itemId={ViewCalendarLayout.WEEK}
-          onEnter={() => handleSelect(ViewCalendarLayout.WEEK)}
-        >
-          <MenuItemSelect
-            text={t`Week`}
-            LeftIcon={IconCalendarWeek}
-            selected={currentCalendarLayout === ViewCalendarLayout.WEEK}
-            focused={selectedItemId === ViewCalendarLayout.WEEK}
-            onClick={() => handleSelect(ViewCalendarLayout.WEEK)}
-          />
-        </SelectableListItem>
-        <SelectableListItem
-          itemId={ViewCalendarLayout.MONTH}
-          onEnter={() => handleSelect(ViewCalendarLayout.MONTH)}
-        >
-          <MenuItemSelect
-            text={t`Month`}
-            LeftIcon={IconCalendarMonth}
-            selected={currentCalendarLayout === ViewCalendarLayout.MONTH}
-            focused={selectedItemId === ViewCalendarLayout.MONTH}
-            onClick={() => handleSelect(ViewCalendarLayout.MONTH)}
-          />
-        </SelectableListItem>
+        {calendarLayoutOptions.map(({ value, label, Icon }) => (
+          <SelectableListItem
+            key={value}
+            itemId={value}
+            onEnter={() => handleSelect(value)}
+          >
+            <MenuItemSelect
+              text={label}
+              LeftIcon={Icon}
+              selected={currentCalendarLayout === value}
+              focused={selectedItemId === value}
+              onClick={() => handleSelect(value)}
+            />
+          </SelectableListItem>
+        ))}
       </SelectableList>
     </DropdownMenuItemsContainer>
   );
