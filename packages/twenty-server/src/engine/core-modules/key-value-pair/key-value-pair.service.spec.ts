@@ -35,6 +35,7 @@ describe('KeyValuePairService', () => {
       {
         userId: null,
         workspaceId: null,
+        applicationId: null,
         key: 'MAINTENANCE_MODE',
         value: { startAt: '2026-04-02T10:00:00.000Z' },
         type: KeyValuePairType.CONFIG_VARIABLE,
@@ -62,6 +63,7 @@ describe('KeyValuePairService', () => {
       {
         userId: 'user-id',
         workspaceId: null,
+        applicationId: null,
         key: 'USER_SETTING',
         value: true,
         type: KeyValuePairType.USER_VARIABLE,
@@ -86,6 +88,7 @@ describe('KeyValuePairService', () => {
       {
         userId: null,
         workspaceId: 'workspace-id',
+        applicationId: null,
         key: 'WORKSPACE_SETTING',
         value: 'test',
         type: KeyValuePairType.CONFIG_VARIABLE,
@@ -110,6 +113,7 @@ describe('KeyValuePairService', () => {
       {
         userId: 'user-id',
         workspaceId: 'workspace-id',
+        applicationId: null,
         key: 'USER_WORKSPACE_SETTING',
         value: 42,
         type: KeyValuePairType.USER_VARIABLE,

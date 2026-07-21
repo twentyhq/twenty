@@ -40,6 +40,7 @@ export class KeyValuePairService<
             ? { workspaceId: IsNull() }
             : { workspaceId }),
         ...(key === undefined ? {} : { key }),
+        applicationId: IsNull(),
         type,
       },
     })) as Array<KeyValueTypesMap[K]>;
@@ -77,6 +78,7 @@ export class KeyValuePairService<
     const upsertData = {
       userId: normalizedUserId,
       workspaceId: normalizedWorkspaceId,
+      applicationId: null,
       key,
       value,
       type,
@@ -129,6 +131,7 @@ export class KeyValuePairService<
         : workspaceId === null
           ? { workspaceId: IsNull() }
           : { workspaceId }),
+      applicationId: IsNull(),
       type,
       key,
     };
