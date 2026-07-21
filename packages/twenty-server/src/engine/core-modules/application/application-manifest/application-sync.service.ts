@@ -161,6 +161,7 @@ export class ApplicationSyncService {
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
       canBeUninstalled: true,
+      autoUpgrade: false,
       isSdkLayerStale: false,
       applicationRegistrationId: null,
       primaryPublicDomainId: null,

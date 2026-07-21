@@ -1,9 +1,16 @@
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineRole } from 'twenty-sdk/define';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+  defineRole,
+} from 'twenty-sdk/define';
 
 import {
   INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  PARTNER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
+  PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import {
   APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
@@ -14,6 +21,14 @@ import {
   APPLICATION_STATE_FIELD_ID,
   APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
 } from 'src/objects/application.object';
+import {
+  PARTNER_CONTENT_APPROVAL_DATE_FIELD_ID,
+  PARTNER_CONTENT_DOCUMENTS_FIELD_ID,
+  PARTNER_CONTENT_INTERVIEW_FIELD_ID,
+  PARTNER_CONTENT_STATUS_FIELD_ID,
+  PARTNER_CONTENT_TYPE_FIELD_ID,
+} from 'src/objects/partner-content.object';
+import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/fields/partner-content-partner.field';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
@@ -27,9 +42,14 @@ import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/fields/opportunity-s
 import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field';
 import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/fields/opportunity-use-case.field';
 import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
+import { PARTNER_LINK_PARTNER_FIELD_ID } from 'src/fields/partner-link-partner.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
+import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on-opportunity.field';
+import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/fields/partner-user-on-partner-content.field';
+import { PARTNER_USER_ON_PARTNER_LINK_FIELD_ID } from 'src/fields/partner-user-on-partner-link.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
+import { PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID } from 'src/fields/partner-user-on-partner-service.field';
 
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
@@ -50,7 +70,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity/Application records (row-level). Can edit its own Partner profile and an Application’s pitch; Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile and an Application’s pitch; Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -58,11 +78,9 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  // No permission flags: partners apply by CREATING an Application directly (a normal record
-  // write, governed by the Application object permission), which fires on-application-created.
-  // They never run a manual workflow, so the WORKFLOWS flag is unnecessary — and it can't be
-  // granted on an app-owned role anyway (the manifest sync drops role→permissionFlag links).
-  permissionFlagUniversalIdentifiers: [],
+  // UPLOAD_FILE lets partners upload their own profile picture and case-study covers on the
+  // native record page (the FilesField upload mutation is gated behind this flag).
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
   // Lock every Opportunity field except the system/server-managed fields left out here
   // (id, timestamps, updatedBy, position — see header). Stage + amount are locked too.
   fieldPermissions: [
@@ -322,6 +340,73 @@ export default defineRole({
       fieldUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
       canUpdateFieldValue: false,
     },
+    // Partner Link object — both relation pivots are read-only for partners. Repointing either
+    // would move links out of RLS scope or let a partner attach links to another profile.
+    {
+      objectUniversalIdentifier: PARTNER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_LINK_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_LINK_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    // Partner Service object — both relation pivots are read-only for partners. Repointing either
+    // would move services out of RLS scope or let a partner attach services to another profile.
+    {
+      objectUniversalIdentifier: PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_SERVICE_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    // Partner Content object — the self-service save route runs with the caller's own
+    // permissions, so partners self-publish their own case studies: only status is writable
+    // (the route sets it to APPROVED/WIP; RLS scopes to their own rows). Ownership (partner,
+    // partnerUser) and contentType stay locked and are stamped server-side by the
+    // on-partner-content-created trigger, so a partner cannot repoint content to another partner.
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_TYPE_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_APPROVAL_DATE_FIELD_ID,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_INTERVIEW_FIELD_ID,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_DOCUMENTS_FIELD_ID,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_STATUS_FIELD_ID,
+      canUpdateFieldValue: true,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_CONTENT_PARTNER_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
     // Application — lock every field except pitch and opportunity (partner sets opportunity
     // on apply/create; state/partnerUser are populated by on-application-created as the app).
     // System/server-managed fields (id, timestamps, updatedBy, position, searchVector) stay
@@ -386,6 +471,27 @@ export default defineRole({
     },
     {
       objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,

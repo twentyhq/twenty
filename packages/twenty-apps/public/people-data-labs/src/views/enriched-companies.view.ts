@@ -52,10 +52,14 @@ export default defineView({
     { universalIdentifier: '0c027ae2-7e63-4354-8962-6922923929c0', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAlternativeDomains, position: 32, isVisible: true },
     { universalIdentifier: '0814427e-6699-44fd-9d57-7af6f2389f7d', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlTags, position: 33, isVisible: true },
     { universalIdentifier: '65ca68c9-589f-44dc-bf57-d0a2152cb09c', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAffiliatedProfiles, position: 34, isVisible: true },
-    { universalIdentifier: '3f0e5a60-3f49-4872-8451-5344a3715374', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.noteTargets.universalIdentifier, position: 35, isVisible: true },
-    { universalIdentifier: '70ab74e1-d2ff-4f15-81ef-196e223a783e', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.taskTargets.universalIdentifier, position: 36, isVisible: true },
-    { universalIdentifier: '035b3904-59b9-4fce-a366-ee0139770346', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.attachments.universalIdentifier, position: 37, isVisible: true },
-    { universalIdentifier: '617b7343-1ae5-4813-b4f5-6e99d0a833bb', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.timelineActivities.universalIdentifier, position: 38, isVisible: true },
+    // TODO: derive these with getSystemRelationFieldUniversalIdentifier once
+    // the next twenty-sdk is released. The system relation field universal
+    // identifiers were re-derived name-free in twenty v2.23 and the pinned
+    // twenty-sdk still embeds the old values.
+    { universalIdentifier: '3f0e5a60-3f49-4872-8451-5344a3715374', fieldMetadataUniversalIdentifier: '0b28db77-8099-5ce3-a11f-86a5778d7740', position: 35, isVisible: true }, // company.noteTargets
+    { universalIdentifier: '70ab74e1-d2ff-4f15-81ef-196e223a783e', fieldMetadataUniversalIdentifier: '9d7b0087-7037-55dc-bb59-456064455694', position: 36, isVisible: true }, // company.taskTargets
+    { universalIdentifier: '035b3904-59b9-4fce-a366-ee0139770346', fieldMetadataUniversalIdentifier: 'a4399ae3-fe89-59fe-a282-aec77d4e63a8', position: 37, isVisible: true }, // company.attachments
+    { universalIdentifier: '617b7343-1ae5-4813-b4f5-6e99d0a833bb', fieldMetadataUniversalIdentifier: '28ec0f8f-ad23-5317-b2d9-1a487bcefee2', position: 38, isVisible: true }, // company.timelineActivities
     { universalIdentifier: '24d0411e-23d2-4cf8-9781-6efc8443efdc', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdBy.universalIdentifier, position: 39, isVisible: true },
     { universalIdentifier: '4036071d-e527-46c8-940c-401f33803aa9', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.updatedBy.universalIdentifier, position: 40, isVisible: true },
     { universalIdentifier: 'ab123fcd-ec53-4d33-b43c-c7319db72be4', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier, position: 41, isVisible: true },

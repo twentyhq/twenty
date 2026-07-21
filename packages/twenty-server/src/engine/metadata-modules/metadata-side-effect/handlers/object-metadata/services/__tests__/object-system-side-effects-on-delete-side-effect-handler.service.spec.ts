@@ -99,6 +99,74 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
     ).toEqual([SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER]);
   });
 
+  it('should cascade-delete the default-relation reverse morph field on a standard object and its join-column index', () => {
+    const FORWARD_FIELD_UNIVERSAL_IDENTIFIER =
+      'd1d2d3d4-d5d6-4000-8000-000000000003';
+    const REVERSE_FIELD_UNIVERSAL_IDENTIFIER =
+      'd1d2d3d4-d5d6-4000-8000-000000000004';
+    const REVERSE_INDEX_UNIVERSAL_IDENTIFIER =
+      'e1e2e3e4-e5e6-4000-8000-000000000002';
+
+    const result = handler.buildSideEffects(
+      buildArgs({
+        relatedFlatEntityMaps: {
+          flatFieldMetadataMaps: {
+            byUniversalIdentifier: {
+              [FORWARD_FIELD_UNIVERSAL_IDENTIFIER]: {
+                universalIdentifier: FORWARD_FIELD_UNIVERSAL_IDENTIFIER,
+                isSystemSideEffect: true,
+                objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+                relationTargetObjectMetadataUniversalIdentifier:
+                  OTHER_OBJECT_UNIVERSAL_IDENTIFIER,
+              },
+              [REVERSE_FIELD_UNIVERSAL_IDENTIFIER]: {
+                universalIdentifier: REVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+                isSystemSideEffect: true,
+                objectMetadataUniversalIdentifier:
+                  OTHER_OBJECT_UNIVERSAL_IDENTIFIER,
+                relationTargetObjectMetadataUniversalIdentifier:
+                  OBJECT_UNIVERSAL_IDENTIFIER,
+              },
+            },
+          },
+          flatIndexMaps: {
+            byUniversalIdentifier: {
+              [REVERSE_INDEX_UNIVERSAL_IDENTIFIER]: {
+                universalIdentifier: REVERSE_INDEX_UNIVERSAL_IDENTIFIER,
+                isSystemSideEffect: true,
+                objectMetadataUniversalIdentifier:
+                  OTHER_OBJECT_UNIVERSAL_IDENTIFIER,
+                universalFlatIndexFieldMetadatas: [
+                  {
+                    fieldMetadataUniversalIdentifier:
+                      REVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+                  },
+                ],
+              },
+            },
+          },
+          flatSearchFieldMetadataMaps: { byUniversalIdentifier: {} },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.keys(result.operations.fieldMetadata?.flatEntityToDelete ?? {}),
+    ).toEqual([
+      FORWARD_FIELD_UNIVERSAL_IDENTIFIER,
+      REVERSE_FIELD_UNIVERSAL_IDENTIFIER,
+    ]);
+    expect(
+      Object.keys(result.operations.index?.flatEntityToDelete ?? {}),
+    ).toEqual([REVERSE_INDEX_UNIVERSAL_IDENTIFIER]);
+  });
+
   it('should not delete entities belonging to a different object', () => {
     const result = handler.buildSideEffects(
       buildArgs({

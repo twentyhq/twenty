@@ -259,4 +259,4 @@ Bu, uygulamanızın `tsconfig.json` dosyasına göre `tsc --noEmit` komutunu ça
 
 İskelet oluşturucu, `.github/workflows/ci.yml` konumunda kullanıma hazır bir iş akışı üretir. `main` dalına yapılan her itmede ve her çekme isteğinde, çalıştırıcı içinde geçici bir Twenty sunucusu başlatır (`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` eylemi aracılığıyla) ve ardından `yarn lint`, `yarn typecheck`, `yarn test:unit` ve `yarn test` komutlarını, `TWENTY_API_URL` / `TWENTY_API_KEY` bu sunucuyu işaret edecek şekilde çalıştırır. Herhangi bir gizli bilgi gerekmez ve iş akışının en üstündeki `TWENTY_VERSION` ortam değişkeni aracılığıyla sunucu sürümünü sabitleyebilirsiniz.
 
-Her iki iskelet iş akışının (`ci.yml` ve `cd.yml` dağıtım hattı) eksiksiz adım adım anlatımı için [Yayınlama → Otomatik CI/CD](/l/tr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) bölümüne bakın.
+Üç iskelet iş akışının (`ci.yml`, `cd.yml` dağıtım hattı ve npm yayınlama için `publish.yml`) eksiksiz adım adım anlatımı için [Yayınlama → Otomatik CI/CD](/l/tr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) bölümüne bakın.

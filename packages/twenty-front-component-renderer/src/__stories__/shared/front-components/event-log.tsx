@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useState } from 'react';
+import { type SyntheticEvent, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type LoggedEventFile = {
@@ -136,7 +136,7 @@ const toUnknownRecord = (value: unknown): Record<string, unknown> =>
 export const useEventLog = () => {
   const [entries, setEntries] = useState<LoggedEventEntry[]>([]);
 
-  const pushEvent = (event: SyntheticEvent<Element>) => {
+  const pushEvent = useCallback((event: SyntheticEvent<Element>) => {
     setEntries((previousEntries) => {
       const eventRecord = event as unknown as Record<string, unknown>;
       const target = toUnknownRecord(eventRecord.target);
@@ -254,7 +254,7 @@ export const useEventLog = () => {
 
       return [...previousEntries, entry];
     });
-  };
+  }, []);
 
   return { entries, pushEvent };
 };

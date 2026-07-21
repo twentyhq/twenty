@@ -50,8 +50,10 @@ import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/se
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
@@ -61,6 +63,10 @@ import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
   type BackfillApplicationInstallationJobData,
 } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
+import {
+  UPGRADE_APPLICATIONS_JOB_NAME,
+  type UpgradeApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -131,6 +137,7 @@ export class AdminPanelResolver {
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly adminPanelSigningKeyService: AdminPanelSigningKeyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
@@ -511,6 +518,16 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @Query(() => [AdminApplicationRegistrationClaimDTO])
+  async findAdminApplicationRegistrationClaims(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<AdminApplicationRegistrationClaimDTO[]> {
+    return this.applicationRegistrationClaimService.findClaimsForRegistration(
+      applicationRegistrationId,
+    );
+  }
+
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => ApplicationRegistrationEntity)
   async updateAdminApplicationRegistration(
     @Args('input') input: UpdateApplicationRegistrationInput,
@@ -539,6 +556,26 @@ export class AdminPanelResolver {
       { applicationRegistrationId },
       {
         id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
+      }, // Avoids triggering multiple pending jobs for the same app
+    );
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async upgradeRegistrationApplications(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<boolean> {
+    await this.applicationRegistrationService.findOneByIdGlobal(
+      applicationRegistrationId,
+    );
+
+    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      UPGRADE_APPLICATIONS_JOB_NAME,
+      { applicationRegistrationId, onlyAutoUpgrade: false },
+      {
+        id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
       }, // Avoids triggering multiple pending jobs for the same app
     );
 

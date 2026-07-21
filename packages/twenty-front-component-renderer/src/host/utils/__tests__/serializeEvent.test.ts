@@ -34,6 +34,52 @@ describe('serializeEvent', () => {
     expect(result).toEqual({ type: 'wheel' });
   });
 
+  it('should map first changed touch coordinates into coordinate fields', () => {
+    const result = serializeEvent({
+      type: 'touchstart',
+      changedTouches: {
+        length: 1,
+        0: {
+          clientX: 10,
+          clientY: 20,
+          pageX: 30,
+          pageY: 40,
+          screenX: 50,
+          screenY: 60,
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      type: 'touchstart',
+      clientX: 10,
+      clientY: 20,
+      pageX: 30,
+      pageY: 40,
+      screenX: 50,
+      screenY: 60,
+    });
+  });
+
+  it('should keep own coordinates over changed touch coordinates', () => {
+    const result = serializeEvent({
+      type: 'mousemove',
+      clientX: 1,
+      changedTouches: { length: 1, 0: { clientX: 99 } },
+    });
+
+    expect(result.clientX).toBe(1);
+  });
+
+  it('should ignore an empty changed touches list', () => {
+    const result = serializeEvent({
+      type: 'touchend',
+      changedTouches: { length: 0 },
+    });
+
+    expect(result).toEqual({ type: 'touchend' });
+  });
+
   it('should extract safe target properties', () => {
     const result = serializeEvent({
       type: 'change',

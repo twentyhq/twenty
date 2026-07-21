@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -21,6 +22,7 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -38,8 +40,31 @@ const StyledHeader = styled.div`
 `;
 
 const StyledHeaderActions = styled.div`
+  align-items: center;
   display: flex;
-  margin-left: auto;
+  flex-shrink: 0;
+  // padding + negative margin cancel out in layout and exist only so
+  // overflow:hidden clips 4px outside each button, leaving room for
+  // LightIconButton's 3px focus ring
+  margin: calc(-1 * ${themeCssVariables.spacing[1]});
+  max-width: 0;
+  min-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[1]};
+  pointer-events: none;
+  transition:
+    max-width ease-in-out
+      calc(${themeCssVariables.animation.duration.fast} * 1s),
+    opacity ease-in-out calc(${themeCssVariables.animation.duration.fast} * 1s);
+
+  &[data-dropdown-open='true'],
+  ${StyledHeader}:hover &,
+  ${StyledHeader}:focus-within & {
+    max-width: ${themeCssVariables.spacing[14]};
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -53,11 +78,6 @@ const StyledLeftContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
-`;
-
-const StyledRightContainer = styled.div`
-  align-items: center;
-  display: flex;
 `;
 
 const StyledColumn = styled.div`
@@ -104,8 +124,6 @@ export const RecordBoardColumnHeader = () => {
     onPointerUp: handlePointerUp,
   } = useDisableDragSelectOnPointerDown();
 
-  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
-
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -140,6 +158,11 @@ export const RecordBoardColumnHeader = () => {
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
+
   const handleCreateNewRecordClick = async () => {
     await createNewIndexRecord({
       position: 'first',
@@ -152,8 +175,6 @@ export const RecordBoardColumnHeader = () => {
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
       <DragDropColumnSortableHandle fill>
         <StyledHeader
-          onMouseEnter={() => setIsHeaderHovered(true)}
-          onMouseLeave={() => setIsHeaderHovered(false)}
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
@@ -187,28 +208,28 @@ export const RecordBoardColumnHeader = () => {
                 aggregateLabel={recordIndexAggregateDisplayLabel}
               />
             </StyledLeftContainer>
-            <StyledRightContainer>
-              {isHeaderHovered && (
-                <StyledHeaderActions>
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconDotsVertical}
-                    onClick={() => {
-                      toggleDropdown({
-                        dropdownComponentInstanceIdFromProps: dropdownId,
-                      });
-                    }}
-                  />
-                  {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
-                    />
-                  )}
-                </StyledHeaderActions>
+            <StyledHeaderActions
+              data-dropdown-open={isDropdownOpen ? 'true' : undefined}
+            >
+              <LightIconButton
+                accent="tertiary"
+                aria-label={t`More options`}
+                Icon={IconDotsVertical}
+                onClick={() => {
+                  toggleDropdown({
+                    dropdownComponentInstanceIdFromProps: dropdownId,
+                  });
+                }}
+              />
+              {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                <LightIconButton
+                  accent="tertiary"
+                  aria-label={t`Add new`}
+                  Icon={IconPlus}
+                  onClick={handleCreateNewRecordClick}
+                />
               )}
-            </StyledRightContainer>
+            </StyledHeaderActions>
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropColumnSortableHandle>

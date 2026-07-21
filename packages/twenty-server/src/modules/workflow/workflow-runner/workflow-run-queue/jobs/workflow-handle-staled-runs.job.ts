@@ -26,6 +26,9 @@ export class WorkflowHandleStaledRunsJob {
       this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
         workspaceId,
       ),
+      this.workflowHandleStaledRunsWorkspaceService.handleStuckRunningRunsForWorkspace(
+        workspaceId,
+      ),
     ]);
   }
 }

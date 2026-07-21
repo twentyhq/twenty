@@ -13,6 +13,7 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
+import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
@@ -20,6 +21,7 @@ import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
@@ -89,10 +91,19 @@ const UpgradeFreeTrialSubmitButton = ({
     recurringInterval,
   });
 
+  const setIsOnboardingCheckoutPending = useSetAtomState(
+    isOnboardingCheckoutPendingState,
+  );
+
+  const handleSubmit = () => {
+    setIsOnboardingCheckoutPending(true);
+    void submit();
+  };
+
   return (
     <MainButton
       title={t`Continue`}
-      onClick={submit}
+      onClick={handleSubmit}
       fullWidth
       Icon={() => (isSubmitting ? <Loader /> : null)}
       disabled={!isStripeReady || isSubmitting}
@@ -141,6 +152,15 @@ const UpgradeFreeTrialContent = ({
       requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
       successUrlPath: AppPath.PlanRequiredSuccess,
     });
+
+  const setIsOnboardingCheckoutPending = useSetAtomState(
+    isOnboardingCheckoutPendingState,
+  );
+
+  const handleCheckoutSessionClick = () => {
+    setIsOnboardingCheckoutPending(true);
+    void handleCheckoutSession();
+  };
 
   const selectTrialPeriod = (withCreditCard: boolean) => () => {
     if (
@@ -213,7 +233,7 @@ const UpgradeFreeTrialContent = ({
           ) : (
             <MainButton
               title={t`Continue`}
-              onClick={handleCheckoutSession}
+              onClick={handleCheckoutSessionClick}
               fullWidth
               Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
               disabled={isCheckoutSubmitting}
