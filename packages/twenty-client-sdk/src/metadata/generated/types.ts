@@ -8946,7 +8946,7 @@ export default {
                 }
             ],
             "getAuthTokensFromSSOExchangeToken": [
-                256,
+                257,
                 {
                     "ssoExchangeToken": [
                         1,

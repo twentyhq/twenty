@@ -1,15 +1,25 @@
 import crypto from 'crypto';
 
 import { type DataSource } from 'typeorm';
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAuthTokensFromSSOExchangeToken } from 'test/integration/graphql/utils/get-auth-tokens-from-sso-exchange-token.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 const hashToken = (token: string) =>
   crypto.createHash('sha256').update(token).digest('hex');
+
+// Consumed, expired and unknown tokens must be indistinguishable, otherwise
+// the endpoint becomes an oracle telling an attacker which tokens once existed.
+const expectUniformInvalidTokenError = (errors: { message: string }[]) => {
+  expect(errors).toHaveLength(1);
+  expect(errors[0]).toMatchObject({
+    message: 'Invalid SSO exchange token',
+    extensions: { subCode: AuthExceptionCode.INVALID_INPUT },
+  });
+};
 
 describe('SSO exchange token redemption (integration)', () => {
   let dataSource: DataSource;
@@ -84,7 +94,7 @@ describe('SSO exchange token redemption (integration)', () => {
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectUniformInvalidTokenError(errors);
   });
 
   it('should reject an expired token', async () => {
@@ -97,7 +107,7 @@ describe('SSO exchange token redemption (integration)', () => {
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectUniformInvalidTokenError(errors);
     expect(await countRemainingRows(plainToken)).toBe(0);
   });
 
@@ -107,7 +117,7 @@ describe('SSO exchange token redemption (integration)', () => {
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectUniformInvalidTokenError(errors);
   });
 
   // The redirect must never yield more than one refresh token, even if the
