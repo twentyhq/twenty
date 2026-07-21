@@ -362,7 +362,7 @@ export abstract class CommonBaseQueryRunnerService<
     try {
       // Keyed on universalIdentifier without workspaceId: the budget is shared
       // by every installation of the application on the instance.
-      await this.throttlerService.fixedWindowThrottleOrThrow(
+      await this.throttlerService.tokenBucketThrottleOrThrow(
         `api:throttler:application:${authContext.application.universalIdentifier}`,
         1,
         this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_LIMIT'),

@@ -312,31 +312,6 @@ export class CacheStorageService {
     return newValue;
   }
 
-  async incrByWithTtl(
-    key: string,
-    increment: number,
-    ttlMs: Milliseconds,
-  ): Promise<number> {
-    if (this.isRedisCache()) {
-      const prefixedKey = this.getKey(key);
-
-      const [count] = (await (this.cache as RedisCache).store.client
-        .multi()
-        .incrBy(prefixedKey, increment)
-        .pExpire(prefixedKey, ttlMs)
-        .exec()) as [number, unknown];
-
-      return count;
-    }
-
-    const current = (await this.get<number>(key)) ?? 0;
-    const newValue = current + increment;
-
-    await this.set(key, newValue, ttlMs);
-
-    return newValue;
-  }
-
   async hashGetValues(key: string): Promise<string[]> {
     if (!this.isRedisCache()) {
       throw new Error('hashGetValues is only supported with Redis cache');

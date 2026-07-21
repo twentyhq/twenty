@@ -48,29 +48,6 @@ export class ThrottlerService {
     return availableTokens - tokensToConsume;
   }
 
-  async fixedWindowThrottleOrThrow(
-    key: string,
-    tokensToConsume: number,
-    maxTokens: number,
-    timeWindow: number,
-  ): Promise<void> {
-    const windowStartTimestamp =
-      Math.floor(Date.now() / timeWindow) * timeWindow;
-
-    const consumedTokens = await this.cacheStorage.incrByWithTtl(
-      `${key}:${windowStartTimestamp}`,
-      tokensToConsume,
-      timeWindow * 2,
-    );
-
-    if (consumedTokens > maxTokens) {
-      throw new ThrottlerException(
-        `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      );
-    }
-  }
-
   async consumeTokens(
     key: string,
     tokensToConsume: number,
