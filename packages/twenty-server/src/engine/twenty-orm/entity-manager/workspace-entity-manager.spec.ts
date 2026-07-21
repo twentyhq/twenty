@@ -484,14 +484,13 @@ describe('WorkspaceEntityManager', () => {
         fieldName: 'New Name',
         avatarUrl: 'http://localhost:3000/file/core-picture/abc',
       };
-      // TypeORM nulls untouched nullable columns on the persisted payload
-      const persistedPayload = {
+      const persistedPayloadWithUntouchedColumnsNulled = {
         id: 'record-id',
         fieldName: 'New Name',
         avatarUrl: '',
       };
 
-      (formatResult as jest.Mock).mockReturnValue([persistedPayload]);
+      (formatResult as jest.Mock).mockReturnValue([persistedPayloadWithUntouchedColumnsNulled]);
 
       const findSpy = jest
         .spyOn(entityManager, 'find')

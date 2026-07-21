@@ -1310,8 +1310,6 @@ export class WorkspaceEntityManager extends EntityManager {
         .map((entity) => entity.id)
         .filter((entityId) => isDefined(beforeUpdateMapById[entityId]));
 
-      // Re-select instead of reusing the persisted payload: TypeORM sets untouched
-      // nullable columns to null on it, which would surface as spurious changes.
       const updatedEntities = isNonEmptyArray(updatedEntityIds)
         ? await this.find(
             entityTarget,
