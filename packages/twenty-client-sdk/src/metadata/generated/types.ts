@@ -1253,6 +1253,9 @@ export default {
             "version": [
                 1
             ],
+            "sourceType": [
+                9
+            ],
             "universalIdentifier": [
                 1
             ],

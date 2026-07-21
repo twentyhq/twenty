@@ -33,13 +33,13 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import {
+  ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
-import { isLocalApplicationVersion } from '~/pages/settings/applications/utils/isLocalApplicationVersion';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -122,17 +122,25 @@ export const SettingsApplicationDetails = () => {
     detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
-  // A local dev apply stores its version tagged "(local)", detaching the
-  // installation from its registration. The upgrade button is then offered to
-  // re-attach it to the latest published version regardless of the semver
-  // comparison against that tagged version.
-  const isLocalDetached = isLocalApplicationVersion(currentVersion);
+  // A locally-applied app keeps the plain package.json version but has its
+  // source type set to LOCAL. When its registration is not local (a published
+  // npm/tarball source), the installation is detached and can be re-attached to
+  // the latest published version, so the "(local)" tag and the upgrade button
+  // are derived from the source types here rather than persisted on the entity.
+  const isLocalApplication =
+    application?.sourceType === ApplicationRegistrationSourceType.LOCAL;
+
+  const displayVersion =
+    isLocalApplication && isDefined(currentVersion)
+      ? `${currentVersion} (local)`
+      : (currentVersion ?? undefined);
 
   const hasUpdate =
     isUpgradableApplicationSourceType(sourceType) &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
-    (isLocalDetached || isNewerSemver(latestAvailableVersion, currentVersion));
+    (isLocalApplication ||
+      isNewerSemver(latestAvailableVersion, currentVersion));
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
@@ -275,7 +283,7 @@ export const SettingsApplicationDetails = () => {
             author={detail?.author ?? undefined}
             category={detail?.category ?? undefined}
             contentEntries={contentEntries}
-            currentVersion={currentVersion ?? undefined}
+            currentVersion={displayVersion}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
               isDefined(detail)

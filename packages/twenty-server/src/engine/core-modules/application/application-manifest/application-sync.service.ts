@@ -8,7 +8,6 @@ import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { buildApplicationVersionForSourceType } from 'src/engine/core-modules/application/application-manifest/utils/build-application-version-for-source-type.util';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -257,10 +256,7 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       logo: manifest.application.logoUrl ?? null,
-      version: buildApplicationVersionForSourceType({
-        packageJsonVersion: packageJson.version,
-        sourceType: applicationSourceType,
-      }),
+      version: packageJson.version,
       sourceType: applicationSourceType,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,

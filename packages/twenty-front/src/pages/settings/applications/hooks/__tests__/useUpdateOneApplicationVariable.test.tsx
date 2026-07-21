@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 
 import {
   type Application,
+  ApplicationRegistrationSourceType,
   FindOneApplicationDocument,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
@@ -33,6 +34,7 @@ const buildApplication = (variableValue: string): Application => ({
   description: null,
   logo: null,
   version: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.LOCAL,
   universalIdentifier: 'test-app',
   applicationRegistrationId: null,
   applicationRegistration: null,
