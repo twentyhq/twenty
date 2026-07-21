@@ -50,6 +50,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };

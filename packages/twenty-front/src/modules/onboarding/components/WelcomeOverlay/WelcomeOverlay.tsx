@@ -3,20 +3,26 @@ import {
   type AnimationEvent,
   type CSSProperties,
   useCallback,
+  useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { WelcomeAnimationAutoLeaveEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect';
+import { WelcomeAnimationForcedTeardownEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect';
 import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
+import { WELCOME_TITLE_WORDS } from '@/onboarding/constants/WelcomeTitleWords';
+import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { type WelcomeTitleFlight } from '@/onboarding/types/WelcomeTitleFlight';
+import { measureWelcomeTitleFlight } from '@/onboarding/utils/measureWelcomeTitleFlight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
 
 const StyledOverlay = styled.div`
   align-items: center;
@@ -25,6 +31,7 @@ const StyledOverlay = styled.div`
   justify-content: center;
   left: 0;
   overflow: hidden;
+  pointer-events: none;
   position: fixed;
   right: 0;
   top: 0;
@@ -66,8 +73,6 @@ const StyledCanvasLayer = styled.div`
 const StyledTitle = styled.div`
   align-items: center;
   animation: welcomeTitleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
-  background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-wrap: nowrap;
@@ -106,11 +111,32 @@ const StyledTitle = styled.div`
     }
   }
 
+  &.is-flying {
+    animation:
+      welcomeTitleFlight 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      welcomeTitleFlightOut 0.12s ease-out 0.5s forwards;
+    transform-origin: var(--welcome-flight-origin-x) center;
+  }
+
+  @keyframes welcomeTitleFlight {
+    to {
+      transform: translate(var(--welcome-flight-x), var(--welcome-flight-y))
+        scale(var(--welcome-flight-scale));
+    }
+  }
+
+  @keyframes welcomeTitleFlightOut {
+    to {
+      opacity: 0;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
 
-    &.is-leaving {
-      animation-name: welcomeTitleFadeOut;
+    &.is-leaving,
+    &.is-flying {
+      animation: welcomeTitleFadeOut 0.34s ease-out forwards;
     }
 
     @keyframes welcomeTitleFadeOut {
@@ -121,10 +147,28 @@ const StyledTitle = styled.div`
   }
 `;
 
+const StyledTitleSurface = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  inset: 0;
+  position: absolute;
+
+  .is-flying & {
+    animation: welcomeTitleSurfaceOut 0.24s ease-out forwards;
+  }
+
+  @keyframes welcomeTitleSurfaceOut {
+    to {
+      opacity: 0;
+    }
+  }
+`;
+
 const StyledWord = styled.span`
   animation: welcomeWordIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(1.1s + var(--word-index) * 0.07s);
   display: inline-flex;
+  position: relative;
 
   @keyframes welcomeWordIn {
     from {
@@ -153,15 +197,39 @@ const StyledWord = styled.span`
 `;
 
 export const WelcomeOverlay = () => {
+  const isMobile = useIsMobile();
   const isWelcomeAnimationVisible = useAtomStateValue(
     isWelcomeAnimationVisibleState,
   );
   const setIsWelcomeAnimationVisible = useSetAtomState(
     isWelcomeAnimationVisibleState,
   );
-  const [isLeaving, setIsLeaving] = useState(false);
+  const isWelcomeAnimationLeaving = useAtomStateValue(
+    isWelcomeAnimationLeavingState,
+  );
+  const setIsWelcomeAnimationLeaving = useSetAtomState(
+    isWelcomeAnimationLeavingState,
+  );
 
-  const startLeaving = useCallback(() => setIsLeaving(true), []);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const [flight, setFlight] = useState<WelcomeTitleFlight | null>(null);
+
+  const canTitleFlyToChat = !isMobile;
+
+  const startLeaving = useCallback(() => {
+    const flightMeasuredWhileTitleIsStillAtRest = canTitleFlyToChat
+      ? measureWelcomeTitleFlight(titleRef.current)
+      : null;
+
+    setFlight(flightMeasuredWhileTitleIsStillAtRest);
+    setIsWelcomeAnimationLeaving(true);
+  }, [canTitleFlyToChat, setIsWelcomeAnimationLeaving]);
+
+  const teardown = useCallback(() => {
+    setIsWelcomeAnimationVisible(false);
+    setIsWelcomeAnimationLeaving(false);
+    setFlight(null);
+  }, [setIsWelcomeAnimationVisible, setIsWelcomeAnimationLeaving]);
 
   if (!isWelcomeAnimationVisible) {
     return null;
@@ -170,25 +238,43 @@ export const WelcomeOverlay = () => {
   const handleBackdropAnimationEnd = (
     event: AnimationEvent<HTMLDivElement>,
   ) => {
-    if (event.target === event.currentTarget && isLeaving) {
-      setIsWelcomeAnimationVisible(false);
-      setIsLeaving(false);
+    if (event.target === event.currentTarget && isWelcomeAnimationLeaving) {
+      teardown();
     }
   };
 
-  const leavingClassName = isLeaving ? 'is-leaving' : undefined;
+  const leavingClassName = isWelcomeAnimationLeaving ? 'is-leaving' : undefined;
+  const titleClassName = isWelcomeAnimationLeaving
+    ? isDefined(flight)
+      ? 'is-flying'
+      : 'is-leaving'
+    : undefined;
+
+  const titleStyle = isDefined(flight)
+    ? ({
+        '--welcome-flight-x': `${flight.translateXInPx}px`,
+        '--welcome-flight-y': `${flight.translateYInPx}px`,
+        '--welcome-flight-scale': flight.scale,
+        '--welcome-flight-origin-x': `${flight.transformOriginXInPx}px`,
+      } as CSSProperties)
+    : undefined;
 
   return createPortal(
     <StyledOverlay>
-      <WelcomeAnimationAutoLeaveEffect onAutoLeave={startLeaving} />
+      {isWelcomeAnimationLeaving ? (
+        <WelcomeAnimationForcedTeardownEffect onForcedTeardown={teardown} />
+      ) : (
+        <WelcomeAnimationAutoLeaveEffect onAutoLeave={startLeaving} />
+      )}
       <StyledBackdrop
         className={leavingClassName}
         onAnimationEnd={handleBackdropAnimationEnd}
       />
       <StyledCanvasLayer>
-        <WelcomeHalftoneCanvas isLeaving={isLeaving} />
+        <WelcomeHalftoneCanvas isLeaving={isWelcomeAnimationLeaving} />
       </StyledCanvasLayer>
-      <StyledTitle className={leavingClassName}>
+      <StyledTitle ref={titleRef} className={titleClassName} style={titleStyle}>
+        <StyledTitleSurface />
         {WELCOME_TITLE_WORDS.map((word, index) => (
           <StyledWord
             key={word}

@@ -1,8 +1,11 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
+import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
+import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
+import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -23,7 +26,11 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
     isDraggingFile ? themeCssVariables.spacing[3] : '0'};
 `;
 
-export const AiChatTab = () => {
+type AiChatTabProps = {
+  messageListPreamble?: ReactNode;
+};
+
+export const AiChatTab = ({ messageListPreamble }: AiChatTabProps) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const threadIdCreatedFromDraft = useAtomStateValue(
@@ -44,6 +51,9 @@ export const AiChatTab = () => {
       onDragEnter={() => setIsDraggingFile(true)}
       onDragLeave={() => setIsDraggingFile(false)}
     >
+      <AgentChatHasBeenOpenedEffect />
+      <AgentChatStreamingPartsDiffSyncEffect />
+      <AgentChatStreamingAutoScrollEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
@@ -52,7 +62,7 @@ export const AiChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          <AiChatTabMessageList />
+          <AiChatTabMessageList messageListPreamble={messageListPreamble} />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
         </>

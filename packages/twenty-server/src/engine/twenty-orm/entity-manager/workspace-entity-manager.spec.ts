@@ -246,6 +246,7 @@ describe('WorkspaceEntityManager', () => {
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
+        IS_ONBOARDING_AI_CHAT_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

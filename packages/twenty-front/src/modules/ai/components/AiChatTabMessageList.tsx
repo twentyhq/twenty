@@ -12,6 +12,8 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledScrollWrapperContainer = styled.div`
@@ -23,6 +25,14 @@ const StyledScrollWrapperContainer = styled.div`
   width: 100%;
 `;
 
+const StyledPreambleOutsideScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: ${themeCssVariables.spacing[4]};
+  width: 100%;
+`;
+
 const StyledMessageListContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,7 +40,13 @@ const StyledMessageListContent = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-export const AiChatTabMessageList = () => {
+type AiChatTabMessageListProps = {
+  messageListPreamble?: ReactNode;
+};
+
+export const AiChatTabMessageList = ({
+  messageListPreamble,
+}: AiChatTabMessageListProps) => {
   const agentChatHasMessage = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
@@ -40,7 +56,14 @@ export const AiChatTabMessageList = () => {
   );
 
   if (!agentChatHasMessage) {
-    return null;
+    if (!isDefined(messageListPreamble)) {
+      return null;
+    }
+    return (
+      <StyledPreambleOutsideScrollContainer>
+        {messageListPreamble}
+      </StyledPreambleOutsideScrollContainer>
+    );
   }
 
   return (
@@ -53,6 +76,7 @@ export const AiChatTabMessageList = () => {
     >
       <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
         <StyledMessageListContent>
+          {messageListPreamble}
           <AiChatNonLastMessageIdsList />
           <AiChatLastMessageWithStreamingState />
           <AiChatPendingResponseIndicator />
