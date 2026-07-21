@@ -1,0 +1,23 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784286710000-add-message-campaign-composer-tab.command.ts
+  s_11e59742733dbd::t_2f1b842f30400e 22-25
+  s_11e59742733dbd::t_b0a5ea9363615b 103-106,108-112,114-121,126-127,132,156,161,172
+  s_11e59742733dbd::t_89c590c6b6aa26 113
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_11e59742733dbd::t_c39e5e44e2b77f 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "3324ec1d79cd95b0e0cf5b9489ee1b11b11b4236",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
