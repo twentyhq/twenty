@@ -137,7 +137,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784200000000',
+      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
   })
   sdkClientCoreChecksum: string | null;
 
