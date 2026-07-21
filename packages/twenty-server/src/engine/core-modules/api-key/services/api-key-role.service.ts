@@ -181,6 +181,7 @@ export class ApiKeyRoleService {
   ): Promise<RoleDTO[]> {
     const roles = await this.roleRepository.find(workspaceId, {
       where: { canBeAssignedToApiKeys: true },
+      order: { label: 'ASC' },
     });
 
     return fromRoleEntitiesToRoleDtos(roles);
