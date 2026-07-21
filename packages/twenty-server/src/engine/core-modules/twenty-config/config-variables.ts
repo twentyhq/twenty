@@ -1499,7 +1499,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  APPLICATION_API_RATE_LIMITING_LIMIT = 3000;
+  APPLICATION_API_RATE_LIMITING_LIMIT = 500;
 
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
