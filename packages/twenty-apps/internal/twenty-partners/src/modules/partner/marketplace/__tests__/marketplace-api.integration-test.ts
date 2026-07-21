@@ -1,8 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { handler as getPartnerBySlug } from '../get-partner-by-slug.logic-function';
-import { handler as listAvailablePartners } from '../list-available-partners.logic-function';
+import { handler as getPartnerBySlug } from 'src/modules/partner/marketplace/get-partner-by-slug.logic-function';
+import { handler as listAvailablePartners } from 'src/modules/partner/marketplace/list-available-partners.logic-function';
 
 const client = new CoreApiClient();
 const KNOWN_SLUG = 'nine-dots-ventures';

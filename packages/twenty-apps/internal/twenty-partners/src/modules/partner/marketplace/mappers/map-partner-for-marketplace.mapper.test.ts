@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { mapPartnerForMarketplace } from './map-partner-for-marketplace';
+import { mapPartnerForMarketplace } from './map-partner-for-marketplace.mapper';
 
 const makeNode = () => ({
   name: 'Nine Dots Ventures',

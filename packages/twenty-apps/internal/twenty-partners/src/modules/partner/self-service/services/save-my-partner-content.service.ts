@@ -18,8 +18,8 @@ import {
   failureResponse,
   resolvePartnerFromRequest,
 } from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
-import { isCaseStudy } from 'src/modules/partner/self-service/utils/content-type';
 import { buildReconcilePlan } from 'src/modules/partner/self-service/utils/reconcile-children';
+import { isCaseStudy } from 'src/modules/partner/utils/content-type';
 
 export type SaveContentResult =
   | { ok: true; caseStudies: CaseStudyRow[] }

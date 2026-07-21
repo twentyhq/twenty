@@ -1,6 +1,6 @@
 import type { findMyPartnerProfile } from 'src/modules/partner/self-service/graphql/queries/find-my-partner-profile';
-import { isCaseStudy } from 'src/modules/partner/self-service/utils/content-type';
-import { firstFileUrl } from 'src/modules/partner/self-service/utils/profile-picture';
+import { isCaseStudy } from 'src/modules/partner/utils/content-type';
+import { firstFileUrl } from 'src/modules/partner/utils/profile-picture';
 
 export type MyProfilePayload = {
   id: string;
