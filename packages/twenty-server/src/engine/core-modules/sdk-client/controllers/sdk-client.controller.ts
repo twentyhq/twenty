@@ -65,12 +65,16 @@ export class SdkClientController {
     const { moduleBuffer, checksum: servedModuleChecksum } =
       moduleName === 'metadata'
         ? await getInstalledSdkMetadataModule()
-        : await this.sdkClientArchiveService.getClientModuleFromArchive({
-            workspaceId: workspace.id,
-            applicationId,
-            applicationUniversalIdentifier: application.universalIdentifier,
-            moduleName,
-          });
+        : {
+            moduleBuffer:
+              await this.sdkClientArchiveService.getClientModuleFromArchive({
+                workspaceId: workspace.id,
+                applicationId,
+                applicationUniversalIdentifier: application.universalIdentifier,
+                moduleName,
+              }),
+            checksum: application.sdkClientCoreChecksum,
+          };
 
     const isChecksumMatch =
       isDefined(checksum) && checksum === servedModuleChecksum;

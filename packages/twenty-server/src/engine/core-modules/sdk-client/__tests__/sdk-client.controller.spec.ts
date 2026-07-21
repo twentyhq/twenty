@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { createHash } from 'crypto';
 import { type Response } from 'express';
 
 import {
@@ -29,9 +28,7 @@ const WORKSPACE_ID = 'workspace-1';
 const APPLICATION_ID = 'app-1';
 
 const CORE_MODULE_BUFFER = Buffer.from('core module from archive');
-const CORE_MODULE_CHECKSUM = createHash('sha256')
-  .update(CORE_MODULE_BUFFER)
-  .digest('hex');
+const PERSISTED_CORE_CHECKSUM = 'b'.repeat(64);
 
 const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
 
@@ -55,16 +52,16 @@ describe('SdkClientController', () => {
             [APPLICATION_ID]: {
               id: APPLICATION_ID,
               universalIdentifier: 'my-app',
+              sdkClientCoreChecksum: PERSISTED_CORE_CHECKSUM,
             },
           },
         },
       }),
     };
     sdkClientArchiveService = {
-      getClientModuleFromArchive: jest.fn().mockResolvedValue({
-        moduleBuffer: CORE_MODULE_BUFFER,
-        checksum: CORE_MODULE_CHECKSUM,
-      }),
+      getClientModuleFromArchive: jest.fn().mockResolvedValue(
+        CORE_MODULE_BUFFER,
+      ),
     };
     response = {
       setHeader: jest.fn(),
@@ -147,13 +144,13 @@ describe('SdkClientController', () => {
     );
   });
 
-  it('serves fingerprinted urls as immutable when the checksum matches the served bytes', async () => {
+  it('serves fingerprinted urls as immutable when the checksum matches the persisted core checksum', async () => {
     await controller.getSdkModule(
       response as unknown as Response,
       APPLICATION_ID,
       'core',
       workspace,
-      CORE_MODULE_CHECKSUM,
+      PERSISTED_CORE_CHECKSUM,
     );
 
     expect(response.setHeader).toHaveBeenCalledWith(
@@ -162,7 +159,7 @@ describe('SdkClientController', () => {
     );
   });
 
-  it('opts out of caching when the fingerprint does not match the served bytes', async () => {
+  it('opts out of caching when the fingerprint does not match the persisted checksum', async () => {
     await controller.getSdkModule(
       response as unknown as Response,
       APPLICATION_ID,

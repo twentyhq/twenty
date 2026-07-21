@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -88,7 +87,7 @@ export class SdkClientArchiveService {
     applicationId: string;
     applicationUniversalIdentifier: string;
     moduleName: SdkModuleName;
-  }): Promise<{ moduleBuffer: Buffer; checksum: string }> {
+  }): Promise<Buffer> {
     const filePath = `dist/${moduleName}.mjs`;
 
     const archiveBuffer = await this.downloadArchiveBufferOrGenerate({
@@ -111,12 +110,7 @@ export class SdkClientArchiveService {
       );
     }
 
-    const moduleBuffer = await entry.buffer();
-
-    return {
-      moduleBuffer,
-      checksum: createHash('sha256').update(moduleBuffer).digest('hex'),
-    };
+    return entry.buffer();
   }
 
   async markSdkLayerFresh({
