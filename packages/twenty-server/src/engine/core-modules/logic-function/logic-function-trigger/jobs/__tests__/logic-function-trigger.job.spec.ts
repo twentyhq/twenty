@@ -30,7 +30,10 @@ const buildFlatLogicFunctionMaps = (
   byUniversalIdentifier: Object.fromEntries(
     flatLogicFunctions.map((flatLogicFunction) => [
       `uid-${flatLogicFunction.id}`,
-      { ...flatLogicFunction, universalIdentifier: `uid-${flatLogicFunction.id}` },
+      {
+        ...flatLogicFunction,
+        universalIdentifier: `uid-${flatLogicFunction.id}`,
+      },
     ]),
   ),
   universalIdentifierById: Object.fromEntries(
@@ -62,9 +65,7 @@ describe('LogicFunctionTriggerJob', () => {
           { id: 'fn-2', shouldRetryOnFailure: true },
         ]),
       }),
-    } as unknown as jest.Mocked<
-      Pick<WorkspaceCacheService, 'getOrRecompute'>
-    >;
+    } as unknown as jest.Mocked<Pick<WorkspaceCacheService, 'getOrRecompute'>>;
 
     job = new LogicFunctionTriggerJob(
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
