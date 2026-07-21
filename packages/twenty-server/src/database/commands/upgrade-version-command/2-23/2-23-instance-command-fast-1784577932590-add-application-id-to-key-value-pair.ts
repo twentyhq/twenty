@@ -13,10 +13,10 @@ export class AddApplicationIdToKeyValuePairFastInstanceCommand implements FastIn
       'ALTER TABLE "core"."keyValuePair" ADD COLUMN IF NOT EXISTS "applicationId" uuid',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT IF EXISTS "FK_KEY_VALUE_PAIR_APPLICATION_ID"',
+      'ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT IF EXISTS "FK_e31d245e30cd82307e5416450fc"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."keyValuePair" ADD CONSTRAINT "FK_KEY_VALUE_PAIR_APPLICATION_ID" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE',
+      'ALTER TABLE "core"."keyValuePair" ADD CONSTRAINT "FK_e31d245e30cd82307e5416450fc" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
     );
     await queryRunner.query(
       'CREATE INDEX IF NOT EXISTS "IDX_KEY_VALUE_PAIR_APPLICATION_ID" ON "core"."keyValuePair" ("applicationId")',
@@ -58,7 +58,7 @@ export class AddApplicationIdToKeyValuePairFastInstanceCommand implements FastIn
       'DROP INDEX IF EXISTS "core"."IDX_KEY_VALUE_PAIR_APPLICATION_ID"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT IF EXISTS "FK_KEY_VALUE_PAIR_APPLICATION_ID"',
+      'ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT IF EXISTS "FK_e31d245e30cd82307e5416450fc"',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."keyValuePair" DROP COLUMN IF EXISTS "applicationId"',
