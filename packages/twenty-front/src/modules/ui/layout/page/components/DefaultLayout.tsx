@@ -24,6 +24,10 @@ const StyledLayout = styled.div`
   scrollbar-width: 4px;
   width: 100%;
 
+  *::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
   *::-webkit-scrollbar-thumb {
     border-radius: ${themeCssVariables.border.radius.md};
   }
