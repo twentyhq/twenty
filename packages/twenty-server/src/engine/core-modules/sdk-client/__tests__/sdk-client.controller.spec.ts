@@ -59,9 +59,9 @@ describe('SdkClientController', () => {
       }),
     };
     sdkClientArchiveService = {
-      getClientModuleFromArchive: jest.fn().mockResolvedValue(
-        CORE_MODULE_BUFFER,
-      ),
+      getClientModuleFromArchive: jest
+        .fn()
+        .mockResolvedValue(CORE_MODULE_BUFFER),
     };
     response = {
       setHeader: jest.fn(),
