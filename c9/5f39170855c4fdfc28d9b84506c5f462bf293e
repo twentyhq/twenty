@@ -1,0 +1,35 @@
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/user-lookup.dto.ts
+  s_11e59742733dbd::t_56ee451fc4b4eb 1,61-63
+packages/twenty-front/src/generated-admin/graphql.ts
+  s_11e59742733dbd::t_db522c2d2f98cf 325,464,593-598,970,1226-1233,1298,1305,1429,1439-1440
+packages/twenty-front/src/modules/settings/admin-panel/graphql/queries/userLookupAdminPanel.ts
+  s_11e59742733dbd::t_c816b22338e3e8 34
+packages/twenty-front/src/modules/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel.ts
+  s_11e59742733dbd::t_0b9dfefb44a2ab 35
+packages/twenty-front/src/modules/settings/admin-panel/graphql/mutations/updateWorkspaceMessageCampaignDailySendLimit.ts
+  s_11e59742733dbd::t_c816b22338e3e8 1-13
+packages/twenty-front/src/modules/settings/admin-panel/components/SettingsAdminWorkspaceSendLimit.tsx
+  s_11e59742733dbd::t_4e36ab9fbfa2a8 7
+  s_11e59742733dbd::t_086b075a541476 1-6,8-102
+packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+  s_11e59742733dbd::t_4e36ab9fbfa2a8 13
+  s_11e59742733dbd::t_61eb81d292868d 331-336,338-384
+packages/twenty-server/src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service.ts
+  s_11e59742733dbd::t_765113c36acdca 128-129,208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c95f39170855c4fdfc28d9b84506c5f462bf293e",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
