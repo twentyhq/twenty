@@ -1,6 +1,7 @@
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { type ApplicationSdkClientChecksumsBroadcastRecord } from '@/front-components/types/ApplicationSdkClientChecksumsBroadcastRecord';
 import { useApolloClient } from '@apollo/client/react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   GetApplicationSdkClientChecksumsDocument,
@@ -16,57 +17,60 @@ export const useUpdateSdkClientChecksumsApolloCache = ({
 }: UseUpdateSdkClientChecksumsApolloCacheArgs) => {
   const apolloClient = useApolloClient();
 
-  const updateSdkClientChecksumsApolloCache = (
-    detail: MetadataOperationBrowserEventDetail<ApplicationSdkClientChecksumsBroadcastRecord>,
-  ) => {
-    if (detail.operation.type !== 'update') {
-      return;
-    }
+  const updateSdkClientChecksumsApolloCache = useCallback(
+    (
+      detail: MetadataOperationBrowserEventDetail<ApplicationSdkClientChecksumsBroadcastRecord>,
+    ) => {
+      if (detail.operation.type !== 'update') {
+        return;
+      }
 
-    const { updatedRecord } = detail.operation;
+      const { updatedRecord } = detail.operation;
 
-    if (!isDefined(applicationId) || updatedRecord.id !== applicationId) {
-      return;
-    }
+      if (!isDefined(applicationId) || updatedRecord.id !== applicationId) {
+        return;
+      }
 
-    const { sdkClientCoreChecksum } = updatedRecord;
+      const { sdkClientCoreChecksum } = updatedRecord;
 
-    if (!isDefined(sdkClientCoreChecksum)) {
-      return;
-    }
+      if (!isDefined(sdkClientCoreChecksum)) {
+        return;
+      }
 
-    const cachedData =
-      apolloClient.cache.readQuery<GetApplicationSdkClientChecksumsQuery>({
-        query: GetApplicationSdkClientChecksumsDocument,
-        variables: { applicationId },
-      });
+      const cachedData =
+        apolloClient.cache.readQuery<GetApplicationSdkClientChecksumsQuery>({
+          query: GetApplicationSdkClientChecksumsDocument,
+          variables: { applicationId },
+        });
 
-    const existingChecksums = cachedData?.applicationSdkClientChecksums;
+      const existingChecksums = cachedData?.applicationSdkClientChecksums;
 
-    if (!isDefined(existingChecksums)) {
-      void apolloClient.query({
-        query: GetApplicationSdkClientChecksumsDocument,
-        variables: { applicationId },
-        fetchPolicy: 'network-only',
-      });
+      if (!isDefined(existingChecksums)) {
+        void apolloClient.query({
+          query: GetApplicationSdkClientChecksumsDocument,
+          variables: { applicationId },
+          fetchPolicy: 'network-only',
+        });
 
-      return;
-    }
+        return;
+      }
 
-    apolloClient.cache.updateQuery<GetApplicationSdkClientChecksumsQuery>(
-      {
-        query: GetApplicationSdkClientChecksumsDocument,
-        variables: { applicationId },
-      },
-      (existingData) => ({
-        ...existingData,
-        applicationSdkClientChecksums: {
-          ...existingChecksums,
-          core: sdkClientCoreChecksum,
+      apolloClient.cache.updateQuery<GetApplicationSdkClientChecksumsQuery>(
+        {
+          query: GetApplicationSdkClientChecksumsDocument,
+          variables: { applicationId },
         },
-      }),
-    );
-  };
+        (existingData) => ({
+          ...existingData,
+          applicationSdkClientChecksums: {
+            ...existingChecksums,
+            core: sdkClientCoreChecksum,
+          },
+        }),
+      );
+    },
+    [apolloClient, applicationId],
+  );
 
   return { updateSdkClientChecksumsApolloCache };
 };
