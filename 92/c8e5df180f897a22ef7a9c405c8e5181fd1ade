@@ -1,0 +1,52 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-from-header.util.ts
+  s_11e59742733dbd::t_50f44bbdd54e9c 1-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/update-emailing-domain-sender-identity.input.ts
+  s_11e59742733dbd::t_589d4a7ee92048 1-21
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_11e59742733dbd::t_48062afda6412b 11
+packages/twenty-front/src/modules/settings/workspace/components/SettingsEmailGroupPlanPill.tsx
+  s_11e59742733dbd::t_ca2a1e0d192846 18
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/update-workspace-message-campaign-daily-send-limit.input.ts
+  s_11e59742733dbd::t_ca2a1e0d192846 3-10
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_11e59742733dbd::t_000cb87af3f9c7 60-61
+  s_11e59742733dbd::t_443cb12fd15215 59
+packages/twenty-front/src/modules/settings/emailing-domains/components/SettingsEmailingDomainSenderFieldInput.tsx
+  s_11e59742733dbd::t_d643ab2986e5ae 1-89
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_618c3ab5678241 12,63-64,69-74
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/updateEmailingDomainSenderIdentity.ts
+  s_11e59742733dbd::t_e1dd94a18037d6 1-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_11e59742733dbd::t_cb0708df358a55 137-142,151-158
+  s_11e59742733dbd::t_657e1889769f93 24-30
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286709000-add-emailing-domain-sender-identity.ts
+  s_11e59742733dbd::t_17dfffe275786e 7,14-16,20-22
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_f5880e79d14f25 11
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto.ts
+  s_11e59742733dbd::t_618c3ab5678241 36-38
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_11e59742733dbd::t_74d04071c1d7f2 19
+  s_11e59742733dbd::t_2d44c7f4626751 61-64
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_48062afda6412b 1582,2729,3641-3642,5504,5506-5507,8263-8264,8268,8275,8280,9247-9249
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_11e59742733dbd::t_f5880e79d14f25 12,246,248-268
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "92c8e5df180f897a22ef7a9c405c8e5181fd1ade",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
