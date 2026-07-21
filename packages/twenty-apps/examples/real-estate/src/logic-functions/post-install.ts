@@ -150,8 +150,36 @@ const handler = async () => {
   const propertyId = (name: string): string =>
     createProperties.find((property: any) => property.name === name).id;
 
-  const showingsData = buyerFirst.flatMap((firstName, b) =>
-    [0, 1].map((k) => {
+  // One opportunity per buyer: the buyer's pipeline card, staged by buyerStage.
+  const opportunitiesData = buyerFirst.map((firstName, b) => {
+    const buyerStage = BUYER_STAGE_CYCLE[b % BUYER_STAGE_CYCLE.length];
+    const meta = propertyMeta[(b * 2) % PROPERTY_COUNT];
+    return {
+      name: `${firstName} ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`,
+      buyerStage,
+      stage: STANDARD_STAGE_BY_BUYER_STAGE[buyerStage],
+      amount: eur(Math.round(meta.priceEur * 0.97)),
+      closeDate: `2026-${String(9 + (b % 3)).padStart(2, '0')}-15T00:00:00.000Z`,
+      buyerId: personId(firstName),
+      sellerId: personId(meta.sellerFirst),
+      propertyId: propertyId(meta.name),
+    };
+  });
+
+  const { createOpportunities } = (await client.mutation({
+    createOpportunities: {
+      __args: { data: opportunitiesData as any },
+      id: true,
+      name: true,
+    },
+  } as any)) as any;
+
+  const opportunityId = (name: string): string =>
+    createOpportunities.find((opportunity: any) => opportunity.name === name).id;
+
+  const showingsData = buyerFirst.flatMap((firstName, b) => {
+    const opportunityName = `${firstName} ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`;
+    return [0, 1].map((k) => {
       const propertyIndex = (b * 2 + k * 11) % PROPERTY_COUNT;
       const meta = propertyMeta[propertyIndex];
       const status = SHOWING_STATUSES[(b + k) % SHOWING_STATUSES.length];
@@ -163,38 +191,18 @@ const handler = async () => {
         scheduledAt: `2026-0${month}-${day}T1${k + 2}:00:00.000Z`,
         propertyId: propertyId(meta.name),
         buyerId: personId(firstName),
+        agentId: personId(meta.agentFirst),
+        opportunityId: opportunityId(opportunityName),
         ...(status === 'COMPLETED'
           ? { interestLevel: `RATING_${2 + ((b + k) % 4)}` }
           : {}),
       };
-    }),
-  );
+    });
+  });
 
   await client.mutation({
     createShowings: {
       __args: { data: showingsData as any },
-      id: true,
-    },
-  } as any);
-
-  // One opportunity per buyer: the buyer's pipeline card, staged by buyerStage.
-  const opportunitiesData = buyerFirst.map((firstName, b) => {
-    const buyerStage = BUYER_STAGE_CYCLE[b % BUYER_STAGE_CYCLE.length];
-    const meta = propertyMeta[(b * 2) % PROPERTY_COUNT];
-    return {
-      name: `${firstName} ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`,
-      buyerStage,
-      stage: STANDARD_STAGE_BY_BUYER_STAGE[buyerStage],
-      amount: eur(Math.round(meta.priceEur * 0.97)),
-      closeDate: `2026-${String(9 + (b % 3)).padStart(2, '0')}-15T00:00:00.000Z`,
-      pointOfContactId: personId(firstName),
-      propertyId: propertyId(meta.name),
-    };
-  });
-
-  await client.mutation({
-    createOpportunities: {
-      __args: { data: opportunitiesData as any },
       id: true,
     },
   } as any);
