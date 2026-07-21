@@ -6,9 +6,9 @@ import {
   PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/partner-field-universal-identifiers';
+} from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 
 // Reuses the retired all-partners view id so the 0.5.x→1.0.0 sync updates the Partner
 // object's existing view in place instead of deleting it (Twenty blocks deleting an object's only view).

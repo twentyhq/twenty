@@ -1,7 +1,7 @@
 import { ViewType, defineView } from 'twenty-sdk/define';
 
 import { PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/fields/partner-content-partner.field';
+import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
 import {
   PARTNER_CONTENT_BODY_FIELD_ID,
   PARTNER_CONTENT_CASE_STUDY_LINK_FIELD_ID,
@@ -10,7 +10,7 @@ import {
   PARTNER_CONTENT_HEADLINE_FIELD_ID,
   PARTNER_CONTENT_NAME_FIELD_ID,
   PARTNER_CONTENT_STATUS_FIELD_ID,
-} from 'src/objects/partner-content.object';
+} from 'src/modules/partner/objects/partner-content.object';
 
 export const PARTNER_CONTENT_RECORD_PAGE_FIELDS_VIEW_ID =
   'a1b2c3d4-5e6f-4789-a012-3456789abcde';

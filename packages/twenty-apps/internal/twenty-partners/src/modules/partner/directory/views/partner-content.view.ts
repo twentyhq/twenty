@@ -13,7 +13,7 @@ import {
   PARTNER_CONTENT_NAME_FIELD_ID,
   PARTNER_CONTENT_STATUS_FIELD_ID,
   PARTNER_CONTENT_TYPE_FIELD_ID,
-} from 'src/objects/partner-content.object';
+} from 'src/modules/partner/objects/partner-content.object';
 
 // Index view for partner content.
 export default defineView({

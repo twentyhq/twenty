@@ -27,8 +27,8 @@ import {
   PARTNER_CONTENT_INTERVIEW_FIELD_ID,
   PARTNER_CONTENT_STATUS_FIELD_ID,
   PARTNER_CONTENT_TYPE_FIELD_ID,
-} from 'src/objects/partner-content.object';
-import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/fields/partner-content-partner.field';
+} from 'src/modules/partner/objects/partner-content.object';
+import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-hosting-type.field';
@@ -41,15 +41,15 @@ import { OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID } from 'src/modules/opportu
 import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-subscription-type.field';
 import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-tft-id.field';
 import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-use-case.field';
-import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
-import { PARTNER_LINK_PARTNER_FIELD_ID } from 'src/fields/partner-link-partner.field';
+import { PARTNER_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-company.field';
+import { PARTNER_LINK_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-link-partner.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/partner-on-opportunity.field';
-import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/fields/partner-service-partner.field';
+import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/partner-user-on-opportunity.field';
-import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/fields/partner-user-on-partner-content.field';
-import { PARTNER_USER_ON_PARTNER_LINK_FIELD_ID } from 'src/fields/partner-user-on-partner-link.field';
-import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
-import { PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID } from 'src/fields/partner-user-on-partner-service.field';
+import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-content.field';
+import { PARTNER_USER_ON_PARTNER_LINK_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-link.field';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
+import { PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-service.field';
 
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';

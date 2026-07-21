@@ -1,6 +1,6 @@
 import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
 
-import { PARTNERS_PER_COUNTRY_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/partners-per-country.view';
+import { PARTNERS_PER_COUNTRY_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/directory/views/partners-per-country.view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '284df145-0d35-4733-92ea-89aff788d6a9',

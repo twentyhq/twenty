@@ -10,12 +10,12 @@ import {
   PARTNER_INTRODUCTION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/partner-field-universal-identifiers';
+} from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 
 export const PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER =
   '8d8fc77b-77df-4eeb-9e0c-6409efd30a9c';

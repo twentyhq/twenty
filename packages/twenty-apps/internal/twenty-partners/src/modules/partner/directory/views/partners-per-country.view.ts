@@ -5,13 +5,13 @@ import {
   defineView,
 } from 'twenty-sdk/define';
 
-import { PARTNER_COUNTRY_VIEW_GROUPS } from 'src/constants/partner-country-view-groups';
+import { PARTNER_COUNTRY_VIEW_GROUPS } from 'src/modules/partner/constants/partner-country-view-groups';
 import {
   PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/partner-field-universal-identifiers';
+} from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export const PARTNERS_PER_COUNTRY_VIEW_UNIVERSAL_IDENTIFIER =

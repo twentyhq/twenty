@@ -1,7 +1,7 @@
 import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
 
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/views/partner-record-page-fields.view';
+import { PARTNER_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/partner/directory/views/partner-record-page-fields.view';
 
 // Partner is a custom (app-owned) object, so we fully control its record page. The
 // Fields widget points at the FIELDS_WIDGET view so the partnerUser relation shows in

@@ -6,7 +6,7 @@ import {
   PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/partner-field-universal-identifiers';
+} from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export const PARTNERS_PER_STAGE_VIEW_UNIVERSAL_IDENTIFIER =

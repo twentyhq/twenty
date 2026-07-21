@@ -1,41 +1,41 @@
 import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
 
-import { PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_SERVICE_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/views/partner-service-record-page-fields.view';
+import { PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { PARTNER_CONTENT_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/partner/directory/views/partner-content-record-page-fields.view';
 
 export default definePageLayout({
-  universalIdentifier: '7032692b-63bd-432c-acac-a6e368adbff9',
-  name: 'Default Partner Service Layout',
+  universalIdentifier: '4d1f8ad2-6dcd-4f14-b2bc-3d16bb9dc462',
+  name: 'Default Partner Content Layout',
   type: 'RECORD_PAGE',
-  objectUniversalIdentifier: PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
-      universalIdentifier: '7fd356ad-7ab8-4bb7-b507-bc7d93b25c87',
+      universalIdentifier: '24a33b22-6ef5-4d3f-88c4-a0f6cf43bfff',
       title: 'Home',
       position: 10,
       icon: 'IconHome',
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
-          universalIdentifier: 'e7de8b6b-9fba-4215-a40b-de656a46cd7c',
+          universalIdentifier: 'd5833c26-aa65-418d-a359-b420369990f6',
           title: 'Fields',
           type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
-            viewUniversalIdentifier: PARTNER_SERVICE_RECORD_PAGE_FIELDS_VIEW_ID,
+            viewUniversalIdentifier: PARTNER_CONTENT_RECORD_PAGE_FIELDS_VIEW_ID,
           },
         },
       ],
     },
     {
-      universalIdentifier: '7810fdf5-6a3c-4dea-9336-1ed25b8b0940',
+      universalIdentifier: '39292e48-e6df-43df-b1b8-7e367daa382a',
       title: 'Timeline',
       position: 20,
       icon: 'IconTimelineEvent',
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
-          universalIdentifier: '87ad1f2b-63f0-4f15-a098-e4bc911feb58',
+          universalIdentifier: '1d293bf5-f6d4-41c4-a6f6-db7955759f35',
           title: 'Timeline',
           type: 'TIMELINE',
           configuration: { configurationType: 'TIMELINE' },

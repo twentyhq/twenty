@@ -22,19 +22,19 @@ import {
   PARTNER_TYPE_OF_TEAM_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/partner-field-universal-identifiers';
+} from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
   PARTNER_CONTENTS_ON_PARTNER_FIELD_ID,
-} from 'src/fields/partner-content-partner.field';
-import { PARTNER_COMPANY_FIELD_ID } from 'src/fields/partner-company.field';
+} from 'src/modules/partner/fields/partner-content-partner.field';
+import { PARTNER_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-company.field';
 import {
   PARTNER_LINKS_ON_PARTNER_FIELD_ID,
-} from 'src/fields/partner-link-partner.field';
+} from 'src/modules/partner/fields/partner-link-partner.field';
 import {
   PARTNER_SERVICES_ON_PARTNER_FIELD_ID,
-} from 'src/fields/partner-service-partner.field';
-import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
+} from 'src/modules/partner/fields/partner-service-partner.field';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 
 export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
   'a10bf4de-0770-4bee-ae04-1ae97aa18254';

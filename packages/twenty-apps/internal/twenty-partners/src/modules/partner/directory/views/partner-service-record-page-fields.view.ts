@@ -1,12 +1,12 @@
 import { ViewType, defineView } from 'twenty-sdk/define';
 
 import { PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/fields/partner-service-partner.field';
+import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-service-partner.field';
 import {
   PARTNER_SERVICE_DESCRIPTION_FIELD_ID,
   PARTNER_SERVICE_SORT_ORDER_FIELD_ID,
   PARTNER_SERVICE_TITLE_FIELD_ID,
-} from 'src/objects/partner-service.object';
+} from 'src/modules/partner/objects/partner-service.object';
 
 export const PARTNER_SERVICE_RECORD_PAGE_FIELDS_VIEW_ID =
   '0dfa3e6b-5461-4494-8a5a-ce363617e5a0';
