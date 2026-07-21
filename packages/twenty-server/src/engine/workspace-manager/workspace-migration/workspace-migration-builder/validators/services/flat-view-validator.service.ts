@@ -1,6 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   RelationType,
   ViewCalendarLayout,
@@ -28,9 +29,11 @@ export class FlatViewValidatorService {
   private validateCalendarFields({
     flatView,
     flatFieldMetadataMaps,
+    isCalendarWeekViewEnabled,
   }: {
     flatView: UniversalFlatView;
     flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
+    isCalendarWeekViewEnabled: boolean;
   }): FlatEntityValidationError[] {
     if (getViewLayoutFromViewType(flatView.type) !== ViewType.CALENDAR) {
       return [];
@@ -46,11 +49,12 @@ export class FlatViewValidatorService {
       });
     }
 
-    // Widget calendars only render the month grid; rejecting other
-    // layouts here keeps that a data invariant instead of a UI-only
-    // convention, independent of the week/day view feature flag.
+    // Widget calendars only allow non-month layouts when the day/week
+    // calendar feature is enabled; while it is off the month grid stays a
+    // data invariant rather than a UI-only convention.
     if (
       flatView.type === ViewType.CALENDAR_WIDGET &&
+      !isCalendarWeekViewEnabled &&
       isDefined(flatView.calendarLayout) &&
       flatView.calendarLayout !== ViewCalendarLayout.MONTH
     ) {
@@ -205,6 +209,7 @@ export class FlatViewValidatorService {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
     },
+    additionalCacheDataMaps: { featureFlagsMap },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'update'> {
@@ -338,6 +343,8 @@ export class FlatViewValidatorService {
       ...this.validateCalendarFields({
         flatView: updatedFlatView,
         flatFieldMetadataMaps,
+        isCalendarWeekViewEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED],
       }),
     );
 
@@ -412,6 +419,7 @@ export class FlatViewValidatorService {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
+    additionalCacheDataMaps: { featureFlagsMap },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'create'> {
@@ -517,6 +525,8 @@ export class FlatViewValidatorService {
       ...this.validateCalendarFields({
         flatView: flatViewToValidate,
         flatFieldMetadataMaps,
+        isCalendarWeekViewEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED],
       }),
     );
 

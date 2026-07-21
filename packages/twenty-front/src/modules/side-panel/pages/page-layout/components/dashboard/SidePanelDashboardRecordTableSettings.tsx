@@ -14,6 +14,7 @@ import { RecordTableDataSourceDropdownContent } from '@/side-panel/pages/page-la
 import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownContent';
 import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent';
 import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarFieldDropdownContent';
+import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
@@ -23,6 +24,7 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +42,8 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import {
+  FeatureFlagKey,
+  ViewCalendarLayout,
   ViewType,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
@@ -137,6 +141,20 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+
+  const currentCalendarLayout =
+    widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
+
+  const calendarLayoutLabel =
+    currentCalendarLayout === ViewCalendarLayout.DAY
+      ? t`Day`
+      : currentCalendarLayout === ViewCalendarLayout.WEEK
+        ? t`Week`
+        : t`Month`;
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>
@@ -171,7 +189,12 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-filter',
           'record-table-sort',
           ...(isCalendarLayout
-            ? ['record-table-calendar-field']
+            ? [
+                'record-table-calendar-field',
+                ...(isCalendarWeekViewEnabled
+                  ? ['record-table-calendar-layout']
+                  : []),
+              ]
             : ['record-table-group-by']),
           ...(!isCalendarLayout && hasGroupBy
             ? ['record-table-hide-empty-groups']
@@ -327,6 +350,29 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         dropdownPlacement="bottom-end"
                         hasSubMenu
                         description={calendarFieldLabel}
+                        contextualTextPosition="right"
+                      />
+                    </SelectableListItem>
+                  )}
+                  {isCalendarLayout && isCalendarWeekViewEnabled && (
+                    <SelectableListItem itemId="record-table-calendar-layout">
+                      <CommandMenuItemDropdown
+                        Icon={IconCalendar}
+                        label={t`Calendar view`}
+                        id="record-table-calendar-layout"
+                        dropdownId="record-table-calendar-layout"
+                        dropdownComponents={
+                          <DropdownContent>
+                            <RecordTableCalendarLayoutDropdownContent
+                              pageLayoutId={pageLayoutId}
+                              widgetId={widgetInEditMode.id}
+                              currentCalendarLayout={currentCalendarLayout}
+                            />
+                          </DropdownContent>
+                        }
+                        dropdownPlacement="bottom-end"
+                        hasSubMenu
+                        description={calendarLayoutLabel}
                         contextualTextPosition="right"
                       />
                     </SelectableListItem>

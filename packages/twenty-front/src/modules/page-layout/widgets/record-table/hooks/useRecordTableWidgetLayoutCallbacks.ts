@@ -125,9 +125,10 @@ export const useRecordTableWidgetLayoutCallbacks = ({
           view: {
             ...widgetViewDraft.view,
             type: targetViewType,
-            // Widget calendars are month-only for now, so switching to
-            // the calendar layout always normalizes to MONTH.
-            calendarLayout: ViewCalendarLayout.MONTH,
+            // Default a freshly switched calendar to the month grid; an
+            // existing day/week choice (with the feature enabled) is kept.
+            calendarLayout:
+              widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
             calendarFieldMetadataId: hasCalendarField
               ? widgetViewDraft.view.calendarFieldMetadataId
               : defaultCalendarFieldMetadataItem?.id,
@@ -151,9 +152,16 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       view: {
         ...widgetViewDraft.view,
         calendarFieldMetadataId: fieldMetadataItem.id,
-        // Widget calendars are month-only (also enforced server-side by
-        // FlatViewValidatorService), so every draft write pins MONTH.
-        calendarLayout: ViewCalendarLayout.MONTH,
+      },
+    }));
+  };
+
+  const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
+    setWidgetViewDraft((widgetViewDraft) => ({
+      ...widgetViewDraft,
+      view: {
+        ...widgetViewDraft.view,
+        calendarLayout,
       },
     }));
   };
@@ -172,6 +180,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
 
   return {
     handleCalendarFieldChange,
+    handleCalendarLayoutChange,
     handleGroupByFieldChange,
     handleLayoutChange,
     handleShouldHideEmptyGroupsChange,

@@ -6,6 +6,7 @@ import { getSupportedRecordCalendarLayout } from '@/object-record/record-calenda
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekRange';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { Select } from '@/ui/input/components/Select';
@@ -14,6 +15,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -74,6 +76,14 @@ export const RecordCalendarTopBar = () => {
   const isRecordCalendarReadOnly = useAtomComponentStateValue(
     isRecordCalendarReadOnlyComponentState,
   );
+
+  // The layout switcher persists via updateCurrentView (an index-page write),
+  // so it must never render inside a dashboard widget; widget calendars drive
+  // their layout from the side-panel settings instead.
+  const widgetInstanceId = useAvailableComponentInstanceId(
+    WidgetComponentInstanceContext,
+  );
+  const isInWidget = isDefined(widgetInstanceId);
 
   const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
     useAtomComponentState(recordIndexCalendarLayoutComponentState);
@@ -166,7 +176,7 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        {isCalendarWeekViewEnabled && !isRecordCalendarReadOnly && (
+        {isCalendarWeekViewEnabled && !isRecordCalendarReadOnly && !isInWidget && (
           <Select
             dropdownId={`record-calendar-layout-${recordCalendarId}`}
             value={supportedCalendarLayout}

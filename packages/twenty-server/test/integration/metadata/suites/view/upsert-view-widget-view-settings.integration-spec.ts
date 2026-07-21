@@ -12,7 +12,9 @@ import { findViewGroups } from 'test/integration/metadata/suites/view-group/util
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   ViewCalendarLayout,
   ViewType,
@@ -275,6 +277,41 @@ describe('upsertViewWidget view settings', () => {
     expect(JSON.stringify(errors)).toContain(
       'Calendar widget views only support the month layout',
     );
+  });
+
+  it('should allow a non-month calendar layout on a CALENDAR_WIDGET view when the week/day calendar feature is enabled', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      const { data } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId,
+          view: {
+            type: ViewType.CALENDAR_WIDGET,
+            calendarLayout: ViewCalendarLayout.WEEK,
+            calendarFieldMetadataId: dateFieldMetadataId,
+            mainGroupByFieldMetadataId: null,
+          },
+        },
+        gqlFields: VIEW_SETTINGS_GQL_FIELDS,
+      });
+
+      expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
+      expect(data.upsertViewWidget.calendarLayout).toBe(
+        ViewCalendarLayout.WEEK,
+      );
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
   });
 
   it('should switch the widget view to CALENDAR_WIDGET with a date field and layout', async () => {

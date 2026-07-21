@@ -10,8 +10,13 @@ import { RecordTableWidgetViewDraftInitEffect } from '@/page-layout/widgets/reco
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
-import { ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewCalendarLayout,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
@@ -57,6 +62,23 @@ export const RecordTableWidgetRendererContent = ({
   const isKanbanLayout = widgetViewLayout === ViewType.KANBAN;
   const isCalendarLayout = widgetViewLayout === ViewType.CALENDAR;
 
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+
+  // Widget calendars are read-only month projections, except live (non
+  // edit-mode) day/week calendars, which allow drag-to-reschedule and
+  // record creation under the usual object permissions.
+  const isCalendarDayOrWeek =
+    widgetView?.calendarLayout === ViewCalendarLayout.DAY ||
+    widgetView?.calendarLayout === ViewCalendarLayout.WEEK;
+  const canEditCalendar =
+    isCalendarLayout &&
+    !isPageLayoutInEditMode &&
+    isCalendarWeekViewEnabled &&
+    isCalendarDayOrWeek;
+  const calendarIsReadOnly = isReadOnly && !canEditCalendar;
+
   return (
     <>
       <RecordTableWidgetViewDraftInitEffect
@@ -80,7 +102,7 @@ export const RecordTableWidgetRendererContent = ({
         {isKanbanLayout ? (
           <RecordBoardWidget isReadOnly={isReadOnly} />
         ) : isCalendarLayout ? (
-          <RecordCalendarWidget isReadOnly={isReadOnly} />
+          <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
         ) : (
           <RecordTableWidget
             isReadOnly={isReadOnly}
