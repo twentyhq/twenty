@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.22.0', 1784200000000)
+@RegisteredInstanceCommand('2.23.0', 1784200000000)
 export class AddSdkClientCoreChecksumToApplicationFastInstanceCommand
   implements FastInstanceCommand
 {
