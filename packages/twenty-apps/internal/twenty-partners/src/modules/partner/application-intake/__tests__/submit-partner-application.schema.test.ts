@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { submitPartnerApplicationSchema } from '../submit-partner-application.logic-function';
+import { submitPartnerApplicationSchema } from '../services/submit-partner-application-input.schema';
 
 const base = {
   firstName: 'Ada',

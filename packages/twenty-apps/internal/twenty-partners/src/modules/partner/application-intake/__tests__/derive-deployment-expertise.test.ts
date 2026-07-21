@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { deriveDeploymentExpertise } from './derive-deployment-expertise';
+import { deriveDeploymentExpertise } from '../utils/derive-deployment-expertise';
 
 describe('deriveDeploymentExpertise', () => {
   it('defaults to CLOUD for everyone', () => {

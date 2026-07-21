@@ -9,10 +9,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
-import {
-  buildApplicationEmbed,
-  handler,
-} from '../on-partner-application-created.logic-function';
+import { buildApplicationEmbed } from '../mappers/application-embed.mapper';
+import { handler } from '../on-partner-application-created.logic-function';
 
 const PARTNER_ID = '11111111-1111-1111-1111-111111111111';
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { PARTNER_COUNTRY_VALUES } from './submit-partner-application.logic-function';
-import { COUNTRY_TO_REGION, deriveRegion } from './derive-region';
+import { PARTNER_COUNTRY_VALUES } from 'src/modules/partner/constants/partner-option-values.constant';
+import { COUNTRY_TO_REGION, deriveRegion } from '../utils/derive-region';
 
 describe('deriveRegion', () => {
   it('maps representative countries to the right region', () => {

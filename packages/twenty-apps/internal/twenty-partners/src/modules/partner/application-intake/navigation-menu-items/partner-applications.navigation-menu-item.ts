@@ -1,7 +1,7 @@
 import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
 
 import { PARTNER_APPLICATIONS_NAV_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/partner-applications.view';
+import { PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/application-intake/views/partner-applications.view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: PARTNER_APPLICATIONS_NAV_UNIVERSAL_IDENTIFIER,
