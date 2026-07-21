@@ -46,21 +46,23 @@ export class ApplicationKeyValueService {
     key: string;
     scope: AppKeyValueScope;
   }): Promise<AppKeyValueEntry | null> {
+    const scopedWhere =
+      scope === AppKeyValueScope.GLOBAL
+        ? {
+            applicationId: await this.resolveGlobalApplicationId(application),
+            workspaceId: IsNull(),
+          }
+        : {
+            applicationId: application.id,
+            workspaceId,
+          };
+
     const entry = await this.keyValuePairRepository.findOne({
-      where:
-        scope === AppKeyValueScope.GLOBAL
-          ? {
-              key,
-              applicationId: await this.resolveGlobalApplicationId(application),
-              workspaceId: IsNull(),
-              type: KeyValuePairType.APPLICATION_VARIABLE,
-            }
-          : {
-              key,
-              applicationId: application.id,
-              workspaceId,
-              type: KeyValuePairType.APPLICATION_VARIABLE,
-            },
+      where: {
+        key,
+        type: KeyValuePairType.APPLICATION_VARIABLE,
+        ...scopedWhere,
+      },
     });
 
     if (!isDefined(entry)) {
