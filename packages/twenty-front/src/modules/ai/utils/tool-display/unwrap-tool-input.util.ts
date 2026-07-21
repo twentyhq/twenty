@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { type ToolInput } from '@/ai/types/ToolInput';
 
 const ExecuteToolSchema = z.object({
-  toolName: z.coerce.string(),
+  toolName: z.string().min(1),
   arguments: z.unknown(),
 });
 
