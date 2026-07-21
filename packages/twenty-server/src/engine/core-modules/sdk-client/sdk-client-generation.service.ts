@@ -251,20 +251,6 @@ export class SdkClientGenerationService {
     }
   }
 
-  // Only the core checksum is broadcast: it is persisted per application on
-  // the application row, which is not part of the syncable metadata event
-  // system (ALL_METADATA_NAME), so without this event mounted front components
-  // would keep their session-old core checksum until a reload. Broadcasting
-  // here lets clients rebuild the content-addressed core SDK URL as soon as
-  // regeneration completes.
-  //
-  // The metadata checksum is deliberately NOT broadcast: it is instance-wide
-  // (installed package hash), never persisted, and only changes on a server
-  // release. The frontComponent resolver serves it fresh on every query, and a
-  // release drops all SSE connections anyway, so clients pick up a new metadata
-  // checksum on the reconnect refetch — no dedicated event needed.
-  //
-  // Best-effort: a lost event only delays the refresh until the next reload.
   private async broadcastSdkClientCoreChecksumUpdate({
     workspaceId,
     applicationId,
