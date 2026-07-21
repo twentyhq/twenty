@@ -1,0 +1,65 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/find-message-suppressions.input.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-email-authentication-records.util.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-54
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-72
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_11e59742733dbd::t_972a80123dcf24 13-16,34-40,60-109
+  s_11e59742733dbd::t_54e30475a1968d 110
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_8c1bc74ff744df 90-96
+  s_11e59742733dbd::t_776956ff680a8f 2,10-11
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_972a80123dcf24 9-13,21-24
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-suppression.dto.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-43
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_11e59742733dbd::t_baa8877f2685f3 16
+  s_11e59742733dbd::t_e72717a45b2cf8 19-20,22
+  s_11e59742733dbd::t_e41d4c24625654 46,51-52,60,67
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_11e59742733dbd::t_972a80123dcf24 44-47
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_11e59742733dbd::t_972a80123dcf24 19,56-57,132-134
+  s_11e59742733dbd::t_b969db59102a1a 135
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-content.service.ts
+  s_11e59742733dbd::t_972a80123dcf24 5,19,21-22
+packages/twenty-server/src/modules/emailing/crons/commands/emailing-domain-reverification.cron.command.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-35
+packages/twenty-server/src/modules/emailing/crons/jobs/emailing-domain-reverification.cron.job.ts
+  s_11e59742733dbd::t_972a80123dcf24 1-74
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_11e59742733dbd::t_8a304f7655b2d7 28-35
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_92f5f334162ded 17-23
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type.ts
+  s_11e59742733dbd::t_972a80123dcf24 6
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_11e59742733dbd::t_972a80123dcf24 52,67
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_5b9a70267088a8 60
+  s_11e59742733dbd::t_869f2c3974c32f 385-392
+  s_11e59742733dbd::t_003f4beeb26c1f 286,297-300
+  s_11e59742733dbd::t_5e2a5e07034ddd 10
+  s_11e59742733dbd::t_7e8e5998553ef6 324-338,340
+  s_11e59742733dbd::t_e6613673531f91 418
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_11e59742733dbd::t_972a80123dcf24 9-10,19-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "3475346dc56d5150314abb8121295a9e916a4a7f",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
