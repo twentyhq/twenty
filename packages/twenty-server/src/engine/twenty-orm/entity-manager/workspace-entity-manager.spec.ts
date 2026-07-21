@@ -490,7 +490,9 @@ describe('WorkspaceEntityManager', () => {
         avatarUrl: '',
       };
 
-      (formatResult as jest.Mock).mockReturnValue([persistedPayloadWithUntouchedColumnsNulled]);
+      (formatResult as jest.Mock).mockReturnValue([
+        persistedPayloadWithUntouchedColumnsNulled,
+      ]);
 
       const findSpy = jest
         .spyOn(entityManager, 'find')
