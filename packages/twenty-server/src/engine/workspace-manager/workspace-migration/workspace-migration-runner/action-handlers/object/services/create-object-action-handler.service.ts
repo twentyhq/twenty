@@ -159,4 +159,100 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       columnDefinitions,
     });
   }
+
+  override canBatchCreate = true;
+
+  override async executeForMetadataBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<FlatCreateObjectAction>[],
+  ): Promise<void> {
+    if (contexts.length === 0) {
+      return;
+    }
+
+    const { queryRunner } = contexts[0];
+
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: contexts.map((context) => context.flatAction.flatEntity),
+    });
+
+    const scalarFieldMetadatas = contexts.flatMap((context) =>
+      context.flatAction.flatFieldMetadatas.map((flatFieldMetadata) =>
+        flatEntityToScalarFlatEntity({
+          metadataName: 'fieldMetadata',
+          flatEntity: flatFieldMetadata,
+        }),
+      ),
+    );
+
+    if (scalarFieldMetadatas.length > 0) {
+      await queryRunner.manager
+        .getRepository(ALL_METADATA_ENTITY_BY_METADATA_NAME['fieldMetadata'])
+        .insert(scalarFieldMetadatas);
+    }
+  }
+
+  override async executeForWorkspaceSchemaBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<FlatCreateObjectAction>[],
+  ): Promise<void> {
+    if (contexts.length === 0) {
+      return;
+    }
+
+    const { queryRunner, workspaceId } = contexts[0];
+
+    const { schemaName } = getWorkspaceSchemaContextForMigration({
+      workspaceId,
+      objectMetadata: contexts[0].flatAction.flatEntity,
+    });
+
+    const perObject = contexts.map((context) => {
+      const { flatEntity: flatObjectMetadata, flatFieldMetadatas } =
+        context.flatAction;
+
+      const { tableName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: flatObjectMetadata,
+      });
+
+      const columnDefinitions = flatFieldMetadatas.flatMap(
+        (flatFieldMetadata) =>
+          generateColumnDefinitions({
+            flatFieldMetadata,
+            flatObjectMetadata,
+            workspaceId,
+          }),
+      );
+
+      const enumOrCompositeFlatFieldMetadatas = flatFieldMetadatas.filter(
+        (flatFieldMetadata) =>
+          isEnumFlatFieldMetadata(flatFieldMetadata) ||
+          isCompositeFlatFieldMetadata(flatFieldMetadata),
+      );
+
+      const enumOperations = collectEnumOperationsForObject({
+        flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+        tableName,
+        operation: EnumOperation.CREATE,
+      });
+
+      return { tableName, columnDefinitions, enumOperations };
+    });
+
+    await executeBatchEnumOperations({
+      enumOperations: perObject.flatMap((entry) => entry.enumOperations),
+      queryRunner,
+      schemaName,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+    });
+
+    await this.workspaceSchemaManagerService.tableManager.createTables({
+      queryRunner,
+      schemaName,
+      tables: perObject.map((entry) => ({
+        tableName: entry.tableName,
+        columnDefinitions: entry.columnDefinitions,
+      })),
+    });
+  }
 }

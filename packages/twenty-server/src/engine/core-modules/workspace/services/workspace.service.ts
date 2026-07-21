@@ -373,12 +373,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         userId: user.id,
       });
 
-      await this.featureFlagService.enableFeatureFlags(
-        DEFAULT_FEATURE_FLAGS,
-        workspace.id,
-      );
-
-      await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
+      await Promise.all([
+        this.featureFlagService.enableFeatureFlags(
+          DEFAULT_FEATURE_FLAGS,
+          workspace.id,
+        ),
+        this.userWorkspaceService.createWorkspaceMember(workspace.id, user),
+      ]);
 
       // await this.installPreInstalledAppsOnCreatedWorkspace({
       //   workspaceId: workspace.id,
@@ -399,17 +400,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       throw error;
     }
 
-    try {
-      await this.sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace(
-        workspace.id,
-      );
-    } catch (error) {
-      this.logger.error(
-        `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
-    }
+    this.sdkClientGenerationService
+      .enqueueSdkClientGenerationForWorkspace(workspace.id)
+      .catch((error) => {
+        this.logger.error(
+          `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
+          error,
+        );
+        this.exceptionHandlerService.captureExceptions([error as Error]);
+      });
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',

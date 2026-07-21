@@ -32,6 +32,42 @@ export class WorkspaceSchemaTableManagerService {
     await queryRunner.query(sql);
   }
 
+  async createTables({
+    queryRunner,
+    schemaName,
+    tables,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tables: {
+      tableName: string;
+      columnDefinitions?: WorkspaceSchemaColumnDefinition[];
+    }[];
+  }): Promise<void> {
+    if (tables.length === 0) {
+      return;
+    }
+
+    const sql = tables
+      .map(({ tableName, columnDefinitions }) => {
+        const sqlColumnDefinitions =
+          columnDefinitions?.map((columnDefinition) =>
+            buildSqlColumnDefinition(columnDefinition),
+          ) || [];
+
+        if (sqlColumnDefinitions.length === 0) {
+          sqlColumnDefinitions.push(
+            '"id" uuid PRIMARY KEY DEFAULT gen_random_uuid()',
+          );
+        }
+
+        return `CREATE TABLE IF NOT EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} (${sqlColumnDefinitions.join(', ')})`;
+      })
+      .join(';\n');
+
+    await queryRunner.query(sql);
+  }
+
   async dropTable({
     queryRunner,
     schemaName,

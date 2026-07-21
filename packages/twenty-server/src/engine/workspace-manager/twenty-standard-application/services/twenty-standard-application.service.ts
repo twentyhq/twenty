@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
@@ -11,8 +12,6 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-
-// TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
 export class TwentyStandardApplicationService {
   constructor(
@@ -26,8 +25,8 @@ export class TwentyStandardApplicationService {
     workspaceId,
   }: {
     workspaceId: string;
-  }) {
-    const { twentyStandardFlatApplication } =
+  }): Promise<{ workspaceCustomFlatApplication: FlatApplication }> {
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -92,5 +91,7 @@ export class TwentyStandardApplicationService {
         'Multiple validation errors occurred while synchronizing twenty-standard application',
       );
     }
+
+    return { workspaceCustomFlatApplication };
   }
 }
