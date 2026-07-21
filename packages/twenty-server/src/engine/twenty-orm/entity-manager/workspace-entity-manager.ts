@@ -3,7 +3,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type DeleteResult,
   EntityManager,
@@ -62,7 +62,6 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { buildUpdatedRecordsForEvent } from 'src/engine/twenty-orm/utils/build-updated-records-for-event.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1211,6 +1210,7 @@ export class WorkspaceEntityManager extends EntityManager {
         entityTarget,
         {
           where: { id: In(entityIds) },
+          withDeleted: true,
         },
         { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
       );
@@ -1264,11 +1264,9 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext.flatFieldMetadataMaps,
       );
 
-      const writtenColumnNamesByRecordIndex = formattedEntityOrEntities.map(
-        (formattedEntity) => Object.keys(formattedEntity),
-      );
-
-      const updatedColumns = writtenColumnNamesByRecordIndex.flat();
+      const updatedColumns = formattedEntityOrEntities
+        .map((e) => Object.keys(e))
+        .flat();
 
       this.validatePermissions({
         target: targetOrEntity,
@@ -1308,16 +1306,22 @@ export class WorkspaceEntityManager extends EntityManager {
         (entity) => !beforeUpdateMapById[entity.id],
       );
 
-      const {
-        recordsAfter: updatedRecordsAfter,
-        recordsBefore: updatedRecordsBefore,
-      } = buildUpdatedRecordsForEvent({
-        persistedRecords: formattedResult,
-        writtenColumnNamesByRecordIndex,
-        recordsBeforeUpdateById: beforeUpdateMapById,
-        objectMetadataItem,
-        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-      });
+      const updatedEntityIds = formattedResult
+        .map((entity) => entity.id)
+        .filter((entityId) => isDefined(beforeUpdateMapById[entityId]));
+
+      // Re-select instead of reusing the persisted payload: TypeORM sets untouched
+      // nullable columns to null on it, which would surface as spurious changes.
+      const updatedEntities = isNonEmptyArray(updatedEntityIds)
+        ? await this.find(
+            entityTarget,
+            {
+              where: { id: In(updatedEntityIds) },
+              withDeleted: true,
+            },
+            { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
+          )
+        : [];
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -1325,8 +1329,8 @@ export class WorkspaceEntityManager extends EntityManager {
           objectMetadataItem,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          recordsAfter: updatedRecordsAfter,
-          recordsBefore: updatedRecordsBefore,
+          recordsAfter: updatedEntities,
+          recordsBefore: beforeUpdate,
         }),
       );
 
