@@ -1,0 +1,63 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/filter-emails.util.ts
+  s_66141739344aa6::t_bdee594272b394 50-52
+  s_66141739344aa6::t_b9a15dc3e2b12f 49
+  s_66141739344aa6::t_7ce4ecde52b28c 8
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_66141739344aa6::t_03733fc2238fcb 118
+  s_66141739344aa6::t_6dc045c7ce2083 32
+  s_66141739344aa6::t_2e1cdfd470f0ab 107-110
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.spec.ts
+  s_66141739344aa6::t_660d43eaffaeff 107,155,200
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util.ts
+  s_66141739344aa6::t_8441f83512e556 4
+  s_66141739344aa6::t_0bd6c106f3203a 26-29
+  s_66141739344aa6::t_1e643c4203a7ed 62
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/filter-emails.util.spec.ts
+  s_66141739344aa6::t_269e706c23466f 162-164
+  s_66141739344aa6::t_6fa04bd84e2fb2 142-161,165-173
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/is-bulk-mail.util.spec.ts
+  s_66141739344aa6::t_66560b91f0d1a5 47-48
+  s_66141739344aa6::t_185154c2ea0a6c 31-33
+  s_66141739344aa6::t_021c0188877f54 1-30,34-46,49-50
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_66141739344aa6::t_a3f6132c1dd85e 167
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_66141739344aa6::t_53a485bd747167 347
+  s_66141739344aa6::t_27131fc0522e25 308-315,318-324,328-346,348-355
+  s_66141739344aa6::t_53a708b34cfdc7 316-317,325-327
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface.ts
+  s_66141739344aa6::t_d33e333662cf51 22
+packages/twenty-server/src/modules/messaging/message-import-manager/types/message.ts
+  s_66141739344aa6::t_8d4957ec85bfb2 29-34
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/is-bulk-mail.util.ts
+  s_66141739344aa6::t_5a933de3fb98cc 5,9,13-17,19-26
+  s_66141739344aa6::t_c6a00fff9355aa 3-4,8,10-11,18
+  s_66141739344aa6::t_8f4ace1d8369cb 1
+  s_66141739344aa6::t_2ff15f92f04e8d 12
+  s_66141739344aa6::t_fe42b1afe017c3 2,6-7
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util.ts
+  s_66141739344aa6::t_cc2a7eb62046c8 34
+  s_66141739344aa6::t_8c11b5eca344a5 90
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service.ts
+  s_66141739344aa6::t_17d669263fe721 39-42
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service.ts
+  s_66141739344aa6::t_2e6d0b886d7a39 190-193
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service.ts
+  s_66141739344aa6::t_c85e5d52284af1 20-36,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "452b9b53ac1de4b9e4f3202b234726201bf1f559",
+  "prompts": {},
+  "sessions": {
+    "s_66141739344aa6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b4e4f207-ab09-4447-b365-1cb04ac0858c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
