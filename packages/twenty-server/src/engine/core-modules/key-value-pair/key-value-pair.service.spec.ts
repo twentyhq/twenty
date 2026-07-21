@@ -100,6 +100,27 @@ describe('KeyValuePairService', () => {
     );
   });
 
+  it('should thread applicationId into the upsert payload', async () => {
+    await service.set({
+      userId: null,
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+      key: 'APP_SETTING',
+      value: 'test',
+      type: KeyValuePairType.CONFIG_VARIABLE,
+    });
+
+    expect(keyValuePairRepository.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: null,
+        workspaceId: 'workspace-id',
+        applicationId: 'application-id',
+        key: 'APP_SETTING',
+      }),
+      expect.anything(),
+    );
+  });
+
   it('should upsert with full conflict paths when both ids are present', async () => {
     await service.set({
       userId: 'user-id',

@@ -19,11 +19,13 @@ export class KeyValuePairService<
   async get<K extends keyof KeyValueTypesMap>({
     userId,
     workspaceId,
+    applicationId,
     type,
     key,
   }: {
     userId?: string | null;
     workspaceId?: string | null;
+    applicationId?: string | null;
     type: KeyValuePairType;
     key?: Extract<K, string>;
   }): Promise<Array<KeyValueTypesMap[K]>> {
@@ -40,7 +42,9 @@ export class KeyValuePairService<
             ? { workspaceId: IsNull() }
             : { workspaceId }),
         ...(key === undefined ? {} : { key }),
-        applicationId: IsNull(),
+        // Application rows are isolated from core key-value pairs: without an
+        // explicit applicationId we only match rows where it is NULL.
+        ...(applicationId == null ? { applicationId: IsNull() } : { applicationId }),
         type,
       },
     })) as Array<KeyValueTypesMap[K]>;
@@ -55,12 +59,14 @@ export class KeyValuePairService<
     {
       userId,
       workspaceId,
+      applicationId,
       key,
       value,
       type,
     }: {
       userId?: string | null;
       workspaceId?: string | null;
+      applicationId?: string | null;
       key: Extract<K, string>;
       value: KeyValueTypesMap[K];
       type: KeyValuePairType;
@@ -69,8 +75,11 @@ export class KeyValuePairService<
   ) {
     const normalizedUserId = userId ?? null;
     const normalizedWorkspaceId = workspaceId ?? null;
-    const hasNullUserAndWorkspace =
-      normalizedUserId === null && normalizedWorkspaceId === null;
+    const normalizedApplicationId = applicationId ?? null;
+    const hasNullUserAndWorkspaceAndApplication =
+      normalizedUserId === null &&
+      normalizedWorkspaceId === null &&
+      normalizedApplicationId === null;
     const keyValuePairRepository = queryRunner
       ? queryRunner.manager.getRepository(KeyValuePairEntity)
       : this.keyValuePairRepository;
@@ -78,7 +87,7 @@ export class KeyValuePairService<
     const upsertData = {
       userId: normalizedUserId,
       workspaceId: normalizedWorkspaceId,
-      applicationId: null,
+      applicationId: normalizedApplicationId,
       key,
       value,
       type,
@@ -87,7 +96,7 @@ export class KeyValuePairService<
     const conflictPaths: string[] = ['key'];
     let indexPredicate: string | undefined;
 
-    if (hasNullUserAndWorkspace) {
+    if (hasNullUserAndWorkspaceAndApplication) {
       indexPredicate =
         '"userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedUserId === null) {
@@ -110,11 +119,13 @@ export class KeyValuePairService<
     {
       userId,
       workspaceId,
+      applicationId,
       type,
       key,
     }: {
       userId?: string | null;
       workspaceId?: string | null;
+      applicationId?: string | null;
       type: KeyValuePairType;
       key: Extract<keyof KeyValueTypesMap, string>;
     },
@@ -131,7 +142,11 @@ export class KeyValuePairService<
         : workspaceId === null
           ? { workspaceId: IsNull() }
           : { workspaceId }),
-      applicationId: IsNull(),
+      // Application rows are isolated from core key-value pairs: without an
+      // explicit applicationId we only match rows where it is NULL.
+      ...(applicationId == null
+        ? { applicationId: IsNull() }
+        : { applicationId }),
       type,
       key,
     };
