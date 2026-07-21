@@ -1,0 +1,38 @@
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_11e59742733dbd::t_407516483c09e1 136,144
+packages/twenty-front/src/modules/activities/emails/hooks/useSendTestMessageCampaign.ts
+  s_11e59742733dbd::t_997fd5a7abee10 14,32
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_407516483c09e1 92,1011,1039
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignStats.tsx
+  s_11e59742733dbd::t_a4184b2e5c72a8 1-7,9-85,87-108
+  s_11e59742733dbd::t_b251476a15292d 8,86
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignComposerPage.tsx
+  s_11e59742733dbd::t_146ea5b5da2325 3,6-10,13,50-54,60,82,94-111,130,133,145-149
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_11e59742733dbd::t_dc04caadf876c0 8
+packages/twenty-front/src/modules/activities/emails/components/SendTestCampaignModal.tsx
+  s_11e59742733dbd::t_e8b52da9ef0213 1-142
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_17e4ca826680d4 5234
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-test-message-campaign.input.ts
+  s_11e59742733dbd::t_dc04caadf876c0 3-9
+  s_11e59742733dbd::t_c605996f38a183 17-21
+  s_11e59742733dbd::t_dea3d5af452b2c 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "005fff14def5efd515a49ec1760fd966951acbef",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
