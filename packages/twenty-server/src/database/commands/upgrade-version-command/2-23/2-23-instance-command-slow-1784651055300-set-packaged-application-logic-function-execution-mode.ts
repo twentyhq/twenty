@@ -20,7 +20,7 @@ const INSTALL_BATCH_SIZE = 20;
 // flip; the executor also installs on-demand at first execution, covering
 // functions whose install failed here and nodes with their own local bundle
 // storage.
-@RegisteredInstanceCommand('2.23.0', 1784540930631, { type: 'slow' })
+@RegisteredInstanceCommand('2.23.0', 1784651055300, { type: 'slow' })
 export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
   implements SlowInstanceCommand
 {
