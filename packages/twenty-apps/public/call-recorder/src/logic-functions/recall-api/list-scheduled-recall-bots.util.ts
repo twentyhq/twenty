@@ -1,19 +1,17 @@
-import { isString, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import {
+  fetchRecallListPages,
+  type RecallListResponse,
+} from 'src/logic-functions/recall-api/fetch-recall-list-pages.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallBotSnapshot } from 'src/logic-functions/recall-api/parse-recall-bot-snapshot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
 export type RecallScheduledBot = RecallBotSnapshot & {
   id: string;
-};
-
-type RecallBotListResponse = {
-  next?: unknown;
-  results?: unknown;
 };
 
 type ListScheduledRecallBotsResult =
@@ -26,10 +24,12 @@ export const listScheduledRecallBots = async ({
   joinAtAfter,
   joinAtBefore,
   metadata,
+  statuses,
 }: {
-  joinAtAfter: string;
-  joinAtBefore: string;
+  joinAtAfter?: string;
+  joinAtBefore?: string;
   metadata?: Record<string, string>;
+  statuses?: string[];
 }): Promise<ListScheduledRecallBotsResult> => {
   const configResult = getRecallApiConfig();
 
@@ -37,50 +37,47 @@ export const listScheduledRecallBots = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
-  const bots: RecallScheduledBot[] = [];
-  const searchParams = new URLSearchParams({
-    join_at_after: joinAtAfter,
-    join_at_before: joinAtBefore,
-  });
+  const searchParameters = new URLSearchParams();
 
-  Object.entries(metadata ?? {}).forEach(([key, value]) => {
-    searchParams.set(`metadata__${key}`, value);
-  });
-
-  let path: string | undefined = `/bot/?${searchParams.toString()}`;
-
-  for (
-    let pageIndex = 0;
-    !isUndefined(path) && pageIndex < RECALL_BOT_LIST_MAX_PAGES;
-    pageIndex++
-  ) {
-    const result = await recallBotApiRequest<RecallBotListResponse>({
-      config: configResult.config,
-      path,
-      method: 'GET',
-    });
-
-    if (!result.ok) {
-      return result;
-    }
-
-    bots.push(...extractRecallBots(result.data));
-    path = extractNextPath(result.data, configResult.config.baseUrl);
+  if (!isUndefined(joinAtAfter)) {
+    searchParameters.set('join_at_after', joinAtAfter);
   }
 
-  const truncated = !isUndefined(path);
+  if (!isUndefined(joinAtBefore)) {
+    searchParameters.set('join_at_before', joinAtBefore);
+  }
 
-  if (truncated && process.env.NODE_ENV !== 'test') {
+  Object.entries(metadata ?? {}).forEach(([key, value]) => {
+    searchParameters.set(`metadata__${key}`, value);
+  });
+
+  statuses?.forEach((status) => {
+    searchParameters.append('status', status);
+  });
+
+  const result = await fetchRecallListPages({
+    config: configResult.config,
+    initialPath: `/bot/?${searchParameters.toString()}`,
+    maxPages: RECALL_BOT_LIST_MAX_PAGES,
+    extractPageItems: extractRecallBots,
+    malformedErrorMessage: 'Recall API returned malformed bot list',
+  });
+
+  if (!result.ok) {
+    return result;
+  }
+
+  if (result.truncated && process.env.NODE_ENV !== 'test') {
     console.warn(
-      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots`,
+      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${result.items.length} fetched bots`,
     );
   }
 
-  return { ok: true, bots, truncated };
+  return { ok: true, bots: result.items, truncated: result.truncated };
 };
 
 const extractRecallBots = (
-  response: RecallBotListResponse | undefined,
+  response: RecallListResponse | undefined,
 ): RecallScheduledBot[] => {
   if (!Array.isArray(response?.results)) {
     return [];
@@ -101,17 +98,4 @@ const extractRecallBots = (
 
     return [{ ...snapshot, id: snapshot.id }];
   });
-};
-
-const extractNextPath = (
-  response: RecallBotListResponse | undefined,
-  baseUrl: string,
-): string | undefined => {
-  const next = response?.next;
-
-  if (!isString(next) || !next.startsWith(baseUrl)) {
-    return undefined;
-  }
-
-  return next.slice(baseUrl.length);
 };

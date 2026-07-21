@@ -1,7 +1,13 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationType, ViewType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  RelationType,
+  ViewCalendarLayout,
+  ViewType,
+} from 'twenty-shared/types';
+import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -23,11 +29,13 @@ export class FlatViewValidatorService {
   private validateCalendarFields({
     flatView,
     flatFieldMetadataMaps,
+    isCalendarWeekViewEnabled,
   }: {
     flatView: UniversalFlatView;
     flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
+    isCalendarWeekViewEnabled: boolean;
   }): FlatEntityValidationError[] {
-    if (flatView.type !== ViewType.CALENDAR) {
+    if (getViewLayoutFromViewType(flatView.type) !== ViewType.CALENDAR) {
       return [];
     }
 
@@ -38,6 +46,22 @@ export class FlatViewValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Calendar view must have a calendar layout`,
         userFriendlyMessage: msg`Calendar view must have a calendar layout`,
+      });
+    }
+
+    // Widget calendars only allow non-month layouts when the day/week
+    // calendar feature is enabled; while it is off the month grid stays a
+    // data invariant rather than a UI-only convention.
+    if (
+      flatView.type === ViewType.CALENDAR_WIDGET &&
+      !isCalendarWeekViewEnabled &&
+      isDefined(flatView.calendarLayout) &&
+      flatView.calendarLayout !== ViewCalendarLayout.MONTH
+    ) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Calendar widget views only support the month layout`,
+        userFriendlyMessage: msg`Calendar widget views only support the month layout`,
       });
     }
 
@@ -185,6 +209,7 @@ export class FlatViewValidatorService {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
     },
+    additionalCacheDataMaps: { featureFlagsMap },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'update'> {
@@ -240,8 +265,8 @@ export class FlatViewValidatorService {
     }
 
     const viewBecomesKanban =
-      updatedFlatView.type === ViewType.KANBAN &&
-      existingFlatView.type !== ViewType.KANBAN;
+      getViewLayoutFromViewType(updatedFlatView.type) === ViewType.KANBAN &&
+      getViewLayoutFromViewType(existingFlatView.type) !== ViewType.KANBAN;
 
     if (viewBecomesKanban) {
       if (
@@ -318,6 +343,8 @@ export class FlatViewValidatorService {
       ...this.validateCalendarFields({
         flatView: updatedFlatView,
         flatFieldMetadataMaps,
+        isCalendarWeekViewEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED],
       }),
     );
 
@@ -392,6 +419,7 @@ export class FlatViewValidatorService {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
+    additionalCacheDataMaps: { featureFlagsMap },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'create'> {
@@ -450,7 +478,8 @@ export class FlatViewValidatorService {
       });
     }
 
-    const isKanban = flatViewToValidate.type === ViewType.KANBAN;
+    const isKanban =
+      getViewLayoutFromViewType(flatViewToValidate.type) === ViewType.KANBAN;
 
     if (isKanban) {
       if (
@@ -496,6 +525,8 @@ export class FlatViewValidatorService {
       ...this.validateCalendarFields({
         flatView: flatViewToValidate,
         flatFieldMetadataMaps,
+        isCalendarWeekViewEnabled:
+          featureFlagsMap[FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED],
       }),
     );
 

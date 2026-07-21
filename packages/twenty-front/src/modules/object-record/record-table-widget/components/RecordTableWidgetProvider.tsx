@@ -1,4 +1,5 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { type ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -24,6 +25,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   widgetId: string;
   recordLimit?: number;
   instanceIdSuffix?: string;
+  contextStoreViewType?: ContextStoreViewType;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -32,6 +34,7 @@ export const RecordTableWidgetProvider = ({
   widgetId,
   recordLimit,
   instanceIdSuffix,
+  contextStoreViewType,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -111,6 +114,7 @@ export const RecordTableWidgetProvider = ({
         <RecordTableWidgetContextStoreInitEffect
           objectMetadataItemId={objectMetadataItem.id}
           viewId={viewId}
+          contextStoreViewType={contextStoreViewType}
         />
         <RecordIndexContextProvider
           value={{

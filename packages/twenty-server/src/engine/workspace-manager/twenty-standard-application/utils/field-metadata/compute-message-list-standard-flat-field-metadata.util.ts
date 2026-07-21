@@ -240,6 +240,7 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      isSystemSideEffect: true,
       label: i18nLabel(msg`Events`),
       description: i18nLabel(msg`Events linked to the list`),
       icon: 'IconTimelineEvent',

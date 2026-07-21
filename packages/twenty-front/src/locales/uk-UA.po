@@ -1339,6 +1339,7 @@ msgid "Add Model"
 msgstr "Додати модель"
 
 #. js-lingui-id: Hkobke
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
 msgstr "Додати новий"
@@ -2231,6 +2232,11 @@ msgstr "Та"
 msgid "Annual"
 msgstr "Щорічно"
 
+#. js-lingui-id: +qygei
+#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+msgid "Answers"
+msgstr ""
+
 #. js-lingui-id: 9BhGWn
 #. placeholder {0}: fieldLabel ?? ''
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
@@ -2367,6 +2373,12 @@ msgstr "URL застосунку"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Зовнішній вигляд"
+
+#. js-lingui-id: YhZuwP
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Appears filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
+msgstr ""
 
 #. js-lingui-id: LqRVps
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -2863,6 +2875,11 @@ msgstr "Авто-створення"
 msgid "Auto-generated role for {agentDisplayName}"
 msgstr ""
 
+#. js-lingui-id: /nv0ml
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Auto-upgrade"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -2882,6 +2899,11 @@ msgstr "Автоматично створювати записи Людей пр
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Автоматично встановлювати цей застосунок у кожен новостворений робочий простір"
+
+#. js-lingui-id: XFGV21
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Automatically upgrade this application when a new version is published"
+msgstr ""
 
 #. js-lingui-id: BJgDIM
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -2943,16 +2965,6 @@ msgstr "Повернутися до вмісту"
 msgid "Back to settings"
 msgstr "Назад до налаштувань"
 
-#. js-lingui-id: aHL20j
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill"
-msgstr "Доустановлення"
-
-#. js-lingui-id: mpBETK
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill installation"
-msgstr "Доустановлення"
-
 #. js-lingui-id: RJnYR0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Backfill started. This app will be installed on all existing workspaces in the background."
@@ -2993,6 +3005,11 @@ msgstr "Потрібно вказати базову URL-адресу"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Basic"
 msgstr "Базовий"
+
+#. js-lingui-id: WChKbE
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Batch size"
+msgstr ""
 
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3286,6 +3303,8 @@ msgstr "caldav.example.com"
 
 #. js-lingui-id: AjVXBS
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "Календар"
@@ -3318,6 +3337,7 @@ msgstr "Синхронізація календаря недоступна, ос
 #. js-lingui-id: alkXJ5
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "Calendar view"
 msgstr "Перегляд календаря"
 
@@ -3325,6 +3345,11 @@ msgstr "Перегляд календаря"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Calendar View"
 msgstr "Перегляд календаря"
+
+#. js-lingui-id: mhcSf1
+#: src/modules/views/types/ViewType.ts
+msgid "Calendar widget"
+msgstr ""
 
 #. js-lingui-id: EUpfsd
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -3514,6 +3539,11 @@ msgstr "Оплата карткою наразі недоступна. Пере�
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Каталонська"
+
+#. js-lingui-id: MY7CDs
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Catalog sync started. Try your lookup again in a moment."
+msgstr ""
 
 #. js-lingui-id: K7tIrx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -3755,11 +3785,31 @@ msgstr "Місто"
 msgid "Claim"
 msgstr "Заявити права"
 
+#. js-lingui-id: B6GVe3
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim an application"
+msgstr ""
+
 #. js-lingui-id: aHPKtV
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Claim ownership"
 msgstr "Заявити право власності"
+
+#. js-lingui-id: PzqcRM
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim with GitHub"
+msgstr ""
+
+#. js-lingui-id: ke+vxJ
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Claimed by this workspace"
+msgstr ""
+
+#. js-lingui-id: KqRGF3
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Claiming is not configured on this server. Ask an administrator to set up the GitHub OAuth app."
+msgstr ""
 
 #. js-lingui-id: fcgvCA
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4057,7 +4107,7 @@ msgstr "Коми та крапка"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4065,8 +4115,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Комунікації"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -4693,6 +4743,16 @@ msgstr "Вартість за мільйон токенів (USD)"
 msgid "Cost per million tokens for cached input (USD)"
 msgstr "Вартість за мільйон токенів для кешованих вхідних даних (USD)"
 
+#. js-lingui-id: T8ACay
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not claim this application"
+msgstr ""
+
+#. js-lingui-id: LpyyAM
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Could not complete the claim. Please try again."
+msgstr ""
+
 #. js-lingui-id: VVRHmR
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 msgid "Could not delete approved access domain"
@@ -4737,6 +4797,21 @@ msgstr "Не вдалося оновити токен валідності й н
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token. Please contact support."
 msgstr "Не вдалося оновити токен валідності. Зверніться до служби підтримки."
+
+#. js-lingui-id: 5PWKlr
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not run the lookup"
+msgstr ""
+
+#. js-lingui-id: p75IO8
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not start the GitHub claim"
+msgstr ""
+
+#. js-lingui-id: Yu3v/5
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not sync the catalog"
+msgstr ""
 
 #. js-lingui-id: dIvwQK
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5571,6 +5646,7 @@ msgstr "Дата"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "Поле дати"
@@ -5608,6 +5684,8 @@ msgstr "Гранулярність Дати Y"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "День"
@@ -6551,6 +6629,11 @@ msgstr "наприклад, GPT-4o"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "e.g. My OpenAI Proxy"
 msgstr "наприклад, My OpenAI Proxy"
+
+#. js-lingui-id: SwLZ5l
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "e.g. my-twenty-app"
+msgstr ""
 
 #. js-lingui-id: 88vQqv
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -7934,8 +8017,14 @@ msgstr "Не вдалося встановити застосунок."
 msgid "Failed to load billing plans"
 msgstr "Не вдалося завантажити тарифні плани"
 
-#. js-lingui-id: BTjpvA
+#. js-lingui-id: mvgFp1
+#. placeholder {0}: error.message
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
+msgid "Failed to load front component: {0}"
+msgstr ""
+
+#. js-lingui-id: BTjpvA
+#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Не вдалося завантажити компонент фронтенду: {errorMessage}"
 
@@ -8034,6 +8123,11 @@ msgstr "Не вдалося встановити режим технічного
 msgid "Failed to start backfill"
 msgstr "Не вдалося розпочати заповнення даних"
 
+#. js-lingui-id: SwXGP6
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Failed to start upgrade"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -8043,6 +8137,11 @@ msgstr "Не вдалося синхронізувати каталог марк
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Не вдалося передати право власності. Переконайтеся, що піддомен указано правильно."
+
+#. js-lingui-id: UNwpjb
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Failed to update auto-upgrade setting."
+msgstr ""
 
 #. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -8711,6 +8810,7 @@ msgstr "Gemini CLI"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -8795,6 +8895,11 @@ msgstr "Отримайте максимум від свого робочого �
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (повнотекстовий пошук і JSONB)"
 
+#. js-lingui-id: BhYbva
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
+msgstr ""
+
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
@@ -8810,11 +8915,6 @@ msgstr "Повернутися"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "Перейти до порталу виставлення рахунків"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Перейти до документації"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -8939,6 +9039,7 @@ msgstr "Група"
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
 msgstr "Групувати за"
@@ -9115,6 +9216,7 @@ msgstr "Приховати порожню категорію"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "Hide empty groups"
 msgstr "Приховати порожні групи"
 
@@ -9706,6 +9808,7 @@ msgstr "Вкажіть свої платіжні дані, щоб отримат
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9722,11 +9825,6 @@ msgstr "Встановити {appDisplayName} у свій робочий про�
 msgid "Install and manage applications"
 msgstr "Встановіть і керуйте застосунками"
 
-#. js-lingui-id: 7rG5Kz
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install latest version on all workspaces"
-msgstr "Встановити останню версію в усіх робочих просторах"
-
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -9735,6 +9833,12 @@ msgstr "Встановити останню версію в усіх робоч�
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Посилання для встановлення"
+
+#. js-lingui-id: xif494
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+msgid "Install on all workspaces"
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10206,9 +10310,16 @@ msgid "Just for me"
 msgstr "Лише для мене"
 
 #. js-lingui-id: OGXtL8
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban"
 msgstr "Канбан"
+
+#. js-lingui-id: lsRWTc
+#: src/modules/views/types/ViewType.ts
+msgid "Kanban widget"
+msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -10920,6 +11031,11 @@ msgstr "Для журналів потрібно налаштувати ClickHou
 msgid "Longitude"
 msgstr "Довгота"
 
+#. js-lingui-id: TMahs7
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Look up"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -11437,6 +11553,8 @@ msgstr "місяць"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "Місяць"
@@ -11486,6 +11604,7 @@ msgid "More actions"
 msgstr "Більше дій"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -11502,6 +11621,12 @@ msgstr "Більше віджетів"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "Найчастіше встановлювана версія"
+
+#. js-lingui-id: PfWWOa
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+msgid "Mostly empty"
+msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -11708,10 +11833,15 @@ msgstr "Пункти навігаційного меню"
 msgid "Navigation tabs"
 msgstr "Навігаційні вкладки"
 
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Потрібна допомога з налаштуванням спільної поштової скриньки?"
+#. js-lingui-id: IbVc4A
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
+msgid "Needs a Date field"
+msgstr ""
+
+#. js-lingui-id: 0HxihL
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
+msgid "Needs a Select field"
+msgstr ""
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -12098,6 +12228,11 @@ msgstr "Немає доступних ключів API"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "Жоден ключ API не відповідає вашому запиту"
+
+#. js-lingui-id: OaNsaF
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "No application found. If you just published it to npm with the \"twenty-app\" keyword, sync the catalog and try again."
+msgstr ""
 
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -12486,6 +12621,11 @@ msgstr "Для цього застосунку не налаштовано до�
 msgid "No permissions have been set for individual objects."
 msgstr "‎Не встановлено дозволів для окремих об'єктів."
 
+#. js-lingui-id: pRxlf6
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
+msgstr ""
+
 #. js-lingui-id: 5sv+ia
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skippedCount} skipped)"
@@ -12743,7 +12883,12 @@ msgstr "Вузол"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -13148,6 +13293,11 @@ msgstr "Одна підписка надає один корпоративний
 msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
 msgstr "У вашому поточному плані доступні лише журнали застосунку. Інші типи журналів вимагають підписки Enterprise."
 
+#. js-lingui-id: JzXn58
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Only applications published to npm can be claimed this way."
+msgstr ""
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -13472,15 +13622,27 @@ msgstr "Огляд"
 
 #. js-lingui-id: LtI9AS
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Owner"
 msgstr "Власник"
 
+#. js-lingui-id: oDAEQq
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Ownership"
+msgstr ""
+
 #. js-lingui-id: 9J0yW0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Ownership claimed successfully"
 msgstr "Право власності успішно заявлено"
+
+#. js-lingui-id: tE6+xk
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance. Sign in with a GitHub account that owns the publishing account or organization — when the package is published by an organization, grant this app access to it on GitHub's authorization screen."
+msgstr ""
 
 #. js-lingui-id: RWJnRQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -13496,6 +13658,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Package"
 msgstr "Пакет"
+
+#. js-lingui-id: 1K7pVq
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Package name or universal identifier"
+msgstr ""
 
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -14253,11 +14420,6 @@ msgstr ""
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "Запити, що покладалися на нього, повернуться до послідовного сканування. Ви можете створити його знову пізніше."
 
-#. js-lingui-id: uH9Vwp
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
-msgid "Questions answered"
-msgstr "Відповіді на запитання"
-
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -14322,6 +14484,7 @@ msgid "Read changelog"
 msgstr "Переглянути журнал змін"
 
 #. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Read documentation"
 msgstr "Читати документацію"
@@ -16832,6 +16995,7 @@ msgstr "Стан"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -17142,6 +17306,11 @@ msgstr "Переключено на виробничий інстанс."
 msgid "Sync Account"
 msgstr "Синхронізувати обліковий запис"
 
+#. js-lingui-id: NmHVSC
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Sync catalog"
+msgstr ""
+
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync email and calendar accounts"
@@ -17264,6 +17433,7 @@ msgstr "Налаштування вкладки"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Table"
@@ -17279,6 +17449,11 @@ msgstr "Табличний віджет"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Table, Kanban, Calendar"
 msgstr "Таблиця, Канбан, Календар"
+
+#. js-lingui-id: DBxdLI
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
+msgstr ""
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -17579,6 +17754,11 @@ msgstr "Значення цього поля повинні бути уніка�
 msgid "The whole event details will be shared with your team."
 msgstr "Всі подробиці подій будуть поділені з вашою командою."
 
+#. js-lingui-id: bEXHAZ
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+msgid "The workspace that claimed this app registration"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -17734,6 +17914,26 @@ msgstr "Цей застосунок налаштований не повніст
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "This app's routes are served from this URL. Add a custom domain to use your own."
 msgstr "Маршрути цього застосунку обслуговуються з цього URL. Додайте користувацький домен, щоб використовувати власний."
+
+#. js-lingui-id: 2lDWPO
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application could not be found. It may have been removed from the marketplace catalog."
+msgstr ""
+
+#. js-lingui-id: dT2Ibb
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application has already been claimed by a workspace."
+msgstr ""
+
+#. js-lingui-id: vZhnyV
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "This application has already been claimed."
+msgstr ""
+
+#. js-lingui-id: X7w5n6
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "This application's registration is claimed by your workspace"
+msgstr ""
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -17930,11 +18130,11 @@ msgstr "Це від'єднає всі моделі від цього прова�
 msgid "This will grant {0} to {userLabel}."
 msgstr "Це надасть {0} користувачу {userLabel}."
 
-#. js-lingui-id: jn8Xjg
+#. js-lingui-id: rr0iQF
 #. placeholder {0}: registration.name
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?"
-msgstr "Буде встановлено останню версію \"{0}\" на всі чинні активні та призупинені робочі простори, оновивши ті, де вже встановлено старішу версію. Дія виконується як фонове завдання й може зайняти певний час. Продовжити?"
+msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -17961,6 +18161,12 @@ msgstr "Це назавжди видалить ваш метод двофакт�
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Це відкличе {0} для користувача {userLabel}."
+
+#. js-lingui-id: DXNxPk
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18895,8 +19101,15 @@ msgstr "Оновлення..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Оновити"
+
+#. js-lingui-id: 8guwMM
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade existing installations"
+msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -18912,6 +19125,11 @@ msgstr "Стан оновлення в усіх робочих простора�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "Стан оновлення екземпляра та робочих просторів"
+
+#. js-lingui-id: Ngj5VX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
+msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -19707,6 +19925,11 @@ msgstr "Переглянути демонстрацію"
 msgid "Watch members demo"
 msgstr "Переглянути демонстрацію учасників"
 
+#. js-lingui-id: icGmU/
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
+msgstr ""
+
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/hooks/useSubmitSubscriptionPayment.ts
@@ -19834,6 +20057,8 @@ msgstr "Вебсайт"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "Тиждень"
@@ -20030,6 +20255,7 @@ msgstr "Робочі процеси"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -20468,6 +20694,11 @@ msgstr "Ваш ключ Enterprise"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise subscription has been canceled."
 msgstr "Вашу підписку Enterprise скасовано."
+
+#. js-lingui-id: gUv6/H
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, grant this app access to the organization on GitHub's authorization screen (Organization access section)."
+msgstr ""
 
 #. js-lingui-id: leFkCA
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx

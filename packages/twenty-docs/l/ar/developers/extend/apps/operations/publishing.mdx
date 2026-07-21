@@ -69,7 +69,7 @@ yarn twenty app:publish --private
 
 1. قم بزيادة الحقل `version` في ملف `package.json` (مثلًا: `1.2.3` → `1.2.4`، `1.3.0`، أو `2.0.0`)
 2. شغّل `yarn twenty app:publish --private` (أو `yarn twenty app:publish --private --remote production`)
-3. سترى مساحات العمل التي ثبّتت التطبيق الترقية متاحة في إعداداتها
+3. مساحات العمل التي تم تثبيت التطبيق فيها وتم تفعيل الترقية التلقائية له (في علامة تبويب الإعدادات الخاصة بالتطبيق) سيتم ترقيتها تلقائيًا في الخلفية؛ أما المساحات الأخرى فسترى أن الترقية متاحة في إعداداتها
 
 <Note>
 علامات ما قبل الإصدار تعمل كما هو متوقع: زيادة `1.0.0-rc.1` → `1.0.0-rc.2` مسموح بها، ويُعترَف بالإصدار النهائي مثل `1.0.0` على أنه أعلى من `1.0.0-rc.5`. يجب أن يكون الإصدار في `package.json` بنفسه سلسلة semver صالحة.
@@ -112,7 +112,7 @@ yarn twenty app:publish --private
 
 ## CI/CD المؤتمتة (مهام سير عمل مُولَّدة بالقوالب)
 
-التطبيقات المُولَّدة باستخدام `create-twenty-app` تأتي افتراضيًا مع مهمَّتي سير عمل من GitHub Actions ضمن `.github/workflows/`. هي جاهزة للتشغيل بمجرد دفع المستودع إلى GitHub — لا حاجة لأي إعداد إضافي لـ CI، وCD يتطلّب سرًّا واحدًا فقط.
+التطبيقات المُولَّدة باستخدام `create-twenty-app` تأتي افتراضيًا مع ثلاث مهام سير عمل من GitHub Actions ضمن `.github/workflows/`. يعمل CI بدون أي إعداد، بينما يتطلّب CD سرًّا واحدًا فقط، ويتطلّب النشر إلى npm إعدادًا لمرة واحدة لـ npm trusted-publisher.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ yarn twenty app:publish --private
 
 أضِف الوسم `deploy` إلى طلب سحب. الشرط `if:` في `cd.yml` سيشغّل المهمّة لذلك الطلب مستخدمًا التزام رأس الطلب، مما يتيح لك التحقّق من التغيير على الخادم المستهدف قبل الدمج.
 
+### النشر — `publish.yml`
+
+ينشر تطبيقك إلى npm مع إثبات المصدر (provenance) عند دفع وسم إصدار (مثلًا: `v1.0.0`)، أو عند تشغيل سير العمل يدويًا من علامة التبويب Actions.
+
+**ماذا يفعل:**
+
+1. يجلب شيفرة تطبيقك، ويُعد Node.js، ويُحدِّث npm (يتطلّب النشر الموثوق npm 11.5.1 أو أحدث).
+2. يشغّل `yarn twenty app:publish`، الذي يبني التطبيق وينشر `.twenty/output` إلى npm. في بيئة CI يضيف تلقائيًا `--provenance` و`--access public`، لذا لا حاجة إلى أي أعلام في سير العمل.
+
+**إعداد لمرة واحدة:**
+
+على npmjs.com افتح الحزمة الخاصة بك > **Settings → Trusted Publisher** وسجّل هذا المستودع مع سير عمل `publish.yml` (راجع [وثائق النشر الموثوق من npm](https://docs.npmjs.com/trusted-publishers)). يُصادِق النشر مع بيانات provenance على مستودع GitHub الذي بنى الحزمة، وهو أيضًا ما يتيح لك المطالبة بملكية تطبيقك في سوق Twenty.
+
 ### تثبيت الإجراءات القابلة لإعادة الاستخدام
 
-يشير كلا سيرَي العمل إلى إجراءات قابلة لإعادة الاستخدام عند `@main`، لذا تُلتقط تحديثات الإجراءات في مستودع `twentyhq/twenty` تلقائيًا. إذا كنت تريد بناءات حتمية، فاستبدِل `@main` بقيمة SHA لالتزام أو بوسم إصدار في كل سطر `uses:`.
+يشير سيرَا العمل `ci.yml` و`cd.yml` إلى إجراءات قابلة لإعادة الاستخدام عند `@main`، لذا تُلتقط تحديثات الإجراءات في مستودع `twentyhq/twenty` تلقائيًا. إذا كنت تريد بناءات حتمية، فاستبدِل `@main` بقيمة SHA لالتزام أو بوسم إصدار في كل سطر `uses:`.
 
 ## النشر على npm
 
@@ -241,37 +254,12 @@ yarn twenty dev:catalog-sync
 
 ### النشر عبر CI
 
-استخدم سير عمل GitHub Actions هذا للنشر تلقائيًا مع كل إصدار (يستخدم [OIDC](https://docs.npmjs.com/trusted-publishers)):
+ينشر سير عمل `publish.yml` المُنشأ تلقائيًا والموصوف أعلاه إلى npm تلقائيًا عند علامات الإصدارات، مع بيانات provenance. نظرًا لأن `yarn twenty app:publish` يضيف `--provenance` و`--access public` نيابةً عنك عند تشغيله في CI، فلا يحتاج سير العمل إلى أي أعلام npm — فقط إعداد الناشر الموثوق لمرة واحدة.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-بالنسبة لأنظمة CI الأخرى (GitLab CI، وCircleCI، إلخ)، تنطبق الأوامر الثلاثة نفسها: `yarn install`، ثم `yarn twenty dev:build`، ثم `npm publish` من `.twenty/output`.
+بالنسبة لأنظمة CI الأخرى (GitLab CI وCircleCI وغيرها)، شغّل `yarn install` ثم `yarn twenty app:publish`. يُصدِر بيانات provenance عندما تتمكّن البيئة من إصدار رمز OIDC، ويتم تخطيه تلقائيًا خلاف ذلك.
 
 <Note>
-**npm provenance** اختياري ولكنه موصى به. يضيف النشر باستخدام `--provenance` شارة ثقة إلى إدراجك على npm، مما يتيح للمستخدمين التحقق من أن الحزمة تم بناؤها من التزام محدد ضمن خط أنابيب CI عام. راجع [وثائق npm provenance](https://docs.npmjs.com/generating-provenance-statements) للحصول على تعليمات الإعداد.
+تضيف **npm provenance** شارة ثقة إلى إدراجك على npm، مما يتيح للمستخدمين التحقّق من أن الحزمة تم بناؤها من التزام محدد ضمن خط أنابيب CI عام. وهي أيضًا ما يتيح لك المطالبة بملكية تطبيقك في سوق Twenty. راجع [وثائق npm provenance](https://docs.npmjs.com/generating-provenance-statements) للتفاصيل.
 </Note>
 
 ## تثبيت التطبيقات

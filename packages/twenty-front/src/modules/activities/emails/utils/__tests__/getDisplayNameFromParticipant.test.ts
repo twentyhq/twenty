@@ -65,19 +65,19 @@ describe('getDisplayNameFromParticipant', () => {
     role: MessageParticipantRole.FROM,
   } as EmailThreadMessageParticipant;
 
-  it('should return full name when shouldUseFullName is true', () => {
+  it('should prefer the workspace member full name when shouldUseFullName is true', () => {
     expect(
       getDisplayNameFromParticipant({
         participant: participantWithName,
         shouldUseFullName: true,
       }),
-    ).toBe('John Doe');
+    ).toBe('Jane Smith');
   });
 
-  it('should return first name when shouldUseFullName is false', () => {
+  it('should prefer the workspace member first name when shouldUseFullName is false', () => {
     expect(
       getDisplayNameFromParticipant({ participant: participantWithName }),
-    ).toBe('John');
+    ).toBe('Jane');
   });
 
   it('should return displayName if it is a non-empty string', () => {
@@ -92,6 +92,38 @@ describe('getDisplayNameFromParticipant', () => {
     expect(
       getDisplayNameFromParticipant({ participant: participantWithHandle }),
     ).toBe('user_handle');
+  });
+
+  it('should not append whitespace for a missing last name', () => {
+    const participantWithFirstNameOnly = {
+      displayName: '',
+      handle: '',
+      role: MessageParticipantRole.FROM,
+      person: { name: { firstName: 'John', lastName: '' } },
+    } as unknown as EmailThreadMessageParticipant;
+
+    expect(
+      getDisplayNameFromParticipant({
+        participant: participantWithFirstNameOnly,
+        shouldUseFullName: true,
+      }),
+    ).toBe('John');
+  });
+
+  it('should fall back to displayName when the resolved name is empty', () => {
+    const participantWithEmptyPersonName = {
+      displayName: 'User123',
+      handle: '',
+      role: MessageParticipantRole.FROM,
+      person: { name: { firstName: '', lastName: '' } },
+    } as unknown as EmailThreadMessageParticipant;
+
+    expect(
+      getDisplayNameFromParticipant({
+        participant: participantWithEmptyPersonName,
+        shouldUseFullName: true,
+      }),
+    ).toBe('User123');
   });
 
   it('should return Unknown if no suitable information is available', () => {

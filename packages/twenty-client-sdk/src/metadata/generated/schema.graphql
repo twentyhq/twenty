@@ -660,6 +660,7 @@ type Application {
   availablePackages: JSON!
   applicationRegistrationId: UUID
   canBeUninstalled: Boolean!
+  autoUpgrade: Boolean!
   defaultRoleId: String
   settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
   defaultLogicFunctionRole: Role
@@ -843,6 +844,8 @@ enum ViewType {
   CALENDAR
   FIELDS_WIDGET
   TABLE_WIDGET
+  KANBAN_WIDGET
+  CALENDAR_WIDGET
 }
 
 enum ViewKey {
@@ -978,6 +981,11 @@ enum OnboardingStatus {
 The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSONObject
+
+type SdkClientChecksums {
+  core: String
+  metadata: String!
+}
 
 type RatioAggregateConfig {
   fieldMetadataId: UUID!
@@ -1726,6 +1734,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_CALENDAR_WEEK_VIEW_ENABLED
@@ -1946,6 +1955,17 @@ type UsageBreakdownItem {
   creditsUsed: Float!
 }
 
+type ClaimableApplicationRegistration {
+  id: String!
+  universalIdentifier: String!
+  name: String!
+  sourcePackage: String
+  logoUrl: String
+  description: String
+  author: String
+  isOwned: Boolean!
+}
+
 type CreateApplicationRegistration {
   applicationRegistration: ApplicationRegistration!
   clientSecret: String!
@@ -1961,113 +1981,6 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
-}
-
-type Relation {
-  type: RelationType!
-  sourceObjectMetadata: Object!
-  targetObjectMetadata: Object!
-  sourceFieldMetadata: Field!
-  targetFieldMetadata: Field!
-}
-
-"""Relation type"""
-enum RelationType {
-  ONE_TO_MANY
-  MANY_TO_ONE
-}
-
-type IndexField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  order: Float!
-  subFieldName: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ObjectRecordCount {
-  objectNamePlural: String!
-  totalCount: Int!
-}
-
-type SearchField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  tsVectorFieldMetadataId: UUID!
-  position: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ObjectEdge {
-  """The node containing the Object"""
-  node: Object!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type PageInfo {
-  """true if paging forward and there are more records."""
-  hasNextPage: Boolean
-
-  """true if paging backwards and there are more records."""
-  hasPreviousPage: Boolean
-
-  """The cursor of the first returned record."""
-  startCursor: ConnectionCursor
-
-  """The cursor of the last returned record."""
-  endCursor: ConnectionCursor
-}
-
-type ObjectConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [ObjectEdge!]!
-}
-
-type IndexEdge {
-  """The node containing the Index"""
-  node: Index!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type ObjectIndexMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexEdge!]!
-}
-
-type FieldEdge {
-  """The node containing the Field"""
-  node: Field!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type ObjectFieldsConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
-}
-
-type FieldConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
 }
 
 type AppConnection {
@@ -2219,6 +2132,113 @@ type MarketplaceAppDetail {
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
+}
+
+type Relation {
+  type: RelationType!
+  sourceObjectMetadata: Object!
+  targetObjectMetadata: Object!
+  sourceFieldMetadata: Field!
+  targetFieldMetadata: Field!
+}
+
+"""Relation type"""
+enum RelationType {
+  ONE_TO_MANY
+  MANY_TO_ONE
+}
+
+type IndexField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  order: Float!
+  subFieldName: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ObjectRecordCount {
+  objectNamePlural: String!
+  totalCount: Int!
+}
+
+type SearchField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  tsVectorFieldMetadataId: UUID!
+  position: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ObjectEdge {
+  """The node containing the Object"""
+  node: Object!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type ObjectConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [ObjectEdge!]!
+}
+
+type IndexEdge {
+  """The node containing the Index"""
+  node: Index!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type ObjectIndexMetadatasConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [IndexEdge!]!
+}
+
+type FieldEdge {
+  """The node containing the Field"""
+  node: Field!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type ObjectFieldsConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [FieldEdge!]!
+}
+
+type FieldConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [FieldEdge!]!
 }
 
 type BillingEntitlement {
@@ -2454,6 +2474,7 @@ type VerificationRecord {
   key: String!
   value: String!
   priority: Float
+  status: String
 }
 
 type EmailingDomain {
@@ -3032,6 +3053,7 @@ type MinimalMetadata {
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
+  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
@@ -3048,6 +3070,7 @@ type Query {
   getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
+  getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
@@ -3065,6 +3088,7 @@ type Query {
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
+  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   object(
     """The id of the record to find."""
     id: UUID!
@@ -3087,6 +3111,21 @@ type Query {
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
+  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
+  findManyApplicationRegistrations: [ApplicationRegistration!]!
+  findOneApplicationRegistration(id: String!): ApplicationRegistration!
+  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
+  applicationRegistrationTarballUrl(id: String!): String
+  findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
+  githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
+  findManyApplications: [Application!]!
+  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -3100,19 +3139,6 @@ type Query {
   ): FieldConnection!
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
-  findManyApplications: [Application!]!
-  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
-  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
-  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
-  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findManyApplicationRegistrations: [ApplicationRegistration!]!
-  findOneApplicationRegistration(id: String!): ApplicationRegistration!
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
-  applicationRegistrationTarballUrl(id: String!): String
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
@@ -3363,19 +3389,7 @@ type Mutation {
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
-  createOneField(input: CreateOneFieldMetadataInput!): Field!
-  updateOneField(input: UpdateOneFieldMetadataInput!): Field!
-  deleteOneField(input: DeleteOneFieldInput!): Field!
-  createViewGroup(input: CreateViewGroupInput!): ViewGroup!
-  createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
-  updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
-  updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
-  deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
-  destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  installApplication(universalIdentifier: String!, version: String): Application!
-  uninstallApplication(universalIdentifier: String!): Boolean!
-  syncMarketplaceCatalog: Boolean!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
@@ -3386,6 +3400,20 @@ type Mutation {
   uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
+  installApplication(universalIdentifier: String!, version: String): Application!
+  updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
+  uninstallApplication(universalIdentifier: String!): Boolean!
+  syncMarketplaceCatalog: Boolean!
+  createOneField(input: CreateOneFieldMetadataInput!): Field!
+  updateOneField(input: UpdateOneFieldMetadataInput!): Field!
+  deleteOneField(input: DeleteOneFieldInput!): Field!
+  createViewGroup(input: CreateViewGroupInput!): ViewGroup!
+  createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
+  updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
+  destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3478,7 +3506,6 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
@@ -3649,6 +3676,11 @@ input UpsertViewWidgetInput {
   """The id of the view widget (page layout widget)."""
   widgetId: UUID!
 
+  """
+  View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.
+  """
+  view: UpsertViewWidgetViewSettingsInput
+
   """The view fields to upsert."""
   viewFields: [UpsertViewWidgetViewFieldInput!]
 
@@ -3660,6 +3692,22 @@ input UpsertViewWidgetInput {
 
   """The view sorts to upsert."""
   viewSorts: [UpsertViewWidgetViewSortInput!]
+}
+
+input UpsertViewWidgetViewSettingsInput {
+  """
+  The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.
+  """
+  type: ViewType
+  mainGroupByFieldMetadataId: UUID
+  shouldHideEmptyGroups: Boolean
+  openRecordIn: ViewOpenRecordIn
+  kanbanAggregateOperation: AggregateOperations
+  kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Int
+  calendarLayout: ViewCalendarLayout
+  calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
 }
 
 input UpsertViewWidgetViewFieldInput {
@@ -4183,6 +4231,50 @@ input UpdateWorkspaceInput {
   isInternalMessagesImportEnabled: Boolean
 }
 
+input CreateApplicationRegistrationInput {
+  name: String!
+  universalIdentifier: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+}
+
+input UpdateApplicationRegistrationInput {
+  id: String!
+  update: UpdateApplicationRegistrationPayload!
+}
+
+input UpdateApplicationRegistrationPayload {
+  name: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+  isListed: Boolean
+  isPreInstalled: Boolean
+  isVetted: Boolean
+}
+
+input CreateApplicationRegistrationVariableInput {
+  applicationRegistrationId: String!
+  key: String!
+  value: String!
+  description: String
+  isSecret: Boolean
+}
+
+input UpdateApplicationRegistrationVariableInput {
+  id: String!
+  update: UpdateApplicationRegistrationVariablePayload!
+}
+
+input UpdateApplicationRegistrationVariablePayload {
+  value: String
+  resetValue: Boolean
+  description: String
+}
+
+input UpdateApplicationInput {
+  autoUpgrade: Boolean
+}
+
 input CreateOneFieldMetadataInput {
   """The record to create"""
   field: CreateFieldInput!
@@ -4274,46 +4366,6 @@ input DeleteViewGroupInput {
 input DestroyViewGroupInput {
   """The id of the view group to destroy."""
   id: UUID!
-}
-
-input CreateApplicationRegistrationInput {
-  name: String!
-  universalIdentifier: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationInput {
-  id: String!
-  update: UpdateApplicationRegistrationPayload!
-}
-
-input UpdateApplicationRegistrationPayload {
-  name: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-  isVetted: Boolean
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
-}
-
-input UpdateApplicationRegistrationVariableInput {
-  id: String!
-  update: UpdateApplicationRegistrationVariablePayload!
-}
-
-input UpdateApplicationRegistrationVariablePayload {
-  value: String
-  resetValue: Boolean
-  description: String
 }
 
 input CreateRoleInput {

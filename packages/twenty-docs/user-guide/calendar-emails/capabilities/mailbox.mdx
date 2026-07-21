@@ -55,12 +55,17 @@ For reference:
 - **External Emails**: All emails with contacts outside your organization
 - **Automatic Linking**: Emails connect to existing People and Company records
 - **Multiple Addresses**: Emails from any address link to the same contact record
-- **Updates**: New emails appear within 5 minutes
+- **Updates**: New emails appear immediately
 
 ### What Doesn't Get Synced
-- **Internal Emails**: Emails between colleagues (same domain) remain private
+- **Internal Emails**: By default, emails between colleagues (same domain) remain private (configured in Settings → General → Security)
 - **Group Emails**: Distribution lists and group emails are excluded
 - **Excluded Folders**: Folders you've chosen not to sync (configured under Settings → Accounts → Email)
+
+### Internal emails
+Choose if internal emails are synchronized in Twenty:
+1. Go to **Settings → General → Security**
+2. Toggle **Sync Internal Emails** on/off
 
 ### Selective Folder Sync
 Control which email folders sync with Twenty:
@@ -68,11 +73,10 @@ Control which email folders sync with Twenty:
 2. Configure folders under the Email section
 3. Choose specific folders to include or exclude (Inbox, Sent, Archive, custom folders)
 
-
 ## Troubleshooting Email Sync
 
 ### Common Sync Issues
-- **Sync Delays**: Emails appear within 5 minutes, but initial imports take longer
+- **Sync Delays**: Emails appear immediately, but initial imports take longer
 - **Missing Emails**: Check if:
   - Folders are excluded in Message Folder settings
   - Contact auto-creation is disabled (emails need existing Twenty records)

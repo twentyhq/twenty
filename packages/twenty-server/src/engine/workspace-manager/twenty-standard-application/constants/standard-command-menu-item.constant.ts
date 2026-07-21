@@ -872,7 +872,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/roles' },
+    payload: { path: '/settings/members#roles' },
   },
   goToSettingsDomains: {
     universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',

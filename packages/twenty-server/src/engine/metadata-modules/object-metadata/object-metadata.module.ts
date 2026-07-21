@@ -24,6 +24,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -34,7 +35,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -58,7 +58,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
         ]),
         TypeOrmModule.forFeature([FeatureFlagEntity, ViewEntity]),
         ApplicationModule,
-        WorkspaceMetadataVersionModule,
         IndexMetadataModule,
         PermissionsModule,
         WorkspaceCacheStorageModule,
@@ -103,6 +102,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ObjectMetadataService,
     ObjectMetadataResolver,
     ObjectRecordCountService,
+    MostlyEmptyFieldsService,
     ObjectMetadataToolsFactory,
   ],
   exports: [ObjectMetadataService, ObjectMetadataToolsFactory],

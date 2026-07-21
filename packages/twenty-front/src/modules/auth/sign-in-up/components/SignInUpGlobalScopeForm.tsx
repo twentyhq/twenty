@@ -9,7 +9,6 @@ import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -37,13 +36,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const StyledWorkspaceSelectionContentContainer = styled(
-  StyledOnboardingContentContainer,
-)`
-  max-width: 100%;
-  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
-`;
 
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -173,7 +165,7 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <StyledWorkspaceSelectionContentContainer>
+        <StyledOnboardingContentContainer>
           <StyledWorkspaceContainer>
             {availableWorkspacesList.map((availableWorkspace, index) => (
               <OnboardingStepAnimatedItem
@@ -237,7 +229,7 @@ export const SignInUpGlobalScopeForm = () => {
               </OnboardingStepAnimatedItem>
             )}
           </StyledWorkspaceContainer>
-        </StyledWorkspaceSelectionContentContainer>
+        </StyledOnboardingContentContainer>
       )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledOnboardingContentContainer>
