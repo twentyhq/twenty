@@ -14,7 +14,10 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
-import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
+import {
+  fromRoleEntitiesToRoleDtos,
+  fromRoleEntityToRoleDto,
+} from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -171,6 +174,17 @@ export class ApiKeyRoleService {
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
     };
+  }
+
+  public async getApiKeyAssignableRoles(
+    workspaceId: string,
+  ): Promise<RoleDTO[]> {
+    const roles = await this.roleRepository.find(workspaceId, {
+      where: { canBeAssignedToApiKeys: true },
+      order: { label: 'ASC' },
+    });
+
+    return fromRoleEntitiesToRoleDtos(roles);
   }
 
   public async getRolesByApiKeys({

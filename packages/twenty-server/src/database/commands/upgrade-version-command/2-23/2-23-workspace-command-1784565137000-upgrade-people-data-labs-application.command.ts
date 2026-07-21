@@ -95,6 +95,11 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
         appRegistrationId: applicationRegistration.id,
         targetVersion: PEOPLE_DATA_LABS_TARGET_VERSION,
         workspaceId,
+        // 1.0.7 pins engines.twenty >=2.23.0, but this command runs as part of
+        // the 2.23 workspace upgrade itself, so the workspace has not yet been
+        // marked as completing 2.23 and the compatibility check would reject
+        // the install. The server is already on 2.23, so skip the check here.
+        skipWorkspaceCompatibilityCheck: true,
       });
 
       this.logger.log(
