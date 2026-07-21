@@ -2,8 +2,9 @@ import { type CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { isHttpUrl } from 'src/modules/shared/utils/http-url.util';
+
 import { isCaseStudy } from './content-type';
-import { isHttpUrl } from './http-url';
 import { buildReconcilePlan } from './reconcile-children';
 import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 

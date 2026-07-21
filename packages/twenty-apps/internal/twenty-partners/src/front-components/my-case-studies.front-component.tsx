@@ -3,8 +3,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, openCommandConfirmationModal } from 'twenty-sdk/front-component';
 
 import { MY_CASE_STUDIES_FRONT_COMPONENT_ID } from 'src/constants/my-case-studies.constants';
+import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
 
-import { callAppRoute } from './call-app-route';
 import { CaseStudyCard } from './my-case-studies/case-study-card';
 import {
   buildInitialRows,

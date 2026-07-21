@@ -3,8 +3,8 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { PROFILE_OPTIONS } from 'src/constants/my-profile.constants';
+import { optionalHttpUrl } from 'src/modules/shared/utils/http-url.util';
 
-import { optionalHttpUrl } from './http-url';
 import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1';

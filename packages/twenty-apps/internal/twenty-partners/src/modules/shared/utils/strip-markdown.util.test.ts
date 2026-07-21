@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { stripMarkdown } from './strip-markdown';
+import { stripMarkdown } from './strip-markdown.util';
 
 describe('stripMarkdown', () => {
   it('removes headings, emphasis, and list markers', () => {

@@ -3,11 +3,10 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
-
 import {
   findCompanyIdByExactName,
   findPersonIdByPrimaryEmail,
-} from './find-or-create-company-and-person';
+} from 'src/modules/shared/services/find-or-create-company-and-person.service';
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;

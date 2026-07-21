@@ -3,8 +3,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { MY_PROFILE_FRONT_COMPONENT_ID } from 'src/constants/my-profile.constants';
+import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
 
-import { callAppRoute } from './call-app-route';
 import { MarkdownEditor } from './my-profile/markdown-editor';
 import { ProfilePictureUpload } from './my-profile/ProfilePictureUpload';
 import {

@@ -1,8 +1,9 @@
 import { type CoreSchema } from 'twenty-client-sdk/core';
 
+import { stripMarkdown } from 'src/modules/shared/utils/strip-markdown.util';
+
 import { isCaseStudy } from './content-type';
 import { firstFileUrl, resolvePartnerPictureUrl } from './profile-picture';
-import { stripMarkdown } from './strip-markdown';
 
 export type MapPartnerDetail = 'list' | 'profile';
 
