@@ -108,7 +108,7 @@ export class KeyValuePairEntity {
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.23.0_AddApplicationIdToKeyValuePairFastInstanceCommand_1784577932590',
+      '2.23.0_AddApplicationIdToKeyValuePairFastInstanceCommand_1784659343818',
   })
   applicationId: string | null;
 
