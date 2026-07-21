@@ -13,6 +13,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
+import { hashToken } from 'src/engine/core-modules/auth/utils/hash-token.util';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -37,10 +38,7 @@ export class EmailVerificationTokenService {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const plainToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(plainToken)
-      .digest('hex');
+    const hashedToken = hashToken(plainToken);
 
     const verificationToken = this.appTokenRepository.create({
       userId,
@@ -79,10 +77,7 @@ export class EmailVerificationTokenService {
       );
     }
 
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(emailVerificationToken)
-      .digest('hex');
+    const hashedToken = hashToken(emailVerificationToken);
 
     const appToken = await this.appTokenRepository.findOne({
       where: {

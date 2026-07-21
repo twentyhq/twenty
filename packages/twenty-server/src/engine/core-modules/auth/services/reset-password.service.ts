@@ -29,6 +29,7 @@ import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto
 import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
+import { hashToken } from 'src/engine/core-modules/auth/utils/hash-token.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -105,10 +106,7 @@ export class ResetPasswordService {
     }
 
     const plainResetToken = crypto.randomBytes(32).toString('hex');
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(plainResetToken)
-      .digest('hex');
+    const hashedResetToken = hashToken(plainResetToken);
 
     await this.appTokenRepository.save({
       userId: user.id,
@@ -222,10 +220,7 @@ export class ResetPasswordService {
   async validatePasswordResetToken(
     resetToken: string,
   ): Promise<ValidatePasswordResetTokenDTO> {
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
+    const hashedResetToken = hashToken(resetToken);
 
     const token = await this.appTokenRepository.findOne({
       where: {

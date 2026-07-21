@@ -112,15 +112,17 @@ describe('SSOExchangeTokenService', () => {
         context: { authProvider: AuthProviderEnum.Google },
       }) as AppTokenEntity;
 
+    // Redemption is a single DELETE ... RETURNING, so only its outcome is
+    // asserted here; the atomicity and type scoping it relies on are covered
+    // against a real database in single-use-sso-exchange-token.integration-spec
     const mockClaimedRows = (rows: AppTokenEntity[]) => {
-      const execute = jest.fn().mockResolvedValue({ raw: rows });
       const queryBuilder = {
         delete: jest.fn().mockReturnThis(),
         from: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         returning: jest.fn().mockReturnThis(),
-        execute,
+        execute: jest.fn().mockResolvedValue({ raw: rows }),
       };
 
       jest
@@ -129,21 +131,6 @@ describe('SSOExchangeTokenService', () => {
 
       return queryBuilder;
     };
-
-    it('should claim the token atomically by hash, scoped to the SSO exchange type', async () => {
-      const queryBuilder = mockClaimedRows([buildAppToken()]);
-
-      await service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token');
-
-      expect(queryBuilder.delete).toHaveBeenCalled();
-      expect(queryBuilder.returning).toHaveBeenCalledWith('*');
-      expect(queryBuilder.where).toHaveBeenCalledWith('value = :value', {
-        value: sha256('plain-token'),
-      });
-      expect(queryBuilder.andWhere).toHaveBeenCalledWith('type = :type', {
-        type: AppTokenType.SSOExchangeToken,
-      });
-    });
 
     it('should return the user and auth provider of the claimed token', async () => {
       mockClaimedRows([buildAppToken()]);

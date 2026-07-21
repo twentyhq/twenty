@@ -26,8 +26,10 @@ describe('SSO exchange token redemption (integration)', () => {
 
   const seedSSOExchangeToken = async ({
     expiresAt,
+    type = AppTokenType.SSOExchangeToken,
   }: {
     expiresAt: Date;
+    type?: AppTokenType;
   }): Promise<string> => {
     const plainToken = crypto.randomBytes(32).toString('hex');
 
@@ -36,7 +38,7 @@ describe('SSO exchange token redemption (integration)', () => {
        VALUES ($1, $2, $3, $4, $5)`,
       [
         USER_DATA_SEED_IDS.JANE,
-        AppTokenType.SSOExchangeToken,
+        type,
         hashToken(plainToken),
         expiresAt,
         JSON.stringify({ authProvider: AuthProviderEnum.Google }),
@@ -46,10 +48,13 @@ describe('SSO exchange token redemption (integration)', () => {
     return plainToken;
   };
 
-  const countRemainingRows = async (plainToken: string): Promise<number> => {
+  const countRemainingRows = async (
+    plainToken: string,
+    type: AppTokenType = AppTokenType.SSOExchangeToken,
+  ): Promise<number> => {
     const rows = await dataSource.query(
       `SELECT 1 FROM core."appToken" WHERE "value" = $1 AND "type" = $2`,
-      [hashToken(plainToken), AppTokenType.SSOExchangeToken],
+      [hashToken(plainToken), type],
     );
 
     return rows.length;
@@ -109,6 +114,23 @@ describe('SSO exchange token redemption (integration)', () => {
 
     expectUniformInvalidTokenError(errors);
     expect(await countRemainingRows(plainToken)).toBe(0);
+  });
+
+  it('should not redeem an app token of another type sharing the same value', async () => {
+    const plainToken = await seedSSOExchangeToken({
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      type: AppTokenType.EmailVerificationToken,
+    });
+
+    const { errors } = await getAuthTokensFromSSOExchangeToken({
+      ssoExchangeToken: plainToken,
+      expectToFail: true,
+    });
+
+    expectUniformInvalidTokenError(errors);
+    expect(
+      await countRemainingRows(plainToken, AppTokenType.EmailVerificationToken),
+    ).toBe(1);
   });
 
   it('should reject an unknown token', async () => {

@@ -27,6 +27,7 @@ import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useI
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { SignInUpSSOExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSSOExchangeTokenEffect';
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
@@ -154,6 +155,7 @@ export const SignInUp = () => {
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
         <>
+          <SignInUpSSOExchangeTokenEffect />
           <SignInUpGlobalScopeFormEffect />
           <SignInUpGlobalScopeForm />
         </>
@@ -186,6 +188,7 @@ export const SignInUp = () => {
 
     return (
       <>
+        <SignInUpSSOExchangeTokenEffect />
         <SignInUpGlobalScopeFormEffect />
         <SignInUpGlobalScopeForm />
       </>
