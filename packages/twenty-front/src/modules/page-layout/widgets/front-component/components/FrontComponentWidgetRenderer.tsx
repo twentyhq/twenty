@@ -9,14 +9,13 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{
-  isCanvasLayout: boolean;
+  isSoloLayout: boolean;
   isInEditMode: boolean;
 }>`
   height: 100%;
-  overflow: ${({ isCanvasLayout }) => (isCanvasLayout ? 'visible' : 'auto')};
+  overflow: ${({ isSoloLayout }) => (isSoloLayout ? 'visible' : 'auto')};
   pointer-events: ${({ isInEditMode }) => (isInEditMode ? 'none' : 'auto')};
   width: 100%;
 `;
@@ -35,7 +34,7 @@ export const FrontComponentWidgetRenderer = ({
   widget,
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const { layoutMode } = usePageLayoutContentContext();
+  const { presentation } = usePageLayoutContentContext();
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
   const configuration = widget.configuration;
@@ -54,7 +53,7 @@ export const FrontComponentWidgetRenderer = ({
 
   return (
     <StyledContainer
-      isCanvasLayout={layoutMode === PageLayoutTabLayoutMode.CANVAS}
+      isSoloLayout={presentation === 'solo'}
       isInEditMode={isPageLayoutInEditMode}
     >
       <Suspense fallback={null}>
