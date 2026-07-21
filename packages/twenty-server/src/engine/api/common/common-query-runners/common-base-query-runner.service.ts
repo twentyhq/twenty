@@ -360,8 +360,6 @@ export abstract class CommonBaseQueryRunnerService<
     if (!isApplicationAuthContext(authContext)) return;
 
     try {
-      // Keyed on universalIdentifier without workspaceId: the budget is shared
-      // by every installation of the application on the instance.
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `api:throttler:application:${authContext.application.universalIdentifier}`,
         1,
