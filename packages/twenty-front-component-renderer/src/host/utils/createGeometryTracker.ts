@@ -1,43 +1,32 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { DEFAULT_FONT_SHORTHAND } from '@/host/constants/DefaultFontShorthand';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/constants/GeometryIdleFrameThreshold';
 import { MAX_MEASURED_GEOMETRY_ELEMENTS } from '@/host/constants/MaxMeasuredGeometryElements';
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/host/constants/MaxObservedGeometryElements';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/types/PushGeometryUpdates';
+import { createGeometryWakeSources } from '@/host/utils/createGeometryWakeSources';
 import { isElementGeometryEqualWithinEpsilon } from '@/host/utils/isElementGeometryEqualWithinEpsilon';
 import { isViewportGeometryEqualWithinEpsilon } from '@/host/utils/isViewportGeometryEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/utils/measureViewportGeometry';
+import { resolveRootContainerFontShorthand } from '@/host/utils/resolveRootContainerFontShorthand';
 import { sanitizeRemoteElementIds } from '@/host/utils/sanitizeRemoteElementIds';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
-
-const ANIMATION_START_EVENT_TYPES = ['transitionrun', 'animationstart'];
-const ANIMATION_END_EVENT_TYPES = [
-  'transitionend',
-  'transitioncancel',
-  'animationend',
-  'animationcancel',
-];
 
 export const createGeometryTracker = (): GeometryTracker => {
   const registeredNodes = new Map<string, Element>();
   const observedRemoteElementIds = new Set<string>();
   const lastElementSnapshots = new Map<string, ElementGeometrySnapshot>();
-  const resizeObservedNodes = new Set<Element>();
 
   let rootContainer: Element | null = null;
+  let rootContainerFontShorthand = DEFAULT_FONT_SHORTHAND;
   let pushGeometryUpdates: PushGeometryUpdates | null = null;
   let lastViewportSnapshot: ViewportGeometrySnapshot | null = null;
   let animationFrameHandle: number | null = null;
   let idleFrameCount = 0;
-  let isViewportDirty = false;
-  let animationInFlightCount = 0;
-  let resizeObserver: ResizeObserver | null = null;
-  let mutationObserver: MutationObserver | null = null;
-  let areViewportWakeSourcesAttached = false;
-  let areElementWakeSourcesAttached = false;
 
   const scheduleAnimationFrame = (): void => {
     if (isDefined(animationFrameHandle) || !isDefined(pushGeometryUpdates)) {
@@ -55,140 +44,10 @@ export const createGeometryTracker = (): GeometryTracker => {
     scheduleAnimationFrame();
   };
 
-  const handleWindowResize = (): void => {
-    isViewportDirty = true;
-    wake();
-  };
+  const wakeSources = createGeometryWakeSources(wake);
 
-  const handleVisibilityChange = (): void => {
-    if (document.visibilityState === 'visible') {
-      wake();
-    }
-  };
-
-  const handleAnimationStart = (): void => {
-    animationInFlightCount += 1;
-    wake();
-  };
-
-  const handleAnimationEnd = (): void => {
-    animationInFlightCount = Math.max(0, animationInFlightCount - 1);
-  };
-
-  const createResizeObserver = (): ResizeObserver | null => {
-    if (typeof ResizeObserver !== 'function') {
-      return null;
-    }
-
-    return new ResizeObserver(() => {
-      isViewportDirty = true;
-      wake();
-    });
-  };
-
-  const startObservingNodeResize = (node: Element): void => {
-    if (!areElementWakeSourcesAttached || resizeObservedNodes.has(node)) {
-      return;
-    }
-
-    resizeObserver = resizeObserver ?? createResizeObserver();
-
-    if (!isDefined(resizeObserver)) {
-      return;
-    }
-
-    resizeObserver.observe(node);
-    resizeObservedNodes.add(node);
-  };
-
-  const stopObservingNodeResize = (node: Element): void => {
-    if (!resizeObservedNodes.delete(node)) {
-      return;
-    }
-
-    resizeObserver?.unobserve(node);
-  };
-
-  const attachViewportWakeSources = (): void => {
-    if (areViewportWakeSourcesAttached) {
-      return;
-    }
-
-    areViewportWakeSourcesAttached = true;
-
-    window.addEventListener('resize', handleWindowResize);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    resizeObserver = resizeObserver ?? createResizeObserver();
-
-    if (isDefined(rootContainer) && isDefined(resizeObserver)) {
-      resizeObserver.observe(rootContainer);
-    }
-  };
-
-  const attachElementWakeSources = (): void => {
-    if (areElementWakeSourcesAttached) {
-      return;
-    }
-
-    areElementWakeSourcesAttached = true;
-
-    document.addEventListener('scroll', wake, true);
-
-    for (const eventType of ANIMATION_START_EVENT_TYPES) {
-      document.addEventListener(eventType, handleAnimationStart, true);
-    }
-
-    for (const eventType of ANIMATION_END_EVENT_TYPES) {
-      document.addEventListener(eventType, handleAnimationEnd, true);
-    }
-
-    if (typeof MutationObserver === 'function' && isDefined(rootContainer)) {
-      mutationObserver = new MutationObserver(wake);
-      mutationObserver.observe(rootContainer, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        characterData: true,
-      });
-    }
-
-    for (const remoteElementId of observedRemoteElementIds) {
-      const node = registeredNodes.get(remoteElementId);
-
-      if (isDefined(node)) {
-        startObservingNodeResize(node);
-      }
-    }
-  };
-
-  const detachElementWakeSources = (): void => {
-    if (!areElementWakeSourcesAttached) {
-      return;
-    }
-
-    areElementWakeSourcesAttached = false;
-
-    document.removeEventListener('scroll', wake, true);
-
-    for (const eventType of ANIMATION_START_EVENT_TYPES) {
-      document.removeEventListener(eventType, handleAnimationStart, true);
-    }
-
-    for (const eventType of ANIMATION_END_EVENT_TYPES) {
-      document.removeEventListener(eventType, handleAnimationEnd, true);
-    }
-
-    mutationObserver?.disconnect();
-    mutationObserver = null;
-
-    for (const node of resizeObservedNodes) {
-      resizeObserver?.unobserve(node);
-    }
-    resizeObservedNodes.clear();
-
-    animationInFlightCount = 0;
-  };
+  const readViewportGeometry = (): ViewportGeometrySnapshot =>
+    measureViewportGeometry(rootContainer, rootContainerFontShorthand);
 
   const runFrame = (): void => {
     if (!isDefined(pushGeometryUpdates)) {
@@ -199,7 +58,7 @@ export const createGeometryTracker = (): GeometryTracker => {
       return;
     }
 
-    if (observedRemoteElementIds.size === 0 && !isViewportDirty) {
+    if (observedRemoteElementIds.size === 0 && !wakeSources.isViewportDirty()) {
       return;
     }
 
@@ -229,14 +88,14 @@ export const createGeometryTracker = (): GeometryTracker => {
       }
     }
 
-    const viewport = measureViewportGeometry(rootContainer);
+    const viewport = readViewportGeometry();
     const hasViewportChanged = !isViewportGeometryEqualWithinEpsilon(
       lastViewportSnapshot,
       viewport,
     );
 
     lastViewportSnapshot = viewport;
-    isViewportDirty = false;
+    wakeSources.clearViewportDirty();
 
     const hasChangedElements = Object.keys(changedElements).length > 0;
 
@@ -257,7 +116,7 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     if (
       idleFrameCount < GEOMETRY_IDLE_FRAME_THRESHOLD ||
-      animationInFlightCount > 0
+      wakeSources.hasAnimationInFlight()
     ) {
       scheduleAnimationFrame();
     }
@@ -267,7 +126,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     registeredNodes.set(remoteElementId, node);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
-      startObservingNodeResize(node);
+      wakeSources.startObservingNode(node);
       wake();
     }
   };
@@ -278,7 +137,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     registeredNodes.delete(remoteElementId);
-    stopObservingNodeResize(node);
+    wakeSources.stopObservingNode(node);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
       wake();
@@ -286,26 +145,33 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const observe = (remoteElementIds: unknown): void => {
-    if (!isDefined(pushGeometryUpdates)) {
-      return;
-    }
+    let hasObservedNewElement = false;
 
     for (const remoteElementId of sanitizeRemoteElementIds(remoteElementIds)) {
       if (observedRemoteElementIds.size >= MAX_OBSERVED_GEOMETRY_ELEMENTS) {
         break;
       }
 
-      observedRemoteElementIds.add(remoteElementId);
+      if (observedRemoteElementIds.has(remoteElementId)) {
+        continue;
+      }
 
+      observedRemoteElementIds.add(remoteElementId);
+      hasObservedNewElement = true;
+    }
+
+    if (!hasObservedNewElement) {
+      return;
+    }
+
+    wakeSources.attachElementSources();
+
+    for (const remoteElementId of observedRemoteElementIds) {
       const node = registeredNodes.get(remoteElementId);
 
       if (isDefined(node)) {
-        startObservingNodeResize(node);
+        wakeSources.startObservingNode(node);
       }
-    }
-
-    if (observedRemoteElementIds.size > 0) {
-      attachElementWakeSources();
     }
 
     wake();
@@ -319,17 +185,17 @@ export const createGeometryTracker = (): GeometryTracker => {
       const node = registeredNodes.get(remoteElementId);
 
       if (isDefined(node)) {
-        stopObservingNodeResize(node);
+        wakeSources.stopObservingNode(node);
       }
     }
 
     if (observedRemoteElementIds.size === 0) {
-      detachElementWakeSources();
+      wakeSources.detachElementSources();
     }
   };
 
   const measure = (remoteElementIds: unknown) => {
-    const viewport = measureViewportGeometry(rootContainer);
+    const viewport = readViewportGeometry();
     const elements: Record<string, ElementGeometrySnapshot> = {};
 
     if (!isDefined(pushGeometryUpdates)) {
@@ -361,36 +227,9 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const setRoot = (node: Element | null): void => {
-    if (isDefined(rootContainer) && isDefined(resizeObserver)) {
-      resizeObserver.unobserve(rootContainer);
-    }
-
-    mutationObserver?.disconnect();
-    mutationObserver = null;
-
     rootContainer = node;
-
-    if (!isDefined(node)) {
-      return;
-    }
-
-    if (areViewportWakeSourcesAttached) {
-      resizeObserver = resizeObserver ?? createResizeObserver();
-      resizeObserver?.observe(node);
-    }
-
-    if (
-      areElementWakeSourcesAttached &&
-      typeof MutationObserver === 'function'
-    ) {
-      mutationObserver = new MutationObserver(wake);
-      mutationObserver.observe(node, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        characterData: true,
-      });
-    }
+    rootContainerFontShorthand = resolveRootContainerFontShorthand(node);
+    wakeSources.setRoot(node);
   };
 
   const setPushGeometryUpdates = (
@@ -402,11 +241,15 @@ export const createGeometryTracker = (): GeometryTracker => {
       return;
     }
 
-    attachViewportWakeSources();
+    wakeSources.attachViewportSources();
+
+    if (observedRemoteElementIds.size > 0) {
+      wake();
+    }
   };
 
   const getViewportGeometry = (): ViewportGeometrySnapshot =>
-    measureViewportGeometry(rootContainer);
+    readViewportGeometry();
 
   const reset = (): void => {
     pushGeometryUpdates = null;
@@ -416,23 +259,12 @@ export const createGeometryTracker = (): GeometryTracker => {
       animationFrameHandle = null;
     }
 
-    detachElementWakeSources();
-
-    if (areViewportWakeSourcesAttached) {
-      areViewportWakeSourcesAttached = false;
-      window.removeEventListener('resize', handleWindowResize);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }
-
-    resizeObserver?.disconnect();
-    resizeObserver = null;
+    wakeSources.detachAllSources();
 
     observedRemoteElementIds.clear();
     lastElementSnapshots.clear();
-    resizeObservedNodes.clear();
     lastViewportSnapshot = null;
     idleFrameCount = 0;
-    isViewportDirty = false;
   };
 
   return {

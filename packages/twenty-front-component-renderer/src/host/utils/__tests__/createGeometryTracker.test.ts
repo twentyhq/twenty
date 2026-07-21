@@ -51,6 +51,65 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('should push ids observed before it was armed', () => {
+    const tracker = createGeometryTracker();
+    armedTrackers.push(tracker);
+
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 13,
+      height: 13,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+
+    const pushGeometryUpdates = jest.fn();
+    tracker.setPushGeometryUpdates(pushGeometryUpdates);
+
+    geometryGlobals.flushAnimationFrame();
+
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
+    expect(pushGeometryUpdates.mock.calls[0][0].elements['1'].width).toBe(13);
+  });
+
+  it('should not schedule a frame when arming with nothing observed', () => {
+    const tracker = createGeometryTracker();
+    armedTrackers.push(tracker);
+
+    tracker.setPushGeometryUpdates(jest.fn());
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('should not schedule a frame when every observed id is rejected', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+
+    tracker.observe([42, null, 'x'.repeat(200)]);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+    expect(pushGeometryUpdates).not.toHaveBeenCalled();
+  });
+
+  it('should not schedule a frame when re-observing an already observed id', () => {
+    const { tracker } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    tracker.observe(['1']);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
   it('should never push while nothing is observed', () => {
     const { tracker, pushGeometryUpdates } = createArmedTracker();
     const stub = geometryGlobals.createStubNode({

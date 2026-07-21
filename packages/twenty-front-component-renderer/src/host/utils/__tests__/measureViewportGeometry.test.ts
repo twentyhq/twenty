@@ -3,19 +3,34 @@ import { measureViewportGeometry } from '../measureViewportGeometry';
 
 describe('measureViewportGeometry', () => {
   it('should read the window fields', () => {
-    const viewport = measureViewportGeometry(null);
+    const viewport = measureViewportGeometry(null, DEFAULT_FONT_SHORTHAND);
 
     expect(viewport.innerWidth).toBe(window.innerWidth);
     expect(viewport.innerHeight).toBe(window.innerHeight);
     expect(viewport.devicePixelRatio).toBe(window.devicePixelRatio);
   });
 
-  it('should return zero root fields and the default font for a null root', () => {
-    const viewport = measureViewportGeometry(null);
+  it('should return zero root fields for a null root', () => {
+    const viewport = measureViewportGeometry(null, DEFAULT_FONT_SHORTHAND);
 
     expect(viewport.rootContainerWidth).toBe(0);
     expect(viewport.rootContainerHeight).toBe(0);
-    expect(viewport.defaultFontShorthand).toBe(DEFAULT_FONT_SHORTHAND);
+  });
+
+  it('should pass the supplied font shorthand through', () => {
+    const viewport = measureViewportGeometry(null, '700 20px Inter');
+
+    expect(viewport.defaultFontShorthand).toBe('700 20px Inter');
+  });
+
+  it('should not read computed styles', () => {
+    const getComputedStyle = jest.spyOn(window, 'getComputedStyle');
+    const rootContainer = document.createElement('div');
+
+    measureViewportGeometry(rootContainer, DEFAULT_FONT_SHORTHAND);
+
+    expect(getComputedStyle).not.toHaveBeenCalled();
+    getComputedStyle.mockRestore();
   });
 
   it('should read the root container rect', () => {
@@ -33,7 +48,10 @@ describe('measureViewportGeometry', () => {
         toJSON: () => ({}),
       }) as DOMRect;
 
-    const viewport = measureViewportGeometry(rootContainer);
+    const viewport = measureViewportGeometry(
+      rootContainer,
+      DEFAULT_FONT_SHORTHAND,
+    );
 
     expect(viewport.rootContainerX).toBe(1);
     expect(viewport.rootContainerWidth).toBe(300);
