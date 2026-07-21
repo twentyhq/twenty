@@ -3,9 +3,14 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewCalendarLayout,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 export type RecordTableWidgetLayoutViewType =
   | ViewType.TABLE_WIDGET
@@ -27,6 +32,20 @@ export const useRecordTableWidgetLayoutCallbacks = ({
   );
 
   const store = useStore();
+
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+
+  // Day/week widget calendars only exist while the feature is on; with it off
+  // every calendar draft write clamps to MONTH so a stale day/week value can
+  // never be sent back to (and rejected by) the server.
+  const resolveCalendarLayout = (
+    calendarLayout: ViewCalendarLayout | null | undefined,
+  ) =>
+    isCalendarWeekViewEnabled
+      ? (calendarLayout ?? ViewCalendarLayout.MONTH)
+      : ViewCalendarLayout.MONTH;
 
   // Returning the received snapshot unchanged from the updater leaves the
   // whole draft map untouched (no state update is published).
@@ -125,10 +144,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
           view: {
             ...widgetViewDraft.view,
             type: targetViewType,
-            // Default a freshly switched calendar to the month grid; an
-            // existing day/week choice (with the feature enabled) is kept.
-            calendarLayout:
-              widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
+            calendarLayout: resolveCalendarLayout(
+              widgetViewDraft.view.calendarLayout,
+            ),
             calendarFieldMetadataId: hasCalendarField
               ? widgetViewDraft.view.calendarFieldMetadataId
               : defaultCalendarFieldMetadataItem?.id,
@@ -152,6 +170,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       view: {
         ...widgetViewDraft.view,
         calendarFieldMetadataId: fieldMetadataItem.id,
+        calendarLayout: resolveCalendarLayout(
+          widgetViewDraft.view.calendarLayout,
+        ),
       },
     }));
   };
@@ -161,7 +182,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       ...widgetViewDraft,
       view: {
         ...widgetViewDraft.view,
-        calendarLayout,
+        calendarLayout: resolveCalendarLayout(calendarLayout),
       },
     }));
   };

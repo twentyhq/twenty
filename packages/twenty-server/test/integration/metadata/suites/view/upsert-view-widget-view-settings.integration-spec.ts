@@ -330,9 +330,7 @@ describe('upsertViewWidget view settings', () => {
     });
 
     expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
-    expect(data.upsertViewWidget.calendarLayout).toBe(
-      ViewCalendarLayout.MONTH,
-    );
+    expect(data.upsertViewWidget.calendarLayout).toBe(ViewCalendarLayout.MONTH);
     expect(data.upsertViewWidget.calendarFieldMetadataId).toBe(
       dateFieldMetadataId,
     );

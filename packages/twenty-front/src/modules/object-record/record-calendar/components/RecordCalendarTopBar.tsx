@@ -176,20 +176,22 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        {isCalendarWeekViewEnabled && !isRecordCalendarReadOnly && !isInWidget && (
-          <Select
-            dropdownId={`record-calendar-layout-${recordCalendarId}`}
-            value={supportedCalendarLayout}
-            options={[
-              { label: t`Day`, value: ViewCalendarLayout.DAY },
-              { label: t`Week`, value: ViewCalendarLayout.WEEK },
-              { label: t`Month`, value: ViewCalendarLayout.MONTH },
-            ]}
-            selectSizeVariant="small"
-            dropdownWidth={120}
-            onChange={handleCalendarLayoutChange}
-          />
-        )}
+        {isCalendarWeekViewEnabled &&
+          !isRecordCalendarReadOnly &&
+          !isInWidget && (
+            <Select
+              dropdownId={`record-calendar-layout-${recordCalendarId}`}
+              value={supportedCalendarLayout}
+              options={[
+                { label: t`Day`, value: ViewCalendarLayout.DAY },
+                { label: t`Week`, value: ViewCalendarLayout.WEEK },
+                { label: t`Month`, value: ViewCalendarLayout.MONTH },
+              ]}
+              selectSizeVariant="small"
+              dropdownWidth={120}
+              onChange={handleCalendarLayoutChange}
+            />
+          )}
         <Dropdown
           dropdownId={datePickerDropdownId}
           clickableComponent={
