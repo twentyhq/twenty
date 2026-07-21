@@ -1,5 +1,6 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useApolloClient, useMutation } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { UploadFilesFieldFileDocument } from '~/generated-metadata/graphql';
@@ -17,6 +18,10 @@ export const useUploadFilesFieldFile = () => {
 
   const uploadFile = async (file: File, fieldMetadataId: string) => {
     try {
+      if (!isNonEmptyString(fieldMetadataId)) {
+        throw new Error(t`File field metadata is required for upload`);
+      }
+
       const result = await uploadFilesFieldFile({
         variables: { file, fieldMetadataId },
       });
