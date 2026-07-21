@@ -48,9 +48,6 @@ export class ThrottlerService {
     return availableTokens - tokensToConsume;
   }
 
-  // Unlike the token bucket above, admission relies on a single atomic INCR so
-  // concurrent requests cannot over-consume the budget. The window start is
-  // part of the key; the TTL only garbage-collects expired windows.
   async fixedWindowThrottleOrThrow(
     key: string,
     tokensToConsume: number,
