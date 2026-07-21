@@ -982,6 +982,11 @@ The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](
 """
 scalar JSONObject
 
+type SdkClientChecksums {
+  core: String
+  metadata: String!
+}
+
 type RatioAggregateConfig {
   fieldMetadataId: UUID!
   optionValue: String!
@@ -3048,6 +3053,7 @@ type MinimalMetadata {
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
+  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO

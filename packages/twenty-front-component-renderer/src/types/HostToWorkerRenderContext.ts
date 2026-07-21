@@ -1,4 +1,4 @@
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export type HostToWorkerRenderContext = {
@@ -7,7 +7,7 @@ export type HostToWorkerRenderContext = {
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
-  sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
   initialViewportGeometry?: ViewportGeometrySnapshot;

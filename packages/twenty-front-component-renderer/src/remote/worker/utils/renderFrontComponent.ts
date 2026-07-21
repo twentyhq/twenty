@@ -41,8 +41,7 @@ export const renderFrontComponent = async ({
 
   const componentModule = await loadFrontComponentModule({
     componentSource: renderContext.componentSource,
-    sdkClientUrls: renderContext.sdkClientUrls,
-    applicationAccessToken: renderContext.applicationAccessToken,
+    sdkClientSources: renderContext.sdkClientSources,
   });
 
   componentModule.default(renderContainer);
