@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { PageLayoutWidgetDropLine } from '@/page-layout/components/dnd/PageLayoutWidgetDropLine';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDndData';
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
@@ -17,6 +18,14 @@ const StyledSortableRoot = styled.div<{ isDragging: boolean }>`
   min-height: 0;
   position: relative;
   transition: background 0.1s ease;
+`;
+
+// Sits in the gap above the widget so the drop line does not shift layout.
+const StyledDropLineContainer = styled.div`
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: calc(-1 * ${themeCssVariables.spacing[2]});
 `;
 
 type PageLayoutWidgetSortableItemProps = {
@@ -41,7 +50,7 @@ export const PageLayoutWidgetSortableItem = ({
     index,
   };
 
-  const { ref, isDragging } = useSortable({
+  const { ref, isDragging, isDropTarget } = useSortable({
     id: widgetId,
     index,
     group: tabId,
@@ -54,6 +63,11 @@ export const PageLayoutWidgetSortableItem = ({
 
   return (
     <StyledSortableRoot ref={ref} isDragging={isDragging}>
+      {isDropTarget && (
+        <StyledDropLineContainer>
+          <PageLayoutWidgetDropLine />
+        </StyledDropLineContainer>
+      )}
       {children}
     </StyledSortableRoot>
   );

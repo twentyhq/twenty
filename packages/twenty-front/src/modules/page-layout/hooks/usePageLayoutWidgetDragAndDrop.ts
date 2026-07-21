@@ -80,6 +80,31 @@ export const usePageLayoutWidgetDragAndDrop = (
               moveWidgetToTabInDraft(prev, { widgetId, destinationTabId }),
             );
           }
+        } else if (target.data?.type === 'widget-list') {
+          const destinationTabId = target.data.tabId;
+
+          store.set(pageLayoutDraftState, (prev) => {
+            if (destinationTabId !== sourceTabId) {
+              return moveWidgetToTabInDraft(prev, {
+                widgetId,
+                destinationTabId,
+              });
+            }
+
+            const tab = prev.tabs.find(
+              (candidateTab) => candidateTab.id === sourceTabId,
+            );
+
+            if (!isDefined(tab)) {
+              return prev;
+            }
+
+            return moveWidgetWithinTabInDraft(prev, {
+              tabId: sourceTabId,
+              fromIndex: sourceIndex,
+              toIndex: tab.widgets.length - 1,
+            });
+          });
         } else if (isDefined(target.group)) {
           const destinationTabId = String(target.group);
           const destinationIndex = Number(target.index);

@@ -10,6 +10,12 @@ export type PageLayoutTabWidgetDropData = {
   tabId: string;
 };
 
+export type PageLayoutWidgetListDropData = {
+  type: 'widget-list';
+  tabId: string;
+};
+
 export type PageLayoutWidgetDndData =
   | PageLayoutWidgetDragData
-  | PageLayoutTabWidgetDropData;
+  | PageLayoutTabWidgetDropData
+  | PageLayoutWidgetListDropData;
