@@ -90,8 +90,8 @@ export const RecordTableLayoutDropdownContent = ({
         selectableListInstanceId={dropdownId}
         selectableItemIdArray={[
           ViewType.TABLE_WIDGET,
-          ViewType.KANBAN_WIDGET,
-          ViewType.CALENDAR_WIDGET,
+          ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
+          ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
         ]}
         focusId={dropdownId}
       >
