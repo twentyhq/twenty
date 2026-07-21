@@ -172,6 +172,7 @@ export class ApplicationUpgradeService {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -181,6 +182,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
+      skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
     });
   }
 
@@ -188,6 +190,7 @@ export class ApplicationUpgradeService {
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -209,6 +212,7 @@ export class ApplicationUpgradeService {
         appRegistrationId: appRegistration.id,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
+        skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       });
     } catch (error) {
       const appName =
