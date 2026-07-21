@@ -22,6 +22,7 @@ const makeWidget = (
     id: 'widget',
     pageLayoutTabId: 'tab',
     applicationUniversalIdentifier: 'app',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
     position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
     ...overrides,
   }) as FlatPageLayoutWidget;
@@ -73,19 +74,39 @@ describe('computeCanvasRecordPageTabsToVerticalList', () => {
     expect(result.widgetsToUpdate).toHaveLength(0);
   });
 
-  it('reindexes multiple widgets within a migrated tab', () => {
+  it('reindexes multiple widgets by grid position deterministically', () => {
     const { widgetsToUpdate } = computeCanvasRecordPageTabsToVerticalList({
       recordPageLayoutIds: new Set(['record-layout']),
       tabs: [makeTab({ id: 'multi-tab' })],
+      // Provided out of visual order to prove the sort, not insertion order.
       widgets: [
-        makeWidget({ id: 'w1', pageLayoutTabId: 'multi-tab' }),
-        makeWidget({ id: 'w2', pageLayoutTabId: 'multi-tab' }),
+        makeWidget({
+          id: 'w-bottom',
+          pageLayoutTabId: 'multi-tab',
+          gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },
+        }),
+        makeWidget({
+          id: 'w-top',
+          pageLayoutTabId: 'multi-tab',
+          gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+        }),
       ],
     });
 
-    expect(widgetsToUpdate.map((widget) => widget.position)).toEqual([
-      { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
-      { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+    expect(
+      widgetsToUpdate.map((widget) => ({
+        id: widget.id,
+        position: widget.position,
+      })),
+    ).toEqual([
+      {
+        id: 'w-top',
+        position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
+      },
+      {
+        id: 'w-bottom',
+        position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+      },
     ]);
   });
 });
