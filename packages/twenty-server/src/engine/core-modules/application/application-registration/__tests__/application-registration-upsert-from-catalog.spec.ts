@@ -10,6 +10,9 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('ApplicationRegistrationService - upsertFromCatalog', () => {
@@ -18,6 +21,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     findOne: jest.Mock;
     save: jest.Mock;
     create: jest.Mock;
+    createQueryBuilder: jest.Mock;
   };
 
   const catalogParams = {
@@ -45,6 +49,13 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       findOne: jest.fn(),
       save: jest.fn(),
       create: jest.fn((entity) => entity),
+      createQueryBuilder: jest.fn(() => ({
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        execute: jest.fn().mockResolvedValue({ affected: 0 }),
+      })),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -81,6 +92,14 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: CoreEntityCacheService,
           useValue: { invalidate: jest.fn() },
+        },
+        {
+          provide: MetricsService,
+          useValue: { incrementCounterBy: jest.fn() },
+        },
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: { add: jest.fn() },
         },
       ],
     }).compile();

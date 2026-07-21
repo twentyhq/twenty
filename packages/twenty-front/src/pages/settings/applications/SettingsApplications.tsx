@@ -12,12 +12,14 @@ import { Section } from 'twenty-ui/layout';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
 
 const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
 const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
+const DEVELOPER_TAB_ID = 'developer';
 
 export const SettingsApplications = () => {
   const { t } = useLingui();
@@ -30,7 +32,7 @@ export const SettingsApplications = () => {
     { id: 'marketplace', title: t`Marketplace`, Icon: IconDownload },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
-      ? [{ id: 'developer', title: t`Developer`, Icon: IconCode }]
+      ? [{ id: DEVELOPER_TAB_ID, title: t`Developer`, Icon: IconCode }]
       : []),
   ];
 
@@ -69,6 +71,11 @@ export const SettingsApplications = () => {
         { children: t`Applications` },
       ]}
     >
+      <SettingsApplicationsClaimErrorTabEffect
+        tabListId={APPLICATIONS_TAB_LIST_ID}
+        developerTabId={DEVELOPER_TAB_ID}
+        hasDeveloperAccess={hasDeveloperAccess}
+      />
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard

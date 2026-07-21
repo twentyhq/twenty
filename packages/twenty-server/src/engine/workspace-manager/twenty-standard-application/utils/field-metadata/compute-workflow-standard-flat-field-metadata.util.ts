@@ -357,6 +357,7 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      isSystemSideEffect: true,
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
           .label,
@@ -383,6 +384,7 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
+      isSystemSideEffect: true,
       label: i18nLabel(msg`Attachments`),
       description: i18nLabel(msg`Attachments linked to the workflow`),
       icon: 'IconFileUpload',

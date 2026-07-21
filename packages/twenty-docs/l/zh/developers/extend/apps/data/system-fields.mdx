@@ -84,6 +84,52 @@ export default defineView({
   `getFieldUniversalIdentifier` 能在这些输入发生变化时仍保持引用正确，并在派生逻辑演进时避免偏差。
 </Note>
 
+## 系统关系字段
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` 可在 `twenty-sdk`
+  2.23 及更高版本中使用，并且需要 Twenty 服务器版本为 2.23 或更高。
+</Note>
+
+除了上面的标量系统字段之外，服务器还会在每个对象上预置四个**系统关系字段**：`timelineActivities`、`attachments`、`noteTargets` 和 `taskTargets`，它们各自指向相应的标准关系对象。
+
+这些字段不会通过 `getFieldUniversalIdentifier` 解析：其标识符不依赖名称，而是由承载该字段的对象和该字段指向的对象推导而来。 通过这种方式，重命名对象永远不会改变其关系字段的标识符。
+
+使用 `getSystemRelationFieldUniversalIdentifier` 来解析它们：
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` 是**承载**该字段的对象。
+* `relationTargetObjectUniversalIdentifier` 是该字段**指向**的对象。
+
+方向由参数的顺序编码。 要解析反向端（例如 `attachment.targetRocket`，即服务器在标准关系对象上创建的 morph 字段），交换这两个参数：
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+与标量系统字段一样，解析得到的 id 可在任何需要 `fieldMetadataUniversalIdentifier` 的地方使用。
+
 ## 标准 Twenty 对象
 
 对于**标准** Twenty 对象（Person、Company、Opportunity 等），你不需要进行任何派生：系统字段标识符是预先计算好的常量，你可以直接导入。

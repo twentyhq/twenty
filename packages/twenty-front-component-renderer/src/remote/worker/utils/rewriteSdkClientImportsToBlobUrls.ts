@@ -1,14 +1,6 @@
-import { type SDK_CLIENT_IMPORT_SPECIFIERS } from '@/remote/worker/constants/SdkClientImportSpecifiers';
+import { type SDK_CLIENT_IMPORT_SPECIFIERS } from '@/constants/SdkClientImportSpecifiers';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
-
-const escapeRegExpToken = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const buildImportContextPattern = (specifier: string): RegExp =>
-  new RegExp(
-    `(\\bfrom\\s*|\\bimport\\s*\\(\\s*|\\bimport\\s*)(["'])${escapeRegExpToken(specifier)}\\2`,
-    'g',
-  );
+import { buildSdkClientImportContextPattern } from '@/utils/buildSdkClientImportContextPattern';
 
 export const rewriteSdkClientImportsToBlobUrls = (
   source: string,
@@ -26,7 +18,7 @@ export const rewriteSdkClientImportsToBlobUrls = (
 
   for (const [specifier, blobUrl] of Object.entries(specifierToBlobUrl)) {
     rewrittenSource = rewrittenSource.replace(
-      buildImportContextPattern(specifier),
+      buildSdkClientImportContextPattern(specifier),
       (_fullMatch, importContext: string, quote: string) =>
         `${importContext}${quote}${blobUrl}${quote}`,
     );
