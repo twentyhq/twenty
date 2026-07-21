@@ -705,7 +705,7 @@ export interface User {
 export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'COMPLETED'
 
 export interface SdkClientChecksums {
-    core: Scalars['String']
+    core?: Scalars['String']
     metadata: Scalars['String']
     __typename: 'SdkClientChecksums'
 }
