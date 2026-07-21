@@ -1,0 +1,19 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_11e59742733dbd::t_f8c0a7e17505bd 118-120,238-240
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "2e5dc562f9ecb449a24d0e592f42fa70679147a6",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
