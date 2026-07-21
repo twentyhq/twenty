@@ -1188,6 +1188,7 @@ export type CreateLogicFunctionFromSourceInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
   serverRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+  shouldRetryOnFailure?: InputMaybe<Scalars['Boolean']['input']>;
   source?: InputMaybe<Scalars['JSON']['input']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
@@ -2215,6 +2216,7 @@ export type LogicFunction = {
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
   runtime: Scalars['String']['output'];
+  shouldRetryOnFailure: Scalars['Boolean']['output'];
   sourceHandlerPath: Scalars['String']['output'];
   timeoutSeconds: Scalars['Float']['output'];
   toolTriggerSettings?: Maybe<Scalars['JSON']['output']>;
@@ -5464,6 +5466,7 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   handlerName?: InputMaybe<Scalars['String']['input']>;
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  shouldRetryOnFailure?: InputMaybe<Scalars['Boolean']['input']>;
   sourceHandlerCode?: InputMaybe<Scalars['String']['input']>;
   sourceHandlerPath?: InputMaybe<Scalars['String']['input']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;

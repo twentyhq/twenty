@@ -845,6 +845,9 @@ export default {
             "timeoutSeconds": [
                 12
             ],
+            "shouldRetryOnFailure": [
+                6
+            ],
             "executionMode": [
                 42
             ],
@@ -10634,6 +10637,9 @@ export default {
             "timeoutSeconds": [
                 12
             ],
+            "shouldRetryOnFailure": [
+                6
+            ],
             "source": [
                 7
             ],
@@ -10690,6 +10696,9 @@ export default {
             ],
             "timeoutSeconds": [
                 12
+            ],
+            "shouldRetryOnFailure": [
+                6
             ],
             "sourceHandlerCode": [
                 1
