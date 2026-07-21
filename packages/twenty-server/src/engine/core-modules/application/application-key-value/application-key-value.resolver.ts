@@ -1,7 +1,10 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { type AppKeyValue } from 'twenty-shared/application';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { AppKeyValueDto } from 'src/engine/core-modules/application/application-key-value/dtos/app-key-value.dto';
 import { SetAppKeyValueInput } from 'src/engine/core-modules/application/application-key-value/dtos/set-app-key-value.input';
 import { AppKeyValueScope } from 'src/engine/core-modules/application/application-key-value/enums/app-key-value-scope.enum';
@@ -14,6 +17,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseFilters(ApplicationExceptionFilter)
 @MetadataResolver()
 export class ApplicationKeyValueResolver {
   constructor(
@@ -31,7 +35,7 @@ export class ApplicationKeyValueResolver {
       defaultValue: AppKeyValueScope.INSTALL,
     })
     scope: AppKeyValueScope,
-  ): Promise<AppKeyValueDto | null> {
+  ): Promise<AppKeyValue | null> {
     return this.applicationKeyValueService.get({
       application,
       workspaceId: workspace.id,
@@ -45,7 +49,7 @@ export class ApplicationKeyValueResolver {
     @AuthApplication() application: FlatApplication,
     @AuthWorkspace() workspace: FlatWorkspace,
     @Args('input') input: SetAppKeyValueInput,
-  ): Promise<AppKeyValueDto> {
+  ): Promise<AppKeyValue> {
     return this.applicationKeyValueService.set({
       application,
       workspaceId: workspace.id,

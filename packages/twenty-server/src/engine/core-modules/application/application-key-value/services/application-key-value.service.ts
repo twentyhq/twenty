@@ -1,28 +1,24 @@
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { IsNull, Repository } from 'typeorm';
 
+import { type AppKeyValue } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppKeyValueScope } from 'src/engine/core-modules/application/application-key-value/enums/app-key-value-scope.enum';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-
-type AppKeyValueEntry = {
-  key: string;
-  value: unknown;
-  scope: AppKeyValueScope;
-};
 
 @Injectable()
 export class ApplicationKeyValueService {
@@ -45,7 +41,7 @@ export class ApplicationKeyValueService {
     workspaceId: string;
     key: string;
     scope: AppKeyValueScope;
-  }): Promise<AppKeyValueEntry | null> {
+  }): Promise<AppKeyValue | null> {
     const scopedWhere =
       scope === AppKeyValueScope.GLOBAL
         ? {
@@ -84,7 +80,7 @@ export class ApplicationKeyValueService {
     key: string;
     value: unknown;
     scope: AppKeyValueScope;
-  }): Promise<AppKeyValueEntry> {
+  }): Promise<AppKeyValue> {
     if (scope === AppKeyValueScope.GLOBAL) {
       return this.claimGlobalKey({ application, workspaceId, key, value });
     }
@@ -159,15 +155,20 @@ export class ApplicationKeyValueService {
     workspaceId: string;
     key: string;
     value: unknown;
-  }): Promise<AppKeyValueEntry> {
+  }): Promise<AppKeyValue> {
     if (isDefined(value) && value !== workspaceId) {
-      throw new ForbiddenException(
+      throw new ApplicationException(
         'Global keys hold the claiming workspaceId: omit the value or pass your own workspaceId',
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Global keys can only be claimed for your own workspace.`,
+        },
       );
     }
 
     const globalApplicationId =
       await this.resolveGlobalApplicationId(application);
+    const claimValue: unknown = workspaceId;
 
     await this.keyValuePairRepository
       .createQueryBuilder()
@@ -175,7 +176,7 @@ export class ApplicationKeyValueService {
       .into(KeyValuePairEntity)
       .values({
         key,
-        value: workspaceId as unknown as KeyValuePairEntity['value'],
+        value: claimValue as KeyValuePairEntity['value'],
         applicationId: globalApplicationId,
         workspaceId: null,
         userId: null,
@@ -194,22 +195,28 @@ export class ApplicationKeyValueService {
     });
 
     if (!isDefined(entry)) {
-      throw new InternalServerErrorException(
+      throw new ApplicationException(
         `Could not persist global key "${key}"`,
+        ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED,
       );
     }
 
-    const claimedWorkspaceId = entry.value as unknown as string;
+    const claimedWorkspaceId: unknown = entry.value;
 
     if (claimedWorkspaceId !== workspaceId) {
-      throw new ForbiddenException(
+      throw new ApplicationException(
         `Global key "${key}" is already claimed by another workspace`,
+        ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`This global key is already claimed by another workspace.`,
+        },
       );
     }
 
     return { key, value: entry.value, scope: AppKeyValueScope.GLOBAL };
   }
 
+  // GLOBAL entries of a registered application all live under the registration owner workspace's install
   private async resolveGlobalApplicationId(
     application: FlatApplication,
   ): Promise<string> {
@@ -236,6 +243,16 @@ export class ApplicationKeyValueService {
       },
     });
 
-    return ownerInstall?.id ?? application.id;
+    if (!isDefined(ownerInstall)) {
+      throw new ApplicationException(
+        `Global keys are unavailable for application ${application.id}: the registration owner workspace has no install`,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+        {
+          userFriendlyMessage: msg`Global keys require the application publisher workspace to have the application installed.`,
+        },
+      );
+    }
+
+    return ownerInstall.id;
   }
 }
