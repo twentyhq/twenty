@@ -141,14 +141,16 @@ export class ApplicationUpgradeService {
       (application) => application.version !== targetVersion,
     );
 
+    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+
     for (
       let batchStart = 0;
       batchStart < applicationsToUpgrade.length;
-      batchStart += batchSize
+      batchStart += sanitizedBatchSize
     ) {
       const batch = applicationsToUpgrade.slice(
         batchStart,
-        batchStart + batchSize,
+        batchStart + sanitizedBatchSize,
       );
 
       await Promise.all(
