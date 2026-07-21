@@ -3,7 +3,6 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
-import { performance } from 'node:perf_hooks';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -195,26 +194,16 @@ export class WorkspaceCacheService implements OnModuleInit {
         attributes: { 'cache.key_count': cacheKeyNames.length },
       },
       async () => {
-        const startedAt = performance.now();
+        await this.memoizer.clearKeys(`${workspaceId}-`);
 
-        try {
-          await this.memoizer.clearKeys(`${workspaceId}-`);
+        await this.flush(workspaceId, cacheKeyNames);
+        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
+          strategy: 'mint',
+        });
 
-          await this.flush(workspaceId, cacheKeyNames);
-          await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-            strategy: 'mint',
-          });
-
-          // Clear memoizer again after recomputation to evict any stale entries
-          // cached by concurrent getOrRecompute calls during the flush window.
-          await this.memoizer.clearKeys(`${workspaceId}-`);
-        } finally {
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.WorkspaceMetadataCacheInvalidationDurationMs,
-            value: performance.now() - startedAt,
-            unit: 'ms',
-          });
-        }
+        // Clear memoizer again after recomputation to evict any stale entries
+        // cached by concurrent getOrRecompute calls during the flush window.
+        await this.memoizer.clearKeys(`${workspaceId}-`);
       },
     );
   }
@@ -400,20 +389,7 @@ export class WorkspaceCacheService implements OnModuleInit {
             'cache.local_data_only': isLocalDataOnly,
           },
         },
-        async () => {
-          const startedAt = performance.now();
-
-          try {
-            return await provider.computeForCache(workspaceId);
-          } finally {
-            this.metricsService.recordHistogram({
-              key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
-              value: performance.now() - startedAt,
-              unit: 'ms',
-              attributes: { cache_key: keyName },
-            });
-          }
-        },
+        () => provider.computeForCache(workspaceId),
       );
 
       if (hashResolution.strategy === 'mint') {

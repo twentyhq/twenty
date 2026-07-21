@@ -5,16 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-type PostgresPool = Pick<Pool, 'totalCount' | 'idleCount' | 'waitingCount'>;
 
 @Injectable()
 export class GlobalWorkspaceDataSourceService
@@ -29,7 +25,6 @@ export class GlobalWorkspaceDataSourceService
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly metricsService: MetricsService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -97,8 +92,6 @@ export class GlobalWorkspaceDataSourceService
       );
       await this.globalWorkspaceDataSourceReplica.initialize();
     }
-
-    this.registerDatabasePoolMetrics();
   }
 
   public getGlobalWorkspaceDataSource(): GlobalWorkspaceDataSource {
@@ -128,68 +121,5 @@ export class GlobalWorkspaceDataSourceService
       await this.globalWorkspaceDataSourceReplica.destroy();
       this.globalWorkspaceDataSourceReplica = null;
     }
-  }
-
-  private registerDatabasePoolMetrics(): void {
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_database_pool_connections',
-      options: {
-        description: 'PostgreSQL connections held by each application pool',
-      },
-      callback: async () =>
-        this.getPostgresPools().flatMap(({ poolName, pool }) => [
-          {
-            value: pool.totalCount - pool.idleCount,
-            attributes: { pool: poolName, state: 'used' },
-          },
-          {
-            value: pool.idleCount,
-            attributes: { pool: poolName, state: 'idle' },
-          },
-        ]),
-    });
-
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_database_pool_waiting_requests',
-      options: {
-        description:
-          'Requests waiting to acquire a PostgreSQL connection from each application pool',
-      },
-      callback: async () =>
-        this.getPostgresPools().map(({ poolName, pool }) => ({
-          value: pool.waitingCount,
-          attributes: { pool: poolName },
-        })),
-    });
-  }
-
-  private getPostgresPools(): Array<{
-    poolName: 'core' | 'workspace-primary' | 'workspace-replica';
-    pool: PostgresPool;
-  }> {
-    const dataSources: Array<{
-      poolName: 'core' | 'workspace-primary' | 'workspace-replica';
-      dataSource: DataSource;
-    }> = [{ poolName: 'core', dataSource: this.coreDataSource }];
-
-    if (this.globalWorkspaceDataSource) {
-      dataSources.push({
-        poolName: 'workspace-primary',
-        dataSource: this.globalWorkspaceDataSource,
-      });
-    }
-
-    if (this.globalWorkspaceDataSourceReplica) {
-      dataSources.push({
-        poolName: 'workspace-replica',
-        dataSource: this.globalWorkspaceDataSourceReplica,
-      });
-    }
-
-    return dataSources.flatMap(({ poolName, dataSource }) => {
-      const pool = (dataSource.driver as { master?: PostgresPool }).master;
-
-      return pool ? [{ poolName, pool }] : [];
-    });
   }
 }

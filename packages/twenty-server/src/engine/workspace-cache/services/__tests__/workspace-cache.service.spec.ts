@@ -8,7 +8,6 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   WORKSPACE_CACHE_KEY,
@@ -51,7 +50,6 @@ describe('WorkspaceCacheService', () => {
   let cacheStorageService: jest.Mocked<CacheStorageService>;
   let discoveryService: jest.Mocked<DiscoveryService>;
   let reflector: jest.Mocked<Reflector>;
-  let metricsService: jest.Mocked<MetricsService>;
   let mockProvider: MockFeatureFlagsCacheProvider;
 
   beforeEach(async () => {
@@ -90,7 +88,6 @@ describe('WorkspaceCacheService', () => {
           provide: MetricsService,
           useValue: {
             incrementCounterBy: jest.fn(),
-            recordHistogram: jest.fn(),
           },
         },
         {
@@ -106,7 +103,6 @@ describe('WorkspaceCacheService', () => {
     cacheStorageService = module.get(CacheStorageNamespace.EngineWorkspace);
     discoveryService = module.get(DiscoveryService);
     reflector = module.get(Reflector);
-    metricsService = module.get(MetricsService);
   });
 
   afterEach(() => {
@@ -212,12 +208,6 @@ describe('WorkspaceCacheService', () => {
         },
         expect.any(Function),
       );
-      expect(metricsService.recordHistogram).toHaveBeenCalledWith({
-        key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
-        value: expect.any(Number),
-        unit: 'ms',
-        attributes: { cache_key: 'featureFlagsMap' },
-      });
     });
 
     it('should return data from redis when available', async () => {
@@ -235,11 +225,7 @@ describe('WorkspaceCacheService', () => {
       ]);
 
       expect(result).toEqual({ featureFlagsMap: cachedData });
-      expect(metricsService.recordHistogram).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: MetricsKeys.WorkspaceMetadataCacheProviderComputeDurationMs,
-        }),
-      );
+      expect(Sentry.startSpan).not.toHaveBeenCalled();
     });
 
     it('should use local cache when within TTL staleness window', async () => {
@@ -341,11 +327,6 @@ describe('WorkspaceCacheService', () => {
         },
         expect.any(Function),
       );
-      expect(metricsService.recordHistogram).toHaveBeenCalledWith({
-        key: MetricsKeys.WorkspaceMetadataCacheInvalidationDurationMs,
-        value: expect.any(Number),
-        unit: 'ms',
-      });
     });
 
     it('should invalidate multiple cache keys at once', async () => {
