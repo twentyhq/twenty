@@ -4,9 +4,12 @@ import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/
 import { useUpdateSdkClientChecksumsApolloCache } from '@/front-components/hooks/useUpdateSdkClientChecksumsApolloCache';
 import { type ApplicationSdkClientChecksumsBroadcastRecord } from '@/front-components/types/ApplicationSdkClientChecksumsBroadcastRecord';
 
+const mockReadQuery = jest.fn();
 const mockUpdateQuery = jest.fn();
+const mockQuery = jest.fn().mockResolvedValue({ data: undefined });
 const mockApolloClient = {
-  cache: { updateQuery: mockUpdateQuery },
+  cache: { readQuery: mockReadQuery, updateQuery: mockUpdateQuery },
+  query: mockQuery,
 };
 
 jest.mock('@apollo/client/react', () => ({
@@ -15,6 +18,14 @@ jest.mock('@apollo/client/react', () => ({
 }));
 
 const APPLICATION_ID = 'app-test-id';
+
+const CACHED_CHECKSUM_PAIR = {
+  applicationSdkClientChecksums: {
+    __typename: 'SdkClientChecksums' as const,
+    core: 'old-core-checksum',
+    metadata: 'old-metadata-checksum',
+  },
+};
 
 const buildApplicationRecord = (
   overrides: Partial<ApplicationSdkClientChecksumsBroadcastRecord> = {},
@@ -37,6 +48,7 @@ const buildUpdateDetail = (
 describe('useUpdateSdkClientChecksumsApolloCache', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockReadQuery.mockReturnValue(CACHED_CHECKSUM_PAIR);
   });
 
   it('should call cache.updateQuery when the application id matches', () => {
@@ -51,6 +63,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     );
 
     expect(mockUpdateQuery).toHaveBeenCalledTimes(1);
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should not call cache.updateQuery when the application id does not match', () => {
@@ -65,6 +78,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     );
 
     expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should not call cache.updateQuery when applicationId is undefined', () => {
@@ -77,6 +91,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     );
 
     expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should not call cache.updateQuery when checksums are missing', () => {
@@ -93,6 +108,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     );
 
     expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should not call cache.updateQuery for create operations', () => {
@@ -111,6 +127,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     });
 
     expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should update only the core checksum and preserve the cached metadata checksum', () => {
@@ -126,15 +143,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
 
     const updaterFn = mockUpdateQuery.mock.calls[0][1];
 
-    const existingData = {
-      applicationSdkClientChecksums: {
-        __typename: 'SdkClientChecksums' as const,
-        core: 'old-core-checksum',
-        metadata: 'old-metadata-checksum',
-      },
-    };
-
-    const updatedData = updaterFn(existingData);
+    const updatedData = updaterFn(CACHED_CHECKSUM_PAIR);
 
     expect(updatedData.applicationSdkClientChecksums).toEqual({
       __typename: 'SdkClientChecksums',
@@ -143,7 +152,9 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
     });
   });
 
-  it('should leave the cache untouched when no checksum pair is already cached', () => {
+  it('should refetch the checksum query when no checksum pair is cached yet', () => {
+    mockReadQuery.mockReturnValue({ applicationSdkClientChecksums: null });
+
     const { result } = renderHook(() =>
       useUpdateSdkClientChecksumsApolloCache({
         applicationId: APPLICATION_ID,
@@ -154,13 +165,19 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
       buildUpdateDetail(buildApplicationRecord()),
     );
 
-    const updaterFn = mockUpdateQuery.mock.calls[0][1];
-    const existingData = { applicationSdkClientChecksums: null };
-
-    expect(updaterFn(existingData)).toEqual(existingData);
+    expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+    expect(mockQuery).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: { applicationId: APPLICATION_ID },
+        fetchPolicy: 'network-only',
+      }),
+    );
   });
 
-  it('should return existing data when nothing is cached yet', () => {
+  it('should refetch the checksum query when the query result is absent from the cache', () => {
+    mockReadQuery.mockReturnValue(null);
+
     const { result } = renderHook(() =>
       useUpdateSdkClientChecksumsApolloCache({
         applicationId: APPLICATION_ID,
@@ -171,8 +188,7 @@ describe('useUpdateSdkClientChecksumsApolloCache', () => {
       buildUpdateDetail(buildApplicationRecord()),
     );
 
-    const updaterFn = mockUpdateQuery.mock.calls[0][1];
-
-    expect(updaterFn(undefined)).toBeUndefined();
+    expect(mockUpdateQuery).not.toHaveBeenCalled();
+    expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 });

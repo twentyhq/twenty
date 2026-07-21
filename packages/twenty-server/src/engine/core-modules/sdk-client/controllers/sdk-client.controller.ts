@@ -7,7 +7,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { createHash } from 'crypto';
 import { Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -63,19 +62,15 @@ export class SdkClientController {
       );
     }
 
-    const fileBuffer =
+    const { moduleBuffer, checksum: servedModuleChecksum } =
       moduleName === 'metadata'
-        ? (await getInstalledSdkMetadataModule()).moduleBuffer
+        ? await getInstalledSdkMetadataModule()
         : await this.sdkClientArchiveService.getClientModuleFromArchive({
             workspaceId: workspace.id,
             applicationId,
             applicationUniversalIdentifier: application.universalIdentifier,
             moduleName,
           });
-
-    const servedModuleChecksum = createHash('sha256')
-      .update(fileBuffer)
-      .digest('hex');
 
     const isChecksumMatch =
       isDefined(checksum) && checksum === servedModuleChecksum;
@@ -88,6 +83,6 @@ export class SdkClientController {
         ? SDK_CLIENT_MODULE_CACHE_CONTROL
         : SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
     );
-    res.send(fileBuffer);
+    res.send(moduleBuffer);
   }
 }
