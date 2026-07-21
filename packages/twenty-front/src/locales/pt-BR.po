@@ -1339,6 +1339,7 @@ msgid "Add Model"
 msgstr "Adicionar modelo"
 
 #. js-lingui-id: Hkobke
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
 msgstr "Adicionar novo"
@@ -2231,6 +2232,11 @@ msgstr "E"
 msgid "Annual"
 msgstr "Anual"
 
+#. js-lingui-id: +qygei
+#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+msgid "Answers"
+msgstr ""
+
 #. js-lingui-id: 9BhGWn
 #. placeholder {0}: fieldLabel ?? ''
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
@@ -2869,6 +2875,11 @@ msgstr "Criação automática"
 msgid "Auto-generated role for {agentDisplayName}"
 msgstr "Papel gerado automaticamente para {agentDisplayName}"
 
+#. js-lingui-id: /nv0ml
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Auto-upgrade"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -2888,6 +2899,11 @@ msgstr "Criar Automaticamente Registros de Pessoas ao Receber ou Enviar E-mails"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Instalar este app automaticamente em todo novo espaço de trabalho criado"
+
+#. js-lingui-id: XFGV21
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Automatically upgrade this application when a new version is published"
+msgstr ""
 
 #. js-lingui-id: BJgDIM
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -2948,16 +2964,6 @@ msgstr "Voltar ao conteúdo"
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "Back to settings"
 msgstr "Voltar para Configurações"
-
-#. js-lingui-id: aHL20j
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill"
-msgstr "Backfill"
-
-#. js-lingui-id: mpBETK
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill installation"
-msgstr "Instalação de backfill"
 
 #. js-lingui-id: RJnYR0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
@@ -3521,6 +3527,11 @@ msgstr "O pagamento com cartão está indisponível no momento. Verifique sua co
 msgid "Catalan"
 msgstr "Catalão"
 
+#. js-lingui-id: MY7CDs
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Catalog sync started. Try your lookup again in a moment."
+msgstr ""
+
 #. js-lingui-id: K7tIrx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Category"
@@ -3761,11 +3772,31 @@ msgstr "Cidade"
 msgid "Claim"
 msgstr "Reivindicar"
 
+#. js-lingui-id: B6GVe3
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim an application"
+msgstr ""
+
 #. js-lingui-id: aHPKtV
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Claim ownership"
 msgstr "Reivindicar propriedade"
+
+#. js-lingui-id: PzqcRM
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim with GitHub"
+msgstr ""
+
+#. js-lingui-id: ke+vxJ
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Claimed by this workspace"
+msgstr ""
+
+#. js-lingui-id: KqRGF3
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Claiming is not configured on this server. Ask an administrator to set up the GitHub OAuth app."
+msgstr ""
 
 #. js-lingui-id: fcgvCA
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4063,7 +4094,7 @@ msgstr "Vírgulas e ponto"
 msgid "Comment"
 msgstr "Comentário"
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4102,8 @@ msgstr "Comentário"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Comunicações"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -4699,6 +4730,16 @@ msgstr "Custo por milhão de tokens (USD)"
 msgid "Cost per million tokens for cached input (USD)"
 msgstr "Custo por milhão de tokens para entrada em cache (USD)"
 
+#. js-lingui-id: T8ACay
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not claim this application"
+msgstr ""
+
+#. js-lingui-id: LpyyAM
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Could not complete the claim. Please try again."
+msgstr ""
+
 #. js-lingui-id: VVRHmR
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 msgid "Could not delete approved access domain"
@@ -4743,6 +4784,21 @@ msgstr "Não foi possível atualizar o token de validade e não foi possível re
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token. Please contact support."
 msgstr "Não foi possível atualizar o token de validade. Entre em contato com o suporte."
+
+#. js-lingui-id: 5PWKlr
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not run the lookup"
+msgstr ""
+
+#. js-lingui-id: p75IO8
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not start the GitHub claim"
+msgstr ""
+
+#. js-lingui-id: Yu3v/5
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not sync the catalog"
+msgstr ""
 
 #. js-lingui-id: dIvwQK
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6558,6 +6614,11 @@ msgstr "ex.: GPT-4o"
 msgid "e.g. My OpenAI Proxy"
 msgstr "ex.: My OpenAI Proxy"
 
+#. js-lingui-id: SwLZ5l
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "e.g. my-twenty-app"
+msgstr ""
+
 #. js-lingui-id: 88vQqv
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "e.g. my-workspace"
@@ -8040,6 +8101,11 @@ msgstr "Falha ao definir o modo de manutenção."
 msgid "Failed to start backfill"
 msgstr "Falha ao iniciar o preenchimento retroativo"
 
+#. js-lingui-id: SwXGP6
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Failed to start upgrade"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -8049,6 +8115,11 @@ msgstr "Falha ao sincronizar o catálogo do marketplace."
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Falha ao transferir a propriedade. Verifique se o subdomínio está correto."
+
+#. js-lingui-id: UNwpjb
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Failed to update auto-upgrade setting."
+msgstr ""
 
 #. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -8717,6 +8788,7 @@ msgstr "Gemini CLI"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -8801,6 +8873,11 @@ msgstr "Aproveite ao máximo seu workspace convidando sua equipe."
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (pesquisa de texto completo e JSONB)"
 
+#. js-lingui-id: BhYbva
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
+msgstr ""
+
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
@@ -8816,11 +8893,6 @@ msgstr "Voltar"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "Ir para o portal de faturamento"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Ir para a documentação"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -9712,6 +9784,7 @@ msgstr "Insira seus dados de faturamento para obter uma avaliação gratuita e m
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9728,11 +9801,6 @@ msgstr "Instalar {appDisplayName} no seu espaço de trabalho"
 msgid "Install and manage applications"
 msgstr "Instalar e gerenciar aplicativos"
 
-#. js-lingui-id: 7rG5Kz
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install latest version on all workspaces"
-msgstr "Instalar a versão mais recente em todos os workspaces"
-
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -9741,6 +9809,12 @@ msgstr "Instalar a versão mais recente em todos os workspaces"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Link de instalação"
+
+#. js-lingui-id: xif494
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+msgid "Install on all workspaces"
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10926,6 +11000,11 @@ msgstr "Os logs exigem que o ClickHouse esteja configurado. Entre em contato com
 msgid "Longitude"
 msgstr "Longitude"
 
+#. js-lingui-id: TMahs7
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Look up"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -11492,6 +11571,7 @@ msgid "More actions"
 msgstr "Mais ações"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -11719,11 +11799,6 @@ msgstr "Itens de menu de navegação"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Abas de Navegação"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Precisa de ajuda para configurar sua caixa de correio compartilhada?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -12111,6 +12186,11 @@ msgstr "Nenhuma chave API disponível"
 msgid "No API keys match your search"
 msgstr "Nenhuma chave API corresponde à sua pesquisa"
 
+#. js-lingui-id: OaNsaF
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "No application found. If you just published it to npm with the \"twenty-app\" keyword, sync the catalog and try again."
+msgstr ""
+
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No applications available"
@@ -12497,6 +12577,11 @@ msgstr "Nenhuma permissão configurada para este aplicativo."
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "No permissions have been set for individual objects."
 msgstr "Nenhuma permissão foi definida para objetos individuais."
+
+#. js-lingui-id: pRxlf6
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
+msgstr ""
 
 #. js-lingui-id: 5sv+ia
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -13160,6 +13245,11 @@ msgstr "Uma assinatura fornece uma chave enterprise que alimenta uma instância 
 msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
 msgstr "Somente logs de aplicativo estão disponíveis no seu plano atual. Outros tipos de log exigem uma assinatura Enterprise."
 
+#. js-lingui-id: JzXn58
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Only applications published to npm can be claimed this way."
+msgstr ""
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -13484,15 +13574,27 @@ msgstr "Visão geral"
 
 #. js-lingui-id: LtI9AS
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Owner"
 msgstr "Proprietário"
 
+#. js-lingui-id: oDAEQq
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Ownership"
+msgstr ""
+
 #. js-lingui-id: 9J0yW0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Ownership claimed successfully"
 msgstr "Propriedade reivindicada com sucesso"
+
+#. js-lingui-id: tE6+xk
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance. Sign in with a GitHub account that owns the publishing account or organization — when the package is published by an organization, grant this app access to it on GitHub's authorization screen."
+msgstr ""
 
 #. js-lingui-id: RWJnRQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -13508,6 +13610,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Package"
 msgstr "Pacote"
+
+#. js-lingui-id: 1K7pVq
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Package name or universal identifier"
+msgstr ""
 
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -14265,11 +14372,6 @@ msgstr "trimestres"
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "Consultas que dependiam dele voltarão a usar uma varredura sequencial. Você pode recriá-lo depois."
 
-#. js-lingui-id: uH9Vwp
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
-msgid "Questions answered"
-msgstr "Perguntas respondidas"
-
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -14334,6 +14436,7 @@ msgid "Read changelog"
 msgstr "Leia o registro de alterações"
 
 #. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Read documentation"
 msgstr "Ler documentação"
@@ -16844,6 +16947,7 @@ msgstr "Estado"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -17154,6 +17258,11 @@ msgstr "Alterado para uma instância de produção."
 msgid "Sync Account"
 msgstr "Sincronizar Conta"
 
+#. js-lingui-id: NmHVSC
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Sync catalog"
+msgstr ""
+
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync email and calendar accounts"
@@ -17291,6 +17400,11 @@ msgstr "Widget de tabela"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Table, Kanban, Calendar"
 msgstr "Tabela, Kanban, Calendário"
+
+#. js-lingui-id: DBxdLI
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
+msgstr ""
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -17591,6 +17705,11 @@ msgstr "Os valores deste campo devem ser únicos"
 msgid "The whole event details will be shared with your team."
 msgstr "Todos os detalhes do evento serão compartilhados com sua equipe."
 
+#. js-lingui-id: bEXHAZ
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+msgid "The workspace that claimed this app registration"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -17744,6 +17863,26 @@ msgstr "Este app não está totalmente configurado. Os usuários não poderão i
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "This app's routes are served from this URL. Add a custom domain to use your own."
 msgstr "As rotas deste app são servidas a partir desta URL. Adicione um domínio personalizado para usar o seu próprio."
+
+#. js-lingui-id: 2lDWPO
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application could not be found. It may have been removed from the marketplace catalog."
+msgstr ""
+
+#. js-lingui-id: dT2Ibb
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application has already been claimed by a workspace."
+msgstr ""
+
+#. js-lingui-id: vZhnyV
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "This application has already been claimed."
+msgstr ""
+
+#. js-lingui-id: X7w5n6
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "This application's registration is claimed by your workspace"
+msgstr ""
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -17940,11 +18079,11 @@ msgstr "Isso desconectará todos os modelos deste provedor. Os modelos não esta
 msgid "This will grant {0} to {userLabel}."
 msgstr "Isso concederá {0} a {userLabel}."
 
-#. js-lingui-id: jn8Xjg
+#. js-lingui-id: rr0iQF
 #. placeholder {0}: registration.name
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?"
-msgstr "Isso instalará a versão mais recente de \"{0}\" em todos os espaços de trabalho ativos e suspensos existentes, atualizando qualquer espaço de trabalho que já tenha uma versão mais antiga. Isso é executado como uma tarefa em segundo plano e pode levar algum tempo. Deseja continuar?"
+msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -17971,6 +18110,12 @@ msgstr "Isso excluirá permanentemente seu método de autenticação de dois fat
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Isso revogará {0} de {userLabel}."
+
+#. js-lingui-id: DXNxPk
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18905,8 +19050,15 @@ msgstr "Atualizando..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Upgrade"
+
+#. js-lingui-id: 8guwMM
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade existing installations"
+msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -18922,6 +19074,11 @@ msgstr "Integridade da atualização em todos os espaços de trabalho"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "Integridade da atualização na instância e nos espaços de trabalho"
+
+#. js-lingui-id: Ngj5VX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
+msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -19717,6 +19874,11 @@ msgstr "Assistir demonstração"
 msgid "Watch members demo"
 msgstr "Assistir demonstração de membros"
 
+#. js-lingui-id: icGmU/
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
+msgstr ""
+
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/hooks/useSubmitSubscriptionPayment.ts
@@ -20040,6 +20202,7 @@ msgstr "Workflows"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -20478,6 +20641,11 @@ msgstr "Sua chave Enterprise"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise subscription has been canceled."
 msgstr "Sua assinatura Enterprise foi cancelada."
+
+#. js-lingui-id: gUv6/H
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, grant this app access to the organization on GitHub's authorization screen (Organization access section)."
+msgstr ""
 
 #. js-lingui-id: leFkCA
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx

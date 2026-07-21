@@ -21,7 +21,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -49,6 +49,24 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
+  it('does not request a bot when the conference link is an unsupported platform', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          callRecorderPreference: CallRecorderPreference.ON,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://ro.am/r/#/d/123',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'UNSUPPORTED_MEETING_PLATFORM',
+    });
+  });
+
   it('requires a bot without an event preference override', () => {
     expect(
       resolveCallRecorderPolicyResult({
@@ -57,7 +75,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -75,7 +93,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -93,7 +111,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
           endsAt: PAST_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -111,7 +129,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -129,7 +147,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: BEYOND_HORIZON_STARTS_AT,
           endsAt: BEYOND_HORIZON_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -147,7 +165,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: BEYOND_HORIZON_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),
@@ -165,7 +183,7 @@ describe('resolveCallRecorderPolicyResult', () => {
           isCanceled: false,
           startsAt: '',
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
         },
         now: NOW,
       }),

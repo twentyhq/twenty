@@ -12,6 +12,7 @@ export const GET_ALL_EMAILING_DOMAINS = gql`
         key
         value
         priority
+        status
       }
       createdAt
       updatedAt

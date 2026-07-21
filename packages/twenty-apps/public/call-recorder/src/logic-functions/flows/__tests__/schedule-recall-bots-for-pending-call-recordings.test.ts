@@ -1,7 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
+import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -28,6 +30,9 @@ type CallRecordingNode = {
   recordingRequestStatus?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
+  callRecorderFailureReason?: string | null;
 };
 
 type CalendarEventNode = {
@@ -216,6 +221,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.attachedCallRecordingIds).toEqual([]);
+    // A row that never attempted a bot creation needs no Recall lookup.
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBe(
+      NOW.toISOString(),
+    );
     expect(createBotCalls()).toHaveLength(1);
     const [requestUrl, requestInit] = createBotCalls()[0];
     expect(requestUrl).toBe(RECALL_CREATE_BOT_URL);
@@ -246,7 +256,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       ],
     });
     const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
       calendarEvents: [buildCalendarEvent()],
     });
 
@@ -262,8 +276,8 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(lookupParameters.get('metadata__twentyCallRecordingId')).toBe(
-      'call-recording-1',
+    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
+      false,
     );
     expect(lookupParameters.has('join_at_after')).toBe(false);
     expect(lookupParameters.has('join_at_before')).toBe(false);
@@ -279,10 +293,54 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
   });
 
+  it('looks up existing bots once for the whole run instead of per recording', async () => {
+    stubRecallApi({
+      listedBots: [
+        {
+          id: 'recall-bot-existing',
+          metadata: {
+            twentyWorkspaceId: WORKSPACE_ID,
+            twentyCallRecordingId: 'call-recording-1',
+          },
+        },
+      ],
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+        buildPendingCallRecording({
+          id: 'call-recording-2',
+          calendarEventId: 'calendar-event-2',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent(),
+        buildCalendarEvent({ id: 'calendar-event-2' }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-2']);
+    expect(createBotCalls()).toHaveLength(1);
+  });
+
   it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {
     stubRecallApi({ listStatus: 400 });
     const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
       calendarEvents: [buildCalendarEvent()],
     });
 
@@ -295,6 +353,121 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(createBotCalls()).toHaveLength(0);
     expect(client.callRecordings[0].externalBotId).toBeNull();
+  });
+
+  it('re-sends the creation without any Recall lookup when the stored idempotency key still matches', async () => {
+    const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: unchangedIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    const [, requestInit] = createBotCalls()[0];
+    expect(requestInit.headers).toMatchObject({
+      'Idempotency-Key': unchangedIdempotencyKey,
+    });
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+    // The first attempt timestamp survives the re-send so repeated unknown
+    // outcomes age out of the resend window.
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBe(
+      '2026-01-01T11:55:00.000Z',
+    );
+  });
+
+  it('falls back to the Recall lookup when the recorded attempt is too old to trust its idempotency key', async () => {
+    const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2025-12-30T12:00:00.000Z',
+          botScheduleIdempotencyKey: unchangedIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('falls back to the Recall lookup when the meeting moved since the recorded attempt', async () => {
+    const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt('2026-01-01T09:00:00.000Z'),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: staleIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('re-schedules an ambiguous recording when the lookup confirms no bot exists', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
   it('does not report a recording as scheduled when Recall scheduling fails', async () => {
@@ -318,7 +491,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBeNull();
   });
 
-  it('skips a recording whose meeting has already ended', async () => {
+  it('marks a recording failed when its meeting ended before any bot was scheduled', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [
@@ -335,7 +508,81 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('FAILED');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'bot_never_scheduled',
+    );
+  });
+
+  it('keeps an ended recording with an unresolved attempt pending while convergence may still resolve it', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T09:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: PAST_STARTS_AT,
+          endsAt: PAST_ENDS_AT,
+        }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
+  });
+
+  it('fails an ended recording with an unresolved attempt once the convergence lookback has passed', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2025-12-20T09:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: '2025-12-20T10:00:00.000Z',
+          endsAt: '2025-12-20T11:00:00.000Z',
+        }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('FAILED');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'bot_schedule_outcome_unknown',
+    );
+  });
+
+  it('leaves a recording untouched when its calendar event is missing', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
   });
 
   it('does nothing when every scheduled recording already has a bot', async () => {

@@ -84,6 +84,52 @@ export default defineView({
   `getFieldUniversalIdentifier` يُبقي مرجعك صحيحًا حتى إذا تغيّرت تلك المُدخلات، ويتجنّب الانحراف إذا تطوّر أسلوب الاشتقاق في أي وقت.
 </Note>
 
+## حقول العلاقات الخاصة بالنظام
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` متوفر في `twenty-sdk`
+  بدءًا من الإصدار 2.23، ويتطلب خادم Twenty بالإصدار 2.23 أو أحدث.
+</Note>
+
+بالإضافة إلى حقول النظام البدائية المذكورة أعلاه، يوفِّر الخادم أيضًا أربعة **حقول علاقات للنظام** على كل كائن: `timelineActivities` و`attachments` و`noteTargets` و`taskTargets`، يشير كلٌّ منها إلى كائن العلاقة القياسي المطابِق.
+
+لا يتم حلّ هذه الحقول باستخدام `getFieldUniversalIdentifier`، إذ يتم اشتقاق معرّفها **بدون الاعتماد على الاسم**، من الكائن المستضيف للحقل والكائن الذي يشير إليه الحقل. وبهذه الطريقة، فإن إعادة تسمية كائن ما لا تغيِّر مطلقًا معرّفات حقول العلاقات الخاصة به.
+
+استخدم `getSystemRelationFieldUniversalIdentifier` لحلّها:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` هو الكائن الذي **يستضيف** الحقل.
+* `relationTargetObjectUniversalIdentifier` هو الكائن الذي **يشير إليه** الحقل.
+
+يتم ترميز الاتجاه من خلال ترتيب الوسيطات. لحلّ الجانب العكسي (مثلًا `attachment.targetRocket`، حقل morph الذي يُنشِئه الخادم على كائن العلاقة القياسي)، قم بمبادلة الاثنين:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+كما هو الحال مع حقول النظام القياسية (scalar)، يعمل المعرّف الناتج في أي موضع يُتوقَّع فيه `fieldMetadataUniversalIdentifier`.
+
 ## الكائنات القياسية في Twenty
 
 بالنسبة إلى كائن Twenty **قياسي** (Person، Company، Opportunity، …)، لا تحتاج إلى اشتقاق أي شيء: فمعرّفات الحقول النظامية هي ثوابت مُسبقة الحساب يمكنك استيرادها مباشرة.

@@ -21,7 +21,7 @@ describe('Onboarding status when signing up in an existing workspace (integratio
     }
   });
 
-  it('should only require profile creation for a new user joining through an invite', async () => {
+  it('should start with the connect-account step for a new user joining through an invite', async () => {
     createdUserAccessToken = await signUpInWorkspaceAndGetAccessToken(
       `invited-onboarding-status-${randomUUID()}@example.com`,
     );
@@ -33,8 +33,6 @@ describe('Onboarding status when signing up in an existing workspace (integratio
       expectToFail: false,
     });
 
-    expect(currentUser.onboardingStatus).toBe(
-      OnboardingStatus.PROFILE_CREATION,
-    );
+    expect(currentUser.onboardingStatus).toBe(OnboardingStatus.SYNC_EMAIL);
   });
 });
