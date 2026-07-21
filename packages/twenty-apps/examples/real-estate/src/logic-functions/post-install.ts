@@ -6,56 +6,69 @@ const eur = (amount: number) => ({
   currencyCode: 'EUR',
 });
 
-const AGENTS = [
-  { firstName: 'Sophie', lastName: 'Bernard' },
-  { firstName: 'Marc', lastName: 'Lefevre' },
+const FIRST = [
+  'Emma', 'Lucas', 'Chloe', 'Louis', 'Jade', 'Hugo', 'Lea', 'Nathan',
+  'Manon', 'Enzo', 'Camille', 'Gabriel', 'Sarah', 'Raphael', 'Ines',
+  'Arthur', 'Zoe', 'Paul', 'Julie', 'Adam', 'Alice', 'Theo', 'Lina',
+  'Noah', 'Eva', 'Tom', 'Rose', 'Sacha', 'Nina', 'Leo',
 ];
+const LAST = [
+  'Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit',
+  'Durand', 'Leroy', 'Moreau', 'Simon', 'Laurent', 'Lefevre', 'Michel',
+  'Garcia',
+];
+const lastFor = (i: number) => LAST[i % LAST.length];
 
-const SELLERS = [
-  { firstName: 'Claire', lastName: 'Dubois' },
-  { firstName: 'Julien', lastName: 'Moreau' },
-];
+const AGENT_COUNT = 4;
+const SELLER_COUNT = 12;
+const BUYER_COUNT = 12;
+const PROPERTY_COUNT = 30;
 
-const BUYERS = [
-  {
-    firstName: 'Emma',
-    lastName: 'Laurent',
-    budgetMin: eur(300_000),
-    budgetMax: eur(450_000),
-    preApproved: true,
-    desiredArea: 'Le Marais',
-  },
-  {
-    firstName: 'Lucas',
-    lastName: 'Martin',
-    budgetMin: eur(500_000),
-    budgetMax: eur(750_000),
-    preApproved: false,
-    desiredArea: 'Montmartre',
-  },
-  {
-    firstName: 'Chloe',
-    lastName: 'Petit',
-    budgetMin: eur(250_000),
-    budgetMax: eur(350_000),
-    preApproved: true,
-    desiredArea: 'Belleville',
-  },
+const agentFirst = FIRST.slice(0, AGENT_COUNT);
+const sellerFirst = FIRST.slice(AGENT_COUNT, AGENT_COUNT + SELLER_COUNT);
+const buyerFirst = FIRST.slice(
+  AGENT_COUNT + SELLER_COUNT,
+  AGENT_COUNT + SELLER_COUNT + BUYER_COUNT,
+);
+
+const AREAS = [
+  'Le Marais', 'Montmartre', 'Belleville', 'Bastille', 'Latin Quarter',
+  'Saint-Germain', 'Canal Saint-Martin', 'Batignolles', 'Butte-aux-Cailles',
+  'Pigalle', 'Oberkampf', 'Nation',
 ];
+const STREETS = [
+  'Rue de Rivoli', 'Avenue Montaigne', 'Rue des Martyrs', 'Villa Leandre',
+  'Boulevard Haussmann', 'Rue Oberkampf', 'Rue du Bac', 'Avenue Foch',
+  'Rue de la Pompe', 'Quai de Valmy', 'Rue Lepic', 'Cours Mirabeau',
+];
+const CITIES: [string, string][] = [
+  ['Paris', '75001'], ['Paris', '75008'], ['Lyon', '69002'],
+  ['Bordeaux', '33000'], ['Marseille', '13001'], ['Nice', '06000'],
+];
+const TYPES = ['APARTMENT', 'HOUSE', 'CONDO', 'LAND'];
+const STATUSES = ['ACTIVE', 'ACTIVE', 'ACTIVE', 'UNDER_OFFER', 'COMING_SOON', 'SOLD'];
+const SHOWING_STATUSES = ['COMPLETED', 'SCHEDULED', 'COMPLETED', 'NO_SHOW', 'CANCELLED'];
+const OPP_STAGES = ['SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
 
 const handler = async () => {
   const client = new CoreApiClient();
 
   const peopleData = [
-    ...AGENTS.map((p) => ({ name: p, personType: 'AGENT' })),
-    ...SELLERS.map((p) => ({ name: p, personType: 'SELLER' })),
-    ...BUYERS.map((p) => ({
-      name: { firstName: p.firstName, lastName: p.lastName },
+    ...agentFirst.map((firstName, i) => ({
+      name: { firstName, lastName: lastFor(i) },
+      personType: 'AGENT',
+    })),
+    ...sellerFirst.map((firstName, i) => ({
+      name: { firstName, lastName: lastFor(AGENT_COUNT + i) },
+      personType: 'SELLER',
+    })),
+    ...buyerFirst.map((firstName, b) => ({
+      name: { firstName, lastName: lastFor(AGENT_COUNT + SELLER_COUNT + b) },
       personType: 'BUYER',
-      budgetMin: p.budgetMin,
-      budgetMax: p.budgetMax,
-      preApproved: p.preApproved,
-      desiredArea: p.desiredArea,
+      budgetMin: eur(200_000 + b * 40_000),
+      budgetMax: eur(200_000 + b * 40_000 + 150_000 + (b % 3) * 50_000),
+      preApproved: b % 2 === 0,
+      desiredArea: AREAS[b % AREAS.length],
     })),
   ];
 
@@ -70,76 +83,44 @@ const handler = async () => {
   const personId = (firstName: string): string =>
     createPeople.find((person: any) => person.name?.firstName === firstName).id;
 
-  const propertiesData = [
-    {
-      name: '12 Rue de Rivoli',
-      propertyAddress: {
-        addressStreet1: '12 Rue de Rivoli',
-        addressCity: 'Paris',
-        addressPostcode: '75001',
-        addressCountry: 'France',
-      },
-      price: eur(420_000),
-      status: 'ACTIVE',
-      propertyType: 'APARTMENT',
-      bedrooms: 2,
-      bathrooms: 1,
-      surfaceSqm: 65,
-      listingAgentId: personId('Sophie'),
-      sellerContactId: personId('Claire'),
+  const propertyMeta = Array.from({ length: PROPERTY_COUNT }, (_, i) => {
+    const [city, postcode] = CITIES[i % CITIES.length];
+    const street = STREETS[i % STREETS.length];
+    const number = 3 + i * 7;
+    return {
+      name: `${number} ${street}`,
+      number,
+      street,
+      city,
+      postcode,
+      priceEur: 180_000 + i * 38_000 + (i % 3) * 15_000,
+      status: STATUSES[i % STATUSES.length],
+      propertyType: TYPES[i % TYPES.length],
+      bedrooms: 1 + (i % 5),
+      bathrooms: 1 + (i % 3),
+      surfaceSqm: 42 + i * 4,
+      agentFirst: agentFirst[i % AGENT_COUNT],
+      sellerFirst: sellerFirst[i % SELLER_COUNT],
+    };
+  });
+
+  const propertiesData = propertyMeta.map((m) => ({
+    name: m.name,
+    propertyAddress: {
+      addressStreet1: `${m.number} ${m.street}`,
+      addressCity: m.city,
+      addressPostcode: m.postcode,
+      addressCountry: 'France',
     },
-    {
-      name: '8 Avenue Montaigne',
-      propertyAddress: {
-        addressStreet1: '8 Avenue Montaigne',
-        addressCity: 'Paris',
-        addressPostcode: '75008',
-        addressCountry: 'France',
-      },
-      price: eur(690_000),
-      status: 'UNDER_OFFER',
-      propertyType: 'CONDO',
-      bedrooms: 3,
-      bathrooms: 2,
-      surfaceSqm: 95,
-      listingAgentId: personId('Marc'),
-      sellerContactId: personId('Julien'),
-    },
-    {
-      name: '45 Rue des Martyrs',
-      propertyAddress: {
-        addressStreet1: '45 Rue des Martyrs',
-        addressCity: 'Paris',
-        addressPostcode: '75009',
-        addressCountry: 'France',
-      },
-      price: eur(320_000),
-      status: 'ACTIVE',
-      propertyType: 'HOUSE',
-      bedrooms: 4,
-      bathrooms: 2,
-      surfaceSqm: 120,
-      listingAgentId: personId('Sophie'),
-      sellerContactId: personId('Claire'),
-    },
-    {
-      name: '3 Villa Leandre',
-      propertyAddress: {
-        addressStreet1: '3 Villa Leandre',
-        addressCity: 'Paris',
-        addressPostcode: '75018',
-        addressCountry: 'France',
-      },
-      price: eur(850_000),
-      status: 'COMING_SOON',
-      propertyType: 'HOUSE',
-      bedrooms: 5,
-      bathrooms: 3,
-      surfaceSqm: 160,
-      listingAgentId: personId('Marc'),
-      sellerContactId: personId('Julien'),
-    },
-  ];
+    price: eur(m.priceEur),
+    status: m.status,
+    propertyType: m.propertyType,
+    bedrooms: m.bedrooms,
+    bathrooms: m.bathrooms,
+    surfaceSqm: m.surfaceSqm,
+    listingAgentId: personId(m.agentFirst),
+    sellerContactId: personId(m.sellerFirst),
+  }));
 
   const { createProperties } = (await client.mutation({
     createProperties: {
@@ -152,46 +133,25 @@ const handler = async () => {
   const propertyId = (name: string): string =>
     createProperties.find((property: any) => property.name === name).id;
 
-  const showingsData = [
-    {
-      name: '12 Rue de Rivoli / Laurent',
-      scheduledAt: '2026-07-10T14:00:00.000Z',
-      status: 'COMPLETED',
-      interestLevel: 'RATING_4',
-      propertyId: propertyId('12 Rue de Rivoli'),
-      buyerId: personId('Emma'),
-    },
-    {
-      name: '8 Avenue Montaigne / Martin',
-      scheduledAt: '2026-07-12T11:00:00.000Z',
-      status: 'COMPLETED',
-      interestLevel: 'RATING_5',
-      propertyId: propertyId('8 Avenue Montaigne'),
-      buyerId: personId('Lucas'),
-    },
-    {
-      name: '45 Rue des Martyrs / Petit',
-      scheduledAt: '2026-08-05T10:00:00.000Z',
-      status: 'SCHEDULED',
-      propertyId: propertyId('45 Rue des Martyrs'),
-      buyerId: personId('Chloe'),
-    },
-    {
-      name: '45 Rue des Martyrs / Laurent',
-      scheduledAt: '2026-07-15T16:00:00.000Z',
-      status: 'COMPLETED',
-      interestLevel: 'RATING_3',
-      propertyId: propertyId('45 Rue des Martyrs'),
-      buyerId: personId('Emma'),
-    },
-    {
-      name: '3 Villa Leandre / Martin',
-      scheduledAt: '2026-08-08T15:00:00.000Z',
-      status: 'SCHEDULED',
-      propertyId: propertyId('3 Villa Leandre'),
-      buyerId: personId('Lucas'),
-    },
-  ];
+  const showingsData = buyerFirst.flatMap((firstName, b) =>
+    [0, 1].map((k) => {
+      const propertyIndex = (b * 2 + k * 11) % PROPERTY_COUNT;
+      const meta = propertyMeta[propertyIndex];
+      const status = SHOWING_STATUSES[(b + k) % SHOWING_STATUSES.length];
+      const month = 7 + ((b + k) % 2);
+      const day = String(3 + ((b * 3 + k) % 25)).padStart(2, '0');
+      return {
+        name: `${meta.name} / ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`,
+        status,
+        scheduledAt: `2026-0${month}-${day}T1${k + 2}:00:00.000Z`,
+        propertyId: propertyId(meta.name),
+        buyerId: personId(firstName),
+        ...(status === 'COMPLETED'
+          ? { interestLevel: `RATING_${2 + ((b + k) % 4)}` }
+          : {}),
+      };
+    }),
+  );
 
   await client.mutation({
     createShowings: {
@@ -200,32 +160,16 @@ const handler = async () => {
     },
   } as any);
 
-  const opportunitiesData = [
-    {
-      name: 'Rivoli - Laurent',
-      stage: 'PROPOSAL',
-      amount: eur(410_000),
-      closeDate: '2026-09-15T00:00:00.000Z',
-      pointOfContactId: personId('Emma'),
-      propertyId: propertyId('12 Rue de Rivoli'),
-    },
-    {
-      name: 'Montaigne - Martin',
-      stage: 'CUSTOMER',
-      amount: eur(680_000),
-      closeDate: '2026-08-20T00:00:00.000Z',
-      pointOfContactId: personId('Lucas'),
-      propertyId: propertyId('8 Avenue Montaigne'),
-    },
-    {
-      name: 'Leandre - Martin',
-      stage: 'SCREENING',
-      amount: eur(830_000),
-      closeDate: '2026-10-30T00:00:00.000Z',
-      pointOfContactId: personId('Lucas'),
-      propertyId: propertyId('3 Villa Leandre'),
-    },
-  ];
+  const opportunitiesData = propertyMeta
+    .filter((_, i) => i % 4 === 1)
+    .map((meta, k) => ({
+      name: `${meta.name} - ${lastFor(AGENT_COUNT + SELLER_COUNT + (k % BUYER_COUNT))}`,
+      stage: OPP_STAGES[k % OPP_STAGES.length],
+      amount: eur(Math.round(meta.priceEur * 0.97)),
+      closeDate: `2026-${String(9 + (k % 3)).padStart(2, '0')}-15T00:00:00.000Z`,
+      pointOfContactId: personId(buyerFirst[k % BUYER_COUNT]),
+      propertyId: propertyId(meta.name),
+    }));
 
   await client.mutation({
     createOpportunities: {
@@ -245,7 +189,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: '8adff1aa-c3a5-41ba-8071-d86c1195ffd8',
   name: 'post-install',
   description: 'Seeds demo people, properties, showings and opportunities.',
-  timeoutSeconds: 60,
+  timeoutSeconds: 120,
   shouldRunSynchronously: true,
   handler,
 });
