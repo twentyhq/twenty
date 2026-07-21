@@ -1,0 +1,67 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_11e59742733dbd::t_7ac3408f5034a4 56-58
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_d977295e1531e3 10
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/queries/getMessageSuppressions.ts
+  s_11e59742733dbd::t_2f45b49b25453f 1-17
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/updateEmailingDomainSenderIdentity.ts
+  s_11e59742733dbd::t_bc3e6c5ef5b3fa 1-12
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/update-emailing-domain-sender-identity.input.ts
+  s_11e59742733dbd::t_43ccfba1c4ed16 1-15
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_49cb462405f4cf 61-75
+  s_11e59742733dbd::t_52a81bf76d3fcf 12
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_11e59742733dbd::t_942697a3e855d8 17,29,41,126-135
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_11e59742733dbd::t_5067ba5e6b9c6f 1-184
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto.ts
+  s_11e59742733dbd::t_7d8b980ffa8954 33-35
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-from-header.util.ts
+  s_11e59742733dbd::t_200bdb14a0d25c 1-22
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_11e59742733dbd::t_fabf92d19d63f5 36
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_11e59742733dbd::t_ba2d2868bd9162 4,59-60,128-138
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/mutations/deleteMessageSuppression.ts
+  s_11e59742733dbd::t_ee7fa1262e4e2d 1-7
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_11e59742733dbd::t_586470432baf68 12,108-117,231-255
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_11e59742733dbd::t_edd0586d41553a 217-224,735-738
+packages/twenty-front/src/modules/settings/emailing-domains/components/SettingsEmailingDomainSenderFieldInput.tsx
+  s_11e59742733dbd::t_14ef3b8e91306d 1-89
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_11e59742733dbd::t_f499b36e43d10d 236
+  s_11e59742733dbd::t_82dcfc56b2ebff 118
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286709000-add-emailing-domain-sender-identity.ts
+  s_11e59742733dbd::t_b997bd5fbfcdc5 1-21
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_11e59742733dbd::t_d00f6a09b2f312 5,11-12,24,30
+packages/twenty-front/src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+  s_11e59742733dbd::t_c883f8944f7c72 7,25
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_11e59742733dbd::t_57e30225c56657 10
+packages/twenty-front/src/modules/settings/workspace/components/SettingsEmailGroupPlanPill.tsx
+  s_11e59742733dbd::t_f80260015aef61 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_11e59742733dbd::t_e0d1764875423a 24-29,136-158
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_11e59742733dbd::t_4a53e8627f6569 19,61-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "71172c88986c9aeb4d354841153d43a5eb988113",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
