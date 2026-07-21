@@ -74,8 +74,8 @@ describe('application key-value store (e2e)', () => {
     expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
   });
 
-  it('sets, reads, overwrites and deletes an INSTALL entry', async () => {
-    const key = `${KEY_PREFIX}:install`;
+  it('sets, reads, overwrites and deletes a WORKSPACE entry', async () => {
+    const key = `${KEY_PREFIX}:workspace`;
 
     const setResponse = await makeMetadataAPIRequest(
       {
@@ -89,7 +89,7 @@ describe('application key-value store (e2e)', () => {
     expect(setResponse.body.data.setAppKeyValue).toEqual({
       key,
       value: { count: 1 },
-      scope: 'INSTALL',
+      scope: 'WORKSPACE',
     });
 
     const overwriteResponse = await makeMetadataAPIRequest(
@@ -146,13 +146,13 @@ describe('application key-value store (e2e)', () => {
     expect(response.body.data.appKeyValue).toBeNull();
   });
 
-  it('claims a GLOBAL key for the caller workspace and keeps it separate from INSTALL entries', async () => {
-    const key = `${KEY_PREFIX}:global`;
+  it('claims a SERVER key for the caller workspace and keeps it separate from WORKSPACE entries', async () => {
+    const key = `${KEY_PREFIX}:server`;
 
     const claimResponse = await makeMetadataAPIRequest(
       {
         query: SET_APP_KEY_VALUE,
-        variables: { input: { key, scope: 'GLOBAL' } },
+        variables: { input: { key, scope: 'SERVER' } },
       },
       appToken,
     );
@@ -161,14 +161,14 @@ describe('application key-value store (e2e)', () => {
     expect(claimResponse.body.data.setAppKeyValue).toEqual({
       key,
       value: SEED_APPLE_WORKSPACE_ID,
-      scope: 'GLOBAL',
+      scope: 'SERVER',
     });
 
     // Claiming again from the same workspace is idempotent
     const reclaimResponse = await makeMetadataAPIRequest(
       {
         query: SET_APP_KEY_VALUE,
-        variables: { input: { key, scope: 'GLOBAL' } },
+        variables: { input: { key, scope: 'SERVER' } },
       },
       appToken,
     );
@@ -178,46 +178,46 @@ describe('application key-value store (e2e)', () => {
       SEED_APPLE_WORKSPACE_ID,
     );
 
-    const getGlobalResponse = await makeMetadataAPIRequest(
-      { query: GET_APP_KEY_VALUE, variables: { key, scope: 'GLOBAL' } },
+    const getServerScopeResponse = await makeMetadataAPIRequest(
+      { query: GET_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
 
-    expect(getGlobalResponse.body.data.appKeyValue.value).toBe(
+    expect(getServerScopeResponse.body.data.appKeyValue.value).toBe(
       SEED_APPLE_WORKSPACE_ID,
     );
 
-    const getInstallResponse = await makeMetadataAPIRequest(
+    const getWorkspaceScopeResponse = await makeMetadataAPIRequest(
       { query: GET_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
 
-    expect(getInstallResponse.body.data.appKeyValue).toBeNull();
+    expect(getWorkspaceScopeResponse.body.data.appKeyValue).toBeNull();
 
     const releaseResponse = await makeMetadataAPIRequest(
-      { query: DELETE_APP_KEY_VALUE, variables: { key, scope: 'GLOBAL' } },
+      { query: DELETE_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
 
     expect(releaseResponse.body.data.deleteAppKeyValue).toBe(true);
 
     const getAfterReleaseResponse = await makeMetadataAPIRequest(
-      { query: GET_APP_KEY_VALUE, variables: { key, scope: 'GLOBAL' } },
+      { query: GET_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
 
     expect(getAfterReleaseResponse.body.data.appKeyValue).toBeNull();
   });
 
-  it('rejects a GLOBAL claim whose value is not the caller workspaceId', async () => {
+  it('rejects a SERVER claim whose value is not the caller workspaceId', async () => {
     const response = await makeMetadataAPIRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: {
           input: {
-            key: `${KEY_PREFIX}:global-foreign-value`,
+            key: `${KEY_PREFIX}:server-foreign-value`,
             value: 'some-other-workspace-id',
-            scope: 'GLOBAL',
+            scope: 'SERVER',
           },
         },
       },
@@ -225,8 +225,6 @@ describe('application key-value store (e2e)', () => {
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain(
-      'claiming workspaceId',
-    );
+    expect(response.body.errors[0].message).toContain('claiming workspaceId');
   });
 });

@@ -43,9 +43,9 @@ export class ApplicationKeyValueService {
     scope: AppKeyValueScope;
   }): Promise<AppKeyValue | null> {
     const scopedWhere =
-      scope === AppKeyValueScope.GLOBAL
+      scope === AppKeyValueScope.SERVER
         ? {
-            applicationId: await this.resolveGlobalApplicationId(application),
+            applicationId: await this.resolveServerApplicationId(application),
             workspaceId: IsNull(),
           }
         : {
@@ -81,8 +81,8 @@ export class ApplicationKeyValueService {
     value: unknown;
     scope: AppKeyValueScope;
   }): Promise<AppKeyValue> {
-    if (scope === AppKeyValueScope.GLOBAL) {
-      return this.claimGlobalKey({ application, workspaceId, key, value });
+    if (scope === AppKeyValueScope.SERVER) {
+      return this.claimServerKey({ application, workspaceId, key, value });
     }
 
     await this.keyValuePairRepository.upsert(
@@ -115,13 +115,13 @@ export class ApplicationKeyValueService {
     key: string;
     scope: AppKeyValueScope;
   }): Promise<boolean> {
-    if (scope === AppKeyValueScope.GLOBAL) {
+    if (scope === AppKeyValueScope.SERVER) {
       const result = await this.keyValuePairRepository
         .createQueryBuilder()
         .delete()
         .where('"key" = :key', { key })
         .andWhere('"applicationId" = :applicationId', {
-          applicationId: await this.resolveGlobalApplicationId(application),
+          applicationId: await this.resolveServerApplicationId(application),
         })
         .andWhere('"workspaceId" IS NULL')
         .andWhere('"type" = :type', {
@@ -145,7 +145,7 @@ export class ApplicationKeyValueService {
     return (result.affected ?? 0) > 0;
   }
 
-  private async claimGlobalKey({
+  private async claimServerKey({
     application,
     workspaceId,
     key,
@@ -158,16 +158,16 @@ export class ApplicationKeyValueService {
   }): Promise<AppKeyValue> {
     if (isDefined(value) && value !== workspaceId) {
       throw new ApplicationException(
-        'Global keys hold the claiming workspaceId: omit the value or pass your own workspaceId',
+        'Server keys hold the claiming workspaceId: omit the value or pass your own workspaceId',
         ApplicationExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: msg`Global keys can only be claimed for your own workspace.`,
+          userFriendlyMessage: msg`Server keys can only be claimed for your own workspace.`,
         },
       );
     }
 
-    const globalApplicationId =
-      await this.resolveGlobalApplicationId(application);
+    const serverApplicationId =
+      await this.resolveServerApplicationId(application);
     const claimValue: unknown = workspaceId;
 
     await this.keyValuePairRepository
@@ -177,7 +177,7 @@ export class ApplicationKeyValueService {
       .values({
         key,
         value: claimValue as KeyValuePairEntity['value'],
-        applicationId: globalApplicationId,
+        applicationId: serverApplicationId,
         workspaceId: null,
         userId: null,
         type: KeyValuePairType.APPLICATION_VARIABLE,
@@ -188,7 +188,7 @@ export class ApplicationKeyValueService {
     const entry = await this.keyValuePairRepository.findOne({
       where: {
         key,
-        applicationId: globalApplicationId,
+        applicationId: serverApplicationId,
         workspaceId: IsNull(),
         type: KeyValuePairType.APPLICATION_VARIABLE,
       },
@@ -196,7 +196,7 @@ export class ApplicationKeyValueService {
 
     if (!isDefined(entry)) {
       throw new ApplicationException(
-        `Could not persist global key "${key}"`,
+        `Could not persist server key "${key}"`,
         ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED,
       );
     }
@@ -205,19 +205,19 @@ export class ApplicationKeyValueService {
 
     if (claimedWorkspaceId !== workspaceId) {
       throw new ApplicationException(
-        `Global key "${key}" is already claimed by another workspace`,
+        `Server key "${key}" is already claimed by another workspace`,
         ApplicationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`This global key is already claimed by another workspace.`,
+          userFriendlyMessage: msg`This server key is already claimed by another workspace.`,
         },
       );
     }
 
-    return { key, value: entry.value, scope: AppKeyValueScope.GLOBAL };
+    return { key, value: entry.value, scope: AppKeyValueScope.SERVER };
   }
 
-  // GLOBAL entries of a registered application all live under the registration owner workspace's install
-  private async resolveGlobalApplicationId(
+  // SERVER entries of a registered application all live under the registration owner workspace's install
+  private async resolveServerApplicationId(
     application: FlatApplication,
   ): Promise<string> {
     if (!isDefined(application.applicationRegistrationId)) {
@@ -245,10 +245,10 @@ export class ApplicationKeyValueService {
 
     if (!isDefined(ownerInstall)) {
       throw new ApplicationException(
-        `Global keys are unavailable for application ${application.id}: the registration owner workspace has no install`,
+        `Server keys are unavailable for application ${application.id}: the registration owner workspace has no install`,
         ApplicationExceptionCode.APP_NOT_INSTALLED,
         {
-          userFriendlyMessage: msg`Global keys require the application publisher workspace to have the application installed.`,
+          userFriendlyMessage: msg`Server keys require the application publisher workspace to have the application installed.`,
         },
       );
     }

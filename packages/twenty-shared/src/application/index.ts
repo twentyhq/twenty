@@ -9,7 +9,8 @@
 
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
-export type { AppKeyValueScope, AppKeyValue } from './appKeyValueType';
+export type { AppKeyValueScope } from './appKeyValueScopeType';
+export type { AppKeyValue } from './appKeyValueType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,

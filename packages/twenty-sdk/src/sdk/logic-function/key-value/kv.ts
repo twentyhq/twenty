@@ -31,7 +31,7 @@ const DELETE_APP_KEY_VALUE_MUTATION = `
   }
 `;
 
-const DEFAULT_APP_KEY_VALUE_SCOPE: AppKeyValueScope = 'INSTALL';
+const DEFAULT_APP_KEY_VALUE_SCOPE: AppKeyValueScope = 'WORKSPACE';
 
 type KvOptions = {
   scope?: AppKeyValueScope;

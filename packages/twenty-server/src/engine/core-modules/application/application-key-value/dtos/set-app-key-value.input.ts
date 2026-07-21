@@ -20,7 +20,7 @@ export class SetAppKeyValueInput {
   @IsOptional()
   @Field(() => AppKeyValueScope, {
     nullable: true,
-    defaultValue: AppKeyValueScope.INSTALL,
+    defaultValue: AppKeyValueScope.WORKSPACE,
   })
   scope?: AppKeyValueScope;
 }

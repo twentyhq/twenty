@@ -2918,11 +2918,11 @@ type AppKeyValue {
 }
 
 """
-INSTALL entries are private to one workspace install of the application. GLOBAL entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key.
+WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key.
 """
 enum AppKeyValueScope {
-  INSTALL
-  GLOBAL
+  WORKSPACE
+  SERVER
 }
 
 type CalendarChannel {
@@ -3158,7 +3158,7 @@ type Query {
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
-  appKeyValue(key: String!, scope: AppKeyValueScope = INSTALL): AppKeyValue
+  appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
@@ -3450,7 +3450,7 @@ type Mutation {
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
-  deleteAppKeyValue(key: String!, scope: AppKeyValueScope = INSTALL): Boolean!
+  deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4562,7 +4562,7 @@ input UpdateCalendarChannelInputUpdates {
 input SetAppKeyValueInput {
   key: String!
   value: JSON
-  scope: AppKeyValueScope = INSTALL
+  scope: AppKeyValueScope = WORKSPACE
 }
 
 input FileAttachmentInput {

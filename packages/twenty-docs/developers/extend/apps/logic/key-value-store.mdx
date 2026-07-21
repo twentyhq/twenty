@@ -34,24 +34,24 @@ await kv.delete('sync-cursor:linear');
 
 ## Scopes
 
-Each entry has a scope, passed as an option on every call. The default is `INSTALL`.
+Each entry has a scope, passed as an option on every call. The default is `WORKSPACE`.
 
-- **`INSTALL`** (default) — the entry is private to the current workspace install of your app. Each workspace that installs the app gets its own independent set of keys. This is what you want for caches, cursors, and per-workspace state.
-- **`GLOBAL`** — the entry is shared across **every install** of your app. Global entries behave like **claims**: the stored value is always the workspaceId that claimed the key (omit `value` on `set` to claim the key for the current workspace), and only that workspace can overwrite or delete it. Any install can read the entry.
+- **`WORKSPACE`** (default) — the entry is private to the current workspace install of your app. Each workspace that installs the app gets its own independent set of keys. This is what you want for caches, cursors, and per-workspace state.
+- **`SERVER`** — the entry is shared across **every install** of your app on the server. Server entries behave like **claims**: the stored value is always the workspaceId that claimed the key (omit `value` on `set` to claim the key for the current workspace), and only that workspace can overwrite or delete it. Any install can read the entry.
 
-Global claims exist for cross-workspace routing. A [server-route resolver](/developers/extend/apps/logic/logic-functions#server-route-trigger) runs in the application registration owner workspace, but an inbound webhook usually only carries an external account id — not a Twenty workspaceId. Have each workspace claim its external id at connect time, then resolve it in the route:
+Server claims exist for cross-workspace routing. A [server-route resolver](/developers/extend/apps/logic/logic-functions#server-route-trigger) runs in the application registration owner workspace, but an inbound webhook usually only carries an external account id — not a Twenty workspaceId. Have each workspace claim its external id at connect time, then resolve it in the route:
 
 ```ts
 // In the connected workspace, when the external account is linked:
-await kv.set(`slack:team:${teamId}`, undefined, { scope: 'GLOBAL' });
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
 
 // In the server-route resolver (owner workspace), on each webhook:
 const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
-  scope: 'GLOBAL',
+  scope: 'SERVER',
 });
 ```
 
-Because a global key can only be claimed for the caller's own workspace and never overwritten by another one, a workspace can't hijack a mapping that belongs to someone else. `kv.set` throws when the key is already claimed by another workspace.
+Because a server key can only be claimed for the caller's own workspace and never overwritten by another one, a workspace can't hijack a mapping that belongs to someone else. `kv.set` throws when the key is already claimed by another workspace.
 
 ## Use it: cache an expensive call
 
@@ -106,5 +106,5 @@ The built-in store is deliberately opaque: entries aren't records, so you can't 
 - **Visibility & permissions.** Rows live in the workspace database like any other record, so they're queryable through the API and respect your app's [role](/developers/extend/apps/config/roles). To keep the store out of the main UI, leave it off your [navigation menu](/developers/extend/apps/layout/navigation-menu-items).
 
 <Note>
-Unlike the built-in store, a custom object is always scoped to one workspace — it can't share entries across installs the way `GLOBAL` keys do.
+Unlike the built-in store, a custom object is always scoped to one workspace — it can't share entries across installs the way `SERVER` keys do.
 </Note>

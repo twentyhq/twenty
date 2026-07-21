@@ -32,7 +32,7 @@ export class ApplicationKeyValueResolver {
     @Args('scope', {
       type: () => AppKeyValueScope,
       nullable: true,
-      defaultValue: AppKeyValueScope.INSTALL,
+      defaultValue: AppKeyValueScope.WORKSPACE,
     })
     scope: AppKeyValueScope,
   ): Promise<AppKeyValue | null> {
@@ -55,7 +55,7 @@ export class ApplicationKeyValueResolver {
       workspaceId: workspace.id,
       key: input.key,
       value: input.value,
-      scope: input.scope ?? AppKeyValueScope.INSTALL,
+      scope: input.scope ?? AppKeyValueScope.WORKSPACE,
     });
   }
 
@@ -67,7 +67,7 @@ export class ApplicationKeyValueResolver {
     @Args('scope', {
       type: () => AppKeyValueScope,
       nullable: true,
-      defaultValue: AppKeyValueScope.INSTALL,
+      defaultValue: AppKeyValueScope.WORKSPACE,
     })
     scope: AppKeyValueScope,
   ): Promise<boolean> {

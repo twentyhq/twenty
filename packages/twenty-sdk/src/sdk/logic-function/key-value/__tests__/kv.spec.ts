@@ -25,7 +25,7 @@ describe('kv', () => {
     fetchSpy.mockRestore();
   });
 
-  it('gets a value with the INSTALL scope by default', async () => {
+  it('gets a value with the WORKSPACE scope by default', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -33,7 +33,7 @@ describe('kv', () => {
             appKeyValue: {
               key: 'my-key',
               value: { count: 3 },
-              scope: 'INSTALL',
+              scope: 'WORKSPACE',
             },
           },
         }),
@@ -52,7 +52,7 @@ describe('kv', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain('appKeyValue(key: $key, scope: $scope)');
-    expect(sentBody.variables).toEqual({ key: 'my-key', scope: 'INSTALL' });
+    expect(sentBody.variables).toEqual({ key: 'my-key', scope: 'WORKSPACE' });
   });
 
   it('returns null when the key is absent', async () => {
@@ -67,7 +67,7 @@ describe('kv', () => {
     expect(value).toBeNull();
   });
 
-  it('sets a value with an explicit GLOBAL scope', async () => {
+  it('sets a value with an explicit SERVER scope', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -75,7 +75,7 @@ describe('kv', () => {
             setAppKeyValue: {
               key: 'slack:team:T123',
               value: 'workspace-1',
-              scope: 'GLOBAL',
+              scope: 'SERVER',
             },
           },
         }),
@@ -83,7 +83,7 @@ describe('kv', () => {
       ),
     );
 
-    await kv.set('slack:team:T123', 'workspace-1', { scope: 'GLOBAL' });
+    await kv.set('slack:team:T123', 'workspace-1', { scope: 'SERVER' });
 
     const [, requestInit] = fetchSpy.mock.calls[0];
     const sentBody = JSON.parse(requestInit?.body as string);
@@ -92,7 +92,7 @@ describe('kv', () => {
       input: {
         key: 'slack:team:T123',
         value: 'workspace-1',
-        scope: 'GLOBAL',
+        scope: 'SERVER',
       },
     });
   });
@@ -111,7 +111,7 @@ describe('kv', () => {
     const [, requestInit] = fetchSpy.mock.calls[0];
     const sentBody = JSON.parse(requestInit?.body as string);
 
-    expect(sentBody.variables).toEqual({ key: 'my-key', scope: 'INSTALL' });
+    expect(sentBody.variables).toEqual({ key: 'my-key', scope: 'WORKSPACE' });
   });
 
   it('surfaces GraphQL errors as a regular Error', async () => {
@@ -125,7 +125,7 @@ describe('kv', () => {
     );
 
     await expect(
-      kv.set('slack:team:T123', undefined, { scope: 'GLOBAL' }),
+      kv.set('slack:team:T123', undefined, { scope: 'SERVER' }),
     ).rejects.toThrow(/already claimed/);
   });
 });
