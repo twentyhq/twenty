@@ -1,4 +1,4 @@
-export type AppKeyValueScope = 'INSTALL' | 'GLOBAL';
+import { type AppKeyValueScope } from '@/application/appKeyValueScopeType';
 
 export type AppKeyValue = {
   key: string;
