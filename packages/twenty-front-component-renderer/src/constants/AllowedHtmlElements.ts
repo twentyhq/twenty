@@ -85,6 +85,15 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       multiple: { type: 'boolean', optional: true },
       capture: { type: 'string', optional: true },
     },
+    events: [
+      'beforeinput',
+      'compositionstart',
+      'compositionupdate',
+      'compositionend',
+      'copy',
+      'paste',
+      'cut',
+    ],
   },
   {
     tag: 'html-textarea',
@@ -98,6 +107,15 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       rows: { type: 'number', optional: true },
       cols: { type: 'number', optional: true },
     },
+    events: [
+      'beforeinput',
+      'compositionstart',
+      'compositionupdate',
+      'compositionend',
+      'copy',
+      'paste',
+      'cut',
+    ],
   },
   {
     tag: 'html-select',

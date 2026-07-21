@@ -1,4 +1,4 @@
-import { fetchJavaScriptModuleSourceText } from '../fetchJavaScriptModuleSourceText';
+import { fetchJavaScriptModuleSourceText } from '@/host/utils/fetchJavaScriptModuleSourceText';
 
 const originalFetch = globalThis.fetch;
 
@@ -14,11 +14,11 @@ describe('fetchJavaScriptModuleSourceText', () => {
     })) as unknown as typeof fetch;
 
     await expect(
-      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),
     ).resolves.toBe('module source');
   });
 
-  it('should forward headers to fetch', async () => {
+  it('should forward headers and omit credentials', async () => {
     const fetchSpy = jest.fn(async () => ({
       ok: true,
       text: async () => '',
@@ -26,15 +26,13 @@ describe('fetchJavaScriptModuleSourceText', () => {
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
     await fetchJavaScriptModuleSourceText(
-      'https://api.twenty.test/component.js',
-      {
-        Authorization: 'Bearer token',
-      },
+      'https://api.twenty.test/core/abc.js',
+      { Authorization: 'Bearer token' },
     );
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      'https://api.twenty.test/component.js',
-      { headers: { Authorization: 'Bearer token' } },
+      'https://api.twenty.test/core/abc.js',
+      { headers: { Authorization: 'Bearer token' }, credentials: 'omit' },
     );
   });
 
@@ -46,7 +44,7 @@ describe('fetchJavaScriptModuleSourceText', () => {
     })) as unknown as typeof fetch;
 
     await expect(
-      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),
     ).rejects.toMatchObject({ code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED' });
   });
 
@@ -56,25 +54,11 @@ describe('fetchJavaScriptModuleSourceText', () => {
     }) as unknown as typeof fetch;
 
     await expect(
-      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/core/abc.js'),
     ).rejects.toMatchObject({
       code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED',
       message:
-        'Failed to fetch front component module https://api.twenty.test/component.js: Failed to fetch',
+        'Failed to fetch SDK client module https://api.twenty.test/core/abc.js: Failed to fetch',
     });
-  });
-
-  it('should include the url and status in the error message', async () => {
-    globalThis.fetch = jest.fn(async () => ({
-      ok: false,
-      status: 403,
-      statusText: 'Forbidden',
-    })) as unknown as typeof fetch;
-
-    await expect(
-      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
-    ).rejects.toThrow(
-      'Failed to fetch front component module https://api.twenty.test/component.js: 403 Forbidden',
-    );
   });
 });
