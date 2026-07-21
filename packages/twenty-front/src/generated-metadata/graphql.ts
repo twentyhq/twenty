@@ -5828,6 +5828,8 @@ export type UpsertRowLevelPermissionPredicatesResult = {
 };
 
 export type UpsertViewWidgetInput = {
+  /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
+  view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
   /** The view fields to upsert. */
   viewFields?: InputMaybe<Array<UpsertViewWidgetViewFieldInput>>;
   /** The view filter groups to upsert. */
@@ -5866,6 +5868,20 @@ export type UpsertViewWidgetViewFilterInput = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value: Scalars['JSON']['input'];
   viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpsertViewWidgetViewSettingsInput = {
+  calendarEndFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
+  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
+  type?: InputMaybe<ViewType>;
 };
 
 export type UpsertViewWidgetViewSortInput = {
@@ -6182,8 +6198,10 @@ export enum ViewSortDirection {
 
 export enum ViewType {
   CALENDAR = 'CALENDAR',
+  CALENDAR_WIDGET = 'CALENDAR_WIDGET',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
   KANBAN = 'KANBAN',
+  KANBAN_WIDGET = 'KANBAN_WIDGET',
   TABLE = 'TABLE',
   TABLE_WIDGET = 'TABLE_WIDGET'
 }
