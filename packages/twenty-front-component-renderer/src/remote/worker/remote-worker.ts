@@ -9,7 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { installDocumentGetElementById } from '@/polyfills/dom/installDocumentGetElementById';
+import { installLocalStyleOnBaseElements } from '@/polyfills/dom/installLocalStyleOnBaseElements';
 import { workerGeometryStore } from '@/polyfills/geometry/constants/workerGeometryStore';
+import { createOffscreenCanvasTextMeasurer } from '@/polyfills/geometry/utils/createOffscreenCanvasTextMeasurer';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
@@ -28,11 +31,15 @@ installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
 
+installDocumentGetElementById(document);
+installLocalStyleOnBaseElements(Element.prototype);
+
 installElementGeometryPolyfill({
   elementPrototype: Element.prototype,
   documentTarget: document,
   geometryStore: workerGeometryStore,
-  measureElementTextGeometry: null,
+  measureElementTextGeometry:
+    createOffscreenCanvasTextMeasurer(workerGeometryStore),
 });
 
 installWindowGeometryPolyfill({
