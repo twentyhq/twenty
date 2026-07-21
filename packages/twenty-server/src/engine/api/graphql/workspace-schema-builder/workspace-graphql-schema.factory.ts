@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,12 +13,23 @@ import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-s
 
 @Injectable()
 export class WorkspaceGraphQLSchemaGenerator {
+  private readonly logger = new Logger(WorkspaceGraphQLSchemaGenerator.name);
+
   constructor(private readonly gqlTypeGenerator: GqlTypeGenerator) {}
 
   async generateSchema(
     context: SchemaGenerationContext,
   ): Promise<GraphQLSchema> {
     const gqlTypesStorage = await this.gqlTypeGenerator.buildAndStore(context);
+
+    const duplicateGqlTypeNames =
+      gqlTypesStorage.getDuplicateGqlTypeNames();
+
+    if (Object.keys(duplicateGqlTypeNames).length > 0) {
+      this.logger.error('Duplicate GraphQL type names detected', {
+        duplicateGqlTypeNames,
+      });
+    }
 
     const queryType = gqlTypesStorage.getGqlTypeByKey<GraphQLObjectType>(
       GqlOperation.Query,

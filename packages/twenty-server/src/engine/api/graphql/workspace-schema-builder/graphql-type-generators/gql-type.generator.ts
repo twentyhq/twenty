@@ -14,8 +14,14 @@ import {
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
+import {
+  computeEnumFieldGqlTypeName,
+  disambiguateEnumFieldGqlTypeName,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @Injectable()
@@ -76,6 +82,8 @@ export class GqlTypeGenerator {
     const objectMetadataCollection = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
+    const enumFieldGqlTypeNames =
+      this.computeEnumFieldGqlTypeNames(objectMetadataCollection, context);
 
     this.logger.log(
       `Generating metadata objects: [${objectMetadataCollection
@@ -92,6 +100,7 @@ export class GqlTypeGenerator {
       generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(
         flatObjectMetadata,
         fields,
+        enumFieldGqlTypeNames,
       );
       generators.objectMetadataGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,
@@ -124,6 +133,48 @@ export class GqlTypeGenerator {
         );
       }
     }
+  }
+
+  private computeEnumFieldGqlTypeNames(
+    objectMetadataCollection: FlatObjectMetadata[],
+    context: SchemaGenerationContext,
+  ): Map<string, string> {
+    const enumFields = objectMetadataCollection.flatMap((flatObjectMetadata) =>
+      getFlatFieldsFromFlatObjectMetadata(
+        flatObjectMetadata,
+        context.flatFieldMetadataMaps,
+      )
+        .filter((field) => isEnumFieldMetadataType(field.type))
+        .map((field) => ({
+          field,
+          baseName: computeEnumFieldGqlTypeName(
+            flatObjectMetadata.nameSingular,
+            field.name,
+          ),
+        })),
+    );
+
+    const baseNameCounts = new Map<string, number>();
+
+    for (const { baseName } of enumFields) {
+      baseNameCounts.set(baseName, (baseNameCounts.get(baseName) ?? 0) + 1);
+    }
+
+    const enumFieldGqlTypeNames = new Map<string, string>();
+
+    for (const { field, baseName } of enumFields) {
+      enumFieldGqlTypeNames.set(
+        field.universalIdentifier,
+        baseNameCounts.get(baseName) === 1
+          ? baseName
+          : disambiguateEnumFieldGqlTypeName(
+              baseName,
+              field.universalIdentifier,
+            ),
+      );
+    }
+
+    return enumFieldGqlTypeNames;
   }
 
   private objectContainsRelationOrMorphField(

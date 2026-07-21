@@ -130,6 +130,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     const key = computeEnumFieldGqlTypeKey(
       objectNameSingular,
       fieldMetadata.name,
+      fieldMetadata.universalIdentifier,
     );
 
     const enumType = this.gqlTypesStorage.getGqlTypeByKey(key);

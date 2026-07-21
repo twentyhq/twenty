@@ -1,10 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLEnumType } from 'graphql';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
-import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
+import {
+  computeEnumFieldGqlTypeKey,
+  computeEnumFieldGqlTypeName,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -25,6 +28,7 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
   public buildAndStore(
     flatObjectMetadata: FlatObjectMetadata,
     fields: FlatFieldMetadata[],
+    enumFieldGqlTypeNames: ReadonlyMap<string, string>,
   ) {
     for (const fieldMetadata of fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
@@ -35,14 +39,22 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
         computeEnumFieldGqlTypeKey(
           flatObjectMetadata.nameSingular,
           fieldMetadata.name,
+          fieldMetadata.universalIdentifier,
         ),
-        this.generateEnum(flatObjectMetadata.nameSingular, fieldMetadata),
+        this.generateEnum(
+          enumFieldGqlTypeNames.get(fieldMetadata.universalIdentifier) ??
+            computeEnumFieldGqlTypeName(
+              flatObjectMetadata.nameSingular,
+              fieldMetadata.name,
+            ),
+          fieldMetadata,
+        ),
       );
     }
   }
 
   private generateEnum(
-    objectName: string,
+    enumTypeName: string,
     fieldMetadata: FlatFieldMetadata,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
@@ -65,7 +77,7 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
     }
 
     return new GraphQLEnumType({
-      name: `${pascalCase(objectName)}${pascalCase(fieldMetadata.name)}Enum`,
+      name: enumTypeName,
       description: fieldMetadata.description,
       values: enumOptions.reduce(
         (acc, enumOption) => {

@@ -113,6 +113,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
         const enumFieldEnumTypeKey = computeEnumFieldGqlTypeKey(
           objectNameSingular,
           field.name,
+          field.universalIdentifier,
         );
 
         const enumFieldEnumType =

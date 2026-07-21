@@ -7,12 +7,59 @@ import {
 
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
+const filteredGraphQLErrorCodes = new Set<string>([
+  ErrorCode.GRAPHQL_PARSE_FAILED,
+  ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+  ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+  ErrorCode.UNAUTHENTICATED,
+  ErrorCode.FORBIDDEN,
+  ErrorCode.NOT_FOUND,
+  ErrorCode.METHOD_NOT_ALLOWED,
+  ErrorCode.TIMEOUT,
+  ErrorCode.CONFLICT,
+  ErrorCode.BAD_USER_INPUT,
+  ErrorCode.METADATA_VALIDATION_FAILED,
+]);
+
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    const exceptionWithMetadata =
+      typeof exception === 'object' && exception
+        ? (exception as {
+            extensions?: {
+              code?: string;
+              exception?: { code?: string };
+            };
+          })
+        : undefined;
+
+    const graphQLErrorCode = exceptionWithMetadata?.extensions?.code;
+
+    if (
+      graphQLErrorCode &&
+      filteredGraphQLErrorCodes.has(graphQLErrorCode)
+    ) {
+      return true;
+    }
+
+    if (
+      exceptionWithMetadata?.extensions?.exception?.code ===
+      POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -24,6 +71,12 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       if (options?.operation) {
         scope.setExtra('operation', options.operation.name);
         scope.setExtra('operationType', options.operation.type);
+        scope.setTag('graphql.operation', options.operation.name);
+        scope.setTag('graphql.operation_type', options.operation.type);
+      }
+
+      if (options?.workspace?.id) {
+        scope.setTag('workspace.id', options.workspace.id);
       }
 
       if (options?.document) {
@@ -48,6 +101,16 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'info',
+            message: 'Filtered non-actionable GraphQL error',
+          });
+
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
