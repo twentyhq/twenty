@@ -18,6 +18,7 @@ describe('ThrottlerService', () => {
           useValue: {
             get: jest.fn(),
             set: jest.fn(),
+            incrByWithTtl: jest.fn(),
           },
         },
       ],
@@ -143,6 +144,50 @@ describe('ThrottlerService', () => {
       );
 
       jest.restoreAllMocks();
+    });
+  });
+
+  describe('fixedWindowThrottleOrThrow', () => {
+    const key = 'test-fixed-window-key';
+    const maxTokens = 100;
+    const timeWindow = 60_000;
+
+    it('should consume tokens atomically on the current window key', async () => {
+      const now = 1_700_000_030_000;
+      const windowStartTimestamp = Math.floor(now / timeWindow) * timeWindow;
+
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+      cacheStorageService.incrByWithTtl.mockResolvedValue(1);
+
+      await service.fixedWindowThrottleOrThrow(key, 1, maxTokens, timeWindow);
+
+      expect(cacheStorageService.incrByWithTtl).toHaveBeenCalledWith(
+        `${key}:${windowStartTimestamp}`,
+        1,
+        timeWindow * 2,
+      );
+
+      jest.restoreAllMocks();
+    });
+
+    it('should allow request when consumption stays within the limit', async () => {
+      cacheStorageService.incrByWithTtl.mockResolvedValue(maxTokens);
+
+      await expect(
+        service.fixedWindowThrottleOrThrow(key, 1, maxTokens, timeWindow),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw ThrottlerException when the limit is exceeded', async () => {
+      cacheStorageService.incrByWithTtl.mockResolvedValue(maxTokens + 1);
+
+      await expect(
+        service.fixedWindowThrottleOrThrow(key, 1, maxTokens, timeWindow),
+      ).rejects.toThrow(ThrottlerException);
+
+      await expect(
+        service.fixedWindowThrottleOrThrow(key, 1, maxTokens, timeWindow),
+      ).rejects.toThrow('Limit reached');
     });
   });
 });

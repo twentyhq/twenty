@@ -41,6 +41,7 @@ import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspa
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -361,17 +362,19 @@ export abstract class CommonBaseQueryRunnerService<
     try {
       // Keyed on universalIdentifier without workspaceId: the budget is shared
       // by every installation of the application on the instance.
-      await this.throttlerService.tokenBucketThrottleOrThrow(
+      await this.throttlerService.fixedWindowThrottleOrThrow(
         `api:throttler:application:${authContext.application.universalIdentifier}`,
         1,
         this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_LIMIT'),
         this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_TTL_IN_MS'),
       );
     } catch (error) {
-      await this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.CommonApiApplicationQueryRateLimited,
-        shouldStoreInCache: false,
-      });
+      if (error instanceof ThrottlerException) {
+        await this.metricsService.incrementCounterForEvent({
+          key: MetricsKeys.CommonApiApplicationQueryRateLimited,
+          shouldStoreInCache: false,
+        });
+      }
 
       throw error;
     }
