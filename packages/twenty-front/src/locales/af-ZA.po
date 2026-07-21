@@ -8017,8 +8017,14 @@ msgstr "Kon nie die toepassing installeer nie."
 msgid "Failed to load billing plans"
 msgstr "Kon nie faktureringsplanne laai nie"
 
-#. js-lingui-id: BTjpvA
+#. js-lingui-id: mvgFp1
+#. placeholder {0}: error.message
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
+msgid "Failed to load front component: {0}"
+msgstr ""
+
+#. js-lingui-id: BTjpvA
+#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Kon nie frontkomponent laai nie: {errorMessage}"
 

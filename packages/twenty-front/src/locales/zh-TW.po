@@ -8017,8 +8017,14 @@ msgstr "應用程式安裝失敗。"
 msgid "Failed to load billing plans"
 msgstr "載入計費方案失敗"
 
-#. js-lingui-id: BTjpvA
+#. js-lingui-id: mvgFp1
+#. placeholder {0}: error.message
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
+msgid "Failed to load front component: {0}"
+msgstr ""
+
+#. js-lingui-id: BTjpvA
+#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "載入 Front 元件失敗：{errorMessage}"
 
