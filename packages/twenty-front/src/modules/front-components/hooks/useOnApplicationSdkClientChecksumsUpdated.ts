@@ -4,10 +4,12 @@ import { type ApplicationSdkClientChecksumsBroadcastRecord } from '@/front-compo
 
 type UseOnApplicationSdkClientChecksumsUpdatedArgs = {
   applicationId?: string;
+  skip?: boolean;
 };
 
 export const useOnApplicationSdkClientChecksumsUpdated = ({
   applicationId,
+  skip = false,
 }: UseOnApplicationSdkClientChecksumsUpdatedArgs) => {
   const { updateSdkClientChecksumsApolloCache } =
     useUpdateSdkClientChecksumsApolloCache({
@@ -18,6 +20,7 @@ export const useOnApplicationSdkClientChecksumsUpdated = ({
     {
       metadataName: 'application',
       onMetadataOperationBrowserEvent: updateSdkClientChecksumsApolloCache,
+      skip,
     },
   );
 };

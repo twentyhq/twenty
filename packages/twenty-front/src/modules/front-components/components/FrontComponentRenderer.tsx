@@ -108,6 +108,7 @@ const FrontComponentRendererContent = ({
 
   useOnApplicationSdkClientChecksumsUpdated({
     applicationId,
+    skip: !usesSdkClient,
   });
 
   const sdkClientChecksums =
