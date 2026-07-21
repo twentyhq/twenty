@@ -86,13 +86,11 @@ export const RecordTableWidgetProvider = ({
     () => ({
       isPageLayoutInEditMode,
       pageLayoutId: pageLayoutComponentInstanceContext?.instanceId,
-      viewId,
       widgetId,
     }),
     [
       isPageLayoutInEditMode,
       pageLayoutComponentInstanceContext?.instanceId,
-      viewId,
       widgetId,
     ],
   );

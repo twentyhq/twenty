@@ -1,5 +1,6 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { type RecordTableWidgetDraftViewField } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,11 +11,22 @@ type UseRecordTableWidgetFieldCallbacksParams = {
   viewId: string;
 };
 
-export const useRecordTableWidgetFieldCallbacks = ({
+type UseRecordTableWidgetFieldUpdateParams = Pick<
+  UseRecordTableWidgetFieldCallbacksParams,
+  'pageLayoutId' | 'widgetId'
+>;
+
+type RecordTableWidgetFieldUpdate = Partial<
+  Pick<
+    RecordTableWidgetDraftViewField,
+    'aggregateOperation' | 'isVisible' | 'position'
+  >
+>;
+
+export const useRecordTableWidgetFieldUpdate = ({
   pageLayoutId,
   widgetId,
-  viewId,
-}: UseRecordTableWidgetFieldCallbacksParams) => {
+}: UseRecordTableWidgetFieldUpdateParams) => {
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
     recordTableWidgetViewDraftComponentState,
     pageLayoutId,
@@ -24,7 +36,7 @@ export const useRecordTableWidgetFieldCallbacks = ({
 
   const handleFieldUpdated = (
     viewFieldId: string,
-    update: Partial<{ position: number; isVisible: boolean }>,
+    update: RecordTableWidgetFieldUpdate,
   ) => {
     store.set(recordTableWidgetViewDraftState, (prev) => {
       const widgetViewDraft = prev[widgetId];
@@ -47,6 +59,26 @@ export const useRecordTableWidgetFieldCallbacks = ({
       };
     });
   };
+
+  return { handleFieldUpdated };
+};
+
+export const useRecordTableWidgetFieldCallbacks = ({
+  pageLayoutId,
+  widgetId,
+  viewId,
+}: UseRecordTableWidgetFieldCallbacksParams) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
+
+  const { handleFieldUpdated } = useRecordTableWidgetFieldUpdate({
+    pageLayoutId,
+    widgetId,
+  });
 
   const handleFieldCreated = (recordField: RecordField) => {
     store.set(recordTableWidgetViewDraftState, (prev) => {
