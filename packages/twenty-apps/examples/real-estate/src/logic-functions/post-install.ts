@@ -246,5 +246,6 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Seeds demo people, properties, showings and opportunities.',
   timeoutSeconds: 60,
+  shouldRunSynchronously: true,
   handler,
 });
