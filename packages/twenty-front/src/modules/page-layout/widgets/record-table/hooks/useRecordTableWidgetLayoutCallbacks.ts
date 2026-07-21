@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
@@ -37,15 +38,17 @@ export const useRecordTableWidgetLayoutCallbacks = ({
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
 
-  // Day/week widget calendars only exist while the feature is on; with it off
-  // every calendar draft write clamps to MONTH so a stale day/week value can
-  // never be sent back to (and rejected by) the server.
+  // Clamp a widget calendar's layout to what the workspace supports (MONTH
+  // while the day/week feature is off), reusing the shared resolver so widget
+  // and index calendars can't diverge and no stale day/week value is sent back
+  // to — and rejected by — the server.
   const resolveCalendarLayout = (
     calendarLayout: ViewCalendarLayout | null | undefined,
   ) =>
-    isCalendarWeekViewEnabled
-      ? (calendarLayout ?? ViewCalendarLayout.MONTH)
-      : ViewCalendarLayout.MONTH;
+    getSupportedRecordCalendarLayout({
+      calendarLayout,
+      isCalendarWeekViewEnabled,
+    });
 
   // Returning the received snapshot unchanged from the updater leaves the
   // whole draft map untouched (no state update is published).
