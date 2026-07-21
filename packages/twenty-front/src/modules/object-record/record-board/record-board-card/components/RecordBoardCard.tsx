@@ -21,6 +21,7 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
+import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -28,6 +29,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
@@ -66,6 +68,10 @@ export const RecordBoardCard = () => {
   const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
+  );
+
+  const primaryDraggedRecordId = useAtomComponentStateValue(
+    primaryDraggedRecordIdComponentState,
   );
 
   const { currentView } = useGetCurrentViewOnly();
@@ -150,8 +156,13 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const isDraggingThisCard =
-    isRecordIdPrimaryDragMultiple || isRecordIdSecondaryDragMultiple;
+  // A single-card drag keeps its source in place behind the drag overlay,
+  // which would show the card twice; dim it like multi-drag secondary cards.
+  const isSingleCardBeingDragged =
+    !isDragOverlay &&
+    primaryDraggedRecordId === recordId &&
+    !isRecordIdPrimaryDragMultiple &&
+    !isRecordIdSecondaryDragMultiple;
 
   return (
     <RecordBoardCardComponentInstanceContext.Provider
@@ -181,7 +192,7 @@ export const RecordBoardCard = () => {
               onClick={handleCardClick}
               isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
               isSecondaryDragged={isRecordIdSecondaryDragMultiple}
-              isDragging={isDraggingThisCard}
+              isDragging={isSingleCardBeingDragged}
             >
               <RecordBoardCardHeader />
               <AnimatedEaseInOut

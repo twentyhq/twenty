@@ -13,7 +13,8 @@ const StyledBoardCard = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  opacity: ${({ isSecondaryDragged }) => (isSecondaryDragged ? '0.3' : '1')};
+  opacity: ${({ isSecondaryDragged, isDragging }) =>
+    isSecondaryDragged || isDragging ? '0.3' : '1'};
 
   width: 100%;
 
