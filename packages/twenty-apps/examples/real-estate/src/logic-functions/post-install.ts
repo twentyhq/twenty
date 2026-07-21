@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
+import { BuyerStage } from '../fields/opportunity-buyer-stage.field';
 
 const eur = (amount: number) => ({
   amountMicros: amount * 1_000_000,
@@ -48,7 +49,23 @@ const CITIES: [string, string][] = [
 const TYPES = ['APARTMENT', 'HOUSE', 'CONDO', 'LAND'];
 const STATUSES = ['ACTIVE', 'ACTIVE', 'ACTIVE', 'UNDER_OFFER', 'COMING_SOON', 'SOLD'];
 const SHOWING_STATUSES = ['COMPLETED', 'SCHEDULED', 'COMPLETED', 'NO_SHOW', 'CANCELLED'];
-const OPP_STAGES = ['SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
+const BUYER_STAGE_CYCLE = [
+  BuyerStage.COMPLETING_PROFILE,
+  BuyerStage.SHOWING,
+  BuyerStage.OFFER_MADE,
+  BuyerStage.CLOSING,
+  BuyerStage.WON,
+  BuyerStage.LOST,
+];
+
+const STANDARD_STAGE_BY_BUYER_STAGE: Record<BuyerStage, string> = {
+  [BuyerStage.COMPLETING_PROFILE]: 'NEW',
+  [BuyerStage.SHOWING]: 'SCREENING',
+  [BuyerStage.OFFER_MADE]: 'PROPOSAL',
+  [BuyerStage.CLOSING]: 'PROPOSAL',
+  [BuyerStage.WON]: 'CUSTOMER',
+  [BuyerStage.LOST]: 'NEW',
+};
 
 const handler = async () => {
   const client = new CoreApiClient();
@@ -160,16 +177,20 @@ const handler = async () => {
     },
   } as any);
 
-  const opportunitiesData = propertyMeta
-    .filter((_, i) => i % 4 === 1)
-    .map((meta, k) => ({
-      name: `${meta.name} - ${lastFor(AGENT_COUNT + SELLER_COUNT + (k % BUYER_COUNT))}`,
-      stage: OPP_STAGES[k % OPP_STAGES.length],
+  // One opportunity per buyer: the buyer's pipeline card, staged by buyerStage.
+  const opportunitiesData = buyerFirst.map((firstName, b) => {
+    const buyerStage = BUYER_STAGE_CYCLE[b % BUYER_STAGE_CYCLE.length];
+    const meta = propertyMeta[(b * 2) % PROPERTY_COUNT];
+    return {
+      name: `${firstName} ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`,
+      buyerStage,
+      stage: STANDARD_STAGE_BY_BUYER_STAGE[buyerStage],
       amount: eur(Math.round(meta.priceEur * 0.97)),
-      closeDate: `2026-${String(9 + (k % 3)).padStart(2, '0')}-15T00:00:00.000Z`,
-      pointOfContactId: personId(buyerFirst[k % BUYER_COUNT]),
+      closeDate: `2026-${String(9 + (b % 3)).padStart(2, '0')}-15T00:00:00.000Z`,
+      pointOfContactId: personId(firstName),
       propertyId: propertyId(meta.name),
-    }));
+    };
+  });
 
   await client.mutation({
     createOpportunities: {
