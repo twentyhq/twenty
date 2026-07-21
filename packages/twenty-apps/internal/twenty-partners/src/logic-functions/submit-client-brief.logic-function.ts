@@ -2,6 +2,8 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+
 import {
   findOrCreateCompanyByName,
   findOrCreatePersonByEmail,
@@ -68,32 +70,9 @@ const APPLICATION_SECRET_HEADER = 'x-application-secret';
 export const handler = async (
   event: SubmitClientBriefEvent | SubmitClientBriefInput,
 ): Promise<SubmitClientBriefResult> => {
-  const looksLikeEvent =
-    typeof event === 'object' &&
-    event !== null &&
-    ('body' in event || 'headers' in event);
-
-  const headers = looksLikeEvent
-    ? (event as SubmitClientBriefEvent).headers ?? {}
-    : {};
-  const rawInput = looksLikeEvent
-    ? (event as SubmitClientBriefEvent).body
-    : event;
-
-  const expectedSecret = process.env.PARTNER_APPLICATION_SECRET;
-  if (!isNonEmptyString(expectedSecret)) {
-    return { ok: false, reason: 'unauthorized' };
-  }
-  const providedSecret = headers[APPLICATION_SECRET_HEADER];
-  if (providedSecret !== expectedSecret) {
-    return { ok: false, reason: 'unauthorized' };
-  }
-
-  const parsed = submitClientBriefSchema.safeParse(rawInput);
-  if (!parsed.success) {
-    return { ok: false, reason: 'invalid_input' };
-  }
-  const input = parsed.data;
+  const guard = readSecretGuardedEvent(event, submitClientBriefSchema);
+  if (!guard.ok) return { ok: false, reason: guard.reason };
+  const input = guard.input;
 
   try {
     const client = new CoreApiClient();

@@ -2,6 +2,8 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+
 import {
   findCompanyIdByExactName,
   findPersonIdByPrimaryEmail,
@@ -128,29 +130,10 @@ async function findOrCreatePersonId(
 export const handler = async (
   event: ImportOpportunityFromTftEvent | ImportOpportunityFromTftInput,
 ): Promise<ImportOpportunityFromTftResult> => {
-  // HTTP event ({ body, headers }) or a flat input for direct calls.
-  const looksLikeEvent =
-    typeof event === 'object' &&
-    event !== null &&
-    ('body' in event || 'headers' in event);
-
-  const headers = looksLikeEvent
-    ? (event as ImportOpportunityFromTftEvent).headers ?? {}
-    : {};
-  const rawInput = looksLikeEvent
-    ? (event as ImportOpportunityFromTftEvent).body
-    : event;
-
   // isAuthRequired only accepts user JWTs, not API keys; guard with the shared secret.
-  const expectedSecret = process.env.PARTNER_APPLICATION_SECRET;
-  if (!isNonEmptyString(expectedSecret)) return { ok: false, reason: 'unauthorized' };
-  if (headers[APPLICATION_SECRET_HEADER] !== expectedSecret) {
-    return { ok: false, reason: 'unauthorized' };
-  }
-
-  const parsed = importOpportunityFromTftSchema.safeParse(rawInput);
-  if (!parsed.success) return { ok: false, reason: 'invalid_input' };
-  const input = parsed.data;
+  const guard = readSecretGuardedEvent(event, importOpportunityFromTftSchema);
+  if (!guard.ok) return { ok: false, reason: guard.reason };
+  const input = guard.input;
 
   try {
     const client = new CoreApiClient();

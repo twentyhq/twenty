@@ -2,6 +2,8 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+
 import { slugify } from '../scripts/slugify';
 import { deriveDeploymentExpertise } from './derive-deployment-expertise';
 import { deriveRegion } from './derive-region';
@@ -187,36 +189,12 @@ const APPLICATION_SECRET_HEADER = 'x-application-secret';
 export const handler = async (
   event: SubmitPartnerApplicationEvent | SubmitPartnerApplicationInput,
 ): Promise<SubmitPartnerApplicationResult> => {
-  // Accept either { body, headers } (HTTP) or a flat input object (direct call from tests).
-  const looksLikeEvent =
-    typeof event === 'object' &&
-    event !== null &&
-    ('body' in event || 'headers' in event);
-
-  const headers = looksLikeEvent
-    ? (event as SubmitPartnerApplicationEvent).headers ?? {}
-    : {};
-  const rawInput = looksLikeEvent
-    ? (event as SubmitPartnerApplicationEvent).body
-    : event;
-
-  // Shared-secret guard. The Twenty SDK's isAuthRequired flag only accepts
-  // user-session JWTs, not workspace API keys, so we authenticate at the
-  // handler level via a custom header allowlisted in forwardedRequestHeaders.
-  const expectedSecret = process.env.PARTNER_APPLICATION_SECRET;
-  if (!isNonEmptyString(expectedSecret)) {
-    return { ok: false, reason: 'unauthorized' };
-  }
-  const providedSecret = headers[APPLICATION_SECRET_HEADER];
-  if (providedSecret !== expectedSecret) {
-    return { ok: false, reason: 'unauthorized' };
-  }
-
-  const parsed = submitPartnerApplicationSchema.safeParse(rawInput);
-  if (!parsed.success) {
-    return { ok: false, reason: 'invalid_input' };
-  }
-  const input = parsed.data;
+  // The Twenty SDK's isAuthRequired flag only accepts user-session JWTs, not
+  // workspace API keys, so we authenticate at the handler level via a custom
+  // header allowlisted in forwardedRequestHeaders.
+  const guard = readSecretGuardedEvent(event, submitPartnerApplicationSchema);
+  if (!guard.ok) return { ok: false, reason: guard.reason };
+  const input = guard.input;
 
   try {
     const client = new CoreApiClient();
