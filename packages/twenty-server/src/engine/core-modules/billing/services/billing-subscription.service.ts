@@ -36,6 +36,12 @@ import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/servic
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+const CURRENT_BILLING_SUBSCRIPTION_STATUSES = [
+  SubscriptionStatus.Trialing,
+  SubscriptionStatus.Active,
+  SubscriptionStatus.PastDue,
+];
+
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
@@ -71,20 +77,18 @@ export class BillingSubscriptionService {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
+        order: { createdAt: 'DESC' },
         relations: [
           'billingSubscriptionItems',
           'billingSubscriptionItems.billingProduct',
         ],
       });
 
-    if (notCanceledSubscriptions.length > 1) {
-      throw new BillingException(
-        `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
-        BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND,
-      );
-    }
-
-    return notCanceledSubscriptions[0];
+    return (
+      notCanceledSubscriptions.find((subscription) =>
+        CURRENT_BILLING_SUBSCRIPTION_STATUSES.includes(subscription.status),
+      ) ?? notCanceledSubscriptions[0]
+    );
   }
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
