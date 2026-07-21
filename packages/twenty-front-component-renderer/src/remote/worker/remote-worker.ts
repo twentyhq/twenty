@@ -9,6 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { workerGeometryStore } from '@/polyfills/geometry/constants/workerGeometryStore';
+import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
+import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -24,6 +27,18 @@ import { type WorkerExports } from '@/types/WorkerExports';
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
+
+installElementGeometryPolyfill({
+  elementPrototype: Element.prototype,
+  documentTarget: document,
+  geometryStore: workerGeometryStore,
+  measureElementTextGeometry: null,
+});
+
+installWindowGeometryPolyfill({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  geometryStore: workerGeometryStore,
+});
 
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
@@ -57,6 +72,9 @@ const workerExports: WorkerExports = {
   onConfirmationModalResult: async (result) => {
     await handleCommandConfirmationModalResult(result);
   },
+  pushGeometryUpdates: async (batch) => {
+    workerGeometryStore.applyGeometryBatch(batch);
+  },
 };
 
 self.addEventListener('message', (event) => {
@@ -71,6 +89,12 @@ self.addEventListener('message', (event) => {
     WorkerExports
   >(transferredPort, {
     exports: workerExports,
+  });
+
+  workerGeometryStore.connectTransport({
+    observeElementGeometry: (remoteElementIds) =>
+      hostThread?.imports.observeElementGeometry(remoteElementIds) ??
+      Promise.resolve(),
   });
 
   transferredPort.start();

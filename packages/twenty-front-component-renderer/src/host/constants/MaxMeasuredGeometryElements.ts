@@ -1,0 +1,1 @@
+export const MAX_MEASURED_GEOMETRY_ELEMENTS = 50;

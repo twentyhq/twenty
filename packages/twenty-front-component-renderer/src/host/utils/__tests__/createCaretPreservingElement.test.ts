@@ -12,6 +12,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: { type: 'text' },
       hostEnforcedProps: undefined,
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(element.type).toBe('input');
@@ -24,6 +25,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: { value: 'hello' },
       hostEnforcedProps: undefined,
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('hello');
@@ -35,6 +37,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: { value: 'v', defaultValue: 'd' },
       hostEnforcedProps: undefined,
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('d');
@@ -46,6 +49,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: {},
       hostEnforcedProps: { readOnly: true },
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).readOnly).toBe(true);
@@ -59,6 +63,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: { onFocus },
       hostEnforcedProps: undefined,
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     const event = {} as never;
@@ -75,6 +80,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: {},
       hostEnforcedProps: undefined,
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     (getProps(element).onBlur as (event: unknown) => void)({} as never);

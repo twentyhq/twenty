@@ -6,6 +6,7 @@ import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHo
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
 import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
+import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
@@ -20,6 +21,7 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   applicationVariables?: Record<string, string>;
+  geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
@@ -32,6 +34,7 @@ export const FrontComponentWorkerEffect = ({
   functionsBaseUrl,
   sdkClientUrls,
   applicationVariables,
+  geometryTracker,
   setReceiver,
   setThread,
   setError,
@@ -61,7 +64,11 @@ export const FrontComponentWorkerEffect = ({
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
 
-    const thread = createFrontComponentHostThread(channel.port1, hostFetch);
+    const thread = createFrontComponentHostThread({
+      hostMessagePort: channel.port1,
+      hostFetch,
+      geometryTracker,
+    });
 
     const handleSandboxMessage = createFrontComponentSandboxMessageHandler({
       sandboxIframe,
@@ -97,6 +104,7 @@ export const FrontComponentWorkerEffect = ({
           sdkClientUrls,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
+          initialViewportGeometry: geometryTracker.getViewportGeometry(),
         });
       } catch (error) {
         if (!isCancelled) {
@@ -125,6 +133,7 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     applicationVariables,
+    geometryTracker,
     setError,
     setReceiver,
     setThread,

@@ -1,11 +1,15 @@
 import React, { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
+import { useCaretPreservingElementRef } from '@/host/hooks/useCaretPreservingElementRef';
+import { useComposedElementRef } from '@/host/hooks/useComposedElementRef';
+import { useGeometryNodeRef } from '@/host/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
 import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
 import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
+import { getRemoteElementIdFromProps } from '@/host/utils/getRemoteElementIdFromProps';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
 import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
@@ -36,6 +40,8 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
 
+    const remoteElementId = getRemoteElementIdFromProps(props);
+
     const { reactUnsupportedEventHandlers, reactBindableProps } =
       extractReactUnsupportedEventHandlers(
         buildHostReactPropsFromRemoteProps(props, htmlTag),
@@ -43,6 +49,18 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
     const reactUnsupportedEventListenerRef =
       useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
+
+    const geometryNodeRef = useGeometryNodeRef(remoteElementId);
+
+    const composedElementRef = useComposedElementRef([
+      reactUnsupportedEventListenerRef,
+      geometryNodeRef,
+    ]);
+
+    const caretPreservingElementRef = useCaretPreservingElementRef(
+      composedElementRef,
+      reactBindableProps.value,
+    );
 
     const hostEnforcedProps: Record<string, unknown> = {
       ...createDropTargetGuardProps(reactBindableProps),
@@ -66,7 +84,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
         reactBindableProps,
         hostEnforcedProps,
         setEditableFocused,
-        reactUnsupportedEventListenerRef,
+        caretPreservingElementRef,
       });
     }
 
@@ -75,7 +93,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       {
         ...reactBindableProps,
         ...hostEnforcedProps,
-        ref: reactUnsupportedEventListenerRef,
+        ref: composedElementRef,
       },
       isVoid ? undefined : children,
     );

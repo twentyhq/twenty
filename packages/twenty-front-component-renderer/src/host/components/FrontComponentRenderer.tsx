@@ -1,5 +1,9 @@
+import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
+import { useGeometryRootRef } from '@/host/hooks/useGeometryRootRef';
+import { createGeometryTracker } from '@/host/utils/createGeometryTracker';
 import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
+import { FrontComponentGeometryTrackerEffect } from '@/remote/components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
@@ -54,67 +58,79 @@ export const FrontComponentRenderer = ({
   const [error, setError] = useState<Error | null>(null);
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
+  const [geometryTracker] = useState(() => createGeometryTracker());
+
+  const geometryRootRef = useGeometryRootRef(geometryTracker);
 
   return (
-    <>
-      <FrontComponentWorkerEffect
-        componentUrl={componentUrl}
-        applicationAccessToken={applicationAccessToken}
-        apiUrl={apiUrl}
-        functionsBaseUrl={functionsBaseUrl}
-        sdkClientUrls={sdkClientUrls}
-        applicationVariables={applicationVariables}
-        setReceiver={setReceiver}
-        setThread={setThread}
-        setError={setError}
-      />
+    <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
+      <div ref={geometryRootRef} style={{ width: '100%', height: '100%' }}>
+        <FrontComponentWorkerEffect
+          componentUrl={componentUrl}
+          applicationAccessToken={applicationAccessToken}
+          apiUrl={apiUrl}
+          functionsBaseUrl={functionsBaseUrl}
+          sdkClientUrls={sdkClientUrls}
+          applicationVariables={applicationVariables}
+          geometryTracker={geometryTracker}
+          setReceiver={setReceiver}
+          setThread={setThread}
+          setError={setError}
+        />
 
-      {isDefined(error) && (
-        <ThemeProvider colorScheme={colorScheme}>
-          <FrontComponentErrorEffect error={error} onError={onError} />
-          <FrontComponentErrorBox error={error} />
-        </ThemeProvider>
-      )}
+        {isDefined(error) && (
+          <ThemeProvider colorScheme={colorScheme}>
+            <FrontComponentErrorEffect error={error} onError={onError} />
+            <FrontComponentErrorBox error={error} />
+          </ThemeProvider>
+        )}
 
-      {isDefined(thread) && (
-        <>
-          <FrontComponentUpdateHostCommunicationApiEffect
-            thread={thread}
-            frontComponentHostCommunicationApi={
-              frontComponentHostCommunicationApi
-            }
-          />
-          <FrontComponentInitializeHostCommunicationApiEffect thread={thread} />
-          <FrontComponentUpdateContextEffect
-            thread={thread}
-            executionContext={executionContext}
-            onExecutionContextInitialized={() =>
-              setIsExecutionContextInitialized(true)
-            }
-          />
-          <FrontComponentConfirmationModalResultEffect
-            thread={thread}
-            frontComponentId={executionContext.frontComponentId}
-            onError={setError}
-          />
-        </>
-      )}
-
-      {isDefined(receiver) && isExecutionContextInitialized && (
-        <ThemeProvider colorScheme={colorScheme}>
-          <ErrorBoundary
-            onError={setError}
-            onReset={() => setError(null)}
-            resetKeys={[componentUrl]}
-            fallbackRender={() => null}
-          >
-            <RemoteRootRenderer
-              receiver={receiver}
-              components={fallbackComponentRegistry}
+        {isDefined(thread) && (
+          <>
+            <FrontComponentUpdateHostCommunicationApiEffect
+              thread={thread}
+              frontComponentHostCommunicationApi={
+                frontComponentHostCommunicationApi
+              }
             />
-          </ErrorBoundary>
-        </ThemeProvider>
-      )}
-    </>
+            <FrontComponentInitializeHostCommunicationApiEffect
+              thread={thread}
+            />
+            <FrontComponentGeometryTrackerEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
+            />
+            <FrontComponentUpdateContextEffect
+              thread={thread}
+              executionContext={executionContext}
+              onExecutionContextInitialized={() =>
+                setIsExecutionContextInitialized(true)
+              }
+            />
+            <FrontComponentConfirmationModalResultEffect
+              thread={thread}
+              frontComponentId={executionContext.frontComponentId}
+              onError={setError}
+            />
+          </>
+        )}
+
+        {isDefined(receiver) && isExecutionContextInitialized && (
+          <ThemeProvider colorScheme={colorScheme}>
+            <ErrorBoundary
+              onError={setError}
+              onReset={() => setError(null)}
+              resetKeys={[componentUrl]}
+              fallbackRender={() => null}
+            >
+              <RemoteRootRenderer
+                receiver={receiver}
+                components={fallbackComponentRegistry}
+              />
+            </ErrorBoundary>
+          </ThemeProvider>
+        )}
+      </div>
+    </FrontComponentGeometryTrackerContext.Provider>
   );
 };
