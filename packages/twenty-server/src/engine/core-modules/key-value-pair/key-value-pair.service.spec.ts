@@ -100,7 +100,7 @@ describe('KeyValuePairService', () => {
     );
   });
 
-  it('should thread applicationId into the upsert payload', async () => {
+  it('should upsert a workspace-scoped application key on the (key, applicationId) index', async () => {
     await service.set({
       userId: null,
       workspaceId: 'workspace-id',
@@ -117,7 +117,34 @@ describe('KeyValuePairService', () => {
         applicationId: 'application-id',
         key: 'APP_SETTING',
       }),
-      expect.anything(),
+      {
+        conflictPaths: ['key', 'applicationId'],
+        indexPredicate:
+          '"applicationId" IS NOT NULL AND "workspaceId" IS NOT NULL',
+      },
+    );
+  });
+
+  it('should upsert a server-scoped application key on the global (key, applicationId) index', async () => {
+    await service.set({
+      userId: null,
+      workspaceId: null,
+      applicationId: 'application-id',
+      key: 'APP_CLAIM',
+      value: 'workspace-id',
+      type: KeyValuePairType.CONFIG_VARIABLE,
+    });
+
+    expect(keyValuePairRepository.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspaceId: null,
+        applicationId: 'application-id',
+        key: 'APP_CLAIM',
+      }),
+      {
+        conflictPaths: ['key', 'applicationId'],
+        indexPredicate: '"applicationId" IS NOT NULL AND "workspaceId" IS NULL',
+      },
     );
   });
 

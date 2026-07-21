@@ -96,7 +96,15 @@ export class KeyValuePairService<
     const conflictPaths: string[] = ['key'];
     let indexPredicate: string | undefined;
 
-    if (hasNullUserAndWorkspaceAndApplication) {
+    if (normalizedApplicationId !== null) {
+      // Application-scoped rows are unique per (key, applicationId), split by
+      // whether they are workspace-scoped or server-scoped (workspaceId NULL).
+      conflictPaths.push('applicationId');
+      indexPredicate =
+        normalizedWorkspaceId === null
+          ? '"applicationId" IS NOT NULL AND "workspaceId" IS NULL'
+          : '"applicationId" IS NOT NULL AND "workspaceId" IS NOT NULL';
+    } else if (hasNullUserAndWorkspaceAndApplication) {
       indexPredicate =
         '"userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedUserId === null) {
