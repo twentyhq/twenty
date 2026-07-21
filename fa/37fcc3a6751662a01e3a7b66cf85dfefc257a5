@@ -1,0 +1,118 @@
+packages/twenty-front/src/modules/page-layout/widgets/components/WidgetContentRenderer.tsx
+  s_11e59742733dbd::t_0e8a8753dd23e4 12,85-86
+  s_11e59742733dbd::t_a9d35aad4c216c 87
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_11e59742733dbd::t_cd3dcb75f80f5e 28-29
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/update-workspace-message-campaign-daily-send-limit.input.ts
+  s_11e59742733dbd::t_2339d8425aa8b6 1-21
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/build-standard-flat-page-layout-widget-metadata-maps.util.ts
+  s_11e59742733dbd::t_e03dce7ebd6607 63
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/constants/all-widget-configuration-type-validator-by-widget-configuration-type.constant.ts
+  s_11e59742733dbd::t_458bbecbf1c4e2 12,39
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-test-message-campaign.input.ts
+  s_11e59742733dbd::t_9fd643dfcc8b97 1-19
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_2d59ccca31d596 23
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignDraftAutosave.ts
+  s_11e59742733dbd::t_288c4097b1550e 24,33,35-37
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendTestMessageCampaign.ts
+  s_11e59742733dbd::t_a63b3972ddf429 1-7
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_11e59742733dbd::t_de12f2d87ae7d2 14,24
+packages/twenty-front/src/modules/page-layout/widgets/hooks/useWidgetRendererState.ts
+  s_11e59742733dbd::t_0e8a8753dd23e4 60-61
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_11e59742733dbd::t_197e730c2a7560 631-638
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-configuration.dto.ts
+  s_11e59742733dbd::t_37f6976c5b7f57 1-8,10-14
+  s_11e59742733dbd::t_7c8f5210f3cf86 9
+packages/twenty-front/src/modules/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType.ts
+  s_11e59742733dbd::t_0e8a8753dd23e4 14,54-58
+  s_11e59742733dbd::t_8c7dc3db22da34 59
+packages/twenty-front/src/modules/activities/emails/hooks/useSendTestMessageCampaign.ts
+  s_11e59742733dbd::t_0e79be72932877 1-40
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_11e59742733dbd::t_7832e03acd3773 68-81,92-93
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_11e59742733dbd::t_d2914a561036cf 5,11-12,30
+  s_11e59742733dbd::t_8cf5f97b03df69 24
+packages/twenty-shared/src/types/index.ts
+  s_11e59742733dbd::t_938dc5b00cbbb8 208
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util.ts
+  s_11e59742733dbd::t_938dc5b00cbbb8 363
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_11e59742733dbd::t_fdb8883d3d7349 1,3,11-12
+  s_11e59742733dbd::t_5c1f5190c039de 2,4-10
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784286710000-add-message-campaign-composer-tab.command.ts
+  s_11e59742733dbd::t_a88ff99b78b41b 1-180
+packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+  s_11e59742733dbd::t_524bc7249c526e 253-256
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util.ts
+  s_11e59742733dbd::t_938dc5b00cbbb8 379
+packages/twenty-front/src/modules/settings/workspace/components/SettingsEmailGroupPlanPill.tsx
+  s_11e59742733dbd::t_9568f8e2eca452 1-22
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum.ts
+  s_11e59742733dbd::t_1a49bd205a4d13 21
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286710000-add-message-campaign-widget-type.ts
+  s_11e59742733dbd::t_87b9a513860760 1-49
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignComposerPage.tsx
+  s_11e59742733dbd::t_97b5aa0bef8927 1-145
+packages/twenty-front/src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+  s_11e59742733dbd::t_59ce84d5bc4224 25
+  s_11e59742733dbd::t_07b11e1450a609 7
+packages/twenty-server/src/modules/emailing/services/campaign-send-quota.service.ts
+  s_11e59742733dbd::t_f4d123486666a7 39-42
+  s_11e59742733dbd::t_7f1e1ca7cec0a9 57-67,77-88,91-94,96-98
+  s_11e59742733dbd::t_072a794ba6661e 2,5-6,12-13,16-17,19-21
+packages/twenty-front/src/modules/page-layout/graphql/fragments/pageLayoutWidgetFragment.ts
+  s_11e59742733dbd::t_0e840fa3d91493 156-158
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_11e59742733dbd::t_3efefbadb6add1 6-14,17,22,25-31,33-34
+  s_11e59742733dbd::t_2b2116c050c143 44
+packages/twenty-shared/src/types/page-layout/page-layout-widget-configuration.type.ts
+  s_11e59742733dbd::t_458bbecbf1c4e2 156-159,198-199
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type.ts
+  s_11e59742733dbd::t_458bbecbf1c4e2 30
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286711000-add-workspace-message-campaign-daily-send-limit.ts
+  s_11e59742733dbd::t_cfe3dc1fa04f69 1-21
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_11e59742733dbd::t_7832e03acd3773 161-166,248-253
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_11e59742733dbd::t_cf5431e7f0120d 17,21,23
+  s_11e59742733dbd::t_d69135a4a0da74 125-152
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_de12f2d87ae7d2 90-97
+  s_11e59742733dbd::t_3131dc6de8577d 1009-1048
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-upgrade-version-command.module.ts
+  s_11e59742733dbd::t_7c8f5210f3cf86 7,23
+packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel.resolver.ts
+  s_11e59742733dbd::t_f4f1af85d1feee 35
+  s_11e59742733dbd::t_523623fc9a84d2 222-232
+  s_11e59742733dbd::t_ea8db0e2938a77 220-221
+packages/twenty-server/src/engine/core-modules/workspace/constants/workspace-entity-non-cached-properties.constant.ts
+  s_11e59742733dbd::t_10fd4b5ff2655e 26
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_be110b3497f3b1 7166,7196,7238,7565,7600,7635,7670,7706,7753,7786,9013-9015,9131,9174-9177,9180-9181
+  s_11e59742733dbd::t_0cce50be68dbe2 2368-2372,2703,3514-3518,5229-5234,6313,6328,6352,6416,6581-6586,9057
+  s_11e59742733dbd::t_49c6c71beb9173 6587
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+  s_11e59742733dbd::t_938dc5b00cbbb8 98-100,155-157
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tests__/__snapshots__/get-standard-page-layout-metadata-related-entity-ids.util.spec.ts.snap
+  s_11e59742733dbd::t_c5eec33957fbfb 186-193,214,217,220,225,228,235,238,241,246,249,256,259,262,265,272,275,278,283,286,293,296,299,340,343,346,351,354,357,362,365,370,373,380,383,386,391,394,399,402,407,410,413,416,419,424,427,432,435,440,443,450,453,456,461,464,469,472,477,480,483,486,489,494,497,502,505,510,513,520,523,526,531,534,537,542,545,550,553,560,563,566,571,574,581,584,587,594,597,600,605,608,611,618,621,624,629,632,635
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fa37fcc3a6751662a01e3a7b66cf85dfefc257a5",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
