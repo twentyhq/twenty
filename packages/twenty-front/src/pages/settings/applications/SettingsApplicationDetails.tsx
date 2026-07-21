@@ -51,7 +51,7 @@ import { SettingsApplicationDetailContentTab } from '~/pages/settings/applicatio
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { getApplicationHasUpdate } from '~/pages/settings/applications/utils/getApplicationHasUpdate';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -122,11 +122,6 @@ export const SettingsApplicationDetails = () => {
     detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
-  // A locally-applied app keeps the plain package.json version but has its
-  // source type set to LOCAL. When its registration is not local (a published
-  // npm/tarball source), the installation is detached and can be re-attached to
-  // the latest published version, so the "(local)" tag and the upgrade button
-  // are derived from the source types here rather than persisted on the entity.
   const isLocalApplication =
     application?.sourceType === ApplicationRegistrationSourceType.LOCAL;
 
@@ -135,12 +130,12 @@ export const SettingsApplicationDetails = () => {
       ? `${currentVersion} (local)`
       : (currentVersion ?? undefined);
 
-  const hasUpdate =
-    isUpgradableApplicationSourceType(sourceType) &&
-    isDefined(latestAvailableVersion) &&
-    isDefined(currentVersion) &&
-    (isLocalApplication ||
-      isNewerSemver(latestAvailableVersion, currentVersion));
+  const hasUpdate = getApplicationHasUpdate({
+    applicationSourceType: application?.sourceType,
+    registrationSourceType: sourceType,
+    currentVersion,
+    latestAvailableVersion,
+  });
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {

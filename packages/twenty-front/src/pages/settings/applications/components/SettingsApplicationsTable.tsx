@@ -2,7 +2,7 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -13,8 +13,7 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
+import { getApplicationHasUpdate } from '~/pages/settings/applications/utils/getApplicationHasUpdate';
 import { Section } from 'twenty-ui/layout';
 import { SearchInput } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -86,22 +85,14 @@ export const SettingsApplicationsTable = ({
         </TableRow>
         <StyledTableRowsContainer>
           {filteredApplications.map((application) => {
-            const registrationSourceType =
-              application.applicationRegistration?.sourceType;
-
-            const latestVersion =
-              application.applicationRegistration?.latestAvailableVersion;
-
-            const isLocalApplication =
-              application.sourceType ===
-              ApplicationRegistrationSourceType.LOCAL;
-
-            const hasUpdate =
-              isUpgradableApplicationSourceType(registrationSourceType) &&
-              isDefined(latestVersion) &&
-              isDefined(application.version) &&
-              (isLocalApplication ||
-                isNewerSemver(latestVersion, application.version));
+            const hasUpdate = getApplicationHasUpdate({
+              applicationSourceType: application.sourceType,
+              registrationSourceType:
+                application.applicationRegistration?.sourceType,
+              currentVersion: application.version,
+              latestAvailableVersion:
+                application.applicationRegistration?.latestAvailableVersion,
+            });
 
             return (
               <SettingsApplicationTableRow
