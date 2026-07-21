@@ -53,6 +53,7 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
           toFlatObjectMetadata,
           flatObjectMetadataMaps,
           flatIndexMaps,
+          systemSideEffectMorphFieldsOnly: false,
         })
       : {
           morphRelatedFlatIndexesToUpdate: [],

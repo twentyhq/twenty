@@ -43,7 +43,7 @@ const buildCustomerSyncCallRecordingId = (
   startsAt: string = FUTURE_STARTS_AT,
 ): string =>
   computeCallRecordingIdForMeeting(
-    `link:meet.example.com/customer-sync:${startsAt}`,
+    `link:meet.google.com/customer-sync:${startsAt}`,
   );
 
 type CalendarEventNode = {
@@ -207,7 +207,7 @@ const buildCalendarEvent = (
   endsAt: FUTURE_ENDS_AT,
   iCalUid: 'calendar-event-uid',
   conferenceLink: {
-    primaryLinkUrl: 'https://meet.example.com/customer-sync',
+    primaryLinkUrl: 'https://meet.google.com/customer-sync',
   },
   callRecorderPreference: 'ON',
   ...overrides,
@@ -293,7 +293,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     );
     expect(JSON.parse(createBotInit.body ?? '')).toEqual(
       expect.objectContaining({
-        meeting_url: 'https://meet.example.com/customer-sync',
+        meeting_url: 'https://meet.google.com/customer-sync',
         join_at: FUTURE_RECALL_BOT_JOIN_AT,
         metadata: {
           twentyWorkspaceId: WORKSPACE_ID,
@@ -471,7 +471,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(updateBotUrl).toBe(`${RECALL_API_BASE_URL}/bot/recall-bot-1/`);
     expect(JSON.parse(updateBotInit.body ?? '')).toEqual(
       expect.objectContaining({
-        meeting_url: 'https://meet.example.com/customer-sync',
+        meeting_url: 'https://meet.google.com/customer-sync',
         join_at: FUTURE_RECALL_BOT_JOIN_AT,
         metadata: {
           twentyWorkspaceId: WORKSPACE_ID,
@@ -742,7 +742,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       removedOccurrences: [
         {
           calendarEventId: 'calendar-event-1',
-          realMeetingKey: `link:meet.example.com/customer-sync:${FUTURE_STARTS_AT}`,
+          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
           startsAt: FUTURE_STARTS_AT,
         },
       ],
@@ -798,7 +798,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       removedOccurrences: [
         {
           calendarEventId: 'calendar-event-1',
-          realMeetingKey: `link:meet.example.com/customer-sync:${FUTURE_STARTS_AT}`,
+          realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
           startsAt: FUTURE_STARTS_AT,
         },
       ],
@@ -860,7 +860,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
           id: 'calendar-event-2',
           iCalUid: 'other-meeting-uid',
           conferenceLink: {
-            primaryLinkUrl: 'https://meet.example.com/other-sync',
+            primaryLinkUrl: 'https://meet.google.com/other-sync',
           },
         }),
       ],
@@ -887,7 +887,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'FAILED',
-        realMeetingKey: `link:meet.example.com/customer-sync:${FUTURE_STARTS_AT}`,
+        realMeetingKey: `link:meet.google.com/customer-sync:${FUTURE_STARTS_AT}`,
         errorMessage: 'recall exploded',
       }),
       expect.objectContaining({ action: 'CREATED' }),

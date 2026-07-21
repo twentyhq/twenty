@@ -69,7 +69,7 @@ Pour publier une mise à jour :
 
 1. Incrémentez le champ `version` dans votre `package.json` (par ex. `1.2.3` → `1.2.4`, `1.3.0` ou `2.0.0`)
 2. Exécutez `yarn twenty app:publish --private` (ou `yarn twenty app:publish --private --remote production`)
-3. Les espaces de travail qui ont l'application installée verront la mise à niveau disponible dans leurs paramètres
+3. Les espaces de travail qui ont installé l’application et y ont activé la mise à niveau automatique (dans l’onglet Paramètres de l’application) sont mis à niveau automatiquement en arrière-plan ; les autres verront la mise à niveau disponible dans leurs paramètres
 
 <Note>
 Les tags de préversion fonctionnent comme prévu : incrémenter `1.0.0-rc.1` → `1.0.0-rc.2` est autorisé, et une version finale telle que `1.0.0` est correctement reconnue comme supérieure à `1.0.0-rc.5`. La version dans `package.json` doit elle-même être une chaîne SemVer valide.
@@ -112,7 +112,7 @@ Le serveur est l'autorité de référence pour la vérification — il valide `e
 
 ## CI/CD automatisés (workflows préconfigurés)
 
-Les applications générées avec `create-twenty-app` sont livrées avec deux workflows GitHub Actions prêts à l’emploi, sous `.github/workflows/`. Ils sont prêts à s’exécuter dès que vous poussez le dépôt sur GitHub — aucune configuration supplémentaire n’est nécessaire pour la CI, et le CD ne nécessite qu’un seul secret.
+Les applications générées avec `create-twenty-app` sont livrées avec trois workflows GitHub Actions prêts à l’emploi, sous `.github/workflows/`. L’intégration continue (CI) s’exécute sans configuration, le déploiement continu (CD) ne nécessite qu’un seul secret, et la publication sur npm requiert une configuration unique de npm trusted-publisher.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ La valeur par défaut de `TWENTY_DEPLOY_URL`, `http://localhost:3000`, est un es
 
 Ajoutez le label `deploy` à une pull request. La condition `if:` dans `cd.yml` exécutera le job pour cette PR en utilisant le commit de tête de la PR, vous permettant de valider une modification sur le serveur cible avant la fusion.
 
+### Publication — `publish.yml`
+
+Publie votre application sur npm avec provenance lorsque vous poussez une étiquette de version (par exemple `v1.0.0`), ou lorsque vous exécutez manuellement le workflow depuis l’onglet Actions.
+
+**Ce que cela fait:**
+
+1. Récupère votre application, configure Node.js et met à jour npm (la publication de confiance nécessite npm 11.5.1 ou une version ultérieure).
+2. Exécute `yarn twenty app:publish`, qui génère l’application et publie `.twenty/output` sur npm. En CI, il ajoute automatiquement `--provenance` et `--access public`, de sorte qu’aucun indicateur n’est nécessaire dans le workflow.
+
+**Configuration unique :**
+
+Sur npmjs.com, ouvrez votre package > **Settings → Trusted Publisher** et enregistrez ce dépôt avec le workflow `publish.yml` (voir la [documentation npm sur la publication de confiance](https://docs.npmjs.com/trusted-publishers)). La publication avec provenance certifie quel dépôt GitHub a construit le package, ce qui est aussi la façon de revendiquer la propriété de votre application dans une marketplace Twenty.
+
 ### Épingler les actions réutilisables
 
-Les deux workflows référencent des actions réutilisables sur `@main`, de sorte que les mises à jour des actions dans le dépôt `twentyhq/twenty` sont récupérées automatiquement. Si vous souhaitez des builds déterministes, remplacez `@main` par un SHA de commit ou un tag de version sur chaque ligne `uses:`.
+Les workflows `ci.yml` et `cd.yml` référencent des actions réutilisables sur `@main`, de sorte que les mises à jour des actions dans le dépôt `twentyhq/twenty` sont récupérées automatiquement. Si vous souhaitez des builds déterministes, remplacez `@main` par un SHA de commit ou un tag de version sur chaque ligne `uses:`.
 
 ## Publication sur npm
 
@@ -241,37 +254,12 @@ Si votre application ne définit pas de `aboutDescription` dans `defineApplicati
 
 ### Publication via CI
 
-Utilisez ce workflow GitHub Actions pour publier automatiquement à chaque version (utilise [OIDC](https://docs.npmjs.com/trusted-publishers)) :
+Le workflow `publish.yml` préconfiguré décrit ci-dessus publie automatiquement sur npm lors des tags de version, avec provenance. Comme `yarn twenty app:publish` ajoute `--provenance` et `--access public` pour vous lorsqu’il s’exécute en CI, le workflow n’a besoin d’aucune option npm — seulement de la configuration unique de Trusted Publisher.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Pour d'autres systèmes CI (GitLab CI, CircleCI, etc.), les mêmes trois commandes s'appliquent : `yarn install`, `yarn twenty dev:build`, puis `npm publish` depuis `.twenty/output`.
+Pour d’autres systèmes de CI (GitLab CI, CircleCI, etc.), exécutez `yarn install` puis `yarn twenty app:publish`. La provenance est émise lorsque l’environnement peut générer un jeton OIDC et est ignorée automatiquement dans le cas contraire.
 
 <Note>
-**npm provenance** est facultatif mais recommandé. Publier avec `--provenance` ajoute un badge de confiance à votre fiche npm, permettant aux utilisateurs de vérifier que le package a été construit à partir d'un commit spécifique dans un pipeline CI public. Voir la [documentation npm sur la provenance](https://docs.npmjs.com/generating-provenance-statements) pour les instructions de configuration.
+La **provenance npm** ajoute un badge de confiance à votre fiche npm, permettant aux utilisateurs de vérifier que le package a été construit à partir d’un commit spécifique dans un pipeline CI public. C’est également ce qui vous permet de revendiquer la propriété de votre application dans une marketplace Twenty. Voir la [documentation npm sur la provenance](https://docs.npmjs.com/generating-provenance-statements) pour plus de détails.
 </Note>
 
 ## Installation des applications

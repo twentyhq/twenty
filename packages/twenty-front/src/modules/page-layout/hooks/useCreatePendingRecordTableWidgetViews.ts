@@ -96,6 +96,18 @@ export const useCreatePendingRecordTableWidgetViews = () => {
               openRecordIn: view.openRecordIn,
               visibility: view.visibility,
               shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+              mainGroupByFieldMetadataId:
+                view.mainGroupByFieldMetadataId ?? undefined,
+              kanbanAggregateOperation:
+                view.kanbanAggregateOperation ?? undefined,
+              kanbanAggregateOperationFieldMetadataId:
+                view.kanbanAggregateOperationFieldMetadataId ?? undefined,
+              kanbanColumnWidth: view.kanbanColumnWidth ?? undefined,
+              calendarLayout: view.calendarLayout ?? undefined,
+              calendarFieldMetadataId:
+                view.calendarFieldMetadataId ?? undefined,
+              calendarEndFieldMetadataId:
+                view.calendarEndFieldMetadataId ?? undefined,
             },
           },
           view.objectMetadataId,

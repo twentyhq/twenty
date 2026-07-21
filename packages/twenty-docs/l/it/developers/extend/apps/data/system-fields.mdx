@@ -86,6 +86,52 @@ Lo stesso id risolto funziona ovunque ci si aspetti un `fieldMetadataUniversalId
   input cambiano ed evita discrepanze se la modalità di derivazione dovesse mai evolvere.
 </Note>
 
+## Campi di relazione di sistema
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` è disponibile da `twenty-sdk`
+  2.23 in poi e richiede un server Twenty dalla versione 2.23 o successiva.
+</Note>
+
+Oltre ai campi scalari di sistema sopra indicati, il server fornisce anche quattro **campi di relazione di sistema** su ogni oggetto: `timelineActivities`, `attachments`, `noteTargets` e `taskTargets`, ciascuno dei quali punta al corrispondente oggetto di relazione standard.
+
+Questi campi non vengono risolti con `getFieldUniversalIdentifier`: il loro identificatore è derivato **in modo indipendente dal nome**, dall'oggetto che ospita il campo e dall'oggetto a cui il campo punta. In questo modo, rinominare un oggetto non modifica mai gli identificatori dei suoi campi di relazione.
+
+Usa `getSystemRelationFieldUniversalIdentifier` per risolverli:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` è l'oggetto che **ospita** il campo.
+* `relationTargetObjectUniversalIdentifier` è l'oggetto a cui il campo **punta**.
+
+La direzione è codificata dall'ordine degli argomenti. Per risolvere il lato inverso (ad esempio `attachment.targetRocket`, il campo morph che il server crea sull'oggetto di relazione standard), scambia i due:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Come per i campi di sistema scalari, l'id risolto funziona ovunque ci si aspetti un `fieldMetadataUniversalIdentifier`.
+
 ## Oggetti standard di Twenty
 
 Per un oggetto **standard** di Twenty (Person, Company, Opportunity, …), non hai bisogno di derivare nulla: gli identificatori dei campi di sistema sono costanti pre-calcolate che puoi importare direttamente.

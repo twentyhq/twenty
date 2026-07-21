@@ -92,6 +92,7 @@ describe('ApplicationManifestApplyService', () => {
         workspaceId: WORKSPACE_ID,
         applicationId: APPLICATION_ID,
         applicationUniversalIdentifier: 'my-app',
+        trigger: 'manifest-sync',
       });
     });
 

@@ -1,6 +1,8 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { AddRecordGroupButton } from '@/object-record/record-group/components/AddRecordGroupButton';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -15,6 +17,14 @@ const StyledColumn = styled.div`
 
 export const RecordBoardAddGroupColumn = () => {
   const { selectFieldMetadataItem } = useContext(RecordBoardContext);
+
+  const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
+    isRecordBoardViewSettingsReadOnlyComponentState,
+  );
+
+  if (isRecordBoardViewSettingsReadOnly) {
+    return null;
+  }
 
   if (!canAddRecordGroupForFieldMetadataItem(selectFieldMetadataItem)) {
     return null;
