@@ -189,7 +189,7 @@ export class ChartRelationLabelService {
             apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
           });
 
-          if (!rolePermissionConfig) {
+          if (!isDefined(rolePermissionConfig)) {
             return [];
           }
 
