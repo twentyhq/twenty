@@ -143,6 +143,33 @@ describe('createHtmlHostWrapper geometry registration', () => {
     expect((container.firstElementChild as HTMLInputElement).value).toBe('abc');
   });
 
+  it('should forward focusin through a handler prop that arrives after mount', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = renderWithTracker('div', {
+      [REMOTE_ELEMENT_PROP]: { id: '7' },
+    });
+
+    act(() => {
+      root.render(
+        createElement(
+          FrontComponentGeometryTrackerContext.Provider,
+          { value: geometryTracker },
+          createWrapperElement(Wrapper, {
+            [REMOTE_ELEMENT_PROP]: { id: '7' },
+            onFocusin: handleFocusIn,
+          }),
+        ),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).toHaveBeenCalledTimes(1);
+  });
+
   it('should not register when there is no tracker in context', () => {
     const Wrapper = createHtmlHostWrapper('div');
 

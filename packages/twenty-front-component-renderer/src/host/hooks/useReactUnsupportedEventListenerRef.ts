@@ -5,7 +5,7 @@ import { createReactUnsupportedEventListenerRef } from '@/host/utils/createReact
 
 export const useReactUnsupportedEventListenerRef = (
   reactUnsupportedEventHandlers: ReactUnsupportedEventHandlers,
-): ((element: Element | null) => void) | undefined => {
+): ((element: Element | null) => void) => {
   const latestHandlersRef = useRef(reactUnsupportedEventHandlers);
   latestHandlersRef.current = reactUnsupportedEventHandlers;
 
@@ -13,10 +13,5 @@ export const useReactUnsupportedEventListenerRef = (
     createReactUnsupportedEventListenerRef(latestHandlersRef),
   );
 
-  const hasReactUnsupportedEventHandlers =
-    Object.keys(reactUnsupportedEventHandlers).length > 0;
-
-  return hasReactUnsupportedEventHandlers
-    ? reactUnsupportedEventListenerRef
-    : undefined;
+  return reactUnsupportedEventListenerRef;
 };
