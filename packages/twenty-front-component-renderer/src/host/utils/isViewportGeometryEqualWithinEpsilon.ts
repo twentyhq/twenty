@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { GEOMETRY_EPSILON_PIXELS } from '@/host/constants/GeometryEpsilonPixels';
+import { areSnapshotKeysEqualWithinEpsilon } from '@/host/utils/areSnapshotKeysEqualWithinEpsilon';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
-const VIEWPORT_GEOMETRY_PIXEL_KEYS: (keyof ViewportGeometrySnapshot)[] = [
+const VIEWPORT_GEOMETRY_PIXEL_KEYS = [
   'innerWidth',
   'innerHeight',
   'scrollX',
@@ -14,7 +14,7 @@ const VIEWPORT_GEOMETRY_PIXEL_KEYS: (keyof ViewportGeometrySnapshot)[] = [
   'rootContainerHeight',
   'rootContainerClientWidth',
   'rootContainerClientHeight',
-];
+] satisfies (keyof ViewportGeometrySnapshot)[];
 
 export const isViewportGeometryEqualWithinEpsilon = (
   previousSnapshot: ViewportGeometrySnapshot | null,
@@ -32,14 +32,9 @@ export const isViewportGeometryEqualWithinEpsilon = (
     return false;
   }
 
-  return VIEWPORT_GEOMETRY_PIXEL_KEYS.every((key) => {
-    const previousValue = previousSnapshot[key];
-    const nextValue = nextSnapshot[key];
-
-    if (typeof previousValue !== 'number' || typeof nextValue !== 'number') {
-      return previousValue === nextValue;
-    }
-
-    return Math.abs(previousValue - nextValue) < GEOMETRY_EPSILON_PIXELS;
-  });
+  return areSnapshotKeysEqualWithinEpsilon(
+    previousSnapshot,
+    nextSnapshot,
+    VIEWPORT_GEOMETRY_PIXEL_KEYS,
+  );
 };
