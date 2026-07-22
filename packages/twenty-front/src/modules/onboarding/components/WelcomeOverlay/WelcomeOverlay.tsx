@@ -179,9 +179,6 @@ const StyledTitleBoldRun = styled.span`
   }
 `;
 
-// Exact 2x clone of the handoff target run: regular weight, doubled gap and a
-// 2x-scaled chip, so the 0.5 flight scale lands it pixel-identical to the
-// target. Crossfaded with the bold run mid-flight to morph the font weight.
 const StyledTitleRegularRun = styled.span`
   align-items: center;
   display: inline-flex;

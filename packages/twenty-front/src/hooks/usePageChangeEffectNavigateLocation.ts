@@ -183,9 +183,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     hasAccessTokenPair &&
     isOnAWorkspace
   ) {
-    // PaymentSuccess is about to consume the pending checkout: it fires the
-    // welcome animation, decides the destination, and clears the pending flag,
-    // which re-runs this hook and lets the redirect below proceed.
     if (
       isMatchingLocation(location, AppPath.PlanRequiredSuccess) &&
       isOnboardingCheckoutPending

@@ -5,9 +5,6 @@ import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAni
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Sole teardown clock for the leave sequence. Must outlast the last staged
-// reveal (workspaceSetupContinuationIn ends at 1000ms) so clearing the atoms
-// cannot cut a running reveal short.
 const FORCED_TEARDOWN_DELAY_IN_MS = 1100;
 
 export const WelcomeAnimationForcedTeardownEffect = () => {

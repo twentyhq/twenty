@@ -159,10 +159,6 @@ export const PageChangeEffect = () => {
         clearReturnToPath();
       }
 
-      // The post-onboarding hint stays set while heading to or sitting on the
-      // setup chat (so the page keeps its onboarding dressing across a refresh),
-      // and is consumed the moment a redirect diverts elsewhere, e.g. a stored
-      // returnToPath winning.
       if (
         store.get(shouldOpenAiChatAfterOnboardingState.atom) &&
         pageChangeEffectNavigateLocation !== AppPath.WorkspaceSetup

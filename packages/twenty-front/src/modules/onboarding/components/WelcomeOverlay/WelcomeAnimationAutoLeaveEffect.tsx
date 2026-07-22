@@ -42,8 +42,6 @@ export const WelcomeAnimationAutoLeaveEffect = () => {
         return;
       }
 
-      // A late Inter swap resizes both the flying title and the target line,
-      // so settle fonts before measuring; jsdom has no document.fonts.
       if (isDefined(document.fonts)) {
         void document.fonts.ready.then(leave);
       } else {

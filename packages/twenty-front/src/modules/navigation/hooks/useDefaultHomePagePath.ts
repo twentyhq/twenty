@@ -90,9 +90,6 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    // While metadata is loading the store can look empty; concluding the
-    // /settings/profile empty-workspace fallback from that transient state
-    // would strand the user there. AppPath.Index self-heals once loaded.
     if (!areObjectMetadataItemsLoaded || !areNavigationMenuItemsLoaded) {
       return AppPath.Index;
     }

@@ -393,8 +393,6 @@ const testCases: {
   { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, res: AppPath.WorkspaceSetup },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, returnToPath: '/objects/tasks', res: '/objects/tasks' },
 
-  // isOnboardingCheckoutPending: PaymentSuccess consumes the pending checkout and
-  // fires the welcome animation, so the redirect must wait for it on that page only
   { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: defaultHomePagePath },
 

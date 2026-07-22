@@ -90,7 +90,6 @@ describe('WorkspaceSetup', () => {
     expect(getByTestId('header-title')).toHaveTextContent('Onboarding');
   });
 
-  // Expanding a normal chat must not inject the onboarding welcome text.
   it('should render a plain chat when the post-onboarding hint is not set', () => {
     setOnboardingAiChatFeatureFlag(true);
 

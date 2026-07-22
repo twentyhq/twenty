@@ -57,7 +57,6 @@ describe('WelcomeAnimationAutoLeaveEffect', () => {
     expect(isLeaving()).toBe(false);
   });
 
-  // The cap is anchored to mount and must not slide when the target arrives late.
   it('should leave at the cap when the target never appears', () => {
     render(<WelcomeAnimationAutoLeaveEffect />, { wrapper: Wrapper });
 
