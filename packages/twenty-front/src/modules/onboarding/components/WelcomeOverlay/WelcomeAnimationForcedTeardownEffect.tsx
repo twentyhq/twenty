@@ -5,9 +5,10 @@ import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAni
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Must outlast welcomeBackdropOut (0.7s duration + 0.08s delay = 780ms) so the
-// watchdog only wins when onAnimationEnd never fires, e.g. a backgrounded tab.
-const FORCED_TEARDOWN_DELAY_IN_MS = 1200;
+// Sole teardown clock for the leave sequence. Must outlast the last staged
+// reveal (workspaceSetupContinuationIn ends at 1000ms) so clearing the atoms
+// cannot cut a running reveal short.
+const FORCED_TEARDOWN_DELAY_IN_MS = 1100;
 
 export const WelcomeAnimationForcedTeardownEffect = () => {
   const setIsWelcomeAnimationVisible = useSetAtomState(

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type AnimationEvent, type CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -15,7 +15,6 @@ import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAni
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledOverlay = styled.div`
   align-items: center;
@@ -107,7 +106,7 @@ const StyledTitle = styled.div`
   &.is-flying {
     animation:
       welcomeTitleFlight 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-      welcomeTitleFlightOut 0.12s ease-out 0.5s forwards;
+      welcomeTitleFlightOut 0.14s ease-out 0.66s forwards;
     transform-origin: var(--welcome-flight-origin-x) center;
   }
 
@@ -193,31 +192,14 @@ export const WelcomeOverlay = () => {
   const isWelcomeAnimationVisible = useAtomStateValue(
     isWelcomeAnimationVisibleState,
   );
-  const setIsWelcomeAnimationVisible = useSetAtomState(
-    isWelcomeAnimationVisibleState,
-  );
   const isWelcomeAnimationLeaving = useAtomStateValue(
     isWelcomeAnimationLeavingState,
   );
-  const setIsWelcomeAnimationLeaving = useSetAtomState(
-    isWelcomeAnimationLeavingState,
-  );
   const welcomeTitleFlight = useAtomStateValue(welcomeTitleFlightState);
-  const setWelcomeTitleFlight = useSetAtomState(welcomeTitleFlightState);
 
   if (!isWelcomeAnimationVisible) {
     return null;
   }
-
-  const handleBackdropAnimationEnd = (
-    event: AnimationEvent<HTMLDivElement>,
-  ) => {
-    if (event.target === event.currentTarget && isWelcomeAnimationLeaving) {
-      setIsWelcomeAnimationVisible(false);
-      setIsWelcomeAnimationLeaving(false);
-      setWelcomeTitleFlight(null);
-    }
-  };
 
   const leavingClassName = isWelcomeAnimationLeaving ? 'is-leaving' : undefined;
   const titleClassName = isWelcomeAnimationLeaving
@@ -242,10 +224,7 @@ export const WelcomeOverlay = () => {
       ) : (
         <WelcomeAnimationAutoLeaveEffect />
       )}
-      <StyledBackdrop
-        className={leavingClassName}
-        onAnimationEnd={handleBackdropAnimationEnd}
-      />
+      <StyledBackdrop className={leavingClassName} />
       <StyledCanvasLayer>
         <WelcomeHalftoneCanvas isLeaving={isWelcomeAnimationLeaving} />
       </StyledCanvasLayer>
