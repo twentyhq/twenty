@@ -2611,7 +2611,6 @@ msgstr "Ascending"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
-#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "Ask AI"
 
@@ -3924,7 +3923,6 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying."
 
 #. js-lingui-id: yz7wBu
-#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Close"
@@ -3999,11 +3997,6 @@ msgstr "Collapse"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "Collapse folder"
-
-#. js-lingui-id: OQTRMK
-#: src/modules/ai/components/AiChatCollapseButton.tsx
-msgid "Collapse to side panel"
-msgstr "Collapse to side panel"
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7792,11 +7785,6 @@ msgstr "Exit import flow"
 msgid "Expand"
 msgstr "Expand"
 
-#. js-lingui-id: 8ibXh3
-#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
-msgid "Expand chat"
-msgstr "Expand chat"
-
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10210,11 +10198,6 @@ msgstr "Is today{timeZoneAbbreviationSuffix}"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
 msgstr "Issuer URI"
-
-#. js-lingui-id: TulZsn
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
-msgid "It natively comes with 7 standard objects."
-msgstr "It natively comes with 7 standard objects."
 
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -13280,11 +13263,6 @@ msgstr "on weekdays only"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "On which object(s) should this trigger be available"
-
-#. js-lingui-id: gukxZ5
-#: src/pages/onboarding/WorkspaceSetup.tsx
-msgid "Onboarding"
-msgstr "Onboarding"
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -20129,8 +20107,6 @@ msgid "Welcome to Twenty"
 msgstr "Welcome to Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WelcomeOverlay/WelcomeOverlay.tsx
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Welcome to your workspace"
