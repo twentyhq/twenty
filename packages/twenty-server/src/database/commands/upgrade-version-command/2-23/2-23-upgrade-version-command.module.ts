@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddWorkflowCoreSoftRefFieldCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784286706000-add-workflow-core-soft-ref-field.command';
 import { BackfillWorkflowCoreLinksCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784286707000-backfill-workflow-core-links.command';
+import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784567000000-backfill-message-list-members-junction-target.command';
 import { ReconcileSystemRelationFieldUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784565136000-reconcile-system-relation-field-universal-identifier.command';
 import { UpgradePeopleDataLabsApplicationCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784565137000-upgrade-people-data-labs-application.command';
 import { FixGoToRolesSettingsCommandMenuItemPathCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784566000000-fix-go-to-roles-settings-command-menu-item-path.command';
@@ -29,6 +30,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddWorkflowCoreSoftRefFieldCommand,
     BackfillWorkflowCoreLinksCommand,
     ReconcileSystemRelationFieldUniversalIdentifierCommand,
+    BackfillMessageListMembersJunctionTargetCommand,
     UpgradePeopleDataLabsApplicationCommand,
     FixGoToRolesSettingsCommandMenuItemPathCommand,
   ],
