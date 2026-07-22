@@ -7670,6 +7670,11 @@ msgstr "Листа којој особа припада"
 msgid "The list this campaign was sent to"
 msgstr "Листа на коју је ова кампања послата"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
