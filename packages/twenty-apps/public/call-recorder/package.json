@@ -6,7 +6,7 @@
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.20.0"
+    "twenty": ">=2.23.0"
   },
   "keywords": [
     "twenty-app"
@@ -35,8 +35,8 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "2.20.0",
-    "twenty-sdk": "2.20.0",
+    "twenty-client-sdk": "2.23.0-alpha.2",
+    "twenty-sdk": "2.23.0-alpha.2",
     "twenty-ui": "^1.0.0-alpha.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",

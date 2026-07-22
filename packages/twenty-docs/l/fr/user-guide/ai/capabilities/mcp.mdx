@@ -3,10 +3,6 @@ title: Serveur MCP
 description: Connectez des assistants IA à votre espace de travail Twenty à l'aide du Model Context Protocol.
 ---
 
-<Warning>
-MCP est actuellement en **alpha** et n'est disponible que sur certains espaces de travail. Il se peut qu'il ne soit pas encore activé pour votre espace de travail.
-</Warning>
-
 Twenty expose un serveur [MCP](https://modelcontextprotocol.io/) afin que les assistants IA — Claude Desktop, Claude Code, Cursor, ChatGPT et autres — puissent lire et écrire vos données CRM en langage naturel.
 
 Utilisez l'**URL de votre espace de travail** (l'URL que vous utilisez pour accéder à Twenty) comme point de terminaison MCP. Sur Twenty Cloud, l'URL de votre espace de travail peut être `https://{mycompany}.twenty.com` ou un domaine personnalisé. Le serveur est disponible à l'adresse :
@@ -72,20 +68,20 @@ Si votre client MCP ne prend pas en charge OAuth, ou si vous préférez des iden
 Votre clé API donne accès aux données de votre espace de travail. Ne l'ajoutez pas au contrôle de version et évitez de la placer dans des fichiers de configuration partagés.
 </Warning>
 
-Pour créer une clé API, allez dans **Paramètres > APIs & Webhooks > + Créer une clé**. Voir [APIs](/l/fr/developers/extend/api#create-an-api-key) pour plus de détails.
+Pour créer une clé API, allez dans **Paramètres → MCP & APIs → API → + Créer une clé**. Voir [APIs](/l/fr/developers/extend/api#create-an-api-key) pour plus de détails.
 
 ## Démarrage rapide
 
 ### 1. Copiez la configuration
 
-Allez dans **Paramètres > IA > Plus > MCP Server** dans Twenty. Choisissez votre méthode d'authentification (OAuth ou clé API), copiez l'extrait JSON (il utilisera déjà l'URL de votre espace de travail) et collez-le dans le fichier de configuration de votre client MCP.
+Allez dans **Paramètres → MCP & APIs → MCP** dans Twenty. Choisissez votre méthode d'authentification (OAuth ou clé API), copiez l'extrait JSON (il utilisera déjà l'URL de votre espace de travail) et collez-le dans le fichier de configuration de votre client MCP.
 
 | Client             | Emplacement du fichier de configuration                                                                                                                                                                   |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) ou `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                                      |
 | **Claude Code**    | `~/.claude.json` (utilisateur) ou `.mcp.json` (projet)                                                                                                                                                    |
 | **Cursor**         | `.cursor/mcp.json` dans votre projet, ou `~/.cursor/mcp.json` globalement                                                                                                                                 |
-| **ChatGPT**        | Activez le mode Développeur dans **Paramètres > Applications et connecteurs > Paramètres avancés**, puis utilisez **Créer** dans **Paramètres > Applications et connecteurs** pour ajouter le serveur MCP |
+| **ChatGPT**        | Activez le mode Développeur dans **Paramètres → Applications et connecteurs → Paramètres avancés**, puis utilisez **Créer** dans **Paramètres → Applications et connecteurs** pour ajouter le serveur MCP |
 
 ### 2. Se connecter
 
@@ -113,7 +109,7 @@ Vous n'avez pas besoin de mémoriser les noms des outils. Demandez à votre assi
 Les connexions MCP héritent des autorisations de l'utilisateur authentifié (OAuth) ou du rôle attribué à la clé API. Pour restreindre ce que le serveur MCP peut faire :
 
 * **OAuth** : Le rôle de l'utilisateur dans l'espace de travail s'applique.
-* **Clé API** : Attribuez un rôle à la clé API dans **Paramètres > Rôles**. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions).
+* **Clé API** : Attribuez un rôle à la clé API dans **Paramètres → Membres → Rôles**. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions).
 
 ## Configuration auto-hébergée
 

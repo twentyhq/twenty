@@ -7,7 +7,7 @@ type UsePlansOptions = {
 };
 
 export const usePlans = (options?: UsePlansOptions) => {
-  const { data, loading, error } = useQuery(ListPlansDocument, {
+  const { data, loading, error, refetch } = useQuery(ListPlansDocument, {
     skip: options?.skip,
   });
 
@@ -18,5 +18,5 @@ export const usePlans = (options?: UsePlansOptions) => {
     return data.listPlans;
   };
 
-  return { loading, error, isPlansLoaded, listPlans };
+  return { loading, error, isPlansLoaded, listPlans, refetch };
 };

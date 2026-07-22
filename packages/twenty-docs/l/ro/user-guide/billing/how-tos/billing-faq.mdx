@@ -9,7 +9,7 @@ description: Întrebări frecvente despre prețurile și facturarea Twenty.
 <Accordion title="Pot folosi Twenty gratuit în timp ce găzduiesc pe cont propriu?">
 Da, poți folosi Twenty gratuit în timp ce găzduiești pe cont propriu. Vei avea acces la tot ceea ce este inclus în planul Pro (Cloud), cu excepția asistenței din partea echipei noastre de bază. Suportul este accesibil prin comunitatea noastră Discord.
 
-Dacă vrei să găzduiești pe cont propriu și ai nevoie de funcțiile Premium (SSO și permisiuni la nivel de rând), poți alege licența cu plată Organization (Self-Hosted). Aceasta include și asistență din partea echipei Twenty și elimină obligația de a publica codul personalizat ca open-source înainte de distribuire.
+Dacă vrei să găzduiești pe cont propriu și ai nevoie de funcțiile Premium (SSO, permisiuni la nivel de rând și altele), poți alege licența cu plată Organization (Self-Hosted). Aceasta include și asistență din partea echipei Twenty și elimină obligația de a publica codul personalizat ca open-source înainte de distribuire.
 </Accordion>
 
 <Accordion title="Care sunt funcțiile Premium?">
@@ -17,6 +17,10 @@ Funcțiile Premium sunt disponibile doar în planurile Organization (Cloud sau S
 * **Integrare SSO**: Autentificare unică cu furnizorul tău de identitate
 * **Permisiuni la nivel de rând**: Control de acces granular la nivel de înregistrare
 * **Date privind utilizarea AI**: Urmăriți consumul de AI în spațiul de lucru
+* **Jurnale de audit**: Verifică ce a făcut fiecare membru al spațiului de lucru
+* **Campanii de email**: Planifică ce emailuri ar trebui trimise (disponibil în curând)
+* **Spații de lucru nelimitate**: Creează câte spații de lucru dorești (numai pentru auto-găzduire)
+* **Cod sursă privat**: Nu este nevoie să publici modificările într-un depozit public (numai pentru auto-găzduire)
 </Accordion>
 
 <Accordion title="Planul Organization în cloud și planul Organization autogăzduit sunt același lucru?">
@@ -28,19 +32,19 @@ Nu oferim locuri gratuite. Prețul este pe utilizator și fiecare utilizator are
 </Accordion>
 
 <Accordion title="Unde pot schimba abonamentul meu la planul Organization?">
-Poți face acest lucru în `Setări → Facturare`. Apoi, fă clic pe `Schimbă la Organization`.
+Poți face acest lucru în `Settings → Billing → Plans`. Apoi, fă clic pe `Schimbă la Organization`.
 </Accordion>
 
 <Accordion title="Unde pot schimba abonamentul meu la planul Pro?">
-Te rugăm să contactezi direct echipa noastră prin Suport, momentan nu există o modalitate simplă de a face acest lucru folosind interfața utilizatorului.
+Poți face acest lucru în `Settings → Billing → Plans`. Apoi, fă clic pe `Switch to Pro`.
 </Accordion>
 
-<Accordion title="Unde pot schimba abonamentul meu la planul Anual?">
-Poți face acest lucru sub `Setări → Facturare`. Apoi, fă clic pe `Schimbă la Anual`.
+<Accordion title="Unde pot schimba abonamentul meu la facturarea anuală?">
+Poți face acest lucru în `Setări → Facturare`. Apoi, fă clic pe `Upgrade to yearly`.
 </Accordion>
 
-<Accordion title="Unde pot schimba abonamentul meu la planul Lunar?">
-Te rugăm să contactezi direct echipa noastră prin Suport, momentan nu există o modalitate simplă de a face acest lucru folosind interfața utilizatorului.
+<Accordion title="Unde pot schimba abonamentul meu la facturarea lunară?">
+Poți face acest lucru sub `Setări → Facturare`. Apoi, fă clic pe `Downgrade to monthly`.
 </Accordion>
 
 <Accordion title="Unde pot vedea utilizarea mea de credite?">
@@ -57,13 +61,18 @@ Numărul de credite depinde de ciclul tău de facturare, nu de planul tău:
 Fiecare acțiune de flux de lucru consumă credite în funcție de complexitatea sa:
 * **Operațiunile interne de bază** (cum ar fi căutarea, actualizarea, crearea înregistrărilor) consumă foarte puține credite
 * **Operațiunile mai complexe** cum ar fi nodurile de cod și cererile către servicii externe consumă mai multe credite
-* **Indicațiile AI** (în curând!) vor consuma și ele mai multe credite în funcție de utilizare
+* **Prompturile AI** consumă, de asemenea, mai multe credite în funcție de utilizare
+* **Aplicațiile** consumă, de asemenea, mai multe credite, similar cu nodul Code
 
-Creditele sunt retrase în timp real când se execută fluxurile de lucru. Poți monitoriza utilizarea ta în **Setări → Facturare** pentru a urmări consumul și creditele rămase.
+Creditele sunt retrase în timp real când se execută fluxurile de lucru sau aplicațiile. Poți monitoriza utilizarea ta în **Setări → Facturare** pentru a urmări consumul și creditele rămase.
 </Accordion>
 
 <Accordion title="Pot cumpăra mai multe credite de flux de lucru?">
 Poți cumpăra credite suplimentare sub `Setări → Facturare`.
+</Accordion>
+
+<Accordion title="Pot cumpăra mai multe credite de flux de lucru doar pentru 1 lună?">
+Da, mergi la `Settings → Billing`, fă clic pe butonul `Increase`, alege câte credite dorești și confirmă, acestea vor fi aplicate pentru perioada curentă de facturare. Apoi, fă din nou clic pe butonul `Increase`, schimbă valoarea înapoi la cea inițială și confirmă; retrogradarea va fi aplicată începând cu următoarea perioadă de facturare.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ Poți face acest lucru sub `Setări → Facturare`. Apoi, fă clic pe `Vizualize
 
 <Accordion title="Unde pot accesa facturile mele?">
 Poți face acest lucru sub `Setări → Facturare`. Apoi, fă clic pe `Vizualizează detaliile de facturare`. Veți vedea toate facturile dvs. în partea de jos a ecranului.
+</Accordion>
+
+<Accordion title="De ce numărul de locuri este diferit de numărul de utilizatori din spațiul meu de lucru?">
+Numărul de locuri din spațiul de lucru este sincronizat cu sistemul de plăți la fiecare 6 ore; facturile sunt ajustate pe baza diferenței.
+</Accordion>
+
+<Accordion title="De ce am primit o factură pentru un nou membru al spațiului de lucru?">
+Când un nou membru este adăugat la spațiul de lucru, se trimite o factură pentru a acoperi diferența. Când un membru al spațiului de lucru este eliminat, modificarea este aplicată în următoarea factură standard lunară/anuală.
 </Accordion>
 </AccordionGroup>

@@ -1210,6 +1210,12 @@ msgstr ""
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
+#. js-lingui-id: D9pZ2l
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar widget views only support the month layout"
+msgstr ""
+
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Call Recording"
@@ -2055,11 +2061,6 @@ msgstr "Dashboards"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "Datastrukturen er ugyldig."
-
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Dataversionen stemmer ikke overens. Opdater og prøv igen."
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -6975,6 +6976,11 @@ msgstr "September"
 msgid "Server administrator access changed"
 msgstr "Adgang for serveradministrator ændret"
 
+#. js-lingui-id: uK5uBy
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "Server keys require the application publisher workspace to have the application installed."
+msgstr ""
+
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Server logic function not found."
@@ -7502,6 +7508,11 @@ msgstr "Applikationens kildekanal matcher ikke den forventede type."
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Applikationen har ikke en gyldig rolle tildelt. Tjek venligst din applikationskonfiguration."
+
+#. js-lingui-id: QyGlqv
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The application key-value entry could not be saved. Please try again."
+msgstr ""
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -8170,6 +8181,11 @@ msgstr "Denne rolle kan ikke ændres, da det er en systemrolle. Kun brugerdefine
 #: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
 msgid "This role cannot be modified."
 msgstr "Denne rolle kan ikke ændres."
+
+#. js-lingui-id: DEJJoY
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "This server key is already claimed by another workspace."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -8934,6 +8950,11 @@ msgstr "Visning blev ikke fundet efter upsert"
 msgid "View not found for widget"
 msgstr "Visning blev ikke fundet for widget"
 
+#. js-lingui-id: wIcQxd
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "View settings can only be updated on record table widgets"
+msgstr ""
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -9164,6 +9185,11 @@ msgstr "Widget-rækken overskrider gitterets højde"
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
 msgstr "Widget-typen VIEW understøttes endnu ikke."
+
+#. js-lingui-id: s8y6wj
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Widget views must use a widget view type"
+msgstr ""
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts

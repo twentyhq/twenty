@@ -163,6 +163,7 @@ export class ApplicationSyncService {
       canBeUninstalled: true,
       autoUpgrade: false,
       isSdkLayerStale: false,
+      sdkClientCoreChecksum: null,
       applicationRegistrationId: null,
       primaryPublicDomainId: null,
       createdAt: now,

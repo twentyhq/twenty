@@ -2,7 +2,7 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
-import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -72,8 +72,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const recordIndexOpenRecordIn = useAtomStateValue(
     recordIndexOpenRecordInState,
   );
-  const recordIndexCalendarLayout = useAtomStateValue(
-    recordIndexCalendarLayoutState,
+  const recordIndexCalendarLayout = useAtomComponentStateValue(
+    recordIndexCalendarLayoutComponentState,
   );
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,

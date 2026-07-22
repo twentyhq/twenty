@@ -1,6 +1,7 @@
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
+import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { type View } from '@/views/types/View';
@@ -13,7 +14,7 @@ export const buildRecordTableWidgetViewSnapshotFromView = (
     viewFilters,
     viewFilterGroups,
     viewSorts,
-    viewGroups: _viewGroups,
+    viewGroups,
     viewFieldGroups: _viewFieldGroups,
     ...viewProps
   } = view;
@@ -40,11 +41,19 @@ export const buildRecordTableWidgetViewSnapshotFromView = (
     viewId: view.id,
   }));
 
+  const flatViewGroups: FlatViewGroup[] = (viewGroups ?? []).map(
+    (viewGroup) => ({
+      ...viewGroup,
+      viewId: view.id,
+    }),
+  );
+
   return {
     view: viewProps,
     viewFields: flatViewFields,
     viewFilters: flatViewFilters,
     viewFilterGroups: flatViewFilterGroups,
     viewSorts: flatViewSorts,
+    viewGroups: flatViewGroups,
   };
 };
