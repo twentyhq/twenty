@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 
@@ -34,7 +35,18 @@ export class StartApplicationCommand extends CommandRunner {
     });
 
     this.logger.log(
-      `Started application "${application.name}" (${application.id}) in workspace ${application.workspaceId}. Logic function executions are allowed again.`,
+      `Started application "${application.name}" (id ${application.id}, universalIdentifier ${application.universalIdentifier}) in workspace ${application.workspaceId}: the workspace-level stop is lifted.`,
     );
+
+    if (
+      isDefined(application.applicationRegistrationId) &&
+      (await this.applicationStopService.isApplicationRegistrationStopped(
+        application.applicationRegistrationId,
+      ))
+    ) {
+      this.logger.warn(
+        `Application registration ${application.applicationRegistrationId} is still stopped server-wide: executions of this application remain blocked until application-registration:start is run.`,
+      );
+    }
   }
 }

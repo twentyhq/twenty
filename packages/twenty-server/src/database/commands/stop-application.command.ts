@@ -34,7 +34,7 @@ export class StopApplicationCommand extends CommandRunner {
     });
 
     this.logger.log(
-      `Stopped application "${application.name}" (${application.id}) in workspace ${application.workspaceId}. All its logic function executions are now blocked.`,
+      `Stopped application "${application.name}" (id ${application.id}, universalIdentifier ${application.universalIdentifier}) in workspace ${application.workspaceId}. All its logic function executions are now blocked.`,
     );
   }
 }

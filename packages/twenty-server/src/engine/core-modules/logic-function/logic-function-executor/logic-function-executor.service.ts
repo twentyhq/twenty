@@ -115,15 +115,17 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
-    await this.throttleExecution(workspaceId);
-
     const { flatApplication, flatLogicFunction, flatApplicationVariables } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
       });
 
+    // Checked before the shared workspace throttle so a flood from a stopped
+    // application cannot exhaust the token bucket of the other applications.
     await this.assertApplicationNotStopped(flatApplication);
+
+    await this.throttleExecution(workspaceId);
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,

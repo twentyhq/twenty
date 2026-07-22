@@ -38,7 +38,7 @@ export class StartApplicationRegistrationCommand extends CommandRunner {
       });
 
     this.logger.log(
-      `Started application registration "${applicationRegistration.name}" (${applicationRegistration.id}). Logic function executions of its ${installedApplicationCount} installed application(s) are allowed again.`,
+      `Started application registration "${applicationRegistration.name}" (id ${applicationRegistration.id}, universalIdentifier ${applicationRegistration.universalIdentifier}): the server-level stop is lifted for its ${installedApplicationCount} installed application(s). Workspace-level stops set with application:stop remain in effect.`,
     );
   }
 }

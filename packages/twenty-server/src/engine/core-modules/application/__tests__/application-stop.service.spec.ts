@@ -118,6 +118,21 @@ describe('ApplicationStopService', () => {
       );
       expect(application.stoppedAt).toBeNull();
     });
+
+    it('should throw when the application does not exist', async () => {
+      applicationRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        applicationStopService.startApplication({
+          applicationId: APPLICATION_ID,
+        }),
+      ).rejects.toThrow(ApplicationException);
+
+      expect(applicationRepository.update).not.toHaveBeenCalled();
+      expect(
+        workspaceCacheService.invalidateAndRecompute,
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('stopApplicationRegistration', () => {
@@ -174,6 +189,18 @@ describe('ApplicationStopService', () => {
         { stoppedAt: null },
       );
       expect(applicationRegistration.stoppedAt).toBeNull();
+    });
+
+    it('should throw when the registration does not exist', async () => {
+      applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        applicationStopService.startApplicationRegistration({
+          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        }),
+      ).rejects.toThrow(ApplicationRegistrationException);
+
+      expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
     });
   });
 

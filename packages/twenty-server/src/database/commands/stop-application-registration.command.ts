@@ -36,7 +36,7 @@ export class StopApplicationRegistrationCommand extends CommandRunner {
       });
 
     this.logger.log(
-      `Stopped application registration "${applicationRegistration.name}" (${applicationRegistration.id}). All logic function executions of its ${installedApplicationCount} installed application(s) are now blocked, across all workspaces.`,
+      `Stopped application registration "${applicationRegistration.name}" (id ${applicationRegistration.id}, universalIdentifier ${applicationRegistration.universalIdentifier}). All logic function executions of its ${installedApplicationCount} installed application(s) are now blocked, across all workspaces.`,
     );
   }
 }
