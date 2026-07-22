@@ -1,0 +1,24 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-upgrade-version-command.module.ts
+  s_c3fbc446206706::t_cb083d6578aba8 25
+  s_c3fbc446206706::t_43329f10ce549e 2,8,15
+  s_c3fbc446206706::t_0e4171b7e1df47 5
+  s_c3fbc446206706::t_356fef57009b0d 22-24
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-workspace-command-1784567000000-backfill-message-list-members-junction-target.command.ts
+  s_c3fbc446206706::t_c484cc34006862 25,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9ffb9a4c39e3b75cee87af585886acbfbaeb0b49",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
