@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**: CRON 식을 사용하여 예약된 일정으로 함수를 실행합니다.
 * **databaseEvent**: 워크스페이스 객체 라이프사이클 이벤트에서 실행됩니다. 이벤트 작업이 `updated`인 경우, 수신할 특정 필드를 `updatedFields` 배열에 지정할 수 있습니다. 정의하지 않거나 비워두면, 어떤 업데이트든 함수가 트리거됩니다.
 > 예: `person.updated`, `*.created`, `company.*`
-* **serverRoute**: 단일 등록 범위 HTTP 라우트를 노출합니다. `serverRouteTriggerSettings`로 선언된 **resolver** 함수는 소유자 워크스페이스에서 실행되며, 디스패치할 대상 워크스페이스와 대상 로직 함수를 반환합니다. 그런 다음 플랫폼은 해당 **target** 함수를 실행하고 그 응답을 반환합니다. [서버 라우트 트리거](#server-route-trigger)를 참고하세요.
+* **serverRoute**: 단일 등록 범위 HTTP 라우트를 노출합니다. `serverRouteTriggerSettings`로 선언된 **resolver** 함수는 소유자 워크스페이스에서 실행되며, 디스패치할 대상 워크스페이스와 대상 로직 함수를 반환합니다. 플랫폼은 `202`로 응답을 확인(ack)하고, 워커 큐에서 해당 **target** 함수를 실행합니다. [서버 라우트 트리거](#server-route-trigger)를 참고하세요.
 
 <Note>
 CLI를 사용해 함수를 수동으로 실행할 수도 있습니다:
@@ -289,7 +289,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 위의 resolver 예제는 이미 GitHub HMAC-SHA256 플로우를 보여 줍니다. 통합하려는 공급자에 따라 헤더 이름, 다이제스트 인코딩, 그리고 서명 대상 페이로드 문자열을 조정하세요.
 
 <Note>
-대상 함수는 **동기적으로** 실행되며, 반환한 값이 HTTP 응답이 되므로, 호출자는 상태 코드를 확인하고 2xx가 아닐 경우 재시도할 수 있습니다. 두 핸들러 모두 빠르게 유지하세요. 일부 공급자(예: Slack)는 몇 초 안에 타임아웃됩니다. resolver는 public endpoint로 접근 가능하므로, 엣지에서 rate limiting으로 보호하세요.
+resolver가 반환된 직후 라우트는 `202 { queued: true }`로 응답하고, 대상 함수는 워커 큐에서 실행됩니다. 호출자는 대상 함수의 지연 시간, 결과, 실패를 전혀 관찰하지 못하며(이러한 정보는 실행 로그에 기록됩니다). 이렇게 하면 발신자 재전송으로 인해 처리 지연이 더 커지는 것을 막을 수 있으며, 이는 웹훅 수신에서 바람직한 동작입니다. 호출자가 반드시 응답 본문을 읽어야 하는 엔드포인트(Challenge 핸드셰이크, Slack 명령 등)에는 대신 `httpRouteTriggerSettings` 라우트를 사용하세요. resolver는 빠르게 유지하세요. 일부 공급자(예: Slack)는 몇 초 안에 타임아웃됩니다. resolver는 public endpoint로 접근 가능하므로, 엣지에서 rate limiting으로 보호하세요.
 </Note>
 
 #### 데이터베이스 이벤트 트리거 페이로드

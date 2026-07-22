@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
-* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）会返回目标工作区以及要分发到的目标逻辑函数；平台随后运行该**目标**函数并返回其响应。 参见 [服务端路由触发器](#server-route-trigger)。
+* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）会返回目标工作区以及要分发到的目标逻辑函数；平台会发送 `202` 确认并在工作队列上运行该**目标**函数。 参见 [服务端路由触发器](#server-route-trigger)。
 
 <Note>
 你也可以使用 CLI 手动执行函数：
@@ -290,7 +290,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 上面的 resolver 示例已经展示了 GitHub 的 HMAC-SHA256 流程——请根据你要集成的服务商，调整请求头名称、摘要编码方式以及被签名的负载字符串。
 
 <Note>
-target **同步**运行，其返回值会成为 HTTP 响应，因此调用方可以看到你的状态码，并在非 2xx 时进行重试。 保持两个处理程序都足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
+在 resolver 返回之后，该路由会立即响应 `202 { queued: true }`，并在工作队列上运行目标函数——调用方不会感知目标函数的延迟、结果或失败（这些都会记录在执行日志中）。 这可以防止发送方的重新投递放大处理变慢的问题，而这正是你在处理 webhook 摄取时所需要的。 对于调用方必须读取响应正文的端点（挑战握手、Slack 命令），请改用 `httpRouteTriggerSettings` 路由。 保持 resolver 足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
 </Note>
 
 #### 数据库事件触发器有效负载
