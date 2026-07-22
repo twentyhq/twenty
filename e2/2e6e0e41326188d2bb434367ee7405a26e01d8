@@ -1,0 +1,31 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput.tsx
+  s_11e59742733dbd::t_31c91d8f1b9b87 256-265
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784286708000-backfill-message-list-members-junction-settings.command.ts
+  s_11e59742733dbd::t_6f86a9487adb97 1-149
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-upgrade-version-command.module.ts
+  s_57050fe2efd2c1::t_f5127dcd6c0aa6 6,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e22e6e0e41326188d2bb434367ee7405a26e01d8",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_57050fe2efd2c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a2578bd09ad6fc5bf",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
