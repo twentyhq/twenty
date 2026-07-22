@@ -5,7 +5,7 @@ import {
 import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type DragEvent, type ReactNode } from 'react';
 
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
@@ -17,6 +17,12 @@ const SORTABLE_TRANSITION = {
   duration: 180,
   easing: 'cubic-bezier(0.2, 0, 0, 1)',
   idle: true,
+};
+
+// Links and images inside sortable items are natively draggable, which lets
+// the browser start a URL drag that cancels the dnd-kit pointer drag.
+const preventNativeDragStart = (event: DragEvent) => {
+  event.preventDefault();
 };
 
 const StyledSortableRoot = styled.div<{ $fill?: boolean }>`
@@ -76,7 +82,11 @@ export const DragDropItemSortableCell = ({
 
   return (
     <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
-      <StyledSortableRoot ref={ref} $fill={fill}>
+      <StyledSortableRoot
+        ref={ref}
+        $fill={fill}
+        onDragStart={preventNativeDragStart}
+      >
         {children}
       </StyledSortableRoot>
     </DragDropItemSortableHandleRefContext.Provider>
