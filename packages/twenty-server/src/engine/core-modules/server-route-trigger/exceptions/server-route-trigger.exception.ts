@@ -21,7 +21,7 @@ const getServerRouteTriggerExceptionUserFriendlyMessage = (
     case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Server logic function not found.`;
     case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED:
-      return msg`Logic function execution is disabled.`;
+      return msg`This action is currently unavailable.`;
     case ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
       return msg`Rate limit exceeded.`;
     case ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR:
