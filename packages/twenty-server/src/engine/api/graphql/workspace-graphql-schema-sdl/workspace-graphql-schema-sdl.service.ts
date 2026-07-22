@@ -17,16 +17,10 @@ import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-
-const SCHEMA_SDL_CACHE_DEPENDENCIES = [
-  'flatObjectMetadataMaps',
-  'flatFieldMetadataMaps',
-  'flatIndexMaps',
-  'flatApplicationMaps',
-] as const;
 
 export type WorkspaceGraphqlSchemaSDLResult = {
   sdl: string;

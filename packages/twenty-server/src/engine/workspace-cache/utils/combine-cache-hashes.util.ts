@@ -8,7 +8,11 @@ export const combineCacheHashes = (
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>,
   cacheKeyNames: readonly WorkspaceCacheKeyName[],
 ): string => {
-  const orderedHashes = cacheKeyNames.map((cacheKeyName) => {
+  if (cacheKeyNames.length === 0) {
+    throw new Error('Cannot combine cache hashes without cache key names');
+  }
+
+  const orderedHashes = [...cacheKeyNames].sort().map((cacheKeyName) => {
     const hash = hashes[cacheKeyName];
 
     if (!isDefined(hash)) {
