@@ -117,4 +117,42 @@ describe('installGetElementsByClassName', () => {
     expect(matches.item(0)).toBe(target);
     expect(matches.item(1)).toBeNull();
   });
+
+  it('should reflect a match added after the collection was created', () => {
+    const rootElement = new FakeElement();
+    const matches = asInstalled(rootElement).getElementsByClassName('match');
+
+    expect(matches).toHaveLength(0);
+
+    const lateTarget = new FakeElement('match');
+    rootElement.append(lateTarget);
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0]).toBe(lateTarget);
+  });
+
+  it('should reflect a match removed after the collection was created', () => {
+    const rootElement = new FakeElement();
+    const target = new FakeElement('match');
+    rootElement.append(target);
+
+    const matches = asInstalled(rootElement).getElementsByClassName('match');
+    expect(matches).toHaveLength(1);
+
+    rootElement.childNodes.length = 0;
+
+    expect(matches).toHaveLength(0);
+    expect(matches.item(0)).toBeNull();
+  });
+
+  it('should support iteration', () => {
+    const rootElement = new FakeElement();
+    const first = new FakeElement('match');
+    const second = new FakeElement('match');
+    rootElement.append(first, second);
+
+    const matches = asInstalled(rootElement).getElementsByClassName('match');
+
+    expect([...matches]).toEqual([first, second]);
+  });
 });

@@ -1,3 +1,5 @@
+import { splitCssDeclarations } from '@/polyfills/dom/utils/splitCssDeclarations';
+
 const camelToKebab = (property: string): string =>
   property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 
@@ -55,7 +57,7 @@ export const createLocalStyleDeclaration = (): Record<string, unknown> => {
           delete target[key];
         }
 
-        for (const declaration of String(value).split(';')) {
+        for (const declaration of splitCssDeclarations(String(value))) {
           const colonIndex = declaration.indexOf(':');
 
           if (colonIndex <= 0) {

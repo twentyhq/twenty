@@ -34,6 +34,18 @@ describe('installLocalStyleOnBaseElements', () => {
     expect(second.style.color).toBe('');
   });
 
+  it('should keep semicolons inside quoted values and urls in cssText', () => {
+    const element = new FakeElement() as unknown as HTMLElement;
+
+    element.style.cssText =
+      'content: "a;b"; background: url(data:image/png;base64,abc)';
+
+    expect(element.style.getPropertyValue('content')).toBe('"a;b"');
+    expect(element.style.getPropertyValue('background')).toBe(
+      'url(data:image/png;base64,abc)',
+    );
+  });
+
   it('should populate declarations from a cssText assignment', () => {
     const element = new FakeElement() as unknown as HTMLElement;
 

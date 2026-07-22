@@ -26,6 +26,85 @@ const hasEveryClassNameToken = (
   );
 };
 
+const collectMatchesInTreeOrder = (
+  rootElement: ElementLike,
+  classNameTokens: string[],
+): ElementLike[] => {
+  const matches: ElementLike[] = [];
+
+  if (classNameTokens.length === 0) {
+    return matches;
+  }
+
+  const pendingNodes: ElementLike[] = [rootElement];
+
+  while (pendingNodes.length > 0) {
+    const currentNode = pendingNodes.pop() as ElementLike;
+
+    if (
+      currentNode !== rootElement &&
+      hasEveryClassNameToken(currentNode, classNameTokens)
+    ) {
+      matches.push(currentNode);
+    }
+
+    const childNodes = currentNode.childNodes;
+
+    if (childNodes !== undefined) {
+      for (let index = childNodes.length - 1; index >= 0; index -= 1) {
+        pendingNodes.push(childNodes[index] as ElementLike);
+      }
+    }
+  }
+
+  return matches;
+};
+
+const createLiveClassNameCollection = (
+  rootElement: ElementLike,
+  classNameTokens: string[],
+): object => {
+  const query = () => collectMatchesInTreeOrder(rootElement, classNameTokens);
+
+  return new Proxy(
+    {},
+    {
+      get: (_target, property) => {
+        if (property === 'length') {
+          return query().length;
+        }
+
+        if (property === 'item') {
+          return (index: number) => query()[index] ?? null;
+        }
+
+        if (property === Symbol.iterator) {
+          return function* () {
+            yield* query();
+          };
+        }
+
+        if (typeof property === 'string' && /^\d+$/.test(property)) {
+          return query()[Number(property)];
+        }
+
+        return undefined;
+      },
+      has: (_target, property) => {
+        if (property === 'length' || property === 'item') {
+          return true;
+        }
+
+        if (typeof property === 'string' && /^\d+$/.test(property)) {
+          return Number(property) < query().length;
+        }
+
+        return false;
+      },
+    },
+  );
+};
+
 export const installGetElementsByClassName = (
   elementPrototype: object,
 ): void => {
@@ -35,39 +114,7 @@ export const installGetElementsByClassName = (
         .split(/\s+/)
         .filter((classNameToken) => classNameToken.length > 0);
 
-      const matches: ElementLike[] = [];
-
-      if (classNameTokens.length === 0) {
-        return matches;
-      }
-
-      const pendingNodes: ElementLike[] = [this];
-
-      while (pendingNodes.length > 0) {
-        const currentNode = pendingNodes.pop() as ElementLike;
-
-        if (
-          currentNode !== this &&
-          hasEveryClassNameToken(currentNode, classNameTokens)
-        ) {
-          matches.push(currentNode);
-        }
-
-        const childNodes = currentNode.childNodes;
-
-        if (childNodes !== undefined) {
-          for (let index = childNodes.length - 1; index >= 0; index -= 1) {
-            pendingNodes.push(childNodes[index] as ElementLike);
-          }
-        }
-      }
-
-      const matchesWithItem = matches as ElementLike[] & {
-        item: (index: number) => ElementLike | null;
-      };
-      matchesWithItem.item = (index: number) => matchesWithItem[index] ?? null;
-
-      return matchesWithItem;
+      return createLiveClassNameCollection(this, classNameTokens);
     },
     configurable: true,
     writable: true,
