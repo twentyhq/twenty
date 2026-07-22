@@ -49,6 +49,9 @@ jobs:
       - name: Deploy to k3s
         run: |
           kubectl set image deployment/twenty-crm \
-            twenty-crm=kyotech/twenty-custom:${{ github.sha }}
+            twenty-crm=kyotech/twenty-custom:${{ github.sha }} \
+            -n default
 
-          kubectl rollout status deployment/twenty-crm --timeout=180s
+          kubectl rollout status deployment/twenty-crm \
+            -n default \
+            --timeout=180s
