@@ -1,0 +1,19 @@
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_c3fbc446206706::t_e2d6a360843f7a 1,19,52,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a020c640c7b843cee7f0a8109e92d89252d2efc7",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
