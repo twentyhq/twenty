@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput.tsx
+  s_4831dcb5c1852c::t_398a4cc4507582 31-32,242,248-267,286
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "531258016dce1f5a1a517c9ab0944e307d2f3fc1",
+  "prompts": {},
+  "sessions": {
+    "s_4831dcb5c1852c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fcc8904-bb60-4dd0-8af0-f09679d00279",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
