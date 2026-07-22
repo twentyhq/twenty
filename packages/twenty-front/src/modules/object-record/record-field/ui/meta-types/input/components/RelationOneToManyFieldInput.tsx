@@ -253,9 +253,19 @@ export const RelationOneToManyFieldInput = () => {
                 return currentRecord;
               }
               const currentFieldValue = currentRecord[fieldName];
-              const updatedJunctionRecords = Array.isArray(currentFieldValue)
-                ? [...currentFieldValue, createdJunction]
-                : [createdJunction];
+              // useCreateOneRecord already attaches the junction to this field
+              // through its optimistic effect, so replace that entry with the
+              // fully populated one instead of appending a duplicate chip.
+              const existingJunctionRecords = Array.isArray(currentFieldValue)
+                ? currentFieldValue.filter(
+                    (junctionRecord) =>
+                      junctionRecord?.id !== createdJunction.id,
+                  )
+                : [];
+              const updatedJunctionRecords = [
+                ...existingJunctionRecords,
+                createdJunction,
+              ];
 
               return {
                 ...currentRecord,
