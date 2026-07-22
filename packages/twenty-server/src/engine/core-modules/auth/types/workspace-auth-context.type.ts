@@ -10,7 +10,6 @@ export type WorkspaceAuthContextType =
 interface BaseWorkspaceAuthContext {
   type: WorkspaceAuthContextType;
   workspace: NonNullable<RawAuthContext['workspace']>;
-  workspaceMetadataVersion?: string;
 }
 
 export interface ApiKeyWorkspaceAuthContext extends BaseWorkspaceAuthContext {

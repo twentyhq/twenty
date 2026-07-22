@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { Droppable } from '@hello-pangea/dnd';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
@@ -9,10 +8,14 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { useDroppable } from '@dnd-kit/react';
+import { pointerIntersection } from '@dnd-kit/collision';
+import { RECORD_BOARD_CARD_DND_TYPE } from '@/object-record/record-board/record-board-dnd/constants/RecordBoardCardDndType';
+import { RECORD_BOARD_COLUMN_DND_TYPE } from '@/object-record/record-board/record-board-dnd/constants/RecordBoardColumnDndType';
+import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 
 const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};
@@ -51,6 +54,14 @@ export const RecordBoardColumn = ({
 
   const shouldHide = useShouldHideRecordGroup(recordBoardColumnId);
 
+  const { ref } = useDroppable({
+    id: recordBoardColumnId,
+    collisionPriority: DND_KIT_COLLISION_PRIORITY,
+    collisionDetector: pointerIntersection,
+    type: RECORD_BOARD_COLUMN_DND_TYPE,
+    accept: RECORD_BOARD_CARD_DND_TYPE,
+  });
+
   if (shouldHide) {
     return null;
   }
@@ -68,24 +79,11 @@ export const RecordBoardColumn = ({
         columnIndex: recordBoardColumnIndex,
       }}
     >
-      <Droppable droppableId={recordBoardColumnId} ignoreContainerClipping>
-        {(droppableProvided) => (
-          <StyledColumn
-            ref={droppableProvided.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...droppableProvided.droppableProps}
-          >
-            <DragAndDropLibraryLegacyReRenderBreaker
-              memoizationId={recordBoardColumnId}
-            >
-              <RecordBoardColumnCardsContainer
-                recordBoardColumnId={recordBoardColumnId}
-              />
-            </DragAndDropLibraryLegacyReRenderBreaker>
-            {droppableProvided.placeholder}
-          </StyledColumn>
-        )}
-      </Droppable>
+      <StyledColumn ref={ref} data-record-board-column-id={recordBoardColumnId}>
+        <RecordBoardColumnCardsContainer
+          recordBoardColumnId={recordBoardColumnId}
+        />
+      </StyledColumn>
     </RecordBoardColumnContext.Provider>
   );
 };
