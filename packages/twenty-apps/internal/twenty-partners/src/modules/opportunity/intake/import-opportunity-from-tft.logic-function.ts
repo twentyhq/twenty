@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+import {
+  APPLICATION_SECRET_HEADER,
+  readSecretGuardedEvent,
+} from 'src/modules/shared/http/read-secret-guarded-event';
 import { importOpportunityFromTftSchema } from 'src/modules/opportunity/intake/mappers/import-opportunity-from-tft.mapper';
 import {
   importOpportunityFromTft,
@@ -9,8 +12,6 @@ import {
 
 export const IMPORT_OPPORTUNITY_FROM_TFT_LOGIC_FUNCTION_ID =
   '4c220eaf-a23f-4af2-8d69-38a6c460019f';
-
-const APPLICATION_SECRET_HEADER = 'x-application-secret';
 
 // isAuthRequired only accepts user JWTs, not API keys; guard with the shared secret.
 export const handler = async (event: unknown): Promise<ImportOpportunityFromTftResult> => {

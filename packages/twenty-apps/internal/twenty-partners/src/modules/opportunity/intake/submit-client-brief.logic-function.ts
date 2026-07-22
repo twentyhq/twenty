@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+import {
+  APPLICATION_SECRET_HEADER,
+  readSecretGuardedEvent,
+} from 'src/modules/shared/http/read-secret-guarded-event';
 import { submitClientBriefSchema } from 'src/modules/opportunity/intake/mappers/build-requirements-text.mapper';
 import {
   submitClientBrief,
@@ -9,8 +12,6 @@ import {
 
 export const SUBMIT_CLIENT_BRIEF_LOGIC_FUNCTION_ID =
   'a8f3c2e1-9b4d-4a7f-8c6e-1d2f3a4b5c6d';
-
-const APPLICATION_SECRET_HEADER = 'x-application-secret';
 
 export const handler = async (event: unknown): Promise<SubmitClientBriefResult> => {
   const guard = readSecretGuardedEvent(event, submitClientBriefSchema);

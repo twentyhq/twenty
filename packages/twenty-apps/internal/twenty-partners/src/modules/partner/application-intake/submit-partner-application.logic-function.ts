@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { readSecretGuardedEvent } from 'src/modules/shared/http/read-secret-guarded-event';
+import {
+  APPLICATION_SECRET_HEADER,
+  readSecretGuardedEvent,
+} from 'src/modules/shared/http/read-secret-guarded-event';
 import { submitPartnerApplicationSchema } from 'src/modules/partner/application-intake/services/submit-partner-application-input.schema';
 import {
   submitPartnerApplication,
@@ -12,8 +15,6 @@ export type { SubmitPartnerApplicationResult } from 'src/modules/partner/applica
 
 export const SUBMIT_PARTNER_APPLICATION_LOGIC_FUNCTION_ID =
   '7b1e2c5f-3a14-4f7d-8e91-0b5e2a3c4d76';
-
-const APPLICATION_SECRET_HEADER = 'x-application-secret';
 
 export const handler = async (
   event: unknown,
