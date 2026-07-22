@@ -28,7 +28,7 @@ export const usePerformViewFieldAPIPersist = () => {
   const {
     performViewEntityAPIPersistOperation,
     performViewEntityAPIPersistBatchOperation,
-  } = usePerformViewEntityAPIPersistOperation();
+  } = usePerformViewEntityAPIPersistOperation('viewField');
 
   const performViewFieldAPICreate = useCallback(
     async (
@@ -60,7 +60,6 @@ export const usePerformViewFieldAPIPersist = () => {
               ({ __typename, ...viewField }) => viewField as FlatViewField,
             ),
           }),
-        primaryMetadataName: 'viewField',
         operationType: CrudOperationType.CREATE,
       });
     },
@@ -88,7 +87,6 @@ export const usePerformViewFieldAPIPersist = () => {
                 ({ __typename, ...viewField }) => viewField as FlatViewField,
               ),
           ),
-        primaryMetadataName: 'viewField',
         operationType: CrudOperationType.UPDATE,
       }),
     [updateViewFieldMutation, performViewEntityAPIPersistBatchOperation],
@@ -110,7 +108,6 @@ export const usePerformViewFieldAPIPersist = () => {
             key: 'viewFields',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewField',
         operationType: CrudOperationType.DELETE,
       }),
     [deleteViewFieldMutation, performViewEntityAPIPersistBatchOperation],
@@ -132,7 +129,6 @@ export const usePerformViewFieldAPIPersist = () => {
             key: 'viewFields',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewField',
         operationType: CrudOperationType.DESTROY,
       }),
     [destroyViewFieldMutation, performViewEntityAPIPersistBatchOperation],

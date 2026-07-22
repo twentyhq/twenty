@@ -24,7 +24,7 @@ export const usePerformViewFilterAPIPersist = () => {
   const [destroyViewFilterMutation] = useMutation(DestroyViewFilterDocument);
 
   const { performViewEntityAPIPersistBatchOperation } =
-    usePerformViewEntityAPIPersistOperation();
+    usePerformViewEntityAPIPersistOperation('viewFilter');
 
   const performViewFilterAPICreate = useCallback(
     async (
@@ -47,7 +47,6 @@ export const usePerformViewFilterAPIPersist = () => {
                 ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
               ),
           }),
-        primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.CREATE,
       }),
     [createViewFilterMutation, performViewEntityAPIPersistBatchOperation],
@@ -74,7 +73,6 @@ export const usePerformViewFilterAPIPersist = () => {
                 ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
               ),
           ),
-        primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.UPDATE,
       }),
     [updateViewFilterMutation, performViewEntityAPIPersistBatchOperation],
@@ -96,7 +94,6 @@ export const usePerformViewFilterAPIPersist = () => {
             key: 'viewFilters',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.DELETE,
       }),
     [deleteViewFilterMutation, performViewEntityAPIPersistBatchOperation],
@@ -118,7 +115,6 @@ export const usePerformViewFilterAPIPersist = () => {
             key: 'viewFilters',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.DESTROY,
       }),
     [destroyViewFilterMutation, performViewEntityAPIPersistBatchOperation],

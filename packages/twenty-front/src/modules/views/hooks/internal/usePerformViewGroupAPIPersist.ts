@@ -23,7 +23,7 @@ export const usePerformViewGroupAPIPersist = () => {
   );
 
   const { performViewEntityAPIPersistOperation } =
-    usePerformViewEntityAPIPersistOperation();
+    usePerformViewEntityAPIPersistOperation('viewGroup');
 
   const performViewGroupAPIUpdate = useCallback(
     async (
@@ -52,7 +52,6 @@ export const usePerformViewGroupAPIPersist = () => {
               ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
             ),
           ),
-        primaryMetadataName: 'viewGroup',
         operationType: CrudOperationType.UPDATE,
       });
     },
@@ -86,7 +85,6 @@ export const usePerformViewGroupAPIPersist = () => {
               ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
             ),
           }),
-        primaryMetadataName: 'viewGroup',
         operationType: CrudOperationType.CREATE,
       });
     },

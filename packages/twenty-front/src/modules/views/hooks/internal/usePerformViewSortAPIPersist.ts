@@ -24,7 +24,7 @@ export const usePerformViewSortAPIPersist = () => {
   const [destroyViewSortMutation] = useMutation(DestroyViewSortDocument);
 
   const { performViewEntityAPIPersistBatchOperation } =
-    usePerformViewEntityAPIPersistOperation();
+    usePerformViewEntityAPIPersistOperation('viewSort');
 
   const performViewSortAPICreate = useCallback(
     async (
@@ -45,7 +45,6 @@ export const usePerformViewSortAPIPersist = () => {
               .filter(isDefined)
               .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
           }),
-        primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.CREATE,
       }),
     [createViewSortMutation, performViewEntityAPIPersistBatchOperation],
@@ -70,7 +69,6 @@ export const usePerformViewSortAPIPersist = () => {
               .filter(isDefined)
               .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
           ),
-        primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.UPDATE,
       }),
     [updateViewSortMutation, performViewEntityAPIPersistBatchOperation],
@@ -92,7 +90,6 @@ export const usePerformViewSortAPIPersist = () => {
             key: 'viewSorts',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.DELETE,
       }),
     [deleteViewSortMutation, performViewEntityAPIPersistBatchOperation],
@@ -114,7 +111,6 @@ export const usePerformViewSortAPIPersist = () => {
             key: 'viewSorts',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
-        primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.DESTROY,
       }),
     [destroyViewSortMutation, performViewEntityAPIPersistBatchOperation],

@@ -23,7 +23,7 @@ export const usePerformViewAPIPersist = () => {
     useViewsSideEffectsOnViewGroups();
 
   const { performViewEntityAPIPersistOperation } =
-    usePerformViewEntityAPIPersistOperation();
+    usePerformViewEntityAPIPersistOperation('view');
 
   const performViewAPICreate = useCallback(
     async (
@@ -72,7 +72,6 @@ export const usePerformViewAPIPersist = () => {
 
           addToDraft({ key: 'views', items: [flatView as FlatView] });
         },
-        primaryMetadataName: 'view',
         operationType: CrudOperationType.CREATE,
       });
 
@@ -108,7 +107,6 @@ export const usePerformViewAPIPersist = () => {
           }),
         syncMetadataStore: (_result, { removeFromDraft }) =>
           removeFromDraft({ key: 'views', itemIds: [variables.id] }),
-        primaryMetadataName: 'view',
         operationType: CrudOperationType.DELETE,
       }),
     [destroyViewMutation, performViewEntityAPIPersistOperation],

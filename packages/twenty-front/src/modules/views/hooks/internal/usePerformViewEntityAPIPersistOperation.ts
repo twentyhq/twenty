@@ -15,36 +15,33 @@ type MetadataStoreDraftUtils = Pick<
   'addToDraft' | 'updateInDraft' | 'removeFromDraft'
 >;
 
-type PersistErrorContext = {
-  primaryMetadataName: AllMetadataName;
+type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
+  persist: () => Promise<TResponse>;
+  // Writes the mutation response to the metadata store immediately so a
+  // subsequent save doesn't diff against stale view data and re-send the
+  // same create, which fails server-side on duplicate id
+  syncMetadataStore: (
+    response: TResponse,
+    draftUtils: MetadataStoreDraftUtils,
+  ) => void;
   operationType: CrudOperationType;
 };
 
-type PerformViewEntityAPIPersistOperationArgs<TResponse> =
-  PersistErrorContext & {
-    persist: () => Promise<TResponse>;
-    // Writes the mutation response to the metadata store immediately so a
-    // subsequent save doesn't diff against stale view data and re-send the
-    // same create, which fails server-side on duplicate id
-    syncMetadataStore: (
-      response: TResponse,
-      draftUtils: MetadataStoreDraftUtils,
-    ) => void;
-  };
+type PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult> = {
+  inputs: TInput[];
+  mutate: (input: TInput) => Promise<TResult>;
+  // Receives only the fulfilled mutations so successful items are written to
+  // the metadata store even when a sibling mutation in the batch fails
+  syncMetadataStore: (
+    fulfilledMutations: { input: TInput; result: TResult }[],
+    draftUtils: MetadataStoreDraftUtils,
+  ) => void;
+  operationType: CrudOperationType;
+};
 
-type PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult> =
-  PersistErrorContext & {
-    inputs: TInput[];
-    mutate: (input: TInput) => Promise<TResult>;
-    // Receives only the fulfilled mutations so successful items are written to
-    // the metadata store even when a sibling mutation in the batch fails
-    syncMetadataStore: (
-      fulfilledMutations: { input: TInput; result: TResult }[],
-      draftUtils: MetadataStoreDraftUtils,
-    ) => void;
-  };
-
-export const usePerformViewEntityAPIPersistOperation = () => {
+export const usePerformViewEntityAPIPersistOperation = (
+  metadataName: AllMetadataName,
+) => {
   const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
 
@@ -52,27 +49,23 @@ export const usePerformViewEntityAPIPersistOperation = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const handlePersistError = useCallback(
-    (
-      error: unknown,
-      { primaryMetadataName, operationType }: PersistErrorContext,
-    ) => {
+    (error: unknown, operationType: CrudOperationType) => {
       if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
-          primaryMetadataName,
+          primaryMetadataName: metadataName,
           operationType,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });
       }
     },
-    [handleMetadataError, enqueueErrorSnackBar],
+    [handleMetadataError, enqueueErrorSnackBar, metadataName],
   );
 
   const performViewEntityAPIPersistOperation = useCallback(
     async <TResponse>({
       persist,
       syncMetadataStore,
-      primaryMetadataName,
       operationType,
     }: PerformViewEntityAPIPersistOperationArgs<TResponse>): Promise<
       MetadataRequestResult<TResponse>
@@ -92,7 +85,7 @@ export const usePerformViewEntityAPIPersistOperation = () => {
           response,
         };
       } catch (error) {
-        handlePersistError(error, { primaryMetadataName, operationType });
+        handlePersistError(error, operationType);
 
         return {
           status: 'failed',
@@ -114,7 +107,6 @@ export const usePerformViewEntityAPIPersistOperation = () => {
       inputs,
       mutate,
       syncMetadataStore,
-      primaryMetadataName,
       operationType,
     }: PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult>): Promise<
       MetadataRequestResult<TResult[]>
@@ -149,7 +141,7 @@ export const usePerformViewEntityAPIPersistOperation = () => {
       if (isDefined(firstRejectedMutation)) {
         const error = firstRejectedMutation.reason;
 
-        handlePersistError(error, { primaryMetadataName, operationType });
+        handlePersistError(error, operationType);
 
         return {
           status: 'failed',
