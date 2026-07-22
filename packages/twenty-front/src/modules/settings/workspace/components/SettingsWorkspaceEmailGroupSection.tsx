@@ -23,7 +23,6 @@ export const SettingsWorkspaceEmailGroupSection = () => {
     <SettingsTableListSection<MessageChannel>
       title={t`Channels`}
       description={t`Addresses your workspace uses to send and receive email from shared inboxes`}
-      headerAdornment={<Pill Icon={IconLock} label={t`Organization`} />}
       items={emailGroupChannels}
       columns={[
         { label: t`Email`, Cell: SettingsWorkspaceEmailGroupSourceCell },

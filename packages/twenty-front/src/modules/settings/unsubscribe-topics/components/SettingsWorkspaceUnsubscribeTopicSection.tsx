@@ -20,13 +20,11 @@ export const SettingsWorkspaceUnsubscribeTopicSection = () => {
 
   const title = t`Unsubscribe topics`;
   const description = t`Email categories recipients can opt out of`;
-  const organizationPill = <Pill Icon={IconLock} label={t`Organization`} />;
 
   return (
     <SettingsTableListSection<UnsubscribeTopic>
       title={title}
       description={description}
-      headerAdornment={organizationPill}
       items={unsubscribeTopics}
       columns={[
         {
