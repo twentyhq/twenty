@@ -1,0 +1,38 @@
+packages/twenty-server/src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema.ts
+  s_c3fbc446206706::t_9bf1f2d830d170 1-10
+packages/twenty-server/src/modules/emailing/zod-schemas/__tests__/sendable-draft-campaign.zod-schema.spec.ts
+  s_c3fbc446206706::t_f0282a989f7c89 1-53
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_c3fbc446206706::t_4731af12380a9c 10
+  s_c3fbc446206706::t_cc1d86f32fdf63 37-40
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_c3fbc446206706::t_dbd52718706415 39
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_c3fbc446206706::t_93e86410acdbc1 28-31
+  s_c3fbc446206706::t_c749416ac57206 22-23
+  s_c3fbc446206706::t_13c9a02e91b05c 9,12-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_c3fbc446206706::t_613742179723fe 26-30
+  s_c3fbc446206706::t_b0677a871e3966 13
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_de32409e997e80 23-26
+  s_c3fbc446206706::t_f6b7aa52142371 56
+  s_c3fbc446206706::t_e3591eed4a9be1 281,283
+  s_c3fbc446206706::t_77ee7c131648d9 592-595,601,605
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "f3ceac7ad030b3bf3089e92e8c671a41ac015c5b",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
