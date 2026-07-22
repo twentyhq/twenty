@@ -54,6 +54,11 @@ export class OpportunityUpdateOnePreQueryHook implements WorkspacePreQueryHookIn
         ] as CurrencyMetadata | null)
       : existingFarmPropertyValue;
 
+    this.opportunityLoanToValueRatioService.validateLoanToValueInputsOrThrow(
+      loanAmount,
+      farmPropertyValue,
+    );
+
     const loanToValueRatio =
       this.opportunityLoanToValueRatioService.calculateLoanToValueRatio(
         loanAmount,

@@ -140,6 +140,50 @@ describe('OpportunityLoanToValueRatioService', () => {
     });
   });
 
+  describe('validateLoanToValueInputsOrThrow', () => {
+    it('does not throw when both amounts are positive', () => {
+      expect(() =>
+        service.validateLoanToValueInputsOrThrow(
+          currency(150_000_000_000),
+          currency(200_000_000_000),
+        ),
+      ).not.toThrow();
+    });
+
+    it('does not throw when both amounts are missing', () => {
+      expect(() =>
+        service.validateLoanToValueInputsOrThrow(null, undefined),
+      ).not.toThrow();
+    });
+
+    it('throws when loan amount is negative', () => {
+      expect(() =>
+        service.validateLoanToValueInputsOrThrow(
+          currency(-150_000_000_000),
+          currency(200_000_000_000),
+        ),
+      ).toThrow('Loan amount cannot be negative');
+    });
+
+    it('throws when farm property value is negative', () => {
+      expect(() =>
+        service.validateLoanToValueInputsOrThrow(
+          currency(150_000_000_000),
+          currency(-200_000_000_000),
+        ),
+      ).toThrow('Farm property value cannot be negative');
+    });
+
+    it('throws when farm property value is negative and loan amount is missing', () => {
+      expect(() =>
+        service.validateLoanToValueInputsOrThrow(
+          null,
+          currency(-200_000_000_000),
+        ),
+      ).toThrow('Farm property value cannot be negative');
+    });
+  });
+
   describe('areLoanToValueFieldsEnabled', () => {
     it('returns true when both custom fields exist for the workspace', async () => {
       getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(

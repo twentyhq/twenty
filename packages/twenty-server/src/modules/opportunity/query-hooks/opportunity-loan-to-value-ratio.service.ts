@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type CurrencyMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -25,6 +30,27 @@ export class OpportunityLoanToValueRatioService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
+
+  validateLoanToValueInputsOrThrow(
+    loanAmount: CurrencyMetadata | null | undefined,
+    farmPropertyValue: CurrencyMetadata | null | undefined,
+  ): void {
+    if (isDefined(loanAmount) && loanAmount.amountMicros < 0) {
+      throw new CommonQueryRunnerException(
+        'Loan amount cannot be negative',
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        { userFriendlyMessage: msg`Loan Amount cannot be negative.` },
+      );
+    }
+
+    if (isDefined(farmPropertyValue) && farmPropertyValue.amountMicros < 0) {
+      throw new CommonQueryRunnerException(
+        'Farm property value cannot be negative',
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        { userFriendlyMessage: msg`Farm Property Value cannot be negative.` },
+      );
+    }
+  }
 
   calculateLoanToValueRatio(
     loanAmount: CurrencyMetadata | null | undefined,

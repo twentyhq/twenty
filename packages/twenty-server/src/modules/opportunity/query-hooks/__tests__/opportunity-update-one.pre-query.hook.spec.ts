@@ -9,6 +9,7 @@ describe('OpportunityUpdateOnePreQueryHook', () => {
   let hook: OpportunityUpdateOnePreQueryHook;
   let areLoanToValueFieldsEnabled: jest.Mock;
   let getExistingLoanAmountAndFarmPropertyValue: jest.Mock;
+  let validateLoanToValueInputsOrThrow: jest.Mock;
   let calculateLoanToValueRatio: jest.Mock;
 
   const authContext = {
@@ -19,6 +20,7 @@ describe('OpportunityUpdateOnePreQueryHook', () => {
   beforeEach(async () => {
     areLoanToValueFieldsEnabled = jest.fn();
     getExistingLoanAmountAndFarmPropertyValue = jest.fn();
+    validateLoanToValueInputsOrThrow = jest.fn();
     calculateLoanToValueRatio = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -29,6 +31,7 @@ describe('OpportunityUpdateOnePreQueryHook', () => {
           useValue: {
             areLoanToValueFieldsEnabled,
             getExistingLoanAmountAndFarmPropertyValue,
+            validateLoanToValueInputsOrThrow,
             calculateLoanToValueRatio,
           },
         },
@@ -97,5 +100,26 @@ describe('OpportunityUpdateOnePreQueryHook', () => {
     const result = await hook.execute(authContext, 'opportunity', payload);
 
     expect(result.data.loanToValueRatio).toBeNull();
+  });
+
+  it('propagates the error and does not compute a ratio when validation throws', async () => {
+    areLoanToValueFieldsEnabled.mockResolvedValue(true);
+    getExistingLoanAmountAndFarmPropertyValue.mockResolvedValue({
+      loanAmount: { amountMicros: -150, currencyCode: 'USD' },
+      farmPropertyValue: { amountMicros: 200, currencyCode: 'USD' },
+    });
+    validateLoanToValueInputsOrThrow.mockImplementation(() => {
+      throw new Error('Loan amount cannot be negative');
+    });
+
+    const payload: UpdateOneResolverArgs = {
+      id: 'opportunity-id',
+      data: {},
+    };
+
+    await expect(
+      hook.execute(authContext, 'opportunity', payload),
+    ).rejects.toThrow('Loan amount cannot be negative');
+    expect(calculateLoanToValueRatio).not.toHaveBeenCalled();
   });
 });
