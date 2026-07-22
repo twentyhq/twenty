@@ -7670,6 +7670,11 @@ msgstr "해당 사람이 속한 목록"
 msgid "The list this campaign was sent to"
 msgstr "이 캠페인이 전송된 목록"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."

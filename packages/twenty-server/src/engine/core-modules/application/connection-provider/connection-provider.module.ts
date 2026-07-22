@@ -14,6 +14,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { FlatConnectionProviderModule } from 'src/engine/metadata-modules/flat-connection-provider/flat-connection-provider.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { FlatConnectionProviderModule } from 'src/engine/metadata-modules/flat-c
     TwentyConfigModule,
     FlatConnectionProviderModule,
     ConnectedAccountTokenEncryptionModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     ConnectionProviderService,
