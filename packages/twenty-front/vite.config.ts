@@ -49,6 +49,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: port,
+      allowedHosts: ['.trycloudflare.com'],
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
