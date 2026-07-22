@@ -18,6 +18,7 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -283,6 +284,7 @@ export class AgentAsyncExecutorService {
               ),
               unit: 'token',
               attributes: toolAttributes,
+              bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
             });
           }
         },
