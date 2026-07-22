@@ -44,7 +44,7 @@ export const installGetElementsByClassName = (
       const pendingNodes: ElementLike[] = [this];
 
       while (pendingNodes.length > 0) {
-        const currentNode = pendingNodes.shift() as ElementLike;
+        const currentNode = pendingNodes.pop() as ElementLike;
 
         if (
           currentNode !== this &&
@@ -56,7 +56,7 @@ export const installGetElementsByClassName = (
         const childNodes = currentNode.childNodes;
 
         if (childNodes !== undefined) {
-          for (let index = 0; index < childNodes.length; index += 1) {
+          for (let index = childNodes.length - 1; index >= 0; index -= 1) {
             pendingNodes.push(childNodes[index] as ElementLike);
           }
         }

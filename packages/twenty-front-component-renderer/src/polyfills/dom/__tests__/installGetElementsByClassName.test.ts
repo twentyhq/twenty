@@ -69,6 +69,23 @@ describe('installGetElementsByClassName', () => {
     expect(matches[0]).toBe(both);
   });
 
+  it('should return matches in depth first pre-order', () => {
+    const rootElement = new FakeElement();
+    const firstBranch = new FakeElement('match');
+    const nestedInFirstBranch = new FakeElement('match');
+    const secondBranch = new FakeElement('match');
+
+    rootElement.append(firstBranch, secondBranch);
+    firstBranch.append(nestedInFirstBranch);
+
+    const matches = asInstalled(rootElement).getElementsByClassName('match');
+
+    expect(matches).toHaveLength(3);
+    expect(matches[0]).toBe(firstBranch);
+    expect(matches[1]).toBe(nestedInFirstBranch);
+    expect(matches[2]).toBe(secondBranch);
+  });
+
   it('should return an empty result for a blank query', () => {
     const rootElement = new FakeElement();
     rootElement.append(new FakeElement('anything'));

@@ -38,13 +38,14 @@ describe('createGeometryTracker', () => {
   });
 
   it('should not schedule a frame when created', () => {
-    createGeometryTracker();
+    armedTrackers.push(createGeometryTracker());
 
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
   it('should not schedule a frame when observing before being armed', () => {
     const tracker = createGeometryTracker();
+    armedTrackers.push(tracker);
 
     tracker.observe(['1']);
 
