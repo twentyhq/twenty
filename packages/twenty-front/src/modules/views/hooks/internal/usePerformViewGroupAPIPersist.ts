@@ -1,13 +1,9 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { CrudOperationType } from 'twenty-shared/types';
 import {
@@ -26,11 +22,8 @@ export const usePerformViewGroupAPIPersist = () => {
     CreateManyViewGroupsDocument,
   );
 
-  const { addToDraft, updateInDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation();
 
   const performViewGroupAPIUpdate = useCallback(
     async (
@@ -47,45 +40,23 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await updateManyViewGroupsMutation({
-          variables: updateViewGroupInputs,
-        });
-
-        const updatedFlatViewGroups = (
-          result.data?.updateManyViewGroups ?? []
-        ).map(({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup);
-
-        updateInDraft('viewGroups', updatedFlatViewGroups);
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-            operationType: CrudOperationType.UPDATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          updateManyViewGroupsMutation({
+            variables: updateViewGroupInputs,
+          }),
+        syncMetadataStore: (result, { updateInDraft }) =>
+          updateInDraft(
+            'viewGroups',
+            (result.data?.updateManyViewGroups ?? []).map(
+              ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
+            ),
+          ),
+        primaryMetadataName: 'viewGroup',
+        operationType: CrudOperationType.UPDATE,
+      });
     },
-    [
-      updateManyViewGroupsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      updateInDraft,
-      applyChanges,
-    ],
+    [updateManyViewGroupsMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewGroupAPICreate = useCallback(
@@ -103,48 +74,23 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await createManyViewGroupsMutation({
-          variables: createViewGroupInputs,
-        });
-
-        // Write created view groups to the metadata store immediately so a
-        // subsequent save doesn't diff against stale view data and re-send
-        // the same create, which fails server-side on duplicate id
-        const createdFlatViewGroups = (
-          result.data?.createManyViewGroups ?? []
-        ).map(({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup);
-
-        addToDraft({ key: 'viewGroups', items: createdFlatViewGroups });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-            operationType: CrudOperationType.CREATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          createManyViewGroupsMutation({
+            variables: createViewGroupInputs,
+          }),
+        syncMetadataStore: (result, { addToDraft }) =>
+          addToDraft({
+            key: 'viewGroups',
+            items: (result.data?.createManyViewGroups ?? []).map(
+              ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
+            ),
+          }),
+        primaryMetadataName: 'viewGroup',
+        operationType: CrudOperationType.CREATE,
+      });
     },
-    [
-      createManyViewGroupsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      addToDraft,
-      applyChanges,
-    ],
+    [createManyViewGroupsMutation, performViewEntityAPIPersistOperation],
   );
 
   return {

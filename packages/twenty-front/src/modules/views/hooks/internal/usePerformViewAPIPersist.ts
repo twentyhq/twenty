@@ -1,17 +1,13 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
+import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useMutation } from '@apollo/client/react';
 import {
   type CreateViewMutationVariables,
   type DestroyViewMutationVariables,
@@ -26,11 +22,8 @@ export const usePerformViewAPIPersist = () => {
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
-  const { addToDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation();
 
   const performViewAPICreate = useCallback(
     async (
@@ -39,77 +32,66 @@ export const usePerformViewAPIPersist = () => {
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof createViewMutation>>>
     > => {
-      try {
-        const newViewId = variables.input.id ?? v4();
-        if (variables.input.type === ViewType.KANBAN) {
-          triggerViewGroupOptimisticEffectAtViewCreation({
-            objectMetadataItemId: objectMetadataItemId,
-            mainGroupByFieldMetadataId:
-              variables.input.mainGroupByFieldMetadataId,
-          });
-        }
+      const result = await performViewEntityAPIPersistOperation({
+        persist: () => {
+          const newViewId = variables.input.id ?? v4();
+          if (variables.input.type === ViewType.KANBAN) {
+            triggerViewGroupOptimisticEffectAtViewCreation({
+              objectMetadataItemId: objectMetadataItemId,
+              mainGroupByFieldMetadataId:
+                variables.input.mainGroupByFieldMetadataId,
+            });
+          }
 
-        const result = await createViewMutation({
-          variables: {
-            input: {
-              ...variables.input,
-              id: newViewId,
+          return createViewMutation({
+            variables: {
+              input: {
+                ...variables.input,
+                id: newViewId,
+              },
             },
-          },
-        });
-
-        const newView = result.data?.createView;
-
-        if (!isDefined(newView)) {
-          return {
-            status: 'failed',
-            error: new Error('Failed to create view'),
-          };
-        }
-
-        // Write the created view to the metadata store immediately so
-        // subsequent operations don't diff against stale view data
-        const {
-          __typename,
-          viewFields: _viewFields,
-          viewFieldGroups: _viewFieldGroups,
-          viewFilters: _viewFilters,
-          viewFilterGroups: _viewFilterGroups,
-          viewSorts: _viewSorts,
-          viewGroups: _viewGroups,
-          ...flatView
-        } = newView;
-
-        addToDraft({ key: 'views', items: [flatView as FlatView] });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'view',
-            operationType: CrudOperationType.CREATE,
           });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
+        },
+        syncMetadataStore: (mutationResult, { addToDraft }) => {
+          const newView = mutationResult.data?.createView;
 
+          if (!isDefined(newView)) {
+            return;
+          }
+
+          const {
+            __typename,
+            viewFields: _viewFields,
+            viewFieldGroups: _viewFieldGroups,
+            viewFilters: _viewFilters,
+            viewFilterGroups: _viewFilterGroups,
+            viewSorts: _viewSorts,
+            viewGroups: _viewGroups,
+            ...flatView
+          } = newView;
+
+          addToDraft({ key: 'views', items: [flatView as FlatView] });
+        },
+        primaryMetadataName: 'view',
+        operationType: CrudOperationType.CREATE,
+      });
+
+      if (
+        result.status === 'successful' &&
+        !isDefined(result.response.data?.createView)
+      ) {
         return {
           status: 'failed',
-          error,
+          error: new Error('Failed to create view'),
         };
       }
+
+      return result;
     },
     [
       createViewMutation,
       triggerViewGroupOptimisticEffectAtViewCreation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      addToDraft,
-      applyChanges,
+      performViewEntityAPIPersistOperation,
     ],
   );
 
@@ -118,42 +100,18 @@ export const usePerformViewAPIPersist = () => {
       variables: DestroyViewMutationVariables,
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof destroyViewMutation>>>
-    > => {
-      try {
-        const result = await destroyViewMutation({
-          variables,
-        });
-
-        removeFromDraft({ key: 'views', itemIds: [variables.id] });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'view',
-            operationType: CrudOperationType.DELETE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [
-      destroyViewMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    > =>
+      performViewEntityAPIPersistOperation({
+        persist: () =>
+          destroyViewMutation({
+            variables,
+          }),
+        syncMetadataStore: (_result, { removeFromDraft }) =>
+          removeFromDraft({ key: 'views', itemIds: [variables.id] }),
+        primaryMetadataName: 'view',
+        operationType: CrudOperationType.DELETE,
+      }),
+    [destroyViewMutation, performViewEntityAPIPersistOperation],
   );
 
   return {

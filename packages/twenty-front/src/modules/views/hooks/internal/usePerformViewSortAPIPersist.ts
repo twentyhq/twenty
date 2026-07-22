@@ -1,15 +1,11 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
+import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
 import {
   type CreateViewSortMutationVariables,
   type DeleteViewSortMutationVariables,
@@ -27,11 +23,8 @@ export const usePerformViewSortAPIPersist = () => {
   const [deleteViewSortMutation] = useMutation(DeleteViewSortDocument);
   const [destroyViewSortMutation] = useMutation(DestroyViewSortDocument);
 
-  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation();
 
   const performViewSortAPICreate = useCallback(
     async (
@@ -48,53 +41,28 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          createViewSortInputs.map((variables) =>
-            createViewSortMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            createViewSortInputs.map((variables) =>
+              createViewSortMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        // Write created view sorts to the metadata store immediately so a
-        // subsequent save doesn't diff against stale view data and re-send
-        // the same create, which fails server-side on duplicate id
-        const createdFlatViewSorts = results
-          .map((result) => result.data?.createViewSort)
-          .filter(isDefined)
-          .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort);
-
-        addToDraft({ key: 'viewSorts', items: createdFlatViewSorts });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewSort',
-            operationType: CrudOperationType.CREATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (results, { addToDraft }) =>
+          addToDraft({
+            key: 'viewSorts',
+            items: results
+              .map((result) => result.data?.createViewSort)
+              .filter(isDefined)
+              .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
+          }),
+        primaryMetadataName: 'viewSort',
+        operationType: CrudOperationType.CREATE,
+      });
     },
-    [
-      createViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      addToDraft,
-      applyChanges,
-    ],
+    [createViewSortMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewSortAPIUpdate = useCallback(
@@ -112,50 +80,28 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          updateViewSortInputs.map((variables) =>
-            updateViewSortMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            updateViewSortInputs.map((variables) =>
+              updateViewSortMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        const updatedFlatViewSorts = results
-          .map((result) => result.data?.updateViewSort)
-          .filter(isDefined)
-          .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort);
-
-        updateInDraft('viewSorts', updatedFlatViewSorts);
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewSort',
-            operationType: CrudOperationType.UPDATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (results, { updateInDraft }) =>
+          updateInDraft(
+            'viewSorts',
+            results
+              .map((result) => result.data?.updateViewSort)
+              .filter(isDefined)
+              .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
+          ),
+        primaryMetadataName: 'viewSort',
+        operationType: CrudOperationType.UPDATE,
+      });
     },
-    [
-      updateViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      updateInDraft,
-      applyChanges,
-    ],
+    [updateViewSortMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewSortAPIDelete = useCallback(
@@ -173,48 +119,27 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          deleteViewSortInputs.map((variables) =>
-            deleteViewSortMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            deleteViewSortInputs.map((variables) =>
+              deleteViewSortMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        removeFromDraft({
-          key: 'viewSorts',
-          itemIds: deleteViewSortInputs.map((variables) => variables.input.id),
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewSort',
-            operationType: CrudOperationType.DELETE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (_results, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewSorts',
+            itemIds: deleteViewSortInputs.map(
+              (variables) => variables.input.id,
+            ),
+          }),
+        primaryMetadataName: 'viewSort',
+        operationType: CrudOperationType.DELETE,
+      });
     },
-    [
-      deleteViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    [deleteViewSortMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewSortAPIDestroy = useCallback(
@@ -232,48 +157,27 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          destroyViewSortInputs.map((variables) =>
-            destroyViewSortMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            destroyViewSortInputs.map((variables) =>
+              destroyViewSortMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        removeFromDraft({
-          key: 'viewSorts',
-          itemIds: destroyViewSortInputs.map((variables) => variables.input.id),
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewSort',
-            operationType: CrudOperationType.DESTROY,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (_results, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewSorts',
+            itemIds: destroyViewSortInputs.map(
+              (variables) => variables.input.id,
+            ),
+          }),
+        primaryMetadataName: 'viewSort',
+        operationType: CrudOperationType.DESTROY,
+      });
     },
-    [
-      destroyViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    [destroyViewSortMutation, performViewEntityAPIPersistOperation],
   );
 
   return {

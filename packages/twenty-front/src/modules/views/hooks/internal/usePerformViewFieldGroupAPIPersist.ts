@@ -1,16 +1,12 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatViewFieldGroup } from '@/metadata-store/types/FlatViewFieldGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CREATE_MANY_VIEW_FIELD_GROUPS } from '@/views/graphql/mutations/createManyViewFieldGroups';
 import { DELETE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/deleteViewFieldGroup';
 import { UPDATE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/updateViewFieldGroup';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useMutation } from '@apollo/client/react';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -58,11 +54,8 @@ export const usePerformViewFieldGroupAPIPersist = () => {
     MutationDeleteViewFieldGroupArgs
   >(DELETE_VIEW_FIELD_GROUP);
 
-  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation();
 
   const performViewFieldGroupAPICreate = useCallback(
     async (
@@ -80,51 +73,26 @@ export const usePerformViewFieldGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await createManyViewFieldGroupsMutation({
-          variables: createViewFieldGroupInputs,
-        });
-
-        // Write created view field groups to the metadata store immediately so
-        // a subsequent save doesn't diff against stale view data and re-send
-        // the same create, which fails server-side on duplicate id
-        const createdFlatViewFieldGroups = (
-          result.data?.createManyViewFieldGroups ?? []
-        ).map(toFlatViewFieldGroup);
-
-        addToDraft({
-          key: 'viewFieldGroups',
-          items: createdFlatViewFieldGroups,
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result.data ?? null,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewFieldGroup',
-            operationType: CrudOperationType.CREATE,
+      return performViewEntityAPIPersistOperation({
+        persist: async () => {
+          const result = await createManyViewFieldGroupsMutation({
+            variables: createViewFieldGroupInputs,
           });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
 
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+          return result.data ?? null;
+        },
+        syncMetadataStore: (createdData, { addToDraft }) =>
+          addToDraft({
+            key: 'viewFieldGroups',
+            items: (createdData?.createManyViewFieldGroups ?? []).map(
+              toFlatViewFieldGroup,
+            ),
+          }),
+        primaryMetadataName: 'viewFieldGroup',
+        operationType: CrudOperationType.CREATE,
+      });
     },
-    [
-      createManyViewFieldGroupsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      addToDraft,
-      applyChanges,
-    ],
+    [createManyViewFieldGroupsMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewFieldGroupAPIUpdate = useCallback(
@@ -140,52 +108,30 @@ export const usePerformViewFieldGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          updateViewFieldGroupInputs.map((variables) =>
-            updateViewFieldGroupMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: async () => {
+          const results = await Promise.all(
+            updateViewFieldGroupInputs.map((variables) =>
+              updateViewFieldGroupMutation({
+                variables,
+              }),
+            ),
+          );
+
+          return results.map((result) => result.data).filter(isDefined);
+        },
+        syncMetadataStore: (updatedData, { updateInDraft }) =>
+          updateInDraft(
+            'viewFieldGroups',
+            updatedData.map((data) =>
+              toFlatViewFieldGroup(data.updateViewFieldGroup),
+            ),
           ),
-        );
-
-        const updatedFlatViewFieldGroups = results
-          .map((result) => result.data?.updateViewFieldGroup)
-          .filter(isDefined)
-          .map(toFlatViewFieldGroup);
-
-        updateInDraft('viewFieldGroups', updatedFlatViewFieldGroups);
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results
-            .map((r) => r.data)
-            .filter(isDefined) as UpdateViewFieldGroupMutationResult[],
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewFieldGroup',
-            operationType: CrudOperationType.UPDATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        primaryMetadataName: 'viewFieldGroup',
+        operationType: CrudOperationType.UPDATE,
+      });
     },
-    [
-      updateViewFieldGroupMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      updateInDraft,
-      applyChanges,
-    ],
+    [updateViewFieldGroupMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewFieldGroupAPIDelete = useCallback(
@@ -201,52 +147,30 @@ export const usePerformViewFieldGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          deleteViewFieldGroupInputs.map((variables) =>
-            deleteViewFieldGroupMutation({
-              variables,
-            }),
-          ),
-        );
+      return performViewEntityAPIPersistOperation({
+        persist: async () => {
+          const results = await Promise.all(
+            deleteViewFieldGroupInputs.map((variables) =>
+              deleteViewFieldGroupMutation({
+                variables,
+              }),
+            ),
+          );
 
-        removeFromDraft({
-          key: 'viewFieldGroups',
-          itemIds: deleteViewFieldGroupInputs.map(
-            (variables) => variables.input.id,
-          ),
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results
-            .map((r) => r.data)
-            .filter(isDefined) as DeleteViewFieldGroupMutationResult[],
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewFieldGroup',
-            operationType: CrudOperationType.DELETE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+          return results.map((result) => result.data).filter(isDefined);
+        },
+        syncMetadataStore: (_deletedData, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewFieldGroups',
+            itemIds: deleteViewFieldGroupInputs.map(
+              (variables) => variables.input.id,
+            ),
+          }),
+        primaryMetadataName: 'viewFieldGroup',
+        operationType: CrudOperationType.DELETE,
+      });
     },
-    [
-      deleteViewFieldGroupMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    [deleteViewFieldGroupMutation, performViewEntityAPIPersistOperation],
   );
 
   return {

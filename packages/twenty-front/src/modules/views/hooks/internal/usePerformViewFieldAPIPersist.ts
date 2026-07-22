@@ -1,15 +1,11 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
+import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
 import {
   type CreateManyViewFieldsMutationVariables,
   type DeleteViewFieldMutationVariables,
@@ -29,11 +25,8 @@ export const usePerformViewFieldAPIPersist = () => {
   const [deleteViewFieldMutation] = useMutation(DeleteViewFieldDocument);
   const [destroyViewFieldMutation] = useMutation(DestroyViewFieldDocument);
 
-  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation();
 
   const performViewFieldAPICreate = useCallback(
     async (
@@ -53,109 +46,64 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await createManyViewFieldsMutation({
-          variables: createViewFieldInputs,
-        });
-
-        // Write created view fields to the metadata store immediately so a
-        // subsequent save doesn't diff against stale view data and re-send
-        // the same create, which fails server-side on duplicate id
-        const createdFlatViewFields = (
-          result.data?.createManyViewFields ?? []
-        ).map(({ __typename, ...viewField }) => viewField as FlatViewField);
-
-        addToDraft({ key: 'viewFields', items: createdFlatViewFields });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewField',
-            operationType: CrudOperationType.CREATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          createManyViewFieldsMutation({
+            variables: createViewFieldInputs,
+          }),
+        syncMetadataStore: (result, { addToDraft }) =>
+          addToDraft({
+            key: 'viewFields',
+            items: (result.data?.createManyViewFields ?? []).map(
+              ({ __typename, ...viewField }) => viewField as FlatViewField,
+            ),
+          }),
+        primaryMetadataName: 'viewField',
+        operationType: CrudOperationType.CREATE,
+      });
     },
-    [
-      createManyViewFieldsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      addToDraft,
-      applyChanges,
-    ],
+    [createManyViewFieldsMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewFieldAPIUpdate = useCallback(
     async (
-      createViewFieldInputs: UpdateViewFieldMutationVariables[],
+      updateViewFieldInputs: UpdateViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
         Awaited<ReturnType<typeof updateViewFieldMutation>>[]
       >
     > => {
-      if (createViewFieldInputs.length === 0) {
+      if (updateViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
         };
       }
 
-      try {
-        const results = await Promise.all(
-          createViewFieldInputs.map((variables) =>
-            updateViewFieldMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            updateViewFieldInputs.map((variables) =>
+              updateViewFieldMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        const updatedFlatViewFields = results
-          .map((result) => result.data?.updateViewField)
-          .filter(isDefined)
-          .map(({ __typename, ...viewField }) => viewField as FlatViewField);
-
-        updateInDraft('viewFields', updatedFlatViewFields);
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewField',
-            operationType: CrudOperationType.UPDATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (results, { updateInDraft }) =>
+          updateInDraft(
+            'viewFields',
+            results
+              .map((result) => result.data?.updateViewField)
+              .filter(isDefined)
+              .map(
+                ({ __typename, ...viewField }) => viewField as FlatViewField,
+              ),
+          ),
+        primaryMetadataName: 'viewField',
+        operationType: CrudOperationType.UPDATE,
+      });
     },
-    [
-      updateViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      updateInDraft,
-      applyChanges,
-    ],
+    [updateViewFieldMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewFieldAPIDelete = useCallback(
@@ -173,48 +121,27 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          deleteViewFieldInputs.map((variables) =>
-            deleteViewFieldMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            deleteViewFieldInputs.map((variables) =>
+              deleteViewFieldMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        removeFromDraft({
-          key: 'viewFields',
-          itemIds: deleteViewFieldInputs.map((variables) => variables.input.id),
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewField',
-            operationType: CrudOperationType.DELETE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (_results, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewFields',
+            itemIds: deleteViewFieldInputs.map(
+              (variables) => variables.input.id,
+            ),
+          }),
+        primaryMetadataName: 'viewField',
+        operationType: CrudOperationType.DELETE,
+      });
     },
-    [
-      deleteViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    [deleteViewFieldMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewFieldAPIDestroy = useCallback(
@@ -232,50 +159,27 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
 
-      try {
-        const results = await Promise.all(
-          destroyViewFieldInputs.map((variables) =>
-            destroyViewFieldMutation({
-              variables,
-            }),
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          Promise.all(
+            destroyViewFieldInputs.map((variables) =>
+              destroyViewFieldMutation({
+                variables,
+              }),
+            ),
           ),
-        );
-
-        removeFromDraft({
-          key: 'viewFields',
-          itemIds: destroyViewFieldInputs.map(
-            (variables) => variables.input.id,
-          ),
-        });
-        applyChanges();
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewField',
-            operationType: CrudOperationType.DESTROY,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+        syncMetadataStore: (_results, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewFields',
+            itemIds: destroyViewFieldInputs.map(
+              (variables) => variables.input.id,
+            ),
+          }),
+        primaryMetadataName: 'viewField',
+        operationType: CrudOperationType.DESTROY,
+      });
     },
-    [
-      destroyViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-      removeFromDraft,
-      applyChanges,
-    ],
+    [destroyViewFieldMutation, performViewEntityAPIPersistOperation],
   );
 
   return {
