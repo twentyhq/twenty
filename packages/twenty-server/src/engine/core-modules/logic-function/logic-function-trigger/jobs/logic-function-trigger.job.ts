@@ -1,7 +1,5 @@
 import { Scope } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -27,21 +25,16 @@ export class LogicFunctionTriggerJob {
   @Process(LogicFunctionTriggerJob.name)
   async handle(logicFunctionPayloads: LogicFunctionTriggerJobData[]) {
     await Promise.all(
-      logicFunctionPayloads.map(async (logicFunctionPayload) => {
-        const result = await this.logicFunctionExecutorService.execute({
-          logicFunctionId: logicFunctionPayload.logicFunctionId,
-          workspaceId: logicFunctionPayload.workspaceId,
-          payload: logicFunctionPayload.payload ?? {},
-          userId: logicFunctionPayload.userId,
-          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-        });
-
-        if (isDefined(result.error)) {
-          throw new Error(
-            `Logic function ${logicFunctionPayload.logicFunctionId} failed: ${result.error.errorMessage}`,
-          );
-        }
-      }),
+      logicFunctionPayloads.map(
+        async (logicFunctionPayload) =>
+          await this.logicFunctionExecutorService.execute({
+            logicFunctionId: logicFunctionPayload.logicFunctionId,
+            workspaceId: logicFunctionPayload.workspaceId,
+            payload: logicFunctionPayload.payload ?? {},
+            userId: logicFunctionPayload.userId,
+            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+          }),
+      ),
     );
   }
 }
