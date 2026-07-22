@@ -3,7 +3,7 @@ import '../../../host/utils/__tests__/setupServerRenderingGlobals';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { createStubGeometryTracker } from '../../../host/utils/__tests__/createStubGeometryTracker';
+import { createStubGeometryTracker } from '@/__tests__/createStubGeometryTracker';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentGeometryTrackerEffect } from '../FrontComponentGeometryTrackerEffect';
 

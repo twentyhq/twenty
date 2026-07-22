@@ -1,8 +1,8 @@
 import { remoteId } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
-import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
+import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';

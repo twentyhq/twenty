@@ -6,10 +6,10 @@ import { createRoot, type Root } from 'react-dom/client';
 import { jsx } from 'react/jsx-runtime';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+import { createStubGeometryTracker } from '@/__tests__/createStubGeometryTracker';
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
-import { createStubGeometryTracker } from './createStubGeometryTracker';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }

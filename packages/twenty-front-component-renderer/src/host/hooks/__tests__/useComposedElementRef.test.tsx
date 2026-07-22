@@ -10,7 +10,7 @@ import { useComposedElementRef } from '../useComposedElementRef';
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
 
-const seenComposedElementRefs: (ElementRefCallback | undefined)[] = [];
+const seenComposedElementRefs: ElementRefCallback[] = [];
 
 const TestComponent = ({
   elementRefs,
