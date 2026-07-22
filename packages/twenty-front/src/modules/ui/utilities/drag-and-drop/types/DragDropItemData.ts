@@ -1,4 +1,4 @@
-export type DragDropColumnData = {
+export type DragDropItemData = {
   droppableId: string;
   index: number;
 };

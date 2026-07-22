@@ -1,4 +1,4 @@
-type ResolveDragDropColumnDropArgs = {
+type ResolveDragDropItemDropArgs = {
   pointerX: number;
   sourceIndex: number;
   scrollWrapperElement: HTMLElement;
@@ -6,7 +6,7 @@ type ResolveDragDropColumnDropArgs = {
   leadingOffset?: number;
 };
 
-type ResolvedDragDropColumnDrop = {
+type ResolvedDragDropItemDrop = {
   sourceIndex: number;
   dropTargetIndex: number;
   destinationIndex: number;
@@ -20,13 +20,13 @@ const getDestinationIndexFromDropTargetIndex = ({
   dropTargetIndex: number;
 }) => (dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex);
 
-export const resolveDragDropColumnDrop = ({
+export const resolveDragDropItemDrop = ({
   pointerX,
   sourceIndex,
   scrollWrapperElement,
   columnWidths,
   leadingOffset = 0,
-}: ResolveDragDropColumnDropArgs): ResolvedDragDropColumnDrop => {
+}: ResolveDragDropItemDropArgs): ResolvedDragDropItemDrop => {
   const scrollContainerRect = scrollWrapperElement.getBoundingClientRect();
 
   const contentX =

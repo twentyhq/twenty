@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-export const DragDropColumnSortableHandleRefContext = createContext<
+export const DragDropItemSortableHandleRefContext = createContext<
   ((element: Element | null) => void) | undefined
 >(undefined);

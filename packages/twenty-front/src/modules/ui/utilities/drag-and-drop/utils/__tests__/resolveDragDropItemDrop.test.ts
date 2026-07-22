@@ -1,4 +1,4 @@
-import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
+import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 
 const createScrollWrapperElement = ({
   left = 0,
@@ -14,9 +14,9 @@ const createScrollWrapperElement = ({
 
 const COLUMN_WIDTHS = [100, 100, 100];
 
-describe('resolveDragDropColumnDrop', () => {
+describe('resolveDragDropItemDrop', () => {
   it('should target the column under the pointer before its midpoint', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 40,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({}),
@@ -31,7 +31,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should target the next slot once the pointer passes a column midpoint', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 120,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({}),
@@ -43,7 +43,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should target the trailing slot when the pointer is past every column', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 400,
       sourceIndex: 0,
       scrollWrapperElement: createScrollWrapperElement({}),
@@ -55,7 +55,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should decrement destinationIndex when dropping to the right of the source', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 160,
       sourceIndex: 0,
       scrollWrapperElement: createScrollWrapperElement({}),
@@ -67,7 +67,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should keep destinationIndex equal to dropTargetIndex when dropping to the left of the source', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 120,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({}),
@@ -79,7 +79,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should offset the pointer by the scroll position', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 40,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({ scrollLeft: 100 }),
@@ -90,7 +90,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should offset the pointer by the container left', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 90,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({ left: 50 }),
@@ -101,7 +101,7 @@ describe('resolveDragDropColumnDrop', () => {
   });
 
   it('should subtract the leading offset before resolving the column', () => {
-    const result = resolveDragDropColumnDrop({
+    const result = resolveDragDropItemDrop({
       pointerX: 140,
       sourceIndex: 2,
       scrollWrapperElement: createScrollWrapperElement({}),
