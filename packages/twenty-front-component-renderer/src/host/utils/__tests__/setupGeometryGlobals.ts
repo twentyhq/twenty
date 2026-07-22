@@ -6,7 +6,11 @@ type GeometryFixture = {
 };
 
 export const setupGeometryGlobals = () => {
-  const scheduledAnimationFrameCallbacks: FrameRequestCallback[] = [];
+  const scheduledAnimationFrameCallbacksByHandle = new Map<
+    number,
+    FrameRequestCallback
+  >();
+  let nextAnimationFrameHandle = 1;
   const resizeObserverCallbacks: ResizeObserverCallback[] = [];
   const mutationObserverCallbacks: MutationCallback[] = [];
 
@@ -36,21 +40,33 @@ export const setupGeometryGlobals = () => {
     StubMutationObserver as unknown as typeof MutationObserver;
 
   globalThis.requestAnimationFrame = ((callback: FrameRequestCallback) => {
-    scheduledAnimationFrameCallbacks.push(callback);
+    const animationFrameHandle = nextAnimationFrameHandle;
+    nextAnimationFrameHandle += 1;
+    scheduledAnimationFrameCallbacksByHandle.set(
+      animationFrameHandle,
+      callback,
+    );
 
-    return scheduledAnimationFrameCallbacks.length;
+    return animationFrameHandle;
   }) as typeof requestAnimationFrame;
 
-  globalThis.cancelAnimationFrame = (() => {}) as typeof cancelAnimationFrame;
+  globalThis.cancelAnimationFrame = ((animationFrameHandle: number) => {
+    scheduledAnimationFrameCallbacksByHandle.delete(animationFrameHandle);
+  }) as typeof cancelAnimationFrame;
 
   return {
-    getScheduledFrameCount: () => scheduledAnimationFrameCallbacks.length,
+    getScheduledFrameCount: () => scheduledAnimationFrameCallbacksByHandle.size,
     flushAnimationFrame: () => {
-      const callback = scheduledAnimationFrameCallbacks.shift();
-      callback?.(0);
+      const [animationFrameHandle, callback] =
+        scheduledAnimationFrameCallbacksByHandle.entries().next().value ?? [];
+
+      if (animationFrameHandle !== undefined) {
+        scheduledAnimationFrameCallbacksByHandle.delete(animationFrameHandle);
+        callback?.(0);
+      }
     },
     clearScheduledFrames: () => {
-      scheduledAnimationFrameCallbacks.length = 0;
+      scheduledAnimationFrameCallbacksByHandle.clear();
     },
     triggerResizeObserver: () => {
       for (const callback of resizeObserverCallbacks) {

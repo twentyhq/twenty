@@ -8,6 +8,8 @@ describe('measureViewportGeometry', () => {
     expect(viewport.innerWidth).toBe(window.innerWidth);
     expect(viewport.innerHeight).toBe(window.innerHeight);
     expect(viewport.devicePixelRatio).toBe(window.devicePixelRatio);
+    expect(viewport.scrollX).toBe(window.scrollX);
+    expect(viewport.scrollY).toBe(window.scrollY);
   });
 
   it('should return zero root fields for a null root', () => {
@@ -15,6 +17,8 @@ describe('measureViewportGeometry', () => {
 
     expect(viewport.rootContainerWidth).toBe(0);
     expect(viewport.rootContainerHeight).toBe(0);
+    expect(viewport.rootContainerClientWidth).toBe(0);
+    expect(viewport.rootContainerClientHeight).toBe(0);
   });
 
   it('should pass the supplied font shorthand through', () => {
@@ -33,7 +37,7 @@ describe('measureViewportGeometry', () => {
     getComputedStyle.mockRestore();
   });
 
-  it('should read the root container rect', () => {
+  it('should read the root container rect and client sizes', () => {
     const rootContainer = document.createElement('div');
     rootContainer.getBoundingClientRect = () =>
       ({
@@ -47,6 +51,8 @@ describe('measureViewportGeometry', () => {
         bottom: 402,
         toJSON: () => ({}),
       }) as DOMRect;
+    Object.defineProperty(rootContainer, 'clientWidth', { value: 290 });
+    Object.defineProperty(rootContainer, 'clientHeight', { value: 390 });
 
     const viewport = measureViewportGeometry(
       rootContainer,
@@ -54,7 +60,10 @@ describe('measureViewportGeometry', () => {
     );
 
     expect(viewport.rootContainerX).toBe(1);
+    expect(viewport.rootContainerY).toBe(2);
     expect(viewport.rootContainerWidth).toBe(300);
     expect(viewport.rootContainerHeight).toBe(400);
+    expect(viewport.rootContainerClientWidth).toBe(290);
+    expect(viewport.rootContainerClientHeight).toBe(390);
   });
 });
