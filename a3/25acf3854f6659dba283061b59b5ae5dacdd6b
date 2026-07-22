@@ -1,0 +1,23 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-upgrade-version-command.module.ts
+  s_c3fbc446206706::t_0e4171b7e1df47 1-20
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-workspace-command-1784567000000-backfill-message-list-members-junction-target.command.ts
+  s_c3fbc446206706::t_055296327cd11e 25,27
+packages/twenty-server/src/database/commands/upgrade-version-command/workspace-command-provider.module.ts
+  s_c3fbc446206706::t_546c4510e0f603 27,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a325acf3854f6659dba283061b59b5ae5dacdd6b",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
