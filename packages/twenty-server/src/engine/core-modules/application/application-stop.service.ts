@@ -30,48 +30,57 @@ export class ApplicationStopService {
   ) {}
 
   async stopApplication({
-    applicationId,
+    workspaceId,
+    applicationUniversalIdentifier,
   }: {
-    applicationId: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
   }): Promise<ApplicationEntity> {
     return this.setApplicationStoppedAt({
-      applicationId,
+      workspaceId,
+      applicationUniversalIdentifier,
       stoppedAt: new Date(),
     });
   }
 
   async startApplication({
-    applicationId,
+    workspaceId,
+    applicationUniversalIdentifier,
   }: {
-    applicationId: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
   }): Promise<ApplicationEntity> {
-    return this.setApplicationStoppedAt({ applicationId, stoppedAt: null });
+    return this.setApplicationStoppedAt({
+      workspaceId,
+      applicationUniversalIdentifier,
+      stoppedAt: null,
+    });
   }
 
   async stopApplicationRegistration({
-    applicationRegistrationId,
+    applicationRegistrationUniversalIdentifier,
   }: {
-    applicationRegistrationId: string;
+    applicationRegistrationUniversalIdentifier: string;
   }): Promise<{
     applicationRegistration: ApplicationRegistrationEntity;
     installedApplicationCount: number;
   }> {
     return this.setApplicationRegistrationStoppedAt({
-      applicationRegistrationId,
+      applicationRegistrationUniversalIdentifier,
       stoppedAt: new Date(),
     });
   }
 
   async startApplicationRegistration({
-    applicationRegistrationId,
+    applicationRegistrationUniversalIdentifier,
   }: {
-    applicationRegistrationId: string;
+    applicationRegistrationUniversalIdentifier: string;
   }): Promise<{
     applicationRegistration: ApplicationRegistrationEntity;
     installedApplicationCount: number;
   }> {
     return this.setApplicationRegistrationStoppedAt({
-      applicationRegistrationId,
+      applicationRegistrationUniversalIdentifier,
       stoppedAt: null,
     });
   }
@@ -91,24 +100,29 @@ export class ApplicationStopService {
   }
 
   private async setApplicationStoppedAt({
-    applicationId,
+    workspaceId,
+    applicationUniversalIdentifier,
     stoppedAt,
   }: {
-    applicationId: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
     stoppedAt: Date | null;
   }): Promise<ApplicationEntity> {
     const application = await this.applicationRepository.findOne({
-      where: { id: applicationId },
+      where: {
+        workspaceId,
+        universalIdentifier: applicationUniversalIdentifier,
+      },
     });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
-        `Application ${applicationId} not found`,
+        `Application ${applicationUniversalIdentifier} not found in workspace ${workspaceId}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
-    await this.applicationRepository.update(applicationId, { stoppedAt });
+    await this.applicationRepository.update(application.id, { stoppedAt });
 
     // The executor reads applications from the workspace cache, so the flag
     // only takes effect once the cached flat application maps are rebuilt.
@@ -121,10 +135,10 @@ export class ApplicationStopService {
   }
 
   private async setApplicationRegistrationStoppedAt({
-    applicationRegistrationId,
+    applicationRegistrationUniversalIdentifier,
     stoppedAt,
   }: {
-    applicationRegistrationId: string;
+    applicationRegistrationUniversalIdentifier: string;
     stoppedAt: Date | null;
   }): Promise<{
     applicationRegistration: ApplicationRegistrationEntity;
@@ -132,23 +146,25 @@ export class ApplicationStopService {
   }> {
     const applicationRegistration =
       await this.applicationRegistrationRepository.findOne({
-        where: { id: applicationRegistrationId },
+        where: {
+          universalIdentifier: applicationRegistrationUniversalIdentifier,
+        },
       });
 
     if (!isDefined(applicationRegistration)) {
       throw new ApplicationRegistrationException(
-        `Application registration ${applicationRegistrationId} not found`,
+        `Application registration ${applicationRegistrationUniversalIdentifier} not found`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       );
     }
 
     await this.applicationRegistrationRepository.update(
-      applicationRegistrationId,
+      applicationRegistration.id,
       { stoppedAt },
     );
 
     const installedApplicationCount = await this.applicationRepository.count({
-      where: { applicationRegistrationId },
+      where: { applicationRegistrationId: applicationRegistration.id },
     });
 
     return {

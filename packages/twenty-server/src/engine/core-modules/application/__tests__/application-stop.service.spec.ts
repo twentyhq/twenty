@@ -9,7 +9,10 @@ import { ApplicationException } from 'src/engine/core-modules/application/applic
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const APPLICATION_ID = 'application-1';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier-1';
 const APPLICATION_REGISTRATION_ID = 'application-registration-1';
+const APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER =
+  'application-registration-universal-identifier-1';
 const WORKSPACE_ID = 'workspace-1';
 
 describe('ApplicationStopService', () => {
@@ -61,12 +64,14 @@ describe('ApplicationStopService', () => {
     it('should set stoppedAt and invalidate the workspace application cache', async () => {
       applicationRepository.findOne.mockResolvedValue({
         id: APPLICATION_ID,
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceId: WORKSPACE_ID,
         stoppedAt: null,
       });
 
       const application = await applicationStopService.stopApplication({
-        applicationId: APPLICATION_ID,
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
       expect(applicationRepository.update).toHaveBeenCalledWith(
@@ -85,7 +90,8 @@ describe('ApplicationStopService', () => {
 
       await expect(
         applicationStopService.stopApplication({
-          applicationId: APPLICATION_ID,
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).rejects.toThrow(ApplicationException);
 
@@ -100,12 +106,14 @@ describe('ApplicationStopService', () => {
     it('should clear stoppedAt and invalidate the workspace application cache', async () => {
       applicationRepository.findOne.mockResolvedValue({
         id: APPLICATION_ID,
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceId: WORKSPACE_ID,
         stoppedAt: new Date(),
       });
 
       const application = await applicationStopService.startApplication({
-        applicationId: APPLICATION_ID,
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
       expect(applicationRepository.update).toHaveBeenCalledWith(
@@ -124,7 +132,8 @@ describe('ApplicationStopService', () => {
 
       await expect(
         applicationStopService.startApplication({
-          applicationId: APPLICATION_ID,
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).rejects.toThrow(ApplicationException);
 
@@ -139,6 +148,7 @@ describe('ApplicationStopService', () => {
     it('should set stoppedAt on the registration and report the installed application count', async () => {
       applicationRegistrationRepository.findOne.mockResolvedValue({
         id: APPLICATION_REGISTRATION_ID,
+        universalIdentifier: APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         name: 'My App',
         stoppedAt: null,
       });
@@ -146,7 +156,8 @@ describe('ApplicationStopService', () => {
 
       const { applicationRegistration, installedApplicationCount } =
         await applicationStopService.stopApplicationRegistration({
-          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+          applicationRegistrationUniversalIdentifier:
+            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         });
 
       expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
@@ -162,7 +173,8 @@ describe('ApplicationStopService', () => {
 
       await expect(
         applicationStopService.stopApplicationRegistration({
-          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+          applicationRegistrationUniversalIdentifier:
+            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         }),
       ).rejects.toThrow(ApplicationRegistrationException);
 
@@ -174,6 +186,7 @@ describe('ApplicationStopService', () => {
     it('should clear stoppedAt on the registration', async () => {
       applicationRegistrationRepository.findOne.mockResolvedValue({
         id: APPLICATION_REGISTRATION_ID,
+        universalIdentifier: APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         name: 'My App',
         stoppedAt: new Date(),
       });
@@ -181,7 +194,8 @@ describe('ApplicationStopService', () => {
 
       const { applicationRegistration } =
         await applicationStopService.startApplicationRegistration({
-          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+          applicationRegistrationUniversalIdentifier:
+            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         });
 
       expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
@@ -196,7 +210,8 @@ describe('ApplicationStopService', () => {
 
       await expect(
         applicationStopService.startApplicationRegistration({
-          applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+          applicationRegistrationUniversalIdentifier:
+            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
         }),
       ).rejects.toThrow(ApplicationRegistrationException);
 

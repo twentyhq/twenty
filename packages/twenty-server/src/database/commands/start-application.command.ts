@@ -5,6 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 
+type StartApplicationCommandOptions = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+};
+
 @Command({
   name: 'application:start',
   description:
@@ -18,24 +23,34 @@ export class StartApplicationCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-a, --application-id <application_id>',
-    description: 'id of the installed application (core.application) to start',
+    flags: '-w, --workspace-id <workspace_id>',
+    description: 'id of the workspace the application is installed in',
     required: true,
   })
-  parseApplicationId(value: string): string {
+  parseWorkspaceId(value: string): string {
+    return value;
+  }
+
+  @Option({
+    flags: '-a, --application-universal-identifier <universal_identifier>',
+    description: 'universal identifier of the application to start',
+    required: true,
+  })
+  parseApplicationUniversalIdentifier(value: string): string {
     return value;
   }
 
   override async run(
     _passedParams: string[],
-    options: { applicationId: string },
+    options: StartApplicationCommandOptions,
   ): Promise<void> {
     const application = await this.applicationStopService.startApplication({
-      applicationId: options.applicationId,
+      workspaceId: options.workspaceId,
+      applicationUniversalIdentifier: options.applicationUniversalIdentifier,
     });
 
     this.logger.log(
-      `Started application "${application.name}" (id ${application.id}, universalIdentifier ${application.universalIdentifier}) in workspace ${application.workspaceId}: the workspace-level stop is lifted.`,
+      `Started application "${application.name}" (universalIdentifier ${application.universalIdentifier}) in workspace ${application.workspaceId}: the workspace-level stop is lifted.`,
     );
 
     if (

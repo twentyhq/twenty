@@ -17,26 +17,27 @@ export class StopApplicationRegistrationCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-r, --application-registration-id <application_registration_id>',
-    description:
-      'id of the application registration (core.applicationRegistration) to stop',
+    flags:
+      '-r, --application-registration-universal-identifier <universal_identifier>',
+    description: 'universal identifier of the application registration to stop',
     required: true,
   })
-  parseApplicationRegistrationId(value: string): string {
+  parseApplicationRegistrationUniversalIdentifier(value: string): string {
     return value;
   }
 
   override async run(
     _passedParams: string[],
-    options: { applicationRegistrationId: string },
+    options: { applicationRegistrationUniversalIdentifier: string },
   ): Promise<void> {
     const { applicationRegistration, installedApplicationCount } =
       await this.applicationStopService.stopApplicationRegistration({
-        applicationRegistrationId: options.applicationRegistrationId,
+        applicationRegistrationUniversalIdentifier:
+          options.applicationRegistrationUniversalIdentifier,
       });
 
     this.logger.log(
-      `Stopped application registration "${applicationRegistration.name}" (id ${applicationRegistration.id}, universalIdentifier ${applicationRegistration.universalIdentifier}). All logic function executions of its ${installedApplicationCount} installed application(s) are now blocked, across all workspaces.`,
+      `Stopped application registration "${applicationRegistration.name}" (universalIdentifier ${applicationRegistration.universalIdentifier}). All logic function executions of its ${installedApplicationCount} installed application(s) are now blocked, across all workspaces.`,
     );
   }
 }
