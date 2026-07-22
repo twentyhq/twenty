@@ -1,0 +1,33 @@
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c3fbc446206706::t_7ffd9eb06ce275 98
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_c3fbc446206706::t_d42372f146d4de 22
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_c3fbc446206706::t_d5918b0ef01f12 2
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_c3fbc446206706::t_34ccd9aea43f86 10
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c3fbc446206706::t_3c828339cf0c97 20,22
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_c3fbc446206706::t_cec1e154b413d7 21-27
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784661000000-add-message-channel-display-name.ts
+  s_c3fbc446206706::t_91eda405358bb8 6
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_d050e5e1f41e07 120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "ca9cd41a36774256040bd224f1088ac7c2c365d1",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
