@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { GEOMETRY_EPSILON_PIXELS } from '@/host/constants/GeometryEpsilonPixels';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
-const ELEMENT_GEOMETRY_KEYS: (keyof ElementGeometrySnapshot)[] = [
+const ELEMENT_GEOMETRY_NUMERIC_KEYS = [
   'x',
   'y',
   'width',
@@ -20,7 +20,7 @@ const ELEMENT_GEOMETRY_KEYS: (keyof ElementGeometrySnapshot)[] = [
   'scrollHeight',
   'scrollTop',
   'scrollLeft',
-];
+] satisfies (keyof ElementGeometrySnapshot)[];
 
 export const isElementGeometryEqualWithinEpsilon = (
   previousSnapshot: ElementGeometrySnapshot | undefined,
@@ -30,7 +30,14 @@ export const isElementGeometryEqualWithinEpsilon = (
     return false;
   }
 
-  return ELEMENT_GEOMETRY_KEYS.every(
+  if (
+    previousSnapshot.offsetParentRemoteElementId !==
+    nextSnapshot.offsetParentRemoteElementId
+  ) {
+    return false;
+  }
+
+  return ELEMENT_GEOMETRY_NUMERIC_KEYS.every(
     (key) =>
       Math.abs(previousSnapshot[key] - nextSnapshot[key]) <
       GEOMETRY_EPSILON_PIXELS,

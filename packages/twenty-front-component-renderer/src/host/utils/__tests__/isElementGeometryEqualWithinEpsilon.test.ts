@@ -20,6 +20,7 @@ const createSnapshot = (
   scrollHeight: 0,
   scrollTop: 0,
   scrollLeft: 0,
+  offsetParentRemoteElementId: null,
   ...overrides,
 });
 

@@ -37,6 +37,7 @@ const createSnapshot = (width: number) => ({
   scrollHeight: 0,
   scrollTop: 0,
   scrollLeft: 0,
+  offsetParentRemoteElementId: null,
 });
 
 const createViewport = (innerWidth: number) => ({
@@ -295,6 +296,26 @@ describe('createWorkerGeometryStore', () => {
     store.applyGeometryBatch({ removedRemoteElementIds: ['unknown'] });
 
     expect(unobserveElementGeometry).not.toHaveBeenCalled();
+  });
+
+  it('should resolve an enrolled element by its remote element id', () => {
+    const { store, rootElement } = createRootedStore();
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+
+    expect(store.resolveElementByRemoteElementId('0')).toBe(element);
+    expect(store.resolveElementByRemoteElementId('404')).toBeNull();
+  });
+
+  it('should stop resolving an element after its id is removed', () => {
+    const { store, rootElement } = createRootedStore();
+    const element = { parentNode: rootElement };
+
+    store.resolveElementSnapshot(element);
+    store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
+
+    expect(store.resolveElementByRemoteElementId('0')).toBeNull();
   });
 
   it('should report an element under the remote root as mirrored', () => {

@@ -9,5 +9,6 @@ export type WorkerGeometryStore = {
   applyGeometryBatch: (batch: GeometryUpdateBatch) => void;
   getViewportSnapshot: () => ViewportGeometrySnapshot | null;
   resolveElementSnapshot: (element: object) => ElementGeometrySnapshot | null;
+  resolveElementByRemoteElementId: (remoteElementId: string) => object | null;
   isElementMirrored: (element: object) => boolean;
 };

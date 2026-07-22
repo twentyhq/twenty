@@ -22,6 +22,7 @@ const EMPTY_ELEMENT_GEOMETRY_SNAPSHOT: ElementGeometrySnapshot = {
   scrollHeight: 0,
   scrollTop: 0,
   scrollLeft: 0,
+  offsetParentRemoteElementId: null,
 };
 
 type InstallElementGeometryPolyfillInput = {
@@ -169,6 +170,22 @@ export const installElementGeometryPolyfill = ({
   Object.defineProperty(elementPrototype, 'offsetParent', {
     get(this: object) {
       try {
+        const offsetParentRemoteElementId =
+          geometryStore.resolveElementSnapshot(
+            this,
+          )?.offsetParentRemoteElementId;
+
+        if (isDefined(offsetParentRemoteElementId)) {
+          const offsetParentElement =
+            geometryStore.resolveElementByRemoteElementId(
+              offsetParentRemoteElementId,
+            );
+
+          if (isDefined(offsetParentElement)) {
+            return offsetParentElement;
+          }
+        }
+
         return geometryStore.isElementMirrored(this)
           ? (documentTarget.body ?? null)
           : null;

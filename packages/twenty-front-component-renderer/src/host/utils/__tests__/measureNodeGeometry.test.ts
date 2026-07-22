@@ -2,6 +2,8 @@ import { measureNodeGeometry } from '../measureNodeGeometry';
 
 const ROOT_ORIGIN = { x: 0, y: 0 };
 
+const NO_MIRRORED_PARENT = () => null;
+
 const stubBoundingClientRect = (node: Element) => {
   node.getBoundingClientRect = () =>
     ({
@@ -22,7 +24,7 @@ describe('measureNodeGeometry', () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
 
-    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN);
+    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN, NO_MIRRORED_PARENT);
 
     expect(snapshot.x).toBe(5);
     expect(snapshot.y).toBe(6);
@@ -34,8 +36,47 @@ describe('measureNodeGeometry', () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
 
-    const snapshot = measureNodeGeometry(node, { x: 2, y: 4 });
+    const snapshot = measureNodeGeometry(
+      node,
+      { x: 2, y: 4 },
+      NO_MIRRORED_PARENT,
+    );
 
+    expect(snapshot.offsetLeft).toBe(3);
+    expect(snapshot.offsetTop).toBe(2);
+  });
+
+  it('should keep host offsets and carry the parent id for a mirrored offset parent', () => {
+    const node = document.createElement('div');
+    stubBoundingClientRect(node);
+    const offsetParentNode = document.createElement('div');
+    Object.defineProperty(node, 'offsetParent', { value: offsetParentNode });
+    Object.defineProperty(node, 'offsetTop', { value: 11 });
+    Object.defineProperty(node, 'offsetLeft', { value: 12 });
+
+    const snapshot = measureNodeGeometry(node, { x: 2, y: 4 }, (parentNode) =>
+      parentNode === offsetParentNode ? '9' : null,
+    );
+
+    expect(snapshot.offsetParentRemoteElementId).toBe('9');
+    expect(snapshot.offsetTop).toBe(11);
+    expect(snapshot.offsetLeft).toBe(12);
+  });
+
+  it('should fall back to root relative offsets for an unmirrored offset parent', () => {
+    const node = document.createElement('div');
+    stubBoundingClientRect(node);
+    Object.defineProperty(node, 'offsetParent', {
+      value: document.createElement('div'),
+    });
+
+    const snapshot = measureNodeGeometry(
+      node,
+      { x: 2, y: 4 },
+      NO_MIRRORED_PARENT,
+    );
+
+    expect(snapshot.offsetParentRemoteElementId).toBeNull();
     expect(snapshot.offsetLeft).toBe(3);
     expect(snapshot.offsetTop).toBe(2);
   });
@@ -45,14 +86,16 @@ describe('measureNodeGeometry', () => {
     stubBoundingClientRect(node);
     Object.defineProperty(node, 'offsetWidth', { value: 42 });
 
-    expect(measureNodeGeometry(node, ROOT_ORIGIN).offsetWidth).toBe(42);
+    expect(
+      measureNodeGeometry(node, ROOT_ORIGIN, NO_MIRRORED_PARENT).offsetWidth,
+    ).toBe(42);
   });
 
   it('should report zero offset sizes for an svg element', () => {
     const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     stubBoundingClientRect(node);
 
-    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN);
+    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN, NO_MIRRORED_PARENT);
 
     expect(snapshot.offsetWidth).toBe(0);
     expect(snapshot.offsetHeight).toBe(0);

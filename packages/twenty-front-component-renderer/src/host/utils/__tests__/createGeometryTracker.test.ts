@@ -456,6 +456,112 @@ describe('createGeometryTracker', () => {
     expect(pushGeometryUpdates.mock.calls[2][0].elements['1'].width).toBe(1);
   });
 
+  it('should carry the offset parent id when the parent is observed', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const parent = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    });
+    const child = geometryGlobals.createStubNode({
+      x: 10,
+      y: 10,
+      width: 20,
+      height: 20,
+    });
+    Object.defineProperty(child.node, 'offsetParent', { value: parent.node });
+    Object.defineProperty(child.node, 'offsetTop', { value: 10 });
+    Object.defineProperty(child.node, 'offsetLeft', { value: 10 });
+
+    tracker.registerNode('1', parent.node);
+    tracker.registerNode('2', child.node);
+    tracker.observe(['1', '2']);
+    geometryGlobals.flushAnimationFrame();
+
+    const batch = pushGeometryUpdates.mock.calls[0][0];
+    expect(batch.elements['2'].offsetParentRemoteElementId).toBe('1');
+    expect(batch.elements['2'].offsetTop).toBe(10);
+    expect(batch.elements['1'].offsetParentRemoteElementId).toBeNull();
+  });
+
+  it('should not carry the offset parent id when the parent is not observed', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const parent = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    });
+    const child = geometryGlobals.createStubNode({
+      x: 10,
+      y: 10,
+      width: 20,
+      height: 20,
+    });
+    Object.defineProperty(child.node, 'offsetParent', { value: parent.node });
+
+    tracker.registerNode('1', parent.node);
+    tracker.registerNode('2', child.node);
+    tracker.observe(['2']);
+    geometryGlobals.flushAnimationFrame();
+
+    const batch = pushGeometryUpdates.mock.calls[0][0];
+    expect(batch.elements['2'].offsetParentRemoteElementId).toBeNull();
+  });
+
+  it('should expire an observed id whose node never registers', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1', '404']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    const removalBatches = pushGeometryUpdates.mock.calls.filter(
+      (call) => call[0].removedRemoteElementIds.length > 0,
+    );
+
+    expect(removalBatches).toHaveLength(1);
+    expect(removalBatches[0][0].removedRemoteElementIds).toEqual(['404']);
+  });
+
+  it('should not expire an observed id that registers before the limit', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const anchor = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', anchor.node);
+    tracker.observe(['1', '2']);
+    flushFrames(5);
+
+    const lateStub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 7,
+      height: 7,
+    });
+    tracker.registerNode('2', lateStub.node);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    for (const call of pushGeometryUpdates.mock.calls) {
+      expect(call[0].removedRemoteElementIds).toEqual([]);
+    }
+    const lastPushWithLateNode = pushGeometryUpdates.mock.calls.find(
+      (call) => call[0].elements['2'] !== undefined,
+    );
+    expect(lastPushWithLateNode?.[0].elements['2'].width).toBe(7);
+  });
+
   it('should report a removed id exactly once', () => {
     const { tracker, pushGeometryUpdates } = createArmedTracker();
     const stub = geometryGlobals.createStubNode({

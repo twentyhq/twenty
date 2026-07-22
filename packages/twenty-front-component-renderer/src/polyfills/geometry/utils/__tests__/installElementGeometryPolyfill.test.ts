@@ -24,12 +24,14 @@ const createSnapshot = (
   scrollHeight: 14,
   scrollTop: 15,
   scrollLeft: 16,
+  offsetParentRemoteElementId: null,
   ...overrides,
 });
 
 const createGeometryStore = (
   overrides: Partial<{
     resolveElementSnapshot: (element: object) => ElementGeometrySnapshot | null;
+    resolveElementByRemoteElementId: (remoteElementId: string) => object | null;
     isElementMirrored: (element: object) => boolean;
     getViewportSnapshot: () => ReturnType<() => Record<string, unknown>> | null;
   }> = {},
@@ -40,6 +42,8 @@ const createGeometryStore = (
     applyGeometryBatch: jest.fn(),
     getViewportSnapshot: overrides.getViewportSnapshot ?? (() => null),
     resolveElementSnapshot: overrides.resolveElementSnapshot ?? (() => null),
+    resolveElementByRemoteElementId:
+      overrides.resolveElementByRemoteElementId ?? (() => null),
     isElementMirrored: overrides.isElementMirrored ?? (() => false),
   }) as never;
 
@@ -192,6 +196,36 @@ describe('installElementGeometryPolyfill', () => {
   it('should return the document body from offsetParent for a mirrored element', () => {
     const { documentBody } = installOn(
       createGeometryStore({ isElementMirrored: () => true }),
+    );
+
+    expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
+      documentBody,
+    );
+  });
+
+  it('should resolve offsetParent through the mirrored parent id', () => {
+    const mirroredParent = new FakeElement();
+    installOn(
+      createGeometryStore({
+        resolveElementSnapshot: () =>
+          createSnapshot({ offsetParentRemoteElementId: '9' }),
+        resolveElementByRemoteElementId: (remoteElementId) =>
+          remoteElementId === '9' ? mirroredParent : null,
+      }),
+    );
+
+    expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
+      mirroredParent,
+    );
+  });
+
+  it('should fall back to the document body when the parent id cannot be resolved', () => {
+    const { documentBody } = installOn(
+      createGeometryStore({
+        resolveElementSnapshot: () =>
+          createSnapshot({ offsetParentRemoteElementId: '9' }),
+        isElementMirrored: () => true,
+      }),
     );
 
     expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(

@@ -15,4 +15,5 @@ export type ElementGeometrySnapshot = {
   scrollHeight: number;
   scrollTop: number;
   scrollLeft: number;
+  offsetParentRemoteElementId: string | null;
 };

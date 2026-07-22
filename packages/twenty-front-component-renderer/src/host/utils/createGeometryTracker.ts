@@ -18,8 +18,21 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 
 export const createGeometryTracker = (): GeometryTracker => {
   const registeredNodes = new Map<string, Element>();
+  const registeredRemoteElementIdsByNode = new WeakMap<Element, string>();
   const observedRemoteElementIds = new Set<string>();
   const lastElementSnapshots = new Map<string, ElementGeometrySnapshot>();
+  const unregisteredObservedFrameCounts = new Map<string, number>();
+
+  const resolveObservedRemoteElementIdForNode = (
+    node: Element,
+  ): string | null => {
+    const remoteElementId = registeredRemoteElementIdsByNode.get(node);
+
+    return isDefined(remoteElementId) &&
+      observedRemoteElementIds.has(remoteElementId)
+      ? remoteElementId
+      : null;
+  };
 
   let rootContainer: Element | null = null;
   let rootContainerFontShorthand = DEFAULT_FONT_SHORTHAND;
@@ -76,17 +89,40 @@ export const createGeometryTracker = (): GeometryTracker => {
     const changedElements: Record<string, ElementGeometrySnapshot> = {};
     const removedRemoteElementIds: string[] = [];
 
+    const expiredRemoteElementIds: string[] = [];
+
     for (const remoteElementId of observedRemoteElementIds) {
       const node = registeredNodes.get(remoteElementId);
 
       if (!isDefined(node) || !node.isConnected) {
-        if (lastElementSnapshots.delete(remoteElementId)) {
+        const unregisteredFrameCount =
+          (unregisteredObservedFrameCounts.get(remoteElementId) ?? 0) + 1;
+        unregisteredObservedFrameCounts.set(
+          remoteElementId,
+          unregisteredFrameCount,
+        );
+
+        const hadSnapshot = lastElementSnapshots.delete(remoteElementId);
+        const hasExpired =
+          unregisteredFrameCount >= GEOMETRY_IDLE_FRAME_THRESHOLD;
+
+        if (hasExpired) {
+          expiredRemoteElementIds.push(remoteElementId);
+        }
+
+        if (hadSnapshot || hasExpired) {
           removedRemoteElementIds.push(remoteElementId);
         }
         continue;
       }
 
-      const snapshot = measureNodeGeometry(node, rootContainerOrigin);
+      unregisteredObservedFrameCounts.delete(remoteElementId);
+
+      const snapshot = measureNodeGeometry(
+        node,
+        rootContainerOrigin,
+        resolveObservedRemoteElementIdForNode,
+      );
 
       if (
         !isElementGeometryEqualWithinEpsilon(
@@ -97,6 +133,11 @@ export const createGeometryTracker = (): GeometryTracker => {
         lastElementSnapshots.set(remoteElementId, snapshot);
         changedElements[remoteElementId] = snapshot;
       }
+    }
+
+    for (const remoteElementId of expiredRemoteElementIds) {
+      observedRemoteElementIds.delete(remoteElementId);
+      unregisteredObservedFrameCounts.delete(remoteElementId);
     }
 
     const hasViewportChanged = !isViewportGeometryEqualWithinEpsilon(
@@ -134,6 +175,8 @@ export const createGeometryTracker = (): GeometryTracker => {
 
   const registerNode = (remoteElementId: string, node: Element): void => {
     registeredNodes.set(remoteElementId, node);
+    registeredRemoteElementIdsByNode.set(node, remoteElementId);
+    unregisteredObservedFrameCounts.delete(remoteElementId);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
       wakeSources.startObservingNode(node);
@@ -147,6 +190,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     registeredNodes.delete(remoteElementId);
+    registeredRemoteElementIdsByNode.delete(node);
     wakeSources.stopObservingNode(node);
 
     if (observedRemoteElementIds.has(remoteElementId)) {
@@ -191,6 +235,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     for (const remoteElementId of sanitizeRemoteElementIds(remoteElementIds)) {
       observedRemoteElementIds.delete(remoteElementId);
       lastElementSnapshots.delete(remoteElementId);
+      unregisteredObservedFrameCounts.delete(remoteElementId);
 
       const node = registeredNodes.get(remoteElementId);
 
@@ -226,7 +271,11 @@ export const createGeometryTracker = (): GeometryTracker => {
         continue;
       }
 
-      const snapshot = measureNodeGeometry(node, rootContainerOrigin);
+      const snapshot = measureNodeGeometry(
+        node,
+        rootContainerOrigin,
+        resolveObservedRemoteElementIdForNode,
+      );
       elements[remoteElementId] = snapshot;
 
       if (observedRemoteElementIds.has(remoteElementId)) {
@@ -277,6 +326,7 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     observedRemoteElementIds.clear();
     lastElementSnapshots.clear();
+    unregisteredObservedFrameCounts.clear();
     lastViewportSnapshot = null;
     idleFrameCount = 0;
   };

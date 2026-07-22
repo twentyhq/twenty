@@ -13,6 +13,7 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const elementSnapshots = new Map<string, ElementGeometrySnapshot>();
   const enrolledRemoteElementIds = new WeakMap<object, string>();
+  const enrolledElementsByRemoteElementId = new Map<string, WeakRef<object>>();
   const observedRemoteElementIds = new Set<string>();
   const pendingObservationIds = new Set<string>();
 
@@ -57,6 +58,10 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     const remoteElementId = remoteId(element as Node);
 
     enrolledRemoteElementIds.set(element, remoteElementId);
+    enrolledElementsByRemoteElementId.set(
+      remoteElementId,
+      new WeakRef(element),
+    );
     observedRemoteElementIds.add(remoteElementId);
     pendingObservationIds.add(remoteElementId);
     scheduleObservationFlush();
@@ -113,6 +118,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       for (const remoteElementId of batch.removedRemoteElementIds) {
         elementSnapshots.delete(remoteElementId);
         pendingObservationIds.delete(remoteElementId);
+        enrolledElementsByRemoteElementId.delete(remoteElementId);
 
         if (observedRemoteElementIds.delete(remoteElementId)) {
           prunedObservedRemoteElementIds.push(remoteElementId);
@@ -138,6 +144,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     applyGeometryBatch,
     getViewportSnapshot: () => viewportSnapshot,
     resolveElementSnapshot,
+    resolveElementByRemoteElementId: (remoteElementId: string) =>
+      enrolledElementsByRemoteElementId.get(remoteElementId)?.deref() ?? null,
     isElementMirrored,
   };
 };
