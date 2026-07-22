@@ -1,5 +1,4 @@
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -15,19 +14,18 @@ export const ComposeCampaignCommand = () => {
 
   const handleExecute = async () => {
     const campaignId = v4();
-    const campaign = await createMessageCampaign({ id: campaignId });
 
-    if (isDefined(campaign)) {
-      navigateApp(
-        AppPath.RecordShowPage,
-        {
-          objectNameSingular: CoreObjectNameSingular.MessageCampaign,
-          objectRecordId: campaignId,
-        },
-        undefined,
-        { state: { isNewRecord: true, objectRecordId: campaignId } },
-      );
-    }
+    await createMessageCampaign({ id: campaignId });
+
+    navigateApp(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+        objectRecordId: campaignId,
+      },
+      undefined,
+      { state: { isNewRecord: true, objectRecordId: campaignId } },
+    );
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} ready />;

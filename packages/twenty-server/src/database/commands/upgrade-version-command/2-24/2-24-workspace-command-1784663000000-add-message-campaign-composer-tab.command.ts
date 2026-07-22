@@ -31,9 +31,14 @@ const COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs
     .composer.widgets.messageCampaign.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.23.0', 1784663000000)
+const HOME_TAB_STANDARD_WIDGET_UNIVERSAL_IDENTIFIERS = Object.values(
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets,
+).map((widget) => widget.universalIdentifier);
+
+@RegisteredWorkspaceCommand('2.24.0', 1784663000000)
 @Command({
-  name: 'upgrade:2-23:add-message-campaign-composer-tab',
+  name: 'upgrade:2-24:add-message-campaign-composer-tab',
   description:
     'Adds the Composer canvas tab to the message campaign record page in existing workspaces',
 })
@@ -110,16 +115,27 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         HOME_TAB_UNIVERSAL_IDENTIFIER
       ];
 
-    const pageLayoutTabsToDelete = isDefined(existingHomeTab)
-      ? [existingHomeTab]
-      : [];
-
-    const pageLayoutWidgetsToDelete = isDefined(existingHomeTab)
+    const existingHomeTabWidgets = isDefined(existingHomeTab)
       ? Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier).filter(
           (widget): widget is FlatPageLayoutWidget =>
             isDefined(widget) && widget.pageLayoutTabId === existingHomeTab.id,
         )
       : [];
+
+    const pageLayoutWidgetsToDelete = existingHomeTabWidgets.filter((widget) =>
+      HOME_TAB_STANDARD_WIDGET_UNIVERSAL_IDENTIFIERS.includes(
+        widget.universalIdentifier,
+      ),
+    );
+
+    // A home tab holding user-added widgets is kept so their widgets survive
+    const hasOnlyStandardHomeTabWidgets =
+      pageLayoutWidgetsToDelete.length === existingHomeTabWidgets.length;
+
+    const pageLayoutTabsToDelete =
+      isDefined(existingHomeTab) && hasOnlyStandardHomeTabWidgets
+        ? [existingHomeTab]
+        : [];
 
     const shouldUpdateDefaultTab = isDefined(
       existingPageLayout.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,

@@ -17,7 +17,6 @@ const StyledContainer = styled.div`
   max-width: 640px;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
-  width: 100%;
 `;
 
 const StyledFooter = styled.div`

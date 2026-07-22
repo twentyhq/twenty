@@ -18,6 +18,13 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 
+type FindSuppressionsArgs = {
+  workspaceId: string;
+  reason?: MessageSuppressionReason;
+  limit: number;
+  offset: number;
+};
+
 type SuppressArgs = {
   workspaceId: string;
   emailAddress: string;

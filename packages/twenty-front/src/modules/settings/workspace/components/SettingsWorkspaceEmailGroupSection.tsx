@@ -6,8 +6,6 @@ import { SettingsTableListSection } from '@/settings/components/SettingsTableLis
 import { SettingsWorkspaceEmailChannelDomainStatusCell } from '@/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell';
 import { SettingsWorkspaceEmailGroupSourceCell } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSourceCell';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
-import { Pill } from 'twenty-ui/data-display';
-import { IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsWorkspaceEmailGroupSection = () => {

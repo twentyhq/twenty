@@ -45,6 +45,11 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error);
       case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
         throw new ForbiddenError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
+        throw new NotFoundError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
+        throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
       }

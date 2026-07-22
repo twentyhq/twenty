@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.23.0', 1784662000000)
+@RegisteredInstanceCommand('2.24.0', 1784662000000)
 export class AddMessageCampaignWidgetTypeFastInstanceCommand
   implements FastInstanceCommand
 {
@@ -29,6 +29,9 @@ export class AddMessageCampaignWidgetTypeFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DELETE FROM "core"."pageLayoutWidget" WHERE "type" = 'MESSAGE_CAMPAIGN'`,
+    );
     await queryRunner.query(
       `CREATE TYPE "core"."pageLayoutWidget_type_enum_old" AS ENUM('VIEW', 'IFRAME', 'FIELD', 'FIELDS', 'GRAPH', 'STANDALONE_RICH_TEXT', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN', 'FRONT_COMPONENT', 'RECORD_TABLE', 'EMAIL_THREAD')`,
     );

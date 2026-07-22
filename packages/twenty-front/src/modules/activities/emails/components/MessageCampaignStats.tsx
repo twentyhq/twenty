@@ -20,7 +20,6 @@ const StyledContainer = styled.div`
   margin: 0 auto;
   max-width: 640px;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
-  width: 100%;
 `;
 
 const StyledMetrics = styled.div`
@@ -80,19 +79,30 @@ export const MessageCampaignStats = ({
     { label: t`Complained`, value: complainedCount },
   ];
 
+  const statusLabels: Record<string, string> = {
+    DRAFT: t`Draft`,
+    SCHEDULED: t`Scheduled`,
+    SENDING: t`Sending`,
+    SENT: t`Sent`,
+    SENT_WITH_ERRORS: t`Sent with errors`,
+  };
+
+  const description =
+    status === 'SCHEDULED'
+      ? t`This campaign is scheduled.`
+      : sentAt === null
+        ? t`This campaign is being sent.`
+        : t`Sent on ${formatToHumanReadableDate(sentAt)}.`;
+
   return (
     <StyledContainer>
       <H2Title
         title={subject ?? t`Untitled campaign`}
-        description={
-          sentAt === null
-            ? t`This campaign is being sent.`
-            : t`Sent on ${formatToHumanReadableDate(sentAt)}.`
-        }
+        description={description}
         adornment={
           <Status
             color={CAMPAIGN_STATUS_TO_COLOR[status] ?? 'gray'}
-            text={status}
+            text={statusLabels[status] ?? status}
           />
         }
       />

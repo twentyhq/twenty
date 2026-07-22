@@ -198,9 +198,18 @@ export class MessageCampaignService {
             roleId,
           );
 
-          await campaignRepository.update(campaignId, {
-            status: CAMPAIGN_STATUS.SENDING,
-          });
+          // Conditional update so two concurrent sends cannot both enqueue
+          const { affected } = await campaignRepository.update(
+            { id: campaignId, status: CAMPAIGN_STATUS.DRAFT },
+            { status: CAMPAIGN_STATUS.SENDING },
+          );
+
+          if (affected !== 1) {
+            throw new EmailingDomainException(
+              `Campaign ${campaignId} is no longer a sendable draft`,
+              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+            );
+          }
 
           return {
             recipients: normalized.recipients,
