@@ -22,7 +22,26 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatMapsKeys?: T;
   }): Promise<Pick<WorkspaceCacheDataMap, T[number]>> {
-    return await this.workspaceCacheService.getOrRecompute(
+    const { data } = await this.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
+      { flatMapsKeys, workspaceId },
+    );
+
+    return data;
+  }
+
+  public async getOrRecomputeManyOrAllFlatEntityMapsWithHashes<
+    T extends FlatEntityMapsCacheKeyName[] = (keyof AllFlatEntityMaps)[],
+  >({
+    flatMapsKeys,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    flatMapsKeys?: T;
+  }): Promise<{
+    data: Pick<WorkspaceCacheDataMap, T[number]>;
+    hashes: Record<T[number], string>;
+  }> {
+    return await this.workspaceCacheService.getOrRecomputeWithHashes(
       workspaceId,
       (flatMapsKeys ??
         ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],

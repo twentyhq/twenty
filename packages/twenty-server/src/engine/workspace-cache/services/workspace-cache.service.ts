@@ -29,8 +29,10 @@ import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheResult,
+  type WorkspaceCacheResultWithHashes,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
@@ -42,6 +44,11 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
+
+type CacheEntriesResult = {
+  data: Partial<WorkspaceCacheDataMap>;
+  hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+};
 
 type RecomputeHashResolution =
   | { strategy: 'mint' }
@@ -61,9 +68,9 @@ export class WorkspaceCacheService implements OnModuleInit {
     WorkspaceCacheProvider<CacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
-  private readonly memoizer = new PromiseMemoizer<
-    Partial<WorkspaceCacheDataMap>
-  >(MEMOIZER_TTL_MS);
+  private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
+    MEMOIZER_TTL_MS,
+  );
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
@@ -114,6 +121,20 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResult<K>> {
+    const { data } = await this.getOrRecomputeWithHashes(
+      workspaceId,
+      cacheKeyNames,
+    );
+
+    return data;
+  }
+
+  public async getOrRecomputeWithHashes<
+    const K extends WorkspaceCacheKeyName[],
+  >(
+    workspaceId: string,
+    cacheKeyNames: K,
+  ): Promise<WorkspaceCacheResultWithHashes<K>> {
     this.evictExpiredLocalEntries();
 
     if (
@@ -138,10 +159,10 @@ export class WorkspaceCacheService implements OnModuleInit {
           workspaceId,
           cacheKeyNames,
         );
-        const freshData = this.getFromLocalCache(workspaceId, freshKeys);
+        const freshEntries = this.getFromLocalCache(workspaceId, freshKeys);
 
         if (staleKeys.length === 0) {
-          return freshData;
+          return freshEntries;
         }
 
         // Stage 2: Validate ttl stale keys against Redis hash
@@ -154,32 +175,52 @@ export class WorkspaceCacheService implements OnModuleInit {
           workspaceId,
           staleKeys,
         );
-        const validatedData = this.getFromLocalCache(workspaceId, validKeys);
+        const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
         // Stage 3: Fetch data from Redis
-        const { redisData, missingInRedis } = await this.fetchDataFromRedis(
+        const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
         );
 
         // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
-        const recomputedData = await this.recomputeDataFromProvider(
+        const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,
           keysToRecompute,
           { strategy: 'recover', adoptableHashes },
         );
 
         return {
-          ...freshData,
-          ...validatedData,
-          ...redisData,
-          ...recomputedData,
+          data: {
+            ...freshEntries.data,
+            ...validatedEntries.data,
+            ...redisEntries.data,
+            ...recomputedEntries.data,
+          },
+          hashes: {
+            ...freshEntries.hashes,
+            ...validatedEntries.hashes,
+            ...redisEntries.hashes,
+            ...recomputedEntries.hashes,
+          },
         };
       },
     );
 
-    return result as WorkspaceCacheResult<K>;
+    return result as WorkspaceCacheResultWithHashes<K>;
+  }
+
+  public async getOrRecomputeCombinedHash(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<string> {
+    const { hashes } = await this.getOrRecomputeWithHashes(
+      workspaceId,
+      cacheKeyNames,
+    );
+
+    return combineCacheHashes(hashes, cacheKeyNames);
   }
 
   public async invalidateAndRecompute(
@@ -328,14 +369,14 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<{
-    redisData: Partial<WorkspaceCacheDataMap>;
+    redisEntries: CacheEntriesResult;
     missingInRedis: WorkspaceCacheKeyName[];
   }> {
-    const redisData: Partial<WorkspaceCacheDataMap> = {};
+    const redisEntries: CacheEntriesResult = { data: {}, hashes: {} };
     const missingInRedis: WorkspaceCacheKeyName[] = [];
 
     if (cacheKeyNames.length === 0) {
-      return { redisData, missingInRedis };
+      return { redisEntries, missingInRedis };
     }
 
     // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
@@ -354,22 +395,23 @@ export class WorkspaceCacheService implements OnModuleInit {
       const hash = allValues[index * 2 + 1] as string | undefined;
 
       if (isDefined(data) && isDefined(hash)) {
-        Object.assign(redisData, { [keyName]: data });
+        Object.assign(redisEntries.data, { [keyName]: data });
+        redisEntries.hashes[keyName] = hash;
         this.setInLocalCache(workspaceId, keyName, data, hash);
       } else {
         missingInRedis.push(keyName);
       }
     }
 
-    return { redisData, missingInRedis };
+    return { redisEntries, missingInRedis };
   }
 
   private async recomputeDataFromProvider(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
-  ): Promise<Partial<WorkspaceCacheDataMap>> {
-    const result: Partial<WorkspaceCacheDataMap> = {};
+  ): Promise<CacheEntriesResult> {
+    const result: CacheEntriesResult = { data: {}, hashes: {} };
 
     if (cacheKeyNames.length === 0) {
       return result;
@@ -412,7 +454,8 @@ export class WorkspaceCacheService implements OnModuleInit {
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
-      Object.assign(result, { [keyName]: data });
+      Object.assign(result.data, { [keyName]: data });
+      result.hashes[keyName] = hash;
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
@@ -453,8 +496,8 @@ export class WorkspaceCacheService implements OnModuleInit {
   private getFromLocalCache(
     workspaceId: string,
     workspaceCacheKeyNames: WorkspaceCacheKeyName[],
-  ): Partial<WorkspaceCacheDataMap> {
-    const result: Partial<WorkspaceCacheDataMap> = {};
+  ): CacheEntriesResult {
+    const result: CacheEntriesResult = { data: {}, hashes: {} };
 
     for (const keyName of workspaceCacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
@@ -463,7 +506,8 @@ export class WorkspaceCacheService implements OnModuleInit {
 
       if (isDefined(entry) && isDefined(version)) {
         version.lastReadAt = Date.now();
-        Object.assign(result, { [keyName]: version.data });
+        Object.assign(result.data, { [keyName]: version.data });
+        result.hashes[keyName] = entry.latestHash;
         this.cleanupStaleVersions(entry);
       }
     }

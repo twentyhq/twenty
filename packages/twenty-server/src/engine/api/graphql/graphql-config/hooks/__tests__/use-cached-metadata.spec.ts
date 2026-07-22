@@ -4,6 +4,7 @@ import { type Request } from 'express';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 
 jest.mock('@sentry/node', () => ({
+  captureException: jest.fn(),
   getCurrentScope: jest.fn(),
   setTags: jest.fn(),
   startSpan: jest.fn(),
@@ -40,18 +41,20 @@ describe('useCachedMetadata', () => {
       },
       locale: 'en',
       userWorkspaceId: 'user-workspace-id',
-      workspace: { id: 'workspace-id', metadataVersion: 3 },
+      workspace: { id: 'workspace-id' },
       ...overrides,
     }) as Request;
 
   const createPlugin = ({
     cacheGetter = jest.fn().mockResolvedValue(undefined),
     cacheSetter = jest.fn(),
+    dependencyHashGetter = jest.fn().mockResolvedValue('dependency-hash'),
   } = {}) =>
     useCachedMetadata({
       cacheGetter,
       cacheSetter,
-      operationsToCache: ['FindAllViews'],
+      operationsToCache: { FindAllViews: ['flatViewMaps'] },
+      dependencyHashGetter,
     });
 
   beforeEach(() => {
@@ -133,6 +136,67 @@ describe('useCachedMetadata', () => {
     expect(mockSpan.setAttribute).toHaveBeenNthCalledWith(2, 'cache.hit', true);
   });
 
+  it('resolves dependency hashes once per request and caches the response under that key', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const cacheSetter = jest.fn();
+    const dependencyHashGetter = jest.fn().mockResolvedValue('dependency-hash');
+    const plugin = createPlugin({
+      cacheGetter,
+      cacheSetter,
+      dependencyHashGetter,
+    });
+    const request = createRequest();
+    const serverContext = { req: request };
+    const responseBody = { data: { views: [] } };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+    await plugin.onResponse?.({
+      response: Response.json(responseBody),
+      serverContext,
+    } as never);
+
+    expect(dependencyHashGetter).toHaveBeenCalledTimes(1);
+    expect(dependencyHashGetter).toHaveBeenCalledWith('workspace-id', [
+      'flatViewMaps',
+    ]);
+
+    const cacheKey = cacheGetter.mock.calls[0][0];
+
+    expect(cacheKey).toContain('dependency-hash');
+    expect(cacheSetter).toHaveBeenCalledWith(cacheKey, responseBody);
+  });
+
+  it('serves the request uncached when dependency hashes cannot be resolved', async () => {
+    const cacheGetter = jest.fn();
+    const cacheSetter = jest.fn();
+    const dependencyHashGetter = jest
+      .fn()
+      .mockRejectedValue(new Error('cache storage unavailable'));
+    const plugin = createPlugin({
+      cacheGetter,
+      cacheSetter,
+      dependencyHashGetter,
+    });
+    const request = createRequest();
+    const serverContext = { req: request };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+    await plugin.onResponse?.({
+      response: Response.json({ data: { views: [] } }),
+      serverContext,
+    } as never);
+
+    expect(cacheGetter).not.toHaveBeenCalled();
+    expect(cacheSetter).not.toHaveBeenCalled();
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+  });
+
   it('does not trace client-controlled operations outside the cache allowlist', async () => {
     const cacheGetter = jest.fn();
     const plugin = createPlugin({ cacheGetter });
@@ -156,5 +220,26 @@ describe('useCachedMetadata', () => {
     expect(cacheGetter).not.toHaveBeenCalled();
     expect(Sentry.setTags).not.toHaveBeenCalled();
     expect(Sentry.startSpan).not.toHaveBeenCalled();
+  });
+
+  it('ignores operation names inherited from Object.prototype', async () => {
+    const cacheGetter = jest.fn();
+    const dependencyHashGetter = jest.fn();
+    const plugin = createPlugin({ cacheGetter, dependencyHashGetter });
+    const request = createRequest({
+      body: {
+        operationName: 'constructor',
+        query: 'query { views { id } }',
+      },
+    });
+    const serverContext = { req: request };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+
+    expect(cacheGetter).not.toHaveBeenCalled();
+    expect(dependencyHashGetter).not.toHaveBeenCalled();
   });
 });
