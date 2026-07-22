@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { type FlatView } from '@/metadata-store/types/FlatView';
+import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
@@ -66,11 +67,20 @@ export const usePerformViewAPIPersist = () => {
             viewFilters: _viewFilters,
             viewFilterGroups: _viewFilterGroups,
             viewSorts: _viewSorts,
-            viewGroups: _viewGroups,
+            viewGroups,
             ...flatView
           } = newView;
 
           addToDraft({ key: 'views', items: [flatView as FlatView] });
+
+          // The server auto-creates viewGroups for Kanban views (mainGroupByFieldMetadataId)
+          addToDraft({
+            key: 'viewGroups',
+            items: viewGroups.map(
+              ({ __typename: _viewGroupTypename, ...viewGroup }) =>
+                viewGroup as FlatViewGroup,
+            ),
+          });
         },
         operationType: CrudOperationType.CREATE,
       });

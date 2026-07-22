@@ -5,17 +5,29 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { convertViewFilterValueToString, isDefined } from 'twenty-shared/utils';
 import {
   type CreateViewFilterMutationVariables,
   type DeleteViewFilterMutationVariables,
   type DestroyViewFilterMutationVariables,
   type UpdateViewFilterMutationVariables,
+  type ViewFilterFragmentFragment,
   CreateViewFilterDocument,
   DeleteViewFilterDocument,
   DestroyViewFilterDocument,
   UpdateViewFilterDocument,
 } from '~/generated-metadata/graphql';
+
+// Normalize value like the fetch path (splitViewWithRelated) so store
+// comparisons against string-converted values stay consistent
+const toFlatViewFilter = ({
+  __typename,
+  ...viewFilter
+}: ViewFilterFragmentFragment): FlatViewFilter =>
+  ({
+    ...viewFilter,
+    value: convertViewFilterValueToString(viewFilter.value),
+  }) as FlatViewFilter;
 
 export const usePerformViewFilterAPIPersist = () => {
   const [createViewFilterMutation] = useMutation(CreateViewFilterDocument);
@@ -43,9 +55,7 @@ export const usePerformViewFilterAPIPersist = () => {
             items: fulfilledMutations
               .map(({ result }) => result.data?.createViewFilter)
               .filter(isDefined)
-              .map(
-                ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
-              ),
+              .map(toFlatViewFilter),
           }),
         operationType: CrudOperationType.CREATE,
       }),
@@ -69,9 +79,7 @@ export const usePerformViewFilterAPIPersist = () => {
             fulfilledMutations
               .map(({ result }) => result.data?.updateViewFilter)
               .filter(isDefined)
-              .map(
-                ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
-              ),
+              .map(toFlatViewFilter),
           ),
         operationType: CrudOperationType.UPDATE,
       }),
