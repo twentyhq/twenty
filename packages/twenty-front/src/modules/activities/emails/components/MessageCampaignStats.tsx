@@ -17,6 +17,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
 `;
 
 const StyledMetrics = styled.div`

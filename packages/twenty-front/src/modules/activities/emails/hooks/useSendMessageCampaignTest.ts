@@ -1,5 +1,5 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { useCallback } from 'react';
 
 import { SEND_MESSAGE_CAMPAIGN_TEST } from '@/activities/emails/graphql/mutations/sendMessageCampaignTest';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,41 +25,33 @@ export const useSendMessageCampaignTest = () => {
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const sendMessageCampaignTest = useCallback(
-    async (params: SendMessageCampaignTestParams): Promise<boolean> => {
-      try {
-        const result = await sendMessageCampaignTestMutation({
-          variables: { input: params },
-        });
+  const sendMessageCampaignTest = async (
+    params: SendMessageCampaignTestParams,
+  ): Promise<boolean> => {
+    try {
+      const result = await sendMessageCampaignTestMutation({
+        variables: { input: params },
+      });
 
-        if (!result.data?.sendMessageCampaignTest) {
-          enqueueErrorSnackBar({ message: t`Failed to send test email` });
-
-          return false;
-        }
-
-        enqueueSuccessSnackBar({
-          message: t`Test email sent to ${params.toAddress}`,
-        });
-
-        return true;
-      } catch (error) {
-        enqueueErrorSnackBar({
-          message:
-            error instanceof Error
-              ? error.message
-              : t`Failed to send test email`,
-        });
+      if (!result.data?.sendMessageCampaignTest) {
+        enqueueErrorSnackBar({ message: t`Failed to send test email` });
 
         return false;
       }
-    },
-    [
-      sendMessageCampaignTestMutation,
-      enqueueSuccessSnackBar,
-      enqueueErrorSnackBar,
-    ],
-  );
+
+      enqueueSuccessSnackBar({
+        message: t`Test email sent to ${params.toAddress}`,
+      });
+
+      return true;
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+      });
+
+      return false;
+    }
+  };
 
   return { sendMessageCampaignTest, loading };
 };

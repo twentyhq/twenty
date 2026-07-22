@@ -10,7 +10,10 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { MessageChannelType } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  MessageChannelType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -48,9 +51,13 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
     parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
   }
 
-  const breakdown = parts.length > 0 ? ` (${parts.join(', ')})` : '';
+  if (parts.length === 0) {
+    return t`${preview.totalMembers} in this list`;
+  }
 
-  return t`${preview.totalMembers} in this list` + breakdown;
+  const breakdown = parts.join(', ');
+
+  return t`${preview.totalMembers} in this list (${breakdown})`;
 };
 
 type CampaignComposerFieldsProps = {
@@ -63,7 +70,7 @@ export const CampaignComposerFields = ({
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
-    objectNameSingular: 'messageList',
+    objectNameSingular: CoreObjectNameSingular.MessageList,
   });
 
   const handleCreateList = async (searchInput?: string) => {
@@ -108,7 +115,7 @@ export const CampaignComposerFields = ({
       />
       <FormSingleRecordPicker
         label={t`To`}
-        objectNameSingulars={['messageList']}
+        objectNameSingulars={[CoreObjectNameSingular.MessageList]}
         defaultValue={campaignState.listId}
         onChange={campaignState.setListId}
         onCreate={handleCreateList}

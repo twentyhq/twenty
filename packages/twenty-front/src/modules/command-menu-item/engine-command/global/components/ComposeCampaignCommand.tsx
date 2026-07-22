@@ -1,4 +1,4 @@
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -10,17 +10,23 @@ export const ComposeCampaignCommand = () => {
   const navigateApp = useNavigateApp();
 
   const { createOneRecord: createMessageCampaign } = useCreateOneRecord({
-    objectNameSingular: 'messageCampaign',
+    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
   });
 
   const handleExecute = async () => {
-    const campaign = await createMessageCampaign({ id: v4() });
+    const campaignId = v4();
+    const campaign = await createMessageCampaign({ id: campaignId });
 
     if (isDefined(campaign)) {
-      navigateApp(AppPath.RecordShowPage, {
-        objectNameSingular: 'messageCampaign',
-        objectRecordId: campaign.id,
-      });
+      navigateApp(
+        AppPath.RecordShowPage,
+        {
+          objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+          objectRecordId: campaignId,
+        },
+        undefined,
+        { state: { isNewRecord: true, objectRecordId: campaignId } },
+      );
     }
   };
 

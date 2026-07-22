@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
@@ -37,7 +38,7 @@ export const useCampaignComposerState = ({
   const persistDraft = useDebouncedCallback(
     (draftToPersist: CampaignComposerDraft) =>
       updateOneRecord({
-        objectNameSingular: 'messageCampaign',
+        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
         idToUpdate: campaign.id,
         updateOneRecordInput: {
           listId: draftToPersist.listId,
