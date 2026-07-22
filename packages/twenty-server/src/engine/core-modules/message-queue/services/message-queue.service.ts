@@ -38,14 +38,6 @@ export class MessageQueueService {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  addBulk<T extends MessageQueueJobData>(
-    jobName: string,
-    dataItems: T[],
-    options?: QueueJobOptions,
-  ): Promise<void> {
-    return this.driver.addBulk(this.queueName, jobName, dataItems, options);
-  }
-
   getInFlightJobs<T extends MessageQueueJobData>(): Promise<
     InFlightQueueJob<T>[]
   > {

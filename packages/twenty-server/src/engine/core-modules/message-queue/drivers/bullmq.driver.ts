@@ -354,46 +354,6 @@ export class BullMQDriver
 
     const queueOptions: JobsOptions = {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
-      ...this.buildCommonJobOptions(queueName, options),
-    };
-
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
-  }
-
-  // Single round trip to Redis for a whole batch of jobs. Does not support
-  // options.id deduplication.
-  async addBulk<T>(
-    queueName: MessageQueue,
-    jobName: string,
-    dataItems: T[],
-    options?: QueueJobOptions,
-  ): Promise<void> {
-    if (!this.queueMap[queueName]) {
-      throw new Error(
-        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
-      );
-    }
-
-    if (dataItems.length === 0) {
-      return;
-    }
-
-    const queueOptions = this.buildCommonJobOptions(queueName, options);
-
-    await this.queueMap[queueName].addBulk(
-      dataItems.map((data) => ({
-        name: jobName,
-        data,
-        opts: queueOptions,
-      })),
-    );
-  }
-
-  private buildCommonJobOptions(
-    queueName: MessageQueue,
-    options?: QueueJobOptions,
-  ): JobsOptions {
-    return {
       priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: {
@@ -406,6 +366,8 @@ export class BullMQDriver
       },
       delay: options?.delay,
     };
+
+    await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(

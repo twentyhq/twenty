@@ -60,12 +60,14 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    await this.messageQueueService.addBulk<LogicFunctionTriggerJobData[]>(
-      LogicFunctionTriggerJob.name,
-      logicFunctionPayloads.map((logicFunctionPayload) => [
-        logicFunctionPayload,
-      ]),
-      { retryLimit: 3 },
+    await Promise.all(
+      logicFunctionPayloads.map((logicFunctionPayload) =>
+        this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+          LogicFunctionTriggerJob.name,
+          [logicFunctionPayload],
+          { retryLimit: 3 },
+        ),
+      ),
     );
   }
 
