@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewFieldGroup } from '@/metadata-store/types/FlatViewFieldGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CREATE_MANY_VIEW_FIELD_GROUPS } from '@/views/graphql/mutations/createManyViewFieldGroups';
@@ -30,6 +32,18 @@ type DeleteViewFieldGroupMutationResult = {
   deleteViewFieldGroup: ViewFieldGroup;
 };
 
+const toFlatViewFieldGroup = (
+  viewFieldGroup: ViewFieldGroup,
+): FlatViewFieldGroup => {
+  const {
+    __typename,
+    viewFields: _viewFields,
+    ...flatViewFieldGroup
+  } = viewFieldGroup;
+
+  return flatViewFieldGroup as FlatViewFieldGroup;
+};
+
 export const usePerformViewFieldGroupAPIPersist = () => {
   const [createManyViewFieldGroupsMutation] = useMutation<
     CreateManyViewFieldGroupsMutationResult,
@@ -43,6 +57,9 @@ export const usePerformViewFieldGroupAPIPersist = () => {
     DeleteViewFieldGroupMutationResult,
     MutationDeleteViewFieldGroupArgs
   >(DELETE_VIEW_FIELD_GROUP);
+
+  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -68,6 +85,19 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           variables: createViewFieldGroupInputs,
         });
 
+        // Write created view field groups to the metadata store immediately so
+        // a subsequent save doesn't diff against stale view data and re-send
+        // the same create, which fails server-side on duplicate id
+        const createdFlatViewFieldGroups = (
+          result.data?.createManyViewFieldGroups ?? []
+        ).map(toFlatViewFieldGroup);
+
+        addToDraft({
+          key: 'viewFieldGroups',
+          items: createdFlatViewFieldGroups,
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: result.data ?? null,
@@ -92,6 +122,8 @@ export const usePerformViewFieldGroupAPIPersist = () => {
       createManyViewFieldGroupsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
     ],
   );
 
@@ -117,6 +149,14 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           ),
         );
 
+        const updatedFlatViewFieldGroups = results
+          .map((result) => result.data?.updateViewFieldGroup)
+          .filter(isDefined)
+          .map(toFlatViewFieldGroup);
+
+        updateInDraft('viewFieldGroups', updatedFlatViewFieldGroups);
+        applyChanges();
+
         return {
           status: 'successful',
           response: results
@@ -139,7 +179,13 @@ export const usePerformViewFieldGroupAPIPersist = () => {
         };
       }
     },
-    [updateViewFieldGroupMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateViewFieldGroupMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFieldGroupAPIDelete = useCallback(
@@ -164,6 +210,14 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewFieldGroups',
+          itemIds: deleteViewFieldGroupInputs.map(
+            (variables) => variables.input.id,
+          ),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results
@@ -186,7 +240,13 @@ export const usePerformViewFieldGroupAPIPersist = () => {
         };
       }
     },
-    [deleteViewFieldGroupMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      deleteViewFieldGroupMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {

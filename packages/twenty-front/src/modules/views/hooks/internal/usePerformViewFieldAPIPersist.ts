@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateManyViewFieldsMutationVariables,
@@ -25,6 +28,9 @@ export const usePerformViewFieldAPIPersist = () => {
   const [updateViewFieldMutation] = useMutation(UpdateViewFieldDocument);
   const [deleteViewFieldMutation] = useMutation(DeleteViewFieldDocument);
   const [destroyViewFieldMutation] = useMutation(DestroyViewFieldDocument);
+
+  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -52,6 +58,16 @@ export const usePerformViewFieldAPIPersist = () => {
           variables: createViewFieldInputs,
         });
 
+        // Write created view fields to the metadata store immediately so a
+        // subsequent save doesn't diff against stale view data and re-send
+        // the same create, which fails server-side on duplicate id
+        const createdFlatViewFields = (
+          result.data?.createManyViewFields ?? []
+        ).map(({ __typename, ...viewField }) => viewField as FlatViewField);
+
+        addToDraft({ key: 'viewFields', items: createdFlatViewFields });
+        applyChanges();
+
         return {
           status: 'successful',
           response: result,
@@ -72,7 +88,13 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [createManyViewFieldsMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createManyViewFieldsMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFieldAPIUpdate = useCallback(
@@ -99,6 +121,14 @@ export const usePerformViewFieldAPIPersist = () => {
           ),
         );
 
+        const updatedFlatViewFields = results
+          .map((result) => result.data?.updateViewField)
+          .filter(isDefined)
+          .map(({ __typename, ...viewField }) => viewField as FlatViewField);
+
+        updateInDraft('viewFields', updatedFlatViewFields);
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -119,7 +149,13 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [updateViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateViewFieldMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFieldAPIDelete = useCallback(
@@ -146,6 +182,12 @@ export const usePerformViewFieldAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewFields',
+          itemIds: deleteViewFieldInputs.map((variables) => variables.input.id),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -166,7 +208,13 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [deleteViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      deleteViewFieldMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFieldAPIDestroy = useCallback(
@@ -193,6 +241,14 @@ export const usePerformViewFieldAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewFields',
+          itemIds: destroyViewFieldInputs.map(
+            (variables) => variables.input.id,
+          ),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -213,7 +269,13 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [destroyViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      destroyViewFieldMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {

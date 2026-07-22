@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateViewSortMutationVariables,
@@ -23,6 +26,9 @@ export const usePerformViewSortAPIPersist = () => {
   const [updateViewSortMutation] = useMutation(UpdateViewSortDocument);
   const [deleteViewSortMutation] = useMutation(DeleteViewSortDocument);
   const [destroyViewSortMutation] = useMutation(DestroyViewSortDocument);
+
+  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -50,6 +56,18 @@ export const usePerformViewSortAPIPersist = () => {
             }),
           ),
         );
+
+        // Write created view sorts to the metadata store immediately so a
+        // subsequent save doesn't diff against stale view data and re-send
+        // the same create, which fails server-side on duplicate id
+        const createdFlatViewSorts = results
+          .map((result) => result.data?.createViewSort)
+          .filter(isDefined)
+          .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort);
+
+        addToDraft({ key: 'viewSorts', items: createdFlatViewSorts });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -70,7 +88,13 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [createViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
+    ],
   );
 
   const performViewSortAPIUpdate = useCallback(
@@ -97,6 +121,14 @@ export const usePerformViewSortAPIPersist = () => {
           ),
         );
 
+        const updatedFlatViewSorts = results
+          .map((result) => result.data?.updateViewSort)
+          .filter(isDefined)
+          .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort);
+
+        updateInDraft('viewSorts', updatedFlatViewSorts);
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -117,7 +149,13 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [updateViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+    ],
   );
 
   const performViewSortAPIDelete = useCallback(
@@ -144,6 +182,12 @@ export const usePerformViewSortAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewSorts',
+          itemIds: deleteViewSortInputs.map((variables) => variables.input.id),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -164,7 +208,13 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [deleteViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      deleteViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   const performViewSortAPIDestroy = useCallback(
@@ -191,6 +241,12 @@ export const usePerformViewSortAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewSorts',
+          itemIds: destroyViewSortInputs.map((variables) => variables.input.id),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -211,7 +267,13 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [destroyViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      destroyViewSortMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {

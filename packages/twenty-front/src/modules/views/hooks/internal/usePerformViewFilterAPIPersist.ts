@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateViewFilterMutationVariables,
@@ -23,6 +26,9 @@ export const usePerformViewFilterAPIPersist = () => {
   const [updateViewFilterMutation] = useMutation(UpdateViewFilterDocument);
   const [deleteViewFilterMutation] = useMutation(DeleteViewFilterDocument);
   const [destroyViewFilterMutation] = useMutation(DestroyViewFilterDocument);
+
+  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -51,6 +57,17 @@ export const usePerformViewFilterAPIPersist = () => {
           ),
         );
 
+        // Write created view filters to the metadata store immediately so a
+        // subsequent save doesn't diff against stale view data and re-send
+        // the same create, which fails server-side on duplicate id
+        const createdFlatViewFilters = results
+          .map((result) => result.data?.createViewFilter)
+          .filter(isDefined)
+          .map(({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter);
+
+        addToDraft({ key: 'viewFilters', items: createdFlatViewFilters });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -71,7 +88,13 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [createViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createViewFilterMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFilterAPIUpdate = useCallback(
@@ -98,6 +121,14 @@ export const usePerformViewFilterAPIPersist = () => {
           ),
         );
 
+        const updatedFlatViewFilters = results
+          .map((result) => result.data?.updateViewFilter)
+          .filter(isDefined)
+          .map(({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter);
+
+        updateInDraft('viewFilters', updatedFlatViewFilters);
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -118,7 +149,13 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [updateViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateViewFilterMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFilterAPIDelete = useCallback(
@@ -145,6 +182,14 @@ export const usePerformViewFilterAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewFilters',
+          itemIds: deleteViewFilterInputs.map(
+            (variables) => variables.input.id,
+          ),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -165,7 +210,13 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [deleteViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      deleteViewFilterMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   const performViewFilterAPIDestroy = useCallback(
@@ -192,6 +243,14 @@ export const usePerformViewFilterAPIPersist = () => {
           ),
         );
 
+        removeFromDraft({
+          key: 'viewFilters',
+          itemIds: destroyViewFilterInputs.map(
+            (variables) => variables.input.id,
+          ),
+        });
+        applyChanges();
+
         return {
           status: 'successful',
           response: results,
@@ -212,7 +271,13 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [destroyViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      destroyViewFilterMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {

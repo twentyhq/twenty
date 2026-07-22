@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { CREATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createViewFilterGroup';
 import { DESTROY_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyViewFilterGroup';
 import { UPDATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateViewFilterGroup';
@@ -9,8 +11,21 @@ import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewFilterGroup as GqlViewFilterGroup } from '~/generated-metadata/graphql';
 
+const toFlatViewFilterGroup = (
+  viewFilterGroup: ViewFilterGroup,
+): FlatViewFilterGroup => ({
+  id: viewFilterGroup.id,
+  viewId: viewFilterGroup.viewId,
+  parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
+  logicalOperator: viewFilterGroup.logicalOperator,
+  positionInViewFilterGroup: viewFilterGroup.positionInViewFilterGroup,
+});
+
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
+
+  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const createViewFilterGroupRecord = useCallback(
     async (viewFilterGroup: ViewFilterGroup, view: Pick<GraphQLView, 'id'>) => {
@@ -34,7 +49,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
         throw new Error('Failed to create view filter group');
       }
 
-      return { newRecordId: result.data.createViewFilterGroup.id };
+      return { newRecord: result.data.createViewFilterGroup };
     },
     [apolloClient],
   );
@@ -47,6 +62,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
       if (!viewFilterGroupsToCreate.length) return [];
 
       const oldToNewId = new Map<string, string>();
+      const createdFlatViewFilterGroups: FlatViewFilterGroup[] = [];
 
       for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
         const newParentViewFilterGroupId = isDefined(
@@ -56,7 +72,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             viewFilterGroupToCreate.parentViewFilterGroupId)
           : undefined;
 
-        const { newRecordId } = await createViewFilterGroupRecord(
+        const { newRecord } = await createViewFilterGroupRecord(
           {
             ...viewFilterGroupToCreate,
             parentViewFilterGroupId: newParentViewFilterGroupId,
@@ -64,8 +80,18 @@ export const usePerformViewFilterGroupAPIPersist = () => {
           view,
         );
 
-        oldToNewId.set(viewFilterGroupToCreate.id, newRecordId);
+        oldToNewId.set(viewFilterGroupToCreate.id, newRecord.id);
+        createdFlatViewFilterGroups.push(toFlatViewFilterGroup(newRecord));
       }
+
+      // Write created view filter groups to the metadata store immediately so
+      // a subsequent save doesn't diff against stale view data and re-send
+      // the same create, which fails server-side on duplicate id
+      addToDraft({
+        key: 'viewFilterGroups',
+        items: createdFlatViewFilterGroups,
+      });
+      applyChanges();
 
       const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
         const newId = oldToNewId.get(viewFilterGroup.id);
@@ -77,13 +103,13 @@ export const usePerformViewFilterGroupAPIPersist = () => {
 
       return newRecordIds;
     },
-    [createViewFilterGroupRecord],
+    [createViewFilterGroupRecord, addToDraft, applyChanges],
   );
 
   const performViewFilterGroupAPIUpdate = useCallback(
-    (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
+    async (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
       if (!viewFilterGroupsToUpdate.length) return;
-      return Promise.all(
+      const results = await Promise.all(
         viewFilterGroupsToUpdate.map((viewFilterGroup) =>
           apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
             mutation: UPDATE_VIEW_FILTER_GROUP,
@@ -100,14 +126,24 @@ export const usePerformViewFilterGroupAPIPersist = () => {
           }),
         ),
       );
+
+      const updatedFlatViewFilterGroups = results
+        .map((result) => result.data?.updateViewFilterGroup)
+        .filter(isDefined)
+        .map(toFlatViewFilterGroup);
+
+      updateInDraft('viewFilterGroups', updatedFlatViewFilterGroups);
+      applyChanges();
+
+      return results;
     },
-    [apolloClient],
+    [apolloClient, updateInDraft, applyChanges],
   );
 
   const performViewFilterGroupAPIDestroy = useCallback(
-    (viewFilterGroupIdsToDestroy: string[]) => {
+    async (viewFilterGroupIdsToDestroy: string[]) => {
       if (!viewFilterGroupIdsToDestroy.length) return;
-      return Promise.all(
+      const results = await Promise.all(
         viewFilterGroupIdsToDestroy.map((viewFilterGroupId) =>
           apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: DESTROY_VIEW_FILTER_GROUP,
@@ -117,8 +153,16 @@ export const usePerformViewFilterGroupAPIPersist = () => {
           }),
         ),
       );
+
+      removeFromDraft({
+        key: 'viewFilterGroups',
+        itemIds: viewFilterGroupIdsToDestroy,
+      });
+      applyChanges();
+
+      return results;
     },
-    [apolloClient],
+    [apolloClient, removeFromDraft, applyChanges],
   );
 
   return {

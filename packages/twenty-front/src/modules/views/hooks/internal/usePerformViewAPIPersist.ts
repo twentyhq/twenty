@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
@@ -23,6 +25,9 @@ export const usePerformViewAPIPersist = () => {
   const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
+
+  const { addToDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -62,6 +67,22 @@ export const usePerformViewAPIPersist = () => {
           };
         }
 
+        // Write the created view to the metadata store immediately so
+        // subsequent operations don't diff against stale view data
+        const {
+          __typename,
+          viewFields: _viewFields,
+          viewFieldGroups: _viewFieldGroups,
+          viewFilters: _viewFilters,
+          viewFilterGroups: _viewFilterGroups,
+          viewSorts: _viewSorts,
+          viewGroups: _viewGroups,
+          ...flatView
+        } = newView;
+
+        addToDraft({ key: 'views', items: [flatView as FlatView] });
+        applyChanges();
+
         return {
           status: 'successful',
           response: result,
@@ -87,6 +108,8 @@ export const usePerformViewAPIPersist = () => {
       triggerViewGroupOptimisticEffectAtViewCreation,
       handleMetadataError,
       enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
     ],
   );
 
@@ -100,6 +123,9 @@ export const usePerformViewAPIPersist = () => {
         const result = await destroyViewMutation({
           variables,
         });
+
+        removeFromDraft({ key: 'views', itemIds: [variables.id] });
+        applyChanges();
 
         return {
           status: 'successful',
@@ -121,7 +147,13 @@ export const usePerformViewAPIPersist = () => {
         };
       }
     },
-    [destroyViewMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      destroyViewMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {

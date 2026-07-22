@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -23,6 +25,9 @@ export const usePerformViewGroupAPIPersist = () => {
   const [createManyViewGroupsMutation] = useMutation(
     CreateManyViewGroupsDocument,
   );
+
+  const { addToDraft, updateInDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -47,6 +52,13 @@ export const usePerformViewGroupAPIPersist = () => {
           variables: updateViewGroupInputs,
         });
 
+        const updatedFlatViewGroups = (
+          result.data?.updateManyViewGroups ?? []
+        ).map(({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup);
+
+        updateInDraft('viewGroups', updatedFlatViewGroups);
+        applyChanges();
+
         return {
           status: 'successful',
           response: result,
@@ -67,7 +79,13 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
     },
-    [updateManyViewGroupsMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateManyViewGroupsMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      updateInDraft,
+      applyChanges,
+    ],
   );
 
   const performViewGroupAPICreate = useCallback(
@@ -90,6 +108,16 @@ export const usePerformViewGroupAPIPersist = () => {
           variables: createViewGroupInputs,
         });
 
+        // Write created view groups to the metadata store immediately so a
+        // subsequent save doesn't diff against stale view data and re-send
+        // the same create, which fails server-side on duplicate id
+        const createdFlatViewGroups = (
+          result.data?.createManyViewGroups ?? []
+        ).map(({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup);
+
+        addToDraft({ key: 'viewGroups', items: createdFlatViewGroups });
+        applyChanges();
+
         return {
           status: 'successful',
           response: result,
@@ -110,7 +138,13 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
     },
-    [createManyViewGroupsMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createManyViewGroupsMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+      addToDraft,
+      applyChanges,
+    ],
   );
 
   return {
