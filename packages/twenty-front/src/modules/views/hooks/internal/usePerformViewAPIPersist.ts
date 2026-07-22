@@ -9,11 +9,11 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
+  CreateViewDocument,
   type CreateViewMutationVariables,
+  DestroyViewDocument,
   type DestroyViewMutationVariables,
   ViewType,
-  CreateViewDocument,
-  DestroyViewDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIPersist = () => {
@@ -56,7 +56,7 @@ export const usePerformViewAPIPersist = () => {
           const newView = mutationResult.data?.createView;
 
           if (!isDefined(newView)) {
-            return;
+            throw new Error('Failed to create view');
           }
 
           const {
@@ -74,16 +74,6 @@ export const usePerformViewAPIPersist = () => {
         },
         operationType: CrudOperationType.CREATE,
       });
-
-      if (
-        result.status === 'successful' &&
-        !isDefined(result.response.data?.createView)
-      ) {
-        return {
-          status: 'failed',
-          error: new Error('Failed to create view'),
-        };
-      }
 
       return result;
     },
