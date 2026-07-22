@@ -6,9 +6,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsString,
   IsUUID,
-  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -55,12 +53,6 @@ export class UpdateMessageChannelInputUpdates {
   @IsBoolean()
   @Field({ nullable: true })
   excludeGroupEmails?: boolean;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @Field({ nullable: true })
-  displayName?: string;
 }
 
 @InputType()

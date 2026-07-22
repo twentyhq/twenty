@@ -10,7 +10,6 @@ import { type MessageChannelVisibility } from '~/generated/graphql';
 export type MessageChannel = {
   id: string;
   handle: string;
-  displayName: string | null;
   visibility: MessageChannelVisibility;
   type: MessageChannelType;
   isContactAutoCreationEnabled: boolean;

@@ -1,18 +1,14 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -71,14 +67,10 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
-  const [draftDisplayName, setDraftDisplayName] = useState<string | null>(null);
-  const [updateMessageChannel, { loading: savingDisplayName }] = useMutation(
-    UPDATE_MESSAGE_CHANNEL,
-  );
 
   if (loading) {
     return <SettingsSkeletonLoader />;
@@ -137,30 +129,6 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
     }
   };
 
-  const savedDisplayName = channel.displayName ?? '';
-  const displayNameValue = draftDisplayName ?? savedDisplayName;
-  const isDisplayNameDirty =
-    draftDisplayName !== null && draftDisplayName.trim() !== savedDisplayName;
-
-  const handleSaveDisplayName = async () => {
-    try {
-      await updateMessageChannel({
-        variables: {
-          input: {
-            id: channel.id,
-            update: { displayName: displayNameValue.trim() },
-          },
-        },
-      });
-      setDraftDisplayName(null);
-      enqueueSuccessSnackBar({ message: t`Sender name saved` });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
-    }
-  };
-
   return (
     <SettingsPageLayout
       title={sourceHandle}
@@ -175,25 +143,15 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         },
       ]}
       actionButton={
-        isDisplayNameDirty ? (
-          <SaveAndCancelButtons
-            isSaveDisabled={savingDisplayName}
-            isCancelDisabled={savingDisplayName}
-            isLoading={savingDisplayName}
-            onCancel={() => setDraftDisplayName(null)}
-            onSave={handleSaveDisplayName}
-          />
-        ) : (
-          <Button
-            Icon={IconTrash}
-            title={t`Delete`}
-            variant="secondary"
-            accent="danger"
-            size="small"
-            disabled={deleting}
-            onClick={() => openModal(DELETE_EMAIL_GROUP_MODAL_ID)}
-          />
-        )
+        <Button
+          Icon={IconTrash}
+          title={t`Delete`}
+          variant="secondary"
+          accent="danger"
+          size="small"
+          disabled={deleting}
+          onClick={() => openModal(DELETE_EMAIL_GROUP_MODAL_ID)}
+        />
       }
     >
       <SettingsPageContainer>
@@ -234,20 +192,6 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               }
             />
           </StyledForwardingRow>
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Sender name`}
-            description={t`The name recipients see next to your address, instead of the address alone.`}
-          />
-          <SettingsTextInput
-            instanceId="message-channel-sender-name"
-            value={displayNameValue}
-            onChange={setDraftDisplayName}
-            placeholder={t`Acme Team`}
-            disabled={savingDisplayName}
-            fullWidth
-          />
         </Section>
         {isDefined(emailingDomain) && (
           <Section>

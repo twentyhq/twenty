@@ -5,7 +5,6 @@ export const GET_MY_MESSAGE_CHANNELS = gql`
     myMessageChannels(connectedAccountId: $connectedAccountId) {
       id
       handle
-      displayName
       visibility
       type
       isContactAutoCreationEnabled
