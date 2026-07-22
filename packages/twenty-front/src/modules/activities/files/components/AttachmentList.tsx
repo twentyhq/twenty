@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { lazy, type ReactElement, Suspense, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { DropZone } from '@/activities/files/components/DropZone';
@@ -37,9 +37,7 @@ const DocumentViewer = lazy(() =>
 
 type AttachmentListProps = {
   targetableObject: ActivityTargetableObject;
-  title: string;
   attachments: Attachment[];
-  button?: ReactElement | false | null;
 };
 
 const StyledContainer = styled.div`
@@ -49,28 +47,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[6]}
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]}
     ${themeCssVariables.spacing[6]};
   width: calc(100% - ${themeCssVariables.spacing[12]});
-`;
-
-const StyledTitleBar = styled.h3`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-  margin-top: ${themeCssVariables.spacing[4]};
-  place-items: center;
-  width: 100%;
-`;
-
-const StyledTitle = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledCount = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDropZoneContainer = styled.div`
@@ -116,9 +95,7 @@ export const PREVIEW_MODAL_ID = 'preview-modal';
 
 export const AttachmentList = ({
   targetableObject,
-  title,
   attachments,
-  button,
 }: AttachmentListProps) => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -172,12 +149,6 @@ export const AttachmentList = ({
     <>
       {attachmentsWithFile.length > 0 && (
         <StyledContainer>
-          <StyledTitleBar>
-            <StyledTitle>
-              {title} <StyledCount>{attachmentsWithFile.length}</StyledCount>
-            </StyledTitle>
-            {button}
-          </StyledTitleBar>
           <StyledDropZoneContainer
             onDragEnter={() => hasUploadPermission && setIsDraggingFile(true)}
           >
