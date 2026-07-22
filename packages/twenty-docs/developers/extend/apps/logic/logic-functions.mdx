@@ -61,7 +61,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform acks with `202` and runs that **target** function on the worker queue. See [Server route trigger](#server-route-trigger).
 
-Queue-executed runs (database event, cron, server-route dispatch) are retried when the handler fails. The retry budget is set per trigger with `retryLimit` (`0`–`10`): `cronTriggerSettings.retryLimit` (default `10`) and `databaseEventTriggerSettings.retryLimit` (default `3`); server-route dispatch always uses `3`. Set `retryLimit: 0` on triggers whose handler is not idempotent — a retry re-runs the whole handler, and every attempt is billed as an execution.
+Queue-executed runs (database event, cron, server-route dispatch) are retried when the handler fails: up to 10 times for cron triggers and 3 times for database-event triggers and server-route dispatch. Write these handlers to be idempotent — a retry re-runs the whole handler, and every attempt is billed as an execution.
 
 <Note>
 You can also manually execute a function using the CLI:

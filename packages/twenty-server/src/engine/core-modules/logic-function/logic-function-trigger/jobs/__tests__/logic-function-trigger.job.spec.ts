@@ -51,7 +51,7 @@ describe('LogicFunctionTriggerJob', () => {
     );
   });
 
-  it('throws on a failed execution so the queue retries up to the trigger retryLimit', async () => {
+  it('throws on a failed execution so the queue retries', async () => {
     logicFunctionExecutorService.execute.mockResolvedValue(
       buildExecuteResult({ errorMessage: 'boom' }),
     );

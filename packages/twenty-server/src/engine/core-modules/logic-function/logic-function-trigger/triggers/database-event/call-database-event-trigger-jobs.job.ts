@@ -12,11 +12,8 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { resolveTriggerRetryLimit } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/resolve-trigger-retry-limit.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-
-const DEFAULT_DATABASE_EVENT_RETRY_LIMIT = 3;
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
@@ -63,41 +60,12 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    const retryLimitByLogicFunctionId = new Map(
-      logicFunctionsToTrigger.map((logicFunction) => [
-        logicFunction.id,
-        resolveTriggerRetryLimit({
-          declaredRetryLimit:
-            logicFunction.databaseEventTriggerSettings?.retryLimit,
-          defaultRetryLimit: DEFAULT_DATABASE_EVENT_RETRY_LIMIT,
-        }),
-      ]),
-    );
-
-    const payloadsByRetryLimit = new Map<
-      number,
-      LogicFunctionTriggerJobData[]
-    >();
-
-    for (const logicFunctionPayload of logicFunctionPayloads) {
-      const retryLimit =
-        retryLimitByLogicFunctionId.get(logicFunctionPayload.logicFunctionId) ??
-        DEFAULT_DATABASE_EVENT_RETRY_LIMIT;
-
-      payloadsByRetryLimit.set(retryLimit, [
-        ...(payloadsByRetryLimit.get(retryLimit) ?? []),
+    await this.messageQueueService.addBulk<LogicFunctionTriggerJobData[]>(
+      LogicFunctionTriggerJob.name,
+      logicFunctionPayloads.map((logicFunctionPayload) => [
         logicFunctionPayload,
-      ]);
-    }
-
-    await Promise.all(
-      [...payloadsByRetryLimit.entries()].map(([retryLimit, payloads]) =>
-        this.messageQueueService.addBulk<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          payloads.map((logicFunctionPayload) => [logicFunctionPayload]),
-          { retryLimit },
-        ),
-      ),
+      ]),
+      { retryLimit: 3 },
     );
   }
 
