@@ -18,7 +18,11 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import {
   EmailingDomainStatus,
   GetEmailingDomainsDocument,
@@ -193,6 +197,20 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             />
           </StyledForwardingRow>
         </Section>
+        {isNonEmptyString(channel.displayName) && (
+          <Section>
+            <H2Title
+              title={t`Sender name`}
+              description={t`The name recipients see next to your address. It is set when the channel is created.`}
+            />
+            <SettingsTextInput
+              instanceId="message-channel-sender-name"
+              value={channel.displayName}
+              disabled
+              fullWidth
+            />
+          </Section>
+        )}
         {isDefined(emailingDomain) && (
           <Section>
             <H2Title
