@@ -50,7 +50,7 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @Index('IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
   unique: true,
-  where: `status IN ('trialing', 'active', 'past_due')`,
+  where: `status IN ('trialing', 'active', 'past_due', 'incomplete', 'incomplete_expired', 'unpaid', 'paused')`,
 })
 @ObjectType('BillingSubscription')
 export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {

@@ -7,6 +7,7 @@ import {
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
 import { TextWithRecordLinks } from '@/ai/components/TextWithRecordLinks';
+import { protectRecordReferencesForMarkdown } from '@/ai/utils/protectRecordReferencesForMarkdown';
 import { marked } from 'marked';
 import {
   cloneElement,
@@ -179,9 +180,14 @@ const MemoizedMarkdownBlock = memo(
 );
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const markdownBlocks = useMemo(
-    () => marked.lexer(text).map((token) => token.raw),
+  const protectedText = useMemo(
+    () => protectRecordReferencesForMarkdown(text),
     [text],
+  );
+
+  const markdownBlocks = useMemo(
+    () => marked.lexer(protectedText).map((token) => token.raw),
+    [protectedText],
   );
 
   return (

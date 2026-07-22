@@ -3006,6 +3006,11 @@ msgstr "Основни URL је обавезан"
 msgid "Basic"
 msgstr "Основни"
 
+#. js-lingui-id: WChKbE
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Batch size"
+msgstr ""
+
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -8012,8 +8017,14 @@ msgstr "Инсталација апликације није успела."
 msgid "Failed to load billing plans"
 msgstr "Није успело учитавање планова наплате"
 
-#. js-lingui-id: BTjpvA
+#. js-lingui-id: mvgFp1
+#. placeholder {0}: error.message
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
+msgid "Failed to load front component: {0}"
+msgstr ""
+
+#. js-lingui-id: BTjpvA
+#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Учитавање фронтенд компоненте није успело: {errorMessage}"
 
