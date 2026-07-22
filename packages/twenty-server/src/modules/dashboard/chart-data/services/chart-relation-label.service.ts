@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
@@ -84,7 +85,7 @@ export class ChartRelationLabelService {
       }
     }
 
-    if (resolvableAxes.length === 0) {
+    if (!isNonEmptyArray(resolvableAxes)) {
       return {};
     }
 
@@ -196,14 +197,11 @@ export class ChartRelationLabelService {
       ...new Set(
         rawResults
           .map((result) => result.groupByDimensionValues?.[dimensionIndex])
-          .filter(
-            (value): value is string =>
-              typeof value === 'string' && value.length > 0,
-          ),
+          .filter(isNonEmptyString),
       ),
     ];
 
-    if (recordIds.length === 0) {
+    if (!isNonEmptyArray(recordIds)) {
       return undefined;
     }
 

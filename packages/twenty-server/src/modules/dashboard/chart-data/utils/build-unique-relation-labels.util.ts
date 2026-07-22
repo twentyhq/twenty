@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
@@ -38,7 +39,7 @@ export const buildUniqueRelationLabels = ({
   for (const recordId of sortedRecordIds) {
     const rawLabel = rawLabelByRecordId.get(recordId);
 
-    if (!isDefined(rawLabel) || rawLabel.trim().length === 0) {
+    if (!isDefined(rawLabel) || !isNonEmptyString(rawLabel.trim())) {
       unresolvedRecordIds.add(recordId);
       continue;
     }

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 
@@ -9,7 +9,7 @@ export const buildFormattedToRawLookupDto = (
   const definedUnresolvedRecordIdSets =
     unresolvedRecordIdSets.filter(isDefined);
 
-  if (definedUnresolvedRecordIdSets.length === 0) {
+  if (!isNonEmptyArray(definedUnresolvedRecordIdSets)) {
     return Object.fromEntries(formattedToRawLookup);
   }
 
