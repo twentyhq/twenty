@@ -1,26 +1,32 @@
+import { type CachedOperationConfig } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 export const METADATA_GRAPHQL_OPERATIONS_TO_CACHE: Record<
   string,
-  WorkspaceCacheKeyName[]
+  CachedOperationConfig
 > = {
-  ObjectMetadataItems: [
-    'flatObjectMetadataMaps',
-    'flatFieldMetadataMaps',
-    'flatIndexMaps',
-    'flatSearchFieldMetadataMaps',
-    'flatApplicationMaps',
-  ],
-  [FIND_ALL_VIEWS_GRAPHQL_OPERATION]: [
-    'flatViewMaps',
-    'flatViewFieldMaps',
-    'flatViewFieldGroupMaps',
-    'flatViewFilterMaps',
-    'flatViewFilterGroupMaps',
-    'flatViewSortMaps',
-    'flatViewGroupMaps',
-    'flatObjectMetadataMaps',
-    'flatApplicationMaps',
-  ],
+  ObjectMetadataItems: {
+    scope: 'workspace',
+    dependencies: [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatIndexMaps',
+      'flatSearchFieldMetadataMaps',
+      'flatApplicationMaps',
+    ],
+  },
+  [FIND_ALL_VIEWS_GRAPHQL_OPERATION]: {
+    scope: 'userWorkspace',
+    dependencies: [
+      'flatViewMaps',
+      'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
+      'flatViewFilterMaps',
+      'flatViewFilterGroupMaps',
+      'flatViewSortMaps',
+      'flatViewGroupMaps',
+      'flatObjectMetadataMaps',
+      'flatApplicationMaps',
+    ],
+  },
 };

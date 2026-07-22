@@ -7,12 +7,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
+export type CachedOperationConfig = {
+  dependencies: WorkspaceCacheKeyName[];
+  scope: 'workspace' | 'userWorkspace';
+};
+
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
-  operationsToCache: Record<string, WorkspaceCacheKeyName[]>;
+  operationsToCache: Record<string, CachedOperationConfig>;
   dependencyHashGetter: (
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
@@ -22,34 +27,38 @@ export type CacheMetadataPluginConfig = {
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const computeCacheKey = async ({
     operationName,
-    cacheDependencies,
+    operationConfig,
     workspaceId,
     request,
   }: {
     operationName: string;
-    cacheDependencies: WorkspaceCacheKeyName[];
+    operationConfig: CachedOperationConfig;
     workspaceId: string;
     request: Pick<Request, 'locale' | 'body' | 'userWorkspaceId'>;
   }): Promise<string> => {
     const dependencyHash = await config.dependencyHashGetter(
       workspaceId,
-      cacheDependencies,
+      operationConfig.dependencies,
     );
     const queryHash = createHash('sha256')
       .update(request.body.query)
       .update(JSON.stringify(request.body.variables ?? null))
       .digest('hex');
+    const userScopeSegment =
+      operationConfig.scope === 'userWorkspace'
+        ? `:${request.userWorkspaceId}`
+        : '';
 
-    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}:${request.userWorkspaceId}:${request.locale}:${queryHash}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${queryHash}`;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 
-  const getCacheDependencies = (
+  const getOperationCacheConfig = (
     operationName: unknown,
-  ): WorkspaceCacheKeyName[] | undefined =>
+  ): CachedOperationConfig | undefined =>
     typeof operationName === 'string' &&
     Object.prototype.hasOwnProperty.call(
       config.operationsToCache,
@@ -61,17 +70,14 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const cacheHitRequests = new WeakSet<Request>();
   const requestCacheKeys = new WeakMap<Request, string | null>();
 
-  // The key is resolved once per request and reused in onResponse: dependency
-  // hashes may rotate mid-request, and caching a response under a fresher key
-  // than the data it was computed from would persist a stale entry.
   const resolveCacheKey = async ({
     operationName,
-    cacheDependencies,
+    operationConfig,
     workspaceId,
     request,
   }: {
     operationName: string;
-    cacheDependencies: WorkspaceCacheKeyName[];
+    operationConfig: CachedOperationConfig;
     workspaceId: string;
     request: Request;
   }): Promise<string | null> => {
@@ -80,7 +86,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     try {
       cacheKey = await computeCacheKey({
         operationName,
-        cacheDependencies,
+        operationConfig,
         workspaceId,
         request,
       });
@@ -134,9 +140,9 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       }
 
       const operationName = getOperationName(serverContext);
-      const cacheDependencies = getCacheDependencies(operationName);
+      const operationConfig = getOperationCacheConfig(operationName);
 
-      if (!isDefined(cacheDependencies)) {
+      if (!isDefined(operationConfig)) {
         return;
       }
 
@@ -145,7 +151,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
       const cacheKey = await resolveCacheKey({
         operationName,
-        cacheDependencies,
+        operationConfig,
         workspaceId,
         request,
       });
@@ -177,7 +183,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
       const operationName = getOperationName(serverContext);
 
-      if (!isDefined(getCacheDependencies(operationName))) {
+      if (!isDefined(getOperationCacheConfig(operationName))) {
         return;
       }
 

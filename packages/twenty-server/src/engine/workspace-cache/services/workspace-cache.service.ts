@@ -215,12 +215,24 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<string> {
-    const { hashes } = await this.getOrRecomputeWithHashes(
-      workspaceId,
-      cacheKeyNames,
+    const cachedHashes = await this.getCacheHashes(workspaceId, cacheKeyNames);
+    const missingKeys = cacheKeyNames.filter(
+      (cacheKeyName) => !isDefined(cachedHashes[cacheKeyName]),
     );
 
-    return combineCacheHashes(hashes, cacheKeyNames);
+    if (missingKeys.length === 0) {
+      return combineCacheHashes(cachedHashes, cacheKeyNames);
+    }
+
+    const { hashes: recomputedHashes } = await this.getOrRecomputeWithHashes(
+      workspaceId,
+      missingKeys,
+    );
+
+    return combineCacheHashes(
+      { ...cachedHashes, ...recomputedHashes },
+      cacheKeyNames,
+    );
   }
 
   public async invalidateAndRecompute(

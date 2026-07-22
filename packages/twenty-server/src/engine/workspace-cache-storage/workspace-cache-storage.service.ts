@@ -8,13 +8,12 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
-export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
+export const HASH_KEYED_WORKSPACE_CACHE_KEYS = {
   GraphQLTypeDefs: 'graphql:type-defs',
-  MetadataVersion: 'metadata:workspace-metadata-version',
   GraphQLUsedScalarNames: 'graphql:used-scalar-names',
-  ORMEntitySchemas: 'orm:entity-schemas',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
+  MetadataVersion: 'metadata:workspace-metadata-version',
   GraphQLOperations: 'graphql:operations',
   GraphQLFeatureFlag: 'graphql:feature-flag',
   FeatureFlagMap: 'feature-flag:feature-flag-map',
@@ -45,7 +44,7 @@ export class WorkspaceCacheStorageService {
     metadataVersion: number,
   ): Promise<void> {
     return this.cacheStorageService.set<number>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.MetadataVersion}:${workspaceId}`,
+      `${WORKSPACE_CACHE_KEYS.MetadataVersion}:${workspaceId}`,
       metadataVersion,
       TTL_ONE_WEEK,
     );
@@ -53,7 +52,7 @@ export class WorkspaceCacheStorageService {
 
   getMetadataVersion(workspaceId: string): Promise<number | undefined> {
     return this.cacheStorageService.get<number>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.MetadataVersion}:${workspaceId}`,
+      `${WORKSPACE_CACHE_KEYS.MetadataVersion}:${workspaceId}`,
     );
   }
 
@@ -66,7 +65,7 @@ export class WorkspaceCacheStorageService {
     const applicationSuffix = applicationId ? `:${applicationId}` : '';
 
     return this.cacheStorageService.set<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
+      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLTypeDefs}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
       typeDefs,
       TTL_ONE_WEEK,
     );
@@ -80,7 +79,7 @@ export class WorkspaceCacheStorageService {
     const applicationSuffix = applicationId ? `:${applicationId}` : '';
 
     return this.cacheStorageService.get<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
+      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLTypeDefs}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
     );
   }
 
@@ -93,7 +92,7 @@ export class WorkspaceCacheStorageService {
     const applicationSuffix = applicationId ? `:${applicationId}` : '';
 
     return this.cacheStorageService.set<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
+      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
       usedScalarNames,
       TTL_ONE_WEEK,
     );
@@ -107,7 +106,7 @@ export class WorkspaceCacheStorageService {
     const applicationSuffix = applicationId ? `:${applicationId}` : '';
 
     return this.cacheStorageService.get<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
+      `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
     );
   }
 
@@ -167,20 +166,16 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flushVersionedMetadata(workspaceId: string): Promise<void> {
-    const { MetadataVersion, ...versionedCacheKeys } =
-      METADATA_VERSIONED_WORKSPACE_CACHE_KEY;
-
-    await Promise.all([
-      this.cacheStorageService.del(`${MetadataVersion}:${workspaceId}`),
-      ...Object.values(versionedCacheKeys).map((key) =>
+  async flushHashKeyedWorkspaceCache(workspaceId: string): Promise<void> {
+    await Promise.all(
+      Object.values(HASH_KEYED_WORKSPACE_CACHE_KEYS).map((key) =>
         this.cacheStorageService.flushByPattern(`${key}:${workspaceId}:*`),
       ),
-    ]);
+    );
   }
 
   async flush(workspaceId: string): Promise<void> {
-    await this.flushVersionedMetadata(workspaceId);
+    await this.flushHashKeyedWorkspaceCache(workspaceId);
 
     await Promise.all(
       Object.values(WORKSPACE_CACHE_KEYS).map(

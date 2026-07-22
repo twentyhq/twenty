@@ -53,7 +53,12 @@ describe('useCachedMetadata', () => {
     useCachedMetadata({
       cacheGetter,
       cacheSetter,
-      operationsToCache: { FindAllViews: ['flatViewMaps'] },
+      operationsToCache: {
+        FindAllViews: {
+          scope: 'userWorkspace',
+          dependencies: ['flatViewMaps'],
+        },
+      },
       dependencyHashGetter,
     });
 
@@ -166,7 +171,32 @@ describe('useCachedMetadata', () => {
     const cacheKey = cacheGetter.mock.calls[0][0];
 
     expect(cacheKey).toContain('dependency-hash');
+    expect(cacheKey).toContain('user-workspace-id');
     expect(cacheSetter).toHaveBeenCalledWith(cacheKey, responseBody);
+  });
+
+  it('shares cache entries across users for workspace-scoped operations', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const plugin = useCachedMetadata({
+      cacheGetter,
+      cacheSetter: jest.fn(),
+      operationsToCache: {
+        FindAllViews: { scope: 'workspace', dependencies: ['flatViewMaps'] },
+      },
+      dependencyHashGetter: jest.fn().mockResolvedValue('dependency-hash'),
+    });
+    const request = createRequest();
+    const serverContext = { req: request };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+
+    const cacheKey = cacheGetter.mock.calls[0][0];
+
+    expect(cacheKey).not.toContain('user-workspace-id');
+    expect(cacheKey).toContain(':en:');
   });
 
   it('serves the request uncached when dependency hashes cannot be resolved', async () => {
