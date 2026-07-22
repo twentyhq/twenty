@@ -2611,6 +2611,7 @@ msgstr "Ascending"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "Ask AI"
 
@@ -3923,6 +3924,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying."
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Close"
@@ -3997,6 +3999,11 @@ msgstr "Collapse"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "Collapse folder"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr "Collapse to side panel"
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7785,6 +7792,11 @@ msgstr "Exit import flow"
 msgid "Expand"
 msgstr "Expand"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr "Expand chat"
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10199,6 +10211,11 @@ msgstr "Is today{timeZoneAbbreviationSuffix}"
 msgid "Issuer URI"
 msgstr "Issuer URI"
 
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr "It natively comes with 7 standard objects."
+
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -10957,6 +10974,7 @@ msgstr "Log a new deal (company, amount, stage, expected close). Details: "
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Log out"
@@ -13262,6 +13280,11 @@ msgstr "on weekdays only"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "On which object(s) should this trigger be available"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr "Onboarding"
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -16798,6 +16821,16 @@ msgstr "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
+#. js-lingui-id: oxbT4Q
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Something went wrong while contacting our billing service."
+msgstr "Something went wrong while contacting our billing service."
+
+#. js-lingui-id: GEfZAW
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+msgid "Something went wrong while contacting our billing service. Please try again."
+msgstr "Something went wrong while contacting our billing service. Please try again."
+
 #. js-lingui-id: i34/fH
 #: src/pages/onboarding/WorkspaceActivation.tsx
 msgid "Something went wrong while creating your workspace. Please try again."
@@ -18534,6 +18567,12 @@ msgstr "Triggers the function with an HTTP request"
 msgid "True"
 msgstr "True"
 
+#. js-lingui-id: KDw4GX
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Try again"
+msgstr "Try again"
+
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Try our REST or GraphQL API playgrounds"
@@ -19941,6 +19980,12 @@ msgstr "We could not reach the package registry to verify the package provenance
 msgid "We couldn't confirm your payment method. Please retry."
 msgstr "We couldn't confirm your payment method. Please retry."
 
+#. js-lingui-id: TvNBSn
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "We couldn't load the plans"
+msgstr "We couldn't load the plans"
+
 #. js-lingui-id: 6eMAkI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "We encountered an issue verifying"
@@ -20084,6 +20129,8 @@ msgid "Welcome to Twenty"
 msgstr "Welcome to Twenty"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/components/WelcomeOverlay/WelcomeOverlay.tsx
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Welcome to your workspace"

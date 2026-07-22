@@ -7,7 +7,6 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
-import { WELCOME_TITLE_WORDS } from '@/onboarding/constants/WelcomeTitleWords';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -42,6 +41,6 @@ describe('WorkspaceSetupChatPreamble', () => {
     );
 
     expect(handoffRun).toBeInTheDocument();
-    expect(handoffRun?.textContent).toContain(WELCOME_TITLE_WORDS.join(' '));
+    expect(handoffRun?.textContent).toContain('Welcome to your workspace');
   });
 });

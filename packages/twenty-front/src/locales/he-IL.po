@@ -2616,6 +2616,7 @@ msgstr "עולה"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "שאל את ה-AI"
 
@@ -3928,6 +3929,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "לוח הגזירים דורש חיבור מאובטח (HTTPS). יש לגשת לאפליקציה זו באמצעות HTTPS כדי לאפשר העתקה."
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "סגור"
@@ -4002,6 +4004,11 @@ msgstr "צמצם"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "כווץ תיקייה"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7790,6 +7797,11 @@ msgstr "יציאה מתהליך הייבוא"
 msgid "Expand"
 msgstr "הרחב"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10204,6 +10216,11 @@ msgstr "הוא היום{timeZoneAbbreviationSuffix}"
 msgid "Issuer URI"
 msgstr "כתובת URI של יוצא לאור"
 
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr ""
+
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -10962,6 +10979,7 @@ msgstr "רשום עסקה חדשה (חברה, סכום, שלב, תאריך סג�
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Log out"
@@ -13267,6 +13285,11 @@ msgstr "רק בימי חול"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "על איזה אובייקט(ים) צריך להיות זמין הטריגר הזה"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr ""
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -16803,6 +16826,16 @@ msgstr "חלק מנתוני היומן הושמטו כדי להתאים למגב
 msgid "Something went wrong"
 msgstr "משהו השתבש"
 
+#. js-lingui-id: oxbT4Q
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Something went wrong while contacting our billing service."
+msgstr ""
+
+#. js-lingui-id: GEfZAW
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+msgid "Something went wrong while contacting our billing service. Please try again."
+msgstr ""
+
 #. js-lingui-id: i34/fH
 #: src/pages/onboarding/WorkspaceActivation.tsx
 msgid "Something went wrong while creating your workspace. Please try again."
@@ -18537,6 +18570,12 @@ msgstr "מפעיל את הפונקציה עם בקשת HTTP"
 msgid "True"
 msgstr "נכון"
 
+#. js-lingui-id: KDw4GX
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Try again"
+msgstr ""
+
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Try our REST or GraphQL API playgrounds"
@@ -19944,6 +19983,12 @@ msgstr ""
 msgid "We couldn't confirm your payment method. Please retry."
 msgstr "לא הצלחנו לאשר את אמצעי התשלום שלך. אנא נסה שוב."
 
+#. js-lingui-id: TvNBSn
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "We couldn't load the plans"
+msgstr ""
+
 #. js-lingui-id: 6eMAkI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "We encountered an issue verifying"
@@ -20087,6 +20132,8 @@ msgid "Welcome to Twenty"
 msgstr "ברוכים הבאים ל-Twenty"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/components/WelcomeOverlay/WelcomeOverlay.tsx
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "ברוכים הבאים למרחב העבודה שלך"

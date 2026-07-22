@@ -2616,6 +2616,7 @@ msgstr "Ascendant"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "Demander à l'IA"
 
@@ -3928,6 +3929,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "Le presse-papiers nécessite une connexion sécurisée (HTTPS). Veuillez accéder à cette application via HTTPS pour activer la copie."
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Fermer"
@@ -4002,6 +4004,11 @@ msgstr "Réduire"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "Replier le dossier"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7790,6 +7797,11 @@ msgstr "Quitter le flux d'importation"
 msgid "Expand"
 msgstr "Agrandir"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10204,6 +10216,11 @@ msgstr "Est aujourd’hui{timeZoneAbbreviationSuffix}"
 msgid "Issuer URI"
 msgstr "URI de l'émetteur"
 
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr ""
+
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -10962,6 +10979,7 @@ msgstr "Enregistrer une nouvelle affaire (entreprise, montant, étape, clôture 
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Log out"
@@ -13267,6 +13285,11 @@ msgstr "en semaine uniquement"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "Sur quel(s) objet(s) ce déclencheur doit-il être disponible ?"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr ""
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -16803,6 +16826,16 @@ msgstr "Certaines données de journal ont été supprimées pour respecter la li
 msgid "Something went wrong"
 msgstr "Un problème est survenu"
 
+#. js-lingui-id: oxbT4Q
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Something went wrong while contacting our billing service."
+msgstr ""
+
+#. js-lingui-id: GEfZAW
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+msgid "Something went wrong while contacting our billing service. Please try again."
+msgstr ""
+
 #. js-lingui-id: i34/fH
 #: src/pages/onboarding/WorkspaceActivation.tsx
 msgid "Something went wrong while creating your workspace. Please try again."
@@ -18539,6 +18572,12 @@ msgstr "Déclenche la fonction avec une requête HTTP"
 msgid "True"
 msgstr "Vrai"
 
+#. js-lingui-id: KDw4GX
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Try again"
+msgstr ""
+
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Try our REST or GraphQL API playgrounds"
@@ -19946,6 +19985,12 @@ msgstr ""
 msgid "We couldn't confirm your payment method. Please retry."
 msgstr "Nous n'avons pas pu confirmer votre mode de paiement. Veuillez réessayer."
 
+#. js-lingui-id: TvNBSn
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "We couldn't load the plans"
+msgstr ""
+
 #. js-lingui-id: 6eMAkI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "We encountered an issue verifying"
@@ -20089,6 +20134,8 @@ msgid "Welcome to Twenty"
 msgstr "Bienvenue sur Twenty"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/components/WelcomeOverlay/WelcomeOverlay.tsx
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Bienvenue dans votre espace de travail"

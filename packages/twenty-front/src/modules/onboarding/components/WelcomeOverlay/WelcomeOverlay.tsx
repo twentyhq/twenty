@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,6 @@ import { WelcomeAnimationForcedTeardownEffect } from '@/onboarding/components/We
 import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { WELCOME_TITLE_SOURCE_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleSourceElementId';
-import { WELCOME_TITLE_WORDS } from '@/onboarding/constants/WelcomeTitleWords';
 import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
@@ -253,6 +253,7 @@ const StyledWord = styled.span`
 `;
 
 export const WelcomeOverlay = () => {
+  const { t } = useLingui();
   const isWelcomeAnimationVisible = useAtomStateValue(
     isWelcomeAnimationVisibleState,
   );
@@ -264,6 +265,9 @@ export const WelcomeOverlay = () => {
   if (!isWelcomeAnimationVisible) {
     return null;
   }
+
+  const welcomeTitle = t`Welcome to your workspace`;
+  const welcomeTitleWords = welcomeTitle.split(' ');
 
   const leavingClassName = isWelcomeAnimationLeaving ? 'is-leaving' : undefined;
   const titleClassName = isWelcomeAnimationLeaving
@@ -299,9 +303,9 @@ export const WelcomeOverlay = () => {
       >
         <StyledTitleSurface />
         <StyledTitleBoldRun>
-          {WELCOME_TITLE_WORDS.map((word, index) => (
+          {welcomeTitleWords.map((word, index) => (
             <StyledWord
-              key={word}
+              key={`${word}-${index}`}
               style={{ '--word-index': index } as CSSProperties}
             >
               {word}
@@ -309,14 +313,14 @@ export const WelcomeOverlay = () => {
           ))}
           <StyledWord
             style={
-              { '--word-index': WELCOME_TITLE_WORDS.length } as CSSProperties
+              { '--word-index': welcomeTitleWords.length } as CSSProperties
             }
           >
             <WelcomePersonChip />
           </StyledWord>
         </StyledTitleBoldRun>
         <StyledTitleRegularRun aria-hidden>
-          {WELCOME_TITLE_WORDS.join(' ')}
+          {welcomeTitle}
           <StyledTargetScaleChip>
             <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
           </StyledTargetScaleChip>

@@ -32,7 +32,9 @@ export const SidePanelExpandAiChatButton = () => {
   }
 
   const handleClick = () => {
-    setAiChatExpandedReturnLocation(`${location.pathname}${location.search}`);
+    setAiChatExpandedReturnLocation(
+      `${location.pathname}${location.search}${location.hash}`,
+    );
     navigate(AppPath.WorkspaceSetup);
   };
 
