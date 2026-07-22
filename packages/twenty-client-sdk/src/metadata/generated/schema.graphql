@@ -1389,44 +1389,6 @@ type ApplicationConnectionProvider {
   oauth: ApplicationConnectionProviderOAuthConfig
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
-}
-
-type FileWithSignedUrl {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
-  url: String!
-}
-
-type FileUploadTarget {
-  fileId: UUID!
-  uploadUrl: String!
-  contentType: String!
-  expiresAt: DateTime!
-}
-
 type BillingSubscriptionSchedulePhaseItem {
   price: String!
   quantity: Float
@@ -1518,11 +1480,6 @@ type BillingSubscriptionItem {
   billingProduct: BillingProductDTO!
 }
 
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
-}
-
 type BillingSubscription {
   id: UUID!
   status: SubscriptionStatus!
@@ -1543,6 +1500,73 @@ enum SubscriptionStatus {
   Paused
   Trialing
   Unpaid
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
+type LogicFunctionExecutionResult {
+  """Execution result in JSON format"""
+  data: JSON
+
+  """Execution Logs"""
+  logs: String!
+
+  """Execution duration in milliseconds"""
+  duration: Float!
+
+  """Execution status"""
+  status: LogicFunctionExecutionStatus!
+
+  """Execution error in JSON format"""
+  error: JSON
+}
+
+"""Status of the logic function execution"""
+enum LogicFunctionExecutionStatus {
+  IDLE
+  SUCCESS
+  ERROR
+}
+
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
+type ApprovedAccessDomain {
+  id: UUID!
+  domain: String!
+  isValidated: Boolean!
+  createdAt: DateTime!
+}
+
+type FileWithSignedUrl {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+  url: String!
+}
+
+type FileUploadTarget {
+  fileId: UUID!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
 }
 
 type BillingEndTrialPeriod {
@@ -1702,30 +1726,6 @@ type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
-}
-
-type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
-  data: JSON
-
-  """Execution Logs"""
-  logs: String!
-
-  """Execution duration in milliseconds"""
-  duration: Float!
-
-  """Execution status"""
-  status: LogicFunctionExecutionStatus!
-
-  """Execution error in JSON format"""
-  error: JSON
-}
-
-"""Status of the logic function execution"""
-enum LogicFunctionExecutionStatus {
-  IDLE
-  SUCCESS
-  ERROR
 }
 
 type FeatureFlag {
