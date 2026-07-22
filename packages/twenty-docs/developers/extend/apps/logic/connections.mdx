@@ -42,9 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
-  // Optional: universalIdentifier of a logic function in this app to run right
-  // after a connection is established. See "Run a logic function on connect".
-  // onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-...-...',
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -92,7 +92,7 @@ https://<your-twenty-server>/auth/apps/callback
 
 <Accordion title="Run a logic function on connect" description="React the moment a connection is established">
 
-Some providers hand you data at connect time that you need to persist before the connection is usable — the classic example is Slack, where the OAuth response identifies the workspace's `team_id` that inbound events will be keyed by. Set `onConnectLogicFunctionUniversalIdentifier` to the `universalIdentifier` of a logic function in the same app, and it runs right after the `ConnectedAccount` is created.
+Some providers hand you data at connect time that you need to persist before the connection is usable — the classic example is Slack, where the OAuth response identifies the workspace's `team_id` that inbound events will be keyed by. Set `onConnectLogicFunction` to reference a logic function in the same app (by its `universalIdentifier`), and it runs right after the `ConnectedAccount` is created.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -104,7 +104,9 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs claimSlackTeam after every successful Slack connection.
-  onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
 });
 ```
 

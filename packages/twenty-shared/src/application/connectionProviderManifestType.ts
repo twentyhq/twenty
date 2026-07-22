@@ -6,5 +6,5 @@ export type ConnectionProviderManifest = SyncableEntityOptions & {
   displayName: string;
   type: 'oauth';
   oauth: OAuthConnectionProviderConfig;
-  onConnectLogicFunctionUniversalIdentifier?: string;
+  onConnectLogicFunction?: SyncableEntityOptions;
 };

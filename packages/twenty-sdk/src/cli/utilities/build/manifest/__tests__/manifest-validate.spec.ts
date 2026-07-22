@@ -197,7 +197,7 @@ describe('manifestValidate', () => {
       );
     });
 
-    it('should not flag a connection provider referencing a logic function via onConnectLogicFunctionUniversalIdentifier as a duplicate', () => {
+    it('should not flag a connection provider referencing a logic function via onConnectLogicFunction as a duplicate', () => {
       const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
 
       const logicFunction = {
@@ -215,7 +215,7 @@ describe('manifestValidate', () => {
         displayName: 'Slack',
         type: 'oauth',
         oauth: {},
-        onConnectLogicFunctionUniversalIdentifier: logicFunctionId,
+        onConnectLogicFunction: { universalIdentifier: logicFunctionId },
       } as unknown as NonNullable<Manifest['connectionProviders']>[number];
 
       const result = manifestValidate({

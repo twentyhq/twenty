@@ -37,11 +37,11 @@ export const defineConnectionProvider: DefineEntity<
   }
 
   if (
-    config.onConnectLogicFunctionUniversalIdentifier &&
-    !UUID_PATTERN.test(config.onConnectLogicFunctionUniversalIdentifier)
+    config.onConnectLogicFunction &&
+    !UUID_PATTERN.test(config.onConnectLogicFunction.universalIdentifier)
   ) {
     errors.push(
-      `Connection provider onConnectLogicFunctionUniversalIdentifier "${config.onConnectLogicFunctionUniversalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+      `Connection provider onConnectLogicFunction.universalIdentifier "${config.onConnectLogicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
     );
   }
 
