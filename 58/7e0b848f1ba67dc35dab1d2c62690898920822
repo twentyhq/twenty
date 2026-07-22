@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+  s_c3fbc446206706::t_1bf1098145cc92 109-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "587e0b848f1ba67dc35dab1d2c62690898920822",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
