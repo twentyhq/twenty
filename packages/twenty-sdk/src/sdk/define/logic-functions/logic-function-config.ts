@@ -9,7 +9,6 @@ export type ServerRouteResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
-  dispatchMode?: 'sync' | 'queued';
   retryLimit?: number;
 };
 

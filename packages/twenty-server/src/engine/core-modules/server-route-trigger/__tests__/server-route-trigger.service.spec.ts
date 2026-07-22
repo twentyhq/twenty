@@ -104,25 +104,19 @@ describe('ServerRouteTriggerService', () => {
       createQueryBuilder: jest.fn(() => queryBuilder),
       findOne: jest
         .fn()
-        // resolver lookup inside runFunction
+        // resolver lookup
         .mockResolvedValueOnce({ id: 'resolver-id' })
-        // target lookup inside runFunction
+        // target lookup before enqueueing
         .mockResolvedValueOnce({ id: 'target-id' }),
     };
     logicFunctionExecutorService = {
-      execute: jest
-        .fn()
-        // resolver result; dispatchMode 'sync' keeps the historical inline path
-        .mockResolvedValueOnce(
-          buildExecuteResult({
-            workspaceId: 'target-ws',
-            targetLogicFunctionUniversalIdentifier: TARGET_UID,
-            payload: { from: 'resolver' },
-            dispatchMode: 'sync',
-          }),
-        )
-        // target returns the final response body
-        .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
+      execute: jest.fn().mockResolvedValueOnce(
+        buildExecuteResult({
+          workspaceId: 'target-ws',
+          targetLogicFunctionUniversalIdentifier: TARGET_UID,
+          payload: { from: 'resolver' },
+        }),
+      ),
     };
 
     messageQueueService = {
@@ -136,28 +130,31 @@ describe('ServerRouteTriggerService', () => {
     );
   });
 
-  it('runs the resolver in the owner workspace then the resolver-named target in the resolved workspace', async () => {
+  it('runs the resolver synchronously, enqueues the target, and acks with 202', async () => {
     const result = await handle();
 
-    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
-      1,
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledTimes(1);
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith(
       expect.objectContaining({
         logicFunctionId: 'resolver-id',
         workspaceId: 'owner-ws',
       }),
     );
-    expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        logicFunctionId: 'target-id',
-        workspaceId: 'target-ws',
-        payload: { from: 'resolver' },
-      }),
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: 'target-id',
+          workspaceId: 'target-ws',
+          payload: { from: 'resolver' },
+        },
+      ],
+      { retryLimit: 3 },
     );
     expect(result).toEqual(
       expect.objectContaining({
-        statusCode: 200,
-        body: { ok: true },
+        statusCode: 202,
+        body: { queued: true },
       }),
     );
   });
@@ -193,6 +190,21 @@ describe('ServerRouteTriggerService', () => {
     );
   });
 
+  it('scopes the target lookup to the resolver application registration', async () => {
+    await handle();
+
+    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          universalIdentifier: TARGET_UID,
+          workspaceId: 'target-ws',
+          application: { applicationRegistrationId: 'reg-1' },
+        }),
+      }),
+    );
+  });
+
   it('throws LOGIC_FUNCTION_NOT_FOUND and executes nothing when the query returns no server-route resolver', async () => {
     resolverRow = null;
 
@@ -200,6 +212,7 @@ describe('ServerRouteTriggerService', () => {
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
     expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('rejects and executes nothing when the resolver requires authentication', async () => {
@@ -249,127 +262,16 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('throws LOGIC_FUNCTION_NOT_FOUND when the target named by the resolver is missing in the resolved workspace', async () => {
+  it('throws LOGIC_FUNCTION_NOT_FOUND and enqueues nothing when the target is missing', async () => {
     logicFunctionRepository.findOne.mockReset();
     logicFunctionRepository.findOne
-      // resolver lookup succeeds
       .mockResolvedValueOnce({ id: 'resolver-id' })
-      // target lookup returns null
       .mockResolvedValueOnce(null);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
-  });
-
-  it('surfaces a target userError as a server-route exception on sync dispatch', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute
-      .mockResolvedValueOnce(
-        buildExecuteResult({
-          workspaceId: 'target-ws',
-          targetLogicFunctionUniversalIdentifier: TARGET_UID,
-          dispatchMode: 'sync',
-        }),
-      )
-      .mockResolvedValueOnce(
-        buildExecuteResult(null, { errorMessage: 'boom' }),
-      );
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-    });
-  });
-
-  it('maps a LogicFunctionExecutionException(LOGIC_FUNCTION_NOT_FOUND) to the server-route not-found code', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockRejectedValue(
-      new LogicFunctionExecutionException(
-        'not found',
-        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      ),
-    );
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-    });
-  });
-
-  it('falls back to PLATFORM_ERROR for any other thrown executor error', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockRejectedValue(new Error('boom'));
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
-    });
-  });
-
-  it('maps a LogicFunctionExecutionException(RATE_LIMIT_EXCEEDED) to the server-route rate-limit code', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockRejectedValue(
-      new LogicFunctionExecutionException(
-        'too many requests',
-        LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
-      ),
-    );
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED,
-    });
-  });
-
-  it('scopes the target lookup to the resolver application registration', async () => {
-    await handle();
-
-    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        where: expect.objectContaining({
-          universalIdentifier: TARGET_UID,
-          workspaceId: 'target-ws',
-          application: { applicationRegistrationId: 'reg-1' },
-        }),
-      }),
-    );
-  });
-
-  it('does not enqueue anything on sync dispatch', async () => {
-    await handle();
-
     expect(messageQueueService.add).not.toHaveBeenCalled();
-  });
-
-  it('defaults to queued dispatch when the resolver does not specify dispatchMode', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        payload: { from: 'resolver' },
-      }),
-    );
-
-    const result = await handle();
-
-    // only the resolver ran synchronously
-    expect(logicFunctionExecutorService.execute).toHaveBeenCalledTimes(1);
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: 'target-id',
-          workspaceId: 'target-ws',
-          payload: { from: 'resolver' },
-        },
-      ],
-      { retryLimit: 3 },
-    );
-    expect(result).toEqual(
-      expect.objectContaining({
-        statusCode: 202,
-        body: { queued: true },
-      }),
-    );
   });
 
   it('passes the resolver retryLimit through to the queued job', async () => {
@@ -378,7 +280,6 @@ describe('ServerRouteTriggerService', () => {
       buildExecuteResult({
         workspaceId: 'target-ws',
         targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        dispatchMode: 'queued',
         retryLimit: 7,
       }),
     );
@@ -408,79 +309,39 @@ describe('ServerRouteTriggerService', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('still scopes the queued target lookup to the resolver application registration', async () => {
+  it('maps a LogicFunctionExecutionException(LOGIC_FUNCTION_NOT_FOUND) to the server-route not-found code', async () => {
     logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        dispatchMode: 'queued',
-      }),
+    logicFunctionExecutorService.execute.mockRejectedValue(
+      new LogicFunctionExecutionException(
+        'not found',
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      ),
     );
-
-    await handle();
-
-    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        where: expect.objectContaining({
-          universalIdentifier: TARGET_UID,
-          workspaceId: 'target-ws',
-          application: { applicationRegistrationId: 'reg-1' },
-        }),
-      }),
-    );
-  });
-
-  it('throws LOGIC_FUNCTION_NOT_FOUND and enqueues nothing when the queued target is missing', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        dispatchMode: 'queued',
-      }),
-    );
-    logicFunctionRepository.findOne.mockReset();
-    logicFunctionRepository.findOne
-      .mockResolvedValueOnce({ id: 'resolver-id' })
-      .mockResolvedValueOnce(null);
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
     });
-    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('throws RESOLVER_INVALID_RESULT on an unknown dispatchMode', async () => {
+  it('maps a LogicFunctionExecutionException(RATE_LIMIT_EXCEEDED) to the server-route rate-limit code', async () => {
     logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        dispatchMode: 'later',
-      }),
+    logicFunctionExecutorService.execute.mockRejectedValue(
+      new LogicFunctionExecutionException(
+        'too many requests',
+        LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+      ),
     );
 
     await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+      code: ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED,
     });
-    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('does not leak the raw executor error message to the caller', async () => {
+  it('does not leak the raw resolver executor error message to the caller', async () => {
     logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute
-      .mockResolvedValueOnce(
-        buildExecuteResult({
-          workspaceId: 'target-ws',
-          targetLogicFunctionUniversalIdentifier: TARGET_UID,
-          dispatchMode: 'sync',
-        }),
-      )
-      .mockRejectedValueOnce(
-        new Error('internal: connection to lambda-internal:5000 refused'),
-      );
+    logicFunctionExecutorService.execute.mockRejectedValue(
+      new Error('internal: connection to lambda-internal:5000 refused'),
+    );
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,

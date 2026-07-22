@@ -19,25 +19,17 @@ import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  type RouteTriggerResponse,
-  buildRouteTriggerResponse,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
-const RESOLVER_DISPATCH_MODES = ['sync', 'queued'] as const;
-
-type ResolverDispatchMode = (typeof RESOLVER_DISPATCH_MODES)[number];
-
 type ResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
-  dispatchMode: ResolverDispatchMode;
   retryLimit: number;
 };
 
@@ -107,33 +99,14 @@ export class ServerRouteTriggerService {
     });
     const resolved = this.parseResolverResult(resolverResult);
 
-    if (resolved.dispatchMode === 'queued') {
-      return await this.enqueueTargetFunction({
-        logicFunctionUniversalIdentifier:
-          resolved.targetLogicFunctionUniversalIdentifier,
-        workspaceId: resolved.workspaceId,
-        payload: resolved.payload ?? event,
-        applicationRegistrationId,
-        retryLimit: resolved.retryLimit,
-      });
-    }
-
-    const targetResult = await this.runFunction({
+    return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
         resolved.targetLogicFunctionUniversalIdentifier,
       workspaceId: resolved.workspaceId,
       payload: resolved.payload ?? event,
       applicationRegistrationId,
+      retryLimit: resolved.retryLimit,
     });
-
-    if (isDefined(targetResult.error)) {
-      throw new ServerRouteTriggerException(
-        targetResult.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-      );
-    }
-
-    return buildRouteTriggerResponse(targetResult.data);
   }
 
   private async findResolver({
@@ -175,7 +148,6 @@ export class ServerRouteTriggerService {
       workspaceId?: unknown;
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;
-      dispatchMode?: unknown;
       retryLimit?: unknown;
     };
 
@@ -184,18 +156,7 @@ export class ServerRouteTriggerService {
       !isString(data?.targetLogicFunctionUniversalIdentifier)
     ) {
       throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; dispatchMode?: "sync" | "queued"; retryLimit?: number }',
-        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-      );
-    }
-
-    const dispatchMode = data.dispatchMode ?? 'queued';
-
-    if (
-      !RESOLVER_DISPATCH_MODES.includes(dispatchMode as ResolverDispatchMode)
-    ) {
-      throw new ServerRouteTriggerException(
-        `Resolver dispatchMode must be one of ${RESOLVER_DISPATCH_MODES.join(', ')}`,
+        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; retryLimit?: number }',
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
@@ -222,7 +183,6 @@ export class ServerRouteTriggerService {
         typeof data.payload === 'object' && data.payload !== null
           ? (data.payload as object)
           : undefined,
-      dispatchMode: dispatchMode as ResolverDispatchMode,
       retryLimit,
     };
   }

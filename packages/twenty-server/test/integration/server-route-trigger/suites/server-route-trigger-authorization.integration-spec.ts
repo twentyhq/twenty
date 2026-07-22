@@ -22,8 +22,6 @@ const AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER =
   '3c3f983f-5c1a-4c60-a3c8-7d0e2a4a33c3';
 const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
   '4d4f983f-5c1a-4c60-a3c8-7d0e2a4a44d4';
-const SYNC_RESOLVER_UNIVERSAL_IDENTIFIER =
-  '5e5f983f-5c1a-4c60-a3c8-7d0e2a4a55e5';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -32,13 +30,6 @@ const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 const RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
   workspaceId: '${OWNER_WORKSPACE_ID}',
   targetLogicFunctionUniversalIdentifier: '${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
-});
-`;
-
-const SYNC_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
-  workspaceId: '${OWNER_WORKSPACE_ID}',
-  targetLogicFunctionUniversalIdentifier: '${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
-  dispatchMode: 'sync',
 });
 `;
 
@@ -117,11 +108,6 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
-      builtHandlerPath: 'dist/sync-resolver.mjs',
-      builtHandlerCode: SYNC_RESOLVER_BUILT_HANDLER_CODE,
-    });
-
-    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -141,12 +127,6 @@ describe('ServerRouteTrigger authorization (integration)', () => {
             buildLogicFunctionManifest({
               universalIdentifier: EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER,
               name: 'exposed-resolver',
-              serverRouteExposed: true,
-              authRequired: false,
-            }),
-            buildLogicFunctionManifest({
-              universalIdentifier: SYNC_RESOLVER_UNIVERSAL_IDENTIFIER,
-              name: 'sync-resolver',
               serverRouteExposed: true,
               authRequired: false,
             }),
@@ -188,22 +168,13 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       });
     });
 
-    it('acks with 202 and queues the target for a resolver without dispatchMode', async () => {
+    it('dispatches a server-route-exposed resolver, queues the target, and acks with 202', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
         .send({ any: 'payload' });
 
       expect(response.status).toBe(202);
       expect(response.body).toEqual({ queued: true });
-    }, 60000);
-
-    it('runs the target inline and returns its response for a sync-dispatch resolver', async () => {
-      const response = await request(baseUrl)
-        .post(`/webhooks/server/${SYNC_RESOLVER_UNIVERSAL_IDENTIFIER}`)
-        .send({ any: 'payload' });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(TARGET_FUNCTION_RESPONSE);
     }, 60000);
 
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
