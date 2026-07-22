@@ -34,32 +34,6 @@ type WidgetViewLayoutSettingsRowsProps = {
   isLayoutRowHidden?: boolean;
 };
 
-// The keyboard-selectable item ids this component renders, in render order, for
-// the parent SidePanelList's selectableItemIds. Kept next to the render so the
-// two can't drift.
-export const getWidgetViewLayoutSettingsItemIds = ({
-  isCalendarLayout,
-  isCalendarWeekViewEnabled,
-  hasGroupBy,
-  isLayoutRowHidden = false,
-}: {
-  isCalendarLayout: boolean;
-  isCalendarWeekViewEnabled: boolean;
-  hasGroupBy: boolean;
-  isLayoutRowHidden?: boolean;
-}) => [
-  ...(isLayoutRowHidden ? [] : ['object-view-layout']),
-  ...(isCalendarLayout
-    ? [
-        'record-table-calendar-field',
-        ...(isCalendarWeekViewEnabled ? ['record-table-calendar-layout'] : []),
-      ]
-    : ['record-table-group-by']),
-  ...(!isCalendarLayout && hasGroupBy
-    ? ['record-table-hide-empty-groups']
-    : []),
-];
-
 // The embedded-view layout rows (layout type + group-by / calendar field /
 // calendar view / hide-empty-groups) shared by widgets backed by a record table
 // view: dashboard record table widgets and relation field widgets in table
