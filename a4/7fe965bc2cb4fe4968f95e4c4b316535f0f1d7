@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
+  s_c3fbc446206706::t_de8c19dd2fdc9d 46-47
+  s_c3fbc446206706::t_98541402f6983d 7
+  s_c3fbc446206706::t_86fd35fe290945 58-64,66-67
+  s_c3fbc446206706::t_03bab53ee45148 65
+  s_c3fbc446206706::t_38d428f01d2f3b 68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a47fe965bc2cb4fe4968f95e4c4b316535f0f1d7",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
