@@ -1,0 +1,57 @@
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_11e59742733dbd::t_6561c06811b644 44-47
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_e9578767249c62 21-24
+  s_11e59742733dbd::t_b85305eb8c0463 9-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-suppression.dto.ts
+  s_11e59742733dbd::t_4fe99f881b1671 1-43
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_11e59742733dbd::t_a9d0d3396d5fee 735-737
+  s_11e59742733dbd::t_39fab43505ac26 217-224
+  s_11e59742733dbd::t_15b7fc0c25aeac 738
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_11e59742733dbd::t_f472c11b27420b 1-72
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_11e59742733dbd::t_c53ba7cf437df0 36
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_11e59742733dbd::t_c8b86767a06364 34-40
+  s_11e59742733dbd::t_a349e3f56db2a2 60-109
+  s_11e59742733dbd::t_06f86a44e0d7e5 13-16
+  s_11e59742733dbd::t_f1b284fcc12a37 110
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_11e59742733dbd::t_e7271f15a91b0d 19-22
+  s_11e59742733dbd::t_54787ebfee7df1 9-10
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/mutations/deleteMessageSuppression.ts
+  s_11e59742733dbd::t_e987f93aaac274 1-7
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_11e59742733dbd::t_405df28a3ae2c4 54-55,69-74,77-98
+  s_11e59742733dbd::t_8c8584e46a7d69 144-158
+  s_11e59742733dbd::t_2d0ef96b576c9f 181-190
+  s_11e59742733dbd::t_40ff89630193db 7,14-24,27,39
+  s_11e59742733dbd::t_86315cfaf2f585 99
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_11e59742733dbd::t_0c61d00e75c891 54
+  s_11e59742733dbd::t_4cecfc14cf8464 19
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/find-message-suppressions.input.ts
+  s_11e59742733dbd::t_8ccfb28ccac308 1-22
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_11e59742733dbd::t_24f2de95b909ca 1-184
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/queries/getMessageSuppressions.ts
+  s_11e59742733dbd::t_fa85b782091633 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "3432cdbf959bb2cfa5fd63332b71b641f57338ad",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
