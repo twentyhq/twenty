@@ -1,5 +1,3 @@
-// The keyboard-selectable item ids WidgetViewLayoutSettingsRows renders, in
-// render order, for the parent SidePanelList's selectableItemIds.
 export const getWidgetViewLayoutSettingsItemIds = ({
   isCalendarLayout,
   isCalendarWeekViewEnabled,
