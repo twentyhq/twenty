@@ -7890,6 +7890,11 @@ msgstr "Yeniden denenecek başarısız bir ileti yok."
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "Bu {fieldLabel} değeri zaten kullanımda. Lütfen verilerinizi kontrol edin ve tekrar deneyin."
 
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."

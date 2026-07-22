@@ -7890,6 +7890,11 @@ msgstr "没有可重试的失败消息。"
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "此{fieldLabel}的值已被占用。请检查您的数据并重试。"
 
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
