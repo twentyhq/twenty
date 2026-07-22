@@ -1,11 +1,9 @@
 import { useCallback } from 'react';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { CrudOperationType } from 'twenty-shared/types';
 import {
@@ -24,8 +22,8 @@ export const usePerformViewGroupAPIPersist = () => {
     CreateManyViewGroupsDocument,
   );
 
-  const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { performViewEntityAPIPersistOperation } =
+    usePerformViewEntityAPIPersistOperation('viewGroup');
 
   const performViewGroupAPIUpdate = useCallback(
     async (
@@ -42,32 +40,22 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await updateManyViewGroupsMutation({
-          variables: updateViewGroupInputs,
-        });
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-            operationType: CrudOperationType.UPDATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          updateManyViewGroupsMutation({
+            variables: updateViewGroupInputs,
+          }),
+        applyResultToDraft: (result, { updateInDraft }) =>
+          updateInDraft(
+            'viewGroups',
+            (result.data?.updateManyViewGroups ?? []).map(
+              ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
+            ),
+          ),
+        operationType: CrudOperationType.UPDATE,
+      });
     },
-    [updateManyViewGroupsMutation, handleMetadataError, enqueueErrorSnackBar],
+    [updateManyViewGroupsMutation, performViewEntityAPIPersistOperation],
   );
 
   const performViewGroupAPICreate = useCallback(
@@ -85,32 +73,22 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
 
-      try {
-        const result = await createManyViewGroupsMutation({
-          variables: createViewGroupInputs,
-        });
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-            operationType: CrudOperationType.CREATE,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
+      return performViewEntityAPIPersistOperation({
+        persist: () =>
+          createManyViewGroupsMutation({
+            variables: createViewGroupInputs,
+          }),
+        applyResultToDraft: (result, { addToDraft }) =>
+          addToDraft({
+            key: 'viewGroups',
+            items: (result.data?.createManyViewGroups ?? []).map(
+              ({ __typename, ...viewGroup }) => viewGroup as FlatViewGroup,
+            ),
+          }),
+        operationType: CrudOperationType.CREATE,
+      });
     },
-    [createManyViewGroupsMutation, handleMetadataError, enqueueErrorSnackBar],
+    [createManyViewGroupsMutation, performViewEntityAPIPersistOperation],
   );
 
   return {
