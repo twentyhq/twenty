@@ -1210,6 +1210,12 @@ msgstr ""
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
+#. js-lingui-id: D9pZ2l
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar widget views only support the month layout"
+msgstr ""
+
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Call Recording"
@@ -2055,11 +2061,6 @@ msgstr "仪表板"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "数据结构无效。"
-
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "数据版本不匹配。请刷新后重试。"
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -8934,6 +8935,11 @@ msgstr "在插入或更新后未找到视图"
 msgid "View not found for widget"
 msgstr "未找到小部件的视图"
 
+#. js-lingui-id: wIcQxd
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "View settings can only be updated on record table widgets"
+msgstr ""
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -9164,6 +9170,11 @@ msgstr "小部件行超出网格高度"
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
 msgstr "小部件类型 VIEW 尚不支持。"
+
+#. js-lingui-id: s8y6wj
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Widget views must use a widget view type"
+msgstr ""
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts

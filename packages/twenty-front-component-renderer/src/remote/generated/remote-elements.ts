@@ -540,7 +540,15 @@ export const HtmlInputElement = createRemoteElement<
   HtmlInputProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & {
+    beforeinput(event: RemoteEvent<SerializedEventData>): void;
+    compositionstart(event: RemoteEvent<SerializedEventData>): void;
+    compositionupdate(event: RemoteEvent<SerializedEventData>): void;
+    compositionend(event: RemoteEvent<SerializedEventData>): void;
+    copy(event: RemoteEvent<SerializedEventData>): void;
+    paste(event: RemoteEvent<SerializedEventData>): void;
+    cut(event: RemoteEvent<SerializedEventData>): void;
+  }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -557,6 +565,13 @@ export const HtmlInputElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    beforeinput: createSerializedEventConfig('beforeinput'),
+    compositionstart: createSerializedEventConfig('compositionstart'),
+    compositionupdate: createSerializedEventConfig('compositionupdate'),
+    compositionend: createSerializedEventConfig('compositionend'),
+    copy: createSerializedEventConfig('copy'),
+    paste: createSerializedEventConfig('paste'),
+    cut: createSerializedEventConfig('cut'),
   },
 });
 
@@ -574,7 +589,15 @@ export const HtmlTextareaElement = createRemoteElement<
   HtmlTextareaProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & {
+    beforeinput(event: RemoteEvent<SerializedEventData>): void;
+    compositionstart(event: RemoteEvent<SerializedEventData>): void;
+    compositionupdate(event: RemoteEvent<SerializedEventData>): void;
+    compositionend(event: RemoteEvent<SerializedEventData>): void;
+    copy(event: RemoteEvent<SerializedEventData>): void;
+    paste(event: RemoteEvent<SerializedEventData>): void;
+    cut(event: RemoteEvent<SerializedEventData>): void;
+  }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -588,6 +611,13 @@ export const HtmlTextareaElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    beforeinput: createSerializedEventConfig('beforeinput'),
+    compositionstart: createSerializedEventConfig('compositionstart'),
+    compositionupdate: createSerializedEventConfig('compositionupdate'),
+    compositionend: createSerializedEventConfig('compositionend'),
+    copy: createSerializedEventConfig('copy'),
+    paste: createSerializedEventConfig('paste'),
+    cut: createSerializedEventConfig('cut'),
   },
 });
 

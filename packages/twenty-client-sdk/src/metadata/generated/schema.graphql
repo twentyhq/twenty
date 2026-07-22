@@ -844,6 +844,8 @@ enum ViewType {
   CALENDAR
   FIELDS_WIDGET
   TABLE_WIDGET
+  KANBAN_WIDGET
+  CALENDAR_WIDGET
 }
 
 enum ViewKey {
@@ -979,6 +981,11 @@ enum OnboardingStatus {
 The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSONObject
+
+type SdkClientChecksums {
+  core: String
+  metadata: String!
+}
 
 type RatioAggregateConfig {
   fieldMetadataId: UUID!
@@ -3046,6 +3053,7 @@ type MinimalMetadata {
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
+  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
@@ -3062,6 +3070,7 @@ type Query {
   getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
+  getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
@@ -3667,6 +3676,11 @@ input UpsertViewWidgetInput {
   """The id of the view widget (page layout widget)."""
   widgetId: UUID!
 
+  """
+  View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.
+  """
+  view: UpsertViewWidgetViewSettingsInput
+
   """The view fields to upsert."""
   viewFields: [UpsertViewWidgetViewFieldInput!]
 
@@ -3678,6 +3692,22 @@ input UpsertViewWidgetInput {
 
   """The view sorts to upsert."""
   viewSorts: [UpsertViewWidgetViewSortInput!]
+}
+
+input UpsertViewWidgetViewSettingsInput {
+  """
+  The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.
+  """
+  type: ViewType
+  mainGroupByFieldMetadataId: UUID
+  shouldHideEmptyGroups: Boolean
+  openRecordIn: ViewOpenRecordIn
+  kanbanAggregateOperation: AggregateOperations
+  kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Int
+  calendarLayout: ViewCalendarLayout
+  calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
 }
 
 input UpsertViewWidgetViewFieldInput {

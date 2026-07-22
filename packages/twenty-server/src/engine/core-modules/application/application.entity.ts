@@ -134,6 +134,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
+  })
+  sdkClientCoreChecksum: string | null;
+
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;
 
