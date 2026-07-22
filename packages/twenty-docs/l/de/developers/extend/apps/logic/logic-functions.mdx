@@ -59,7 +59,7 @@ Um eine routenausgelöste Logikfunktion von einer (headless) Front-Komponente au
 * **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
 * **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
 > z. B. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Stellt eine einzelne, registrierungsbezogene HTTP-Route bereit. Eine **Resolver**-Funktion (deklariert mit `serverRouteTriggerSettings`) läuft im Owner-Workspace und gibt den Ziel-Workspace UND die Ziel-Logikfunktion zurück, an die weitergeleitet werden soll; die Plattform führt dann diese **Ziel**-Funktion aus und gibt deren Antwort zurück. Siehe [Server-Route-Trigger](#server-route-trigger).
+* **serverRoute**: Stellt eine einzelne, registrierungsbezogene HTTP-Route bereit. Eine **Resolver**-Funktion (deklariert mit `serverRouteTriggerSettings`) läuft im Owner-Workspace und gibt den Ziel-Workspace UND die Ziel-Logikfunktion zurück, an die weitergeleitet werden soll; die Plattform bestätigt mit `202` und führt diese **Ziel**-Funktion in der Worker-Queue aus. Siehe [Server-Route-Trigger](#server-route-trigger).
 
 <Note>
 Sie können eine Funktion auch manuell über die CLI ausführen:
@@ -289,7 +289,7 @@ Für Anfragesignaturen signieren die meisten Provider mit HMAC-SHA256; die Teile
 Das obige Resolver-Beispiel zeigt bereits den GitHub-HMAC-SHA256-Flow – passe den Header-Namen, die Digest-Codierung und den signierten Payload-String entsprechend dem Provider an, den du integrierst.
 
 <Note>
-Das Target läuft **synchron** und sein Rückgabewert wird zur HTTP-Antwort, sodass Aufrufer deinen Statuscode sehen und bei Nicht-2xx erneut versuchen können. Halte beide Handler schnell – einige Provider (z. B. Slack) laufen nach wenigen Sekunden in ein Timeout. Da der Resolver als öffentlicher Endpoint erreichbar ist, schütze ihn mit Rate-Limiting an deinem Edge.
+Die Route antwortet mit `202 { queued: true }`, sobald der Resolver zurückkehrt und das Ziel in der Worker-Queue ausgeführt wird – der Aufrufer bekommt weder die Latenz, noch das Ergebnis oder Fehler des Ziels mit (diese werden in den Ausführungsprotokollen aufgezeichnet). Dadurch wird verhindert, dass erneute Zustellungen des Senders Verarbeitungsverzögerungen verstärken – genau das ist bei der Erfassung von Webhooks erwünscht. Für Endpunkte, bei denen der Aufrufer den Response-Body lesen muss (Challenge-Handshakes, Slack-Befehle), verwenden Sie stattdessen eine `httpRouteTriggerSettings`-Route. Halten Sie den Resolver schnell – einige Provider (z. B. Slack) laufen nach wenigen Sekunden in ein Timeout. Da der Resolver als öffentlicher Endpoint erreichbar ist, schütze ihn mit Rate-Limiting an deinem Edge.
 </Note>
 
 #### Datenbank-Event-Trigger-Payload

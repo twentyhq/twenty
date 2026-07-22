@@ -59,7 +59,7 @@ Para invocar uma função de lógica acionada por rota a partir de um componente
 * **cron**: Executa sua função em um agendamento usando uma expressão CRON.
 * **databaseEvent**: Executa em eventos do ciclo de vida de objetos do espaço de trabalho. Quando a operação do evento é `updated`, campos específicos a serem observados podem ser especificados no array `updatedFields`. Se deixar indefinido ou vazio, qualquer atualização acionará a função.
 > por exemplo, `person.updated`, `*.created`, `company.*`
-* **serverRoute**: expõe uma única rota HTTP com escopo de registro. Uma função **resolver** (declarada com `serverRouteTriggerSettings`) é executada no workspace proprietário e retorna o workspace de destino E a função de lógica de destino para a qual despachar; a plataforma então executa essa função de **destino** e retorna sua resposta. Veja [gatilho de rota de servidor](#server-route-trigger).
+* **serverRoute**: expõe uma única rota HTTP com escopo de registro. Uma função **resolver** (declarada com `serverRouteTriggerSettings`) é executada no workspace proprietário e retorna o workspace de destino E a função de lógica de destino para a qual despachar; a plataforma confirma com `202` e executa essa função de **destino** na fila de workers. Veja [gatilho de rota de servidor](#server-route-trigger).
 
 <Note>
 Você também pode executar manualmente uma função usando a CLI:
@@ -289,7 +289,7 @@ Para assinaturas de requisição, a maioria dos provedores assina com HMAC-SHA25
 O exemplo de resolver acima já mostra o fluxo de HMAC-SHA256 do GitHub — adapte o nome do header, a codificação do digest e a string de payload assinada de acordo com o provedor com o qual você está integrando.
 
 <Note>
-O target é executado **sincronamente** e o valor retornado se torna a resposta HTTP, então quem faz a chamada vê seu código de status e pode tentar novamente em caso de não 2xx. Mantenha ambos os handlers rápidos — alguns provedores (por exemplo, Slack) atingem timeout em poucos segundos. Como o resolver fica acessível como um endpoint público, proteja-o com rate limiting na sua borda.
+A rota responde com `202 { queued: true }` logo após o retorno do resolver e o destino é executado na fila de workers — quem faz a chamada nunca observa a latência, o resultado ou as falhas do destino (esses são registrados nos logs de execução). Isso evita que reentregas do remetente amplifiquem a lentidão do processamento, que é o que você quer para a ingestão de webhooks. Para endpoints cujo chamador precisa ler o corpo da resposta (handshakes de verificação (challenge), comandos do Slack), use em vez disso uma rota `httpRouteTriggerSettings`. Mantenha o resolver rápido — alguns provedores (por exemplo, Slack) atingem timeout em poucos segundos. Como o resolver fica acessível como um endpoint público, proteja-o com rate limiting na sua borda.
 </Note>
 
 #### Payload do gatilho de evento do banco de dados
