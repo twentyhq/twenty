@@ -21,20 +21,26 @@ import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
+const RECORD_ITEM_ID = 'record';
+
 type ChartGroupByFieldSelectionTargetObjectFieldsViewProps = {
   targetObjectNameSingular?: string;
   headerLabel: string;
   currentSubFieldName: string | undefined;
+  isCurrentGroupByField: boolean;
   onBack: () => void;
   onSelectSubField: (subFieldName: string) => void;
+  onSelectRecord: () => void;
 };
 
 export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
   targetObjectNameSingular,
   headerLabel,
   currentSubFieldName,
+  isCurrentGroupByField,
   onBack,
   onSelectSubField,
+  onSelectRecord,
 }: ChartGroupByFieldSelectionTargetObjectFieldsViewProps) => {
   const { getIcon } = useIcons();
 
@@ -130,15 +136,34 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {availableFields.length === 0 ? (
-          <MenuItem text={t`No fields available`} />
-        ) : (
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            focusId={dropdownId}
-            selectableItemIdArray={availableFields.map((field) => field.id)}
-          >
-            {availableFields.map((fieldMetadataItem) => (
+        <SelectableList
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
+          selectableItemIdArray={[
+            ...(searchQuery === '' ? [RECORD_ITEM_ID] : []),
+            ...availableFields.map((field) => field.id),
+          ]}
+        >
+          {searchQuery === '' && (
+            <SelectableListItem
+              itemId={RECORD_ITEM_ID}
+              onEnter={onSelectRecord}
+            >
+              <MenuItemSelect
+                text={t`Record`}
+                selected={
+                  isCurrentGroupByField && !isDefined(currentSubFieldName)
+                }
+                focused={selectedItemId === RECORD_ITEM_ID}
+                LeftIcon={getIcon(targetObjectMetadataItem?.icon)}
+                onClick={onSelectRecord}
+              />
+            </SelectableListItem>
+          )}
+          {availableFields.length === 0 && searchQuery !== '' ? (
+            <MenuItem text={t`No fields available`} />
+          ) : (
+            availableFields.map((fieldMetadataItem) => (
               <SelectableListItem
                 key={fieldMetadataItem.id}
                 itemId={fieldMetadataItem.id}
@@ -160,9 +185,9 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   }}
                 />
               </SelectableListItem>
-            ))}
-          </SelectableList>
-        )}
+            ))
+          )}
+        </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );
