@@ -6,7 +6,7 @@ import {
   APPLICATION_OPPORTUNITY_FIELD_ID,
   APPLICATION_PITCH_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
-} from 'src/objects/application.object';
+} from 'src/modules/application/objects/application.object';
 
 export const MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER =
   'cba45e02-b3a7-420f-ace5-5e2773076080';

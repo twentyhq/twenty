@@ -9,7 +9,7 @@ import {
   APPLICATIONS_AS_PARTNER_USER_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_PARTNER_USER_FIELD_ID,
-} from 'src/objects/application.object';
+} from 'src/modules/application/objects/application.object';
 
 export default defineField({
   universalIdentifier: APPLICATIONS_AS_PARTNER_USER_FIELD_ID,

@@ -1,6 +1,6 @@
 import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
 
-import { MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/my-applications.view';
+import { MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/my-applications.view';
 
 import { PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/directory/navigation-menu-items/partner-workspace-folder.navigation-menu-item';
 

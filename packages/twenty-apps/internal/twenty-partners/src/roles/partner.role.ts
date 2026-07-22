@@ -20,7 +20,7 @@ import {
   APPLICATION_PARTNER_USER_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
   APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
-} from 'src/objects/application.object';
+} from 'src/modules/application/objects/application.object';
 import {
   PARTNER_CONTENT_APPROVAL_DATE_FIELD_ID,
   PARTNER_CONTENT_DOCUMENTS_FIELD_ID,

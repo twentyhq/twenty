@@ -1,6 +1,6 @@
 import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
 
-import { APPLICATIONS_REVIEW_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/applications-review.view';
+import { APPLICATIONS_REVIEW_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/applications-review.view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: 'fcf7e5e8-9ec2-4f08-898a-39e51a2787d0',

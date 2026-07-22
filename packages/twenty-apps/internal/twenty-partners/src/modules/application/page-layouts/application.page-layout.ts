@@ -1,7 +1,7 @@
 import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
 
-import { APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/application.object';
-import { APPLICATION_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/views/application-record-page-fields.view';
+import { APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/application/objects/application.object';
+import { APPLICATION_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/application/views/application-record-page-fields.view';
 
 // Application is a custom (app-owned) object, so we fully control its record page (unlike the
 // standard Opportunity). The Fields widget points at the FIELDS_WIDGET view so the opportunity +

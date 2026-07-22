@@ -4,7 +4,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { OPPORTUNITY_RECORD_PAGE_APPLICATIONS_VIEW_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.object';
+import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/application/objects/application.object';
 
 const OPPORTUNITY_RECORD_PAGE_FIELDS =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.views.opportunityRecordPageFields;

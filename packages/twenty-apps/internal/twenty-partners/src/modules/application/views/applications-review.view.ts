@@ -8,7 +8,7 @@ import {
   APPLICATION_PARTNER_FIELD_ID,
   APPLICATION_PITCH_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
-} from 'src/objects/application.object';
+} from 'src/modules/application/objects/application.object';
 
 export const APPLICATIONS_REVIEW_VIEW_UNIVERSAL_IDENTIFIER =
   'cc652ba3-23e8-4e0e-a616-c9fa50b702a0';

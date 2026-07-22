@@ -8,7 +8,7 @@ import {
   APPLICATION_PARTNER_FIELD_ID,
   APPLICATION_PITCH_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
-} from 'src/objects/application.object';
+} from 'src/modules/application/objects/application.object';
 
 export const FOLLOWUP_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER =
   'c815e9f5-511b-467f-85b0-08ef341ff856';

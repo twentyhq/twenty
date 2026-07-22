@@ -8,7 +8,7 @@ import {
 import { OPPORTUNITY_STAGE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/modules/opportunity/constants/opportunity-stage-options';
 import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-is-listed.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/partner-on-opportunity.field';
-import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/application.object';
+import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/application/objects/application.object';
 
 export const DEALS_BOARD_VIEW_UNIVERSAL_IDENTIFIER =
   '39c3ffbc-e91a-46b9-a9c6-4d186d5b3dcf';
