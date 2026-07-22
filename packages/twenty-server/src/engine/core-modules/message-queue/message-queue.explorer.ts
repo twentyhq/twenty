@@ -21,8 +21,8 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { parseQueueListFromEnv } from 'src/engine/core-modules/message-queue/utils/parse-queue-list-from-env.util';
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -43,6 +43,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly metadataAccessor: MessageQueueMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit() {
@@ -62,21 +63,25 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     const groupedProcessors = this.groupProcessorsByQueueName(processors);
 
-    const enabledQueues = parseQueueListFromEnv(
-      process.env.WORKER_ENABLED_QUEUES,
-    );
-    const excludedQueues = parseQueueListFromEnv(
-      process.env.WORKER_EXCLUDED_QUEUES,
+    const enabledQueues = this.twentyConfigService.get('WORKER_ENABLED_QUEUES');
+    const excludedQueues = this.twentyConfigService.get(
+      'WORKER_EXCLUDED_QUEUES',
     );
 
     this.warnAboutUnknownQueueNames([...enabledQueues, ...excludedQueues]);
 
-    for (const [queueName, processorGroupCollection] of Object.entries(
-      groupedProcessors,
-    )) {
+    const groupedProcessorEntries = Object.entries(groupedProcessors) as [
+      MessageQueue,
+      ProcessorGroup[],
+    ][];
+
+    for (const [
+      queueName,
+      processorGroupCollection,
+    ] of groupedProcessorEntries) {
       if (
         !shouldCreateWorkerForQueue({
-          queueName: queueName as MessageQueue,
+          queueName,
           enabledQueues,
           excludedQueues,
         })
@@ -93,7 +98,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
+        QUEUE_WORKER_OPTIONS[queueName],
       );
     }
   }

@@ -40,6 +40,19 @@ describe('shouldCreateWorkerForQueue', () => {
     ).toBe(false);
   });
 
+  it('should create a worker when the queue passes the allowlist and is not in the denylist', () => {
+    expect(
+      shouldCreateWorkerForQueue({
+        queueName: MessageQueue.workspaceQueue,
+        enabledQueues: [
+          MessageQueue.workspaceQueue,
+          MessageQueue.workflowQueue,
+        ],
+        excludedQueues: [MessageQueue.aiQueue],
+      }),
+    ).toBe(true);
+  });
+
   it('should apply the excluded list after the enabled list', () => {
     expect(
       shouldCreateWorkerForQueue({
