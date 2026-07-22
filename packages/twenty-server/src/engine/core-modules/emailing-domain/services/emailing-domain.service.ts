@@ -21,6 +21,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+type UpdateSenderIdentityArgs = {
+  workspaceId: string;
+  emailingDomainId: string;
+  senderDisplayName?: string;
+};
+
 @Injectable()
 export class EmailingDomainService {
   private readonly logger = new Logger(EmailingDomainService.name);
@@ -125,6 +131,29 @@ export class EmailingDomainService {
     await this.emailingDomainRepository.delete(workspaceId, {
       id: emailingDomain.id,
     });
+  }
+
+  async updateSenderIdentity({
+    workspaceId,
+    emailingDomainId,
+    senderDisplayName,
+  }: UpdateSenderIdentityArgs): Promise<EmailingDomainEntity> {
+    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
+      workspaceId,
+      emailingDomainId,
+    );
+
+    await this.emailingDomainRepository.update(
+      workspaceId,
+      { id: emailingDomain.id },
+      {
+        ...(isDefined(senderDisplayName)
+          ? { senderDisplayName: senderDisplayName.trim() || null }
+          : {}),
+      },
+    );
+
+    return this.findEmailingDomainByIdOrThrow(workspaceId, emailingDomainId);
   }
 
   async deleteEmailingDomain(

@@ -16,6 +16,7 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { buildFromHeader } from 'src/engine/core-modules/emailing-domain/utils/build-from-header.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
@@ -57,6 +58,10 @@ export class EmailingDomainSenderService {
 
     const emailToSend: EmailingDomainSendEmailRequest = {
       ...emailContent,
+      from: buildFromHeader(
+        emailContent.from,
+        emailingDomain.senderDisplayName,
+      ),
       workspaceId,
       domain: emailingDomain.domain,
       emailingDomain,

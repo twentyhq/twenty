@@ -30,4 +30,7 @@ export class EmailingDomainDTO {
 
   @Field(() => Date, { nullable: true })
   verifiedAt: Date | null;
+
+  @Field(() => String, { nullable: true })
+  senderDisplayName: string | null;
 }
