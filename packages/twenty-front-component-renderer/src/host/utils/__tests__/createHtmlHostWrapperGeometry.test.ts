@@ -9,23 +9,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
+import { createStubGeometryTracker } from './createStubGeometryTracker';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
-
-const createStubTracker = () =>
-  ({
-    registerNode: jest.fn(),
-    unregisterNode: jest.fn(),
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    measure: jest.fn(),
-    setRoot: jest.fn(),
-    setPushGeometryUpdates: jest.fn(),
-    getViewportGeometry: jest.fn(),
-    reset: jest.fn(),
-  }) as unknown as GeometryTracker;
 
 const createWrapperElement = (
   Wrapper: ComponentType<never>,
@@ -41,7 +29,7 @@ describe('createHtmlHostWrapper geometry registration', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
-    geometryTracker = createStubTracker();
+    geometryTracker = createStubGeometryTracker();
   });
 
   afterEach(() => {

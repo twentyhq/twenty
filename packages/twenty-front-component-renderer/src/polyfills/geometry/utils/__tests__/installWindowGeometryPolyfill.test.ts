@@ -1,20 +1,15 @@
+import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 import { installWindowGeometryPolyfill } from '../installWindowGeometryPolyfill';
 
-const createViewport = (): ViewportGeometrySnapshot => ({
-  innerWidth: 1024,
-  innerHeight: 768,
-  devicePixelRatio: 2,
-  scrollX: 30,
-  scrollY: 40,
-  rootContainerX: 0,
-  rootContainerY: 0,
-  rootContainerWidth: 0,
-  rootContainerHeight: 0,
-  rootContainerClientWidth: 0,
-  rootContainerClientHeight: 0,
-  defaultFontShorthand: '400 13px sans-serif',
-});
+const createViewport = (): ViewportGeometrySnapshot =>
+  createViewportGeometrySnapshotFixture({
+    innerWidth: 1024,
+    innerHeight: 768,
+    devicePixelRatio: 2,
+    scrollX: 30,
+    scrollY: 40,
+  });
 
 const createGeometryStore = (
   getViewportSnapshot: () => ViewportGeometrySnapshot | null,

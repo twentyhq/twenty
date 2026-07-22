@@ -1,33 +1,10 @@
+import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
 import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
-import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 
 class FakeElement {
   textContent: string | null = null;
 }
-
-const createSnapshot = (
-  overrides: Partial<ElementGeometrySnapshot> = {},
-): ElementGeometrySnapshot => ({
-  x: 1,
-  y: 2,
-  width: 3,
-  height: 4,
-  offsetWidth: 5,
-  offsetHeight: 6,
-  offsetTop: 7,
-  offsetLeft: 8,
-  clientWidth: 9,
-  clientHeight: 10,
-  clientTop: 11,
-  clientLeft: 12,
-  scrollWidth: 13,
-  scrollHeight: 14,
-  scrollTop: 15,
-  scrollLeft: 16,
-  offsetParentRemoteElementId: null,
-  ...overrides,
-});
 
 const createGeometryStore = (
   overrides: Partial<{
@@ -82,7 +59,7 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot(),
+          snapshot: createElementGeometrySnapshotFixture(),
         }),
       }),
     );
@@ -101,7 +78,7 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot(),
+          snapshot: createElementGeometrySnapshotFixture(),
         }),
       }),
     );
@@ -148,7 +125,7 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot(),
+          snapshot: createElementGeometrySnapshotFixture(),
         }),
       }),
     );
@@ -164,7 +141,7 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot(),
+          snapshot: createElementGeometrySnapshotFixture(),
         }),
       }),
     );
@@ -214,7 +191,7 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot(),
+          snapshot: createElementGeometrySnapshotFixture(),
         }),
       }),
     );
@@ -248,7 +225,9 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot({ offsetParentRemoteElementId: '9' }),
+          snapshot: createElementGeometrySnapshotFixture({
+            offsetParentRemoteElementId: '9',
+          }),
         }),
         resolveElementByRemoteElementId: (remoteElementId) =>
           remoteElementId === '9' ? mirroredParent : null,
@@ -265,7 +244,9 @@ describe('installElementGeometryPolyfill', () => {
       createGeometryStore({
         resolveMirroredElementState: () => ({
           isMirrored: true,
-          snapshot: createSnapshot({ offsetParentRemoteElementId: '9' }),
+          snapshot: createElementGeometrySnapshotFixture({
+            offsetParentRemoteElementId: '9',
+          }),
         }),
       }),
     );

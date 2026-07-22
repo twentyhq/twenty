@@ -1,3 +1,5 @@
+import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { createWorkerGeometryStore } from '../createWorkerGeometryStore';
 
@@ -20,40 +22,11 @@ jest.mock('@remote-dom/core/elements', () => ({
   },
 }));
 
-const createSnapshot = (width: number) => ({
-  x: 0,
-  y: 0,
-  width,
-  height: 0,
-  offsetWidth: 0,
-  offsetHeight: 0,
-  offsetTop: 0,
-  offsetLeft: 0,
-  clientWidth: 0,
-  clientHeight: 0,
-  clientTop: 0,
-  clientLeft: 0,
-  scrollWidth: 0,
-  scrollHeight: 0,
-  scrollTop: 0,
-  scrollLeft: 0,
-  offsetParentRemoteElementId: null,
-});
+const createSnapshot = (width: number) =>
+  createElementGeometrySnapshotFixture({ width });
 
-const createViewport = (innerWidth: number) => ({
-  innerWidth,
-  innerHeight: 0,
-  devicePixelRatio: 1,
-  scrollX: 0,
-  scrollY: 0,
-  rootContainerX: 0,
-  rootContainerY: 0,
-  rootContainerWidth: 0,
-  rootContainerHeight: 0,
-  rootContainerClientWidth: 0,
-  rootContainerClientHeight: 0,
-  defaultFontShorthand: '400 13px sans-serif',
-});
+const createViewport = (innerWidth: number) =>
+  createViewportGeometrySnapshotFixture({ innerWidth });
 
 const flushMicrotasks = () => Promise.resolve();
 

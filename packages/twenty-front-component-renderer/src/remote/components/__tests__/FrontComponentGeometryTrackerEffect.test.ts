@@ -3,26 +3,13 @@ import '../../../host/utils/__tests__/setupServerRenderingGlobals';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { type GeometryTracker } from '@/host/types/GeometryTracker';
+import { createStubGeometryTracker } from '../../../host/utils/__tests__/createStubGeometryTracker';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentGeometryTrackerEffect } from '../FrontComponentGeometryTrackerEffect';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
-
-const createStubTracker = () =>
-  ({
-    registerNode: jest.fn(),
-    unregisterNode: jest.fn(),
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    measure: jest.fn(),
-    setRoot: jest.fn(),
-    setPushGeometryUpdates: jest.fn(),
-    getViewportGeometry: jest.fn(),
-    reset: jest.fn(),
-  }) as unknown as GeometryTracker;
 
 const createStubThread = () =>
   ({
@@ -44,7 +31,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should arm the tracker on mount', () => {
-    const geometryTracker = createStubTracker();
+    const geometryTracker = createStubGeometryTracker();
     const thread = createStubThread();
 
     act(() => {
@@ -60,7 +47,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should forward a pushed batch to the worker thread', () => {
-    const geometryTracker = createStubTracker();
+    const geometryTracker = createStubGeometryTracker();
     const thread = createStubThread();
 
     act(() => {
@@ -84,7 +71,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should reset the tracker on unmount', () => {
-    const geometryTracker = createStubTracker();
+    const geometryTracker = createStubGeometryTracker();
 
     act(() => {
       root.render(
@@ -103,7 +90,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should re-arm when the thread identity changes', () => {
-    const geometryTracker = createStubTracker();
+    const geometryTracker = createStubGeometryTracker();
 
     act(() => {
       root.render(
