@@ -41,7 +41,17 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
     context: WebhookSubscriptionContext,
   ): Promise<WebhookSubscriptionResult> {
     if (context.channelType === WebhookSubscriptionChannelType.CALENDAR) {
-      await this.deleteSubscription(context);
+      // Google Calendar watches can't be extended, only replaced by a fresh channel.
+      // Recreate before stopping the old watch so a failed recreate never leaves the account with no live watch.
+      const result = await this.createSubscription(
+        context.connectedAccountId,
+        context.channelType,
+        context.clientState,
+      );
+
+      await this.deleteSubscription(context).catch(() => undefined);
+
+      return result;
     }
 
     return this.createSubscription(

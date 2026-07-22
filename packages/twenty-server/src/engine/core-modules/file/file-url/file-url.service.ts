@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -29,6 +30,26 @@ export class FileUrlService {
       fileId: workspace.logoFileId,
       workspaceId: workspace.id,
       fileFolder: FileFolder.CorePicture,
+    });
+  }
+
+  async signFirstFilesFieldFileUrl({
+    filesFieldValue,
+    workspaceId,
+  }: {
+    filesFieldValue: FileOutput[] | null | undefined;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const firstFileId = filesFieldValue?.[0]?.fileId;
+
+    if (!isDefined(firstFileId)) {
+      return null;
+    }
+
+    return this.signFileByIdUrl({
+      fileId: firstFileId,
+      workspaceId,
+      fileFolder: FileFolder.FilesField,
     });
   }
 

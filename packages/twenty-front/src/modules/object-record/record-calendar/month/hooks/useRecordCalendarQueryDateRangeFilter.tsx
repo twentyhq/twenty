@@ -1,6 +1,9 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
+import { getRecordCalendarDateRangeOverlapFilter } from '@/object-record/record-calendar/month/utils/getRecordCalendarDateRangeOverlapFilter';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -10,7 +13,6 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import {
@@ -20,6 +22,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
 const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
@@ -33,8 +36,6 @@ export const useRecordCalendarQueryDateRangeFilter = (
     useRecordCalendarMonthDaysRange(selectedDate);
 
   const { userTimezone } = useUserTimezone();
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
@@ -51,16 +52,22 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
+  // Read per calendar instance (hydrated from the draft view in widget
+  // edit mode, from the persisted view elsewhere) instead of the current
+  // view store: a widget's pending view only exists after dashboard save.
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
+  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
     viewBarInstanceId,
   );
 
-  if (
-    !isDefined(currentView) ||
-    !isDefined(currentView.calendarFieldMetadataId)
-  ) {
+  if (!isDefined(recordIndexCalendarFieldMetadataId)) {
     return {
       dateRangeFilter: {},
     };
@@ -78,7 +85,32 @@ export const useRecordCalendarQueryDateRangeFilter = (
       userTimezone,
     );
 
-  const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
+  const dateRangeFilterFieldMetadataId = recordIndexCalendarFieldMetadataId;
+
+  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.id === recordIndexCalendarFieldMetadataId,
+  );
+
+  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.id === recordIndexCalendarEndFieldMetadataId,
+  );
+
+  const dateRangeOverlapFilter = isDefined(calendarFieldMetadataItem)
+    ? getRecordCalendarDateRangeOverlapFilter({
+        calendarField: calendarFieldMetadataItem,
+        calendarEndField: calendarEndFieldMetadataItem,
+        firstDayOfRange:
+          calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
+            ? firstDayOfFirstWeekISOString
+            : firstDayOfFirstWeek.toString(),
+        nextDayAfterLastDayOfRange:
+          calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
+            ? nextDayAfterLastDayOfLastWeekISOString
+            : lastDayOfLastWeek.add({ days: 1 }).toString(),
+      })
+    : undefined;
 
   const dateRangeFilterAfter: RecordFilter = {
     id: DATE_RANGE_FILTER_AFTER_ID,
@@ -100,11 +132,9 @@ export const useRecordCalendarQueryDateRangeFilter = (
     displayValue: `${lastDayOfLastWeek.toString()}`,
   };
 
-  const calendarRecordFilters = [
-    ...currentRecordFilters,
-    dateRangeFilterAfter,
-    dateRangeFilterBefore,
-  ];
+  const calendarRecordFilters = isDefined(dateRangeOverlapFilter)
+    ? currentRecordFilters
+    : [...currentRecordFilters, dateRangeFilterAfter, dateRangeFilterBefore];
 
   const dateRangeFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
@@ -119,7 +149,11 @@ export const useRecordCalendarQueryDateRangeFilter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const combinedFilter = combineFilters([dateRangeFilter, anyFieldFilter]);
+  const combinedFilter = combineFilters([
+    dateRangeFilter,
+    dateRangeOverlapFilter ?? {},
+    anyFieldFilter,
+  ]);
 
   return {
     dateRangeFilter: combinedFilter,

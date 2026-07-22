@@ -98,11 +98,12 @@ CHART FILTERS (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART):
 6. STANDALONE_RICH_TEXT: { type: "STANDALONE_RICH_TEXT", configuration: { configurationType: "STANDALONE_RICH_TEXT", body: { ... } } }
 
 7. RECORD_TABLE: displays a live, filterable record list directly on the dashboard.
-   - IMPORTANT: you MUST create a dedicated view for the widget BEFORE creating the widget. Use create_view to create a new TABLE view for the object, then pass its ID as viewId. Never reuse an existing index-page view — widget views and record index views must not overlap.
+   - IMPORTANT: you MUST create a dedicated view for the widget BEFORE creating the widget. Use create_view to create a new TABLE_WIDGET view for the object, then pass its ID as viewId. Never reuse an existing index-page view and never use plain TABLE/KANBAN/CALENDAR types for widget-backing views — non-widget view types leak into record index view pickers.
    - Requires: objectMetadataId (top-level, UUID of the object to display) AND configuration.viewId (UUID of the dedicated view you just created)
    - configuration.configurationType must be "RECORD_TABLE"
    - Recommended size: rowSpan 8-10, columnSpan 12 (full width)
-   - Workflow: (1) call create_view with type TABLE for the object → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
+   - Workflow: (1) call create_view with the appropriate *_WIDGET type (TABLE_WIDGET for a table, KANBAN_WIDGET for a board, CALENDAR_WIDGET for a calendar — kanban requires mainGroupByFieldName, calendar requires calendarFieldName) → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
+   - The widget renders according to its view type: TABLE_WIDGET renders a table, KANBAN_WIDGET a board (requires mainGroupByFieldName pointing at a SELECT or many-to-one relation field), CALENDAR_WIDGET a calendar (requires a date calendar field)
    - Example: { type: "RECORD_TABLE", objectMetadataId: "<object-uuid>", configuration: { configurationType: "RECORD_TABLE", viewId: "<dedicated-view-uuid>" } }
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,

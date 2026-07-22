@@ -953,8 +953,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:2.20.0"
-    twenty-sdk: "npm:2.20.0"
+    twenty-client-sdk: "npm:2.23.0-alpha.1"
+    twenty-sdk: "npm:2.23.0-alpha.1"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -2833,22 +2833,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.20.0":
-  version: 2.20.0
-  resolution: "twenty-client-sdk@npm:2.20.0"
+"twenty-client-sdk@npm:2.23.0-alpha.1":
+  version: 2.23.0-alpha.1
+  resolution: "twenty-client-sdk@npm:2.23.0-alpha.1"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/925a5ad99bbccb7290365536b6d7ded6a8d02a064b175a195b6439732db6848a0a3aaa762f5c30ad0b79f48921a6cbd203fe442a0b9f93d1d902812c0d83aa17
+  checksum: 10c0/b55c1e4eee7cdf24d68b9318924f428ad2d26a96052b5ed7d2a6da21a88bb216326fb979e8f7e99765e6495b9f98c0334ed6fb0452beb49a135f88bfb09c70cc
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.20.0":
-  version: 2.20.0
-  resolution: "twenty-sdk@npm:2.20.0"
+"twenty-sdk@npm:2.23.0-alpha.1":
+  version: 2.23.0-alpha.1
+  resolution: "twenty-sdk@npm:2.23.0-alpha.1"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -2867,12 +2867,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.34.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.20.0"
+    twenty-client-sdk: "npm:2.23.0-alpha.1"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/7fe50f229470e370473e7555f0eb284b59424cb51369ce0fa88723681bd6a662879268f953599b0e3c5fc97b73f1e756352df80605185ed6b4e9c85fa186feef
+  checksum: 10c0/c11830007c6bbf3bc0447c9e7ba2df9d3d3eac9593cb9b0236757e92fbf94cb9f24eecc150b663e435e65dc0bee48baf1833ff2d06333e84845c8b47464bcdce
   languageName: node
   linkType: hard
 

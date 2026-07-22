@@ -8,17 +8,21 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
 
 type CallRecordingNode = {
   id: string;
   title?: string | null;
   status?: string | null;
   recordingRequestStatus?: unknown;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
 };
@@ -46,10 +50,14 @@ export const findCallRecordingsByFilter = async (
               title: true,
               status: true,
               recordingRequestStatus: true,
+              createdAt: true,
+              updatedAt: true,
               startedAt: true,
               endedAt: true,
               calendarEventId: true,
               externalBotId: true,
+              botScheduleAttemptedAt: true,
+              botScheduleIdempotencyKey: true,
               externalRecordingId: true,
               callRecorderFailureReason: true,
             },
@@ -70,10 +78,18 @@ export const findCallRecordingsByFilter = async (
     recordingRequestStatus: normalizeCallRecordingRequestStatus(
       callRecording.recordingRequestStatus,
     ),
+    createdAt: callRecording.createdAt ?? undefined,
+    updatedAt: callRecording.updatedAt ?? undefined,
     startedAt: callRecording.startedAt ?? undefined,
     endedAt: callRecording.endedAt ?? undefined,
     calendarEventId: callRecording.calendarEventId ?? undefined,
     externalBotId: normalizeOptionalString(callRecording.externalBotId),
+    botScheduleAttemptedAt: normalizeOptionalString(
+      callRecording.botScheduleAttemptedAt,
+    ),
+    botScheduleIdempotencyKey: normalizeOptionalString(
+      callRecording.botScheduleIdempotencyKey,
+    ),
     externalRecordingId: normalizeOptionalString(
       callRecording.externalRecordingId,
     ),
@@ -82,10 +98,6 @@ export const findCallRecordingsByFilter = async (
     ),
   }));
 };
-
-const normalizeOptionalString = (
-  value: string | null | undefined,
-): string | undefined => (isNonEmptyString(value) ? value : undefined);
 
 const normalizeCallRecordingRequestStatus = (
   recordingRequestStatus: unknown,

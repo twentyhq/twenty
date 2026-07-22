@@ -3,6 +3,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -30,6 +31,8 @@ export const PaymentSuccess = () => {
     fetchPolicy: 'network-only',
   });
   const setCurrentUser = useSetAtomState(currentUserState);
+  const showWelcomeAnimationAfterOnboardingCheckout =
+    useShowWelcomeAnimationAfterOnboardingCheckout();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
@@ -45,6 +48,7 @@ export const PaymentSuccess = () => {
       }
 
       if (isDefined(subscriptionStatus)) {
+        showWelcomeAnimationAfterOnboardingCheckout();
         return;
       }
 
@@ -60,6 +64,7 @@ export const PaymentSuccess = () => {
 
       if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
         setCurrentUser(currentUser);
+        showWelcomeAnimationAfterOnboardingCheckout();
         return;
       }
 

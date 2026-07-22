@@ -42,14 +42,14 @@ export default defineView({
 
 | Property | Values | Description |
 |----------|--------|-------------|
-| `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET` / `TABLE_WIDGET` also exist but are used internally by page-layout widgets.) |
+| `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
 | `openRecordIn` | `ViewOpenRecordIn.SIDE_PANEL` (default), `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
 | `isCompact` | `boolean` | Compact row display. |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*` | Kanban column aggregates and sizing. |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views: layout and the date field that positions records. |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views: layout, the date field that positions records, and an optional end date field. |
 
 All enums above are exported from `twenty-sdk/define`.
 

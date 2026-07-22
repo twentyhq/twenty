@@ -1,9 +1,13 @@
 import React, { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
+import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
+import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
-import { filterProps } from '@/host/utils/filterProps';
+import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
+import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
+import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const VOID_ELEMENTS = new Set([
@@ -31,49 +35,48 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
-    const reactProps = filterProps(props, htmlTag);
 
-    const forcedProps: Record<string, unknown> | undefined = isIframe
-      ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
-      : isForm
-        ? {
-            // The remote component's onSubmit is forwarded asynchronously across
-            // the remote-dom boundary, so its preventDefault lands too late to
-            // stop a native form submission (which navigates and closes the
-            // page). Guard synchronously on the host while still forwarding the
-            // event to the remote handler. (React 19 also blocks the previous
-            // `action="javascript:void(0)"` guard.)
-            onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-              event.preventDefault();
-              const remoteOnSubmit = reactProps.onSubmit;
-              // The remote prop is untrusted across the remote-dom boundary, so
-              // it may not be a function — guard before invoking.
-              if (typeof remoteOnSubmit === 'function') {
-                (
-                  remoteOnSubmit as (
-                    event: React.FormEvent<HTMLFormElement>,
-                  ) => void
-                )(event);
-              }
-            },
-          }
-        : undefined;
+    const { reactUnsupportedEventHandlers, reactBindableProps } =
+      extractReactUnsupportedEventHandlers(
+        buildHostReactPropsFromRemoteProps(props, htmlTag),
+      );
+
+    const reactUnsupportedEventListenerRef =
+      useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
+
+    const hostEnforcedProps: Record<string, unknown> = {
+      ...createDropTargetGuardProps(reactBindableProps),
+      ...(isIframe && {
+        sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
+      }),
+      // React 19 blocks the previous `action="javascript:void(0)"` guard.
+      ...(isForm && {
+        onSubmit: preventDefaultThenForwardToRemote(
+          reactBindableProps.onSubmit,
+        ),
+      }),
+    };
 
     if (
       htmlTag === 'textarea' ||
-      (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
+      (htmlTag === 'input' && isTextLikeInputType(reactBindableProps.type))
     ) {
-      return createCaretPreservingElement(
+      return createCaretPreservingElement({
         htmlTag,
-        reactProps,
-        forcedProps,
+        reactBindableProps,
+        hostEnforcedProps,
         setEditableFocused,
-      );
+        reactUnsupportedEventListenerRef,
+      });
     }
 
     return React.createElement(
       htmlTag,
-      { ...reactProps, ...forcedProps },
+      {
+        ...reactBindableProps,
+        ...hostEnforcedProps,
+        ref: reactUnsupportedEventListenerRef,
+      },
       isVoid ? undefined : children,
     );
   };

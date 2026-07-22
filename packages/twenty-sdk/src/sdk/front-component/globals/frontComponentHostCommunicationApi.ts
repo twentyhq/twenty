@@ -18,6 +18,7 @@ export type OpenSidePanelPageParams =
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
+      tab?: string;
       resetNavigationStack?: boolean;
     }
   | {

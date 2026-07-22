@@ -1,18 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildAuthorizationHeadersFromAccessToken } from '@/remote/worker/utils/buildAuthorizationHeadersFromAccessToken';
-import { containsSdkClientImportSpecifier } from '@/remote/worker/utils/containsSdkClientImportSpecifier';
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
-import { fetchComponentSource } from '@/remote/worker/utils/fetchComponentSource';
-import { fetchSdkClientModulesAsBlobUrls } from '@/remote/worker/utils/fetchSdkClientModulesAsBlobUrls';
+import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkClientModuleBlobUrls';
 import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
 import { rewriteSdkClientImportsToBlobUrls } from '@/remote/worker/utils/rewriteSdkClientImportsToBlobUrls';
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 
 type LoadFrontComponentModuleInput = {
-  componentUrl: string;
-  sdkClientUrls?: SdkClientUrls;
-  applicationAccessToken?: string;
+  componentSource: string;
+  sdkClientSources?: SdkClientSources;
 };
 
 type FrontComponentModule = {
@@ -20,27 +16,12 @@ type FrontComponentModule = {
 };
 
 export const loadFrontComponentModule = async ({
-  componentUrl,
-  sdkClientUrls,
-  applicationAccessToken,
+  componentSource,
+  sdkClientSources,
 }: LoadFrontComponentModuleInput): Promise<FrontComponentModule> => {
-  const authorizationHeaders = buildAuthorizationHeadersFromAccessToken(
-    applicationAccessToken,
-  );
-
-  const componentSource = await fetchComponentSource({
-    url: componentUrl,
-    headers: authorizationHeaders,
-  });
-
-  const sdkModuleBlobUrls =
-    isDefined(sdkClientUrls) &&
-    containsSdkClientImportSpecifier(componentSource)
-      ? await fetchSdkClientModulesAsBlobUrls(
-          sdkClientUrls,
-          authorizationHeaders,
-        )
-      : null;
+  const sdkModuleBlobUrls = isDefined(sdkClientSources)
+    ? createSdkClientModuleBlobUrls(sdkClientSources)
+    : null;
 
   const componentModuleSource = isDefined(sdkModuleBlobUrls)
     ? rewriteSdkClientImportsToBlobUrls(componentSource, sdkModuleBlobUrls)

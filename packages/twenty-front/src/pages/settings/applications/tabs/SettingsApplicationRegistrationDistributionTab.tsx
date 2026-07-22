@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { CommandBlock } from 'twenty-ui/data-display';
+import { CommandBlock, Tag } from 'twenty-ui/data-display';
 import { IconCopy } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
@@ -13,8 +13,10 @@ import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/setting
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,
+  fromAdmin,
 }: {
   registration: ApplicationRegistrationData;
+  fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -34,6 +36,15 @@ export const SettingsApplicationRegistrationDistributionTab = ({
 
   return (
     <>
+      {isNpmSource && fromAdmin !== true && (
+        <Section>
+          <H2Title
+            title={t`Ownership`}
+            description={t`This application's registration is claimed by your workspace`}
+          />
+          <Tag text={t`Claimed by this workspace`} color="green" />
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Public`}

@@ -206,6 +206,24 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  coreWorkflowVersionId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'coreWorkflowVersionId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(msg`Core workflow version id`),
+      description: i18nLabel(msg`Reference to the core workflowVersion row`),
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   status: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -346,6 +364,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      isSystemSideEffect: true,
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
           .label,

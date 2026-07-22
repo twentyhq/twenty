@@ -1,5 +1,6 @@
 import {
   isDefined,
+  isImageIdentifierFieldMetadataType,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -63,6 +64,52 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       );
     }
 
+    const requestedImageIdentifierFieldMetadataId =
+      rawUpdateObjectInput.update.imageIdentifierFieldMetadataId;
+
+    if (isDefined(requestedImageIdentifierFieldMetadataId)) {
+      const imageIdentifierFlatFieldMetadata =
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityId: requestedImageIdentifierFieldMetadataId,
+        });
+
+      if (!isDefined(imageIdentifierFlatFieldMetadata)) {
+        throw new ObjectMetadataException(
+          'Field declared as image identifier not found',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
+        imageIdentifierFlatFieldMetadata.objectMetadataId !==
+        existingFlatObjectMetadata.id
+      ) {
+        throw new ObjectMetadataException(
+          'Field declared as image identifier does not belong to this object',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
+        !isImageIdentifierFieldMetadataType(
+          imageIdentifierFlatFieldMetadata.type,
+        )
+      ) {
+        throw new ObjectMetadataException(
+          'Field cannot be used as image identifier due to its type: should be of type Files or Links',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (!imageIdentifierFlatFieldMetadata.isActive) {
+        throw new ObjectMetadataException(
+          'Field cannot be used as image identifier because it is deactivated',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+    }
+
     const isStandardObject = belongsToTwentyStandardApp(
       existingFlatObjectMetadata,
     );
@@ -95,6 +142,19 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
 
       toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier =
         flatFieldMetadata?.universalIdentifier;
+    }
+
+    if ('imageIdentifierFieldMetadataId' in updatedEditableObjectProperties) {
+      const { imageIdentifierFieldMetadataId } =
+        updatedEditableObjectProperties;
+
+      toFlatObjectMetadata.imageIdentifierFieldMetadataUniversalIdentifier =
+        isDefined(imageIdentifierFieldMetadataId)
+          ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityMaps: flatFieldMetadataMaps,
+              flatEntityId: imageIdentifierFieldMetadataId,
+            }).universalIdentifier
+          : null;
     }
 
     const {

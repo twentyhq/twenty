@@ -4,80 +4,34 @@ import { IconBrandLinkedin } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
 
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
-  color,
-  EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
   radius,
-  REDUCED_MOTION,
   semanticColor,
-  SHADOW,
   spacing,
 } from '@/tokens';
 import { Button, ExternalLink } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
+import { CardFrame, type PartnerCardIndexStyle } from './MarketplaceCardFrame';
 import { type MarketplacePartner } from './marketplace-partner';
 import { PartnerAvatar } from './PartnerAvatar';
 import { PartnerChipRow } from './PartnerChipRow';
 import { PartnerMoneyRow } from './PartnerMoneyRow';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
+import { richTextExcerpt } from './rich-text-excerpt';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';
 import { titleCaseFallback } from './title-case-fallback';
 
-type PartnerCardStyle = CSSProperties & {
-  '--partner-card-index': number;
-};
-
-const CardArticle = styled.article`
-  @keyframes partnerCardEnter {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 18px, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  animation: partnerCardEnter 700ms ${EASING.standard} both;
-  animation-delay: calc(var(--partner-card-index) * 90ms + 180ms);
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  display: flex;
-  flex-direction: column;
+const CardArticle = styled(CardFrame)`
   gap: ${spacing(5)};
-  isolation: isolate;
   padding: ${spacing(6)};
-  position: relative;
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
   will-change: transform;
-
-  &:hover {
-    border-color: ${semanticColor.lineStrong};
-    box-shadow: ${SHADOW.card};
-    transform: translateY(-2px);
-  }
-
-  ${REDUCED_MOTION} {
-    animation: none;
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
 `;
 
 const CardHeader = styled.div`
@@ -207,7 +161,7 @@ type PartnerCardProps = {
 export function PartnerCard({ partner, index }: PartnerCardProps) {
   const { i18n } = useLingui();
   const headingId = `partner-card-heading-${partner.slug}`;
-  const style: PartnerCardStyle = { '--partner-card-index': index };
+  const style: PartnerCardIndexStyle = { '--partner-card-index': index };
   // Unprefixed; LocalizedLink (the name link) and the Button add the locale.
   const profileHref = `/partners/profile/${partner.slug}`;
 
@@ -218,7 +172,12 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
     .filter(Boolean)
     .join(', ');
 
-  const linkedinSafe = isSafeHttpUrl(partner.linkedinUrl);
+  const linkedinHref =
+    partner.links.linkedin !== null && isSafeHttpUrl(partner.links.linkedin)
+      ? partner.links.linkedin
+      : null;
+
+  const descriptionExcerpt = richTextExcerpt(partner.description);
 
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
@@ -233,20 +192,22 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
             <PartnerName id={headingId}>
               <NameLink href={profileHref}>{partner.name}</NameLink>
             </PartnerName>
-            {linkedinSafe && (
+            {linkedinHref !== null && (
               <LinkedinIconLink
-                href={partner.linkedinUrl}
+                href={linkedinHref}
                 aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
               >
                 <IconBrandLinkedin size={16} aria-hidden="true" />
               </LinkedinIconLink>
             )}
           </NameRow>
-          <LocationEyebrow>{locationLine}</LocationEyebrow>
+          {locationLine.length > 0 && (
+            <LocationEyebrow>{locationLine}</LocationEyebrow>
+          )}
         </HeaderText>
       </CardHeader>
 
-      <Introduction>{partner.introduction}</Introduction>
+      <Introduction>{descriptionExcerpt}</Introduction>
 
       <Divider aria-hidden="true" />
 
