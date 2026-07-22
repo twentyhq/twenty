@@ -1,9 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
+import { isFieldSupportedAsChartGroupBySubField } from '@/side-panel/pages/page-layout/utils/isFieldSupportedAsChartGroupBySubField';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -70,7 +69,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
 
     return filterBySearchQuery({
       items: targetObjectMetadataItem.fields.filter(
-        (field) => !isHiddenSystemField(field) && !isFieldRelation(field),
+        isFieldSupportedAsChartGroupBySubField,
       ),
       searchQuery,
       getSearchableValues: (field) => [field.label, field.name],
