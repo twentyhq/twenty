@@ -37,6 +37,6 @@ describe('WelcomeOverlay', () => {
 
     expect(screen.getByText('Welcome')).toBeInTheDocument();
     expect(screen.getByText('workspace')).toBeInTheDocument();
-    expect(screen.getByText('Marie Curie')).toBeInTheDocument();
+    expect(screen.getAllByText('Marie Curie').length).toBeGreaterThan(0);
   });
 });

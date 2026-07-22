@@ -156,6 +156,70 @@ const StyledTitleSurface = styled.div`
   }
 `;
 
+const StyledTitleBoldRun = styled.span`
+  align-items: center;
+  display: inline-flex;
+  gap: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
+
+  .is-flying & {
+    animation: welcomeTitleBoldRunOut 0.38s ease 0.12s forwards;
+  }
+
+  @keyframes welcomeTitleBoldRunOut {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .is-flying & {
+      animation: none;
+    }
+  }
+`;
+
+// Exact 2x clone of the handoff target run: regular weight, doubled gap and a
+// 2x-scaled chip, so the 0.5 flight scale lands it pixel-identical to the
+// target. Crossfaded with the bold run mid-flight to morph the font weight.
+const StyledTitleRegularRun = styled.span`
+  align-items: center;
+  display: inline-flex;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: calc(${themeCssVariables.spacing[2]} * 2);
+  left: ${themeCssVariables.spacing[8]};
+  line-height: 1.4em;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+
+  .is-flying & {
+    animation: welcomeTitleRegularRunIn 0.38s ease 0.12s forwards;
+  }
+
+  @keyframes welcomeTitleRegularRunIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .is-flying & {
+      animation: none;
+    }
+  }
+`;
+
+const StyledTargetScaleChip = styled.span`
+  display: inline-flex;
+  font-size: 0.5em;
+  line-height: 1.4em;
+  transform: scale(2);
+  transform-origin: left center;
+`;
+
 const StyledWord = styled.span`
   animation: welcomeWordIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(1.1s + var(--word-index) * 0.07s);
@@ -234,21 +298,29 @@ export const WelcomeOverlay = () => {
         style={titleStyle}
       >
         <StyledTitleSurface />
-        {WELCOME_TITLE_WORDS.map((word, index) => (
+        <StyledTitleBoldRun>
+          {WELCOME_TITLE_WORDS.map((word, index) => (
+            <StyledWord
+              key={word}
+              style={{ '--word-index': index } as CSSProperties}
+            >
+              {word}
+            </StyledWord>
+          ))}
           <StyledWord
-            key={word}
-            style={{ '--word-index': index } as CSSProperties}
+            style={
+              { '--word-index': WELCOME_TITLE_WORDS.length } as CSSProperties
+            }
           >
-            {word}
+            <WelcomePersonChip />
           </StyledWord>
-        ))}
-        <StyledWord
-          style={
-            { '--word-index': WELCOME_TITLE_WORDS.length } as CSSProperties
-          }
-        >
-          <WelcomePersonChip />
-        </StyledWord>
+        </StyledTitleBoldRun>
+        <StyledTitleRegularRun aria-hidden>
+          {WELCOME_TITLE_WORDS.join(' ')}
+          <StyledTargetScaleChip>
+            <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
+          </StyledTargetScaleChip>
+        </StyledTitleRegularRun>
       </StyledTitle>
     </StyledOverlay>,
     document.body,
