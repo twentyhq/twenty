@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
 import { installDocumentGetElementById } from '@/polyfills/dom/installDocumentGetElementById';
+import { installGetComputedStyle } from '@/polyfills/dom/installGetComputedStyle';
+import { installGetElementsByClassName } from '@/polyfills/dom/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/installLocalStyleOnBaseElements';
 import { workerGeometryStore } from '@/polyfills/geometry/constants/workerGeometryStore';
 import { createOffscreenCanvasTextMeasurer } from '@/polyfills/geometry/utils/createOffscreenCanvasTextMeasurer';
@@ -32,7 +34,12 @@ patchRemoteElementAttributes();
 installErrorEventBridge();
 
 installDocumentGetElementById(document);
+installGetElementsByClassName(Element.prototype);
 installLocalStyleOnBaseElements(Element.prototype);
+
+installGetComputedStyle({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+});
 
 installElementGeometryPolyfill({
   elementPrototype: Element.prototype,

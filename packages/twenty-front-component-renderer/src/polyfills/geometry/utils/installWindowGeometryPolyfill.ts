@@ -25,7 +25,14 @@ export const installWindowGeometryPolyfill = ({
   }
 
   const defineViewportGetter = (
-    propertyName: 'innerWidth' | 'innerHeight' | 'devicePixelRatio',
+    propertyName:
+      | 'innerWidth'
+      | 'innerHeight'
+      | 'devicePixelRatio'
+      | 'scrollX'
+      | 'scrollY'
+      | 'pageXOffset'
+      | 'pageYOffset',
     readFromViewport: (viewport: ViewportGeometrySnapshot) => number,
     fallbackValue: number,
   ): void => {
@@ -50,4 +57,8 @@ export const installWindowGeometryPolyfill = ({
     (viewport) => viewport.devicePixelRatio,
     1,
   );
+  defineViewportGetter('scrollX', (viewport) => viewport.scrollX, 0);
+  defineViewportGetter('scrollY', (viewport) => viewport.scrollY, 0);
+  defineViewportGetter('pageXOffset', (viewport) => viewport.scrollX, 0);
+  defineViewportGetter('pageYOffset', (viewport) => viewport.scrollY, 0);
 };
