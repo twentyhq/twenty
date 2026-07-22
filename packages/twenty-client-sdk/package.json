@@ -1,6 +1,6 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.23.0-alpha.2",
+  "version": "2.23.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
