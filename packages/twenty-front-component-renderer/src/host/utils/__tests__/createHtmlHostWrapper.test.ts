@@ -135,6 +135,29 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'fixed' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'fixed-typed';
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'text',
+          value: 'fixed',
+          className: 'rerendered',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('fixed');
+  });
+
   it('should clear the host input when a controlled value becomes empty', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
