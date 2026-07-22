@@ -250,6 +250,10 @@ export class WorkspaceEntity {
   @Column({ default: 1 })
   metadataVersion: number;
 
+  @Field(() => Number, { nullable: true })
+  @Column({ type: 'int', nullable: true, default: null })
+  messageCampaignDailySendLimit: number | null;
+
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true, default: null })
   databaseSchema: string | null;

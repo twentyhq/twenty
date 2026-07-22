@@ -870,6 +870,7 @@ type Workspace {
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
   metadataVersion: Float!
+  messageCampaignDailySendLimit: Float
   databaseSchema: String
   subdomain: String!
   customDomain: String
@@ -2587,6 +2588,12 @@ type CampaignAudiencePreviewDTO {
   sendable: Int!
 }
 
+type CampaignSendQuota {
+  dailyLimit: Int
+  used: Int!
+  remaining: Int
+}
+
 type SendEmailViaDomainOutput {
   messageId: String!
 }
@@ -3186,6 +3193,7 @@ type Query {
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
   getRoles: [Role!]!
+  campaignSendQuota: CampaignSendQuota!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!

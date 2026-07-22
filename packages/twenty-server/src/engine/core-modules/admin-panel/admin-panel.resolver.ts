@@ -32,6 +32,7 @@ import { SigningKeysAdminPanelDTO } from 'src/engine/core-modules/admin-panel/dt
 import { SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateServerAdminAccessInput } from 'src/engine/core-modules/admin-panel/dtos/update-server-admin-access.input';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
+import { UpdateWorkspaceMessageCampaignDailySendLimitInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-message-campaign-daily-send-limit.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
@@ -214,6 +215,19 @@ export class AdminPanelResolver {
       canImpersonate: input.canImpersonate,
       otp: input.otp,
     });
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async updateWorkspaceMessageCampaignDailySendLimit(
+    @Args() input: UpdateWorkspaceMessageCampaignDailySendLimitInput,
+  ): Promise<boolean> {
+    await this.workspaceRepository.update(
+      { id: input.workspaceId },
+      { messageCampaignDailySendLimit: input.dailySendLimit ?? null },
+    );
+
+    return true;
   }
 
   @UseGuards(AdminPanelGuard)

@@ -20,6 +20,10 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import {
+  EmailGroupAccessException,
+  EmailGroupAccessExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception';
+import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
@@ -47,6 +51,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
@@ -125,6 +130,7 @@ export class MessageCampaignService {
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
+    private readonly campaignSendQuotaService: CampaignSendQuotaService,
     private readonly emailBillingService: EmailBillingService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
@@ -154,6 +160,8 @@ export class MessageCampaignService {
     userWorkspaceId,
     campaignId,
   }: SendCampaignArgs): Promise<SendCampaignResult> {
+    const quota = await this.campaignSendQuotaService.getQuota(workspaceId);
+
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
@@ -193,6 +201,13 @@ export class MessageCampaignService {
             rawRecipients,
             MAX_CAMPAIGN_RECIPIENTS,
           );
+
+          if (normalized.recipients.length > quota.remaining) {
+            throw new EmailGroupAccessException(
+              `Campaign of ${normalized.recipients.length} recipients exceeds the remaining daily quota of ${quota.remaining}`,
+              EmailGroupAccessExceptionCode.CAMPAIGN_SEND_QUOTA_EXCEEDED,
+            );
+          }
 
           const campaignRepository = await this.getUserRepository(
             workspaceId,

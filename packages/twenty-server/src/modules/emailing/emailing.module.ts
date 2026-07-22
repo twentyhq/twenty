@@ -15,12 +15,14 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
+import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
@@ -40,6 +42,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
       EmailingDomainEntity,
       MessageSuppressionEntity,
       UnsubscribeTopicEntity,
+      WorkspaceEntity,
     ]),
   ],
   controllers: [UnsubscribeController],
@@ -47,6 +50,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
     EmailBillingService,
     MessageCampaignService,
     MessageCampaignStatisticsService,
+    CampaignSendQuotaService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
@@ -61,6 +65,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
     EmailingDomainSenderService,
     MessageCampaignService,
     MessageCampaignStatisticsService,
+    CampaignSendQuotaService,
     MessageSuppressionService,
     UnsubscribeTopicService,
   ],

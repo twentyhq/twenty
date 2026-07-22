@@ -6,6 +6,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
+import { CampaignSendQuotaDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-send-quota.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
@@ -27,6 +28,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
 @UseGuards(
@@ -44,6 +46,7 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly campaignSendQuotaService: CampaignSendQuotaService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
     private readonly emailBillingService: EmailBillingService,
   ) {}
@@ -114,6 +117,25 @@ export class EmailingSendResolver {
     });
 
     return { messageId: result.messageId };
+  }
+
+  @Query(() => CampaignSendQuotaDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async campaignSendQuota(
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): Promise<CampaignSendQuotaDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    const { dailyLimit, used, remaining } =
+      await this.campaignSendQuotaService.getQuota(currentWorkspace.id);
+
+    const isUnlimited = !Number.isFinite(dailyLimit);
+
+    return {
+      dailyLimit: isUnlimited ? null : dailyLimit,
+      used,
+      remaining: isUnlimited ? null : remaining,
+    };
   }
 
   @Query(() => CampaignAudiencePreviewDTO)

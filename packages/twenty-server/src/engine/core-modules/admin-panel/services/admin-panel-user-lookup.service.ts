@@ -125,6 +125,8 @@ export class AdminPanelUserLookupService {
                 (flag) => flag.key === key,
               )?.value ?? false,
           })),
+          messageCampaignDailySendLimit:
+            userWorkspace.workspace.messageCampaignDailySendLimit,
         };
       }),
     );
@@ -203,6 +205,7 @@ export class AdminPanelUserLookupService {
         key,
         value: featureFlags.find((flag) => flag.key === key)?.value ?? false,
       })),
+      messageCampaignDailySendLimit: workspace.messageCampaignDailySendLimit,
     };
 
     const firstUser = workspaceUsers.find((wu) => isDefined(wu.user))?.user;

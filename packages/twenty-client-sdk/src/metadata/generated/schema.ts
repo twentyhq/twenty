@@ -612,6 +612,7 @@ export interface Workspace {
     viewGroups?: ViewGroup[]
     viewSorts?: ViewSort[]
     metadataVersion: Scalars['Float']
+    messageCampaignDailySendLimit?: Scalars['Float']
     databaseSchema?: Scalars['String']
     subdomain: Scalars['String']
     customDomain?: Scalars['String']
@@ -2257,6 +2258,13 @@ export interface CampaignAudiencePreviewDTO {
     __typename: 'CampaignAudiencePreviewDTO'
 }
 
+export interface CampaignSendQuota {
+    dailyLimit?: Scalars['Int']
+    used: Scalars['Int']
+    remaining?: Scalars['Int']
+    __typename: 'CampaignSendQuota'
+}
+
 export interface SendEmailViaDomainOutput {
     messageId: Scalars['String']
     __typename: 'SendEmailViaDomainOutput'
@@ -2816,6 +2824,7 @@ export interface Query {
     getViewGroups: ViewGroup[]
     getViewGroup?: ViewGroup
     getRoles: Role[]
+    campaignSendQuota: CampaignSendQuota
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
@@ -3732,6 +3741,7 @@ export interface WorkspaceGenqlSelection{
     viewGroups?: ViewGroupGenqlSelection
     viewSorts?: ViewSortGenqlSelection
     metadataVersion?: boolean | number
+    messageCampaignDailySendLimit?: boolean | number
     databaseSchema?: boolean | number
     subdomain?: boolean | number
     customDomain?: boolean | number
@@ -5469,6 +5479,14 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CampaignSendQuotaGenqlSelection{
+    dailyLimit?: boolean | number
+    used?: boolean | number
+    remaining?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SendEmailViaDomainOutputGenqlSelection{
     messageId?: boolean | number
     __typename?: boolean | number
@@ -6069,6 +6087,7 @@ export interface QueryGenqlSelection{
     getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
     getRoles?: RoleGenqlSelection
+    campaignSendQuota?: CampaignSendQuotaGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
@@ -8445,6 +8464,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
       return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CampaignSendQuota_possibleTypes: string[] = ['CampaignSendQuota']
+    export const isCampaignSendQuota = (obj?: { __typename?: any } | null): obj is CampaignSendQuota => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignSendQuota"')
+      return CampaignSendQuota_possibleTypes.includes(obj.__typename)
     }
     
 

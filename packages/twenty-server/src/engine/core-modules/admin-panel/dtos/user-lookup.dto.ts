@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -58,6 +58,9 @@ class WorkspaceInfoDTO {
 
   @Field(() => [FeatureFlagDTO])
   featureFlags: FeatureFlagDTO[];
+
+  @Field(() => Int, { nullable: true })
+  messageCampaignDailySendLimit: number | null;
 }
 
 @ObjectType('UserLookup')

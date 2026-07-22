@@ -10,6 +10,7 @@ import {
 
 export const EmailGroupAccessExceptionCode = appendCommonExceptionCode({
   EMAIL_GROUP_ENTERPRISE_PLAN_REQUIRED: 'EMAIL_GROUP_ENTERPRISE_PLAN_REQUIRED',
+  CAMPAIGN_SEND_QUOTA_EXCEEDED: 'CAMPAIGN_SEND_QUOTA_EXCEEDED',
 } as const);
 
 const emailGroupAccessExceptionUserFriendlyMessages: Record<
@@ -17,6 +18,7 @@ const emailGroupAccessExceptionUserFriendlyMessages: Record<
   MessageDescriptor
 > = {
   EMAIL_GROUP_ENTERPRISE_PLAN_REQUIRED: msg`Email group requires an Enterprise plan.`,
+  CAMPAIGN_SEND_QUOTA_EXCEEDED: msg`This campaign is over your daily sending limit. Contact support to raise it.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

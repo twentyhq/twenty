@@ -13,6 +13,7 @@ import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeat
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
+import { SettingsAdminWorkspaceSendLimit } from '@/settings/admin-panel/components/SettingsAdminWorkspaceSendLimit';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
@@ -324,6 +325,16 @@ export const SettingsAdminWorkspaceDetail = () => {
             </Table>
           </Section>
         )}
+
+        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
+          workspace && (
+            <SettingsAdminWorkspaceSendLimit
+              workspaceId={workspace.id}
+              messageCampaignDailySendLimit={
+                workspace.messageCampaignDailySendLimit
+              }
+            />
+          )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
           workspace && (
