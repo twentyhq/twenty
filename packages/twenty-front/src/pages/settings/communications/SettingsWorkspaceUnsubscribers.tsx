@@ -1,5 +1,4 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -8,19 +7,16 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  DeleteMessageSuppressionDocument,
   MessageSuppressionReason,
   MessageSuppressionsDocument,
   type MessageSuppressionsQuery,
 } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
-import { IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -47,34 +43,18 @@ const StyledPaginationRow = styled.div`
 
 export const SettingsWorkspaceUnsubscribers = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const [offset, setOffset] = useState(0);
 
   const isEmailGroupEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
 
-  const { data, loading, refetch } = useQuery(MessageSuppressionsDocument, {
+  const { data, loading } = useQuery(MessageSuppressionsDocument, {
     variables: {
       input: { limit: MESSAGE_SUPPRESSIONS_PAGE_SIZE, offset },
     },
     skip: !isEmailGroupEnabled,
   });
-
-  const [deleteMessageSuppression] = useMutation(
-    DeleteMessageSuppressionDocument,
-  );
-
-  const handleRemove = async (id: string) => {
-    try {
-      await deleteMessageSuppression({ variables: { id } });
-      await refetch();
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
-    }
-  };
 
   if (!isEmailGroupEnabled) {
     return null;
@@ -134,21 +114,8 @@ export const SettingsWorkspaceUnsubscribers = () => {
                   <>{formatToHumanReadableDate(item.createdAt)}</>
                 ),
               },
-              {
-                label: '',
-                align: 'right',
-                Cell: ({ item }) =>
-                  item.reason === MessageSuppressionReason.BOUNCE ? (
-                    <IconButton
-                      onClick={() => handleRemove(item.id)}
-                      variant="tertiary"
-                      size="small"
-                      Icon={IconX}
-                    />
-                  ) : null,
-              },
             ]}
-            gridAutoColumns="1fr 140px 160px 40px"
+            gridAutoColumns="1fr 140px 160px"
           />
         )}
         {totalCount > MESSAGE_SUPPRESSIONS_PAGE_SIZE && (
