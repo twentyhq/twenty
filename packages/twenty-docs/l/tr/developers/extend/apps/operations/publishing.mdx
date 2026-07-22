@@ -170,6 +170,17 @@ Bir sürüm etiketi (örn. `v1.0.0`) gönderdiğinizde veya Actions sekmesinden 
 
 npmjs.com’da paketinizin sayfasını açın > **Settings → Trusted Publisher** bölümüne gidin ve bu depoyu `publish.yml` iş akışıyla kaydedin ([npm trusted publishing belgelerine](https://docs.npmjs.com/trusted-publishers) bakın). Provenance ile yayımlama, paketi hangi GitHub deposunun oluşturduğunu doğrular; ayrıca Twenty pazaryerinde uygulamanızın sahipliğini bu şekilde talep edersiniz.
 
+<Note>
+npm yalnızca **herkese açık** kaynak depolarından gelen provenansı kabul eder. Özel bir depodan yayınlarsanız, npm OIDC provenans paketini `E422 ... Desteklenmeyen GitHub Actions kaynak deposu görünürlüğü: "private"` hatası. Özel bir depodan yayınlamak için, yayın adımının `env` bölümünde `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` ayarını yaparak provenansı devre dışı bırakın (hazırlanmış `publish.yml` içinde yorum satırı olarak eklenmiş bir ipucu bulunur):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Yeniden kullanılabilir eylemleri sabitleme
 
 `ci.yml` ve `cd.yml` iş akışları, `@main` üzerindeki yeniden kullanılabilir eylemlere başvurur; bu nedenle `twentyhq/twenty` deposundaki eylem güncellemeleri otomatik olarak alınır. Deterministik derlemeler istiyorsanız, her `uses:` satırında `@main` ifadesini bir commit SHA'sı veya sürüm etiketiyle değiştirin.
