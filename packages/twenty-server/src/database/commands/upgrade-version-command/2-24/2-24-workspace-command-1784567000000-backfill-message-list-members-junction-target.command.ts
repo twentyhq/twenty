@@ -22,9 +22,9 @@ const MEMBERS_FIELD_UNIVERSAL_IDENTIFIER =
 const PERSON_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.messageListMember.fields.person.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.23.0', 1784567000000)
+@RegisteredWorkspaceCommand('2.24.0', 1784567000000)
 @Command({
-  name: 'upgrade:2-23:backfill-message-list-members-junction-target',
+  name: 'upgrade:2-24:backfill-message-list-members-junction-target',
   description:
     'Backfill the junction target field id on messageList.members for workspaces provisioned before it was declared, so the record page renders the members junction picker.',
 })
