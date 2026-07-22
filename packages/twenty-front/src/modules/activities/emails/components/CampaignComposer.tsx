@@ -13,7 +13,11 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  margin: 0 auto;
+  max-width: 640px;
   overflow-y: auto;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
+  width: 100%;
 `;
 
 const StyledFooter = styled.div`

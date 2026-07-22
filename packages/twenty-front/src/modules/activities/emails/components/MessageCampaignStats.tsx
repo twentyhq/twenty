@@ -17,7 +17,10 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+  margin: 0 auto;
+  max-width: 640px;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
+  width: 100%;
 `;
 
 const StyledMetrics = styled.div`
