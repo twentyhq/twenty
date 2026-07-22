@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { createLocalStyleDeclaration } from '@/polyfills/dom/utils/createLocalStyleDeclaration';
+import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 
 export const installLocalStyleOnBaseElements = (
   elementPrototype: object,
@@ -15,7 +15,7 @@ export const installLocalStyleOnBaseElements = (
         return existingDeclaration;
       }
 
-      const declaration = createLocalStyleDeclaration();
+      const declaration = createStyleProxy();
       localStyleDeclarations.set(this, declaration);
 
       return declaration;

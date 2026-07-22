@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { createLocalStyleDeclaration } from '@/polyfills/dom/utils/createLocalStyleDeclaration';
+import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 
 type ElementWithStyle = {
   style?: unknown;
@@ -21,7 +21,7 @@ export const installGetComputedStyle = ({
 
     return isDefined(declaredStyle)
       ? declaredStyle
-      : createLocalStyleDeclaration();
+      : createStyleProxy();
   };
 
   const installTargets: Record<string, unknown>[] = [globalScope];
