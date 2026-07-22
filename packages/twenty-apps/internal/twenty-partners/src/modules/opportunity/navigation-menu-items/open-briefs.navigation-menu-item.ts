@@ -2,7 +2,7 @@ import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/def
 
 import { OPEN_BRIEFS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/opportunity/views/open-briefs.view';
 
-import { PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/directory/navigation-menu-items/partner-workspace-folder.navigation-menu-item';
+import { PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/shared/navigation-menu-items/partner-workspace-folder.navigation-menu-item';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '1392ad4d-3792-4187-a1c5-ee05815dcfde',
