@@ -46,6 +46,28 @@ export class MessageSuppressionService {
     private readonly unsubscribeTopicService: UnsubscribeTopicService,
   ) {}
 
+  async findSuppressions({
+    workspaceId,
+    reason,
+    limit,
+    offset,
+  }: FindSuppressionsArgs): Promise<{
+    records: MessageSuppressionEntity[];
+    totalCount: number;
+  }> {
+    const [records, totalCount] = await this.suppressionRepository.findAndCount(
+      workspaceId,
+      {
+        where: isDefined(reason) ? { reason } : {},
+        order: { createdAt: 'DESC' },
+        take: limit,
+        skip: offset,
+      },
+    );
+
+    return { records, totalCount };
+  }
+
   async getSuppressedAddresses(
     workspaceId: string,
     emailAddresses: string[],

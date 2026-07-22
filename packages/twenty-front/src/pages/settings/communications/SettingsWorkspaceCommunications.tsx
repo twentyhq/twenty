@@ -14,6 +14,7 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandWhatsapp,
+  IconForbid,
   IconMail,
   IconMailX,
   IconPhone,
@@ -24,7 +25,8 @@ import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
 
@@ -34,10 +36,18 @@ const StyledCardLink = styled.a`
   text-decoration: none;
 `;
 
+const StyledCardsColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsWorkspaceCommunications = () => {
   const { theme } = useContext(ThemeContext);
 
   const { t } = useLingui();
+
+  const navigateSettings = useNavigateSettings();
 
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
@@ -105,21 +115,33 @@ export const SettingsWorkspaceCommunications = () => {
             title={t`Unsubscribe`}
             description={t`The page your users will get redirected to to unsubscribe from your emails`}
           />
-          <StyledCardLink
-            href={unsubscribePageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <StyledCardsColumn>
+            <StyledCardLink
+              href={unsubscribePageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SettingsCard
+                Icon={
+                  <IconMailX
+                    size={theme.icon.size.lg}
+                    stroke={theme.icon.stroke.md}
+                  />
+                }
+                title={t`See unsubscribe page`}
+              />
+            </StyledCardLink>
             <SettingsCard
               Icon={
-                <IconMailX
+                <IconForbid
                   size={theme.icon.size.lg}
                   stroke={theme.icon.stroke.md}
                 />
               }
-              title={t`See unsubscribe page`}
+              title={t`Unsubscribers`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribers)}
             />
-          </StyledCardLink>
+          </StyledCardsColumn>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

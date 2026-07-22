@@ -39,6 +39,11 @@ export class MessageChannelDTO {
   @Field()
   handle: string;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  displayName: string | null;
+
   @IsEnum(MessageChannelType)
   @IsNotEmpty()
   @Field(() => MessageChannelType)

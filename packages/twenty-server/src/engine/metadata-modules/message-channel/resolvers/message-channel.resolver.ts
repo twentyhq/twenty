@@ -174,6 +174,7 @@ export class MessageChannelResolver {
   ): Promise<CreateEmailGroupChannelOutput> {
     return this.messageChannelMetadataService.createEmailGroupChannel({
       handle: input.handle,
+      displayName: input.displayName,
       userWorkspaceId,
       workspaceId: workspace.id,
     });

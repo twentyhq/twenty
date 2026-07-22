@@ -214,6 +214,14 @@ const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceUnsubscribers = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceUnsubscribers').then(
+    (module) => ({
+      default: module.SettingsWorkspaceUnsubscribers,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -723,6 +731,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.UnsubscribeTopicDetail}
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
+        />
+        <Route
+          path={SettingsPath.Unsubscribers}
+          element={<SettingsWorkspaceUnsubscribers />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route
