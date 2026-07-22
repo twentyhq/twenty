@@ -22,6 +22,9 @@ import {
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
+import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
+import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
@@ -40,6 +43,7 @@ export class PieChartDataService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
+    private readonly chartRelationLabelService: ChartRelationLabelService,
   ) {}
 
   async getPieChartData({
@@ -134,6 +138,19 @@ export class PieChartDataService {
         splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
+      const relationLabelResolutions =
+        await this.chartRelationLabelService.resolveRelationLabels({
+          rawResults,
+          primaryAxis: {
+            groupByField,
+            subFieldName: configuration.groupBySubFieldName,
+          },
+          workspaceId,
+          authContext,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
+
       return this.transformToPieChartData({
         rawResults,
         groupByField,
@@ -142,6 +159,7 @@ export class PieChartDataService {
         firstDayOfTheWeek:
           (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
           CalendarStartDay.MONDAY,
+        relationLabelResolution: relationLabelResolutions.primary,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Pie chart data retrieval failed');
@@ -154,6 +172,7 @@ export class PieChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    relationLabelResolution,
   }: {
     rawResults: Array<{
       groupByDimensionValues: unknown[];
@@ -163,6 +182,7 @@ export class PieChartDataService {
     configuration: PieChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    relationLabelResolution: RelationLabelResolution | undefined;
   }): PieChartDataDTO {
     const filteredResults = configuration.hideEmptyCategory
       ? rawResults.filter(
@@ -180,21 +200,17 @@ export class PieChartDataService {
         FirstDayOfTheWeek.SUNDAY,
       );
 
-    const limitedResults = filteredResults.slice(
-      0,
-      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-    );
-
     const {
       processedDataPoints: rawProcessedDataPoints,
       formattedToRawLookup,
     } = processOneDimensionalResults({
-      rawResults: limitedResults,
+      rawResults: filteredResults,
       primaryAxisGroupByField: groupByField,
       dateGranularity: configuration.dateGranularity,
       subFieldName: configuration.groupBySubFieldName,
       userTimezone,
       firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      relationLabelResolution,
     });
 
     const processedDataPoints = rawProcessedDataPoints.map((point) => {
@@ -221,7 +237,14 @@ export class PieChartDataService {
       dateGranularity: configuration.dateGranularity,
     });
 
-    const data = sortedData.map(({ rawValue: _rawValue, ...item }) => item);
+    const limitedSortedData = sortedData.slice(
+      0,
+      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+    );
+
+    const data = limitedSortedData.map(
+      ({ rawValue: _rawValue, ...item }) => item,
+    );
 
     return {
       data,
@@ -230,7 +253,9 @@ export class PieChartDataService {
       showCenterMetric: configuration.showCenterMetric ?? true,
       hasTooManyGroups:
         filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
+      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
+        relationLabelResolution?.unresolvedRecordIds,
+      ]),
     };
   }
 }

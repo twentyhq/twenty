@@ -7,6 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
 
 describe('PieChartDataService', () => {
@@ -105,6 +106,12 @@ describe('PieChartDataService', () => {
           provide: ChartDataQueryService,
           useValue: {
             executeGroupByQuery: mockExecuteGroupByQuery,
+          },
+        },
+        {
+          provide: ChartRelationLabelService,
+          useValue: {
+            resolveRelationLabels: jest.fn().mockResolvedValue({}),
           },
         },
       ],

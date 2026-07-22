@@ -24,10 +24,13 @@ import {
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
+import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -50,6 +53,7 @@ export class LineChartDataService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
+    private readonly chartRelationLabelService: ChartRelationLabelService,
   ) {}
 
   async getLineChartData({
@@ -174,6 +178,26 @@ export class LineChartDataService {
         configuration,
       );
 
+      const relationLabelResolutions =
+        await this.chartRelationLabelService.resolveRelationLabels({
+          rawResults,
+          primaryAxis: {
+            groupByField: primaryAxisGroupByField,
+            subFieldName: configuration.primaryAxisGroupBySubFieldName,
+          },
+          secondaryAxis:
+            isTwoDimensional && isDefined(secondaryAxisGroupByField)
+              ? {
+                  groupByField: secondaryAxisGroupByField,
+                  subFieldName: configuration.secondaryAxisGroupBySubFieldName,
+                }
+              : undefined,
+          workspaceId,
+          authContext,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalLineChartData({
           rawResults,
@@ -184,6 +208,8 @@ export class LineChartDataService {
           userTimezone,
           firstDayOfTheWeek,
           seriesIdPrefix,
+          primaryRelationLabelResolution: relationLabelResolutions.primary,
+          secondaryRelationLabelResolution: relationLabelResolutions.secondary,
         });
       }
 
@@ -195,6 +221,7 @@ export class LineChartDataService {
         userTimezone,
         firstDayOfTheWeek,
         seriesIdPrefix,
+        relationLabelResolution: relationLabelResolutions.primary,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Line chart data retrieval failed');
@@ -209,6 +236,7 @@ export class LineChartDataService {
     userTimezone,
     firstDayOfTheWeek,
     seriesIdPrefix,
+    relationLabelResolution,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -217,6 +245,7 @@ export class LineChartDataService {
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
     seriesIdPrefix: string;
+    relationLabelResolution: RelationLabelResolution | undefined;
   }): LineChartDataDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -258,6 +287,7 @@ export class LineChartDataService {
       subFieldName: configuration.primaryAxisGroupBySubFieldName,
       userTimezone,
       firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      relationLabelResolution,
     });
 
     const processedDataPoints = rawProcessedDataPoints.map((point) => ({
@@ -313,7 +343,9 @@ export class LineChartDataService {
       hasTooManyGroups:
         filteredResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
         dateRangeWasTruncated,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
+      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
+        relationLabelResolution?.unresolvedRecordIds,
+      ]),
     };
   }
 
@@ -326,6 +358,8 @@ export class LineChartDataService {
     userTimezone,
     firstDayOfTheWeek,
     seriesIdPrefix,
+    primaryRelationLabelResolution,
+    secondaryRelationLabelResolution,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -335,6 +369,8 @@ export class LineChartDataService {
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
     seriesIdPrefix: string;
+    primaryRelationLabelResolution: RelationLabelResolution | undefined;
+    secondaryRelationLabelResolution: RelationLabelResolution | undefined;
   }): LineChartDataDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
@@ -384,6 +420,8 @@ export class LineChartDataService {
       secondarySubFieldName: configuration.secondaryAxisGroupBySubFieldName,
       userTimezone,
       firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      primaryRelationLabelResolution,
+      secondaryRelationLabelResolution,
     });
 
     const allXValues: string[] = [];
@@ -496,8 +534,8 @@ export class LineChartDataService {
       hasTooManySeries || hasTooManyDataPoints || dateRangeWasTruncated;
 
     const mergedLookup = new Map([
-      ...formattedToRawLookup,
       ...secondaryFormattedToRawLookup,
+      ...formattedToRawLookup,
     ]);
 
     for (const seriesId of limitedSeriesIds) {
@@ -515,7 +553,10 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups,
-      formattedToRawLookup: Object.fromEntries(mergedLookup),
+      formattedToRawLookup: buildFormattedToRawLookupDto(mergedLookup, [
+        primaryRelationLabelResolution?.unresolvedRecordIds,
+        secondaryRelationLabelResolution?.unresolvedRecordIds,
+      ]),
     };
   }
 

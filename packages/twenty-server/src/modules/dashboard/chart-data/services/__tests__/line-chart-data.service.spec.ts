@@ -7,6 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-data-points.constant';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 
 describe('LineChartDataService', () => {
@@ -111,6 +112,12 @@ describe('LineChartDataService', () => {
           provide: ChartDataQueryService,
           useValue: {
             executeGroupByQuery: mockExecuteGroupByQuery,
+          },
+        },
+        {
+          provide: ChartRelationLabelService,
+          useValue: {
+            resolveRelationLabels: jest.fn().mockResolvedValue({}),
           },
         },
       ],

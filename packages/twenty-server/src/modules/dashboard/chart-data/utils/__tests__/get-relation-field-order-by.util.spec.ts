@@ -26,7 +26,7 @@ describe('getRelationFieldOrderBy', () => {
   });
 
   describe('without subFieldName', () => {
-    it('should return Id suffix for relation field', () => {
+    it('should order by the nested id for relation field', () => {
       const result = getRelationFieldOrderBy(
         relationFieldMetadata,
         null,
@@ -34,11 +34,13 @@ describe('getRelationFieldOrderBy', () => {
       );
 
       expect(result).toEqual({
-        companyId: OrderByDirection.AscNullsLast,
+        company: {
+          id: OrderByDirection.AscNullsLast,
+        },
       });
     });
 
-    it('should return Id suffix for undefined subFieldName', () => {
+    it('should order by the nested id for undefined subFieldName', () => {
       const result = getRelationFieldOrderBy(
         relationFieldMetadata,
         undefined,
@@ -46,7 +48,9 @@ describe('getRelationFieldOrderBy', () => {
       );
 
       expect(result).toEqual({
-        companyId: OrderByDirection.DescNullsLast,
+        company: {
+          id: OrderByDirection.DescNullsLast,
+        },
       });
     });
   });

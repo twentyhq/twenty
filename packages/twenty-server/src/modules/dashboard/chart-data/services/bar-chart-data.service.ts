@@ -26,10 +26,13 @@ import {
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
+import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -51,6 +54,7 @@ export class BarChartDataService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
+    private readonly chartRelationLabelService: ChartRelationLabelService,
   ) {}
 
   async getBarChartData({
@@ -168,6 +172,26 @@ export class BarChartDataService {
         splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
+      const relationLabelResolutions =
+        await this.chartRelationLabelService.resolveRelationLabels({
+          rawResults,
+          primaryAxis: {
+            groupByField: primaryAxisGroupByField,
+            subFieldName: configuration.primaryAxisGroupBySubFieldName,
+          },
+          secondaryAxis:
+            isTwoDimensional && isDefined(secondaryAxisGroupByField)
+              ? {
+                  groupByField: secondaryAxisGroupByField,
+                  subFieldName: configuration.secondaryAxisGroupBySubFieldName,
+                }
+              : undefined,
+          workspaceId,
+          authContext,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalBarChartData({
           rawResults,
@@ -177,6 +201,8 @@ export class BarChartDataService {
           configuration,
           userTimezone,
           firstDayOfTheWeek,
+          primaryRelationLabelResolution: relationLabelResolutions.primary,
+          secondaryRelationLabelResolution: relationLabelResolutions.secondary,
         });
       }
 
@@ -187,6 +213,7 @@ export class BarChartDataService {
         configuration,
         userTimezone,
         firstDayOfTheWeek,
+        relationLabelResolution: relationLabelResolutions.primary,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Bar chart data retrieval failed');
@@ -200,6 +227,7 @@ export class BarChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    relationLabelResolution,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -207,6 +235,7 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    relationLabelResolution: RelationLabelResolution | undefined;
   }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
@@ -258,6 +287,7 @@ export class BarChartDataService {
         subFieldName: configuration.primaryAxisGroupBySubFieldName,
         userTimezone,
         firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+        relationLabelResolution,
       });
 
     const sortedData = sortChartDataIfNeeded({
@@ -314,7 +344,9 @@ export class BarChartDataService {
       hasTooManyGroups:
         filteredResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
         dateRangeWasTruncated,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
+      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
+        relationLabelResolution?.unresolvedRecordIds,
+      ]),
     };
   }
 
@@ -326,6 +358,8 @@ export class BarChartDataService {
     configuration,
     userTimezone,
     firstDayOfTheWeek,
+    primaryRelationLabelResolution,
+    secondaryRelationLabelResolution,
   }: {
     rawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
@@ -334,6 +368,8 @@ export class BarChartDataService {
     configuration: BarChartConfigurationDTO;
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
+    primaryRelationLabelResolution: RelationLabelResolution | undefined;
+    secondaryRelationLabelResolution: RelationLabelResolution | undefined;
   }): BarChartDataDTO {
     const layout = configuration.layout ?? BarChartLayout.VERTICAL;
     const isHorizontal = layout === BarChartLayout.HORIZONTAL;
@@ -392,6 +428,8 @@ export class BarChartDataService {
       secondarySubFieldName: configuration.secondaryAxisGroupBySubFieldName,
       userTimezone,
       firstDayOfTheWeek: convertedFirstDayOfTheWeek,
+      primaryRelationLabelResolution,
+      secondaryRelationLabelResolution,
     });
 
     const allSecondaryValues = new Set<string>();
@@ -506,8 +544,8 @@ export class BarChartDataService {
     hasTooManyGroups = hasTooManyGroups || dateRangeWasTruncated;
 
     const mergedLookup = new Map([
-      ...formattedToRawLookup,
       ...secondaryFormattedToRawLookup,
+      ...formattedToRawLookup,
     ]);
 
     return {
@@ -522,7 +560,10 @@ export class BarChartDataService {
       layout,
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups,
-      formattedToRawLookup: Object.fromEntries(mergedLookup),
+      formattedToRawLookup: buildFormattedToRawLookupDto(mergedLookup, [
+        primaryRelationLabelResolution?.unresolvedRecordIds,
+        secondaryRelationLabelResolution?.unresolvedRecordIds,
+      ]),
     };
   }
 

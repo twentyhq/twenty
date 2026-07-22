@@ -18,7 +18,9 @@ export const getRelationFieldOrderBy = (
 ): ObjectRecordOrderByForScalarField | ObjectRecordOrderByForRelationField => {
   if (!isDefined(groupBySubFieldName)) {
     return {
-      [`${groupByFieldMetadata.name}Id`]: direction,
+      [groupByFieldMetadata.name]: {
+        id: direction,
+      },
     };
   }
 

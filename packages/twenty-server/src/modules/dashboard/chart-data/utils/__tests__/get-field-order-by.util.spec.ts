@@ -145,7 +145,7 @@ describe('getFieldOrderBy', () => {
   });
 
   describe('relation fields', () => {
-    it('should return Id suffix for relation field without subFieldName', () => {
+    it('should order by the nested id for relation field without subFieldName', () => {
       const fieldMetadata = createMockFieldMetadata({
         name: 'company',
         type: FieldMetadataType.RELATION,
@@ -160,7 +160,9 @@ describe('getFieldOrderBy', () => {
       );
 
       expect(result).toEqual({
-        companyId: OrderByDirection.AscNullsLast,
+        company: {
+          id: OrderByDirection.AscNullsLast,
+        },
       });
     });
 
