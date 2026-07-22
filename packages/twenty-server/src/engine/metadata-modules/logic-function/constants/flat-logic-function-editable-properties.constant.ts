@@ -4,7 +4,6 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'name',
   'description',
   'timeoutSeconds',
-  'shouldRetryOnFailure',
   'checksum',
   'sourceHandlerPath',
   'handlerName',

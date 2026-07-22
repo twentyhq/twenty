@@ -119,7 +119,6 @@ import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
-import { AddShouldRetryOnFailureToLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784662919355-add-should-retry-on-failure-to-logic-function';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -241,5 +240,4 @@ export const INSTANCE_COMMANDS = [
   AddAutoUpgradeToApplicationFastInstanceCommand,
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
-  AddShouldRetryOnFailureToLogicFunctionFastInstanceCommand,
 ];

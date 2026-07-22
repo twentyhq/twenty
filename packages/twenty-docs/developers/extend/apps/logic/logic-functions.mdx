@@ -61,7 +61,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform then runs that **target** function and returns its response. See [Server route trigger](#server-route-trigger).
 
-Queue-executed runs (database event, cron, queued server-route dispatch) swallow handler failures by default: the failure is recorded in execution logs but the run is not repeated. Set `shouldRetryOnFailure: true` on a function to have the queue retry its failed runs. Only declare it on idempotent handlers — a retry re-runs the whole handler, and every attempt is billed as an execution.
+Queue-executed runs (database event, cron, queued server-route dispatch) are retried when the handler fails. The retry budget is set per trigger with `retryLimit` (`0`–`10`): `cronTriggerSettings.retryLimit` (default `10`), `databaseEventTriggerSettings.retryLimit` (default `3`), and the resolver-returned `retryLimit` for queued server routes (default `3`). Set `retryLimit: 0` on triggers whose handler is not idempotent — a retry re-runs the whole handler, and every attempt is billed as an execution.
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -275,7 +275,7 @@ The identifier is the resolver's `universalIdentifier` from your manifest. Regis
 | `targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of the logic function to invoke in that workspace. |
 | `payload` | `object` (optional) | If set, replaces the request body sent to the target. |
 | `dispatchMode` | `'sync' \| 'queued'` (optional) | `'queued'` (default) acknowledges with `202` as soon as the resolver returns and runs the target on the worker queue — the caller cannot observe the target's result. `'sync'` runs the target inline and returns its result as the HTTP response. |
-| `retryLimit` | `number` (optional) | Queue attempts after the first run in `'queued'` mode, `0`–`10`, default `3`. Platform errors always retry up to this limit; a failure inside the target handler is only retried when the target declares `shouldRetryOnFailure`. Ignored in `'sync'` mode. |
+| `retryLimit` | `number` (optional) | Queue retries after the first run in `'queued'` mode, `0`–`10`, default `3`. Any failure — platform error or a throw inside the target handler — is retried up to this limit. Ignored in `'sync'` mode. |
 
 <Warning>
 **Signature verification is your responsibility — verify in the resolver.** The platform does not verify request signatures. The resolver is the recommended place to do it: it runs first, with access to `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, and a thrown error (or any non-matching `workspaceId`) stops the dispatch before the target is invoked. If you instead push verification down into the target, the target must be careful not to lose `rawBody` and headers — i.e. the resolver must not return a `payload`. Always verify **before** any side effect and use a constant-time comparison.

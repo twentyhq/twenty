@@ -6,6 +6,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
+import { resolveTriggerRetryLimit } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/resolve-trigger-retry-limit.util';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -94,7 +95,12 @@ export class CronTriggerCronJob {
                 payload: {},
               },
             ],
-            { retryLimit: 10 },
+            {
+              retryLimit: resolveTriggerRetryLimit({
+                declaredRetryLimit: cronSettings.retryLimit,
+                defaultRetryLimit: 10,
+              }),
+            },
           );
         }
       } catch (error) {

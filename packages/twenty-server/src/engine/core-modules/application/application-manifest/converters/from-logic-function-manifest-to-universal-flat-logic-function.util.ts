@@ -27,7 +27,6 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     description: logicFunctionManifest.description ?? null,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: logicFunctionManifest.timeoutSeconds ?? 300,
-    shouldRetryOnFailure: logicFunctionManifest.shouldRetryOnFailure ?? false,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,

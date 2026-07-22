@@ -44,8 +44,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       description: description ?? null,
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
-      shouldRetryOnFailure:
-        createLogicFunctionFromSourceInput.shouldRetryOnFailure ?? false,
       checksum,
       isBuildUpToDate,
       executionMode: LogicFunctionExecutionMode.LIVE,

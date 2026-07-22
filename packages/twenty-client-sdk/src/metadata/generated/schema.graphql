@@ -450,7 +450,6 @@ type LogicFunction {
   description: String
   runtime: String!
   timeoutSeconds: Float!
-  shouldRetryOnFailure: Boolean!
   executionMode: LogicFunctionExecutionMode!
   sourceHandlerPath: String!
   handlerName: String!
@@ -4103,7 +4102,6 @@ input CreateLogicFunctionFromSourceInput {
   name: String!
   description: String
   timeoutSeconds: Float
-  shouldRetryOnFailure: Boolean
   source: JSON
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
@@ -4133,7 +4131,6 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   name: String
   description: String
   timeoutSeconds: Float
-  shouldRetryOnFailure: Boolean
   sourceHandlerCode: String
   handlerName: String
   sourceHandlerPath: String

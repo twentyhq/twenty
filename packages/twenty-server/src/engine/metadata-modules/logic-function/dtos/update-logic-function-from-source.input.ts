@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -45,11 +44,6 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @Max(900)
   @IsOptional()
   timeoutSeconds?: number;
-
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  shouldRetryOnFailure?: boolean;
 
   @IsString()
   @Field({ nullable: true })

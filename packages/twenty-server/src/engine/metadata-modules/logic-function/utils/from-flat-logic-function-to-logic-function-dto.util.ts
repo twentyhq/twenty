@@ -13,7 +13,6 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
     description: flatLogicFunction.description ?? undefined,
     runtime: flatLogicFunction.runtime,
     timeoutSeconds: flatLogicFunction.timeoutSeconds,
-    shouldRetryOnFailure: flatLogicFunction.shouldRetryOnFailure,
     executionMode: flatLogicFunction.executionMode,
     sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
     handlerName: flatLogicFunction.handlerName,

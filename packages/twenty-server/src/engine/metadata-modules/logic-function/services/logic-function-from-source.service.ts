@@ -168,7 +168,6 @@ export class LogicFunctionFromSourceService {
         name: existingLogicFunction.name,
         description: existingLogicFunction.description,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        shouldRetryOnFailure: existingLogicFunction.shouldRetryOnFailure,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
         checksum: existingLogicFunction.checksum,
         executionMode: LogicFunctionExecutionMode.LIVE,

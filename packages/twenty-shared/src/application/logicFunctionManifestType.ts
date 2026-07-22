@@ -8,7 +8,6 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  shouldRetryOnFailure?: boolean;
   cronTriggerSettings?: CronTriggerSettings;
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
@@ -23,11 +22,13 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 
 export type CronTriggerSettings = {
   pattern: string;
+  retryLimit?: number;
 };
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
+  retryLimit?: number;
 };
 
 export type HttpRouteTriggerSettings = {
