@@ -1,7 +1,20 @@
 packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
   s_c3fbc446206706::t_e8eef98b2fe306 20,22,42
+  s_c3fbc446206706::t_7dca7dec13cdc4 20,22
+  s_c3fbc446206706::t_b9327838d6f01a 42
 packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
   s_c3fbc446206706::t_04fc49ee2c7f06 6-7,9-10,14,16,18-21,24-25,28-32,44-47,51,58-69,79,84-105,107,109-118,124-125,128-147
+  s_c3fbc446206706::t_14fad183a643cc 86-88,90,92
+  s_c3fbc446206706::t_5d937d3f32ea4a 31
+  s_c3fbc446206706::t_0e48644ab9f288 6,9-10,14,16,18-21,24-25,44-45,79,85,89,91,93-128,146-147
+  s_c3fbc446206706::t_cd699d93177176 129-145
+  s_c3fbc446206706::t_ca02389c1d7db1 28-30,32,33-34
+  s_c3fbc446206706::t_2a4277fcc5b27b 31
+  s_c3fbc446206706::t_de8c19dd2fdc9d 46-47
+  s_c3fbc446206706::t_98541402f6983d 7
+  s_c3fbc446206706::t_86fd35fe290945 58-64,66-67
+  s_c3fbc446206706::t_03bab53ee45148 65
+  s_c3fbc446206706::t_38d428f01d2f3b 68-69
 ---
 {
   "schema_version": "authorship/3.0.0",
