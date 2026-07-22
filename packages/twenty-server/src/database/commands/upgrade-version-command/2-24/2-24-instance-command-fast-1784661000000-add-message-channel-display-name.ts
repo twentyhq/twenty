@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.23.0', 1784661000000)
+@RegisteredInstanceCommand('2.24.0', 1784661000000)
 export class AddMessageChannelDisplayNameFastInstanceCommand
   implements FastInstanceCommand
 {

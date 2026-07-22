@@ -95,6 +95,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             label={t`Display Name`}
             placeholder={t`Support Team`}
             value={displayName}
+            maxLength={255}
             onChange={setDisplayName}
             onInputEnter={() => {
               if (canSave) {
