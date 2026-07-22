@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useSendMessageCampaignTest } from '@/activities/emails/hooks/useSendMessageCampaignTest';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -43,27 +42,19 @@ export const CampaignTestSendSection = ({
 
   const { openModal, closeModal } = useModal();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
   const { sendMessageCampaignTest, loading } = useSendMessageCampaignTest();
 
+  const isCampaignReadyForTest =
+    campaignState.fromAddress.trim().length > 0 &&
+    campaignState.subject.trim().length > 0;
+
   const canSendTest =
-    isValidEmailRecipientAddress(toAddress.trim()) && !loading;
+    isValidEmailRecipientAddress(toAddress.trim()) &&
+    isCampaignReadyForTest &&
+    !loading;
 
   const handleSendTest = async () => {
     if (!canSendTest) {
-      return;
-    }
-
-    if (campaignState.fromAddress.trim().length === 0) {
-      enqueueErrorSnackBar({ message: t`Select a sender first` });
-
-      return;
-    }
-
-    if (campaignState.subject.trim().length === 0) {
-      enqueueErrorSnackBar({ message: t`Add a subject first` });
-
       return;
     }
 
@@ -126,6 +117,14 @@ export const CampaignTestSendSection = ({
             autoFocusOnMount
           />
         </Section>
+        {!isCampaignReadyForTest && (
+          <Section
+            alignment={SectionAlignment.Center}
+            fontColor={SectionFontColor.Tertiary}
+          >
+            {t`Add a sender and a subject to the campaign before sending a test.`}
+          </Section>
+        )}
         <StyledButtonRow>
           <Button
             onClick={() => closeModal(CAMPAIGN_TEST_SEND_MODAL_ID)}
