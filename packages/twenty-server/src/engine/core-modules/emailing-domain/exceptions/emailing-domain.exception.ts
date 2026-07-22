@@ -24,7 +24,7 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
     case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
       return msg`This suppressed address no longer exists.`;
     case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
-      return msg`Only bounced addresses can be removed. People who unsubscribed or reported spam must opt back in themselves.`;
+      return msg`This address cannot be removed from the suppression list.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
       return msg`This campaign no longer exists.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
