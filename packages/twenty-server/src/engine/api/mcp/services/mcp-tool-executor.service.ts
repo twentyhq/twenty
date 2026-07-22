@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -79,10 +80,20 @@ export class McpToolExecutorService {
       }),
     );
 
+    const executionStartedAt = performance.now();
+
     try {
       const result = await tool.execute(params.arguments, {
         toolCallId: '1',
         messages: [],
+      });
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.McpToolExecutionDurationMs,
+        value: performance.now() - executionStartedAt,
+        unit: 'ms',
+        attributes: { tool: metricToolName },
+        bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
       const succeeded = isToolOutputSuccessful(result);
@@ -110,6 +121,14 @@ export class McpToolExecutorService {
         },
       });
     } catch (executionError) {
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.McpToolExecutionDurationMs,
+        value: performance.now() - executionStartedAt,
+        unit: 'ms',
+        attributes: { tool: metricToolName },
+        bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.McpToolExecutionFailed,
         amount: 1,
