@@ -39,7 +39,8 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             viewId: view.id,
             parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
             logicalOperator: viewFilterGroup.logicalOperator,
-            positionInViewFilterGroup: viewFilterGroup.positionInViewFilterGroup,
+            positionInViewFilterGroup:
+              viewFilterGroup.positionInViewFilterGroup,
           },
         },
       });
@@ -92,7 +93,10 @@ export const usePerformViewFilterGroupAPIPersist = () => {
           return result;
         }
 
-        oldToNewId.set(viewFilterGroupToCreate.id, result.response.newRecord.id);
+        oldToNewId.set(
+          viewFilterGroupToCreate.id,
+          result.response.newRecord.id,
+        );
         newRecordIds.push(result.response.newRecord.id);
       }
 
@@ -113,7 +117,8 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             variables: {
               id: viewFilterGroup.id,
               input: {
-                parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
+                parentViewFilterGroupId:
+                  viewFilterGroup.parentViewFilterGroupId,
                 logicalOperator: viewFilterGroup.logicalOperator,
                 positionInViewFilterGroup:
                   viewFilterGroup.positionInViewFilterGroup,
