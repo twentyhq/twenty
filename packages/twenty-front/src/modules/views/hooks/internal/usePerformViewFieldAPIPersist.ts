@@ -53,7 +53,7 @@ export const usePerformViewFieldAPIPersist = () => {
           createManyViewFieldsMutation({
             variables: createViewFieldInputs,
           }),
-        syncMetadataStore: (result, { addToDraft }) =>
+        applyResultToDraft: (result, { addToDraft }) =>
           addToDraft({
             key: 'viewFields',
             items: (result.data?.createManyViewFields ?? []).map(
@@ -77,7 +77,7 @@ export const usePerformViewFieldAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: updateViewFieldInputs,
         mutate: (variables) => updateViewFieldMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewFields',
             fulfilledMutations
@@ -103,7 +103,7 @@ export const usePerformViewFieldAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: deleteViewFieldInputs,
         mutate: (variables) => deleteViewFieldMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFields',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
@@ -124,7 +124,7 @@ export const usePerformViewFieldAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: destroyViewFieldInputs,
         mutate: (variables) => destroyViewFieldMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFields',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),

@@ -17,7 +17,7 @@ type MetadataStoreDraftUtils = Pick<
 
 type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
   persist: () => Promise<TResponse>;
-  syncMetadataStore: (
+  applyResultToDraft: (
     response: TResponse,
     draftUtils: MetadataStoreDraftUtils,
   ) => void;
@@ -27,7 +27,7 @@ type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
 type PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult> = {
   inputs: TInput[];
   mutate: (input: TInput) => Promise<TResult>;
-  syncMetadataStore: (
+  applyResultToDraft: (
     fulfilledMutations: { input: TInput; result: TResult }[],
     draftUtils: MetadataStoreDraftUtils,
   ) => void;
@@ -60,7 +60,7 @@ export const usePerformViewEntityAPIPersistOperation = (
   const performViewEntityAPIPersistOperation = useCallback(
     async <TResponse>({
       persist,
-      syncMetadataStore,
+      applyResultToDraft,
       operationType,
     }: PerformViewEntityAPIPersistOperationArgs<TResponse>): Promise<
       MetadataRequestResult<TResponse>
@@ -68,7 +68,7 @@ export const usePerformViewEntityAPIPersistOperation = (
       try {
         const response = await persist();
 
-        syncMetadataStore(response, {
+        applyResultToDraft(response, {
           addToDraft,
           updateInDraft,
           removeFromDraft,
@@ -101,7 +101,7 @@ export const usePerformViewEntityAPIPersistOperation = (
     async <TInput, TResult>({
       inputs,
       mutate,
-      syncMetadataStore,
+      applyResultToDraft,
       operationType,
     }: PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult>): Promise<
       MetadataRequestResult<TResult[]>
@@ -122,7 +122,7 @@ export const usePerformViewEntityAPIPersistOperation = (
             : [],
       );
 
-      syncMetadataStore(fulfilledMutations, {
+      applyResultToDraft(fulfilledMutations, {
         addToDraft,
         updateInDraft,
         removeFromDraft,

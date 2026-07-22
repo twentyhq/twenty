@@ -37,7 +37,7 @@ export const usePerformViewSortAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: createViewSortInputs,
         mutate: (variables) => createViewSortMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { addToDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { addToDraft }) =>
           addToDraft({
             key: 'viewSorts',
             items: fulfilledMutations
@@ -61,7 +61,7 @@ export const usePerformViewSortAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: updateViewSortInputs,
         mutate: (variables) => updateViewSortMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewSorts',
             fulfilledMutations
@@ -85,7 +85,7 @@ export const usePerformViewSortAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: deleteViewSortInputs,
         mutate: (variables) => deleteViewSortMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewSorts',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
@@ -106,7 +106,7 @@ export const usePerformViewSortAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: destroyViewSortInputs,
         mutate: (variables) => destroyViewSortMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewSorts',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),

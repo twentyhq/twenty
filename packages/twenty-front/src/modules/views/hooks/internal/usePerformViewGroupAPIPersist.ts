@@ -45,7 +45,7 @@ export const usePerformViewGroupAPIPersist = () => {
           updateManyViewGroupsMutation({
             variables: updateViewGroupInputs,
           }),
-        syncMetadataStore: (result, { updateInDraft }) =>
+        applyResultToDraft: (result, { updateInDraft }) =>
           updateInDraft(
             'viewGroups',
             (result.data?.updateManyViewGroups ?? []).map(
@@ -78,7 +78,7 @@ export const usePerformViewGroupAPIPersist = () => {
           createManyViewGroupsMutation({
             variables: createViewGroupInputs,
           }),
-        syncMetadataStore: (result, { addToDraft }) =>
+        applyResultToDraft: (result, { addToDraft }) =>
           addToDraft({
             key: 'viewGroups',
             items: (result.data?.createManyViewGroups ?? []).map(

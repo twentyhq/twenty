@@ -37,7 +37,7 @@ export const usePerformViewFilterAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: createViewFilterInputs,
         mutate: (variables) => createViewFilterMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { addToDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { addToDraft }) =>
           addToDraft({
             key: 'viewFilters',
             items: fulfilledMutations
@@ -63,7 +63,7 @@ export const usePerformViewFilterAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: updateViewFilterInputs,
         mutate: (variables) => updateViewFilterMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewFilters',
             fulfilledMutations
@@ -89,7 +89,7 @@ export const usePerformViewFilterAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: deleteViewFilterInputs,
         mutate: (variables) => deleteViewFilterMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFilters',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),
@@ -110,7 +110,7 @@ export const usePerformViewFilterAPIPersist = () => {
       performViewEntityAPIPersistBatchOperation({
         inputs: destroyViewFilterInputs,
         mutate: (variables) => destroyViewFilterMutation({ variables }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFilters',
             itemIds: fulfilledMutations.map(({ input }) => input.input.id),

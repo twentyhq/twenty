@@ -78,7 +78,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
               },
               view,
             ),
-          syncMetadataStore: ({ newRecord }, { addToDraft }) => {
+          applyResultToDraft: ({ newRecord }, { addToDraft }) => {
             const { __typename, ...viewFilterGroup } = newRecord;
             return addToDraft({
               key: 'viewFilterGroups',
@@ -120,7 +120,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
               },
             },
           }),
-        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewFilterGroups',
             fulfilledMutations
@@ -146,7 +146,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
               id: viewFilterGroupId,
             },
           }),
-        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFilterGroups',
             itemIds: fulfilledMutations.map(({ input }) => input),

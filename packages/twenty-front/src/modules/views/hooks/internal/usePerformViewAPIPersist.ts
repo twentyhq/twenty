@@ -52,7 +52,7 @@ export const usePerformViewAPIPersist = () => {
             },
           });
         },
-        syncMetadataStore: (mutationResult, { addToDraft }) => {
+        applyResultToDraft: (mutationResult, { addToDraft }) => {
           const newView = mutationResult.data?.createView;
 
           if (!isDefined(newView)) {
@@ -95,7 +95,7 @@ export const usePerformViewAPIPersist = () => {
           destroyViewMutation({
             variables,
           }),
-        syncMetadataStore: (_result, { removeFromDraft }) =>
+        applyResultToDraft: (_result, { removeFromDraft }) =>
           removeFromDraft({ key: 'views', itemIds: [variables.id] }),
         operationType: CrudOperationType.DELETE,
       }),
