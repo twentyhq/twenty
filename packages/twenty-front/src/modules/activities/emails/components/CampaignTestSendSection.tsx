@@ -1,13 +1,15 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
+import { z } from 'zod';
+
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useSendMessageCampaignTest } from '@/activities/emails/hooks/useSendMessageCampaignTest';
-import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconTestPipe } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
@@ -39,17 +41,33 @@ export const CampaignTestSendSection = ({
   campaignState,
 }: CampaignTestSendSectionProps) => {
   const [toAddress, setToAddress] = useState('');
+  const [toAddressErrorMessage, setToAddressErrorMessage] = useState<
+    string | undefined
+  >();
 
   const { openModal, closeModal } = useModal();
 
   const { sendMessageCampaignTest, loading } = useSendMessageCampaignTest();
+
+  const handleToAddressChange = (value: string) => {
+    setToAddress(value);
+
+    const result = z.email().safeParse(value.trim());
+
+    setToAddressErrorMessage(
+      result.success || value.trim().length === 0
+        ? undefined
+        : t`Invalid email address`,
+    );
+  };
 
   const isCampaignReadyForTest =
     campaignState.fromAddress.trim().length > 0 &&
     campaignState.subject.trim().length > 0;
 
   const canSendTest =
-    isValidEmailRecipientAddress(toAddress.trim()) &&
+    toAddress.trim().length > 0 &&
+    !isDefined(toAddressErrorMessage) &&
     isCampaignReadyForTest &&
     !loading;
 
@@ -110,7 +128,8 @@ export const CampaignTestSendSection = ({
           <SettingsTextInput
             instanceId="campaign-test-send-to-address"
             value={toAddress}
-            onChange={setToAddress}
+            onChange={handleToAddressChange}
+            error={toAddressErrorMessage}
             placeholder={t`Recipient email address`}
             fullWidth
             disableHotkeys
