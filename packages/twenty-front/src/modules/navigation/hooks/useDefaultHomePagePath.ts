@@ -90,24 +90,15 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    if (isEmpty(readableNonSystemObjectMetadataItems)) {
-      // Object metadata may legitimately be empty for a user with no readable
-      // objects, in which case /settings/profile is the intended fallback.
-      // It can also be transiently empty during the post-login window before
-      // workspace metadata has finished loading. Defer to AppPath.Index in
-      // that case so the user isn't stranded on /settings/profile once
-      // metadata becomes available.
-      if (!areObjectMetadataItemsLoaded) {
-        return AppPath.Index;
-      }
-      return getSettingsPath(SettingsPath.ProfilePage);
+    // While metadata is loading the store can look empty; concluding the
+    // /settings/profile empty-workspace fallback from that transient state
+    // would strand the user there. AppPath.Index self-heals once loaded.
+    if (!areObjectMetadataItemsLoaded || !areNavigationMenuItemsLoaded) {
+      return AppPath.Index;
     }
 
-    // The navigation menu drives the redirect and loads after the minimal-
-    // metadata fast path. Wait for it instead of falling back to the
-    // alphabetically-first object during the post-login window.
-    if (!areNavigationMenuItemsLoaded) {
-      return AppPath.Index;
+    if (isEmpty(readableNonSystemObjectMetadataItems)) {
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     if (isDefined(firstNavigationMenuItemLink)) {
