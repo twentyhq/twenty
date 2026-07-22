@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_FONT_SHORTHAND } from '@/host/constants/DefaultFontShorthand';
+import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
 
 export const resolveRootContainerFontShorthand = (
   rootContainer: Element | null,

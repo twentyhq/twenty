@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_CANVAS_FONT_SHORTHAND } from '@/polyfills/geometry/constants/DefaultCanvasFontShorthand';
+import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
+import { DEFAULT_FONT_SIZE_PIXELS } from '@/constants/DefaultFontSizePixels';
 import { DEFAULT_LINE_HEIGHT_RATIO } from '@/polyfills/geometry/constants/DefaultLineHeightRatio';
 import { type TextGeometry } from '@/polyfills/geometry/types/TextGeometry';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
@@ -14,7 +15,9 @@ type ElementWithTextContent = {
 const parseFontSizeInPixels = (fontShorthand: string): number => {
   const fontSizeMatch = /(\d+(?:\.\d+)?)px/.exec(fontShorthand);
 
-  return isDefined(fontSizeMatch) ? Number(fontSizeMatch[1]) : 13;
+  return isDefined(fontSizeMatch)
+    ? Number(fontSizeMatch[1])
+    : DEFAULT_FONT_SIZE_PIXELS;
 };
 
 export const createOffscreenCanvasTextMeasurer = (
@@ -55,7 +58,7 @@ export const createOffscreenCanvasTextMeasurer = (
 
     const defaultFontShorthand =
       geometryStore.getViewportSnapshot()?.defaultFontShorthand ??
-      DEFAULT_CANVAS_FONT_SHORTHAND;
+      DEFAULT_FONT_SHORTHAND;
 
     const fontShorthand = buildCanvasFontFromElement(
       element,

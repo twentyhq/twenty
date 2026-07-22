@@ -2,7 +2,7 @@ import { remoteId } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
-import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/polyfills/geometry/constants/MaxObservedGeometryElements';
+import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';

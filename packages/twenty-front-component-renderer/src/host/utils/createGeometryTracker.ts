@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_FONT_SHORTHAND } from '@/host/constants/DefaultFontShorthand';
+import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/constants/GeometryIdleFrameThreshold';
 import { MAX_MEASURED_GEOMETRY_ELEMENTS } from '@/host/constants/MaxMeasuredGeometryElements';
-import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/host/constants/MaxObservedGeometryElements';
+import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/types/PushGeometryUpdates';
 import { createGeometryWakeSources } from '@/host/utils/createGeometryWakeSources';

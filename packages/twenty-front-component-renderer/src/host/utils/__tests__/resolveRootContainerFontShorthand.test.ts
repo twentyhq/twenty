@@ -1,4 +1,4 @@
-import { DEFAULT_FONT_SHORTHAND } from '@/host/constants/DefaultFontShorthand';
+import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
 import { resolveRootContainerFontShorthand } from '../resolveRootContainerFontShorthand';
 
 describe('resolveRootContainerFontShorthand', () => {
