@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { CREATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createViewFilterGroup';
 import { DESTROY_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyViewFilterGroup';
 import { UPDATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateViewFilterGroup';
@@ -26,10 +26,10 @@ const toFlatViewFilterGroup = (
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
 
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
-
-  const { performViewEntityAPIPersistBatchOperation } =
-    usePerformViewEntityAPIPersistOperation('viewFilterGroup');
+  const {
+    performViewEntityAPIPersistOperation,
+    performViewEntityAPIPersistBatchOperation,
+  } = usePerformViewEntityAPIPersistOperation('viewFilterGroup');
 
   const createViewFilterGroupRecord = useCallback(
     async (viewFilterGroup: ViewFilterGroup, view: Pick<GraphQLView, 'id'>) => {
@@ -58,58 +58,56 @@ export const usePerformViewFilterGroupAPIPersist = () => {
     [apolloClient],
   );
 
-  // Creates stay sequential (not batched) because each group's
-  // parentViewFilterGroupId is remapped from a previously created sibling's id
   const performViewFilterGroupAPICreate = useCallback(
     async (
       viewFilterGroupsToCreate: ViewFilterGroup[],
       view: Pick<GraphQLView, 'id'>,
-    ) => {
-      if (!viewFilterGroupsToCreate.length) return [];
-
+    ): Promise<MetadataRequestResult<string[]>> => {
       const oldToNewId = new Map<string, string>();
-      const createdFlatViewFilterGroups: FlatViewFilterGroup[] = [];
+      const newRecordIds: string[] = [];
 
-      try {
-        for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
-          const newParentViewFilterGroupId = isDefined(
-            viewFilterGroupToCreate.parentViewFilterGroupId,
-          )
-            ? (oldToNewId.get(
-                viewFilterGroupToCreate.parentViewFilterGroupId,
-              ) ?? viewFilterGroupToCreate.parentViewFilterGroupId)
-            : undefined;
+      for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
+        const newParentViewFilterGroupId = isDefined(
+          viewFilterGroupToCreate.parentViewFilterGroupId,
+        )
+          ? (oldToNewId.get(viewFilterGroupToCreate.parentViewFilterGroupId) ??
+            viewFilterGroupToCreate.parentViewFilterGroupId)
+          : undefined;
 
-          const { newRecord } = await createViewFilterGroupRecord(
-            {
-              ...viewFilterGroupToCreate,
-              parentViewFilterGroupId: newParentViewFilterGroupId,
-            },
-            view,
-          );
-
-          oldToNewId.set(viewFilterGroupToCreate.id, newRecord.id);
-          createdFlatViewFilterGroups.push(toFlatViewFilterGroup(newRecord));
-        }
-      } finally {
-        addToDraft({
-          key: 'viewFilterGroups',
-          items: createdFlatViewFilterGroups,
+        const result = await performViewEntityAPIPersistOperation({
+          persist: () =>
+            createViewFilterGroupRecord(
+              {
+                ...viewFilterGroupToCreate,
+                parentViewFilterGroupId: newParentViewFilterGroupId,
+              },
+              view,
+            ),
+          syncMetadataStore: ({ newRecord }, { addToDraft }) =>
+            addToDraft({
+              key: 'viewFilterGroups',
+              items: [toFlatViewFilterGroup(newRecord)],
+            }),
+          operationType: CrudOperationType.CREATE,
         });
-        applyChanges();
+
+        if (result.status === 'failed') {
+          return result;
+        }
+
+        oldToNewId.set(
+          viewFilterGroupToCreate.id,
+          result.response.newRecord.id,
+        );
+        newRecordIds.push(result.response.newRecord.id);
       }
 
-      const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
-        const newId = oldToNewId.get(viewFilterGroup.id);
-        if (!newId) {
-          throw new Error('Failed to create view filter group');
-        }
-        return newId;
-      });
-
-      return newRecordIds;
+      return {
+        status: 'successful',
+        response: newRecordIds,
+      };
     },
-    [createViewFilterGroupRecord, addToDraft, applyChanges],
+    [createViewFilterGroupRecord, performViewEntityAPIPersistOperation],
   );
 
   const performViewFilterGroupAPIUpdate = useCallback(
