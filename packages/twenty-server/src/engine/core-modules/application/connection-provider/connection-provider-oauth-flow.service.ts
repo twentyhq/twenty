@@ -242,7 +242,10 @@ export class ConnectionProviderOAuthFlowService {
           onConnectLogicFunctionUniversalIdentifier
         ];
 
-      if (!isDefined(flatLogicFunction)) {
+      if (
+        !isDefined(flatLogicFunction) ||
+        isDefined(flatLogicFunction.deletedAt)
+      ) {
         throw new ConnectionProviderException(
           `Connection provider ${provider.id} references on-connect logic function ${onConnectLogicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
           ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,

@@ -536,6 +536,34 @@ describe('ConnectionProviderOAuthFlowService', () => {
           1,
         );
       });
+
+      it('treats a soft-deleted hook function as missing instead of enqueuing it', async () => {
+        connectionProviderService.findOneByIdOrThrow.mockResolvedValue({
+          ...baseProvider,
+          onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_UID,
+        });
+        workspaceCacheService.getOrRecompute.mockResolvedValue({
+          flatLogicFunctionMaps: {
+            byUniversalIdentifier: {
+              [ON_CONNECT_UID]: {
+                id: 'logic-function-1',
+                deletedAt: new Date().toISOString(),
+              },
+            },
+          },
+        });
+
+        const result = await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(result.connectedAccountId).toBe('new-account-id');
+        expect(messageQueueService.add).not.toHaveBeenCalled();
+        expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledTimes(
+          1,
+        );
+      });
     });
   });
 });
