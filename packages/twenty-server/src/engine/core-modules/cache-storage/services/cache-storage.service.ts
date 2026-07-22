@@ -97,9 +97,29 @@ export class CacheStorageService {
       return;
     }
 
-    await Promise.all(
-      entries.map(({ key, value, ttl }) => this.set(key, value, ttl)),
-    );
+    if (this.isRedisCache()) {
+      const redisStore = (this.cache as RedisCache).store;
+      const entriesByTtl = new Map<Milliseconds | undefined, [string, T][]>();
+
+      for (const { key, value, ttl } of entries) {
+        const ttlGroup = entriesByTtl.get(ttl) ?? [];
+
+        ttlGroup.push([this.getKey(key), value]);
+        entriesByTtl.set(ttl, ttlGroup);
+      }
+
+      await Promise.all(
+        [...entriesByTtl.entries()].map(([ttl, ttlGroupEntries]) =>
+          redisStore.mset(ttlGroupEntries, ttl),
+        ),
+      );
+
+      return;
+    }
+
+    for (const { key, value, ttl } of entries) {
+      await this.set(key, value, ttl);
+    }
   }
 
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
