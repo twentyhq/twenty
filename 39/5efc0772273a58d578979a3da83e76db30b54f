@@ -1,0 +1,25 @@
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_4831dcb5c1852c::t_2f4b8f0ca99fb3 146-154
+  s_4831dcb5c1852c::t_f77e21f6191575 70
+  s_4831dcb5c1852c::t_94130871fad7d6 1
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_4831dcb5c1852c::t_1ece268888bce7 129-139
+  s_4831dcb5c1852c::t_df2e83de512e41 60-61
+  s_4831dcb5c1852c::t_54f493aa8e55a2 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "395efc0772273a58d578979a3da83e76db30b54f",
+  "prompts": {},
+  "sessions": {
+    "s_4831dcb5c1852c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fcc8904-bb60-4dd0-8af0-f09679d00279",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
