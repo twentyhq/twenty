@@ -1,0 +1,46 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_c3fbc446206706::t_1f8b08b9c974d5 1,24-30,32,34-35,37-38,40-41,43,45,50-66
+packages/twenty-shared/src/types/CoreObjectNameSingular.ts
+  s_c3fbc446206706::t_0c59e1dbea60ff 14,16
+packages/twenty-front/src/modules/activities/emails/types/MessageCampaign.ts
+  s_c3fbc446206706::t_231e68fd176e95 2-7,9,16
+  s_c3fbc446206706::t_6a49deed0ed893 1
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_c3fbc446206706::t_ea25dc358d96bf 2
+  s_c3fbc446206706::t_3c5a7f19efad58 41
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_c3fbc446206706::t_9dcebc2594b14a 13-16
+  s_c3fbc446206706::t_cc58403273716d 73
+  s_c3fbc446206706::t_c1c94a4c749606 118
+  s_c3fbc446206706::t_9ead93a60a92bc 54-58,60
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaignTest.ts
+  s_c3fbc446206706::t_2cb7af46e7f116 1
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignStats.tsx
+  s_c3fbc446206706::t_53763ef340475d 20
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignCard.tsx
+  s_c3fbc446206706::t_1a856b63f0a19f 1-48
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_c3fbc446206706::t_2bc9f01af09fd2 1,13,17-18,21-29
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_c3fbc446206706::t_d3b997d7af5691 1,4
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaignTest.ts
+  s_c3fbc446206706::t_44ee51ee72395f 1,28-34,36-37,39-40,42-44,46-50,52-54
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaign.ts
+  s_c3fbc446206706::t_387e477f646eb9 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "be31493e551d3ba5590da781f1c8e50b6a835472",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
