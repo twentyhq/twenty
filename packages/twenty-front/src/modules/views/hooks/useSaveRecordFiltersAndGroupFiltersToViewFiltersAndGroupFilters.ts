@@ -92,8 +92,9 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           return;
         }
 
-        const updateFilterGroupResult =
-          await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
+        const updateFilterGroupResult = await performViewFilterGroupAPIUpdate(
+          viewFilterGroupsToUpdate,
+        );
         if (updateFilterGroupResult.status === 'failed') {
           return;
         }
