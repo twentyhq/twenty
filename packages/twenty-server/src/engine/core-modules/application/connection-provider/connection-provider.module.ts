@@ -14,7 +14,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { FlatConnectionProviderModule } from 'src/engine/metadata-modules/flat-connection-provider/flat-connection-provider.module';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -23,7 +23,6 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
       ApplicationEntity,
       ApplicationRegistrationVariableEntity,
       ConnectedAccountEntity,
-      LogicFunctionEntity,
     ]),
     JwtModule,
     SecretEncryptionModule,
@@ -31,6 +30,7 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
     TwentyConfigModule,
     FlatConnectionProviderModule,
     ConnectedAccountTokenEncryptionModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     ConnectionProviderService,

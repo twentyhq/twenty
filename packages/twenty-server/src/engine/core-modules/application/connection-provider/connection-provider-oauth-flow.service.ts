@@ -21,6 +21,7 @@ import { exchangeCodeForToken } from 'src/engine/core-modules/application/connec
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import {
   LogicFunctionTriggerJob,
@@ -33,7 +34,7 @@ import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-cli
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -71,10 +72,10 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async startAuthorizationFlow(
@@ -227,27 +228,32 @@ export class ConnectionProviderOAuthFlowService {
       return;
     }
 
+    // The on-connect hook is best-effort: the ConnectedAccount is already
+    // persisted, so a misconfigured or failing hook must not break the OAuth
+    // callback. We still report failures to Sentry so they don't go unnoticed.
     try {
-      const logicFunction = await this.logicFunctionRepository.findOne({
-        where: {
-          universalIdentifier: onConnectLogicFunctionUniversalIdentifier,
-          workspaceId,
-        },
-      });
+      const { flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+        ]);
 
-      if (!isDefined(logicFunction)) {
-        this.logger.warn(
-          `Connection provider ${provider.id} references on-connect logic function ${onConnectLogicFunctionUniversalIdentifier} not found in workspace ${workspaceId}; skipping.`,
+      const flatLogicFunction =
+        flatLogicFunctionMaps.byUniversalIdentifier[
+          onConnectLogicFunctionUniversalIdentifier
+        ];
+
+      if (!isDefined(flatLogicFunction)) {
+        throw new ConnectionProviderException(
+          `Connection provider ${provider.id} references on-connect logic function ${onConnectLogicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
+          ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
         );
-
-        return;
       }
 
       await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
         LogicFunctionTriggerJob.name,
         [
           {
-            logicFunctionId: logicFunction.id,
+            logicFunctionId: flatLogicFunction.id,
             workspaceId,
             payload: {
               connectionProviderId: provider.id,
@@ -259,9 +265,9 @@ export class ConnectionProviderOAuthFlowService {
         { retryLimit: 3 },
       );
     } catch (error) {
-      this.logger.error(
-        `Failed to dispatch on-connect hook for provider ${provider.id} in workspace ${workspaceId}: ${(error as Error).message}`,
-      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 

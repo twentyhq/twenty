@@ -19,6 +19,7 @@ import { type ConnectionProviderEntity } from 'src/engine/core-modules/applicati
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -27,7 +28,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
@@ -50,8 +51,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
     findOne: jest.Mock;
     findOneByOrFail: jest.Mock;
   };
-  let logicFunctionRepository: { findOne: jest.Mock };
+  let workspaceCacheService: { getOrRecompute: jest.Mock };
   let messageQueueService: { add: jest.Mock };
+  let exceptionHandlerService: { captureExceptions: jest.Mock };
 
   const baseProvider: ConnectionProviderEntity = {
     id: 'provider-1',
@@ -100,8 +102,13 @@ describe('ConnectionProviderOAuthFlowService', () => {
         provider: ConnectedAccountProvider.APP,
       })),
     };
-    logicFunctionRepository = { findOne: jest.fn(async () => null) };
+    workspaceCacheService = {
+      getOrRecompute: jest.fn(async () => ({
+        flatLogicFunctionMaps: { byUniversalIdentifier: {} },
+      })),
+    };
     messageQueueService = { add: jest.fn() };
+    exceptionHandlerService = { captureExceptions: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -121,12 +128,16 @@ describe('ConnectionProviderOAuthFlowService', () => {
           useValue: connectedAccountRepository,
         },
         {
-          provide: getRepositoryToken(LogicFunctionEntity),
-          useValue: logicFunctionRepository,
+          provide: WorkspaceCacheService,
+          useValue: workspaceCacheService,
         },
         {
           provide: getQueueToken(MessageQueue.logicFunctionQueue),
           useValue: messageQueueService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: exceptionHandlerService,
         },
         {
           // Real prefix/round-trip behavior is asserted in
@@ -462,7 +473,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           state: 'signed-state',
         });
 
-        expect(logicFunctionRepository.findOne).not.toHaveBeenCalled();
+        expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
         expect(messageQueueService.add).not.toHaveBeenCalled();
       });
 
@@ -471,8 +482,12 @@ describe('ConnectionProviderOAuthFlowService', () => {
           ...baseProvider,
           onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_UID,
         });
-        logicFunctionRepository.findOne.mockResolvedValue({
-          id: 'logic-function-1',
+        workspaceCacheService.getOrRecompute.mockResolvedValue({
+          flatLogicFunctionMaps: {
+            byUniversalIdentifier: {
+              [ON_CONNECT_UID]: { id: 'logic-function-1' },
+            },
+          },
         });
 
         const result = await service.completeAuthorizationFlow({
@@ -480,12 +495,10 @@ describe('ConnectionProviderOAuthFlowService', () => {
           state: 'signed-state',
         });
 
-        expect(logicFunctionRepository.findOne).toHaveBeenCalledWith({
-          where: {
-            universalIdentifier: ON_CONNECT_UID,
-            workspaceId: 'workspace-1',
-          },
-        });
+        expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+          'workspace-1',
+          ['flatLogicFunctionMaps'],
+        );
         expect(messageQueueService.add).toHaveBeenCalledWith(
           'LogicFunctionTriggerJob',
           [
@@ -503,12 +516,14 @@ describe('ConnectionProviderOAuthFlowService', () => {
         );
       });
 
-      it('skips dispatch without failing the connection when the hook function is missing', async () => {
+      it('reports to Sentry without failing the connection when the hook function is missing', async () => {
         connectionProviderService.findOneByIdOrThrow.mockResolvedValue({
           ...baseProvider,
           onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_UID,
         });
-        logicFunctionRepository.findOne.mockResolvedValue(null);
+        workspaceCacheService.getOrRecompute.mockResolvedValue({
+          flatLogicFunctionMaps: { byUniversalIdentifier: {} },
+        });
 
         const result = await service.completeAuthorizationFlow({
           code: 'auth_code',
@@ -517,6 +532,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
         expect(result.connectedAccountId).toBe('new-account-id');
         expect(messageQueueService.add).not.toHaveBeenCalled();
+        expect(exceptionHandlerService.captureExceptions).toHaveBeenCalledTimes(
+          1,
+        );
       });
     });
   });
