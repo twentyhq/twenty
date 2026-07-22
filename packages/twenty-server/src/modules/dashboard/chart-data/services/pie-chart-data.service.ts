@@ -25,6 +25,8 @@ import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
+import { buildObjectIdByNameSingular } from 'src/modules/dashboard/chart-data/utils/build-object-id-by-name-singular.util';
+import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
@@ -107,15 +109,9 @@ export class PieChartDataService {
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const objectIdByNameSingular: Record<string, string> = {};
-
-      for (const objMetadata of Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      )) {
-        if (isDefined(objMetadata)) {
-          objectIdByNameSingular[objMetadata.nameSingular] = objMetadata.id;
-        }
-      }
+      const objectIdByNameSingular = buildObjectIdByNameSingular(
+        flatObjectMetadataMaps,
+      );
 
       const rawResults = await this.chartDataQueryService.executeGroupByQuery({
         flatObjectMetadata,
@@ -138,9 +134,14 @@ export class PieChartDataService {
         splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
+      const filteredResults = filterOutEmptyChartBuckets({
+        rawResults,
+        shouldOmitEmptyBuckets: configuration.hideEmptyCategory ?? false,
+      });
+
       const relationLabelResolutions =
         await this.chartRelationLabelService.resolveRelationLabels({
-          rawResults,
+          rawResults: filteredResults,
           primaryAxis: {
             groupByField,
             subFieldName: configuration.groupBySubFieldName,
@@ -152,7 +153,7 @@ export class PieChartDataService {
         });
 
       return this.transformToPieChartData({
-        rawResults,
+        filteredRawResults: filteredResults,
         groupByField,
         configuration,
         userTimezone: configuration.timezone ?? 'UTC',
@@ -167,14 +168,14 @@ export class PieChartDataService {
   }
 
   private transformToPieChartData({
-    rawResults,
+    filteredRawResults,
     groupByField,
     configuration,
     userTimezone,
     firstDayOfTheWeek,
     relationLabelResolution,
   }: {
-    rawResults: Array<{
+    filteredRawResults: Array<{
       groupByDimensionValues: unknown[];
       aggregateValue: number;
     }>;
@@ -184,14 +185,6 @@ export class PieChartDataService {
     firstDayOfTheWeek: CalendarStartDay;
     relationLabelResolution: RelationLabelResolution | undefined;
   }): PieChartDataDTO {
-    const filteredResults = configuration.hideEmptyCategory
-      ? rawResults.filter(
-          (result) =>
-            isDefined(result.groupByDimensionValues?.[0]) &&
-            result.aggregateValue !== 0,
-        )
-      : rawResults;
-
     const selectOptions = getSelectOptions(groupByField);
 
     const convertedFirstDayOfTheWeek =
@@ -204,7 +197,7 @@ export class PieChartDataService {
       processedDataPoints: rawProcessedDataPoints,
       formattedToRawLookup,
     } = processOneDimensionalResults({
-      rawResults: filteredResults,
+      rawResults: filteredRawResults,
       primaryAxisGroupByField: groupByField,
       dateGranularity: configuration.dateGranularity,
       subFieldName: configuration.groupBySubFieldName,
@@ -252,7 +245,7 @@ export class PieChartDataService {
       showDataLabels: configuration.displayDataLabel ?? false,
       showCenterMetric: configuration.showCenterMetric ?? true,
       hasTooManyGroups:
-        filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+        filteredRawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
       formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
         relationLabelResolution?.unresolvedRecordIds,
       ]),

@@ -13,6 +13,7 @@ import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/p
 describe('PieChartDataService', () => {
   let service: PieChartDataService;
   let mockExecuteGroupByQuery: jest.Mock;
+  let mockResolveRelationLabels: jest.Mock;
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
@@ -55,6 +56,7 @@ describe('PieChartDataService', () => {
 
   beforeEach(async () => {
     mockExecuteGroupByQuery = jest.fn();
+    mockResolveRelationLabels = jest.fn().mockResolvedValue({});
     mockGetOrRecomputeManyOrAllFlatEntityMaps = jest.fn().mockResolvedValue({
       flatObjectMetadataMaps: {
         byUniversalIdentifier: {
@@ -111,7 +113,7 @@ describe('PieChartDataService', () => {
         {
           provide: ChartRelationLabelService,
           useValue: {
-            resolveRelationLabels: jest.fn().mockResolvedValue({}),
+            resolveRelationLabels: mockResolveRelationLabels,
           },
         },
       ],
@@ -194,6 +196,32 @@ describe('PieChartDataService', () => {
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].key).toBe('Active');
+    });
+
+    it('should resolve relation labels from the buckets surviving hideEmptyCategory', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: [null], aggregateValue: 2 },
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 0 },
+        { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+      ]);
+
+      await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          hideEmptyCategory: true,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(mockResolveRelationLabels).toHaveBeenCalledWith(
+        expect.objectContaining({
+          rawResults: [
+            { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+          ],
+        }),
+      );
     });
 
     it('should flag too many groups and limit slices', async () => {

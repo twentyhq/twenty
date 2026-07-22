@@ -29,8 +29,11 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
+import { applyCumulativeToLineDataPoints } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-line-data-points.util';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
+import { buildObjectIdByNameSingular } from 'src/modules/dashboard/chart-data/utils/build-object-id-by-name-singular.util';
+import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -137,15 +140,9 @@ export class LineChartDataService {
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;
 
-      const objectIdByNameSingular: Record<string, string> = {};
-
-      for (const objMetadata of Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      )) {
-        if (isDefined(objMetadata)) {
-          objectIdByNameSingular[objMetadata.nameSingular] = objMetadata.id;
-        }
-      }
+      const objectIdByNameSingular = buildObjectIdByNameSingular(
+        flatObjectMetadataMaps,
+      );
 
       const rawResults = await this.chartDataQueryService.executeGroupByQuery({
         flatObjectMetadata,
@@ -178,9 +175,14 @@ export class LineChartDataService {
         configuration,
       );
 
+      const filteredResults = filterOutEmptyChartBuckets({
+        rawResults,
+        shouldOmitEmptyBuckets: configuration.omitNullValues ?? false,
+      });
+
       const relationLabelResolutions =
         await this.chartRelationLabelService.resolveRelationLabels({
-          rawResults,
+          rawResults: filteredResults,
           primaryAxis: {
             groupByField: primaryAxisGroupByField,
             subFieldName: configuration.primaryAxisGroupBySubFieldName,
@@ -200,7 +202,7 @@ export class LineChartDataService {
 
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalLineChartData({
-          rawResults,
+          filteredRawResults: filteredResults,
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
@@ -214,7 +216,7 @@ export class LineChartDataService {
       }
 
       return this.transformToOneDimensionalLineChartData({
-        rawResults,
+        filteredRawResults: filteredResults,
         primaryAxisGroupByField,
         aggregateField,
         configuration,
@@ -229,7 +231,7 @@ export class LineChartDataService {
   }
 
   private transformToOneDimensionalLineChartData({
-    rawResults,
+    filteredRawResults,
     primaryAxisGroupByField,
     aggregateField,
     configuration,
@@ -238,7 +240,7 @@ export class LineChartDataService {
     seriesIdPrefix,
     relationLabelResolution,
   }: {
-    rawResults: GroupByRawResult[];
+    filteredRawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
     aggregateField: FlatFieldMetadata;
     configuration: LineChartConfigurationDTO;
@@ -247,20 +249,12 @@ export class LineChartDataService {
     seriesIdPrefix: string;
     relationLabelResolution: RelationLabelResolution | undefined;
   }): LineChartDataDTO {
-    const filteredResults = configuration.omitNullValues
-      ? rawResults.filter(
-          (result) =>
-            isDefined(result.groupByDimensionValues?.[0]) &&
-            result.aggregateValue !== 0,
-        )
-      : rawResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: filteredResults,
+        data: filteredRawResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -315,7 +309,7 @@ export class LineChartDataService {
     );
 
     const transformedData = configuration.isCumulative
-      ? this.applyCumulativeTransform(limitedSortedData)
+      ? applyCumulativeToLineDataPoints(limitedSortedData)
       : limitedSortedData;
 
     const dataPoints = transformedData.map(({ x, y }) => ({
@@ -341,7 +335,7 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups:
-        filteredResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
+        filteredRawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
         dateRangeWasTruncated,
       formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
         relationLabelResolution?.unresolvedRecordIds,
@@ -350,7 +344,7 @@ export class LineChartDataService {
   }
 
   private transformToTwoDimensionalLineChartData({
-    rawResults,
+    filteredRawResults,
     primaryAxisGroupByField,
     secondaryAxisGroupByField,
     aggregateField,
@@ -361,7 +355,7 @@ export class LineChartDataService {
     primaryRelationLabelResolution,
     secondaryRelationLabelResolution,
   }: {
-    rawResults: GroupByRawResult[];
+    filteredRawResults: GroupByRawResult[];
     primaryAxisGroupByField: FlatFieldMetadata;
     secondaryAxisGroupByField: FlatFieldMetadata;
     aggregateField: FlatFieldMetadata;
@@ -372,14 +366,6 @@ export class LineChartDataService {
     primaryRelationLabelResolution: RelationLabelResolution | undefined;
     secondaryRelationLabelResolution: RelationLabelResolution | undefined;
   }): LineChartDataDTO {
-    const filteredResults = configuration.omitNullValues
-      ? rawResults.filter(
-          (result) =>
-            isDefined(result.groupByDimensionValues?.[0]) &&
-            result.aggregateValue !== 0,
-        )
-      : rawResults;
-
     const isStacked = configuration.isStacked ?? false;
 
     const isDescOrder =
@@ -387,7 +373,7 @@ export class LineChartDataService {
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: filteredResults,
+        data: filteredRawResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -514,7 +500,7 @@ export class LineChartDataService {
       }));
 
       if (configuration.isCumulative) {
-        dataPoints = this.applyCumulativeTransform(dataPoints);
+        dataPoints = applyCumulativeToLineDataPoints(dataPoints);
       }
 
       return {
@@ -607,24 +593,5 @@ export class LineChartDataService {
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
       dateGranularity: configuration.secondaryAxisGroupByDateGranularity,
     });
-  }
-
-  private applyCumulativeTransform<T extends { y: number | null }>(
-    data: T[],
-  ): T[] {
-    const result: T[] = [];
-    let runningTotal = 0;
-
-    for (const point of data) {
-      if (isDefined(point.y)) {
-        runningTotal += point.y;
-      }
-
-      const cumulativeValue = runningTotal;
-
-      result.push({ ...point, y: cumulativeValue });
-    }
-
-    return result;
   }
 }
