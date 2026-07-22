@@ -87,6 +87,61 @@ https://<your-twenty-server>/auth/apps/callback
 
 </Accordion>
 
+<Accordion title="React to a new connection" description="Run a logic function after OAuth succeeds">
+
+Declare `onConnectLogicFunctionUniversalIdentifier` on the connection provider to run one of your app's logic functions right after a user completes the OAuth consent screen (it also runs on reconnect):
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: { /* ... */ },
+  // universalIdentifier of a logic function declared in this app
+  onConnectLogicFunctionUniversalIdentifier:
+    '5f0a2b1c-8d3e-4f6a-9b7c-1d2e3f4a5b6c',
+});
+```
+
+The function is enqueued asynchronously — a failure never blocks the user's OAuth redirect — and receives the new connection as its payload:
+
+```ts src/logic-functions/on-slack-connected.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getConnection } from 'twenty-sdk/logic-function';
+
+type OnConnectPayload = {
+  connectionId: string;
+  connectionProviderName: string;
+  workspaceId: string;
+  userWorkspaceId: string;
+  isReconnection: boolean;
+};
+
+const handler = async (payload: OnConnectPayload) => {
+  const connection = await getConnection(payload.connectionId);
+
+  // Use the fresh token for provider-specific bookkeeping, e.g. asking
+  // Slack which team was just connected.
+  const response = await fetch('https://slack.com/api/auth.test', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${connection.accessToken}` },
+  });
+  const { team_id } = (await response.json()) as { team_id: string };
+
+  // e.g. persist it for later webhook routing
+  // await kv.set(`slack:team:${team_id}`, undefined, { scope: 'GLOBAL' });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '5f0a2b1c-8d3e-4f6a-9b7c-1d2e3f4a5b6c',
+  name: 'on-slack-connected',
+  handler,
+});
+```
+
+</Accordion>
+
 <Accordion title="listConnections / getConnection" description="Use connections from a logic function">
 
 Inside a logic function handler, `listConnections({ providerName })` returns this app's `ConnectedAccount` rows for the given provider, with refreshed access tokens.

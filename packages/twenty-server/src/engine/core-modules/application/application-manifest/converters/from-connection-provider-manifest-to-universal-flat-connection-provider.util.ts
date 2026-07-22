@@ -33,6 +33,9 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
               connectionProviderManifest.oauth.tokenRequestContentType ??
               'json',
             usePkce: connectionProviderManifest.oauth.usePkce ?? true,
+            onConnectLogicFunctionUniversalIdentifier:
+              connectionProviderManifest.onConnectLogicFunctionUniversalIdentifier ??
+              null,
           }
         : null;
 

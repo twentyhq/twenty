@@ -49,10 +49,27 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         authorizationParams: null,
         tokenRequestContentType: 'json',
         usePkce: true,
+        onConnectLogicFunctionUniversalIdentifier: null,
       },
       createdAt: NOW,
       updatedAt: NOW,
     });
+  });
+
+  it('passes through the on-connect logic function universal identifier', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          onConnectLogicFunctionUniversalIdentifier:
+            '11111111-1111-4111-8111-111111111111',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.oauthConfig?.onConnectLogicFunctionUniversalIdentifier).toBe(
+      '11111111-1111-4111-8111-111111111111',
+    );
   });
 
   it('passes through optional oauth config when provided', () => {

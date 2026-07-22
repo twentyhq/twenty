@@ -6,4 +6,7 @@ export type ConnectionProviderManifest = SyncableEntityOptions & {
   displayName: string;
   type: 'oauth';
   oauth: OAuthConnectionProviderConfig;
+  // universalIdentifier of a logic function of the same application, enqueued
+  // after each successful OAuth connect (and reconnect) of this provider.
+  onConnectLogicFunctionUniversalIdentifier?: string;
 };

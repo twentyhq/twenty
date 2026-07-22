@@ -13,4 +13,5 @@ export type StoredOAuthConnectionProviderConfig = {
   authorizationParams: Record<string, string> | null;
   tokenRequestContentType: OAuthProviderTokenRequestContentType;
   usePkce: boolean;
+  onConnectLogicFunctionUniversalIdentifier: string | null;
 };

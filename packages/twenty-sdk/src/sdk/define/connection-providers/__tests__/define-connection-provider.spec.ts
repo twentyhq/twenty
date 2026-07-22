@@ -24,6 +24,29 @@ describe('defineConnectionProvider', () => {
     expect(result.errors).toEqual([]);
   });
 
+  it('accepts a UUID onConnectLogicFunctionUniversalIdentifier', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      onConnectLogicFunctionUniversalIdentifier:
+        '11111111-1111-4111-8111-111111111111',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a non-UUID onConnectLogicFunctionUniversalIdentifier', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      onConnectLogicFunctionUniversalIdentifier: 'my-hook',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Connection provider onConnectLogicFunctionUniversalIdentifier "my-hook" must be the UUID universalIdentifier of a logic function of this application',
+    );
+  });
+
   it('reports a missing universalIdentifier', () => {
     const result = defineConnectionProvider({
       ...baseValidConfig,

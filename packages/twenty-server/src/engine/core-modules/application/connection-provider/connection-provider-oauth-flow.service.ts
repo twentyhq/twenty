@@ -22,10 +22,18 @@ import { generatePkceVerifier } from 'src/engine/core-modules/application/connec
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import {
+  LogicFunctionTriggerJob,
+  type LogicFunctionTriggerJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -63,6 +71,9 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async startAuthorizationFlow(
@@ -186,12 +197,93 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
+    await this.enqueueOnConnectLogicFunction({
+      provider,
+      connectionId: connectedAccount.id,
+      workspaceId: statePayload.workspaceId,
+      userId: statePayload.userId,
+      userWorkspaceId: statePayload.userWorkspaceId,
+      isReconnection: isDefined(statePayload.reconnectingConnectedAccountId),
+    });
+
     return {
       connectedAccountId: connectedAccount.id,
       workspaceId: statePayload.workspaceId,
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  // Fire-and-forget: a failing hook must never fail the OAuth redirect the
+  // user is waiting on, so errors are logged and swallowed.
+  private async enqueueOnConnectLogicFunction({
+    provider,
+    connectionId,
+    workspaceId,
+    userId,
+    userWorkspaceId,
+    isReconnection,
+  }: {
+    provider: OAuthConnectionProvider;
+    connectionId: string;
+    workspaceId: string;
+    userId: string;
+    userWorkspaceId: string;
+    isReconnection: boolean;
+  }): Promise<void> {
+    const onConnectLogicFunctionUniversalIdentifier =
+      provider.oauthConfig.onConnectLogicFunctionUniversalIdentifier;
+
+    if (!isDefined(onConnectLogicFunctionUniversalIdentifier)) {
+      return;
+    }
+
+    try {
+      const { flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+        ]);
+
+      const flatLogicFunction =
+        flatLogicFunctionMaps.byUniversalIdentifier[
+          onConnectLogicFunctionUniversalIdentifier
+        ];
+
+      if (
+        !isDefined(flatLogicFunction) ||
+        flatLogicFunction.applicationId !== provider.applicationId
+      ) {
+        this.logger.error(
+          `On-connect logic function "${onConnectLogicFunctionUniversalIdentifier}" not found for provider ${provider.id} in workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        [
+          {
+            logicFunctionId: flatLogicFunction.id,
+            workspaceId,
+            userId,
+            userWorkspaceId,
+            payload: {
+              connectionId,
+              connectionProviderName: provider.name,
+              workspaceId,
+              userWorkspaceId,
+              isReconnection,
+            },
+          },
+        ],
+        { retryLimit: 3 },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue on-connect logic function for provider ${provider.id}: ${(error as Error).message}`,
+      );
+    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

@@ -44,6 +44,15 @@ export const defineConnectionProvider: DefineEntity<
     );
   }
 
+  if (
+    config.onConnectLogicFunctionUniversalIdentifier !== undefined &&
+    !UUID_PATTERN.test(config.onConnectLogicFunctionUniversalIdentifier)
+  ) {
+    errors.push(
+      `Connection provider onConnectLogicFunctionUniversalIdentifier "${config.onConnectLogicFunctionUniversalIdentifier}" must be the UUID universalIdentifier of a logic function of this application`,
+    );
+  }
+
   if (config.type === 'oauth') {
     const oauth = config.oauth;
 
