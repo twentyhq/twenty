@@ -1,6 +1,7 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
@@ -56,6 +57,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
@@ -89,6 +91,15 @@ type CampaignAudiencePreview = {
 };
 
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
+
+const sendableDraftCampaignSchema = z.object({
+  status: z.literal(CAMPAIGN_STATUS.DRAFT),
+  subject: z.string().min(1),
+  fromAddress: z.object({ primaryEmail: z.string().min(1) }),
+  listId: z.string().min(1),
+});
+
+type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
 
 const toRawRecipient = (person: {
   id: string;
@@ -151,15 +162,15 @@ export class MessageCampaignService {
     const { fromAddress, listId } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const campaign = await this.findSendableDraftCampaignOrThrow(
+          const sendableCampaign = await this.findSendableDraftCampaignOrThrow(
             workspaceId,
             campaignId,
             roleId,
           );
 
           return {
-            fromAddress: campaign.fromAddress?.primaryEmail ?? '',
-            listId: campaign.listId ?? '',
+            fromAddress: sendableCampaign.fromAddress.primaryEmail,
+            listId: sendableCampaign.listId,
           };
         },
       );
@@ -268,7 +279,7 @@ export class MessageCampaignService {
       { where: { domain: fromDomain, status: EmailingDomainStatus.VERIFIED } },
     );
 
-    if (emailingDomain === null) {
+    if (!isDefined(emailingDomain)) {
       throw new Error(
         `No verified emailing domain matches the from address ${fromAddress}`,
       );
@@ -296,7 +307,7 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (campaign === null) {
+      if (!isDefined(campaign)) {
         return;
       }
 
@@ -384,7 +395,7 @@ export class MessageCampaignService {
       });
 
       if (
-        message === null ||
+        !isDefined(message) ||
         (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
           message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED)
       ) {
@@ -400,7 +411,7 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (campaign === null) {
+      if (!isDefined(campaign)) {
         return;
       }
 
@@ -483,7 +494,7 @@ export class MessageCampaignService {
           );
 
           const isRetryable =
-            code === null ||
+            !isDefined(code) ||
             code === EmailingDomainDriverExceptionCode.TEMPORARY_ERROR ||
             code === EmailingDomainDriverExceptionCode.UNKNOWN;
 
@@ -543,7 +554,7 @@ export class MessageCampaignService {
         where: { headerMessageId: providerMessageId },
       });
 
-      if (message === null || message.messageCampaignId === null) {
+      if (!isDefined(message) || !isDefined(message.messageCampaignId)) {
         return;
       }
 
@@ -567,7 +578,7 @@ export class MessageCampaignService {
     workspaceId: string,
     campaignId: string,
     roleId: string,
-  ): Promise<MessageCampaignWorkspaceEntity> {
+  ): Promise<SendableDraftCampaign> {
     const campaignRepository = await this.getUserRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
@@ -578,29 +589,21 @@ export class MessageCampaignService {
       where: { id: campaignId },
     });
 
-    if (campaign === null) {
+    if (!isDefined(campaign)) {
       throw new Error(`Campaign ${campaignId} not found`);
     }
 
-    if (campaign.status !== CAMPAIGN_STATUS.DRAFT) {
+    const sendableCampaign = sendableDraftCampaignSchema.safeParse(campaign);
+
+    if (!sendableCampaign.success) {
       throw new Error(
-        `Campaign ${campaignId} is not a draft (status: ${campaign.status})`,
+        `Campaign ${campaignId} is not sendable: ${sendableCampaign.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
       );
     }
 
-    if (!isNonEmptyString(campaign.subject)) {
-      throw new Error(`Campaign ${campaignId} has no subject`);
-    }
-
-    if (!isNonEmptyString(campaign.fromAddress?.primaryEmail)) {
-      throw new Error(`Campaign ${campaignId} has no from address`);
-    }
-
-    if (!isNonEmptyString(campaign.listId)) {
-      throw new Error(`Campaign ${campaignId} has no recipient list`);
-    }
-
-    return campaign;
+    return sendableCampaign.data;
   }
 
   private async materializeCampaignMessages({
