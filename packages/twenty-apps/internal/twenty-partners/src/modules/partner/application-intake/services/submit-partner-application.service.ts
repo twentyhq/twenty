@@ -9,7 +9,7 @@ import {
   buildPartnerCreateData,
   buildPartnerFields,
 } from 'src/modules/partner/application-intake/mappers/build-partner-fields.mapper';
-import { findOrCreateCompanyId } from 'src/modules/partner/application-intake/services/find-or-create-company';
+import { findOrCreateCompanyId } from 'src/modules/partner/application-intake/services/find-or-create-company.service';
 import { type SubmitPartnerApplicationInput } from 'src/modules/partner/application-intake/services/submit-partner-application-input.schema';
 
 export type SubmitPartnerApplicationResult =
