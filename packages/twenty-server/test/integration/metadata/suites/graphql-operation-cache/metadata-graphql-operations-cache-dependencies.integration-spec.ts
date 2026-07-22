@@ -237,19 +237,17 @@ describe('metadata GraphQL operations cache dependencies', () => {
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
     const spy = jest.spyOn(workspaceCacheService, 'getOrRecomputeWithHashes');
 
-    spy.mockClear();
+    try {
+      const response = await makeMetadataAPIRequest({ query });
 
-    const response = await makeMetadataAPIRequest({ query });
+      expect(response.body.errors).toBeUndefined();
 
-    expect(response.body.errors).toBeUndefined();
-
-    const accessedCacheKeys = new Set<WorkspaceCacheKeyName>(
-      spy.mock.calls.flatMap(([, cacheKeyNames]) => cacheKeyNames),
-    );
-
-    spy.mockRestore();
-
-    return accessedCacheKeys;
+      return new Set<WorkspaceCacheKeyName>(
+        spy.mock.calls.flatMap(([, cacheKeyNames]) => cacheKeyNames),
+      );
+    } finally {
+      spy.mockRestore();
+    }
   };
 
   const findUndeclaredDependencies = async ({

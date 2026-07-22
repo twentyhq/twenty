@@ -136,17 +136,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
     this.evictExpiredLocalEntries();
-
-    if (
-      !isDefined(workspaceId) ||
-      cacheKeyNames.length === 0 ||
-      !isValidUuid(workspaceId)
-    ) {
-      throw new WorkspaceCacheException(
-        'Invalid parameters: workspace ID and cache key names are required',
-        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
-      );
-    }
+    this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
       `${workspaceId}-${[...cacheKeyNames].sort().join(',')}` as const;
@@ -215,6 +205,8 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<string> {
+    this.assertValidCacheParameters(workspaceId, cacheKeyNames);
+
     const cachedHashes = await this.getCacheHashes(workspaceId, cacheKeyNames);
     const missingKeys = cacheKeyNames.filter(
       (cacheKeyName) => !isDefined(cachedHashes[cacheKeyName]),
@@ -293,6 +285,22 @@ export class WorkspaceCacheService implements OnModuleInit {
     await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+  }
+
+  private assertValidCacheParameters(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): void {
+    if (
+      !isDefined(workspaceId) ||
+      cacheKeyNames.length === 0 ||
+      !isValidUuid(workspaceId)
+    ) {
+      throw new WorkspaceCacheException(
+        'Invalid parameters: workspace ID and cache key names are required',
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
+      );
+    }
   }
 
   private checkLocalTTL<K extends WorkspaceCacheKeyName>(
