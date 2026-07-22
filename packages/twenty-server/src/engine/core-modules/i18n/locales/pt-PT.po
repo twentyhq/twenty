@@ -7890,6 +7890,11 @@ msgstr "Não há mensagem com falha para tentar novamente."
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "Este valor de {fieldLabel} já está em uso. Verifique seus dados e tente novamente."
 
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
