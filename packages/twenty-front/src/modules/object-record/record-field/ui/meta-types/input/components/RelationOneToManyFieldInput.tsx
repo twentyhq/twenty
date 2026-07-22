@@ -28,8 +28,6 @@ import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -239,31 +237,14 @@ export const RelationOneToManyFieldInput = () => {
         await createTargetRecord(targetPayload);
 
         const newJunctionId = v4();
-        const createdJunction = await createJunctionRecord({
+        // The junction is attached to the source record's field by
+        // useCreateOneRecord's post-optimistic effect; appending it here as well
+        // would render the same list twice until a reload.
+        await createJunctionRecord({
           id: newJunctionId,
           [sourceJoinColumnName]: recordId,
           [targetJoinColumnName]: newTargetId,
         });
-
-        if (isDefined(createdJunction)) {
-          store.set(
-            recordStoreFamilyState.atomFamily(recordId),
-            (currentRecord: ObjectRecord | null | undefined) => {
-              if (!isDefined(currentRecord)) {
-                return currentRecord;
-              }
-              const currentFieldValue = currentRecord[fieldName];
-              const updatedJunctionRecords = Array.isArray(currentFieldValue)
-                ? [...currentFieldValue, createdJunction]
-                : [createdJunction];
-
-              return {
-                ...currentRecord,
-                [fieldName]: updatedJunctionRecords,
-              } as ObjectRecord;
-            },
-          );
-        }
 
         updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
           junctionTargetObjectMetadata,
@@ -283,7 +264,6 @@ export const RelationOneToManyFieldInput = () => {
       createNewRecordAndOpenSidePanel,
       createTargetRecord,
       createJunctionRecord,
-      fieldName,
       instanceId,
       isMorphJunction,
       isJunctionRelation,
