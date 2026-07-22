@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
+import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 type InstallWindowGeometryPolyfillInput = {
@@ -12,17 +13,7 @@ export const installWindowGeometryPolyfill = ({
   globalScope,
   geometryStore,
 }: InstallWindowGeometryPolyfillInput): void => {
-  const polyfillWindow = globalScope.window;
-
-  const installTargets: object[] = [globalScope];
-
-  if (
-    isDefined(polyfillWindow) &&
-    typeof polyfillWindow === 'object' &&
-    polyfillWindow !== globalScope
-  ) {
-    installTargets.push(polyfillWindow);
-  }
+  const installTargets = resolveGlobalScopeInstallTargets(globalScope);
 
   const defineViewportGetter = (
     propertyName:

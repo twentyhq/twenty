@@ -2,6 +2,7 @@ import { isFunction, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
+import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 
 type ElementWithStyle = {
   style?: unknown;
@@ -22,18 +23,7 @@ export const installGetComputedStyle = ({
     return isDefined(declaredStyle) ? declaredStyle : createStyleProxy();
   };
 
-  const installTargets: Record<string, unknown>[] = [globalScope];
-  const polyfillWindow = globalScope.window;
-
-  if (
-    isDefined(polyfillWindow) &&
-    typeof polyfillWindow === 'object' &&
-    polyfillWindow !== globalScope
-  ) {
-    installTargets.push(polyfillWindow as Record<string, unknown>);
-  }
-
-  for (const installTarget of installTargets) {
+  for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
     if (isFunction(installTarget.getComputedStyle)) {
       continue;
     }

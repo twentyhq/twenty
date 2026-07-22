@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
+import { assembleFontShorthandFromLonghands } from '@/utils/assembleFontShorthandFromLonghands';
 
 export const resolveRootContainerFontShorthand = (
   rootContainer: Element | null,
@@ -25,13 +26,13 @@ export const resolveRootContainerFontShorthand = (
       return DEFAULT_FONT_SHORTHAND;
     }
 
-    const sizeAndLineHeight = isNonEmptyString(lineHeight)
-      ? `${fontSize}/${lineHeight}`
-      : fontSize;
-
-    return [fontStyle, fontWeight, sizeAndLineHeight, fontFamily]
-      .filter(isNonEmptyString)
-      .join(' ');
+    return assembleFontShorthandFromLonghands({
+      fontStyle,
+      fontWeight,
+      fontSize,
+      lineHeight,
+      fontFamily,
+    });
   } catch {
     return DEFAULT_FONT_SHORTHAND;
   }

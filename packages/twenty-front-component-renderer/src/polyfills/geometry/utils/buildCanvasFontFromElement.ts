@@ -2,6 +2,7 @@ import { isFunction, isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_FONT_FAMILY } from '@/constants/DefaultFontFamily';
 import { DEFAULT_FONT_SIZE_PIXELS } from '@/constants/DefaultFontSizePixels';
+import { assembleFontShorthandFromLonghands } from '@/utils/assembleFontShorthandFromLonghands';
 
 type StyleDeclarationLike = {
   getPropertyValue?: (propertyName: string) => unknown;
@@ -56,17 +57,11 @@ export const buildCanvasFontFromElement = (
     return defaultFontShorthand;
   }
 
-  const resolvedFontSize = fontSize ?? `${DEFAULT_FONT_SIZE_PIXELS}px`;
-  const sizeAndLineHeight = isNonEmptyString(lineHeight)
-    ? `${resolvedFontSize}/${lineHeight}`
-    : resolvedFontSize;
-
-  return [
+  return assembleFontShorthandFromLonghands({
     fontStyle,
     fontWeight,
-    sizeAndLineHeight,
-    fontFamily ?? DEFAULT_FONT_FAMILY,
-  ]
-    .filter(isNonEmptyString)
-    .join(' ');
+    fontSize: fontSize ?? `${DEFAULT_FONT_SIZE_PIXELS}px`,
+    lineHeight,
+    fontFamily: fontFamily ?? DEFAULT_FONT_FAMILY,
+  });
 };
