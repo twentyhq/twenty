@@ -337,6 +337,38 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
   });
 
+  it('should refresh the font shorthand when a document style mutation marks the viewport dirty', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    document.body.append(rootContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    const getComputedStyle = jest
+      .spyOn(window, 'getComputedStyle')
+      .mockReturnValue({ font: '700 20px Inter' } as CSSStyleDeclaration);
+
+    pushGeometryUpdates.mockClear();
+    geometryGlobals.triggerMutationObserver();
+    geometryGlobals.flushAnimationFrame();
+
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
+    expect(
+      pushGeometryUpdates.mock.calls[0][0].viewport.defaultFontShorthand,
+    ).toBe('700 20px Inter');
+
+    getComputedStyle.mockRestore();
+  });
+
   it('should keep scheduling past the idle threshold while an animation runs inside the root', () => {
     const { tracker } = createArmedTracker();
     const rootContainer = document.createElement('div');

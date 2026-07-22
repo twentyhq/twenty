@@ -25,6 +25,7 @@ export const createGeometryWakeSources = (
   let rootContainer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
+  let documentStyleObserver: MutationObserver | null = null;
   let animationInFlightCount = 0;
   let viewportDirty = false;
   let areViewportSourcesAttached = false;
@@ -123,6 +124,27 @@ export const createGeometryWakeSources = (
     resizeObserver?.unobserve(node);
   };
 
+  const observeDocumentStyleMutations = (): void => {
+    if (typeof MutationObserver !== 'function') {
+      return;
+    }
+
+    documentStyleObserver = new MutationObserver(wakeForViewport);
+    documentStyleObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    });
+    documentStyleObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    });
+    documentStyleObserver.observe(document.head, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  };
+
   const attachViewportSources = (): void => {
     if (areViewportSourcesAttached) {
       return;
@@ -132,6 +154,7 @@ export const createGeometryWakeSources = (
 
     window.addEventListener('resize', wakeForViewport);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    observeDocumentStyleMutations();
 
     if (isDefined(rootContainer)) {
       resolveResizeObserver()?.observe(rootContainer);
@@ -195,6 +218,8 @@ export const createGeometryWakeSources = (
       areViewportSourcesAttached = false;
       window.removeEventListener('resize', wakeForViewport);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      documentStyleObserver?.disconnect();
+      documentStyleObserver = null;
     }
 
     resizeObserver?.disconnect();
