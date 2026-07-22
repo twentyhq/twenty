@@ -1,0 +1,21 @@
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_e8eef98b2fe306 20,22,42
+packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
+  s_c3fbc446206706::t_04fc49ee2c7f06 6-7,9-10,14,16,18-21,24-25,28-32,44-47,51,58-69,79,84-105,107,109-118,124-125,128-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5eb698b04637281f88394a8918df322d51861247",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
