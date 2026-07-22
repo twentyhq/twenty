@@ -22,10 +22,18 @@ import { generatePkceVerifier } from 'src/engine/core-modules/application/connec
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import {
+  LogicFunctionTriggerJob,
+  type LogicFunctionTriggerJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -63,6 +71,10 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async startAuthorizationFlow(
@@ -186,12 +198,71 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
+    await this.dispatchOnConnectHook({
+      provider,
+      workspaceId: statePayload.workspaceId,
+      connectedAccountId: connectedAccount.id,
+    });
+
     return {
       connectedAccountId: connectedAccount.id,
       workspaceId: statePayload.workspaceId,
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  private async dispatchOnConnectHook({
+    provider,
+    workspaceId,
+    connectedAccountId,
+  }: {
+    provider: OAuthConnectionProvider;
+    workspaceId: string;
+    connectedAccountId: string;
+  }): Promise<void> {
+    const { onConnectLogicFunctionUniversalIdentifier } = provider;
+
+    if (!isDefined(onConnectLogicFunctionUniversalIdentifier)) {
+      return;
+    }
+
+    try {
+      const logicFunction = await this.logicFunctionRepository.findOne({
+        where: {
+          universalIdentifier: onConnectLogicFunctionUniversalIdentifier,
+          workspaceId,
+        },
+      });
+
+      if (!isDefined(logicFunction)) {
+        this.logger.warn(
+          `Connection provider ${provider.id} references on-connect logic function ${onConnectLogicFunctionUniversalIdentifier} not found in workspace ${workspaceId}; skipping.`,
+        );
+
+        return;
+      }
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        [
+          {
+            logicFunctionId: logicFunction.id,
+            workspaceId,
+            payload: {
+              connectionProviderId: provider.id,
+              connectionProviderName: provider.name,
+              connectedAccountId,
+            },
+          },
+        ],
+        { retryLimit: 3 },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to dispatch on-connect hook for provider ${provider.id} in workspace ${workspaceId}: ${(error as Error).message}`,
+      );
+    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

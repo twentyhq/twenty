@@ -22,9 +22,12 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
@@ -47,6 +50,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
     findOne: jest.Mock;
     findOneByOrFail: jest.Mock;
   };
+  let logicFunctionRepository: { findOne: jest.Mock };
+  let messageQueueService: { add: jest.Mock };
 
   const baseProvider: ConnectionProviderEntity = {
     id: 'provider-1',
@@ -95,6 +100,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
         provider: ConnectedAccountProvider.APP,
       })),
     };
+    logicFunctionRepository = { findOne: jest.fn(async () => null) };
+    messageQueueService = { add: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -112,6 +119,14 @@ describe('ConnectionProviderOAuthFlowService', () => {
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: connectedAccountRepository,
+        },
+        {
+          provide: getRepositoryToken(LogicFunctionEntity),
+          useValue: logicFunctionRepository,
+        },
+        {
+          provide: getQueueToken(MessageQueue.logicFunctionQueue),
+          useValue: messageQueueService,
         },
         {
           // Real prefix/round-trip behavior is asserted in
@@ -436,6 +451,73 @@ describe('ConnectionProviderOAuthFlowService', () => {
           state: 'bad-state',
         }),
       ).rejects.toThrow(/state/);
+    });
+
+    describe('on-connect hook', () => {
+      const ON_CONNECT_UID = 'c1c1c1c1-c1c1-4c1c-c1c1-c1c1c1c1c1c1';
+
+      it('does not dispatch a hook when the provider declares none', async () => {
+        await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(logicFunctionRepository.findOne).not.toHaveBeenCalled();
+        expect(messageQueueService.add).not.toHaveBeenCalled();
+      });
+
+      it('enqueues the declared on-connect logic function in the connecting workspace', async () => {
+        connectionProviderService.findOneByIdOrThrow.mockResolvedValue({
+          ...baseProvider,
+          onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_UID,
+        });
+        logicFunctionRepository.findOne.mockResolvedValue({
+          id: 'logic-function-1',
+        });
+
+        const result = await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(logicFunctionRepository.findOne).toHaveBeenCalledWith({
+          where: {
+            universalIdentifier: ON_CONNECT_UID,
+            workspaceId: 'workspace-1',
+          },
+        });
+        expect(messageQueueService.add).toHaveBeenCalledWith(
+          'LogicFunctionTriggerJob',
+          [
+            {
+              logicFunctionId: 'logic-function-1',
+              workspaceId: 'workspace-1',
+              payload: {
+                connectionProviderId: 'provider-1',
+                connectionProviderName: 'linear',
+                connectedAccountId: result.connectedAccountId,
+              },
+            },
+          ],
+          { retryLimit: 3 },
+        );
+      });
+
+      it('skips dispatch without failing the connection when the hook function is missing', async () => {
+        connectionProviderService.findOneByIdOrThrow.mockResolvedValue({
+          ...baseProvider,
+          onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_UID,
+        });
+        logicFunctionRepository.findOne.mockResolvedValue(null);
+
+        const result = await service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'signed-state',
+        });
+
+        expect(result.connectedAccountId).toBe('new-account-id');
+        expect(messageQueueService.add).not.toHaveBeenCalled();
+      });
     });
   });
 });
