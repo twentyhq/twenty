@@ -9,9 +9,9 @@ import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/r
 import { RECORD_TABLE_HEADER_DROPPABLE_ID } from '@/object-record/record-table/record-table-header/dnd/constants/RecordTableHeaderDroppableId';
 import { RecordTableHeaderDndKitProvider } from '@/object-record/record-table/record-table-header/dnd/providers/RecordTableHeaderDndKitProvider';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
-import { DragDropColumnDroppableSlot } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDroppableSlot';
-import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
-import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
+import { DragDropItemDroppableSlot } from '@/ui/utilities/drag-and-drop/components/DragDropItemDroppableSlot';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,61 +28,68 @@ export const RecordTableHeaderDnd = () => {
 
   return (
     <RecordTableHeaderDndKitProvider>
-      <DragDropColumnDroppableSlot
+      <DragDropItemDroppableSlot
         droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
         index={0}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
-        <DragDropColumnDropTarget index={0} compact />
-      </DragDropColumnDroppableSlot>
+        <DragDropItemDropTarget index={0} orientation="vertical" compact />
+      </DragDropItemDroppableSlot>
 
       {isDefined(firstScrollableRecordField) && (
-        <DragDropColumnSortableCell
+        <DragDropItemSortableCell
           key={firstScrollableRecordField.fieldMetadataItemId}
           id={firstScrollableRecordField.fieldMetadataItemId}
           index={0}
           group={RECORD_TABLE_HEADER_DROPPABLE_ID}
           disabled={isRecordTableColumnHeadersReadOnly}
+          restrictMovementTo="x"
         >
           <RecordTableHeaderFirstScrollableCell
             firstScrollableRecordField={firstScrollableRecordField}
           />
-        </DragDropColumnSortableCell>
+        </DragDropItemSortableCell>
       )}
 
       {recordFieldsWithoutFirstTwo.map((recordField, index) => (
         <React.Fragment key={recordField.fieldMetadataItemId}>
-          <DragDropColumnDroppableSlot
+          <DragDropItemDroppableSlot
             droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
             index={index + 1}
             disabled={isRecordTableColumnHeadersReadOnly}
           >
-            <DragDropColumnDropTarget index={index + 1} compact />
-          </DragDropColumnDroppableSlot>
-          <DragDropColumnSortableCell
+            <DragDropItemDropTarget
+              index={index + 1}
+              orientation="vertical"
+              compact
+            />
+          </DragDropItemDroppableSlot>
+          <DragDropItemSortableCell
             id={recordField.fieldMetadataItemId}
             index={index + 1}
             group={RECORD_TABLE_HEADER_DROPPABLE_ID}
             disabled={isRecordTableColumnHeadersReadOnly}
+            restrictMovementTo="x"
           >
             <RecordTableHeaderCell
               key={recordField.fieldMetadataItemId}
               recordField={recordField}
               recordFieldIndex={index + 2}
             />
-          </DragDropColumnSortableCell>
+          </DragDropItemSortableCell>
         </React.Fragment>
       ))}
-      <DragDropColumnDroppableSlot
+      <DragDropItemDroppableSlot
         droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
         index={visibleRecordFields.length - 1}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
-        <DragDropColumnDropTarget
+        <DragDropItemDropTarget
           index={visibleRecordFields.length - 1}
+          orientation="vertical"
           compact
         />
-      </DragDropColumnDroppableSlot>
+      </DragDropItemDroppableSlot>
       {isRecordTableColumnHeadersReadOnly ? (
         <RecordTableHeaderEmptyLastColumn />
       ) : (

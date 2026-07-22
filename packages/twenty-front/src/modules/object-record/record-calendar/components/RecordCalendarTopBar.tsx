@@ -1,10 +1,12 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekRange';
-import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { Select } from '@/ui/input/components/Select';
@@ -13,9 +15,10 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -70,8 +73,20 @@ export const RecordCalendarTopBar = () => {
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
     useAtomComponentState(recordCalendarSelectedDateComponentState);
 
+  const isRecordCalendarReadOnly = useAtomComponentStateValue(
+    isRecordCalendarReadOnlyComponentState,
+  );
+
+  // The layout switcher persists via updateCurrentView (an index-page write),
+  // so it must never render inside a dashboard widget; widget calendars drive
+  // their layout from the side-panel settings instead.
+  const widgetInstanceId = useAvailableComponentInstanceId(
+    WidgetComponentInstanceContext,
+  );
+  const isInWidget = isDefined(widgetInstanceId);
+
   const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
-    useAtomState(recordIndexCalendarLayoutState);
+    useAtomComponentState(recordIndexCalendarLayoutComponentState);
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
@@ -161,20 +176,22 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        {isCalendarWeekViewEnabled && (
-          <Select
-            dropdownId={`record-calendar-layout-${recordCalendarId}`}
-            value={supportedCalendarLayout}
-            options={[
-              { label: t`Day`, value: ViewCalendarLayout.DAY },
-              { label: t`Week`, value: ViewCalendarLayout.WEEK },
-              { label: t`Month`, value: ViewCalendarLayout.MONTH },
-            ]}
-            selectSizeVariant="small"
-            dropdownWidth={120}
-            onChange={handleCalendarLayoutChange}
-          />
-        )}
+        {isCalendarWeekViewEnabled &&
+          !isRecordCalendarReadOnly &&
+          !isInWidget && (
+            <Select
+              dropdownId={`record-calendar-layout-${recordCalendarId}`}
+              value={supportedCalendarLayout}
+              options={[
+                { label: t`Day`, value: ViewCalendarLayout.DAY },
+                { label: t`Week`, value: ViewCalendarLayout.WEEK },
+                { label: t`Month`, value: ViewCalendarLayout.MONTH },
+              ]}
+              selectSizeVariant="small"
+              dropdownWidth={120}
+              onChange={handleCalendarLayoutChange}
+            />
+          )}
         <Dropdown
           dropdownId={datePickerDropdownId}
           clickableComponent={
