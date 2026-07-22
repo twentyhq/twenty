@@ -1,0 +1,75 @@
+packages/twenty-front/src/modules/settings/admin-panel/graphql/mutations/updateWorkspaceMessageCampaignDailySendLimit.ts
+  s_c3fbc446206706::t_d3d04c7120a45f 1-13
+packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+  s_c3fbc446206706::t_c694b13369ba4b 16,330-337
+  s_c3fbc446206706::t_936d9c3a61e894 338-339
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/user-lookup.dto.ts
+  s_c3fbc446206706::t_c6097eae98a0e4 1,61-63
+packages/twenty-front/src/modules/settings/admin-panel/components/SettingsAdminWorkspaceSendLimit.tsx
+  s_c3fbc446206706::t_d3d04c7120a45f 1-102
+packages/twenty-server/src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service.ts
+  s_c3fbc446206706::t_46dea535e70d93 128-129,208
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_c3fbc446206706::t_06f9f893621057 9,29,44,98-114
+  s_c3fbc446206706::t_01cc0f2bfa386a 115-116
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784766200000-add-workspace-message-campaign-daily-send-limit.ts
+  s_c3fbc446206706::t_4a4274ad1715b0 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_c3fbc446206706::t_3443cf7302870a 13,21
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/update-workspace-message-campaign-daily-send-limit.input.ts
+  s_c3fbc446206706::t_e4520f9ea64445 1-27
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_84a92229667d0c 22-25,50,117,164-165,185-190
+  s_c3fbc446206706::t_b40affeb39fcdb 191
+packages/twenty-front/src/generated-admin/graphql.ts
+  s_c3fbc446206706::t_b1440fcfe59af1 463,592-597,970,1227-1234,1306,1430,1441
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_f027122e2e34c2 57,250
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_c3fbc446206706::t_3443cf7302870a 28-31
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignSendQuota.ts
+  s_c3fbc446206706::t_00e17c8443a9a1 1-12
+packages/twenty-front/src/modules/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel.ts
+  s_c3fbc446206706::t_d3d04c7120a45f 35
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_c3fbc446206706::t_00e17c8443a9a1 4,32-40,98-101,136-148
+  s_c3fbc446206706::t_df50deba9c1cae 149
+packages/twenty-server/src/modules/emailing/services/campaign-send-quota.service.ts
+  s_c3fbc446206706::t_8a8ff5f0495954 74
+  s_c3fbc446206706::t_e4520f9ea64445 1-73,75-109
+packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel.resolver.ts
+  s_c3fbc446206706::t_06f9f893621057 35,220-230
+  s_c3fbc446206706::t_b250e39cbbb198 231-232
+packages/twenty-front/src/modules/activities/emails/graphql/metadata-queries/campaignSendQuota.ts
+  s_c3fbc446206706::t_00e17c8443a9a1 1-11
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/campaign-send-quota.dto.ts
+  s_c3fbc446206706::t_e4520f9ea64445 1-13
+packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+  s_c3fbc446206706::t_3443cf7302870a 253-256
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_c3fbc446206706::t_295cc362b8e870 873,2584-2589,3164
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_c3fbc446206706::t_f441a2e818e2f9 615,2255-2261,2801,3716,5446-5453,6036,8403-8410
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_c3fbc446206706::t_06f6cf7c077fbb 74-75,79-83,85-86,1667-1669,5080-5093,5124,5147,5193,5221,5224,5227,5247,5469,5518,5526,5563,5668,5674,5738,5807,5835,5897,5900,5931,5946,5949,5952,5958,6009,6027,6091,6094,6097,6262,6365,6399,6408,6420,6429,6647-6649,6654,6660,6680,6692,6695,6704,6712,6720,6723,6730,6738,6752,6755,6758,6767,6776,6785,6788,6791,6800,6866,6869,6875,6878,6884,6887,6893,6896,6902,6911,6930,6946,6975,6978,7043,7046,7067,7134,7146,7155,7164,7173,7182,7191,7226,7265,7274,7283,7292,7301,7310,7323,7336,7349,7376,7385,7394,7403,7412,7425,7452,7461,7470,7479,7488,7497,7506,7515,7524,7533,7542,7551,7560,7569,7578,7587,7596,7605,7614,7769,7778,7787,7796,7809,7827,7840,7862,7898,7911,7929,7938,7947,7956,7965,7974,7983,7992,8001,8010,8019,8028,8037,8046,8073,8082,8100,8109,8137,8146,8173,8182,8200,8262,8283,8292,8301,8310,8319,8328,8337,8346,8355,8377,8386,8404,8413,8422,8431,8459,8462,8468,8471,8477,8480,8486,8489,8507,8516,8534,8567,8570,8576,8579,8585,8588,8594,8603,8606,8612,8615,8621,8624,8630,8633,8646,8651,8654,8675,8681,8693,8704,8722,8735,8744,8771,8774,8780,8783,8789,8798,8807,8816,8825,8841,9007,9019,9162,9196,9205,9214,9223,9229,9249,9252,9267,9289,9292,9298,9301,9307,9316,9323,9335,9400,9408,9513,9624,9795,9798,9801,9804,9807,9953,9991,10067,10131,10134,10154,10322,10345,10368,10417,10443,10536,10596,10651,10662,10747,10907,11034,11088,11118,11191,11286,11371,11426,11468,11499,11502,11620,11637,11648,11732,11760,11779,11790,11798,11804,11821,12058,12080,12083,12086,12137,12143,12152,12155
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c3fbc446206706::t_8696a9fdc6e268 853-859,4385,6387,6514-6518,8968
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_c3fbc446206706::t_47c50a6fdce020 18,24,44,52,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "cdc0f6b2791592d106675b5a2c846179ac494e24",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
