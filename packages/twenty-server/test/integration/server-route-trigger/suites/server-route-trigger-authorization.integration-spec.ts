@@ -168,13 +168,13 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       });
     });
 
-    it('dispatches a server-route-exposed resolver and returns the target function response', async () => {
+    it('dispatches a server-route-exposed resolver, queues the target, and acks with 202', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
         .send({ any: 'payload' });
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(TARGET_FUNCTION_RESPONSE);
+      expect(response.status).toBe(202);
+      expect(response.body).toEqual({ queued: true });
     }, 60000);
 
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
