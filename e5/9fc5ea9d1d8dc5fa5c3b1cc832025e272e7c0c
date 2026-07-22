@@ -1,0 +1,128 @@
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util.ts
+  s_c3fbc446206706::t_9174e5ecfc1ced 379
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_b6352cab0ed147::t_cd8a230c2c2610 1,4,7,10
+  s_c3fbc446206706::t_85ea7b4a2c06b3 2-3,6,12-17,19-24
+  s_c3fbc446206706::t_4a3966be033baf 11
+packages/twenty-shared/src/types/page-layout/page-layout-widget-configuration.type.ts
+  s_c3fbc446206706::t_b5af497c2c12cf 156-159
+  s_c3fbc446206706::t_4a84bc7d15c9f9 198-199
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_c3fbc446206706::t_a6ff8da27bc11f 88
+  s_b6352cab0ed147::t_434cb74c09da7b 14
+  s_b6352cab0ed147::t_a36e4ecb17303d 89,92-105,111-117
+  s_b6352cab0ed147::t_fbc6bf5d8d877b 90-91
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_c3fbc446206706::t_20e9cb65318960 159-160
+  s_c3fbc446206706::t_e63a15f7899923 230,232-235
+  s_c3fbc446206706::t_ff208028606905 155-158
+  s_c3fbc446206706::t_c1eaea9a90314a 231
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util.ts
+  s_c3fbc446206706::t_9174e5ecfc1ced 363
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_74fa4e462d2294 121,247
+packages/twenty-front/src/modules/page-layout/widgets/hooks/useWidgetRendererState.ts
+  s_c3fbc446206706::t_0b32c5c6dd5da7 60-61
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_f19438962ffa8e 64
+  s_b6352cab0ed147::t_f09ee1762fc2de 225-279
+  s_c3fbc446206706::t_042baf22306c6f 144,146,148-149,151-164,167,169-170,172,186,188,190-193
+  s_c3fbc446206706::t_1aa1cd34ba234e 566-570,577-578,581-603
+  s_b6352cab0ed147::t_40d556e6636145 67-69
+  s_c3fbc446206706::t_b0ee9f15be9bd7 65-66
+packages/twenty-front/src/modules/object-record/utils/__tests__/canOpenObjectInSidePanel.test.ts
+  s_c3fbc446206706::t_ee26dc3c1da844 8
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_c3fbc446206706::t_453a6eab2e8311 1-23
+packages/twenty-front/src/modules/page-layout/widgets/components/WidgetContentRenderer.tsx
+  s_c3fbc446206706::t_ef6c7694b75e95 85-87
+  s_c3fbc446206706::t_654148d2e9a670 12
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/build-standard-flat-page-layout-widget-metadata-maps.util.ts
+  s_c3fbc446206706::t_156f4a171f856d 64
+  s_c3fbc446206706::t_0fc525ccc2e135 42
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_c3fbc446206706::t_a3b1764e68ced8 614,617
+  s_c3fbc446206706::t_12edb790fcae02 615-616,618-621
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_c3fbc446206706::t_5e85e38d9cb59e 29
+  s_c3fbc446206706::t_b226e6bae9403a 16-17,19,22-23,25,28
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/constants/all-widget-configuration-type-validator-by-widget-configuration-type.constant.ts
+  s_c3fbc446206706::t_1f8a71cfeb9f09 3
+  s_c3fbc446206706::t_b667a176372cb5 39
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_c3fbc446206706::t_46eb4fecc05d88 2,5-14,17,22,25-33,37-61,70,74-76
+  s_c3fbc446206706::t_abed09a1ee2ad8 62,84-85,87-90
+  s_b6352cab0ed147::t_89a9ac71770894 64-66,86
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_c3fbc446206706::t_1ee0afc634ef52 13
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+  s_c3fbc446206706::t_e2c8c276f4014d 155-157
+  s_c3fbc446206706::t_dc2ba941e096c4 98-100
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_b6352cab0ed147::t_b729081925441c 53
+  s_b6352cab0ed147::t_97e6418bef09b8 119-136
+  s_b6352cab0ed147::t_3afddf2a94266e 144
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784663000000-add-message-campaign-composer-tab.command.ts
+  s_c3fbc446206706::t_600ecc52b243c5 1-200
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type.ts
+  s_c3fbc446206706::t_836b957c5efef2 30
+packages/twenty-front/src/modules/page-layout/graphql/fragments/pageLayoutWidgetFragment.ts
+  s_c3fbc446206706::t_c12f51d3ce8d36 156-158
+packages/twenty-front/src/modules/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType.ts
+  s_c3fbc446206706::t_9b2dc12659dd0a 54-59
+  s_c3fbc446206706::t_2dacf5bbdd9cc6 14
+packages/twenty-front/src/modules/object-record/utils/canOpenObjectInSidePanel.ts
+  s_c3fbc446206706::t_733f5191d53c6c 5-6
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input.ts
+  s_c3fbc446206706::t_890e96c03dc83f 3,9
+packages/twenty-front/src/modules/activities/emails/types/MessageCampaign.ts
+  s_c3fbc446206706::t_2ad6e20af77cd0 1-9
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784662000000-add-message-campaign-widget-type.ts
+  s_c3fbc446206706::t_641f6e31f0f72e 1-49
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_ce20b0559208ae 1-53
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum.ts
+  s_c3fbc446206706::t_c37df13efca290 21
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-upgrade-version-command.module.ts
+  s_c3fbc446206706::t_b96c52e0eef443 8
+  s_c3fbc446206706::t_1750508a82e25a 37
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-configuration.dto.ts
+  s_c3fbc446206706::t_27596b74ff40dd 1-16
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c3fbc446206706::t_e1da95943b8b2e 2702,3509-3513,5219,5229-5236,6334,6349,6373,6589-6595,7174,7204,7246,7580,7615,7650,7685,7721,7768,7801,9019-9021,9061
+  s_c3fbc446206706::t_2128ecd3e2e8f6 2372-2376,9135,9179-9182,9185-9186
+packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
+  s_c3fbc446206706::t_1063b7e0ed46ad 1-117
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaignTest.ts
+  s_c3fbc446206706::t_35fc1f4d860448 1-9
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaignTest.ts
+  s_c3fbc446206706::t_8e7cba4df90cd5 1,4-5,7-43,45-52,54-62,64
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign-test.input.ts
+  s_c3fbc446206706::t_4eb2e3f9f84198 1-36
+packages/twenty-shared/src/types/index.ts
+  s_c3fbc446206706::t_da34603cacc0ed 208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e59fc5ea9d1d8dc5fa5c3b1cc832025e272e7c0c",
+  "prompts": {},
+  "sessions": {
+    "s_b6352cab0ed147": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bf274dc2-d29c-423b-bf66-93ad8363f80b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    },
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
