@@ -1,0 +1,21 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784766000000-add-message-channel-display-name.ts
+  s_c3fbc446206706::t_45711ad2270baf 6
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_ff35b8f96f46f1 120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "51df0f3690a2215e387949e5caa4b8b2ce3bdead",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
