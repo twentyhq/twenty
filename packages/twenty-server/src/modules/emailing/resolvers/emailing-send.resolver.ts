@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
+import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
 import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
@@ -33,7 +34,10 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
-@UseFilters(EmailGroupAccessGraphqlApiExceptionFilter)
+@UseFilters(
+  EmailGroupAccessGraphqlApiExceptionFilter,
+  EmailingDomainGraphqlApiExceptionFilter,
+)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class EmailingSendResolver {

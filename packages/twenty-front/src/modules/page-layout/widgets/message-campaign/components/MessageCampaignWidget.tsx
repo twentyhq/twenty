@@ -36,8 +36,7 @@ export const MessageCampaignWidget = () => {
     return null;
   }
 
-  // A campaign that has left DRAFT is already with the provider, so the page
-  // reports on it instead of offering an editor that could not be applied.
+  // A campaign that left DRAFT is already with the provider, so no more editing
   if (campaign.status !== 'DRAFT') {
     return (
       <StyledContainer>

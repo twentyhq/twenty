@@ -20,6 +20,10 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -49,6 +53,7 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
+import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -91,13 +96,6 @@ type CampaignAudiencePreview = {
 };
 
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
-
-const sendableDraftCampaignSchema = z.object({
-  status: z.literal(CAMPAIGN_STATUS.DRAFT),
-  subject: z.string().min(1),
-  fromAddress: z.object({ primaryEmail: z.string().min(1) }),
-  listId: z.string().min(1),
-});
 
 type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
 
@@ -280,8 +278,9 @@ export class MessageCampaignService {
     );
 
     if (!isDefined(emailingDomain)) {
-      throw new Error(
+      throw new EmailingDomainException(
         `No verified emailing domain matches the from address ${fromAddress}`,
+        EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED,
       );
     }
 
@@ -590,16 +589,20 @@ export class MessageCampaignService {
     });
 
     if (!isDefined(campaign)) {
-      throw new Error(`Campaign ${campaignId} not found`);
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} not found`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND,
+      );
     }
 
     const sendableCampaign = sendableDraftCampaignSchema.safeParse(campaign);
 
     if (!sendableCampaign.success) {
-      throw new Error(
+      throw new EmailingDomainException(
         `Campaign ${campaignId} is not sendable: ${sendableCampaign.error.issues
           .map((issue) => `${issue.path.join('.')} ${issue.message}`)
           .join(', ')}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
       );
     }
 
