@@ -11,8 +11,6 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 const hashToken = (token: string) =>
   crypto.createHash('sha256').update(token).digest('hex');
 
-// Consumed, expired and unknown tokens must be indistinguishable, otherwise
-// the endpoint becomes an oracle telling an attacker which tokens once existed.
 const expectUniformInvalidTokenError = (errors: { message: string }[]) => {
   expect(errors).toHaveLength(1);
   expect(errors[0]).toMatchObject({
@@ -154,8 +152,6 @@ describe('SSO exchange token redemption (integration)', () => {
     expectUniformInvalidTokenError(errors);
   });
 
-  // The redirect must never yield more than one refresh token, even if the
-  // browser and an attacker replaying a leaked URL race each other.
   it('should let exactly one of several concurrent redemptions succeed', async () => {
     const plainToken = await seedSSOExchangeToken();
 

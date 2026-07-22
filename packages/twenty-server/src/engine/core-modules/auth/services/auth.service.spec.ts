@@ -715,8 +715,6 @@ describe('AuthService', () => {
         .mockResolvedValue({ id: 'user-id' } as UserEntity);
     });
 
-    // Regression: this redirect used to carry a 60-day refresh token in a
-    // `tokenPair` query param, exposing it to history, Referer and access logs.
     it('should not mint a refresh token nor put credentials in the redirect URL', async () => {
       const url = await service.signInUpWithSocialSSO(
         socialSSOUser,

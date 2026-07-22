@@ -112,9 +112,6 @@ describe('SSOExchangeTokenService', () => {
         context: { authProvider: AuthProviderEnum.Google },
       }) as AppTokenEntity;
 
-    // Redemption is a single DELETE ... RETURNING, so only its outcome is
-    // asserted here; the atomicity and type scoping it relies on are covered
-    // against a real database in single-use-sso-exchange-token.integration-spec
     const mockClaimedRows = (rows: AppTokenEntity[]) => {
       const queryBuilder = {
         delete: jest.fn().mockReturnThis(),

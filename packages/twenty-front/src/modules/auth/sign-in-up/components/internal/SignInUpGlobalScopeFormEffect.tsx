@@ -14,8 +14,6 @@ export const SignInUpGlobalScopeFormEffect = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const hasAccessTokenPair = useHasAccessTokenPair();
 
-  // Also the resume path for social SSO: SignInUpSSOExchangeTokenEffect clears
-  // then sets the token pair, which re-runs this effect via hasAccessTokenPair.
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
       const { user } = await loadCurrentUser();

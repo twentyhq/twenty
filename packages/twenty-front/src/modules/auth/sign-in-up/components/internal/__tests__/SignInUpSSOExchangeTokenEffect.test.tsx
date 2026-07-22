@@ -18,7 +18,6 @@ const SearchParamsProbe = () => {
   return <div data-testid="search-params">{searchParams.toString()}</div>;
 };
 
-// StrictMode double invokes effects, proving the single use latch holds
 const renderEffect = (initialEntry: string) =>
   render(
     <StrictMode>
