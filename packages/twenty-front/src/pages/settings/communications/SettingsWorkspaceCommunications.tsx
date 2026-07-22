@@ -4,7 +4,6 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
 import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
@@ -13,15 +12,9 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
-  MessageChannelType,
   SettingsPath,
 } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  EmailingDomainStatus,
-  GetEmailingDomainsDocument,
-} from '~/generated-metadata/graphql';
-import { Callout } from 'twenty-ui/feedback';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandWhatsapp,
   IconForbid,
@@ -35,7 +28,7 @@ import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
@@ -125,31 +118,33 @@ export const SettingsWorkspaceCommunications = () => {
             title={t`Unsubscribe`}
             description={t`The page your users will get redirected to to unsubscribe from your emails`}
           />
-          <StyledCardLink
-            href={unsubscribePageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <StyledCardsColumn>
+            <StyledCardLink
+              href={unsubscribePageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SettingsCard
+                Icon={
+                  <IconMailX
+                    size={theme.icon.size.lg}
+                    stroke={theme.icon.stroke.md}
+                  />
+                }
+                title={t`See unsubscribe page`}
+              />
+            </StyledCardLink>
             <SettingsCard
               Icon={
-                <IconMailX
+                <IconForbid
                   size={theme.icon.size.lg}
                   stroke={theme.icon.stroke.md}
                 />
               }
-              title={t`See unsubscribe page`}
+              title={t`Unsubscribers`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribers)}
             />
-          </StyledCardLink>
-          <SettingsCard
-            Icon={
-              <IconForbid
-                size={theme.icon.size.lg}
-                stroke={theme.icon.stroke.md}
-              />
-            }
-            title={t`Unsubscribers`}
-            onClick={() => navigateSettings(SettingsPath.Unsubscribers)}
-          />
+          </StyledCardsColumn>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>
