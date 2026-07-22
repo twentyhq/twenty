@@ -21,10 +21,8 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import {
-  parseQueueListFromEnv,
-  shouldCreateWorkerForQueue,
-} from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
+import { parseQueueListFromEnv } from 'src/engine/core-modules/message-queue/utils/parse-queue-list-from-env.util';
+import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
