@@ -34,7 +34,10 @@ export class ApplicationStopService {
   }: {
     applicationId: string;
   }): Promise<ApplicationEntity> {
-    return this.setApplicationStoppedAt({ applicationId, stoppedAt: new Date() });
+    return this.setApplicationStoppedAt({
+      applicationId,
+      stoppedAt: new Date(),
+    });
   }
 
   async startApplication({

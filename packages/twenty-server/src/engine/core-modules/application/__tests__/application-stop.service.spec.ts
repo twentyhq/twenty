@@ -73,9 +73,10 @@ describe('ApplicationStopService', () => {
         APPLICATION_ID,
         { stoppedAt: expect.any(Date) },
       );
-      expect(
-        workspaceCacheService.invalidateAndRecompute,
-      ).toHaveBeenCalledWith(WORKSPACE_ID, ['flatApplicationMaps']);
+      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        ['flatApplicationMaps'],
+      );
       expect(application.stoppedAt).toBeInstanceOf(Date);
     });
 
@@ -111,9 +112,10 @@ describe('ApplicationStopService', () => {
         APPLICATION_ID,
         { stoppedAt: null },
       );
-      expect(
-        workspaceCacheService.invalidateAndRecompute,
-      ).toHaveBeenCalledWith(WORKSPACE_ID, ['flatApplicationMaps']);
+      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        ['flatApplicationMaps'],
+      );
       expect(application.stoppedAt).toBeNull();
     });
   });
