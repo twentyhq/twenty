@@ -1,0 +1,27 @@
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_c3fbc446206706::t_f88862c2cc4256 9-11,18,25,34,40-41,49-52,76,84-94,112-113,115-117,122-123
+packages/twenty-front/src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
+  s_c3fbc446206706::t_cc949594cfe46e 1-23
+packages/twenty-front/src/modules/settings/unsubscribers/utils/__tests__/getMessageSuppressionReasonBadge.test.ts
+  s_c3fbc446206706::t_d11a2c73d39164 1-22
+packages/twenty-front/src/modules/settings/unsubscribers/hooks/useMessageSuppressions.ts
+  s_c3fbc446206706::t_546499d4486fb8 1-30
+packages/twenty-front/src/modules/settings/unsubscribers/constants/MessageSuppressionsPageSize.ts
+  s_c3fbc446206706::t_ce3ba6fb30523d 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "8e9968d7e391e32301114532ef29e0fc3e3b9346",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
