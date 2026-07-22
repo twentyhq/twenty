@@ -30,11 +30,9 @@ type ResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
-  retryLimit: number;
 };
 
-const DEFAULT_QUEUED_TARGET_RETRY_LIMIT = 3;
-const MAX_QUEUED_TARGET_RETRY_LIMIT = 10;
+const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 @Injectable()
 export class ServerRouteTriggerService {
@@ -105,7 +103,6 @@ export class ServerRouteTriggerService {
       workspaceId: resolved.workspaceId,
       payload: resolved.payload ?? event,
       applicationRegistrationId,
-      retryLimit: resolved.retryLimit,
     });
   }
 
@@ -148,7 +145,6 @@ export class ServerRouteTriggerService {
       workspaceId?: unknown;
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;
-      retryLimit?: unknown;
     };
 
     if (
@@ -156,21 +152,7 @@ export class ServerRouteTriggerService {
       !isString(data?.targetLogicFunctionUniversalIdentifier)
     ) {
       throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; retryLimit?: number }',
-        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-      );
-    }
-
-    const retryLimit = data.retryLimit ?? DEFAULT_QUEUED_TARGET_RETRY_LIMIT;
-
-    if (
-      typeof retryLimit !== 'number' ||
-      !Number.isInteger(retryLimit) ||
-      retryLimit < 0 ||
-      retryLimit > MAX_QUEUED_TARGET_RETRY_LIMIT
-    ) {
-      throw new ServerRouteTriggerException(
-        `Resolver retryLimit must be an integer between 0 and ${MAX_QUEUED_TARGET_RETRY_LIMIT}`,
+        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
@@ -183,7 +165,6 @@ export class ServerRouteTriggerService {
         typeof data.payload === 'object' && data.payload !== null
           ? (data.payload as object)
           : undefined,
-      retryLimit,
     };
   }
 
@@ -192,13 +173,11 @@ export class ServerRouteTriggerService {
     workspaceId,
     payload,
     applicationRegistrationId,
-    retryLimit,
   }: {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
     applicationRegistrationId: string;
-    retryLimit: number;
   }): Promise<RouteTriggerResponse> {
     const logicFunction = await this.findLogicFunctionOrFail({
       logicFunctionUniversalIdentifier,
@@ -215,7 +194,7 @@ export class ServerRouteTriggerService {
           payload,
         },
       ],
-      { retryLimit },
+      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
     );
 
     return { statusCode: 202, headers: {}, body: { queued: true } };

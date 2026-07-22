@@ -274,41 +274,6 @@ describe('ServerRouteTriggerService', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('passes the resolver retryLimit through to the queued job', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        retryLimit: 7,
-      }),
-    );
-
-    await handle();
-
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      LogicFunctionTriggerJob.name,
-      expect.any(Array),
-      { retryLimit: 7 },
-    );
-  });
-
-  it('throws RESOLVER_INVALID_RESULT on an out-of-range retryLimit', async () => {
-    logicFunctionExecutorService.execute.mockReset();
-    logicFunctionExecutorService.execute.mockResolvedValueOnce(
-      buildExecuteResult({
-        workspaceId: 'target-ws',
-        targetLogicFunctionUniversalIdentifier: TARGET_UID,
-        retryLimit: 99,
-      }),
-    );
-
-    await expect(handle()).rejects.toMatchObject({
-      code: ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-    });
-    expect(messageQueueService.add).not.toHaveBeenCalled();
-  });
-
   it('maps a LogicFunctionExecutionException(LOGIC_FUNCTION_NOT_FOUND) to the server-route not-found code', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockRejectedValue(

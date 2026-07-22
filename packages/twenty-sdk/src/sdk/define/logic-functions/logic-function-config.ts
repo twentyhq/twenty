@@ -5,11 +5,16 @@ import {
 
 export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
+// A resolver function attached to `serverRouteTriggerSettings` runs in the
+// owner workspace and must return BOTH the target workspace and the target
+// logic function to dispatch to. The server contract is
+// `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
+// payload?: object }`. The resolver is the single point of authorization —
+// the URL only carries the resolver's universalIdentifier.
 export type ServerRouteResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
-  retryLimit?: number;
 };
 
 export type ServerRouteResolverHandler = (
