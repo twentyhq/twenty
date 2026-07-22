@@ -128,8 +128,6 @@ describe('SSOExchangeTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'createQueryBuilder')
         .mockReturnValue(queryBuilder as never);
-
-      return queryBuilder;
     };
 
     it('should return the user and auth provider of the claimed token', async () => {

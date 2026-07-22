@@ -91,19 +91,20 @@ export class SSOExchangeTokenService {
         value: hashSSOExchangeToken(ssoExchangeToken),
       })
       .andWhere('type = :type', { type: AppTokenType.SSOExchangeToken })
+      .andWhere('"revokedAt" IS NULL')
+      .andWhere('"deletedAt" IS NULL')
       .returning('*')
       .execute();
 
     const claimedRows: ClaimedSSOExchangeTokenRow[] = raw;
-    const claimedToken: ClaimedSSOExchangeTokenRow | undefined = claimedRows[0];
 
     // value carries no unique constraint, so assert the claim matched exactly
     // one row rather than silently redeeming the first of several
-    if (claimedRows.length !== 1 || !isDefined(claimedToken)) {
+    if (claimedRows.length !== 1) {
       throw buildInvalidSSOExchangeTokenException();
     }
 
-    const { userId, expiresAt, context } = claimedToken;
+    const { userId, expiresAt, context } = claimedRows[0];
 
     if (new Date() > new Date(expiresAt)) {
       throw buildInvalidSSOExchangeTokenException();

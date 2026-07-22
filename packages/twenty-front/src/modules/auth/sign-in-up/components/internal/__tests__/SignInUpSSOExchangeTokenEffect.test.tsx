@@ -1,13 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { MemoryRouter, useSearchParams } from 'react-router-dom';
 
 import { SignInUpSSOExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSSOExchangeTokenEffect';
-import {
-  jotaiStore,
-  resetJotaiStore,
-} from '@/ui/utilities/state/jotai/jotaiStore';
 
 const redeemSSOExchangeTokenMock = jest.fn();
 
@@ -23,17 +18,14 @@ const SearchParamsProbe = () => {
   return <div data-testid="search-params">{searchParams.toString()}</div>;
 };
 
-// StrictMode has to be the outermost element for React to double invoke
-// effects: nested under other providers it silently does nothing.
+// StrictMode double invokes effects, proving the single use latch holds
 const renderEffect = (initialEntry: string) =>
   render(
     <StrictMode>
-      <JotaiProvider store={jotaiStore}>
-        <MemoryRouter initialEntries={[initialEntry]}>
-          <SignInUpSSOExchangeTokenEffect />
-          <SearchParamsProbe />
-        </MemoryRouter>
-      </JotaiProvider>
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <SignInUpSSOExchangeTokenEffect />
+        <SearchParamsProbe />
+      </MemoryRouter>
     </StrictMode>,
   );
 
@@ -42,8 +34,6 @@ const getSearchParams = () => screen.getByTestId('search-params').textContent;
 describe('SignInUpSSOExchangeTokenEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.clear();
-    resetJotaiStore();
   });
 
   it('redeems the single use token at most once', async () => {

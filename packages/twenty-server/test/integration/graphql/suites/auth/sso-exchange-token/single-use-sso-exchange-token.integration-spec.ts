@@ -25,22 +25,25 @@ describe('SSO exchange token redemption (integration)', () => {
   let dataSource: DataSource;
 
   const seedSSOExchangeToken = async ({
-    expiresAt,
+    expiresAt = new Date(Date.now() + 5 * 60 * 1000),
     type = AppTokenType.SSOExchangeToken,
+    revokedAt = null,
   }: {
-    expiresAt: Date;
+    expiresAt?: Date;
     type?: AppTokenType;
-  }): Promise<string> => {
+    revokedAt?: Date | null;
+  } = {}): Promise<string> => {
     const plainToken = crypto.randomBytes(32).toString('hex');
 
     await dataSource.query(
-      `INSERT INTO core."appToken" ("userId", "type", "value", "expiresAt", "context")
-       VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO core."appToken" ("userId", "type", "value", "expiresAt", "revokedAt", "context")
+       VALUES ($1, $2, $3, $4, $5, $6)`,
       [
         USER_DATA_SEED_IDS.JANE,
         type,
         hashToken(plainToken),
         expiresAt,
+        revokedAt,
         JSON.stringify({ authProvider: AuthProviderEnum.Google }),
       ],
     );
@@ -65,9 +68,7 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should exchange a valid token for a token pair and consume it', async () => {
-    const plainToken = await seedSSOExchangeToken({
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
+    const plainToken = await seedSSOExchangeToken();
 
     const { data } = await getAuthTokensFromSSOExchangeToken({
       ssoExchangeToken: plainToken,
@@ -85,9 +86,7 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should reject a second redemption of the same token', async () => {
-    const plainToken = await seedSSOExchangeToken({
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
+    const plainToken = await seedSSOExchangeToken();
 
     await getAuthTokensFromSSOExchangeToken({
       ssoExchangeToken: plainToken,
@@ -116,9 +115,22 @@ describe('SSO exchange token redemption (integration)', () => {
     expect(await countRemainingRows(plainToken)).toBe(0);
   });
 
+  it('should reject a revoked token without consuming it', async () => {
+    const plainToken = await seedSSOExchangeToken({
+      revokedAt: new Date(),
+    });
+
+    const { errors } = await getAuthTokensFromSSOExchangeToken({
+      ssoExchangeToken: plainToken,
+      expectToFail: true,
+    });
+
+    expectUniformInvalidTokenError(errors);
+    expect(await countRemainingRows(plainToken)).toBe(1);
+  });
+
   it('should not redeem an app token of another type sharing the same value', async () => {
     const plainToken = await seedSSOExchangeToken({
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       type: AppTokenType.EmailVerificationToken,
     });
 
@@ -145,9 +157,7 @@ describe('SSO exchange token redemption (integration)', () => {
   // The redirect must never yield more than one refresh token, even if the
   // browser and an attacker replaying a leaked URL race each other.
   it('should let exactly one of several concurrent redemptions succeed', async () => {
-    const plainToken = await seedSSOExchangeToken({
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
+    const plainToken = await seedSSOExchangeToken();
 
     const responses = await Promise.all(
       Array.from({ length: 5 }, () =>
