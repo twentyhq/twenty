@@ -46,6 +46,12 @@ const StyledCardLink = styled.a`
   text-decoration: none;
 `;
 
+const StyledCardsColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsWorkspaceCommunications = () => {
   const { theme } = useContext(ThemeContext);
 
@@ -66,36 +72,7 @@ export const SettingsWorkspaceCommunications = () => {
     skip: !isEmailGroupFeatureEnabled,
   });
 
-  const { channels } = useMyMessageChannels();
-
-  const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument, {
-    skip: !isEmailGroupFeatureEnabled,
-  });
-
   const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;
-
-  const firstEmailChannel = channels.find(
-    (channel) => channel.type === MessageChannelType.EMAIL_GROUP,
-  );
-
-  const hasVerifiedDomain = (
-    emailingDomainsData?.getEmailingDomains ?? []
-  ).some((domain) => domain.status === EmailingDomainStatus.VERIFIED);
-
-  const isSetupComplete = isDefined(firstEmailChannel) && hasVerifiedDomain;
-
-  const setupAction = !isDefined(firstEmailChannel)
-    ? {
-        label: t`Add email channel`,
-        onClick: () => navigateSettings(SettingsPath.NewEmailGroupChannel),
-      }
-    : {
-        label: t`Verify your domain`,
-        onClick: () =>
-          navigateSettings(SettingsPath.EmailGroupChannelDetail, {
-            messageChannelId: firstEmailChannel.id,
-          }),
-      };
 
   if (!isEmailGroupFeatureEnabled) {
     return null;
@@ -141,21 +118,6 @@ export const SettingsWorkspaceCommunications = () => {
             tabs={[]}
           />
         </Section>
-        {!isSetupComplete && (
-          <Section>
-            <Callout
-              variant="info"
-              Icon={IconMail}
-              title={t`Finish setting up email`}
-              description={
-                isDefined(firstEmailChannel)
-                  ? t`Verify a sending domain before you can send campaign emails.`
-                  : t`Connect a shared mailbox to start sending and receiving email.`
-              }
-              action={setupAction}
-            />
-          </Section>
-        )}
         <SettingsWorkspaceEmailGroupSection />
         <SettingsWorkspaceUnsubscribeTopicSection />
         <Section>
