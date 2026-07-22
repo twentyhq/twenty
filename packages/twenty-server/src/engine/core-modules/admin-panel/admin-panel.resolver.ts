@@ -153,8 +153,8 @@ export class AdminPanelResolver {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly cronQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.applicationQueue)
-    private readonly applicationQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -551,7 +551,7 @@ export class AdminPanelResolver {
       );
     }
 
-    await this.applicationQueueService.add<BackfillApplicationInstallationJobData>(
+    await this.workspaceQueueService.add<BackfillApplicationInstallationJobData>(
       BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
       { applicationRegistrationId },
       {
@@ -573,7 +573,7 @@ export class AdminPanelResolver {
       applicationRegistrationId,
     );
 
-    await this.applicationQueueService.add<UpgradeApplicationsJobData>(
+    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
       UPGRADE_APPLICATIONS_JOB_NAME,
       {
         applicationRegistrationId,

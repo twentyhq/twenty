@@ -7,7 +7,7 @@ import {
 } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 
-@Processor(MessageQueue.applicationQueue)
+@Processor(MessageQueue.workspaceQueue)
 export class BackfillApplicationInstallationJob {
   constructor(
     private readonly preInstalledAppsService: PreInstalledAppsService,

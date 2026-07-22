@@ -12,7 +12,4 @@ export const QUEUE_WORKER_OPTIONS: Partial<
     boundedShutdownDrain: true,
   },
   [MessageQueue.logicFunctionQueue]: { concurrency: 10 },
-  // Application installs/upgrades are long-running and iterate over many
-  // workspaces: keep them strictly serial on each worker
-  [MessageQueue.applicationQueue]: { concurrency: 1 },
 };

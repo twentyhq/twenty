@@ -1262,26 +1262,6 @@ export class ConfigVariables {
   REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Comma-separated list of queues this worker processes (e.g. application-queue). Empty means all queues. Used to dedicate worker pods to specific queues.',
-    isEnvOnly: true,
-    type: ConfigVariableType.ARRAY,
-  })
-  @IsOptional()
-  WORKER_ENABLED_QUEUES: string[] = [];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Comma-separated list of queues this worker does not process (e.g. application-queue). Applied after WORKER_ENABLED_QUEUES. Used to keep long-running queues off general-purpose worker pods.',
-    isEnvOnly: true,
-    type: ConfigVariableType.ARRAY,
-  })
-  @IsOptional()
-  WORKER_EXCLUDED_QUEUES: string[] = [];
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
