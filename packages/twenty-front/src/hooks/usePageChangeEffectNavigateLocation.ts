@@ -10,6 +10,7 @@ import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMe
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
@@ -86,6 +87,10 @@ export const usePageChangeEffectNavigateLocation = () => {
   const onboardingCompletedPath = shouldOpenAiChatAfterOnboarding
     ? AppPath.WorkspaceSetup
     : defaultHomePagePath;
+
+  const isOnboardingCheckoutPending = useAtomStateValue(
+    isOnboardingCheckoutPendingState,
+  );
 
   if (
     (!hasAccessTokenPair || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
@@ -178,6 +183,16 @@ export const usePageChangeEffectNavigateLocation = () => {
     hasAccessTokenPair &&
     isOnAWorkspace
   ) {
+    // PaymentSuccess is about to consume the pending checkout: it fires the
+    // welcome animation, decides the destination, and clears the pending flag,
+    // which re-runs this hook and lets the redirect below proceed.
+    if (
+      isMatchingLocation(location, AppPath.PlanRequiredSuccess) &&
+      isOnboardingCheckoutPending
+    ) {
+      return;
+    }
+
     return resolvedReturnToPath ?? onboardingCompletedPath;
   }
 

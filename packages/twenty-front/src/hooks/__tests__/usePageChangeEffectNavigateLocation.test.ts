@@ -87,6 +87,7 @@ const setupMockState = (
   isBillingEnabled: boolean = true,
   isMinimalMetadataReady: boolean = true,
   shouldOpenAiChatAfterOnboarding: boolean = false,
+  isOnboardingCheckoutPending: boolean = false,
 ) => {
   jest
     .mocked(useAtomStateValue)
@@ -96,7 +97,8 @@ const setupMockState = (
     .mockReturnValueOnce(isMinimalMetadataReady)
     .mockReturnValueOnce(verifyEmailRedirectPath)
     .mockReturnValueOnce(returnToPath ?? '')
-    .mockReturnValueOnce(shouldOpenAiChatAfterOnboarding);
+    .mockReturnValueOnce(shouldOpenAiChatAfterOnboarding)
+    .mockReturnValueOnce(isOnboardingCheckoutPending);
 };
 
 // prettier-ignore
@@ -116,6 +118,7 @@ const testCases: {
   isBillingEnabled?: boolean;
   isMinimalMetadataReady?: boolean;
   shouldOpenAiChatAfterOnboarding?: boolean;
+  isOnboardingCheckoutPending?: boolean;
 }[] = [
   { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -390,6 +393,11 @@ const testCases: {
   { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, res: AppPath.WorkspaceSetup },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, returnToPath: '/objects/tasks', res: '/objects/tasks' },
 
+  // isOnboardingCheckoutPending: PaymentSuccess consumes the pending checkout and
+  // fires the welcome animation, so the redirect must wait for it on that page only
+  { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
+  { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: defaultHomePagePath },
+
   // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
@@ -413,6 +421,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       isBillingEnabled,
       isMinimalMetadataReady,
       shouldOpenAiChatAfterOnboarding,
+      isOnboardingCheckoutPending,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
@@ -430,6 +439,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
         isBillingEnabled ?? true,
         isMinimalMetadataReady ?? true,
         shouldOpenAiChatAfterOnboarding ?? false,
+        isOnboardingCheckoutPending ?? false,
       );
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
@@ -465,6 +475,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
             'workspaceSetupNotPending:inviteTeamCompleted',
             'workspaceSetupPending:paymentSuccessCompleted',
             'workspaceSetupPending:returnToPathWins',
+            'checkoutPending:paymentSuccessDefersRedirect',
+            'checkoutPending:verifyStillRedirects',
           ].length,
       );
     });
