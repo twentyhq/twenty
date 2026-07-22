@@ -18,6 +18,7 @@ import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFie
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
@@ -108,6 +109,14 @@ const StyledTagContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledAggregateDropdownContainer = styled.div<{
+  isNonInteractive: boolean;
+}>`
+  display: flex;
+  pointer-events: ${({ isNonInteractive }) =>
+    isNonInteractive ? 'none' : 'auto'};
+`;
+
 const StyledDropdownContainer = styled.div`
   min-width: 0;
   overflow: hidden;
@@ -126,6 +135,10 @@ export const RecordBoardColumnHeader = () => {
 
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
+
+  const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
+    isRecordBoardViewSettingsReadOnlyComponentState,
+  );
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -182,58 +195,74 @@ export const RecordBoardColumnHeader = () => {
           <StyledHeaderContainer>
             <StyledLeftContainer>
               <StyledDropdownContainer>
-                <Dropdown
-                  dropdownId={dropdownId}
-                  dropdownPlacement="bottom-start"
-                  dropdownOffset={{
-                    x: 0,
-                    y: 10,
-                  }}
-                  clickableComponent={
-                    <StyledTagContainer>
-                      <RecordGroupChip
-                        recordGroupDefinition={columnDefinition}
-                        fieldMetadataItem={selectFieldMetadataItem}
-                      />
-                    </StyledTagContainer>
-                  }
-                  dropdownComponents={<RecordBoardColumnDropdownMenu />}
-                />
+                {isRecordBoardViewSettingsReadOnly ? (
+                  <StyledTagContainer>
+                    <RecordGroupChip
+                      recordGroupDefinition={columnDefinition}
+                      fieldMetadataItem={selectFieldMetadataItem}
+                    />
+                  </StyledTagContainer>
+                ) : (
+                  <Dropdown
+                    dropdownId={dropdownId}
+                    dropdownPlacement="bottom-start"
+                    dropdownOffset={{
+                      x: 0,
+                      y: 10,
+                    }}
+                    clickableComponent={
+                      <StyledTagContainer>
+                        <RecordGroupChip
+                          recordGroupDefinition={columnDefinition}
+                          fieldMetadataItem={selectFieldMetadataItem}
+                        />
+                      </StyledTagContainer>
+                    }
+                    dropdownComponents={<RecordBoardColumnDropdownMenu />}
+                  />
+                )}
               </StyledDropdownContainer>
 
-              <RecordBoardColumnHeaderAggregateDropdown
-                aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-                objectMetadataItem={objectMetadataItem}
-                aggregateLabel={recordIndexAggregateDisplayLabel}
-              />
+              <StyledAggregateDropdownContainer
+                isNonInteractive={isRecordBoardViewSettingsReadOnly}
+                inert={isRecordBoardViewSettingsReadOnly || undefined}
+              >
+                <RecordBoardColumnHeaderAggregateDropdown
+                  aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+                  dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                  objectMetadataItem={objectMetadataItem}
+                  aggregateLabel={recordIndexAggregateDisplayLabel}
+                />
+              </StyledAggregateDropdownContainer>
             </StyledLeftContainer>
-            <StyledHeaderActions
-              data-dropdown-open={isDropdownOpen ? 'true' : undefined}
-            >
-              <LightIconButton
-                accent="tertiary"
-                aria-label={t`More options`}
-                Icon={IconDotsVertical}
-                onClick={() => {
-                  toggleDropdown({
-                    dropdownComponentInstanceIdFromProps: dropdownId,
-                  });
-                }}
-              />
-              {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+            {!isRecordBoardViewSettingsReadOnly && (
+              <StyledHeaderActions
+                data-dropdown-open={isDropdownOpen ? 'true' : undefined}
+              >
                 <LightIconButton
                   accent="tertiary"
-                  aria-label={t`Add new`}
-                  Icon={IconPlus}
-                  onClick={handleCreateNewRecordClick}
+                  aria-label={t`More options`}
+                  Icon={IconDotsVertical}
+                  onClick={() => {
+                    toggleDropdown({
+                      dropdownComponentInstanceIdFromProps: dropdownId,
+                    });
+                  }}
                 />
-              )}
-            </StyledHeaderActions>
+                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                  <LightIconButton
+                    accent="tertiary"
+                    aria-label={t`Add new`}
+                    Icon={IconPlus}
+                    onClick={handleCreateNewRecordClick}
+                  />
+                )}
+              </StyledHeaderActions>
+            )}
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropColumnSortableHandle>
-      <RecordBoardColumnResizeHandler />
+      {!isRecordBoardViewSettingsReadOnly && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };

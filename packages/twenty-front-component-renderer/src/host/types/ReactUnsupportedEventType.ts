@@ -1,1 +1,1 @@
-export type ReactUnsupportedEventType = 'focusin' | 'focusout';
+export type ReactUnsupportedEventType = 'beforeinput' | 'focusin' | 'focusout';
