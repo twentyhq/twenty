@@ -4,9 +4,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
+import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { UpdateEmailingDomainSenderIdentityDocument } from '~/generated-metadata/graphql';
 import { IconCheck } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,44 +21,38 @@ const StyledInputContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-type SenderField = 'senderDisplayName';
-
-type SettingsEmailingDomainSenderFieldInputProps = {
-  emailingDomainId: string;
-  field: SenderField;
+type SettingsMessageChannelSenderNameInputProps = {
+  messageChannelId: string;
   value: string | null | undefined;
   placeholder: string;
-  successMessage: string;
-  minimumLength: number;
 };
 
-export const SettingsEmailingDomainSenderFieldInput = ({
-  emailingDomainId,
-  field,
+export const SettingsMessageChannelSenderNameInput = ({
+  messageChannelId,
   value,
   placeholder,
-  successMessage,
-  minimumLength,
-}: SettingsEmailingDomainSenderFieldInputProps) => {
+}: SettingsMessageChannelSenderNameInputProps) => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [draftValue, setDraftValue] = useState(value ?? '');
-  const [updateSenderIdentity, { loading }] = useMutation(
-    UpdateEmailingDomainSenderIdentityDocument,
+  const [updateMessageChannel, { loading }] = useMutation(
+    UPDATE_MESSAGE_CHANNEL,
   );
 
   const isSavable =
-    draftValue.trim().length >= minimumLength &&
-    draftValue.trim() !== (value ?? '');
+    draftValue.trim().length >= 1 && draftValue.trim() !== (value ?? '');
 
   const handleSave = async () => {
     try {
-      await updateSenderIdentity({
+      await updateMessageChannel({
         variables: {
-          input: { emailingDomainId, [field]: draftValue.trim() },
+          input: {
+            id: messageChannelId,
+            update: { displayName: draftValue.trim() },
+          },
         },
       });
-      enqueueSuccessSnackBar({ message: successMessage });
+      enqueueSuccessSnackBar({ message: t`Sender name saved` });
     } catch (error) {
       enqueueErrorSnackBar({
         ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
@@ -70,7 +64,7 @@ export const SettingsEmailingDomainSenderFieldInput = ({
     <StyledRow>
       <StyledInputContainer>
         <SettingsTextInput
-          instanceId={`emailing-domain-${field}`}
+          instanceId="message-channel-sender-name"
           value={draftValue}
           onChange={setDraftValue}
           placeholder={placeholder}

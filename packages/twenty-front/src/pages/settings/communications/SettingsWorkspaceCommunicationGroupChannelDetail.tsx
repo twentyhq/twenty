@@ -9,7 +9,7 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
-import { SettingsEmailingDomainSenderFieldInput } from '@/settings/emailing-domains/components/SettingsEmailingDomainSenderFieldInput';
+import { SettingsMessageChannelSenderNameInput } from '@/settings/accounts/components/SettingsMessageChannelSenderNameInput';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -218,22 +218,17 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             )}
           </Section>
         )}
-        {isDefined(emailingDomain) && (
-          <Section>
-            <H2Title
-              title={t`Sender name`}
-              description={t`The name recipients see next to your address, instead of the address alone.`}
-            />
-            <SettingsEmailingDomainSenderFieldInput
-              emailingDomainId={emailingDomain.id}
-              field="senderDisplayName"
-              value={emailingDomain.senderDisplayName}
-              placeholder={t`Acme Team`}
-              successMessage={t`Sender name saved`}
-              minimumLength={1}
-            />
-          </Section>
-        )}
+        <Section>
+          <H2Title
+            title={t`Sender name`}
+            description={t`The name recipients see next to your address, instead of the address alone.`}
+          />
+          <SettingsMessageChannelSenderNameInput
+            messageChannelId={channel.id}
+            value={channel.displayName}
+            placeholder={t`Acme Team`}
+          />
+        </Section>
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}

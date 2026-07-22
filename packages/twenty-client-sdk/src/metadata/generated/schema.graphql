@@ -2498,6 +2498,7 @@ type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
   handle: String!
+  displayName: String
   type: MessageChannelType!
   isContactAutoCreationEnabled: Boolean!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -2594,6 +2595,31 @@ type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
   skipped: CampaignSkippedRecipientsDTO!
+}
+
+type MessageSuppression {
+  id: UUID!
+  createdAt: DateTime!
+  emailAddress: String!
+  reason: MessageSuppressionReason!
+  source: MessageSuppressionSource!
+  unsubscribeTopicId: UUID
+}
+
+enum MessageSuppressionReason {
+  BOUNCE
+  COMPLAINT
+  UNSUBSCRIBE
+}
+
+enum MessageSuppressionSource {
+  WEBHOOK
+  SYSTEM
+}
+
+type MessageSuppressionList {
+  records: [MessageSuppression!]!
+  totalCount: Int!
 }
 
 type UnsubscribeTopic {
@@ -3155,6 +3181,7 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
   unsubscribePagePreviewUrl: String!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
@@ -3228,6 +3255,12 @@ input LogicFunctionIdInput {
 input PreviewMessageCampaignAudienceInput {
   listId: String!
   unsubscribeTopicId: String
+}
+
+input FindMessageSuppressionsInput {
+  reason: MessageSuppressionReason
+  limit: Int! = 30
+  offset: Int! = 0
 }
 
 input ListAppConnectionsInput {
@@ -3441,6 +3474,7 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  deleteMessageSuppression(id: String!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
@@ -4525,10 +4559,12 @@ input UpdateMessageChannelInputUpdates {
   isSyncEnabled: Boolean
   excludeNonProfessionalEmails: Boolean
   excludeGroupEmails: Boolean
+  displayName: String
 }
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  displayName: String
 }
 
 input CreateEmailingDomainInput {

@@ -20,12 +20,17 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
   const { createEmailGroupChannel, loading } = useCreateEmailGroupChannel();
 
   const [handle, setHandle] = useState('');
+  const [displayName, setDisplayName] = useState('');
 
   const isHandleValidEmail = z.email().safeParse(handle).success;
   const canSave = isHandleValidEmail && !loading;
 
   const handleSave = useCallback(async () => {
-    const result = await createEmailGroupChannel(handle);
+    const trimmedDisplayName = displayName.trim();
+    const result = await createEmailGroupChannel(
+      handle,
+      trimmedDisplayName.length > 0 ? trimmedDisplayName : undefined,
+    );
     const messageChannelId =
       result.data?.createEmailGroupChannel.messageChannel.id;
 
@@ -34,7 +39,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
         messageChannelId,
       });
     }
-  }, [createEmailGroupChannel, handle, navigate]);
+  }, [createEmailGroupChannel, displayName, handle, navigate]);
 
   return (
     <SettingsPageLayout
@@ -72,6 +77,25 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             placeholder="support@mycompany.com"
             value={handle}
             onChange={setHandle}
+            onInputEnter={() => {
+              if (canSave) {
+                handleSave();
+              }
+            }}
+            disabled={loading}
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Display Name`}
+            description={t`The name recipients see next to your address in their inbox, instead of the address alone.`}
+          />
+          <SettingsTextInput
+            instanceId="email-group-display-name"
+            label={t`Display Name`}
+            placeholder={t`Support Team`}
+            value={displayName}
+            onChange={setDisplayName}
             onInputEnter={() => {
               if (canSave) {
                 handleSave();

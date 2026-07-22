@@ -10,10 +10,7 @@ import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/compone
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  SettingsPath,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandWhatsapp,
