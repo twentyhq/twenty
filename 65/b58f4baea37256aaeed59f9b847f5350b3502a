@@ -1,0 +1,24 @@
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_4831dcb5c1852c::t_6110b423b66445 200-213
+  s_4831dcb5c1852c::t_e319fb7da2a5a4 21-25
+packages/twenty-front/src/modules/accounts/types/MessageChannel.ts
+  s_4831dcb5c1852c::t_7b8ce4b233ffa7 13
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getMyMessageChannels.ts
+  s_4831dcb5c1852c::t_7b8ce4b233ffa7 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "65b58f4baea37256aaeed59f9b847f5350b3502a",
+  "prompts": {},
+  "sessions": {
+    "s_4831dcb5c1852c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fcc8904-bb60-4dd0-8af0-f09679d00279",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
