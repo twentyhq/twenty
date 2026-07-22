@@ -115,7 +115,6 @@ const ScopeLine = styled.p`
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 1.4;
-  margin: 0;
   min-width: 0;
   overflow: hidden;
 `;
