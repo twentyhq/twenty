@@ -17,9 +17,6 @@ type MetadataStoreDraftUtils = Pick<
 
 type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
   persist: () => Promise<TResponse>;
-  // Writes the mutation response to the metadata store immediately so a
-  // subsequent save doesn't diff against stale view data and re-send the
-  // same create, which fails server-side on duplicate id
   syncMetadataStore: (
     response: TResponse,
     draftUtils: MetadataStoreDraftUtils,
@@ -30,8 +27,6 @@ type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
 type PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult> = {
   inputs: TInput[];
   mutate: (input: TInput) => Promise<TResult>;
-  // Receives only the fulfilled mutations so successful items are written to
-  // the metadata store even when a sibling mutation in the batch fails
   syncMetadataStore: (
     fulfilledMutations: { input: TInput; result: TResult }[],
     draftUtils: MetadataStoreDraftUtils,
