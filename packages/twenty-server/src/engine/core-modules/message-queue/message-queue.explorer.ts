@@ -18,9 +18,11 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -41,6 +43,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly metadataAccessor: MessageQueueMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit() {
@@ -60,9 +63,29 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     const groupedProcessors = this.groupProcessorsByQueueName(processors);
 
+    const enabledQueues = this.twentyConfigService.get('WORKER_ENABLED_QUEUES');
+    const excludedQueues = this.twentyConfigService.get(
+      'WORKER_EXCLUDED_QUEUES',
+    );
+
+    this.warnAboutUnknownQueueNames([...enabledQueues, ...excludedQueues]);
+
     for (const [queueName, processorGroupCollection] of Object.entries(
       groupedProcessors,
     )) {
+      if (
+        !shouldCreateWorkerForQueue({
+          queueName: queueName as MessageQueue,
+          enabledQueues,
+          excludedQueues,
+        })
+      ) {
+        this.logger.log(
+          `Skipping worker creation for queue ${queueName} (filtered out by WORKER_ENABLED_QUEUES/WORKER_EXCLUDED_QUEUES)`,
+        );
+        continue;
+      }
+
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
 
@@ -71,6 +94,18 @@ export class MessageQueueExplorer implements OnModuleInit {
         messageQueueService,
         QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
       );
+    }
+  }
+
+  private warnAboutUnknownQueueNames(queueNames: string[]) {
+    const knownQueueNames = Object.values(MessageQueue) as string[];
+
+    for (const queueName of queueNames) {
+      if (!knownQueueNames.includes(queueName)) {
+        this.logger.warn(
+          `Unknown queue name "${queueName}" in WORKER_ENABLED_QUEUES/WORKER_EXCLUDED_QUEUES, expected one of: ${knownQueueNames.join(', ')}`,
+        );
+      }
     }
   }
 

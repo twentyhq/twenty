@@ -13,6 +13,7 @@ export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.taskAssignedQueue]: 4,
   [MessageQueue.logicFunctionQueue]: 4,
   [MessageQueue.workspaceQueue]: 5,
+  [MessageQueue.applicationQueue]: 5,
   [MessageQueue.triggerQueue]: 5,
   [MessageQueue.deleteCascadeQueue]: 6,
   [MessageQueue.cronQueue]: 7,

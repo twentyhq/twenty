@@ -98,7 +98,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
           useValue: { incrementCounterBy: jest.fn() },
         },
         {
-          provide: getQueueToken(MessageQueue.workspaceQueue),
+          provide: getQueueToken(MessageQueue.applicationQueue),
           useValue: { add: jest.fn() },
         },
       ],

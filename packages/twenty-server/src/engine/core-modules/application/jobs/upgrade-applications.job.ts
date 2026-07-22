@@ -7,7 +7,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.applicationQueue)
 export class UpgradeApplicationsJob {
   constructor(
     private readonly applicationUpgradeService: ApplicationUpgradeService,

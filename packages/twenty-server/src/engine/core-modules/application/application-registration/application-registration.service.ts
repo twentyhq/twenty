@@ -124,8 +124,8 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationQueue)
+    private readonly applicationQueueService: MessageQueueService,
   ) {}
 
   // Best-effort: a queue outage must not fail the publish flow that
@@ -134,7 +134,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string,
   ): Promise<void> {
     try {
-      await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      await this.applicationQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
         { applicationRegistrationId, onlyAutoUpgrade: true },
       );
