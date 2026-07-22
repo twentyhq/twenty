@@ -1,0 +1,75 @@
+packages/twenty-front/src/modules/accounts/types/MessageChannel.ts
+  s_b6352cab0ed147::t_27cfd40e6452ef 13
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_b6352cab0ed147::t_053e16ee78210a 217-224,735-738
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_b6352cab0ed147::t_65c4d472ded328 23,29-33,42,88-106
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getMyMessageChannels.ts
+  s_b6352cab0ed147::t_ded2d0ce74ea10 8
+packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
+  s_b6352cab0ed147::t_a76db9ce811204 33,51,53
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_b6352cab0ed147::t_e12c9a0ca2a720 3-4,60-61,129-139
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/mutations/deleteMessageSuppression.ts
+  s_b6352cab0ed147::t_fa642cfc195caf 1-7
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/queries/getMessageSuppressions.ts
+  s_b6352cab0ed147::t_5dfd40e493f8fe 1-17
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_b6352cab0ed147::t_35226d833c010e 21-25,200-213
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_b6352cab0ed147::t_73aa2790b40956 17,28-29,39-44,50-51,118-133,136,141-142,144
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_b6352cab0ed147::t_8c0b599fe3297d 1-184
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784661000000-add-message-channel-display-name.ts
+  s_b6352cab0ed147::t_9d89642f26f93b 1-21
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_b6352cab0ed147::t_c579e8eab92906 120,245
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/find-message-suppressions.input.ts
+  s_b6352cab0ed147::t_94fb05e775d5bd 1-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-suppression.dto.ts
+  s_b6352cab0ed147::t_b743f10e88cbe8 1-43
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_b6352cab0ed147::t_cd48ea5edfd5d5 9-10,19-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_b6352cab0ed147::t_9306173c16c3b1 9-13,21-24
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-from-header.util.ts
+  s_b6352cab0ed147::t_6ebf98b065ad24 1-22
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input.ts
+  s_b6352cab0ed147::t_568202edaec870 2-8,18-23
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/message-channel.dto.ts
+  s_b6352cab0ed147::t_65ec5c604e3829 42-46
+packages/twenty-server/src/engine/metadata-modules/message-channel/entities/message-channel.entity.ts
+  s_b6352cab0ed147::t_ac3ced23c14f7f 71-73
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_b6352cab0ed147::t_6f94008f7a3208 216,221,273-274,278-280
+packages/twenty-server/src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts
+  s_b6352cab0ed147::t_dbfdd57df35370 177
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_b6352cab0ed147::t_b8d536aed10a8b 44-47
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_b6352cab0ed147::t_a5d9fd209ffe4c 19,54
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_b6352cab0ed147::t_56542648adfae6 1-72
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_b6352cab0ed147::t_b22472acbda33b 19,57-62,66-69,84,86-88,92,96-104
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_b6352cab0ed147::t_4ce3aa4f024e2f 13-16,34-40,60-110
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_b6352cab0ed147::t_6fe6d0e517c87f 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "8ce235419328074abd6f981ab5912587fe586dc3",
+  "prompts": {},
+  "sessions": {
+    "s_b6352cab0ed147": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bf274dc2-d29c-423b-bf66-93ad8363f80b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
