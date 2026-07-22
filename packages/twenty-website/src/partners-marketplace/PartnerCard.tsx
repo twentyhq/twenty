@@ -1,12 +1,12 @@
 'use client';
 
-import { IconBrandLinkedin } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
+  color,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
@@ -14,30 +14,24 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button, ExternalLink } from '@/ui';
 
-import { isSafeHttpUrl } from './is-safe-http-url';
 import { CardFrame, type PartnerCardIndexStyle } from './MarketplaceCardFrame';
 import { type MarketplacePartner } from './marketplace-partner';
 import { PartnerAvatar } from './PartnerAvatar';
-import { PartnerChipRow } from './PartnerChipRow';
-import { PartnerMoneyRow } from './PartnerMoneyRow';
-import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
+import { resolvePartnerScopeCards } from './resolve-partner-scope-cards';
 import { richTextExcerpt } from './rich-text-excerpt';
-import { SERVED_GEO_LABELS } from './served-geo-labels';
-import { SPOKEN_LANGUAGE_LABELS } from './spoken-language-labels';
 import { titleCaseFallback } from './title-case-fallback';
 
 const CardArticle = styled(CardFrame)`
-  gap: ${spacing(5)};
-  padding: ${spacing(6)};
+  gap: ${spacing(3.5)};
+  padding: ${spacing(5.5)} ${spacing(5.5)} ${spacing(4.5)};
   will-change: transform;
 `;
 
-const CardHeader = styled.div`
+const CardTop = styled.div`
   align-items: center;
   display: flex;
-  gap: ${spacing(4)};
+  gap: ${spacing(3.25)};
 `;
 
 const HeaderText = styled.div`
@@ -46,30 +40,22 @@ const HeaderText = styled.div`
   min-width: 0;
 
   & > * + * {
-    margin-top: ${spacing(1)};
+    margin-top: ${spacing(0.75)};
   }
-`;
-
-const NameRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${spacing(2)};
 `;
 
 const PartnerName = styled.h3`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('serif')};
-  font-size: ${fontSize(6)};
-  font-weight: ${FONT_WEIGHT.light};
-  letter-spacing: -0.02em;
-  line-height: ${fontSize(7)};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(4.25)};
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 `;
 
 // The card's whole-surface link uses the "stretched link" pattern: an inline
 // <a> on the name with an absolutely-positioned ::after that covers the
-// entire <article>. Other anchors inside the card (LinkedIn icon, View
-// profile) sit above this overlay via z-index, so each stays an independent
-// click target without illegal nested <a> elements.
+// entire <article>.
 const NameLink = styled(LocalizedLink)`
   color: inherit;
   text-decoration: none;
@@ -88,69 +74,63 @@ const NameLink = styled(LocalizedLink)`
   }
 `;
 
-const LinkedinIconLink = styled(ExternalLink)`
-  align-items: center;
-  color: ${semanticColor.inkMuted};
-  display: inline-flex;
-  position: relative;
-  transition: color 0.2s ease;
-  z-index: 1;
-
-  &:hover {
-    color: ${semanticColor.ink};
-  }
-`;
-
 const LocationEyebrow = styled.span`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: 0.08em;
-  line-height: ${fontSize(4)};
+  font-size: ${fontSize(2.625)};
+  letter-spacing: 0.1em;
+  line-height: 1.2;
   text-transform: uppercase;
 `;
 
-const Introduction = styled.p`
+const CardIntro = styled.p`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   color: ${semanticColor.inkMuted};
   display: -webkit-box;
   font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4)};
-  line-height: ${fontSize(5.5)};
+  font-size: ${fontSize(3.625)};
+  line-height: 1.5;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+`;
+
+const CardFoot = styled.div`
+  align-items: center;
+  border-top: 1px solid ${semanticColor.line};
+  display: flex;
+  gap: ${spacing(3.5)};
+  justify-content: space-between;
+  margin-top: ${spacing(0.5)};
+  padding-top: ${spacing(3.5)};
+`;
+
+const ScopeLine = styled.p`
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: ${semanticColor.inkMuted};
+  display: -webkit-box;
+  flex: 1;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  font-weight: ${FONT_WEIGHT.medium};
+  line-height: 1.4;
+  margin: 0;
+  min-width: 0;
   overflow: hidden;
 `;
 
-const Divider = styled.hr`
-  background-color: ${semanticColor.line};
-  border: 0;
-  height: 1px;
-  width: 100%;
-`;
-
-const ChipRows = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  & > * + * {
-    margin-top: ${spacing(3)};
-  }
-`;
-
-// The price row pins to the card bottom (margin-top: auto), so the button —
-// its plain trailing sibling — sits right under it with the same gap on every
-// card, regardless of how many lines the chip rows took. The flexible space
-// lands above the price (between the chips and the price), not between the
-// price and the button.
-const MoneyRowPin = styled.div`
-  margin-top: auto;
-`;
-
-const CtaWrapper = styled.div`
-  display: flex;
-  position: relative;
-  z-index: 1;
+const CardCta = styled.span`
+  align-items: center;
+  color: ${color('blue')};
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(2.75)};
+  gap: ${spacing(1.25)};
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
 `;
 
 type PartnerCardProps = {
@@ -162,7 +142,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
   const { i18n } = useLingui();
   const headingId = `partner-card-heading-${partner.slug}`;
   const style: PartnerCardIndexStyle = { '--partner-card-index': index };
-  // Unprefixed; LocalizedLink (the name link) and the Button add the locale.
+  // Unprefixed; LocalizedLink (the name link) adds the locale.
   const profileHref = `/partners/profile/${partner.slug}`;
 
   const locationLine = [
@@ -172,77 +152,37 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
     .filter(Boolean)
     .join(', ');
 
-  const linkedinHref =
-    partner.links.linkedin !== null && isSafeHttpUrl(partner.links.linkedin)
-      ? partner.links.linkedin
-      : null;
+  const scopeCards = resolvePartnerScopeCards(partner.partnerScope);
+  const scopeLine = scopeCards.map((scope) => i18n._(scope.label)).join(' · ');
 
   const descriptionExcerpt = richTextExcerpt(partner.description);
 
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
-      <CardHeader>
+      <CardTop>
         <PartnerAvatar
           name={partner.name}
           slug={partner.slug}
           profilePictureUrl={partner.profilePictureUrl}
         />
         <HeaderText>
-          <NameRow>
-            <PartnerName id={headingId}>
-              <NameLink href={profileHref}>{partner.name}</NameLink>
-            </PartnerName>
-            {linkedinHref !== null && (
-              <LinkedinIconLink
-                href={linkedinHref}
-                aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
-              >
-                <IconBrandLinkedin size={16} aria-hidden="true" />
-              </LinkedinIconLink>
-            )}
-          </NameRow>
+          <PartnerName id={headingId}>
+            <NameLink href={profileHref}>{partner.name}</NameLink>
+          </PartnerName>
           {locationLine.length > 0 && (
             <LocationEyebrow>{locationLine}</LocationEyebrow>
           )}
         </HeaderText>
-      </CardHeader>
+      </CardTop>
 
-      <Introduction>{descriptionExcerpt}</Introduction>
+      <CardIntro>{descriptionExcerpt}</CardIntro>
 
-      <Divider aria-hidden="true" />
-
-      <ChipRows>
-        <PartnerChipRow
-          label={msg`Regions`}
-          values={partner.region}
-          valueLabels={SERVED_GEO_LABELS}
-        />
-        <PartnerChipRow
-          label={msg`Languages`}
-          values={partner.languagesSpoken}
-          valueLabels={SPOKEN_LANGUAGE_LABELS}
-        />
-        <PartnerChipRow
-          label={msg`Categories`}
-          values={partner.partnerScope}
-          valueLabels={PARTNER_SCOPE_LABELS}
-        />
-      </ChipRows>
-
-      <MoneyRowPin>
-        <PartnerMoneyRow
-          hourlyRateUsd={partner.hourlyRateUsd}
-          projectBudgetMinUsd={partner.projectBudgetMinUsd}
-        />
-      </MoneyRowPin>
-
-      <CtaWrapper>
-        <Button
-          href={profileHref}
-          label={i18n._(msg`View profile`)}
-          variant="filled"
-        />
-      </CtaWrapper>
+      <CardFoot>
+        {scopeLine.length > 0 && (
+          <ScopeLine title={scopeLine}>{scopeLine}</ScopeLine>
+        )}
+        <CardCta>{i18n._(msg`View profile`)} →</CardCta>
+      </CardFoot>
     </CardArticle>
   );
 }
