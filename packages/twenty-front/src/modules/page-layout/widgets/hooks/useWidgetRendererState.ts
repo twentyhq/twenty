@@ -61,7 +61,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
-  const showHeader = presentation !== 'solo' && !hideHeaderInViewMode;
+  const showHeader = presentation === 'solo' ? false : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({

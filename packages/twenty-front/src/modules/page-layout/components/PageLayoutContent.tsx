@@ -54,10 +54,8 @@ export const PageLayoutContent = () => {
     return <PageLayoutGridLayout tabId={tabId} />;
   }
 
-  if (presentation === 'solo') {
-    return <PageLayoutSoloViewer widgets={activeTab.widgets} />;
-  }
-
+  // Edit mode always shows the stack structure, whatever the view-mode
+  // presentation is: every tab is edited through the same vertical-list editor.
   if (isPageLayoutInEditMode && isRecordPageLayout) {
     return (
       <PageLayoutVerticalListEditor
@@ -67,6 +65,10 @@ export const PageLayoutContent = () => {
         trailingElement={<RecordPageAddWidgetSection />}
       />
     );
+  }
+
+  if (presentation === 'solo') {
+    return <PageLayoutSoloViewer widgets={activeTab.widgets} />;
   }
 
   return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;

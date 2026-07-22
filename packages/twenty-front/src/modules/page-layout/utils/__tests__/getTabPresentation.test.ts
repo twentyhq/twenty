@@ -8,16 +8,23 @@ import {
 const widgetOfType = (type: WidgetType) => ({ type }) as PageLayoutWidget;
 
 describe('getTabPresentation', () => {
-  it('returns solo for a single module widget on a list tab', () => {
+  it('returns solo for any single widget on a list tab', () => {
     expect(
       getTabPresentation({
         widgets: [widgetOfType(WidgetType.TASKS)],
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       }),
     ).toBe('solo');
+
+    expect(
+      getTabPresentation({
+        widgets: [widgetOfType(WidgetType.FIELDS)],
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      }),
+    ).toBe('solo');
   });
 
-  it('treats a legacy CANVAS tab with a module widget as solo', () => {
+  it('treats a legacy CANVAS tab with a single widget as solo', () => {
     expect(
       getTabPresentation({
         widgets: [widgetOfType(WidgetType.CALENDAR)],
@@ -26,21 +33,12 @@ describe('getTabPresentation', () => {
     ).toBe('solo');
   });
 
-  it('returns stack for a single card widget', () => {
-    expect(
-      getTabPresentation({
-        widgets: [widgetOfType(WidgetType.FIELDS)],
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      }),
-    ).toBe('stack');
-  });
-
   it('returns stack when more than one widget is present', () => {
     expect(
       getTabPresentation({
         widgets: [
           widgetOfType(WidgetType.TASKS),
-          widgetOfType(WidgetType.FIELDS),
+          widgetOfType(WidgetType.GRAPH),
         ],
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       }),
@@ -52,6 +50,16 @@ describe('getTabPresentation', () => {
       getTabPresentation({
         widgets: [],
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      }),
+    ).toBe('stack');
+  });
+
+  it('always returns stack in edit mode', () => {
+    expect(
+      getTabPresentation({
+        widgets: [widgetOfType(WidgetType.TASKS)],
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        isInEditMode: true,
       }),
     ).toBe('stack');
   });

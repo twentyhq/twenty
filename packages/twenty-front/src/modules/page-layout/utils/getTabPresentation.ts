@@ -1,34 +1,26 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type TabPresentation } from '@/page-layout/types/TabPresentation';
-import { getWidgetDisplayProfile } from '@/page-layout/widgets/utils/getWidgetDisplayProfile';
-import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type GetTabPresentationParams = {
   widgets: PageLayoutWidget[];
   layoutMode: PageLayoutTabLayoutMode;
+  isInEditMode?: boolean;
 };
 
-// Presentation is derived from content, never stored. A list-mode tab is "solo"
-// when it hosts a single module widget (Timeline, Tasks, a record table...) so
-// it can render full-bleed with page-level scroll; otherwise it is a "stack" of
-// boxed widgets. Grid tabs (dashboards) are always stacks.
+// Presentation is derived from content, never stored. In view mode, a list tab
+// hosting a single widget renders it solo: full-bleed, owning the tab. Any
+// other tab is a stack of boxed widgets. Edit mode always shows the stack
+// structure so every tab is edited through the same vertical-list editor.
+// Grid tabs (dashboards) are always stacks.
 export const getTabPresentation = ({
   widgets,
   layoutMode,
+  isInEditMode = false,
 }: GetTabPresentationParams): TabPresentation => {
-  if (layoutMode === PageLayoutTabLayoutMode.GRID) {
+  if (isInEditMode || layoutMode === PageLayoutTabLayoutMode.GRID) {
     return 'stack';
   }
 
-  const soleWidget = widgets.length === 1 ? widgets.at(0) : undefined;
-
-  if (
-    isDefined(soleWidget) &&
-    getWidgetDisplayProfile(soleWidget.type).affinity === 'module'
-  ) {
-    return 'solo';
-  }
-
-  return 'stack';
+  return widgets.length === 1 ? 'solo' : 'stack';
 };

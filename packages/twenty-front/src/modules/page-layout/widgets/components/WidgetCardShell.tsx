@@ -6,7 +6,6 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
-import { getWidgetDisplayProfile } from '@/page-layout/widgets/utils/getWidgetDisplayProfile';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -71,11 +70,10 @@ export const WidgetCardShell = ({
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
 
-  // A module widget stacked alongside other widgets (vertical-list record page)
-  // keeps its own bounded scroll region rather than stretching the whole tab.
-  const isStackedModuleWidget =
-    (variant === 'record-page' || variant === 'side-column') &&
-    getWidgetDisplayProfile(widget.type).affinity === 'module';
+  // A widget stacked in the main tab area gets a bounded slot with its own
+  // scroll, so no single widget swallows the tab. Solo widgets own the tab,
+  // and pinned/side-column stacks keep their flowing column behavior.
+  const hasBoundedHeight = variant === 'record-page' && isInVerticalListTab;
 
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
@@ -123,7 +121,7 @@ export const WidgetCardShell = ({
           isInVerticalListTab={isInVerticalListTab}
           isMobile={isMobile}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
-          hasBoundedHeight={isStackedModuleWidget}
+          hasBoundedHeight={hasBoundedHeight}
         >
           {hasAccess ? (
             <ErrorBoundary

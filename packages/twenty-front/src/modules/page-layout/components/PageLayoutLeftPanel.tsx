@@ -4,7 +4,6 @@ import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutCont
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
-import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -45,11 +44,6 @@ export const PageLayoutLeftPanel = ({
     pageLayoutType: currentPageLayout.type,
   });
 
-  const presentation = getTabPresentation({
-    widgets: pinnedTab.widgets,
-    layoutMode,
-  });
-
   return (
     <StyledContainer>
       <SummaryCard
@@ -58,11 +52,13 @@ export const PageLayoutLeftPanel = ({
         isInSidePanel={isInSidePanel}
       />
 
+      {/* The pinned left panel is always a column of cards, even with a single
+          widget: solo presentation is a main-tab-area concept. */}
       <PageLayoutContentProvider
         value={{
           tabId: pinnedLeftTabId,
           layoutMode,
-          presentation,
+          presentation: 'stack',
         }}
       >
         <ScrollWrapper

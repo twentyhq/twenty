@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { STACKED_MODULE_WIDGET_MAX_HEIGHT } from '~/modules/page-layout/widgets/constants/StackedModuleWidgetMaxHeight';
+import { STACKED_WIDGET_MAX_HEIGHT } from '~/modules/page-layout/widgets/constants/StackedWidgetMaxHeight';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type WidgetCardContentStyledProps = {
@@ -35,7 +35,7 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
     hasHeader ? themeCssVariables.spacing[2] : '0'};
 
   max-height: ${({ hasBoundedHeight }) =>
-    hasBoundedHeight ? `${STACKED_MODULE_WIDGET_MAX_HEIGHT}px` : 'none'};
+    hasBoundedHeight ? `${STACKED_WIDGET_MAX_HEIGHT}px` : 'none'};
 
   overflow: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : 'hidden')};
 
