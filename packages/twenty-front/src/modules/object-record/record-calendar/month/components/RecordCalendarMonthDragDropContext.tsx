@@ -1,19 +1,19 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import { useRecordTableHeaderDndKit } from '@/object-record/record-table/record-table-header/dnd/hooks/useRecordTableHeaderDndKit';
-import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
+import { useRecordCalendarMonthDndKit } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 
-type RecordTableHeaderDndKitProviderProps = {
+type RecordCalendarMonthDragDropContextProps = {
   children: ReactNode;
 };
 
-export const RecordTableHeaderDndKitProvider = ({
+export const RecordCalendarMonthDragDropContext = ({
   children,
-}: RecordTableHeaderDndKitProviderProps) => {
-  const { contextValues, handlers } = useRecordTableHeaderDndKit();
+}: RecordCalendarMonthDragDropContextProps) => {
+  const { contextValues, handlers } = useRecordCalendarMonthDndKit();
 
   return (
     <DragDropItemDndContext.Provider value={contextValues}>
