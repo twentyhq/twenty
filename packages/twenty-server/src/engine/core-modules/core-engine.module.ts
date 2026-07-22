@@ -20,6 +20,7 @@ import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/bi
 import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -173,6 +174,10 @@ import { FileModule } from './file/file.module';
     {
       provide: APP_FILTER,
       useClass: BillingGraphqlApiExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: PermissionsGraphqlApiExceptionFilter,
     },
   ],
   exports: [
