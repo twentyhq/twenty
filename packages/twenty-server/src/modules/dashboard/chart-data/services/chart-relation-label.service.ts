@@ -1,36 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import chunk from 'lodash.chunk';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { CHART_RELATION_LABEL_BATCH_SIZE } from 'src/modules/dashboard/chart-data/constants/chart-relation-label-batch-size.constant';
+import { type ChartRelationLabelAxisInput } from 'src/modules/dashboard/chart-data/types/chart-relation-label-axis-input.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
+import { type ResolvableChartRelationAxis } from 'src/modules/dashboard/chart-data/types/resolvable-chart-relation-axis.type';
+import { buildRawLabelByRecordId } from 'src/modules/dashboard/chart-data/utils/build-raw-label-by-record-id.util';
+import { buildResolvableChartRelationAxis } from 'src/modules/dashboard/chart-data/utils/build-resolvable-chart-relation-axis.util';
 import { buildUniqueRelationLabels } from 'src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util';
-import { getRelationLabelIdentifierColumns } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-columns.util';
-
-type ChartRelationLabelAxisInput = {
-  groupByField: FlatFieldMetadata;
-  subFieldName?: string | null;
-};
-
-type ResolvableAxis = {
-  dimensionIndex: number;
-  targetFlatObjectMetadata: FlatObjectMetadata;
-  columns: string[];
-  recordIds: string[];
-};
 
 type ResolveRelationLabelsParams = {
   rawResults: GroupByRawResult[];
@@ -69,58 +57,29 @@ export class ChartRelationLabelService {
         : []),
     ];
 
-    const resolvableAxes: ResolvableAxis[] = [];
-
-    for (const { dimensionIndex, axis } of axisInputs) {
-      const resolvableAxis = this.buildResolvableAxis({
-        dimensionIndex,
-        axis,
-        rawResults,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
-
-      if (isDefined(resolvableAxis)) {
-        resolvableAxes.push(resolvableAxis);
-      }
-    }
+    const resolvableAxes = axisInputs
+      .map(({ dimensionIndex, axis }) =>
+        buildResolvableChartRelationAxis({
+          dimensionIndex,
+          axis,
+          rawResults,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      )
+      .filter(isDefined);
 
     if (!isNonEmptyArray(resolvableAxes)) {
       return {};
     }
 
-    const rawLabelsByTargetObjectId = new Map<string, Map<string, string>>();
-
-    for (const resolvableAxis of resolvableAxes) {
-      const targetObjectId = resolvableAxis.targetFlatObjectMetadata.id;
-
-      if (rawLabelsByTargetObjectId.has(targetObjectId)) {
-        continue;
-      }
-
-      const recordIds = [
-        ...new Set(
-          resolvableAxes
-            .filter(
-              (axis) => axis.targetFlatObjectMetadata.id === targetObjectId,
-            )
-            .flatMap((axis) => axis.recordIds),
-        ),
-      ];
-
-      rawLabelsByTargetObjectId.set(
-        targetObjectId,
-        await this.fetchRawLabels({
-          targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
-          columns: resolvableAxis.columns,
-          recordIds,
-          workspaceId,
-          authContext,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        }),
-      );
-    }
+    const rawLabelsByTargetObjectId = await this.fetchRawLabelsPerTargetObject({
+      resolvableAxes,
+      workspaceId,
+      authContext,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const resolutionByDimensionIndex = new Map<
       number,
@@ -148,74 +107,64 @@ export class ChartRelationLabelService {
     };
   }
 
-  private buildResolvableAxis({
-    dimensionIndex,
-    axis,
-    rawResults,
+  private async fetchRawLabelsPerTargetObject({
+    resolvableAxes,
+    workspaceId,
+    authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
-    dimensionIndex: number;
-    axis: ChartRelationLabelAxisInput;
-    rawResults: GroupByRawResult[];
+    resolvableAxes: ResolvableChartRelationAxis[];
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  }): ResolvableAxis | undefined {
-    if (
-      !isMorphOrRelationFlatFieldMetadata(axis.groupByField) ||
-      isDefined(axis.subFieldName)
-    ) {
-      return undefined;
+  }): Promise<Map<string, Map<string, string>>> {
+    const rawLabelsByTargetObjectId = new Map<string, Map<string, string>>();
+
+    for (const resolvableAxis of resolvableAxes) {
+      const targetObjectId = resolvableAxis.targetFlatObjectMetadata.id;
+
+      if (rawLabelsByTargetObjectId.has(targetObjectId)) {
+        continue;
+      }
+
+      const recordIdsForTargetObject = [
+        ...new Set(
+          resolvableAxes
+            .filter(
+              (axis) => axis.targetFlatObjectMetadata.id === targetObjectId,
+            )
+            .flatMap((axis) => axis.recordIds),
+        ),
+      ];
+
+      const records = await this.fetchLabelIdentifierRecords({
+        targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
+        labelIdentifierColumnNames: resolvableAxis.labelIdentifierColumnNames,
+        recordIds: recordIdsForTargetObject,
+        workspaceId,
+        authContext,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+      rawLabelsByTargetObjectId.set(
+        targetObjectId,
+        buildRawLabelByRecordId({
+          records,
+          targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      );
     }
 
-    const targetObjectMetadataId =
-      axis.groupByField.relationTargetObjectMetadataId;
-
-    if (!isDefined(targetObjectMetadataId)) {
-      return undefined;
-    }
-
-    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: targetObjectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(targetFlatObjectMetadata)) {
-      return undefined;
-    }
-
-    const labelIdentifierColumns = getRelationLabelIdentifierColumns({
-      flatObjectMetadata: targetFlatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(labelIdentifierColumns)) {
-      return undefined;
-    }
-
-    const recordIds = [
-      ...new Set(
-        rawResults
-          .map((result) => result.groupByDimensionValues?.[dimensionIndex])
-          .filter(isNonEmptyString),
-      ),
-    ];
-
-    if (!isNonEmptyArray(recordIds)) {
-      return undefined;
-    }
-
-    return {
-      dimensionIndex,
-      targetFlatObjectMetadata,
-      columns: labelIdentifierColumns.columns,
-      recordIds,
-    };
+    return rawLabelsByTargetObjectId;
   }
 
-  private async fetchRawLabels({
+  private async fetchLabelIdentifierRecords({
     targetFlatObjectMetadata,
-    columns,
+    labelIdentifierColumnNames,
     recordIds,
     workspaceId,
     authContext,
@@ -223,59 +172,47 @@ export class ChartRelationLabelService {
     flatFieldMetadataMaps,
   }: {
     targetFlatObjectMetadata: FlatObjectMetadata;
-    columns: string[];
+    labelIdentifierColumnNames: string[];
     recordIds: string[];
     workspaceId: string;
     authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  }): Promise<Map<string, string>> {
+  }): Promise<Record<string, unknown>[]> {
     try {
-      const records =
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const context = getWorkspaceContext();
-            const rolePermissionConfig = resolveRolePermissionConfig({
-              authContext: context.authContext,
-              userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-              apiKeyRoleMap: context.apiKeyRoleMap,
-            });
+      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workspaceContext = getWorkspaceContext();
+          const rolePermissionConfig = resolveRolePermissionConfig({
+            authContext: workspaceContext.authContext,
+            userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
+            apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+          });
 
-            if (!rolePermissionConfig) {
-              return [];
-            }
+          if (!rolePermissionConfig) {
+            return [];
+          }
 
-            const repository =
-              await this.globalWorkspaceOrmManager.getRepository(
-                workspaceId,
-                targetFlatObjectMetadata.nameSingular,
-                rolePermissionConfig,
-              );
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            targetFlatObjectMetadata.nameSingular,
+            rolePermissionConfig,
+          );
 
-            const alias = targetFlatObjectMetadata.nameSingular;
-            const recordIdChunks: string[][] = [];
+          const alias = targetFlatObjectMetadata.nameSingular;
 
-            for (
-              let chunkStart = 0;
-              chunkStart < recordIds.length;
-              chunkStart += CHART_RELATION_LABEL_BATCH_SIZE
-            ) {
-              recordIdChunks.push(
-                recordIds.slice(
-                  chunkStart,
-                  chunkStart + CHART_RELATION_LABEL_BATCH_SIZE,
-                ),
-              );
-            }
-
-            const rawRowChunks = await Promise.all(
-              recordIdChunks.map((recordIdChunk) => {
+          const rawRowChunks = await Promise.all(
+            chunk(recordIds, CHART_RELATION_LABEL_BATCH_SIZE).map(
+              (recordIdChunk) => {
                 const queryBuilder = repository.createQueryBuilder(alias);
 
                 queryBuilder.select([]);
 
-                for (const column of columns) {
-                  queryBuilder.addSelect(`"${alias}"."${column}"`, column);
+                for (const columnName of labelIdentifierColumnNames) {
+                  queryBuilder.addSelect(
+                    `"${alias}"."${columnName}"`,
+                    columnName,
+                  );
                 }
 
                 return queryBuilder
@@ -283,41 +220,23 @@ export class ChartRelationLabelService {
                     recordIdChunk,
                   })
                   .getRawMany();
-              }),
+              },
+            ),
+          );
+
+          return rawRowChunks
+            .flat()
+            .map((rawRow) =>
+              formatResult<Record<string, unknown>>(
+                rawRow,
+                targetFlatObjectMetadata,
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+              ),
             );
-
-            return rawRowChunks
-              .flat()
-              .map((rawRow) =>
-                formatResult<Record<string, unknown>>(
-                  rawRow,
-                  targetFlatObjectMetadata,
-                  flatObjectMetadataMaps,
-                  flatFieldMetadataMaps,
-                ),
-              );
-          },
-          authContext,
-        );
-
-      const rawLabelByRecordId = new Map<string, string>();
-
-      for (const record of records) {
-        const recordId = String(record.id);
-        const displayName = getRecordDisplayName(
-          record,
-          targetFlatObjectMetadata,
-          flatFieldMetadataMaps,
-        );
-
-        if (displayName === recordId) {
-          continue;
-        }
-
-        rawLabelByRecordId.set(recordId, displayName);
-      }
-
-      return rawLabelByRecordId;
+        },
+        authContext,
+      );
     } catch (error) {
       this.logger.warn(
         `Failed to resolve relation labels for object ${targetFlatObjectMetadata.nameSingular}: ${
@@ -325,7 +244,7 @@ export class ChartRelationLabelService {
         }`,
       );
 
-      return new Map();
+      return [];
     }
   }
 }

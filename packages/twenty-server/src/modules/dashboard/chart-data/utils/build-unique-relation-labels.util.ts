@@ -3,25 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
-
-const claimSuffixedLabel = (
-  baseLabel: string,
-  startOrdinal: number,
-  takenLabels: Set<string>,
-  formatOrdinal: (ordinal: number) => string,
-): { label: string; nextOrdinal: number } => {
-  let ordinal = startOrdinal;
-  let candidate = `${baseLabel} (${formatOrdinal(ordinal)})`;
-
-  while (takenLabels.has(candidate)) {
-    ordinal += 1;
-    candidate = `${baseLabel} (${formatOrdinal(ordinal)})`;
-  }
-
-  takenLabels.add(candidate);
-
-  return { label: candidate, nextOrdinal: ordinal + 1 };
-};
+import { claimUniqueSuffixedLabel } from 'src/modules/dashboard/chart-data/utils/claim-unique-suffixed-label.util';
 
 export const buildUniqueRelationLabels = ({
   rawLabelByRecordId,
@@ -51,9 +33,9 @@ export const buildUniqueRelationLabels = ({
   }
 
   for (const [rawLabel, recordIds] of recordIdsByRawLabel) {
-    const isColliding = recordIds.length > 1 || takenLabels.has(rawLabel);
+    const isCollidingLabel = recordIds.length > 1 || takenLabels.has(rawLabel);
 
-    if (!isColliding) {
+    if (!isCollidingLabel) {
       takenLabels.add(rawLabel);
       labelByRecordId.set(recordIds[0], rawLabel);
       continue;
@@ -62,12 +44,12 @@ export const buildUniqueRelationLabels = ({
     let ordinal = 1;
 
     for (const recordId of recordIds) {
-      const { label, nextOrdinal } = claimSuffixedLabel(
-        rawLabel,
-        ordinal,
+      const { label, nextOrdinal } = claimUniqueSuffixedLabel({
+        baseLabel: rawLabel,
+        startOrdinal: ordinal,
         takenLabels,
-        String,
-      );
+        formatOrdinal: String,
+      });
 
       labelByRecordId.set(recordId, label);
       ordinal = nextOrdinal;
@@ -79,16 +61,17 @@ export const buildUniqueRelationLabels = ({
   if (sortedUnresolvedRecordIds.length === 1) {
     labelByRecordId.set(sortedUnresolvedRecordIds[0], t`Unknown`);
   } else if (sortedUnresolvedRecordIds.length > 1) {
-    const padding = String(sortedUnresolvedRecordIds.length).length;
+    const ordinalPadding = String(sortedUnresolvedRecordIds.length).length;
     let ordinal = 1;
 
     for (const recordId of sortedUnresolvedRecordIds) {
-      const { label, nextOrdinal } = claimSuffixedLabel(
-        t`Unknown`,
-        ordinal,
+      const { label, nextOrdinal } = claimUniqueSuffixedLabel({
+        baseLabel: t`Unknown`,
+        startOrdinal: ordinal,
         takenLabels,
-        (value) => String(value).padStart(padding, '0'),
-      );
+        formatOrdinal: (ordinalToFormat) =>
+          String(ordinalToFormat).padStart(ordinalPadding, '0'),
+      });
 
       labelByRecordId.set(recordId, label);
       ordinal = nextOrdinal;

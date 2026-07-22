@@ -16,7 +16,10 @@ export const getRelationLabelIdentifierColumns = ({
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): { labelIdentifierField: FlatFieldMetadata; columns: string[] } | null => {
+}): {
+  labelIdentifierField: FlatFieldMetadata;
+  columnNames: string[];
+} | null => {
   const { labelIdentifierFieldMetadataId } = flatObjectMetadata;
 
   if (!isDefined(labelIdentifierFieldMetadataId)) {
@@ -43,7 +46,7 @@ export const getRelationLabelIdentifierColumns = ({
 
     return {
       labelIdentifierField,
-      columns: [
+      columnNames: [
         'id',
         ...compositeType.properties.map((property) =>
           computeCompositeColumnName(labelIdentifierField.name, property),
@@ -61,6 +64,6 @@ export const getRelationLabelIdentifierColumns = ({
 
   return {
     labelIdentifierField,
-    columns: ['id', labelIdentifierField.name],
+    columnNames: ['id', labelIdentifierField.name],
   };
 };
