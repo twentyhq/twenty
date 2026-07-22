@@ -2128,9 +2128,6 @@ msgid "Amount Micros"
 msgstr "Belopp i mikroenheter"
 
 #. js-lingui-id: Vw8l6h
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
 msgstr "Ett fel inträffade"
@@ -2178,23 +2175,8 @@ msgstr "Ett fel uppstod när bilden laddades upp."
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 msgid "An error occurred."
