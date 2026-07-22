@@ -106,6 +106,10 @@ export const useAdvancedTextEditor = (
       return marked.parse(defaultValue, { async: false }) as string;
     }
 
+    if (contentType === 'html') {
+      return defaultValue;
+    }
+
     return getInitialAdvancedTextEditorContent(defaultValue);
   };
 
