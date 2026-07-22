@@ -236,17 +236,14 @@ export class ServerRouteTriggerService {
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
-    applicationRegistrationId,
   }: {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
-    applicationRegistrationId?: string;
   }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
     const logicFunction = await this.findLogicFunctionOrFail({
       logicFunctionUniversalIdentifier,
       workspaceId,
-      applicationRegistrationId,
     });
 
     try {

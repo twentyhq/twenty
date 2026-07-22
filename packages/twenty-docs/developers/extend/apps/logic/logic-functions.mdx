@@ -61,7 +61,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform acks with `202` and runs that **target** function on the worker queue. See [Server route trigger](#server-route-trigger).
 
-Queue-executed runs (database event, cron, server-route dispatch) are retried when the handler fails: up to 10 times for cron triggers and 3 times for database-event triggers and server-route dispatch. Write these handlers to be idempotent — a retry re-runs the whole handler, and every attempt is billed as an execution.
+Queue-executed runs (database event, cron, server-route dispatch) are retried when the handler fails. Write these handlers to be idempotent — a retry re-runs the whole handler, and every attempt is billed as an execution.
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -292,7 +292,7 @@ For request signatures, most providers sign with HMAC-SHA256; the parts that dif
 The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
 
 <Note>
-The route responds `202 { queued: true }` right after the resolver returns and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (the queue retries those internally, 3 times). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion. For endpoints whose caller must read the response body (challenge handshakes, Slack commands), use an `httpRouteTriggerSettings` route instead. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+The route responds `202 { queued: true }` right after the resolver returns and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (the queue retries those internally). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion. For endpoints whose caller must read the response body (challenge handshakes, Slack commands), use an `httpRouteTriggerSettings` route instead. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload
