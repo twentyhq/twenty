@@ -2062,11 +2062,6 @@ msgstr "仪表板"
 msgid "Data structure is invalid."
 msgstr "数据结构无效。"
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "数据版本不匹配。请刷新后重试。"
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

@@ -6,7 +6,6 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyORMExceptionCode {
-  METADATA_VERSION_MISMATCH = 'METADATA_VERSION_MISMATCH',
   WORKSPACE_SCHEMA_NOT_FOUND = 'WORKSPACE_SCHEMA_NOT_FOUND',
   ROLES_PERMISSIONS_VERSION_NOT_FOUND = 'ROLES_PERMISSIONS_VERSION_NOT_FOUND',
   FEATURE_FLAG_MAP_VERSION_NOT_FOUND = 'FEATURE_FLAG_MAP_VERSION_NOT_FOUND',
@@ -33,8 +32,6 @@ const getTwentyORMExceptionUserFriendlyMessage = (
   code: TwentyORMExceptionCode,
 ) => {
   switch (code) {
-    case TwentyORMExceptionCode.METADATA_VERSION_MISMATCH:
-      return msg`Data version mismatch. Please refresh and try again.`;
     case TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND:
       return msg`Workspace schema not found.`;
     case TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND:

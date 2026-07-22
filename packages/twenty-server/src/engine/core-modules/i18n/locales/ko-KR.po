@@ -2062,11 +2062,6 @@ msgstr "대시보드"
 msgid "Data structure is invalid."
 msgstr "데이터 구조가 잘못되었습니다."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "데이터 버전이 일치하지 않습니다. 새로고침 후 다시 시도해 주세요."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

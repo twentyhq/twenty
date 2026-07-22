@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntitySchemaOptions } from 'typeorm';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
@@ -14,7 +13,6 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   GraphQLTypeDefs: 'graphql:type-defs',
   MetadataVersion: 'metadata:workspace-metadata-version',
-  MetadataObjectMetadataMaps: 'metadata:object-metadata-maps',
   GraphQLUsedScalarNames: 'graphql:used-scalar-names',
   ORMEntitySchemas: 'orm:entity-schemas',
 } as const;
@@ -43,31 +41,6 @@ export class WorkspaceCacheStorageService {
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
-
-  setORMEntitySchema(
-    workspaceId: string,
-    metadataVersion: number,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    entitySchemas: EntitySchemaOptions<any>[],
-  ) {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
-      entitySchemas,
-      TTL_ONE_WEEK,
-    );
-  }
-
-  getORMEntitySchema(
-    workspaceId: string,
-    metadataVersion: number,
-    // oxlint-disable-next-line typescript/no-explicit-any
-  ): Promise<EntitySchemaOptions<any>[] | undefined> {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    return this.cacheStorageService.get<EntitySchemaOptions<any>[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
-    );
-  }
 
   setMetadataVersion(
     workspaceId: string,
@@ -200,18 +173,28 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion?: number,
   ): Promise<void> {
-    const metadataVersionSuffix = isDefined(metadataVersion)
-      ? `${metadataVersion}`
-      : '*';
+    const { MetadataVersion, ...versionedCacheKeys } =
+      METADATA_VERSIONED_WORKSPACE_CACHE_KEY;
 
-    await Promise.all(
-      Object.values(METADATA_VERSIONED_WORKSPACE_CACHE_KEY).map(
-        async (key) =>
-          await this.cacheStorageService.del(
-            `${key}:${workspaceId}:${metadataVersionSuffix}`,
-          ),
+    await Promise.all([
+      this.cacheStorageService.del(`${MetadataVersion}:${workspaceId}`),
+      ...Object.values(versionedCacheKeys).flatMap((key) =>
+        isDefined(metadataVersion)
+          ? [
+              this.cacheStorageService.del(
+                `${key}:${workspaceId}:${metadataVersion}`,
+              ),
+              this.cacheStorageService.flushByPattern(
+                `${key}:${workspaceId}:${metadataVersion}:*`,
+              ),
+            ]
+          : [
+              this.cacheStorageService.flushByPattern(
+                `${key}:${workspaceId}:*`,
+              ),
+            ],
       ),
-    );
+    ]);
   }
 
   async flush(workspaceId: string, metadataVersion?: number): Promise<void> {

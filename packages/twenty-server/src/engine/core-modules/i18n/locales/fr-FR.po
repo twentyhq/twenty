@@ -2062,11 +2062,6 @@ msgstr "Tableaux de bord"
 msgid "Data structure is invalid."
 msgstr "La structure des données est invalide."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Incompatibilité de version des données. Veuillez actualiser et réessayer."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

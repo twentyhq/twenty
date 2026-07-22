@@ -118,6 +118,7 @@ import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
+import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -238,4 +239,5 @@ export const INSTANCE_COMMANDS = [
   WidenViewCalendarIntegrityConstraintFastInstanceCommand,
   AddAutoUpgradeToApplicationFastInstanceCommand,
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
+  AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
 ];
