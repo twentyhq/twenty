@@ -13,6 +13,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -36,7 +37,6 @@ import { applyCumulativeToOneDimensionalBarData } from 'src/modules/dashboard/ch
 import { applyCumulativeToTwoDimensionalBarData } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-two-dimensional-bar-data.util';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
-import { buildObjectIdByNameSingular } from 'src/modules/dashboard/chart-data/utils/build-object-id-by-name-singular.util';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
@@ -141,9 +141,8 @@ export class BarChartDataService {
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;
 
-      const objectIdByNameSingular = buildObjectIdByNameSingular(
-        flatObjectMetadataMaps,
-      );
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const rawResults = await this.chartDataQueryService.executeGroupByQuery({
         flatObjectMetadata,

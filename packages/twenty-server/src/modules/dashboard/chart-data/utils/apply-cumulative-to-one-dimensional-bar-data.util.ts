@@ -1,15 +1,9 @@
-import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-
-type OneDimensionalBarDataPoint = {
-  formattedValue: string;
-  aggregateValue: number;
-  rawValue: RawDimensionValue;
-};
+import { type ProcessedOneDimensionalDataPoint } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 
 export const applyCumulativeToOneDimensionalBarData = (
-  dataPoints: OneDimensionalBarDataPoint[],
-): OneDimensionalBarDataPoint[] => {
-  const result: OneDimensionalBarDataPoint[] = [];
+  dataPoints: ProcessedOneDimensionalDataPoint[],
+): ProcessedOneDimensionalDataPoint[] => {
+  const result: ProcessedOneDimensionalDataPoint[] = [];
   let runningTotal = 0;
 
   for (const dataPoint of dataPoints) {

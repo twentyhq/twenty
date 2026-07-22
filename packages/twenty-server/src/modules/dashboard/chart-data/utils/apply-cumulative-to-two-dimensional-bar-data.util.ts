@@ -21,7 +21,7 @@ export const applyCumulativeToTwoDimensionalBarData = ({
     for (const key of keys) {
       const value = datum[key];
 
-      if (isNumber(value)) {
+      if (isNumber(value) && Number.isFinite(value)) {
         runningTotalByKey[key] += value;
       }
 

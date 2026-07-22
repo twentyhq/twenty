@@ -11,6 +11,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
@@ -25,7 +26,6 @@ import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
-import { buildObjectIdByNameSingular } from 'src/modules/dashboard/chart-data/utils/build-object-id-by-name-singular.util';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -109,9 +109,8 @@ export class PieChartDataService {
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const objectIdByNameSingular = buildObjectIdByNameSingular(
-        flatObjectMetadataMaps,
-      );
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const rawResults = await this.chartDataQueryService.executeGroupByQuery({
         flatObjectMetadata,

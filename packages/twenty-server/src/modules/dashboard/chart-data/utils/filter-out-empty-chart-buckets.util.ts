@@ -16,6 +16,7 @@ export const filterOutEmptyChartBuckets = ({
   return rawResults.filter(
     (result) =>
       isDefined(result.groupByDimensionValues?.[0]) &&
+      Number.isFinite(result.aggregateValue) &&
       result.aggregateValue !== 0,
   );
 };
