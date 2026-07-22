@@ -33,6 +33,7 @@ export enum SettingsPath {
   NewEmailGroupChannel = 'email/new-email-group',
   NewUnsubscribeTopic = 'email/new-unsubscribe-topic',
   UnsubscribeTopicDetail = 'email/unsubscribe-topic/:unsubscribeTopicId',
+  Unsubscribers = 'email/unsubscribers',
   PublicDomain = 'applications/public-domain',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Community = 'community',

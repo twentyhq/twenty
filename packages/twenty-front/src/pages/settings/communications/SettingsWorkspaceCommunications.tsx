@@ -4,16 +4,27 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
 import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import {
+  FeatureFlagKey,
+  MessageChannelType,
+  SettingsPath,
+} from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  EmailingDomainStatus,
+  GetEmailingDomainsDocument,
+} from '~/generated-metadata/graphql';
+import { Callout } from 'twenty-ui/feedback';
 import {
   IconBrandWhatsapp,
+  IconForbid,
   IconMail,
   IconMailX,
   IconPhone,
@@ -25,6 +36,7 @@ import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
 
@@ -39,6 +51,8 @@ export const SettingsWorkspaceCommunications = () => {
 
   const { t } = useLingui();
 
+  const navigateSettings = useNavigateSettings();
+
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
@@ -52,7 +66,36 @@ export const SettingsWorkspaceCommunications = () => {
     skip: !isEmailGroupFeatureEnabled,
   });
 
+  const { channels } = useMyMessageChannels();
+
+  const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument, {
+    skip: !isEmailGroupFeatureEnabled,
+  });
+
   const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;
+
+  const firstEmailChannel = channels.find(
+    (channel) => channel.type === MessageChannelType.EMAIL_GROUP,
+  );
+
+  const hasVerifiedDomain = (
+    emailingDomainsData?.getEmailingDomains ?? []
+  ).some((domain) => domain.status === EmailingDomainStatus.VERIFIED);
+
+  const isSetupComplete = isDefined(firstEmailChannel) && hasVerifiedDomain;
+
+  const setupAction = !isDefined(firstEmailChannel)
+    ? {
+        label: t`Add email channel`,
+        onClick: () => navigateSettings(SettingsPath.NewEmailGroupChannel),
+      }
+    : {
+        label: t`Verify your domain`,
+        onClick: () =>
+          navigateSettings(SettingsPath.EmailGroupChannelDetail, {
+            messageChannelId: firstEmailChannel.id,
+          }),
+      };
 
   if (!isEmailGroupFeatureEnabled) {
     return null;
@@ -98,6 +141,21 @@ export const SettingsWorkspaceCommunications = () => {
             tabs={[]}
           />
         </Section>
+        {!isSetupComplete && (
+          <Section>
+            <Callout
+              variant="info"
+              Icon={IconMail}
+              title={t`Finish setting up email`}
+              description={
+                isDefined(firstEmailChannel)
+                  ? t`Verify a sending domain before you can send campaign emails.`
+                  : t`Connect a shared mailbox to start sending and receiving email.`
+              }
+              action={setupAction}
+            />
+          </Section>
+        )}
         <SettingsWorkspaceEmailGroupSection />
         <SettingsWorkspaceUnsubscribeTopicSection />
         <Section>
@@ -120,6 +178,16 @@ export const SettingsWorkspaceCommunications = () => {
               title={t`See unsubscribe page`}
             />
           </StyledCardLink>
+          <SettingsCard
+            Icon={
+              <IconForbid
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.md}
+              />
+            }
+            title={t`Unsubscribers`}
+            onClick={() => navigateSettings(SettingsPath.Unsubscribers)}
+          />
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

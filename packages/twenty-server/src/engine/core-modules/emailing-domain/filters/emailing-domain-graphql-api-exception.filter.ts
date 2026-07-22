@@ -6,7 +6,11 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { ConflictError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Catch(EmailingDomainException)
 export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter {
@@ -14,6 +18,10 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
     switch (exception.code) {
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
         throw new ConflictError(exception);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
+        throw new NotFoundError(exception);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
+        throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);
       }

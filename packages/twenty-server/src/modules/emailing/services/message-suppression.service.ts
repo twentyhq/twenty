@@ -10,6 +10,10 @@ import {
   GLOBAL_BLOCKING_SUPPRESSION_REASONS,
   HARD_SUPPRESSION_REASONS,
 } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -25,6 +29,13 @@ type SuppressArgs = {
   source: MessageSuppressionSource;
   providerEventId?: string | null;
   unsubscribeTopicId?: string | null;
+};
+
+type FindSuppressionsArgs = {
+  workspaceId: string;
+  reason?: MessageSuppressionReason;
+  limit: number;
+  offset: number;
 };
 
 type TopicOptOutStateArgs = {
@@ -45,6 +56,57 @@ export class MessageSuppressionService {
     private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
     private readonly unsubscribeTopicService: UnsubscribeTopicService,
   ) {}
+
+  async findSuppressions({
+    workspaceId,
+    reason,
+    limit,
+    offset,
+  }: FindSuppressionsArgs): Promise<{
+    records: MessageSuppressionEntity[];
+    totalCount: number;
+  }> {
+    const [records, totalCount] = await this.suppressionRepository.findAndCount(
+      workspaceId,
+      {
+        where: isDefined(reason) ? { reason } : {},
+        order: { createdAt: 'DESC' },
+        take: limit,
+        skip: offset,
+      },
+    );
+
+    return { records, totalCount };
+  }
+
+  // Only bounces are removable: reinstating someone who unsubscribed or filed a
+  // spam complaint without a fresh opt-in is a CAN-SPAM violation.
+  async deleteSuppression(
+    workspaceId: string,
+    suppressionId: string,
+  ): Promise<void> {
+    const suppression = await this.suppressionRepository.findOne(workspaceId, {
+      where: { id: suppressionId },
+    });
+
+    if (!isDefined(suppression)) {
+      throw new EmailingDomainException(
+        `Message suppression ${suppressionId} not found`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+      );
+    }
+
+    if (suppression.reason !== MessageSuppressionReason.BOUNCE) {
+      throw new EmailingDomainException(
+        `Message suppression ${suppressionId} has reason ${suppression.reason} and cannot be removed`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE,
+      );
+    }
+
+    await this.suppressionRepository.delete(workspaceId, {
+      id: suppression.id,
+    });
+  }
 
   async getSuppressedAddresses(
     workspaceId: string,

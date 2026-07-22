@@ -41,6 +41,10 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
         throw new ConflictError(error);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
+        throw new NotFoundError(error);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
+        throw new ForbiddenError(error);
       default: {
         return assertUnreachable(error.code);
       }
