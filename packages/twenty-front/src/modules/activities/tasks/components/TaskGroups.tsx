@@ -37,7 +37,7 @@ type TaskGroupsProps = {
 };
 
 export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
-  const { tasks, tasksLoading } = useTasks({
+  const { tasks, tasksLoading, totalCountTasks } = useTasks({
     targetableObjects: [targetableObject],
   });
 
@@ -69,7 +69,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   );
 
   usePublishWidgetHeaderInfo({
-    count: tasks.length,
+    count: totalCountTasks,
     primaryAction: newTaskAction,
   });
 

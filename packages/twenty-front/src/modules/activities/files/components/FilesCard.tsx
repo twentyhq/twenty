@@ -43,7 +43,8 @@ const StyledDropZoneContainer = styled.div`
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { attachments, loading } = useAttachments(targetRecord);
+  const { attachments, loading, totalCountAttachments } =
+    useAttachments(targetRecord);
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -101,7 +102,7 @@ export const FilesCard = () => {
   );
 
   usePublishWidgetHeaderInfo({
-    count: attachments.length,
+    count: totalCountAttachments,
     primaryAction: addFileAction,
   });
 

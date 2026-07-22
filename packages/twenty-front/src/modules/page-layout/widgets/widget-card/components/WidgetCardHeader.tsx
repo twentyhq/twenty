@@ -131,6 +131,8 @@ export const WidgetCardHeader = ({
         {!isInEditMode && isDefined(primaryAction) && (
           <LightIconButton
             Icon={primaryAction.Icon}
+            aria-label={primaryAction.label}
+            title={primaryAction.label}
             accent="tertiary"
             size="small"
             onClick={primaryAction.onClick}
