@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -120,6 +121,81 @@ export class CacheStorageService {
     for (const { key, value, ttl } of entries) {
       await this.set(key, value, ttl);
     }
+  }
+
+  // Fenced write: commits all entries only if guardKey still holds
+  // expectedGuardValue (undefined = guard key must be absent), so a slow
+  // writer cannot overwrite a value committed after it took its snapshot.
+  // The non-Redis fallback is check-then-write, best-effort only (test driver).
+  async compareAndMset<T = unknown>({
+    guardKey,
+    expectedGuardValue,
+    entries,
+    ttl,
+  }: {
+    guardKey: string;
+    expectedGuardValue: string | undefined;
+    entries: Array<{ key: string; value: T }>;
+    ttl: Milliseconds;
+  }): Promise<boolean> {
+    if (entries.length === 0) {
+      return true;
+    }
+
+    if (this.isRedisCache()) {
+      const redisClient = (this.cache as RedisCache).store.client;
+
+      const script = `
+local current = redis.call('GET', KEYS[1])
+local matches
+if ARGV[1] == '1' then
+  matches = current ~= false and current == ARGV[2]
+else
+  matches = current == false
+end
+if not matches then
+  return 0
+end
+local ttlMs = tonumber(ARGV[3])
+for keyIndex = 2, #KEYS do
+  if ttlMs > 0 then
+    redis.call('SET', KEYS[keyIndex], ARGV[keyIndex + 2], 'PX', ttlMs)
+  else
+    redis.call('SET', KEYS[keyIndex], ARGV[keyIndex + 2])
+  end
+end
+return 1`;
+
+      const result = await redisClient.eval(script, {
+        keys: [
+          this.getKey(guardKey),
+          ...entries.map(({ key }) => this.getKey(key)),
+        ],
+        arguments: [
+          isDefined(expectedGuardValue) ? '1' : '0',
+          isDefined(expectedGuardValue)
+            ? JSON.stringify(expectedGuardValue)
+            : '',
+          ttl.toString(),
+          ...entries.map(({ value }) => JSON.stringify(value)),
+        ],
+      });
+
+      return result === 1;
+    }
+
+    const currentGuardValue = await this.get<string>(guardKey);
+    const guardMatches = isDefined(expectedGuardValue)
+      ? currentGuardValue === expectedGuardValue
+      : currentGuardValue === undefined;
+
+    if (!guardMatches) {
+      return false;
+    }
+
+    await this.mset(entries.map(({ key, value }) => ({ key, value, ttl })));
+
+    return true;
   }
 
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {

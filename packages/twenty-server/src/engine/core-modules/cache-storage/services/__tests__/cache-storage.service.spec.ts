@@ -109,4 +109,146 @@ describe('CacheStorageService', () => {
       );
     });
   });
+
+  describe('compareAndMset', () => {
+    const createRedisCacheMock = (evalResult: number) => {
+      const evalMock = jest.fn().mockResolvedValue(evalResult);
+      const cache = {
+        store: { name: 'redis', client: { eval: evalMock } },
+      } as unknown as Cache;
+
+      return { cache, evalMock };
+    };
+
+    it('runs a single guarded script and serializes values like the redis store', async () => {
+      const { cache, evalMock } = createRedisCacheMock(1);
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      const written = await cacheStorageService.compareAndMset<unknown>({
+        guardKey: 'entry:hash',
+        expectedGuardValue: 'previous-hash',
+        entries: [
+          { key: 'entry:hash', value: 'next-hash' },
+          { key: 'entry:data', value: { byId: {} } },
+        ],
+        ttl: 1000,
+      });
+
+      expect(written).toBe(true);
+      expect(evalMock).toHaveBeenCalledTimes(1);
+      expect(evalMock).toHaveBeenCalledWith(expect.any(String), {
+        keys: [
+          prefixKey('entry:hash'),
+          prefixKey('entry:hash'),
+          prefixKey('entry:data'),
+        ],
+        arguments: [
+          '1',
+          JSON.stringify('previous-hash'),
+          '1000',
+          JSON.stringify('next-hash'),
+          JSON.stringify({ byId: {} }),
+        ],
+      });
+    });
+
+    it('requires the guard key to be absent when no expected value is given', async () => {
+      const { cache, evalMock } = createRedisCacheMock(1);
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      await cacheStorageService.compareAndMset<unknown>({
+        guardKey: 'entry:hash',
+        expectedGuardValue: undefined,
+        entries: [{ key: 'entry:hash', value: 'next-hash' }],
+        ttl: 1000,
+      });
+
+      expect(evalMock).toHaveBeenCalledWith(expect.any(String), {
+        keys: [prefixKey('entry:hash'), prefixKey('entry:hash')],
+        arguments: ['0', '', '1000', JSON.stringify('next-hash')],
+      });
+    });
+
+    it('reports rejection when the script does not commit', async () => {
+      const { cache } = createRedisCacheMock(0);
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      const written = await cacheStorageService.compareAndMset<unknown>({
+        guardKey: 'entry:hash',
+        expectedGuardValue: 'previous-hash',
+        entries: [{ key: 'entry:hash', value: 'next-hash' }],
+        ttl: 1000,
+      });
+
+      expect(written).toBe(false);
+    });
+
+    it('falls back to check-then-write on non-redis stores', async () => {
+      const cache = {
+        store: { name: 'memory' },
+        get: jest.fn().mockResolvedValue('previous-hash'),
+        set: jest.fn().mockResolvedValue(undefined),
+      } as unknown as Cache;
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      const written = await cacheStorageService.compareAndMset<unknown>({
+        guardKey: 'entry:hash',
+        expectedGuardValue: 'previous-hash',
+        entries: [
+          { key: 'entry:hash', value: 'next-hash' },
+          { key: 'entry:data', value: { byId: {} } },
+        ],
+        ttl: 1000,
+      });
+
+      expect(written).toBe(true);
+      expect(cache.get).toHaveBeenCalledWith(prefixKey('entry:hash'));
+      expect(cache.set).toHaveBeenNthCalledWith(
+        1,
+        prefixKey('entry:hash'),
+        'next-hash',
+        1000,
+      );
+      expect(cache.set).toHaveBeenNthCalledWith(
+        2,
+        prefixKey('entry:data'),
+        { byId: {} },
+        1000,
+      );
+    });
+
+    it('rejects without writing on non-redis stores when the guard changed', async () => {
+      const cache = {
+        store: { name: 'memory' },
+        get: jest.fn().mockResolvedValue('other-hash'),
+        set: jest.fn(),
+      } as unknown as Cache;
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      const written = await cacheStorageService.compareAndMset<unknown>({
+        guardKey: 'entry:hash',
+        expectedGuardValue: 'previous-hash',
+        entries: [{ key: 'entry:hash', value: 'next-hash' }],
+        ttl: 1000,
+      });
+
+      expect(written).toBe(false);
+      expect(cache.set).not.toHaveBeenCalled();
+    });
+  });
 });

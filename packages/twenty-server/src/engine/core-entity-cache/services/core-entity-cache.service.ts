@@ -17,6 +17,7 @@ import { type CoreEntityLocalCacheEntry } from 'src/engine/core-entity-cache/typ
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -52,6 +53,7 @@ export class CoreEntityCacheService implements OnModuleInit {
     private readonly cacheStorage: CacheStorageService,
     private readonly discoveryService: DiscoveryService,
     private readonly reflector: Reflector,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async onModuleInit() {
@@ -147,7 +149,10 @@ export class CoreEntityCacheService implements OnModuleInit {
         }
 
         // Stage 4: Recompute from provider
-        return this.recomputeFromProvider(entityId, cacheKeyName);
+        return this.recomputeFromProvider(entityId, cacheKeyName, {
+          strategy: 'fenced',
+          observedHash: redisDataHash as string | undefined,
+        });
       },
     );
 
@@ -173,13 +178,22 @@ export class CoreEntityCacheService implements OnModuleInit {
   ): Promise<void> {
     await this.memoizer.clearKeys(`${cacheKeyName}-${entityId}`);
     await this.flush(entityId, cacheKeyName);
-    await this.recomputeFromProvider(entityId, cacheKeyName);
+    await this.recomputeFromProvider(entityId, cacheKeyName, {
+      strategy: 'overwrite',
+    });
     await this.memoizer.clearKeys(`${cacheKeyName}-${entityId}`);
   }
 
+  // 'overwrite' is for invalidation writes, which must win unconditionally.
+  // 'fenced' is for read-path recomputes: the pair is only committed if the
+  // stored hash still matches the one observed when the recompute started,
+  // so a slow recompute cannot resurrect a stale pair over a fresher one.
   private async recomputeFromProvider(
     entityId: string,
     cacheKeyName: CoreEntityCacheKeyName,
+    writeResolution:
+      | { strategy: 'overwrite' }
+      | { strategy: 'fenced'; observedHash: string | undefined },
   ): Promise<CacheableValue> {
     const provider = this.getProviderOrThrow(cacheKeyName);
     const data = await provider.computeForCache(entityId);
@@ -190,11 +204,53 @@ export class CoreEntityCacheService implements OnModuleInit {
 
     const localKey = this.buildCacheKey(entityId, cacheKeyName);
 
-    await this.cacheStorage.mset<unknown>([
-      { key: `${localKey}:hash`, value: hash },
-      { key: `${localKey}:data`, value: valueToCache },
-    ]);
+    if (writeResolution.strategy === 'overwrite') {
+      await this.cacheStorage.mset<unknown>([
+        { key: `${localKey}:hash`, value: hash },
+        { key: `${localKey}:data`, value: valueToCache },
+      ]);
 
+      this.setInLocalCache(entityId, cacheKeyName, valueToCache, hash);
+
+      return valueToCache;
+    }
+
+    const written = await this.cacheStorage.compareAndMset<unknown>({
+      guardKey: `${localKey}:hash`,
+      expectedGuardValue: writeResolution.observedHash,
+      entries: [
+        { key: `${localKey}:hash`, value: hash },
+        { key: `${localKey}:data`, value: valueToCache },
+      ],
+      ttl: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
+    });
+
+    if (written) {
+      this.setInLocalCache(entityId, cacheKeyName, valueToCache, hash);
+
+      return valueToCache;
+    }
+
+    const [winnerData, winnerHash] = await this.cacheStorage.mget<
+      CacheableValue | string
+    >([`${localKey}:data`, `${localKey}:hash`]);
+
+    if (isDefined(winnerData) && isDefined(winnerHash)) {
+      this.logger.debug(
+        `Fenced cache write rejected for ${cacheKeyName}:${entityId}, adopting concurrent winner`,
+      );
+      this.setInLocalCache(
+        entityId,
+        cacheKeyName,
+        winnerData as CacheableValue,
+        winnerHash as string,
+      );
+
+      return winnerData as CacheableValue;
+    }
+
+    // An invalidation flushed the pair after our fence check; its own state
+    // is authoritative, so serve our data locally without writing.
     this.setInLocalCache(entityId, cacheKeyName, valueToCache, hash);
 
     return valueToCache;

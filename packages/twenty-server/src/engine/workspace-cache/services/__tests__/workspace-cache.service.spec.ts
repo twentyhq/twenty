@@ -70,6 +70,7 @@ describe('WorkspaceCacheService', () => {
             mset: jest.fn(),
             mdel: jest.fn(),
             setIfAbsent: jest.fn(),
+            compareAndMset: jest.fn().mockResolvedValue(true),
           },
         },
         {
@@ -180,7 +181,6 @@ describe('WorkspaceCacheService', () => {
 
     it('should compute and cache data when redis cache is empty', async () => {
       cacheStorageService.mget.mockResolvedValue([undefined]);
-      cacheStorageService.mset.mockResolvedValue(undefined);
 
       jest.spyOn(mockProvider, 'computeForCache').mockResolvedValue({
         testData: 'fresh-computed-value',
@@ -194,7 +194,23 @@ describe('WorkspaceCacheService', () => {
         featureFlagsMap: { testData: 'fresh-computed-value' },
       });
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
-      expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(cacheStorageService.compareAndMset).toHaveBeenCalledWith({
+        guardKey:
+          'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+        expectedGuardValue: undefined,
+        entries: [
+          {
+            key: 'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+            value: expect.any(String),
+          },
+          {
+            key: 'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+            value: { testData: 'fresh-computed-value' },
+          },
+        ],
+        ttl: 604800000,
+      });
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
       expect(Sentry.startSpan).toHaveBeenCalledWith(
         {
           name: 'compute workspace metadata cache entry from provider',
@@ -279,6 +295,90 @@ describe('WorkspaceCacheService', () => {
       // Each getOrRecompute triggers: 1 hash check + 1 atomic data/hash fetch = 2 mget calls
       // Total: 4 mget calls (2 per getOrRecompute)
       expect(cacheStorageService.mget).toHaveBeenCalledTimes(4);
+    });
+  });
+
+  describe('fenced recompute writes', () => {
+    beforeEach(async () => {
+      discoveryService.getProviders.mockReturnValue([
+        { instance: mockProvider },
+      ] as any);
+
+      reflector.get.mockImplementation((key, target) => {
+        if (
+          key === WORKSPACE_CACHE_KEY &&
+          target === MockFeatureFlagsCacheProvider
+        ) {
+          return 'featureFlagsMap';
+        }
+
+        return undefined;
+      });
+
+      await service.onModuleInit();
+    });
+
+    it('should adopt the winner pair when a concurrent invalidation commits during recompute', async () => {
+      cacheStorageService.mget
+        // Stage 2: hash check
+        .mockResolvedValueOnce([undefined])
+        // Stage 3: pair fetch
+        .mockResolvedValueOnce([undefined, undefined])
+        // Post-rejection re-read of the winner pair
+        .mockResolvedValueOnce([{ testData: 'winner-value' }, 'winner-hash']);
+      cacheStorageService.compareAndMset.mockResolvedValue(false);
+
+      jest.spyOn(mockProvider, 'computeForCache').mockResolvedValue({
+        testData: 'stale-computed-value',
+      });
+
+      const result = await service.getOrRecomputeWithHashes(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      expect(result.data).toEqual({
+        featureFlagsMap: { testData: 'winner-value' },
+      });
+      expect(result.hashes).toEqual({ featureFlagsMap: 'winner-hash' });
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
+    });
+
+    it('should serve computed data without writing when rejected and no winner pair exists', async () => {
+      cacheStorageService.mget
+        .mockResolvedValueOnce([undefined])
+        .mockResolvedValueOnce([undefined, undefined])
+        .mockResolvedValueOnce([undefined, undefined]);
+      cacheStorageService.compareAndMset.mockResolvedValue(false);
+
+      jest.spyOn(mockProvider, 'computeForCache').mockResolvedValue({
+        testData: 'computed-value',
+      });
+
+      const result = await service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      expect(result).toEqual({
+        featureFlagsMap: { testData: 'computed-value' },
+      });
+      expect(cacheStorageService.compareAndMset).toHaveBeenCalledTimes(1);
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
+    });
+
+    it('should fence on the observed hash when redis held a hash without data', async () => {
+      cacheStorageService.mget
+        .mockResolvedValueOnce(['orphan-hash'])
+        .mockResolvedValueOnce([undefined, 'orphan-hash']);
+
+      jest.spyOn(mockProvider, 'computeForCache').mockResolvedValue({
+        testData: 'computed-value',
+      });
+
+      await service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']);
+
+      expect(cacheStorageService.compareAndMset).toHaveBeenCalledWith(
+        expect.objectContaining({ expectedGuardValue: 'orphan-hash' }),
+      );
     });
   });
 

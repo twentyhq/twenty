@@ -50,11 +50,15 @@ type CacheEntriesResult = {
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
 };
 
+// observedHashes: the :hash values read from Redis when the recompute was
+// triggered; they fence the write so a slow recompute cannot overwrite a
+// pair committed by a concurrent invalidation (lost update), and are adopted
+// as-is for localDataOnly keys.
 type RecomputeHashResolution =
   | { strategy: 'mint' }
   | {
       strategy: 'recover';
-      adoptableHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+      observedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
     };
 
 @Injectable()
@@ -168,17 +172,18 @@ export class WorkspaceCacheService implements OnModuleInit {
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
         // Stage 3: Fetch data from Redis
-        const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
-          workspaceId,
-          keysNeedingDataFromRedis,
-        );
+        const { redisEntries, missingInRedis, hashesWithoutData } =
+          await this.fetchDataFromRedis(workspaceId, keysNeedingDataFromRedis);
 
         // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,
           keysToRecompute,
-          { strategy: 'recover', adoptableHashes },
+          {
+            strategy: 'recover',
+            observedHashes: { ...adoptableHashes, ...hashesWithoutData },
+          },
         );
 
         return {
@@ -391,12 +396,15 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): Promise<{
     redisEntries: CacheEntriesResult;
     missingInRedis: WorkspaceCacheKeyName[];
+    hashesWithoutData: Partial<Record<WorkspaceCacheKeyName, string>>;
   }> {
     const redisEntries: CacheEntriesResult = { data: {}, hashes: {} };
     const missingInRedis: WorkspaceCacheKeyName[] = [];
+    const hashesWithoutData: Partial<Record<WorkspaceCacheKeyName, string>> =
+      {};
 
     if (cacheKeyNames.length === 0) {
-      return { redisEntries, missingInRedis };
+      return { redisEntries, missingInRedis, hashesWithoutData };
     }
 
     // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
@@ -420,10 +428,14 @@ export class WorkspaceCacheService implements OnModuleInit {
         this.setInLocalCache(workspaceId, keyName, data, hash);
       } else {
         missingInRedis.push(keyName);
+
+        if (isDefined(hash)) {
+          hashesWithoutData[keyName] = hash;
+        }
       }
     }
 
-    return { redisEntries, missingInRedis };
+    return { redisEntries, missingInRedis, hashesWithoutData };
   }
 
   private async recomputeDataFromProvider(
@@ -458,57 +470,113 @@ export class WorkspaceCacheService implements OnModuleInit {
         return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
       }
 
-      const adoptableHash = hashResolution.adoptableHashes[keyName];
+      const observedHash = hashResolution.observedHashes[keyName];
+      const isAdopted = isDefined(observedHash) && isLocalDataOnly;
 
       return {
         keyName,
         data,
-        hash: adoptableHash ?? crypto.randomUUID(),
-        isAdopted: isDefined(adoptableHash),
+        hash: isAdopted ? observedHash : crypto.randomUUID(),
+        isAdopted,
       };
     });
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: unknown }> = [];
-    const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
-
-    for (const { keyName, data, hash, isAdopted } of computed) {
+    for (const { keyName, data, hash } of computed) {
       Object.assign(result.data, { [keyName]: data });
       result.hashes[keyName] = hash;
+    }
 
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
-      const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
-      const isRecoveryBootstrap =
-        hashResolution.strategy === 'recover' && !isAdopted && isLocalDataOnly;
+    // Invalidation writes must win unconditionally: they are the freshest by
+    // construction and are what fenced recompute writes yield to.
+    if (hashResolution.strategy === 'mint') {
+      const redisEntries: Array<{ key: string; value: unknown }> = [];
 
-      if (isRecoveryBootstrap) {
-        bootstrapHashEntries.push({ key: `${baseKey}:hash`, value: hash });
-      } else if (!isAdopted) {
+      for (const { keyName, data, hash } of computed) {
+        const baseKey = this.buildCacheKey(workspaceId, keyName);
+
         redisEntries.push({ key: `${baseKey}:hash`, value: hash });
+
+        if (!this.localDataOnlyKeys.has(keyName)) {
+          redisEntries.push({ key: `${baseKey}:data`, value: data });
+        }
+
+        this.setInLocalCache(workspaceId, keyName, data, hash);
       }
 
-      if (!isLocalDataOnly) {
-        redisEntries.push({ key: `${baseKey}:data`, value: data });
+      if (redisEntries.length > 0) {
+        await this.cacheStorage.mset(redisEntries);
       }
 
-      this.setInLocalCache(workspaceId, keyName, data, hash);
+      return result;
     }
 
-    if (redisEntries.length > 0) {
-      await this.cacheStorage.mset(redisEntries);
-    }
+    const { observedHashes } = hashResolution;
+    const cacheTtlMs = this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
 
-    if (bootstrapHashEntries.length > 0) {
-      const bootstrapHashTtlMs =
-        this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
+    await Promise.all(
+      computed.map(async ({ keyName, data, hash, isAdopted }) => {
+        const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      await Promise.all(
-        bootstrapHashEntries.map(({ key, value }) =>
-          this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
-        ),
-      );
-    }
+        if (this.localDataOnlyKeys.has(keyName)) {
+          if (!isAdopted) {
+            await this.cacheStorage.setIfAbsent(
+              `${baseKey}:hash`,
+              hash,
+              cacheTtlMs,
+            );
+          }
+
+          this.setInLocalCache(workspaceId, keyName, data, hash);
+
+          return;
+        }
+
+        // Fenced write: only commit the pair if the stored hash is still the
+        // one this recompute started from, so a recompute that raced a
+        // concurrent invalidation cannot resurrect a stale pair.
+        const written = await this.cacheStorage.compareAndMset<unknown>({
+          guardKey: `${baseKey}:hash`,
+          expectedGuardValue: observedHashes[keyName],
+          entries: [
+            { key: `${baseKey}:hash`, value: hash },
+            { key: `${baseKey}:data`, value: data },
+          ],
+          ttl: cacheTtlMs,
+        });
+
+        if (written) {
+          this.setInLocalCache(workspaceId, keyName, data, hash);
+
+          return;
+        }
+
+        const [winnerData, winnerHash] = await this.cacheStorage.mget<
+          CacheDataType | string
+        >([`${baseKey}:data`, `${baseKey}:hash`]);
+
+        if (isDefined(winnerData) && isDefined(winnerHash)) {
+          this.logger.debug(
+            `Fenced cache write rejected for ${keyName} in workspace ${workspaceId}, adopting concurrent winner`,
+          );
+          Object.assign(result.data, { [keyName]: winnerData });
+          result.hashes[keyName] = winnerHash as string;
+          this.setInLocalCache(
+            workspaceId,
+            keyName,
+            winnerData as CacheDataType,
+            winnerHash as string,
+          );
+
+          return;
+        }
+
+        // An invalidation flushed the pair after our fence check; its own
+        // recompute is in flight, so serve our data locally without writing.
+        this.setInLocalCache(workspaceId, keyName, data, hash);
+      }),
+    );
 
     return result;
   }
