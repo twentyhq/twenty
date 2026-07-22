@@ -31,6 +31,30 @@ export default defineConfig(({ mode }) => {
     ? parseInt(REACT_APP_PORT)
     : 3001;
 
+  // Backend route prefixes proxied to the NestJS server so that requests
+  // arriving through a single-port tunnel (e.g. a Cloudflare quick tunnel)
+  // reach the backend without needing a hardcoded/second tunnel URL.
+  const BACKEND_PROXY_PATHS = [
+    '/graphql',
+    '/metadata',
+    '/admin-panel',
+    '/mcp',
+    '/rest',
+    '/auth/',
+    '/oauth',
+    '/webhooks',
+    '/emailing',
+    '/healthz',
+    '/client-config',
+    '/.well-known',
+    '/s/',
+    '/files',
+    '/public-assets',
+    '/file',
+    '/app/billing',
+    '/apps/connections',
+  ];
+
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
@@ -50,6 +74,12 @@ export default defineConfig(({ mode }) => {
     server: {
       port: port,
       allowedHosts: ['.trycloudflare.com'],
+      proxy: Object.fromEntries(
+        BACKEND_PROXY_PATHS.map((backendPath) => [
+          backendPath,
+          { target: 'http://localhost:3000', changeOrigin: true, ws: true },
+        ]),
+      ),
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
