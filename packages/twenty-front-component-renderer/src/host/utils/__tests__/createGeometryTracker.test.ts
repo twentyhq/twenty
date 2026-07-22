@@ -262,6 +262,40 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
   });
 
+  it('should push the resized viewport after visibility is restored', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    const initialInnerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', {
+      value: initialInnerWidth + 100,
+      configurable: true,
+    });
+
+    pushGeometryUpdates.mockClear();
+    document.dispatchEvent(new Event('visibilitychange'));
+    geometryGlobals.flushAnimationFrame();
+
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
+    expect(pushGeometryUpdates.mock.calls[0][0].viewport.innerWidth).toBe(
+      initialInnerWidth + 100,
+    );
+
+    Object.defineProperty(window, 'innerWidth', {
+      value: initialInnerWidth,
+      configurable: true,
+    });
+  });
+
   it('should resume scheduling when the resize observer fires', () => {
     const { tracker } = createArmedTracker();
     const observed = geometryGlobals.createStubNode({
@@ -302,22 +336,53 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
   });
 
-  it('should keep scheduling past the idle threshold while an animation is in flight', () => {
+  it('should keep scheduling past the idle threshold while an animation runs inside the root', () => {
     const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    document.body.append(rootContainer);
+    tracker.setRoot(rootContainer);
+
     const observed = geometryGlobals.createStubNode({
       x: 0,
       y: 0,
       width: 10,
       height: 10,
     });
+    rootContainer.append(observed.node);
 
     tracker.registerNode('1', observed.node);
     tracker.observe(['1']);
 
-    document.dispatchEvent(new Event('transitionrun', { bubbles: true }));
+    observed.node.dispatchEvent(new Event('transitionrun', { bubbles: true }));
     flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
 
     expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+  });
+
+  it('should idle despite an animation outside the root', () => {
+    const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    const unrelatedContainer = document.createElement('div');
+    document.body.append(rootContainer, unrelatedContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    rootContainer.append(observed.node);
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+
+    unrelatedContainer.dispatchEvent(
+      new Event('transitionrun', { bubbles: true }),
+    );
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
   it('should cap the observed set at the configured maximum', () => {

@@ -5,8 +5,8 @@ const createViewport = (): ViewportGeometrySnapshot => ({
   innerWidth: 1024,
   innerHeight: 768,
   devicePixelRatio: 2,
-  scrollX: 0,
-  scrollY: 0,
+  scrollX: 30,
+  scrollY: 40,
   rootContainerX: 0,
   rootContainerY: 0,
   rootContainerWidth: 0,
@@ -41,6 +41,10 @@ describe('installWindowGeometryPolyfill', () => {
     expect(globalScope.innerWidth).toBe(1024);
     expect(polyfillWindow.innerWidth).toBe(1024);
     expect(polyfillWindow.devicePixelRatio).toBe(2);
+    expect(globalScope.scrollX).toBe(30);
+    expect(polyfillWindow.scrollY).toBe(40);
+    expect(globalScope.pageXOffset).toBe(30);
+    expect(polyfillWindow.pageYOffset).toBe(40);
   });
 
   it('should fall back to zero sizes and a device pixel ratio of one before the first push', () => {
@@ -54,6 +58,8 @@ describe('installWindowGeometryPolyfill', () => {
     expect(globalScope.innerWidth).toBe(0);
     expect(globalScope.innerHeight).toBe(0);
     expect(globalScope.devicePixelRatio).toBe(1);
+    expect(globalScope.scrollX).toBe(0);
+    expect(globalScope.pageYOffset).toBe(0);
   });
 
   it('should reflect a later viewport push without reinstalling', () => {

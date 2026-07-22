@@ -62,6 +62,17 @@ export const createGeometryTracker = (): GeometryTracker => {
       return;
     }
 
+    if (wakeSources.isViewportDirty()) {
+      rootContainerFontShorthand =
+        resolveRootContainerFontShorthand(rootContainer);
+    }
+
+    const viewport = readViewportGeometry();
+    const rootContainerOrigin = {
+      x: viewport.rootContainerX,
+      y: viewport.rootContainerY,
+    };
+
     const changedElements: Record<string, ElementGeometrySnapshot> = {};
     const removedRemoteElementIds: string[] = [];
 
@@ -75,7 +86,7 @@ export const createGeometryTracker = (): GeometryTracker => {
         continue;
       }
 
-      const snapshot = measureNodeGeometry(node);
+      const snapshot = measureNodeGeometry(node, rootContainerOrigin);
 
       if (
         !isElementGeometryEqualWithinEpsilon(
@@ -88,7 +99,6 @@ export const createGeometryTracker = (): GeometryTracker => {
       }
     }
 
-    const viewport = readViewportGeometry();
     const hasViewportChanged = !isViewportGeometryEqualWithinEpsilon(
       lastViewportSnapshot,
       viewport,
@@ -196,6 +206,10 @@ export const createGeometryTracker = (): GeometryTracker => {
 
   const measure = (remoteElementIds: unknown) => {
     const viewport = readViewportGeometry();
+    const rootContainerOrigin = {
+      x: viewport.rootContainerX,
+      y: viewport.rootContainerY,
+    };
     const elements: Record<string, ElementGeometrySnapshot> = {};
 
     if (!isDefined(pushGeometryUpdates)) {
@@ -212,7 +226,7 @@ export const createGeometryTracker = (): GeometryTracker => {
         continue;
       }
 
-      const snapshot = measureNodeGeometry(node);
+      const snapshot = measureNodeGeometry(node, rootContainerOrigin);
       elements[remoteElementId] = snapshot;
 
       if (observedRemoteElementIds.has(remoteElementId)) {

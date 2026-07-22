@@ -79,7 +79,10 @@ describe('createWorkerGeometryStore', () => {
   it('should not mint a remote id for an element outside the remote root', async () => {
     const { store } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
 
     store.resolveElementSnapshot({ parentNode: null });
     await flushMicrotasks();
@@ -90,7 +93,10 @@ describe('createWorkerGeometryStore', () => {
   it('should enroll an element under the remote root and observe it once', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
 
     const element = { parentNode: rootElement };
 
@@ -105,7 +111,10 @@ describe('createWorkerGeometryStore', () => {
   it('should coalesce a synchronous burst of enrollments into one call', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
 
     store.resolveElementSnapshot({ parentNode: rootElement });
     store.resolveElementSnapshot({ parentNode: rootElement });
@@ -123,7 +132,10 @@ describe('createWorkerGeometryStore', () => {
     await flushMicrotasks();
 
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
 
     expect(observeElementGeometry).toHaveBeenCalledWith(['0']);
   });
@@ -179,7 +191,10 @@ describe('createWorkerGeometryStore', () => {
   it('should stop enrolling once the observation limit is reached', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 600; index += 1) {
@@ -205,7 +220,10 @@ describe('createWorkerGeometryStore', () => {
   it('should free observation capacity when removedRemoteElementIds prunes ids', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 500; index += 1) {
@@ -228,7 +246,10 @@ describe('createWorkerGeometryStore', () => {
   it('should re-enroll an element whose id was pruned by a removal', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
-    store.connectTransport({ observeElementGeometry });
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
 
     const element = { parentNode: rootElement };
 
@@ -242,6 +263,38 @@ describe('createWorkerGeometryStore', () => {
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
     expect(observeElementGeometry).toHaveBeenLastCalledWith(['0']);
+  });
+
+  it('should unobserve pruned ids on the host when a removal batch arrives', async () => {
+    const { store, rootElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    const unobserveElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry,
+    });
+
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveElementSnapshot({ parentNode: rootElement });
+    await flushMicrotasks();
+
+    store.applyGeometryBatch({ removedRemoteElementIds: ['0', 'unknown'] });
+
+    expect(unobserveElementGeometry).toHaveBeenCalledTimes(1);
+    expect(unobserveElementGeometry).toHaveBeenCalledWith(['0']);
+  });
+
+  it('should not call unobserve when a removal batch prunes nothing observed', () => {
+    const { store } = createRootedStore();
+    const unobserveElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({
+      observeElementGeometry: jest.fn().mockResolvedValue(undefined),
+      unobserveElementGeometry,
+    });
+
+    store.applyGeometryBatch({ removedRemoteElementIds: ['unknown'] });
+
+    expect(unobserveElementGeometry).not.toHaveBeenCalled();
   });
 
   it('should report an element under the remote root as mirrored', () => {

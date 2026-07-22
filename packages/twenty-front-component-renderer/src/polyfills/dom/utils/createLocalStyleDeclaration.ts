@@ -50,6 +50,29 @@ export const createLocalStyleDeclaration = (): Record<string, unknown> => {
         return true;
       }
 
+      if (property === 'cssText') {
+        for (const key of Object.keys(target)) {
+          delete target[key];
+        }
+
+        for (const declaration of String(value).split(';')) {
+          const colonIndex = declaration.indexOf(':');
+
+          if (colonIndex <= 0) {
+            continue;
+          }
+
+          const declarationKey = declaration.slice(0, colonIndex).trim();
+          const declarationValue = declaration.slice(colonIndex + 1).trim();
+
+          if (declarationKey !== '' && declarationValue !== '') {
+            target[declarationKey] = declarationValue;
+          }
+        }
+
+        return true;
+      }
+
       const kebabKey = camelToKebab(property);
 
       if (value === null || value === undefined || value === '') {

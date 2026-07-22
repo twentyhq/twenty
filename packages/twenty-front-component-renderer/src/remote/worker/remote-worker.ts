@@ -109,6 +109,9 @@ self.addEventListener('message', (event) => {
     observeElementGeometry: (remoteElementIds) =>
       hostThread?.imports.observeElementGeometry(remoteElementIds) ??
       Promise.resolve(),
+    unobserveElementGeometry: (remoteElementIds) =>
+      hostThread?.imports.unobserveElementGeometry(remoteElementIds) ??
+      Promise.resolve(),
   });
 
   transferredPort.start();

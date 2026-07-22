@@ -1,5 +1,7 @@
 import { measureNodeGeometry } from '../measureNodeGeometry';
 
+const ROOT_ORIGIN = { x: 0, y: 0 };
+
 const stubBoundingClientRect = (node: Element) => {
   node.getBoundingClientRect = () =>
     ({
@@ -20,7 +22,7 @@ describe('measureNodeGeometry', () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
 
-    const snapshot = measureNodeGeometry(node);
+    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN);
 
     expect(snapshot.x).toBe(5);
     expect(snapshot.y).toBe(6);
@@ -28,23 +30,31 @@ describe('measureNodeGeometry', () => {
     expect(snapshot.height).toBe(8);
   });
 
-  it('should read the offset fields from an html element', () => {
+  it('should compute offsets relative to the root container origin', () => {
+    const node = document.createElement('div');
+    stubBoundingClientRect(node);
+
+    const snapshot = measureNodeGeometry(node, { x: 2, y: 4 });
+
+    expect(snapshot.offsetLeft).toBe(3);
+    expect(snapshot.offsetTop).toBe(2);
+  });
+
+  it('should read the offset sizes from an html element', () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
     Object.defineProperty(node, 'offsetWidth', { value: 42 });
 
-    expect(measureNodeGeometry(node).offsetWidth).toBe(42);
+    expect(measureNodeGeometry(node, ROOT_ORIGIN).offsetWidth).toBe(42);
   });
 
-  it('should report zero offset fields for an svg element', () => {
+  it('should report zero offset sizes for an svg element', () => {
     const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     stubBoundingClientRect(node);
 
-    const snapshot = measureNodeGeometry(node);
+    const snapshot = measureNodeGeometry(node, ROOT_ORIGIN);
 
     expect(snapshot.offsetWidth).toBe(0);
     expect(snapshot.offsetHeight).toBe(0);
-    expect(snapshot.offsetTop).toBe(0);
-    expect(snapshot.offsetLeft).toBe(0);
   });
 });

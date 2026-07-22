@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,7 +24,7 @@ export const useCaretPreservingElementRef = (
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    if (!isDefined(attachedElement) || !isNonEmptyString(value)) {
+    if (!isDefined(attachedElement) || !isString(value)) {
       return;
     }
 

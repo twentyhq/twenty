@@ -37,14 +37,21 @@ export const buildCanvasFontFromElement = (
 
   const fontSize = readStyleProperty(element, 'font-size');
   const fontFamily = readStyleProperty(element, 'font-family');
-
-  if (!isNonEmptyString(fontSize) && !isNonEmptyString(fontFamily)) {
-    return defaultFontShorthand;
-  }
-
   const fontStyle = readStyleProperty(element, 'font-style');
   const fontWeight = readStyleProperty(element, 'font-weight');
   const lineHeight = readStyleProperty(element, 'line-height');
+
+  const hasAnyFontProperty = [
+    fontSize,
+    fontFamily,
+    fontStyle,
+    fontWeight,
+    lineHeight,
+  ].some(isNonEmptyString);
+
+  if (!hasAnyFontProperty) {
+    return defaultFontShorthand;
+  }
 
   const resolvedFontSize = fontSize ?? '13px';
   const sizeAndLineHeight = isNonEmptyString(lineHeight)

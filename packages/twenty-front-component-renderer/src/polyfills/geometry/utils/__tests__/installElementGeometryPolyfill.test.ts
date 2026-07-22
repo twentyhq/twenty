@@ -139,6 +139,17 @@ describe('installElementGeometryPolyfill', () => {
     expect(rects[0].width).toBe(3);
   });
 
+  it('should expose item on getClientRects', () => {
+    installOn(
+      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+    );
+
+    const rects = (new FakeElement() as unknown as Element).getClientRects();
+
+    expect(rects.item(0)?.width).toBe(3);
+    expect(rects.item(1)).toBeNull();
+  });
+
   it('should fall back to text measurement for an element outside the remote root', () => {
     installOn(createGeometryStore(), () => ({ width: 120, height: 16 }));
 

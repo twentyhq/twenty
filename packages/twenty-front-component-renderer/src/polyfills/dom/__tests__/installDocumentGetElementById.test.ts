@@ -1,50 +1,69 @@
 import { installDocumentGetElementById } from '../installDocumentGetElementById';
 
+type FakeNode = {
+  childNodes: FakeNode[];
+  getAttribute?: (attributeName: string) => string | null;
+};
+
+const createElementNode = (elementId?: string): FakeNode => ({
+  childNodes: [],
+  getAttribute: (attributeName: string) =>
+    attributeName === 'id' && elementId !== undefined ? elementId : null,
+});
+
+type InstalledDocument = FakeNode & {
+  getElementById: (elementId: string) => FakeNode | null;
+};
+
+const createDocumentTarget = (): InstalledDocument => {
+  const documentTarget: FakeNode = { childNodes: [] };
+  installDocumentGetElementById(documentTarget);
+
+  return documentTarget as InstalledDocument;
+};
+
 describe('installDocumentGetElementById', () => {
-  it('should delegate to querySelector with an id selector', () => {
-    const match = { tagName: 'SPAN' };
-    const querySelector = jest.fn().mockReturnValue(match);
-    const documentTarget: Record<string, unknown> = { querySelector };
+  it('should find a nested element by id', () => {
+    const documentTarget = createDocumentTarget();
+    const parent = createElementNode();
+    const target = createElementNode('probe');
 
-    installDocumentGetElementById(documentTarget);
+    documentTarget.childNodes.push(parent);
+    parent.childNodes.push(target);
 
-    expect(
-      (documentTarget.getElementById as (id: string) => unknown)('probe'),
-    ).toBe(match);
-    expect(querySelector).toHaveBeenCalledWith('#probe');
+    expect(documentTarget.getElementById('probe')).toBe(target);
   });
 
-  it('should return null when querySelector finds nothing', () => {
-    const documentTarget: Record<string, unknown> = {
-      querySelector: () => undefined,
-    };
+  it('should return null when no element matches', () => {
+    const documentTarget = createDocumentTarget();
+    documentTarget.childNodes.push(createElementNode('other'));
 
-    installDocumentGetElementById(documentTarget);
-
-    expect(
-      (documentTarget.getElementById as (id: string) => unknown)('missing'),
-    ).toBeNull();
+    expect(documentTarget.getElementById('missing')).toBeNull();
   });
 
-  it('should return null when querySelector throws', () => {
-    const documentTarget: Record<string, unknown> = {
-      querySelector: () => {
-        throw new Error('bad selector');
-      },
-    };
+  it('should find an id containing css selector characters', () => {
+    const documentTarget = createDocumentTarget();
+    const target = createElementNode('foo.bar:baz');
+    documentTarget.childNodes.push(target);
 
-    installDocumentGetElementById(documentTarget);
+    expect(documentTarget.getElementById('foo.bar:baz')).toBe(target);
+  });
 
-    expect(
-      (documentTarget.getElementById as (id: string) => unknown)('a b'),
-    ).toBeNull();
+  it('should skip nodes without attributes', () => {
+    const documentTarget = createDocumentTarget();
+    const textLikeNode = { childNodes: [] } as FakeNode;
+    const target = createElementNode('probe');
+
+    documentTarget.childNodes.push(textLikeNode, target);
+
+    expect(documentTarget.getElementById('probe')).toBe(target);
   });
 
   it('should not override an existing getElementById', () => {
     const existingGetElementById = jest.fn();
-    const documentTarget: Record<string, unknown> = {
+    const documentTarget = {
+      childNodes: [],
       getElementById: existingGetElementById,
-      querySelector: jest.fn(),
     };
 
     installDocumentGetElementById(documentTarget);

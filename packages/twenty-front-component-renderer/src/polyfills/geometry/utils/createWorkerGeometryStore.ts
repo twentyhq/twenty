@@ -108,10 +108,21 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     }
 
     if (isDefined(batch.removedRemoteElementIds)) {
+      const prunedObservedRemoteElementIds: string[] = [];
+
       for (const remoteElementId of batch.removedRemoteElementIds) {
         elementSnapshots.delete(remoteElementId);
-        observedRemoteElementIds.delete(remoteElementId);
         pendingObservationIds.delete(remoteElementId);
+
+        if (observedRemoteElementIds.delete(remoteElementId)) {
+          prunedObservedRemoteElementIds.push(remoteElementId);
+        }
+      }
+
+      if (prunedObservedRemoteElementIds.length > 0 && isDefined(transport)) {
+        transport
+          .unobserveElementGeometry(prunedObservedRemoteElementIds)
+          .catch(() => {});
       }
     }
   };

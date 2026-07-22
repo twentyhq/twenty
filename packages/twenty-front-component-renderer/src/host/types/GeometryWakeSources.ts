@@ -8,6 +8,5 @@ export type GeometryWakeSources = {
   stopObservingNode: (node: Element) => void;
   hasAnimationInFlight: () => boolean;
   isViewportDirty: () => boolean;
-  markViewportDirty: () => void;
   clearViewportDirty: () => void;
 };

@@ -37,20 +37,47 @@ export const createGeometryWakeSources = (
 
   const handleVisibilityChange = (): void => {
     if (document.visibilityState === 'visible') {
-      onWake();
+      wakeForViewport();
     }
   };
 
-  const handleAnimationStart = (): void => {
+  const isEventTargetRelevantToRoot = (target: EventTarget | null): boolean => {
+    if (!isDefined(rootContainer)) {
+      return false;
+    }
+
+    if (!(target instanceof Node)) {
+      return false;
+    }
+
+    return rootContainer.contains(target) || target.contains(rootContainer);
+  };
+
+  const handleAnimationStart = (event: Event): void => {
+    if (!isEventTargetRelevantToRoot(event.target)) {
+      return;
+    }
+
     animationInFlightCount += 1;
     onWake();
   };
 
-  const handleAnimationEnd = (): void => {
+  const handleAnimationEnd = (event: Event): void => {
+    if (!isEventTargetRelevantToRoot(event.target)) {
+      return;
+    }
+
     animationInFlightCount = Math.max(0, animationInFlightCount - 1);
   };
 
-  const handleScroll = (): void => {
+  const handleScroll = (event: Event): void => {
+    if (
+      event.target !== document &&
+      !isEventTargetRelevantToRoot(event.target)
+    ) {
+      return;
+    }
+
     onWake();
   };
 
@@ -208,9 +235,6 @@ export const createGeometryWakeSources = (
     stopObservingNode,
     hasAnimationInFlight: () => animationInFlightCount > 0,
     isViewportDirty: () => viewportDirty,
-    markViewportDirty: () => {
-      viewportDirty = true;
-    },
     clearViewportDirty: () => {
       viewportDirty = false;
     },

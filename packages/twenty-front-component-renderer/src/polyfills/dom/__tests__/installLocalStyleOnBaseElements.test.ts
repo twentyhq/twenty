@@ -34,6 +34,18 @@ describe('installLocalStyleOnBaseElements', () => {
     expect(second.style.color).toBe('');
   });
 
+  it('should populate declarations from a cssText assignment', () => {
+    const element = new FakeElement() as unknown as HTMLElement;
+
+    element.style.color = 'red';
+    element.style.cssText = 'font-size: 14px; font-weight: 700';
+
+    expect(element.style.getPropertyValue('font-size')).toBe('14px');
+    expect(element.style.getPropertyValue('font-weight')).toBe('700');
+    expect(element.style.getPropertyValue('color')).toBe('');
+    expect(element.style.getPropertyValue('css-text')).toBe('');
+  });
+
   it('should return the same declaration across reads of one element', () => {
     const element = new FakeElement() as unknown as HTMLElement;
 

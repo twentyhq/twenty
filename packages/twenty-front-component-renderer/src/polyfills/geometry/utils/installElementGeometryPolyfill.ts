@@ -119,7 +119,12 @@ export const installElementGeometryPolyfill = ({
 
   Object.defineProperty(elementPrototype, 'getClientRects', {
     value: function (this: object) {
-      return [createDomRectFromSnapshot(resolveSnapshot(this))];
+      const rects = [
+        createDomRectFromSnapshot(resolveSnapshot(this)),
+      ] as DOMRect[] & { item: (index: number) => DOMRect | null };
+      rects.item = (index: number) => rects[index] ?? null;
+
+      return rects;
     },
     configurable: true,
     writable: true,
