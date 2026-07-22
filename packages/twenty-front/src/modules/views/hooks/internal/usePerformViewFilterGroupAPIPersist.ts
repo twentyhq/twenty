@@ -92,10 +92,6 @@ export const usePerformViewFilterGroupAPIPersist = () => {
           createdFlatViewFilterGroups.push(toFlatViewFilterGroup(newRecord));
         }
       } finally {
-        // Write created view filter groups to the metadata store even when a
-        // later create fails, so a subsequent save doesn't diff against stale
-        // view data and re-send the same create, which fails server-side on
-        // duplicate id
         addToDraft({
           key: 'viewFilterGroups',
           items: createdFlatViewFilterGroups,
