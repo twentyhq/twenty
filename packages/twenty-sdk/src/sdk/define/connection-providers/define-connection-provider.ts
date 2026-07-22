@@ -36,6 +36,15 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
+  if (
+    config.onConnectLogicFunctionUniversalIdentifier &&
+    !UUID_PATTERN.test(config.onConnectLogicFunctionUniversalIdentifier)
+  ) {
+    errors.push(
+      `Connection provider onConnectLogicFunctionUniversalIdentifier "${config.onConnectLogicFunctionUniversalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+    );
+  }
+
   if (!config.type) {
     errors.push("Connection provider must declare a `type` (e.g. 'oauth')");
   } else if (!(SUPPORTED_TYPES as readonly string[]).includes(config.type)) {
