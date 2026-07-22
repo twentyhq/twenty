@@ -156,13 +156,11 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  // A single-card drag keeps its source in place behind the drag overlay,
-  // which would show the card twice; dim it like multi-drag secondary cards.
-  const isSingleCardBeingDragged =
+  const isDraggingThisCard =
     !isDragOverlay &&
-    primaryDraggedRecordId === recordId &&
-    !isRecordIdPrimaryDragMultiple &&
-    !isRecordIdSecondaryDragMultiple;
+    (isRecordIdPrimaryDragMultiple ||
+      isRecordIdSecondaryDragMultiple ||
+      primaryDraggedRecordId === recordId);
 
   return (
     <RecordBoardCardComponentInstanceContext.Provider
@@ -181,18 +179,18 @@ export const RecordBoardCard = () => {
           onPointerUp={handlePointerUp}
         >
           <StyledCardContainer
-            isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
+            isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
           >
-            {isRecordIdPrimaryDragMultiple && <RecordBoardCardMultiDragStack />}
+            {isDragOverlay && isRecordIdPrimaryDragMultiple && (
+              <RecordBoardCardMultiDragStack />
+            )}
             <RecordCard
               data-selected={isRecordBoardCardSelected}
               data-focused={isRecordBoardCardFocused}
               data-active={isRecordBoardCardActive}
               onMouseLeave={onMouseLeaveBoard}
               onClick={handleCardClick}
-              isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
-              isSecondaryDragged={isRecordIdSecondaryDragMultiple}
-              isDragging={isSingleCardBeingDragged}
+              isDragging={isDraggingThisCard}
             >
               <RecordBoardCardHeader />
               <AnimatedEaseInOut
