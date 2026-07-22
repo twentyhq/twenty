@@ -5,9 +5,11 @@ import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterG
 import { CREATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createViewFilterGroup';
 import { DESTROY_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyViewFilterGroup';
 import { UPDATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateViewFilterGroup';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { useApolloClient } from '@apollo/client/react';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewFilterGroup as GqlViewFilterGroup } from '~/generated-metadata/graphql';
 
@@ -21,21 +23,13 @@ const toFlatViewFilterGroup = (
   positionInViewFilterGroup: viewFilterGroup.positionInViewFilterGroup,
 });
 
-const getFirstRejectedReason = (
-  settledResults: PromiseSettledResult<unknown>[],
-): unknown | undefined => {
-  const firstRejected = settledResults.find(
-    (settledResult) => settledResult.status === 'rejected',
-  );
-
-  return firstRejected?.reason;
-};
-
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
 
-  const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
+  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
+
+  const { performViewEntityAPIPersistBatchOperation } =
+    usePerformViewEntityAPIPersistOperation('viewFilterGroup');
 
   const createViewFilterGroupRecord = useCallback(
     async (viewFilterGroup: ViewFilterGroup, view: Pick<GraphQLView, 'id'>) => {
@@ -64,6 +58,8 @@ export const usePerformViewFilterGroupAPIPersist = () => {
     [apolloClient],
   );
 
+  // Creates stay sequential (not batched) because each group's
+  // parentViewFilterGroupId is remapped from a previously created sibling's id
   const performViewFilterGroupAPICreate = useCallback(
     async (
       viewFilterGroupsToCreate: ViewFilterGroup[],
@@ -121,10 +117,10 @@ export const usePerformViewFilterGroupAPIPersist = () => {
   );
 
   const performViewFilterGroupAPIUpdate = useCallback(
-    async (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
-      if (!viewFilterGroupsToUpdate.length) return;
-      const settledResults = await Promise.allSettled(
-        viewFilterGroupsToUpdate.map((viewFilterGroup) =>
+    (viewFilterGroupsToUpdate: ViewFilterGroup[]) =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: viewFilterGroupsToUpdate,
+        mutate: (viewFilterGroup) =>
           apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
             mutation: UPDATE_VIEW_FILTER_GROUP,
             variables: {
@@ -138,72 +134,38 @@ export const usePerformViewFilterGroupAPIPersist = () => {
               } satisfies Partial<GqlViewFilterGroup>,
             },
           }),
-        ),
-      );
-
-      const results = settledResults
-        .filter((settledResult) => settledResult.status === 'fulfilled')
-        .map((settledResult) => settledResult.value);
-
-      // Sync successful updates even when a sibling mutation fails, so the
-      // store doesn't go stale on partial success
-      const updatedFlatViewFilterGroups = results
-        .map((result) => result.data?.updateViewFilterGroup)
-        .filter(isDefined)
-        .map(toFlatViewFilterGroup);
-
-      updateInDraft('viewFilterGroups', updatedFlatViewFilterGroups);
-      applyChanges();
-
-      const firstRejectedReason = getFirstRejectedReason(settledResults);
-
-      if (isDefined(firstRejectedReason)) {
-        throw firstRejectedReason;
-      }
-
-      return results;
-    },
-    [apolloClient, updateInDraft, applyChanges],
+        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
+          updateInDraft(
+            'viewFilterGroups',
+            fulfilledMutations
+              .map(({ result }) => result.data?.updateViewFilterGroup)
+              .filter(isDefined)
+              .map(toFlatViewFilterGroup),
+          ),
+        operationType: CrudOperationType.UPDATE,
+      }),
+    [apolloClient, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewFilterGroupAPIDestroy = useCallback(
-    async (viewFilterGroupIdsToDestroy: string[]) => {
-      if (!viewFilterGroupIdsToDestroy.length) return;
-      const settledResults = await Promise.allSettled(
-        viewFilterGroupIdsToDestroy.map((viewFilterGroupId) =>
+    (viewFilterGroupIdsToDestroy: string[]) =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: viewFilterGroupIdsToDestroy,
+        mutate: (viewFilterGroupId) =>
           apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: DESTROY_VIEW_FILTER_GROUP,
             variables: {
               id: viewFilterGroupId,
             },
           }),
-        ),
-      );
-
-      // Remove only the successfully destroyed groups from the store so
-      // partial failures don't leave it stale
-      const destroyedViewFilterGroupIds = viewFilterGroupIdsToDestroy.filter(
-        (_viewFilterGroupId, index) =>
-          settledResults[index].status === 'fulfilled',
-      );
-
-      removeFromDraft({
-        key: 'viewFilterGroups',
-        itemIds: destroyedViewFilterGroupIds,
-      });
-      applyChanges();
-
-      const firstRejectedReason = getFirstRejectedReason(settledResults);
-
-      if (isDefined(firstRejectedReason)) {
-        throw firstRejectedReason;
-      }
-
-      return settledResults
-        .filter((settledResult) => settledResult.status === 'fulfilled')
-        .map((settledResult) => settledResult.value);
-    },
-    [apolloClient, removeFromDraft, applyChanges],
+        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewFilterGroups',
+            itemIds: fulfilledMutations.map(({ input }) => input),
+          }),
+        operationType: CrudOperationType.DESTROY,
+      }),
+    [apolloClient, performViewEntityAPIPersistBatchOperation],
   );
 
   return {
