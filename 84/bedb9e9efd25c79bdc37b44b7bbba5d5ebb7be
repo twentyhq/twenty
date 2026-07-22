@@ -1,0 +1,21 @@
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_06a7c1009a234d 16-17,19-20
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignStats.tsx
+  s_c3fbc446206706::t_266d97d05a23c8 20-21,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "84bedb9e9efd25c79bdc37b44b7bbba5d5ebb7be",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
