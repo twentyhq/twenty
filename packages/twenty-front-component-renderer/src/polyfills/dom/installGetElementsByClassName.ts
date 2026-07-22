@@ -1,15 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isFunction, isNonEmptyString, isString } from '@sniptt/guards';
 
-type ElementLike = {
-  childNodes?: ArrayLike<unknown>;
-  getAttribute?: (attributeName: string) => string | null;
-};
+import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
+import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 
 const hasEveryClassNameToken = (
   element: ElementLike,
   classNameTokens: string[],
 ): boolean => {
-  if (typeof element.getAttribute !== 'function') {
+  if (!isFunction(element.getAttribute)) {
     return false;
   }
 
@@ -36,24 +34,12 @@ const collectMatchesInTreeOrder = (
     return matches;
   }
 
-  const pendingNodes: ElementLike[] = [rootElement];
-
-  while (pendingNodes.length > 0) {
-    const currentNode = pendingNodes.pop() as ElementLike;
-
+  for (const currentNode of iterateElementSubtree(rootElement)) {
     if (
       currentNode !== rootElement &&
       hasEveryClassNameToken(currentNode, classNameTokens)
     ) {
       matches.push(currentNode);
-    }
-
-    const childNodes = currentNode.childNodes;
-
-    if (childNodes !== undefined) {
-      for (let index = childNodes.length - 1; index >= 0; index -= 1) {
-        pendingNodes.push(childNodes[index] as ElementLike);
-      }
     }
   }
 
@@ -84,7 +70,7 @@ const createLiveClassNameCollection = (
           };
         }
 
-        if (typeof property === 'string' && /^\d+$/.test(property)) {
+        if (isString(property) && /^\d+$/.test(property)) {
           return query()[Number(property)];
         }
 
@@ -95,7 +81,7 @@ const createLiveClassNameCollection = (
           return true;
         }
 
-        if (typeof property === 'string' && /^\d+$/.test(property)) {
+        if (isString(property) && /^\d+$/.test(property)) {
           return Number(property) < query().length;
         }
 
@@ -112,7 +98,7 @@ export const installGetElementsByClassName = (
     value: function (this: ElementLike, classNames: string) {
       const classNameTokens = String(classNames)
         .split(/\s+/)
-        .filter((classNameToken) => classNameToken.length > 0);
+        .filter(isNonEmptyString);
 
       return createLiveClassNameCollection(this, classNameTokens);
     },

@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 
@@ -43,7 +45,7 @@ export const installStylePropertyOnRemoteElements = (): void => {
         return resolveStyleProxy(this);
       },
       set(this: RemoteElementLike, value: unknown) {
-        if (typeof value === 'string') {
+        if (isString(value)) {
           resolveStyleProxy(this).cssText = value;
         }
       },

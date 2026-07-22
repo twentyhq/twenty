@@ -1,3 +1,4 @@
+import { isFunction, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
@@ -14,14 +15,11 @@ export const installGetComputedStyle = ({
   globalScope,
 }: InstallGetComputedStyleInput): void => {
   const getComputedStyle = (element: unknown) => {
-    const declaredStyle =
-      isDefined(element) && typeof element === 'object'
-        ? (element as ElementWithStyle).style
-        : undefined;
+    const declaredStyle = isObject(element)
+      ? (element as ElementWithStyle).style
+      : undefined;
 
-    return isDefined(declaredStyle)
-      ? declaredStyle
-      : createStyleProxy();
+    return isDefined(declaredStyle) ? declaredStyle : createStyleProxy();
   };
 
   const installTargets: Record<string, unknown>[] = [globalScope];
@@ -36,7 +34,7 @@ export const installGetComputedStyle = ({
   }
 
   for (const installTarget of installTargets) {
-    if (typeof installTarget.getComputedStyle === 'function') {
+    if (isFunction(installTarget.getComputedStyle)) {
       continue;
     }
 

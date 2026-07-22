@@ -1,3 +1,5 @@
+import { isNumber, isString } from '@sniptt/guards';
+
 import { splitCssDeclarations } from '@/polyfills/dom/utils/splitCssDeclarations';
 
 const camelToKebab = (property: string): string =>
@@ -121,14 +123,14 @@ export const createStyleProxy = ({
         return (name: string): string => target[name] ?? '';
       }
 
-      if (typeof property === 'string') {
+      if (isString(property)) {
         return target[camelToKebab(property)] ?? '';
       }
 
       return undefined;
     },
     set: (target, property, value) => {
-      if (typeof property !== 'string') {
+      if (!isString(property)) {
         return true;
       }
 
@@ -150,7 +152,7 @@ export const createStyleProxy = ({
 
       const shouldConvertToPx =
         convertNumbersToPx &&
-        typeof value === 'number' &&
+        isNumber(value) &&
         value !== 0 &&
         !UNITLESS_CSS_PROPERTIES.has(property);
 

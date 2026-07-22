@@ -1,38 +1,26 @@
-type NodeLike = {
-  childNodes?: ArrayLike<unknown>;
-  getAttribute?: (attributeName: string) => string | null;
-};
+import { isFunction } from '@sniptt/guards';
 
-type DocumentWithGetElementById = NodeLike & {
+import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
+import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
+
+type DocumentWithGetElementById = ElementLike & {
   getElementById?: unknown;
 };
 
 export const installDocumentGetElementById = (
   documentTarget: DocumentWithGetElementById,
 ): void => {
-  if (typeof documentTarget.getElementById === 'function') {
+  if (isFunction(documentTarget.getElementById)) {
     return;
   }
 
   documentTarget.getElementById = (elementId: string) => {
-    const pendingNodes: NodeLike[] = [documentTarget];
-
-    while (pendingNodes.length > 0) {
-      const currentNode = pendingNodes.shift() as NodeLike;
-
+    for (const currentNode of iterateElementSubtree(documentTarget)) {
       if (
-        typeof currentNode.getAttribute === 'function' &&
+        isFunction(currentNode.getAttribute) &&
         currentNode.getAttribute('id') === elementId
       ) {
         return currentNode;
-      }
-
-      const childNodes = currentNode.childNodes;
-
-      if (childNodes !== undefined) {
-        for (let index = 0; index < childNodes.length; index += 1) {
-          pendingNodes.push(childNodes[index] as NodeLike);
-        }
       }
     }
 

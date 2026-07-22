@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isFunction, isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_FONT_FAMILY } from '@/constants/DefaultFontFamily';
 import { DEFAULT_FONT_SIZE_PIXELS } from '@/constants/DefaultFontSizePixels';
@@ -19,7 +19,7 @@ const readStyleProperty = (
     | StyleDeclarationLike
     | undefined;
 
-  if (typeof style?.getPropertyValue !== 'function') {
+  if (!isFunction(style?.getPropertyValue)) {
     return null;
   }
 

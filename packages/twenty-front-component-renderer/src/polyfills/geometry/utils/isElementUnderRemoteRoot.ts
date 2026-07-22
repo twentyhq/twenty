@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_REMOTE_ROOT_ANCESTOR_WALK_DEPTH } from '@/polyfills/geometry/constants/MaxRemoteRootAncestorWalkDepth';
@@ -25,10 +26,7 @@ export const isElementUnderRemoteRoot = (
 
     const parentNode: unknown = (currentNode as NodeLike).parentNode;
 
-    currentNode =
-      isDefined(parentNode) && typeof parentNode === 'object'
-        ? (parentNode as object)
-        : null;
+    currentNode = isObject(parentNode) ? parentNode : null;
 
     walkedDepth += 1;
   }
