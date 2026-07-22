@@ -117,8 +117,8 @@ import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2
 import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626405-add-kanban-and-calendar-widget-view-types';
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
-import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784661000000-add-message-channel-display-name';
-import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784662000000-add-message-campaign-widget-type';
+import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784766000000-add-message-channel-display-name';
+import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784766100000-add-message-campaign-widget-type';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
