@@ -1,0 +1,192 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_bcdfa2fe2e47fa 26,68
+  s_c3fbc446206706::t_18748336a42d19 4,27-29,60,69-72,78-83,107-108,161,170-191,212,214,216-229,260-315,335,423,439,522,582,602-606,613-614,617-635,778,782-783
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_c3fbc446206706::t_c5d74dc3b929e9 1047,1075,1116,1280-1283,2508,2613-2637,3198,3274-3279,3491,4543-4547,4584
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_c3fbc446206706::t_4c1d5a0abf124e 756,782,801,945-949,2209,2287-2306,2829,3024,3926,4087-4092,5441,5512-5529,6092,6152-6153,6316,6721-6723,6733,7191,7279-7286,8503-8518,9226-9227,9258-9259,9497-9507
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_c3fbc446206706::t_43ca1cf27e2d93 45-56,58-66,73,75-76,78,80,82-88,102,105,108,569,572,608,695,698,711,1733,1736,1742,1745,1748,1757,1827,1839,2095,2098-2100,2102,2105,2108,2111,2114,2117,2120,2123,2126,2129,2132,2480-2487,2496,2661,2667,2717-2811,2836,2844,2847,2850,2861,2870,2896,2899,2905,2922,2939,2942,2959,2962,2988-2998,3004,3007,3010,3019,3029-3031,3036-3038,3043-3045,3047-3048,3050-3053,3056-3057,3059-3066,3072-3074,3076-3077,3079-3080,3082-3083,3089-3090,3093,3110,3113,3163,3200,3233,3259,3268,3280,3295,3307,3318,3321,3327-3347,3350,3428,3453,3456,3469,3506,3509,3518,3557,3572,3611,3619,3645,3679,3682,3707,3710,3713,3737,3743,3746,3749,3755,3797,3887,3939,3948,3967,3979,3982,3993,4002,4010,4022,4045,4051,4059,4062,4195,4198,4266,4277,4383,4386,4405,4408,4427,4430,4438,4441,4449,4487,4526,4535,4538,4541,4597,4648,4651,4689,4703,4736,4780,4821,4843,4851,4854,4857,4860,4869,4968,4971,4986,4991-4993,4995,5001,5004,5013,5022,5025,5046,5061,5080-5083,5086,5129-5164,5182,5228,5245,5256,5259,5262,5282,5504,5553,5561,5598,5703,5709,5773,5787,5842,5870,5932,5935,5966,5981,5984,5987,5993,6044,6062,6126,6129,6132,6140,6143,6177,6297,6303,6306,6315,6326,6329,6332,6335,6338,6347,6356,6362,6367,6400,6406,6427,6434,6443,6455,6464,6497,6505,6514,6544,6553,6571,6605,6614,6623,6632,6650,6683,6686,6691-6699,6701,6707,6715,6718,6721,6733,6736,6745,6753,6761,6764,6771,6776,6779,6784,6787,6793,6796,6799,6808,6817,6826,6829,6832,6841,6850,6862,6880,6889,6892,6904,6907,6910,6916,6919,6925,6928,6934,6937,6943,6952,6971,6984,6987,6992,7016,7019,7051,7068-7081,7098,7101,7122,7189,7201,7210,7216,7219,7225,7228,7234,7237,7243,7246,7252,7261,7270,7281,7293,7305,7308,7317,7320,7326,7329,7335,7338,7344,7347,7353,7356,7362,7365,7375,7378,7391,7404,7431,7440,7449,7458,7467,7480,7507,7516,7525,7534,7543,7552,7561,7570,7579,7588,7597,7606,7615,7624,7633,7642,7651,7660,7669,7688,7691,7717,7720,7724,7737,7740,7744,7761,7764,7767,7770,7773,7776,7785,7788,7800,7809,7821,7824,7833,7839,7842,7848,7851,7857,7864,7879,7882,7888,7895,7910,7917,7923,7941,7953,7966,7984,7993,8002,8011,8020,8029,8038,8047,8056,8065,8071,8074,8083,8092,8101,8128,8137,8155,8164,8173,8189,8192,8201,8216,8228,8237,8255,8317,8338,8347,8356,8365,8374,8383,8392,8401,8410,8432,8441,8459,8468,8477,8483,8486,8517,8526,8531-8539,8541,8544,8550,8553,8568,8571,8577,8580,8586,8595,8598,8613,8622,8631,8634,8640,8643,8649,8652,8658,8667,8670,8676,8679,8685,8688,8694,8697,8710,8715,8718,8739,8745,8757,8768,8786,8799,8808,8835,8838,8844,8847,8853,8862,8871,8880,8889,8902,8905,8911,8937,8959,8979,8995,9015,9037,9068,9071,9076,9083,9089,9092,9105,9127,9136,9152,9164,9177,9190,9193,9202,9226,9244,9257,9260,9266,9269,9275,9278,9284,9287,9293,9313,9316,9331,9340,9353,9356,9362,9365,9371,9380,9387,9396,9399,9405,9427,9436,9449,9461,9464,9472,9545,9577,9688,9859,9862,9865,9868,9871,10017,10055,10131,10195,10198,10218,10352,10366,10380,10386,10409,10432,10481,10507,10600,10660,10715,10726,10811,10971,11098,11152,11182,11255,11350,11435,11490,11532,11563,11566,11657-11665,11692,11709,11720,11728,11734,11737,11756-11758,11807,11835,11854,11865,11873,11879,11896,12062,12133,12155,12158,12161,12181,12200,12209,12212,12218,12227,12230
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c3fbc446206706::t_7f13066ff09514 1147,1981-1986,2379-2383,2390,2478-2504,2709,3516-3520,4512,4880-4884,5227,5237-5244,6342,6357,6381,6603-6609,7188,7218,7260,7594,7629,7664,7699,7735,7782,7815,7938,8554-8560,9012-9014,9055,9129,9173-9176,9179-9180,9196,9282
+packages/twenty-front/src/modules/accounts/types/MessageChannel.ts
+  s_c3fbc446206706::t_cc18c5e7f3c89e 13
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_39ad1b74e815e1 1-2,4,6,10,16-17,19,22-28,30-33,35-39,43-55
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_c3fbc446206706::t_9117faa3d50df4 14-17,64-66,68-70,83,132,154-171,179
+packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
+  s_c3fbc446206706::t_5d9e6df2fb1364 1-170
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignCard.tsx
+  s_c3fbc446206706::t_00d914fa65d250 1-50
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignStats.tsx
+  s_c3fbc446206706::t_1ba2e06e1bd167 1-112
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaign.ts
+  s_c3fbc446206706::t_6e9d9c6d28c7c3 1
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaignTest.ts
+  s_c3fbc446206706::t_acbe9ed3ddbe37 1-9
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_c3fbc446206706::t_dc8547f5511f04 2-3,6-17,20,25,28-38,42-74,76-79,83,87-98,106-112
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_c3fbc446206706::t_1b174e5d20e3c8 1,13,24-30,32,34-35,37-38,40-41,43,45,50-66
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaignTest.ts
+  s_c3fbc446206706::t_f2c25a58729bda 1-57
+packages/twenty-front/src/modules/activities/emails/types/MessageCampaign.ts
+  s_c3fbc446206706::t_872cb3d65ebf2e 1-17
+packages/twenty-front/src/modules/activities/emails/utils/__tests__/getMessageCampaignStatusBadge.test.ts
+  s_c3fbc446206706::t_1e1ee789a2e579 1-23
+packages/twenty-front/src/modules/activities/emails/utils/getMessageCampaignStatusBadge.ts
+  s_c3fbc446206706::t_7dc7a6722c226c 1-27
+packages/twenty-front/src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+  s_c3fbc446206706::t_ec4f60740ef97b 109-112
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_c3fbc446206706::t_4f9d5941b23a6e 217-224,735-738
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_c3fbc446206706::t_ecb834476d15ac 1-3,5-6,9-18,20-28
+packages/twenty-front/src/modules/object-record/utils/__tests__/canOpenObjectInSidePanel.test.ts
+  s_c3fbc446206706::t_fb9281e6924d8a 8
+packages/twenty-front/src/modules/object-record/utils/canOpenObjectInSidePanel.ts
+  s_c3fbc446206706::t_a9c313505cf297 5-6
+packages/twenty-front/src/modules/page-layout/graphql/fragments/pageLayoutWidgetFragment.ts
+  s_c3fbc446206706::t_d677b5a72eb54b 156-158
+packages/twenty-front/src/modules/page-layout/widgets/components/WidgetContentRenderer.tsx
+  s_c3fbc446206706::t_2f933039132f3e 12,85-87
+packages/twenty-front/src/modules/page-layout/widgets/hooks/useWidgetRendererState.ts
+  s_c3fbc446206706::t_02d628157db202 60-61
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_c3fbc446206706::t_cb9943c3f13df1 1-5
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c3fbc446206706::t_1a4f979522adb6 23,29-33,42,88-107
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getMyMessageChannels.ts
+  s_c3fbc446206706::t_babcd87f41442c 8
+packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
+  s_c3fbc446206706::t_c4afe83b4fa575 33,51,53
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_c3fbc446206706::t_b12b06285b4535 3-4,60-61,129-139
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_c3fbc446206706::t_7814ab736f995b 10
+packages/twenty-front/src/modules/settings/unsubscribers/constants/MessageSuppressionsPageSize.ts
+  s_c3fbc446206706::t_039eedb7a519d6 1
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/queries/getMessageSuppressions.ts
+  s_c3fbc446206706::t_736c9363b057fc 1-17
+packages/twenty-front/src/modules/settings/unsubscribers/hooks/useMessageSuppressions.ts
+  s_c3fbc446206706::t_88f580b52ea1d0 1-30
+packages/twenty-front/src/modules/settings/unsubscribers/utils/__tests__/getMessageSuppressionReasonBadge.test.ts
+  s_c3fbc446206706::t_29412cf7dfe278 1-22
+packages/twenty-front/src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
+  s_c3fbc446206706::t_a7525407c38422 2-3,5-8,10-22
+packages/twenty-front/src/modules/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType.ts
+  s_c3fbc446206706::t_5fa191c8a33193 14,54-59
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c3fbc446206706::t_eefd1265c31df8 20,197-210
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_c3fbc446206706::t_3a3b59eef9f098 17,28-29,39-44,50-51,118-133,136,141-142,144
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_c3fbc446206706::t_171b140411ebfb 1-130
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784766000000-add-message-channel-display-name.ts
+  s_c3fbc446206706::t_3fa186608aa9bd 1-21
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784766100000-add-message-campaign-widget-type.ts
+  s_c3fbc446206706::t_14e99b27cb774d 1-52
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-upgrade-version-command.module.ts
+  s_c3fbc446206706::t_78c44053d44c9a 1-27
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-workspace-command-1784567000000-backfill-message-list-members-junction-target.command.ts
+  s_c3fbc446206706::t_3af3e74e9191ac 1-130
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-workspace-command-1784663000000-add-message-campaign-composer-tab.command.ts
+  s_c3fbc446206706::t_2a8905abd72a74 1-216
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_e7336a5e0806d0 122-123,249-250
+packages/twenty-server/src/database/commands/upgrade-version-command/workspace-command-provider.module.ts
+  s_c3fbc446206706::t_9a2abb9a7c246d 27,55
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/find-message-suppressions.input.ts
+  s_c3fbc446206706::t_491f07676fe4b6 1-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-suppression.dto.ts
+  s_c3fbc446206706::t_e665a586638bbc 1-43
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign-test.input.ts
+  s_c3fbc446206706::t_737dd8c0cc384b 1-36
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input.ts
+  s_c3fbc446206706::t_28a1db31cfa076 3,9
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_c3fbc446206706::t_cc4936cbe7e763 9-13,22-31
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_c3fbc446206706::t_d3945ac7e84105 9-14,22-30
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+  s_c3fbc446206706::t_9b35d6af5e1a8d 98-100,155-157
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util.ts
+  s_c3fbc446206706::t_af27b29abb6536 379
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input.ts
+  s_c3fbc446206706::t_579958485226d4 2-8,18-23
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/message-channel.dto.ts
+  s_c3fbc446206706::t_01cbe6b80eda07 42-46
+packages/twenty-server/src/engine/metadata-modules/message-channel/entities/message-channel.entity.ts
+  s_c3fbc446206706::t_9ce455d69f12ff 71-73
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_c3fbc446206706::t_87429a070e3e5d 216,221,273-274,278-280
+packages/twenty-server/src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts
+  s_c3fbc446206706::t_6eefca40da5bc4 177
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_c3fbc446206706::t_922c86903e311e 44-52
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/constants/all-widget-configuration-type-validator-by-widget-configuration-type.constant.ts
+  s_c3fbc446206706::t_90e95e6dd0d5ad 3,39
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-configuration.dto.ts
+  s_c3fbc446206706::t_6f7499c808bf13 1-14
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type.ts
+  s_c3fbc446206706::t_7ef353df182a94 30
+packages/twenty-server/src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum.ts
+  s_c3fbc446206706::t_f75b9f54ede5c7 21
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+  s_c3fbc446206706::t_7cb33b0974e4d8 48-55,99
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_c3fbc446206706::t_1316eaa40f156e 155-160,230-235
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tests__/__snapshots__/get-standard-page-layout-metadata-related-entity-ids.util.spec.ts.snap
+  s_c3fbc446206706::t_22dcd58a58c1ce 186,189,197,200,203,208,211,218,221,224,229,232,239,242,245,248,255,258,261,266,269,276,279,282,323,326,329,334,337,340,345,348,353,356,363,366,369,374,377,382,385,390,393,396,399,402,407,410,415,418,423,426,433,436,439,444,447,452,455,460,463,466,469,472,477,480,485,488,493,496,503,506,509,514,517,520,525,528,533,536,543,546,549,554,557,564,567,570,577,580,583,588,591,594,601,604,607,612,615,618
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util.ts
+  s_c3fbc446206706::t_d27954105b95a3 18
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_c3fbc446206706::t_dabf7ff41d5d9e 16-17,19,22-23,25,28-29
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/build-standard-flat-page-layout-widget-metadata-maps.util.ts
+  s_c3fbc446206706::t_6f4737b8c98600 42,64
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util.ts
+  s_c3fbc446206706::t_6bd28adc79ac1d 363
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_c3fbc446206706::t_b11beb2ea04f01 20,58
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_c3fbc446206706::t_d2839fde700b32 11,16,39-42,95-112,118-119
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_c3fbc446206706::t_70ba098de9991c 1-56
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_c3fbc446206706::t_d5c00ce3681e60 19,57-62,66-69,84,86-88,92,96-104
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_c3fbc446206706::t_5390eeb3076ea3 21-27,56-77
+packages/twenty-server/src/modules/emailing/zod-schemas/__tests__/sendable-draft-campaign.zod-schema.spec.ts
+  s_c3fbc446206706::t_5ee3101fcac49d 1-16,19-25,28-34,37-43,46-52,55-61,64-70
+packages/twenty-server/src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema.ts
+  s_c3fbc446206706::t_ae979605516c91 1-10
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_c3fbc446206706::t_c78e00ea96d110 614-621
+packages/twenty-shared/src/types/CoreObjectNameSingular.ts
+  s_c3fbc446206706::t_c30c986d2bf48c 14,16
+packages/twenty-shared/src/types/MessageCampaignStatus.ts
+  s_c3fbc446206706::t_4a8390d69ab1c5 1-7
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_c3fbc446206706::t_3184411f802921 36
+packages/twenty-shared/src/types/index.ts
+  s_c3fbc446206706::t_8595053948e0f9 149,209
+packages/twenty-shared/src/types/page-layout/page-layout-widget-configuration.type.ts
+  s_c3fbc446206706::t_391673dd2b3c59 156-159,198-199
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "faa8cd80ac3376b928f85b7dddc0a552b2b77812",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
