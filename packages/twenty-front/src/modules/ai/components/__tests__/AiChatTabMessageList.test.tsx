@@ -1,6 +1,15 @@
 import { render } from '@testing-library/react';
+import { type ReactNode } from 'react';
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+
+const renderWithPreamble = (preamble: ReactNode) =>
+  render(
+    <AiChatMessageListPreambleContext.Provider value={preamble}>
+      <AiChatTabMessageList />
+    </AiChatMessageListPreambleContext.Provider>,
+  );
 
 const mockUseAtomComponentSelectorValue = jest.fn();
 
@@ -62,10 +71,8 @@ describe('AiChatTabMessageList', () => {
   it('should render the preamble outside the scroll container with no messages', () => {
     mockUseAtomComponentSelectorValue.mockReturnValue(false);
 
-    const { getByTestId, queryByTestId } = render(
-      <AiChatTabMessageList
-        messageListPreamble={<div data-testid="preamble" />}
-      />,
+    const { getByTestId, queryByTestId } = renderWithPreamble(
+      <div data-testid="preamble" />,
     );
 
     expect(getByTestId('preamble')).toBeInTheDocument();
@@ -75,11 +82,7 @@ describe('AiChatTabMessageList', () => {
   it('should render the preamble inside the message list once messages exist', () => {
     mockUseAtomComponentSelectorValue.mockReturnValue(true);
 
-    const { getByTestId } = render(
-      <AiChatTabMessageList
-        messageListPreamble={<div data-testid="preamble" />}
-      />,
-    );
+    const { getByTestId } = renderWithPreamble(<div data-testid="preamble" />);
 
     expect(getByTestId('scroll-wrapper')).toContainElement(
       getByTestId('preamble'),

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
@@ -26,11 +26,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
     isDraggingFile ? themeCssVariables.spacing[3] : '0'};
 `;
 
-type AiChatTabProps = {
-  messageListPreamble?: ReactNode;
-};
-
-export const AiChatTab = ({ messageListPreamble }: AiChatTabProps) => {
+export const AiChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const threadIdCreatedFromDraft = useAtomStateValue(
@@ -62,7 +58,7 @@ export const AiChatTab = ({ messageListPreamble }: AiChatTabProps) => {
       )}
       {!isDraggingFile && (
         <>
-          <AiChatTabMessageList messageListPreamble={messageListPreamble} />
+          <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
         </>

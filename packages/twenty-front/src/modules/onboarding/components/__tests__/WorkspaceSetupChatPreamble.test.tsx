@@ -8,7 +8,6 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
 import { WELCOME_TITLE_WORDS } from '@/onboarding/constants/WelcomeTitleWords';
-import { isWelcomeTitleHandoffTargetReadyState } from '@/onboarding/states/isWelcomeTitleHandoffTargetReadyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -44,21 +43,5 @@ describe('WorkspaceSetupChatPreamble', () => {
 
     expect(handoffRun).toBeInTheDocument();
     expect(handoffRun?.textContent).toContain(WELCOME_TITLE_WORDS.join(' '));
-  });
-
-  it('should signal handoff-target readiness while mounted', () => {
-    const { unmount } = render(<WorkspaceSetupChatPreamble />, {
-      wrapper: Wrapper,
-    });
-
-    expect(jotaiStore.get(isWelcomeTitleHandoffTargetReadyState.atom)).toBe(
-      true,
-    );
-
-    unmount();
-
-    expect(jotaiStore.get(isWelcomeTitleHandoffTargetReadyState.atom)).toBe(
-      false,
-    );
   });
 });

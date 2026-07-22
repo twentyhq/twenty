@@ -25,10 +25,7 @@ export const SidePanelExpandAiChatButton = () => {
     aiChatExpandedReturnLocationState,
   );
 
-  const isOnAskAiPage = [
-    SidePanelPages.AskAI,
-    SidePanelPages.ViewPreviousAiChats,
-  ].includes(sidePanelPage);
+  const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
 
   if (!isOnboardingAiChatEnabled || isMobile || !isOnAskAiPage) {
     return null;

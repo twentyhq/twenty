@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useLayoutEffect } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
@@ -8,9 +7,7 @@ import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/
 import { WELCOME_TITLE_WORDS } from '@/onboarding/constants/WelcomeTitleWords';
 import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
-import { isWelcomeTitleHandoffTargetReadyState } from '@/onboarding/states/isWelcomeTitleHandoffTargetReadyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledPreamble = styled.div<{
   isHiddenBehindOverlay: boolean;
@@ -56,17 +53,6 @@ export const WorkspaceSetupChatPreamble = () => {
   const isWelcomeAnimationLeaving = useAtomStateValue(
     isWelcomeAnimationLeavingState,
   );
-  const setIsWelcomeTitleHandoffTargetReady = useSetAtomState(
-    isWelcomeTitleHandoffTargetReadyState,
-  );
-
-  useLayoutEffect(() => {
-    setIsWelcomeTitleHandoffTargetReady(true);
-
-    return () => {
-      setIsWelcomeTitleHandoffTargetReady(false);
-    };
-  }, [setIsWelcomeTitleHandoffTargetReady]);
 
   return (
     <StyledPreamble

@@ -1,8 +1,10 @@
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
+import { WELCOME_TITLE_SOURCE_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleSourceElementId';
 import { measureWelcomeTitleFlight } from '@/onboarding/utils/measureWelcomeTitleFlight';
 
 const buildSourceElement = () => {
   const source = document.createElement('div');
+  source.id = WELCOME_TITLE_SOURCE_ELEMENT_ID;
   source.getBoundingClientRect = () =>
     ({ left: 100, top: 200, width: 400, height: 80 }) as DOMRect;
   document.body.appendChild(source);
@@ -27,38 +29,40 @@ describe('measureWelcomeTitleFlight', () => {
   it('should return null when the source element is missing', () => {
     buildTargetElement({});
 
-    expect(measureWelcomeTitleFlight(null)).toBeNull();
+    expect(measureWelcomeTitleFlight()).toBeNull();
   });
 
-  it('should return null when the target element is not in the document', () => {
-    expect(measureWelcomeTitleFlight(buildSourceElement())).toBeNull();
+  it('should return null when the target element is missing', () => {
+    buildSourceElement();
+
+    expect(measureWelcomeTitleFlight()).toBeNull();
   });
 
   it('should return null when the target has no width', () => {
-    const source = buildSourceElement();
+    buildSourceElement();
     buildTargetElement({ width: 0 });
 
-    expect(measureWelcomeTitleFlight(source)).toBeNull();
+    expect(measureWelcomeTitleFlight()).toBeNull();
   });
 
   it('should return null when the target has no height', () => {
-    const source = buildSourceElement();
+    buildSourceElement();
     buildTargetElement({ height: 0 });
 
-    expect(measureWelcomeTitleFlight(source)).toBeNull();
+    expect(measureWelcomeTitleFlight()).toBeNull();
   });
 
   it('should return null when the target is not visible', () => {
-    const source = buildSourceElement();
+    buildSourceElement();
     buildTargetElement({}, 'hidden');
 
-    expect(measureWelcomeTitleFlight(source)).toBeNull();
+    expect(measureWelcomeTitleFlight()).toBeNull();
   });
 
-  it('should measure a flight when the target is laid out and visible', () => {
-    const source = buildSourceElement();
+  it('should measure a flight when both ends are laid out and visible', () => {
+    buildSourceElement();
     buildTargetElement({});
 
-    expect(measureWelcomeTitleFlight(source)).not.toBeNull();
+    expect(measureWelcomeTitleFlight()).not.toBeNull();
   });
 });

@@ -25,18 +25,24 @@ jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
   useDefaultHomePagePath: () => ({ defaultHomePagePath }),
 }));
 
-jest.mock('@/ai/components/AiChatTab', () => ({
-  AiChatTab: ({ messageListPreamble }: { messageListPreamble?: ReactNode }) => (
-    <div data-testid="ai-chat-tab">{messageListPreamble}</div>
+jest.mock('@/ai/components/AiChatTab', () => {
+  const { useContext } = jest.requireActual('react');
+  const { AiChatMessageListPreambleContext } = jest.requireActual(
+    '@/ai/contexts/AiChatMessageListPreambleContext',
+  );
+  return {
+    AiChatTab: () => (
+      <div data-testid="ai-chat-tab">
+        {useContext(AiChatMessageListPreambleContext)}
+      </div>
+    ),
+  };
+});
+
+jest.mock('@/onboarding/components/WorkspaceSetupHeader', () => ({
+  WorkspaceSetupHeader: ({ title }: { title: string }) => (
+    <div data-testid="header-title">{title}</div>
   ),
-}));
-
-jest.mock('@/ai/components/AiChatCollapseButton', () => ({
-  AiChatCollapseButton: () => <button type="button">collapse</button>,
-}));
-
-jest.mock('@/ai/components/AiChatCloseButton', () => ({
-  AiChatCloseButton: () => <button type="button">close</button>,
 }));
 
 jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
@@ -73,27 +79,28 @@ describe('WorkspaceSetup', () => {
     mockNavigate.mockClear();
   });
 
-  it('should render the chat regardless of pending state', () => {
+  it('should dress the chat for onboarding when the post-onboarding hint is set', () => {
+    setOnboardingAiChatFeatureFlag(true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+    const { getByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
+
+    expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
+    expect(getByTestId('preamble')).toBeInTheDocument();
+    expect(getByTestId('header-title')).toHaveTextContent('Onboarding');
+  });
+
+  // Expanding a normal chat must not inject the onboarding welcome text.
+  it('should render a plain chat when the post-onboarding hint is not set', () => {
     setOnboardingAiChatFeatureFlag(true);
 
-    const { getByTestId, getByText } = render(<WorkspaceSetup />, {
+    const { getByTestId, queryByTestId } = render(<WorkspaceSetup />, {
       wrapper: Wrapper,
     });
 
     expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
-    expect(getByTestId('preamble')).toBeInTheDocument();
-    expect(getByText('Onboarding')).toBeInTheDocument();
-  });
-
-  it('should consume the workspace-setup pending flag on mount', () => {
-    setOnboardingAiChatFeatureFlag(true);
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-
-    render(<WorkspaceSetup />, { wrapper: Wrapper });
-
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(queryByTestId('preamble')).not.toBeInTheDocument();
+    expect(getByTestId('header-title')).toHaveTextContent('Ask AI');
   });
 
   it('should redirect home when the onboarding ai chat feature flag is disabled', () => {

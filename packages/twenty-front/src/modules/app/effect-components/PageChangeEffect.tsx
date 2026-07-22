@@ -10,6 +10,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
@@ -157,6 +158,17 @@ export const PageChangeEffect = () => {
       if (consumedReturnToPath) {
         clearReturnToPath();
       }
+
+      // The post-onboarding hint stays set while heading to or sitting on the
+      // setup chat (so the page keeps its onboarding dressing across a refresh),
+      // and is consumed the moment a redirect diverts elsewhere, e.g. a stored
+      // returnToPath winning.
+      if (
+        store.get(shouldOpenAiChatAfterOnboardingState.atom) &&
+        pageChangeEffectNavigateLocation !== AppPath.WorkspaceSetup
+      ) {
+        store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      }
     }
   }, [
     navigate,
@@ -166,6 +178,7 @@ export const PageChangeEffect = () => {
     saveReturnToPath,
     getReturnToPath,
     clearReturnToPath,
+    store,
   ]);
 
   useEffect(() => {

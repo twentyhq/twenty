@@ -8,11 +8,12 @@ import { AgentChatScrollToBottomOnMountLayoutEffect } from '@/ai/components/Agen
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -40,13 +41,8 @@ const StyledMessageListContent = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-type AiChatTabMessageListProps = {
-  messageListPreamble?: ReactNode;
-};
-
-export const AiChatTabMessageList = ({
-  messageListPreamble,
-}: AiChatTabMessageListProps) => {
+export const AiChatTabMessageList = () => {
+  const messageListPreamble = useContext(AiChatMessageListPreambleContext);
   const agentChatHasMessage = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
