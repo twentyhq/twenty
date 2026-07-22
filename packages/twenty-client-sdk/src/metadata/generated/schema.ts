@@ -611,6 +611,7 @@ export interface Workspace {
     viewFilterGroups?: ViewFilterGroup[]
     viewGroups?: ViewGroup[]
     viewSorts?: ViewSort[]
+    /** @deprecated No longer used for metadata cache invalidation, will be removed */
     metadataVersion: Scalars['Float']
     databaseSchema?: Scalars['String']
     subdomain: Scalars['String']
@@ -3703,6 +3704,7 @@ export interface WorkspaceGenqlSelection{
     viewFilterGroups?: ViewFilterGroupGenqlSelection
     viewGroups?: ViewGroupGenqlSelection
     viewSorts?: ViewSortGenqlSelection
+    /** @deprecated No longer used for metadata cache invalidation, will be removed */
     metadataVersion?: boolean | number
     databaseSchema?: boolean | number
     subdomain?: boolean | number
