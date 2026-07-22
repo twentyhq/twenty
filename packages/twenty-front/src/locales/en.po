@@ -16056,6 +16056,11 @@ msgstr "Select action"
 msgid "Select Action"
 msgstr "Select Action"
 
+#. js-lingui-id: /fhMKz
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
+msgid "Select all rows"
+msgstr "Select all rows"
+
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -16135,6 +16140,11 @@ msgstr "Select operand"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Select options"
 msgstr "Select options"
+
+#. js-lingui-id: 9c44h0
+#: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox.tsx
+msgid "Select row"
+msgstr "Select row"
 
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx

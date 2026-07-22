@@ -16061,6 +16061,11 @@ msgstr "Selectează acțiunea"
 msgid "Select Action"
 msgstr "Selectează acțiunea"
 
+#. js-lingui-id: /fhMKz
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
+msgid "Select all rows"
+msgstr ""
+
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -16140,6 +16145,11 @@ msgstr "Selectați operandul"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Select options"
 msgstr "Selectați opțiunile"
+
+#. js-lingui-id: 9c44h0
+#: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox.tsx
+msgid "Select row"
+msgstr ""
 
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
