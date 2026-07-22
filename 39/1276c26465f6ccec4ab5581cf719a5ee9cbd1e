@@ -1,0 +1,41 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_05b2633dbfd75b 63-66,205-206,763,767-768
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignStats.tsx
+  s_c3fbc446206706::t_05b2633dbfd75b 3,5,52,77,80,93-95
+packages/twenty-server/src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema.ts
+  s_c3fbc446206706::t_6cf2c8f848e620 1,5
+packages/twenty-front/src/modules/activities/emails/utils/getMessageCampaignStatusBadge.ts
+  s_c3fbc446206706::t_cd93ab35bb88ce 1-27
+packages/twenty-front/src/modules/activities/emails/components/MessageCampaignCard.tsx
+  s_c3fbc446206706::t_e8b2453541acb3 1
+  s_c3fbc446206706::t_05231afa5b14d5 2-4,29
+packages/twenty-front/src/modules/activities/emails/utils/__tests__/getMessageCampaignStatusBadge.test.ts
+  s_c3fbc446206706::t_3f870d7f02330d 1-23
+packages/twenty-front/src/modules/activities/emails/types/MessageCampaign.ts
+  s_c3fbc446206706::t_a4c1baef338ee5 1
+packages/twenty-front/src/modules/activities/emails/components/CampaignTestSendSection.tsx
+  s_c3fbc446206706::t_5fa795e7ea3031 53-54,58,61,68-69,72,83,87
+  s_c3fbc446206706::t_e7c236757405c1 2
+packages/twenty-server/src/modules/emailing/zod-schemas/__tests__/sendable-draft-campaign.zod-schema.spec.ts
+  s_c3fbc446206706::t_e1738bc3d2cd13 1,6,23
+packages/twenty-shared/src/types/MessageCampaignStatus.ts
+  s_c3fbc446206706::t_f80a8f82f9ec19 1-7
+packages/twenty-shared/src/types/index.ts
+  s_c3fbc446206706::t_99084dea22a0a2 149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "391276c26465f6ccec4ab5581cf719a5ee9cbd1e",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
