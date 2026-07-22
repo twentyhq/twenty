@@ -27,9 +27,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconCalendar,
+  IconLayoutKanban,
   IconLayoutSidebarRight,
   IconList,
   IconListDetails,
+  IconTable,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -109,6 +112,8 @@ export const SidePanelRecordPageFieldSettings = () => {
     isDefined(targetObjectMetadataId) &&
     isDefined(currentViewId);
 
+  const isEmbeddedViewKanbanLayout =
+    embeddedWidgetView?.type === ViewType.KANBAN_WIDGET;
   const isEmbeddedViewCalendarLayout =
     embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
@@ -134,9 +139,26 @@ export const SidePanelRecordPageFieldSettings = () => {
     [FieldDisplayMode.TABLE]: t`Table`,
   };
 
-  const layoutLabel = isDefined(currentDisplayMode)
-    ? (displayModeLabels[currentDisplayMode] ?? '')
-    : '';
+  // The merged Layout row covers both inline display modes (Field / Card) and
+  // the embedded-view layouts (Table / Kanban / Calendar), so its label and
+  // icon reflect the embedded view's type while in table display mode.
+  const layoutLabel = isTableDisplayMode
+    ? isEmbeddedViewKanbanLayout
+      ? t`Kanban`
+      : isEmbeddedViewCalendarLayout
+        ? t`Calendar`
+        : t`Table`
+    : isDefined(currentDisplayMode)
+      ? (displayModeLabels[currentDisplayMode] ?? '')
+      : '';
+
+  const layoutRowIcon = isTableDisplayMode
+    ? isEmbeddedViewKanbanLayout
+      ? IconLayoutKanban
+      : isEmbeddedViewCalendarLayout
+        ? IconCalendar
+        : IconTable
+    : IconLayoutSidebarRight;
 
   const selectableItemIds = [
     'field',
@@ -146,6 +168,7 @@ export const SidePanelRecordPageFieldSettings = () => {
           isCalendarLayout: isEmbeddedViewCalendarLayout,
           isCalendarWeekViewEnabled,
           hasGroupBy: embeddedViewHasGroupBy,
+          isLayoutRowHidden: true,
         })
       : []),
     ...(isTableDisplayMode ? ['fields'] : []),
@@ -180,8 +203,8 @@ export const SidePanelRecordPageFieldSettings = () => {
             <SelectableListItem itemId="layout">
               <CommandMenuItemDropdown
                 id="layout"
-                label={t`Display as`}
-                Icon={IconLayoutSidebarRight}
+                label={t`Layout`}
+                Icon={layoutRowIcon}
                 dropdownId="layout"
                 dropdownComponents={
                   <DropdownContent>
@@ -201,6 +224,7 @@ export const SidePanelRecordPageFieldSettings = () => {
                   widgetId={widgetInEditMode.id}
                   objectMetadataId={targetObjectMetadataId}
                   viewId={currentViewId}
+                  isLayoutRowHidden
                 />
               )}
             {isTableDisplayMode && (

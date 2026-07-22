@@ -31,6 +31,7 @@ type WidgetViewLayoutSettingsRowsProps = {
   widgetId: string;
   objectMetadataId: string;
   viewId: string;
+  isLayoutRowHidden?: boolean;
 };
 
 // The keyboard-selectable item ids this component renders, in render order, for
@@ -40,12 +41,14 @@ export const getWidgetViewLayoutSettingsItemIds = ({
   isCalendarLayout,
   isCalendarWeekViewEnabled,
   hasGroupBy,
+  isLayoutRowHidden = false,
 }: {
   isCalendarLayout: boolean;
   isCalendarWeekViewEnabled: boolean;
   hasGroupBy: boolean;
+  isLayoutRowHidden?: boolean;
 }) => [
-  'object-view-layout',
+  ...(isLayoutRowHidden ? [] : ['object-view-layout']),
   ...(isCalendarLayout
     ? [
         'record-table-calendar-field',
@@ -62,12 +65,14 @@ export const getWidgetViewLayoutSettingsItemIds = ({
 // view: dashboard record table widgets and relation field widgets in table
 // display mode. The source object is passed in (fixed to the relation target
 // for field widgets), so this component makes no assumption about where the
-// widget lives.
+// widget lives. Hosts that surface the layout choice elsewhere (the field
+// widget's merged layout picker) hide the layout row via isLayoutRowHidden.
 export const WidgetViewLayoutSettingsRows = ({
   pageLayoutId,
   widgetId,
   objectMetadataId,
   viewId,
+  isLayoutRowHidden = false,
 }: WidgetViewLayoutSettingsRowsProps) => {
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
@@ -132,40 +137,42 @@ export const WidgetViewLayoutSettingsRows = ({
 
   return (
     <>
-      <SelectableListItem itemId="object-view-layout">
-        <CommandMenuItemDropdown
-          Icon={
-            isKanbanLayout
-              ? IconLayoutKanban
-              : isCalendarLayout
-                ? IconCalendar
-                : IconTable
-          }
-          label={t`Layout`}
-          id="object-view-layout"
-          dropdownId="object-view-layout"
-          dropdownComponents={
-            <DropdownContent>
-              <RecordTableLayoutDropdownContent
-                pageLayoutId={pageLayoutId}
-                widgetId={widgetId}
-                objectMetadataId={objectMetadataId}
-                currentLayoutViewType={currentLayoutViewType}
-              />
-            </DropdownContent>
-          }
-          dropdownPlacement="bottom-end"
-          hasSubMenu
-          description={
-            isKanbanLayout
-              ? t`Kanban`
-              : isCalendarLayout
-                ? t`Calendar`
-                : t`Table`
-          }
-          contextualTextPosition="right"
-        />
-      </SelectableListItem>
+      {!isLayoutRowHidden && (
+        <SelectableListItem itemId="object-view-layout">
+          <CommandMenuItemDropdown
+            Icon={
+              isKanbanLayout
+                ? IconLayoutKanban
+                : isCalendarLayout
+                  ? IconCalendar
+                  : IconTable
+            }
+            label={t`Layout`}
+            id="object-view-layout"
+            dropdownId="object-view-layout"
+            dropdownComponents={
+              <DropdownContent>
+                <RecordTableLayoutDropdownContent
+                  pageLayoutId={pageLayoutId}
+                  widgetId={widgetId}
+                  objectMetadataId={objectMetadataId}
+                  currentLayoutViewType={currentLayoutViewType}
+                />
+              </DropdownContent>
+            }
+            dropdownPlacement="bottom-end"
+            hasSubMenu
+            description={
+              isKanbanLayout
+                ? t`Kanban`
+                : isCalendarLayout
+                  ? t`Calendar`
+                  : t`Table`
+            }
+            contextualTextPosition="right"
+          />
+        </SelectableListItem>
+      )}
       {isCalendarLayout && (
         <SelectableListItem itemId="record-table-calendar-field">
           <CommandMenuItemDropdown
