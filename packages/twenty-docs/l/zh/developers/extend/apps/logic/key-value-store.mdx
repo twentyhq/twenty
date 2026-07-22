@@ -1,153 +1,57 @@
 ---
 title: 键值存储
-description: 使用简单的键值对象持久化中间结果、缓存数据，并在逻辑函数运行之间共享状态。
+description: 使用内置的应用键值存储持久化中间结果、缓存数据，并在多次逻辑函数运行之间共享状态。
 icon: database
 ---
 
-逻辑函数在短生命周期的 Node.js 进程中以沙盒方式运行——一旦一次运行结束，内存中不会保留任何内容。 当你需要在**多次运行之间记住一些东西**时（缓存一次昂贵的 API 响应、存储增量同步的游标、对工作进行防抖处理，或在函数之间传递状态），请将其持久化到工作区数据库中。
+逻辑函数在短生命周期的 Node.js 进程中以沙盒方式运行——一旦一次运行结束，内存中不会保留任何内容。 当你需要在**多次运行之间记住一些东西**时（缓存一次昂贵的 API 响应、存储增量同步的游标、对工作进行防抖处理，或在函数之间传递状态），请将其持久化到内置键值存储中。
 
-你不需要专门的存储原语来实现这一点：一个带有 `key` 字段和 `value` 字段的小型**技术对象**就可以为你提供一个持久的键值存储，它以工作区为作用域，并且可以通过你已经用于记录的同一个[类型化 API 客户端](/l/zh/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)进行查询。
+每个应用都会获得自己隔离的命名空间：条目根据已认证的应用进行键控，因此你的键永远不会与其他应用发生冲突，也不会被其他应用读取。
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## 定义存储对象
+## 获取、设置、删除
 
-声明一个具有两个字段的自定义对象——`key`（唯一的 `TEXT`）和 `value`（`RAW_JSON`，因此你可以存储任何可序列化为 JSON 的有效负载）。 完整的 `defineObject` 参考请参见[对象](/l/zh/developers/extend/apps/data/objects)。
+从 `twenty-sdk/logic-function` 导入 `kv`。 值可以是任何可序列化为 JSON 的负载。
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## 范围
+
+每个条目都有一个作用域，在每次调用时作为选项传入。 默认值为 `WORKSPACE`。
+
+* **`WORKSPACE`**（默认）— 条目对当前工作区中安装的应用是私有的。 每个安装该应用的工作区都会获得自己独立的一组键。 这正是缓存、游标和按工作区存储状态时所需要的。
+* **`SERVER`** — 条目在服务器上应用的**每一次安装**之间共享。 服务器条目的行为类似**声明（claim）**：存储的值始终是声明该键的 workspaceId（在 `set` 时省略 `value` 即可为当前工作区声明该键），并且只有该工作区可以覆盖或删除它。 任何一次安装都可以读取该条目。
+
+服务器声明用于跨工作区路由。 [服务器路由解析器](/l/zh/developers/extend/apps/logic/logic-functions#server-route-trigger)在应用注册所有者的工作区中运行，但入站 Webhook 通常只携带外部账户 ID——而不是 Twenty 的 workspaceId。 让每个工作区在连接时声明其外部 id，然后在路由中解析它：
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### 强制键唯一性
-
-在 `key` 上添加一个**唯一索引**，这样同一个键就永远不会有两行。 这是实现唯一性的推荐原语——参见[数据 → 唯一索引](/l/zh/developers/extend/apps/data/overview#unique-indexes)。
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## 从逻辑函数中读写
-
-用几个小型的辅助函数来封装该对象，这样其余代码用起来就像键值 API 一样——`get`、`set` 和 `del`。 它们使用 [`CoreApiClient`](/l/zh/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)，该客户端由你的工作区模式生成，并针对 `kvStore` 对象提供完整的类型。
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-唯一索引可以防止重复，但在查找和创建之间，两个运行在同一时刻写入**相同的新键**时仍然可能发生竞争。 将因唯一性约束失败的创建视为“被其他人抢先了”——捕获该错误并重新读取，或改为重试执行更新。
-</Note>
+因为服务器键只能为调用方自己的工作区声明，且永远不会被其他工作区覆盖，所以某个工作区无法劫持属于其他工作区的映射。 当某个键已经被其他工作区声明时，`kv.set` 会抛出异常。
 
 ## 使用示例：缓存一次昂贵的调用
 
@@ -155,15 +59,15 @@ export const del = async (key: string): Promise<void> => {
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## 模式与技巧
 
-* **命名空间划分。** 给键添加前缀，以区分不同的用途，并便于批量查找——`sync-cursor:linear`、`cache:exchange-rate:USD:EUR`、`lock:nightly-report`。 使用 `key: { like: 'cache:%' }` 进行过滤，以列出或清理整个命名空间。
-* **过期时间（TTL）。** 该存储本身不带有过期机制。 在 `value` 中存储时间戳（如缓存示例中所示）并在读取时检查，或者添加一个 `DATE_TIME` 字段，并通过[定时任务触发的函数](/l/zh/developers/extend/apps/logic/logic-functions)定期清理陈旧的行。
-* **存什么。** `RAW_JSON` 可以存储任何可序列化为 JSON 的值——数字、字符串、数组、对象。 保持条目足够小；此存储用于协调和缓存，而不是用于存放大型二进制对象或文件。 对于文件，请使用 `FILES` 字段和 [`uploadFile`](/l/zh/developers/extend/apps/logic/logic-functions#uploading-files)。
+* **命名空间划分。** 给键添加前缀，以区分不同的用途——`sync-cursor:linear`、`cache:exchange-rate:USD:EUR`、`lock:nightly-report`。
+* **过期时间（TTL）。** 该存储本身不带有过期机制。 在值中存储时间戳（如缓存示例中所示）并在读取时检查，或者通过[定时任务触发的函数](/l/zh/developers/extend/apps/logic/logic-functions)清理陈旧的键。
+* **存什么。** 任何可序列化为 JSON 的值——数字、字符串、数组、对象。 保持条目足够小；此存储用于协调和缓存，而不是用于存放大型二进制对象或文件。 对于文件，请使用 `FILES` 字段和 [`uploadFile`](/l/zh/developers/extend/apps/logic/logic-functions#uploading-files)。
+* **可见性。** 条目存在于实例数据库中，而不是作为工作区记录存在——它们不会出现在工作区 UI 中，不属于你应用的数据模型，也不需要角色或对象权限。
+
+## 可选方案：可查询的存储对象
+
+内置存储是刻意设计为不透明的：条目不是记录，因此你无法在 UI 中浏览它们、将它们与其他对象关联，或通过记录查询对它们进行筛选。 当你需要这些能力时——比如可见的同步日志或逐条记录的状态——请定义一个小型的**技术对象**，其中包含唯一的 `key` 字段和一个 `RAW_JSON` 类型的 `value` 字段，并通过[类型化 API 客户端](/l/zh/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)对其进行查询。 `defineObject` 的参考请参见 [Objects](/l/zh/developers/extend/apps/data/objects)，关于强制键唯一性请参见 [Data → Unique indexes](/l/zh/developers/extend/apps/data/overview#unique-indexes)。
+
+* **将作用域限定到记录。** 从存储对象到目标对象添加一个[关系](/l/zh/developers/extend/apps/data/relations)，而不是把 id 编码进键中。
 * **可见性与权限。** 这些行像任何其他记录一样存放在工作区数据库中，因此可以通过 API 查询，并遵循你的应用[角色](/l/zh/developers/extend/apps/config/roles)设置。 要将存储从主 UI 中隐藏，只需不要把它加入到你的[导航菜单](/l/zh/developers/extend/apps/layout/navigation-menu-items)中。
-* **作用域到记录。** 需要针对每条记录的状态，而不是全局键吗？ 从存储对象到目标对象添加一个[关系](/l/zh/developers/extend/apps/data/relations)，而不是把 id 编码进键中。
 
 <Note>
-这是一种约定，而不是一个单独的功能——“KV Store” 只是你定义并通过标准 API 查询的常规自定义对象。 这意味着它可以像你的应用中其他数据一样，受益于相同的同步机制、权限控制和工具链。
+与内置存储不同，自定义对象始终作用于单个工作区——它无法像 `SERVER` 键那样在安装之间共享条目。
 </Note>

@@ -170,6 +170,17 @@ tarball アプリは公開マーケットプレイスには掲載されないた
 
 npmjs.com で自分のパッケージを開き、**Settings → Trusted Publisher** から、このリポジトリを `publish.yml` ワークフローで登録します（詳しくは [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers) を参照してください）。 provenance 付きで公開すると、どの GitHub リポジトリがそのパッケージをビルドしたかが証明されます。これは、Twenty マーケットプレイスでアプリの所有権を主張する方法にもなります。
 
+<Note>
+npm は **public** なソースリポジトリからの provenance しか受け付けません。 private リポジトリから publish しようとすると、npm は OIDC provenance バンドルを `E422 ...` エラーで拒否します。 「Unsupported GitHub Actions source repository visibility: "private"」というエラー。 private リポジトリから publish するには、publish ステップの `env` で `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` を設定して provenance を無効化します（コメントアウトされたヒントが scaffold された `publish.yml` に含まれています）。
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### 再利用可能なアクションのバージョン固定
 
 `ci.yml` と `cd.yml` のワークフローは、`@main` の再利用可能なアクションを参照しているため、`twentyhq/twenty` リポジトリでのアクションの更新が自動的に取り込まれます。 ビルドを決定的にしたい場合は、各 `uses:` 行の `@main` をコミット SHA またはリリースタグに置き換えてください。
