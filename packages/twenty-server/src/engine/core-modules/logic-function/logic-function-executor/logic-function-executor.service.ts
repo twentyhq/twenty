@@ -21,6 +21,7 @@ import {
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -92,6 +93,7 @@ export class LogicFunctionExecutorService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationStopService: ApplicationStopService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -120,6 +122,8 @@ export class LogicFunctionExecutorService {
         workspaceId,
         logicFunctionId,
       });
+
+    await this.assertApplicationNotStopped(flatApplication);
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
@@ -231,6 +235,32 @@ export class LogicFunctionExecutorService {
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
     return driver.transpile(params);
+  }
+
+  // Emergency kill switch checked on every execution: an application can be
+  // stopped for one workspace (application.stoppedAt) or server-wide for all
+  // workspaces (applicationRegistration.stoppedAt) when it degrades production.
+  private async assertApplicationNotStopped(
+    flatApplication: FlatApplication,
+  ): Promise<void> {
+    if (isDefined(flatApplication.stoppedAt)) {
+      throw new LogicFunctionException(
+        `Application ${flatApplication.id} is stopped in workspace ${flatApplication.workspaceId}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+      );
+    }
+
+    if (
+      isDefined(flatApplication.applicationRegistrationId) &&
+      (await this.applicationStopService.isApplicationRegistrationStopped(
+        flatApplication.applicationRegistrationId,
+      ))
+    ) {
+      throw new LogicFunctionException(
+        `Application registration ${flatApplication.applicationRegistrationId} is stopped server-wide`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+      );
+    }
   }
 
   private async throttleExecution(workspaceId: string) {
