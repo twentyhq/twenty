@@ -17,7 +17,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledFooter = styled.div`
+  align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
@@ -36,8 +38,8 @@ export const CampaignComposer = ({
   return (
     <StyledContainer>
       <CampaignComposerFields campaignState={campaignState} />
-      <CampaignTestSendSection campaignState={campaignState} />
       <StyledFooter>
+        <CampaignTestSendSection campaignState={campaignState} />
         <Button
           size="small"
           variant="primary"
