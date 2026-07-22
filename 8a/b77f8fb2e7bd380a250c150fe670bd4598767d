@@ -1,0 +1,21 @@
+packages/twenty-front/src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdownToMany.tsx
+  s_fcba317955df87::t_b9e8cbf738349a 310-314
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput.tsx
+  s_fcba317955df87::t_8608c560fe4bc4 239-243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "8ab77f8fb2e7bd380a250c150fe670bd4598767d",
+  "prompts": {},
+  "sessions": {
+    "s_fcba317955df87": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b570f476-3d1c-4c65-a07b-603b5a800bc4",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
