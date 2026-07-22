@@ -20,6 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const RECORD_ITEM_ID = 'record';
 
@@ -104,6 +105,12 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
   const [currentNestedFieldName, currentNestedSubFieldName] =
     currentSubFieldName?.split('.') ?? [];
 
+  const recordOptionLabel = t`Record`;
+
+  const isRecordOptionVisible = normalizeSearchText(recordOptionLabel).includes(
+    normalizeSearchText(searchQuery),
+  );
+
   if (isDefined(selectedCompositeField)) {
     return (
       <ChartGroupByFieldSelectionCompositeFieldView
@@ -140,17 +147,17 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
           selectableItemIdArray={[
-            ...(searchQuery === '' ? [RECORD_ITEM_ID] : []),
+            ...(isRecordOptionVisible ? [RECORD_ITEM_ID] : []),
             ...availableFields.map((field) => field.id),
           ]}
         >
-          {searchQuery === '' && (
+          {isRecordOptionVisible && (
             <SelectableListItem
               itemId={RECORD_ITEM_ID}
               onEnter={onSelectRecord}
             >
               <MenuItemSelect
-                text={t`Record`}
+                text={recordOptionLabel}
                 selected={
                   isCurrentGroupByField && !isDefined(currentSubFieldName)
                 }
@@ -160,7 +167,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
               />
             </SelectableListItem>
           )}
-          {availableFields.length === 0 && searchQuery !== '' ? (
+          {availableFields.length === 0 && !isRecordOptionVisible ? (
             <MenuItem text={t`No fields available`} />
           ) : (
             availableFields.map((fieldMetadataItem) => (
