@@ -32,4 +32,24 @@ describe('resolveDropTarget', () => {
 
     expect(result.dropTargetIndex).toBe(3);
   });
+
+  it('should target the card position when the pointer is above the card top', () => {
+    const result = resolveDropTarget({
+      pointerY: 80,
+      cardPosition: 2,
+      cardShape,
+    });
+
+    expect(result.dropTargetIndex).toBe(2);
+  });
+
+  it('should target the slot after the card when the pointer is below the card bottom', () => {
+    const result = resolveDropTarget({
+      pointerY: 180,
+      cardPosition: 2,
+      cardShape,
+    });
+
+    expect(result.dropTargetIndex).toBe(3);
+  });
 });
