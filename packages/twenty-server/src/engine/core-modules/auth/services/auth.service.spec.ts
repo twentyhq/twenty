@@ -95,11 +95,12 @@ describe('AuthService', () => {
         {
           provide: DomainServerConfigService,
           useValue: {
-            buildBaseUrl: jest.fn(({ pathname, searchParams }) =>
+            buildBaseUrl: jest.fn(({ pathname, searchParams, hash }) =>
               buildUrlWithPathnameAndSearchParams({
                 baseUrl: new URL('https://app.twenty.com'),
                 pathname,
                 searchParams,
+                hash,
               }),
             ),
           },
@@ -715,29 +716,28 @@ describe('AuthService', () => {
         .mockResolvedValue({ id: 'user-id' } as UserEntity);
     });
 
-    it('should not mint a refresh token nor put credentials in the redirect URL', async () => {
+    it('should not mint a refresh token nor put credentials in the query string', async () => {
       const url = await service.signInUpWithSocialSSO(
         socialSSOUser,
         AuthProviderEnum.Google,
       );
 
       expect(refreshTokenService.generateRefreshToken).not.toHaveBeenCalled();
-      expect([...new URL(url).searchParams.keys()].sort()).toEqual([
-        'returnToPath',
-        'ssoExchangeToken',
-      ]);
+      expect([...new URL(url).searchParams.keys()]).toEqual(['returnToPath']);
     });
 
-    it('should redirect with the sso exchange token', async () => {
-      const url = await service.signInUpWithSocialSSO(
-        socialSSOUser,
-        AuthProviderEnum.Google,
+    it('should redirect with the sso exchange token in the url fragment', async () => {
+      const url = new URL(
+        await service.signInUpWithSocialSSO(
+          socialSSOUser,
+          AuthProviderEnum.Google,
+        ),
       );
 
-      expect(new URL(url).searchParams.get('ssoExchangeToken')).toBe(
-        'sso-exchange-token',
-      );
-      expect(new URL(url).pathname).toBe(AppPath.SignInUp);
+      expect(
+        new URLSearchParams(url.hash.substring(1)).get('ssoExchangeToken'),
+      ).toBe('sso-exchange-token');
+      expect(url.pathname).toBe(AppPath.SignInUp);
     });
 
     it('should not sign the user up again when they already exist', async () => {

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
-import { MemoryRouter, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, useSearchParams } from 'react-router-dom';
 
 import { SignInUpSSOExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSSOExchangeTokenEffect';
 
@@ -18,25 +18,31 @@ const SearchParamsProbe = () => {
   return <div data-testid="search-params">{searchParams.toString()}</div>;
 };
 
-const renderEffect = (initialEntry: string) =>
-  render(
+// BrowserRouter because the effect reads and strips window.location, which
+// MemoryRouter never touches
+const renderEffect = (initialUrl: string) => {
+  window.history.replaceState(null, '', initialUrl);
+
+  return render(
     <StrictMode>
-      <MemoryRouter initialEntries={[initialEntry]}>
+      <BrowserRouter>
         <SignInUpSSOExchangeTokenEffect />
         <SearchParamsProbe />
-      </MemoryRouter>
+      </BrowserRouter>
     </StrictMode>,
   );
+};
 
 const getSearchParams = () => screen.getByTestId('search-params').textContent;
 
 describe('SignInUpSSOExchangeTokenEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.history.replaceState(null, '', '/');
   });
 
   it('redeems the single use token at most once', async () => {
-    renderEffect('/sign-in-up?ssoExchangeToken=sso-exchange-token');
+    renderEffect('/sign-in-up#ssoExchangeToken=sso-exchange-token');
 
     await waitFor(() => {
       expect(redeemSSOExchangeTokenMock).toHaveBeenCalledWith(
@@ -48,12 +54,13 @@ describe('SignInUpSSOExchangeTokenEffect', () => {
 
   it('strips the token from the url while keeping returnToPath', async () => {
     renderEffect(
-      '/sign-in-up?ssoExchangeToken=sso-exchange-token&returnToPath=%2Fsettings%2Fprofile',
+      '/sign-in-up?returnToPath=%2Fsettings%2Fprofile#ssoExchangeToken=sso-exchange-token',
     );
 
     await waitFor(() => {
-      expect(getSearchParams()).toBe('returnToPath=%2Fsettings%2Fprofile');
+      expect(window.location.hash).toBe('');
     });
+    expect(getSearchParams()).toBe('returnToPath=%2Fsettings%2Fprofile');
     expect(redeemSSOExchangeTokenMock).toHaveBeenCalledTimes(1);
   });
 

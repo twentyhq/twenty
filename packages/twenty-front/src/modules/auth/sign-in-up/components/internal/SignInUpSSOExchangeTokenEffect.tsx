@@ -8,15 +8,16 @@ export const SignInUpSSOExchangeTokenEffect = () => {
   const { redeemSSOExchangeToken } = useRedeemSSOExchangeToken();
 
   useEffect(() => {
-    const ssoExchangeToken = searchParams.get('ssoExchangeToken');
+    // window.location is read live because the replace below synchronously
+    // strips the fragment, which latches StrictMode's second invocation out
+    const ssoExchangeToken = new URLSearchParams(
+      window.location.hash.substring(1),
+    ).get('ssoExchangeToken');
 
     if (!isDefined(ssoExchangeToken)) {
       return;
     }
 
-    // Deleting in place also latches the redemption: StrictMode re-invokes this
-    // effect with the same searchParams object, which no longer holds the token
-    searchParams.delete('ssoExchangeToken');
     setSearchParams(searchParams, { replace: true });
 
     void redeemSSOExchangeToken(ssoExchangeToken);

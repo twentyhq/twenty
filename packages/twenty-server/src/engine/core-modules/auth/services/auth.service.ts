@@ -988,14 +988,16 @@ export class AuthService {
           authProvider,
         });
 
+      // The token rides in the fragment so it never reaches access logs,
+      // proxies or Referer headers: browsers keep it out of the request line.
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {
-          ssoExchangeToken: ssoExchangeToken.token,
           ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
             ? { returnToPath }
             : {}),
         },
+        hash: `ssoExchangeToken=${ssoExchangeToken.token}`,
       });
 
       return url.toString();
