@@ -39,7 +39,12 @@ jobs:
             kyotech/twenty-custom:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+      # 4.1 prepare kubectl command
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
       # 5. Update the deployment directly
       - name: Deploy to k3s
         run: |
