@@ -2,48 +2,13 @@ import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithin
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+  makeDraft as makeDraftFromTabs,
+  makeTab,
+  makeWidget,
+} from '@/page-layout/testing/pageLayoutDraftFixtures';
 
-const makeWidget = (id: string, index: number): PageLayoutWidget =>
-  ({
-    id,
-    pageLayoutTabId: 'tab-1',
-    title: id,
-    isActive: true,
-    type: WidgetType.FIELDS,
-    gridPosition: { column: 0, columnSpan: 1, row: 0, rowSpan: 1 },
-    configuration: { __typename: 'FieldsConfiguration' as const },
-    position: {
-      __typename: 'PageLayoutWidgetVerticalListPosition' as const,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      index,
-    },
-  }) as unknown as PageLayoutWidget;
-
-const makeDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => ({
-  id: 'test-layout',
-  name: 'Test Layout',
-  type: PageLayoutType.RECORD_PAGE,
-  objectMetadataId: null,
-  tabs: [
-    {
-      id: 'tab-1',
-      applicationId: '',
-      title: 'tab-1',
-      isActive: true,
-      position: 0,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      pageLayoutId: '',
-      widgets,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    },
-  ],
-});
+const makeDraft = (widgets: PageLayoutWidget[]): DraftPageLayout =>
+  makeDraftFromTabs([makeTab('tab-1', widgets)]);
 
 const orderOf = (draft: DraftPageLayout) =>
   draft.tabs[0].widgets.map((widget) => widget.id);

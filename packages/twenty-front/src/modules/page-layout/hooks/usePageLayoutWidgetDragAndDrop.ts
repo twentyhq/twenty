@@ -9,6 +9,7 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { moveWidgetToTabInDraft } from '@/page-layout/utils/moveWidgetToTabInDraft';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
+import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -59,29 +60,25 @@ export const usePageLayoutWidgetDragAndDrop = (
       const sourceData = event.operation.source?.data as
         | PageLayoutWidgetDndData
         | undefined;
-      const target = event.operation.target as {
-        group?: unknown;
-        index?: unknown;
-        data?: PageLayoutWidgetDndData;
-      } | null;
+      const targetData = event.operation.target?.data as
+        | PageLayoutWidgetDndData
+        | undefined;
 
       if (
         !event.canceled &&
         sourceData?.type === 'widget' &&
-        isDefined(target)
+        isDefined(targetData)
       ) {
         const { widgetId, tabId: sourceTabId, index: sourceIndex } = sourceData;
 
-        if (target.data?.type === 'tab-widget-drop') {
-          const destinationTabId = target.data.tabId;
+        if (targetData.type === 'tab-widget-drop') {
+          const destinationTabId = targetData.tabId;
 
-          if (destinationTabId !== sourceTabId) {
-            store.set(pageLayoutDraftState, (prev) =>
-              moveWidgetToTabInDraft(prev, { widgetId, destinationTabId }),
-            );
-          }
-        } else if (target.data?.type === 'widget-list') {
-          const destinationTabId = target.data.tabId;
+          store.set(pageLayoutDraftState, (prev) =>
+            moveWidgetToTabInDraft(prev, { widgetId, destinationTabId }),
+          );
+        } else if (targetData.type === 'widget-list') {
+          const destinationTabId = targetData.tabId;
 
           store.set(pageLayoutDraftState, (prev) => {
             if (destinationTabId !== sourceTabId) {
@@ -105,25 +102,31 @@ export const usePageLayoutWidgetDragAndDrop = (
               toIndex: tab.widgets.length - 1,
             });
           });
-        } else if (isDefined(target.group)) {
-          const destinationTabId = String(target.group);
-          const destinationIndex = Number(target.index);
+        } else if (targetData.type === 'widget') {
+          // The drop line renders above the hovered widget, so the drop targets
+          // the slot before it; getDestinationIndex compensates for the source
+          // removal shifting same-tab downward moves by one.
+          const destinationTabId = targetData.tabId;
+          const destinationIndex = getDestinationIndex({
+            dropTargetIndex: targetData.index,
+            sourceIndex,
+            sourceDroppableId: sourceTabId,
+            destinationDroppableId: destinationTabId,
+          });
 
-          if (Number.isInteger(destinationIndex)) {
-            store.set(pageLayoutDraftState, (prev) =>
-              destinationTabId === sourceTabId
-                ? moveWidgetWithinTabInDraft(prev, {
-                    tabId: sourceTabId,
-                    fromIndex: sourceIndex,
-                    toIndex: destinationIndex,
-                  })
-                : moveWidgetToTabInDraft(prev, {
-                    widgetId,
-                    destinationTabId,
-                    destinationIndex,
-                  }),
-            );
-          }
+          store.set(pageLayoutDraftState, (prev) =>
+            destinationTabId === sourceTabId
+              ? moveWidgetWithinTabInDraft(prev, {
+                  tabId: sourceTabId,
+                  fromIndex: sourceIndex,
+                  toIndex: destinationIndex,
+                })
+              : moveWidgetToTabInDraft(prev, {
+                  widgetId,
+                  destinationTabId,
+                  destinationIndex,
+                }),
+          );
         }
       }
 

@@ -57,7 +57,6 @@ export const PageLayoutContent = () => {
       return (
         <PageLayoutVerticalListEditor
           widgets={activeTab.widgets}
-          isReorderEnabled={true}
           trailingElement={<RecordPageAddWidgetSection />}
         />
       );

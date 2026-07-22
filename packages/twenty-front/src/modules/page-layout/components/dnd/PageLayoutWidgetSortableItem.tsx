@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { PageLayoutWidgetDropLine } from '@/page-layout/components/dnd/PageLayoutWidgetDropLine';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
@@ -24,7 +25,6 @@ type PageLayoutWidgetSortableItemProps = {
   widgetId: string;
   tabId: string;
   index: number;
-  disabled?: boolean;
   children: ReactNode;
 };
 
@@ -32,7 +32,6 @@ export const PageLayoutWidgetSortableItem = ({
   widgetId,
   tabId,
   index,
-  disabled = false,
   children,
 }: PageLayoutWidgetSortableItemProps) => {
   const data: PageLayoutWidgetDragData = {
@@ -47,14 +46,17 @@ export const PageLayoutWidgetSortableItem = ({
     index,
     group: tabId,
     data,
-    disabled,
     transition: null,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
     feedback: 'clone',
   });
 
   return (
-    <StyledSortableRoot ref={ref} isDragging={isDragging}>
+    <StyledSortableRoot
+      ref={ref}
+      isDragging={isDragging}
+      onDragStart={preventNativeDragStart}
+    >
       {isDropTarget && <PageLayoutWidgetDropLine />}
       {children}
     </StyledSortableRoot>

@@ -45,13 +45,11 @@ const StyledEndDropZone = styled.div`
 
 type PageLayoutVerticalListEditorProps = {
   widgets: PageLayoutWidget[];
-  isReorderEnabled?: boolean;
   trailingElement?: ReactNode;
 };
 
 export const PageLayoutVerticalListEditor = ({
   widgets,
-  isReorderEnabled = true,
   trailingElement,
 }: PageLayoutVerticalListEditorProps) => {
   const { tabId } = usePageLayoutContentContext();
@@ -73,7 +71,6 @@ export const PageLayoutVerticalListEditor = ({
 
   const { ref: endDropRef, isDropTarget: isEndDropTarget } = useDroppable({
     id: `page-layout-widget-list-${tabId}`,
-    disabled: !isReorderEnabled,
     collisionDetector: pointerIntersection,
     data: endDropData,
   });
@@ -89,7 +86,6 @@ export const PageLayoutVerticalListEditor = ({
           widgetId={widget.id}
           tabId={tabId}
           index={index}
-          disabled={!isReorderEnabled}
         >
           <WidgetRenderer widget={widget} />
         </PageLayoutWidgetSortableItem>
