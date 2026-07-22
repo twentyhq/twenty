@@ -1,0 +1,32 @@
+packages/twenty-front/src/modules/page-layout/widgets/message-campaign/components/MessageCampaignWidget.tsx
+  s_c3fbc446206706::t_146d6e4e40a7aa 6,26-27,37,41-48,55
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_c3fbc446206706::t_8d75ddaf72f4fc 37-84
+  s_c3fbc446206706::t_4e4007c87ed119 6,9,11,19-21
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784663000000-add-message-campaign-composer-tab.command.ts
+  s_c3fbc446206706::t_3332366997433e 22-37
+  s_c3fbc446206706::t_a1359195356678 122
+  s_c3fbc446206706::t_2df69433ce5259 100,108
+  s_c3fbc446206706::t_fd4c47d3f4432a 146,151
+packages/twenty-front/src/modules/page-layout/components/PageLayoutTabsRenderer.tsx
+  s_c3fbc446206706::t_fcfefa2e4aaa42 4
+  s_c3fbc446206706::t_40ec7d21468ad2 173-185,187
+  s_c3fbc446206706::t_17d741b3f80e43 161-162
+  s_c3fbc446206706::t_8b740fbf33ec77 132-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "dc9988252f95559ff106ca185b4ced0662e8201a",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
