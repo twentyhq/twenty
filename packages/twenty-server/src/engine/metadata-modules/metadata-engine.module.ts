@@ -7,6 +7,7 @@ import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.mod
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
+import { ApplicationKeyValueModule } from 'src/engine/core-modules/application/application-key-value/application-key-value.module';
 import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -48,6 +49,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiGenerateTextModule,
     AiWorkspaceStatsModule,
     ApplicationConnectionsModule,
+    ApplicationKeyValueModule,
     MinimalMetadataModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
