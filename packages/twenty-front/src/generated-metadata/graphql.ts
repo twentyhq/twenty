@@ -279,6 +279,19 @@ export type AppConnection = {
   visibility: Scalars['String']['output'];
 };
 
+export type AppKeyValue = {
+  __typename?: 'AppKeyValue';
+  key: Scalars['String']['output'];
+  scope: AppKeyValueScope;
+  value?: Maybe<Scalars['JSON']['output']>;
+};
+
+/** WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key. */
+export enum AppKeyValueScope {
+  SERVER = 'SERVER',
+  WORKSPACE = 'WORKSPACE'
+}
+
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -2556,6 +2569,7 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
+  deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteApplicationRegistration: Scalars['Boolean']['output'];
   deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
@@ -2645,6 +2659,7 @@ export type Mutation = {
   sendEmailViaEmailingDomain: SendEmailViaDomainOutput;
   sendInvitations: SendInvitations;
   sendMessageCampaign: SendMessageCampaignOutputDto;
+  setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -3014,6 +3029,12 @@ export type MutationCreateWebhookArgs = {
 
 export type MutationDeactivateSkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteAppKeyValueArgs = {
+  key: Scalars['String']['input'];
+  scope?: InputMaybe<AppKeyValueScope>;
 };
 
 
@@ -3441,6 +3462,11 @@ export type MutationSendInvitationsArgs = {
 
 export type MutationSendMessageCampaignArgs = {
   input: SendMessageCampaignInput;
+};
+
+
+export type MutationSetAppKeyValueArgs = {
+  input: SetAppKeyValueInput;
 };
 
 
@@ -4343,6 +4369,7 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
+  appKeyValue?: Maybe<AppKeyValue>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
@@ -4470,6 +4497,12 @@ export type QueryAppConnectionArgs = {
 
 export type QueryAppConnectionsArgs = {
   filter?: InputMaybe<ListAppConnectionsInput>;
+};
+
+
+export type QueryAppKeyValueArgs = {
+  key: Scalars['String']['input'];
+  scope?: InputMaybe<AppKeyValueScope>;
 };
 
 
@@ -5150,6 +5183,12 @@ export type Sentry = {
   dsn?: Maybe<Scalars['String']['output']>;
   environment?: Maybe<Scalars['String']['output']>;
   release?: Maybe<Scalars['String']['output']>;
+};
+
+export type SetAppKeyValueInput = {
+  key: Scalars['String']['input'];
+  scope?: InputMaybe<AppKeyValueScope>;
+  value?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type SetupOidcSsoInput = {
