@@ -5,7 +5,6 @@ import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 
-// Dispatched by the recall-webhook resolver; runs in the resolved workspace so the client is workspace-scoped.
 export const processRecallWebhookHandler = (body: RecallWebhookBody) =>
   handleRecallWebhook({
     client: new CoreApiClient(),
