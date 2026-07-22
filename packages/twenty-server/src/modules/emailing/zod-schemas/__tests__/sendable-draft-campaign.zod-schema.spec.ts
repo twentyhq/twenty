@@ -1,9 +1,9 @@
-import { CAMPAIGN_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { MessageCampaignStatus } from 'twenty-shared/types';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 
 describe('sendableDraftCampaignSchema', () => {
   const sendableDraftCampaign = {
-    status: CAMPAIGN_STATUS.DRAFT,
+    status: MessageCampaignStatus.DRAFT,
     subject: 'Monthly newsletter',
     bodyTemplate: '<p>Hello {{firstName}}</p>',
     fromAddress: { primaryEmail: 'news@company.com' },
@@ -20,7 +20,7 @@ describe('sendableDraftCampaignSchema', () => {
     expect(
       sendableDraftCampaignSchema.safeParse({
         ...sendableDraftCampaign,
-        status: CAMPAIGN_STATUS.SENT,
+        status: MessageCampaignStatus.SENT,
       }).success,
     ).toBe(false);
   });

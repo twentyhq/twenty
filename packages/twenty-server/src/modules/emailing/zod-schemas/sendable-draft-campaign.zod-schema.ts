@@ -1,9 +1,8 @@
+import { MessageCampaignStatus } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { CAMPAIGN_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-
 export const sendableDraftCampaignSchema = z.object({
-  status: z.literal(CAMPAIGN_STATUS.DRAFT),
+  status: z.literal(MessageCampaignStatus.DRAFT),
   subject: z.string().min(1),
   bodyTemplate: z.string().min(1),
   fromAddress: z.object({ primaryEmail: z.email() }),

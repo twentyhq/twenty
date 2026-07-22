@@ -1,9 +1,4 @@
-type MessageCampaignStatus =
-  | 'DRAFT'
-  | 'SCHEDULED'
-  | 'SENDING'
-  | 'SENT'
-  | 'SENT_WITH_ERRORS';
+import { type MessageCampaignStatus } from 'twenty-shared/types';
 
 export type MessageCampaign = {
   __typename: 'MessageCampaign';

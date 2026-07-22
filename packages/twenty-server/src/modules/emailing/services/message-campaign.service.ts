@@ -9,7 +9,6 @@ import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
-  CAMPAIGN_STATUS,
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
   REFRESH_CAMPAIGN_STATS_JOB,
@@ -61,7 +60,10 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { MessageParticipantRole } from 'twenty-shared/types';
+import {
+  MessageParticipantRole,
+  MessageCampaignStatus,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
@@ -200,8 +202,8 @@ export class MessageCampaignService {
 
           // Conditional update so two concurrent sends cannot both enqueue
           const { affected } = await campaignRepository.update(
-            { id: campaignId, status: CAMPAIGN_STATUS.DRAFT },
-            { status: CAMPAIGN_STATUS.SENDING },
+            { id: campaignId, status: MessageCampaignStatus.DRAFT },
+            { status: MessageCampaignStatus.SENDING },
           );
 
           if (affected !== 1) {
@@ -758,12 +760,12 @@ export class MessageCampaignService {
     );
 
     await campaignRepository.update(
-      { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
+      { id: campaignId, status: MessageCampaignStatus.SENDING },
       {
         status:
           failedCount > 0
-            ? CAMPAIGN_STATUS.SENT_WITH_ERRORS
-            : CAMPAIGN_STATUS.SENT,
+            ? MessageCampaignStatus.SENT_WITH_ERRORS
+            : MessageCampaignStatus.SENT,
         sentAt: new Date(),
       },
     );

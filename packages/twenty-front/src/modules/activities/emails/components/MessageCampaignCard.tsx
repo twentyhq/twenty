@@ -1,4 +1,7 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  MessageCampaignStatus,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignComposer } from '@/activities/emails/components/CampaignComposer';
@@ -23,8 +26,7 @@ export const MessageCampaignCard = () => {
     return null;
   }
 
-  // A campaign that left DRAFT is already with the provider, so no more editing
-  if (campaign.status !== 'DRAFT') {
+  if (campaign.status !== MessageCampaignStatus.DRAFT) {
     return (
       <MessageCampaignStats
         status={campaign.status}

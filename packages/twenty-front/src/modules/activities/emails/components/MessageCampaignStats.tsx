@@ -1,17 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { MessageCampaignStatus } from 'twenty-shared/types';
 
+import { getMessageCampaignStatusBadge } from '@/activities/emails/utils/getMessageCampaignStatusBadge';
 import { Status } from 'twenty-ui/data-display';
-import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-
-const CAMPAIGN_STATUS_TO_COLOR: Partial<Record<string, ThemeColor>> = {
-  SENDING: 'yellow',
-  SENT: 'green',
-  SENT_WITH_ERRORS: 'orange',
-};
 
 const StyledContainer = styled.div`
   display: flex;
@@ -54,7 +49,7 @@ const StyledSubject = styled.div`
 `;
 
 type MessageCampaignStatsProps = {
-  status: string;
+  status: MessageCampaignStatus;
   subject: string | null;
   sentAt: string | null;
   sentCount: number;
@@ -79,16 +74,10 @@ export const MessageCampaignStats = ({
     { label: t`Complained`, value: complainedCount },
   ];
 
-  const statusLabels: Record<string, string> = {
-    DRAFT: t`Draft`,
-    SCHEDULED: t`Scheduled`,
-    SENDING: t`Sending`,
-    SENT: t`Sent`,
-    SENT_WITH_ERRORS: t`Sent with errors`,
-  };
+  const statusBadge = getMessageCampaignStatusBadge(status);
 
   const description =
-    status === 'SCHEDULED'
+    status === MessageCampaignStatus.SCHEDULED
       ? t`This campaign is scheduled.`
       : sentAt === null
         ? t`This campaign is being sent.`
@@ -101,8 +90,9 @@ export const MessageCampaignStats = ({
         description={description}
         adornment={
           <Status
-            color={CAMPAIGN_STATUS_TO_COLOR[status] ?? 'gray'}
-            text={statusLabels[status] ?? status}
+            color={statusBadge.color}
+            text={statusBadge.label}
+            weight="medium"
           />
         }
       />

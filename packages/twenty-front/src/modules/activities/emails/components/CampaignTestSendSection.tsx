@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
 import { z } from 'zod';
@@ -49,24 +50,26 @@ export const CampaignTestSendSection = ({
 
   const { sendMessageCampaignTest, loading } = useSendMessageCampaignTest();
 
+  const trimmedToAddress = toAddress.trim();
+
   const handleToAddressChange = (value: string) => {
     setToAddress(value);
 
-    const result = z.email().safeParse(value.trim());
+    const trimmedValue = value.trim();
 
     setToAddressErrorMessage(
-      result.success || value.trim().length === 0
+      z.email().safeParse(trimmedValue).success || trimmedValue.length === 0
         ? undefined
         : t`Invalid email address`,
     );
   };
 
   const isCampaignReadyForTest =
-    campaignState.fromAddress.trim().length > 0 &&
-    campaignState.subject.trim().length > 0;
+    isNonEmptyString(campaignState.fromAddress) &&
+    isNonEmptyString(campaignState.subject.trim());
 
   const canSendTest =
-    toAddress.trim().length > 0 &&
+    trimmedToAddress.length > 0 &&
     !isDefined(toAddressErrorMessage) &&
     isCampaignReadyForTest &&
     !loading;
@@ -77,11 +80,11 @@ export const CampaignTestSendSection = ({
     }
 
     const success = await sendMessageCampaignTest({
-      toAddress: toAddress.trim(),
+      toAddress: trimmedToAddress,
       unsubscribeTopicId: campaignState.unsubscribeTopicId ?? undefined,
       subject: campaignState.subject,
       body: campaignState.body,
-      fromAddress: campaignState.fromAddress.trim(),
+      fromAddress: campaignState.fromAddress,
     });
 
     if (success) {

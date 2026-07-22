@@ -113,15 +113,6 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
-    // The email already left the provider, a billing failure must not make
-    // this look like a failed send and trigger a duplicate retry
-    await this.emailBillingService
-      .billSentEmails({
-        workspaceId: currentWorkspace.id,
-        sentEmailCount: 1,
-      })
-      .catch(() => undefined);
-
     return { messageId: result.messageId };
   }
 
