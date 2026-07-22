@@ -50,10 +50,7 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
 
   const breakdown = parts.length > 0 ? ` (${parts.join(', ')})` : '';
 
-  return (
-    t`${preview.totalMembers} in this list — ${preview.sendable} sendable` +
-    breakdown
-  );
+  return t`${preview.totalMembers} in this list` + breakdown;
 };
 
 type CampaignComposerFieldsProps = {
@@ -119,20 +116,24 @@ export const CampaignComposerFields = ({
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
-      <Select
-        dropdownId="campaign-composer-unsubscribe-topic"
-        label={t`Unsubscribe topic`}
-        fullWidth
-        value={campaignState.unsubscribeTopicId ?? ''}
-        options={topicOptions}
-        emptyOption={{ label: t`No topic`, value: '' }}
-        onChange={(value) =>
-          campaignState.setUnsubscribeTopicId(value === '' ? null : value)
-        }
-      />
-      <StyledHint>
-        {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-      </StyledHint>
+      {topicOptions.length > 0 && (
+        <>
+          <Select
+            dropdownId="campaign-composer-unsubscribe-topic"
+            label={t`Unsubscribe topic`}
+            fullWidth
+            value={campaignState.unsubscribeTopicId ?? ''}
+            options={topicOptions}
+            emptyOption={{ label: t`No topic`, value: '' }}
+            onChange={(value) =>
+              campaignState.setUnsubscribeTopicId(value === '' ? null : value)
+            }
+          />
+          <StyledHint>
+            {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
+          </StyledHint>
+        </>
+      )}
       <FormTextFieldInput
         label={t`Subject`}
         defaultValue={campaignState.subject}
@@ -140,7 +141,7 @@ export const CampaignComposerFields = ({
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        defaultValue={campaignState.body}
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

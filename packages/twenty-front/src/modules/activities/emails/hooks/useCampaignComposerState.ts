@@ -1,42 +1,79 @@
 import { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
+import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+
+type CampaignComposerDraft = {
+  listId: string | null;
+  unsubscribeTopicId: string | null;
+  fromAddress: string;
+  subject: string;
+  body: string;
+};
 
 type UseCampaignComposerStateArgs = {
+  campaign: MessageCampaign;
   onSent?: () => void;
 };
 
 export const useCampaignComposerState = ({
+  campaign,
   onSent,
 }: UseCampaignComposerStateArgs) => {
-  const [unsubscribeTopicId, setUnsubscribeTopicId] = useState<string | null>(
-    null,
-  );
-  const [listId, setListId] = useState<string | null>(null);
-  const [fromAddress, setFromAddress] = useState('');
-  const [subject, setSubject] = useState('');
-  const [body, setBody] = useState('');
+  const [draft, setDraft] = useState<CampaignComposerDraft>(() => ({
+    listId: campaign.listId,
+    unsubscribeTopicId: campaign.unsubscribeTopicId,
+    fromAddress: campaign.fromAddress?.primaryEmail ?? '',
+    subject: campaign.subject ?? '',
+    body: campaign.bodyTemplate ?? '',
+  }));
+
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { sendMessageCampaign, loading } = useSendMessageCampaign();
 
+  const persistDraft = useDebouncedCallback(
+    (draftToPersist: CampaignComposerDraft) =>
+      updateOneRecord({
+        objectNameSingular: 'messageCampaign',
+        idToUpdate: campaign.id,
+        updateOneRecordInput: {
+          listId: draftToPersist.listId,
+          unsubscribeTopicId: draftToPersist.unsubscribeTopicId,
+          fromAddress: {
+            primaryEmail: draftToPersist.fromAddress.trim(),
+            additionalEmails: null,
+          },
+          subject: draftToPersist.subject,
+          bodyTemplate: draftToPersist.body,
+        },
+      }),
+    500,
+  );
+
+  const updateDraft = (partialDraft: Partial<CampaignComposerDraft>) => {
+    const nextDraft = { ...draft, ...partialDraft };
+
+    setDraft(nextDraft);
+    persistDraft(nextDraft);
+  };
+
   const canSend =
-    listId !== null &&
-    fromAddress.trim().length > 0 &&
-    subject.trim().length > 0 &&
+    draft.listId !== null &&
+    draft.fromAddress.trim().length > 0 &&
+    draft.subject.trim().length > 0 &&
     !loading;
 
   const handleSend = async () => {
-    if (listId === null || !canSend) {
+    if (!canSend) {
       return;
     }
 
-    const success = await sendMessageCampaign({
-      listId,
-      unsubscribeTopicId: unsubscribeTopicId ?? undefined,
-      subject,
-      body,
-      fromAddress: fromAddress.trim(),
-    });
+    await persistDraft.flush();
+
+    const success = await sendMessageCampaign({ campaignId: campaign.id });
 
     if (success) {
       onSent?.();
@@ -44,16 +81,13 @@ export const useCampaignComposerState = ({
   };
 
   return {
-    unsubscribeTopicId,
-    setUnsubscribeTopicId,
-    listId,
-    setListId,
-    fromAddress,
-    setFromAddress,
-    subject,
-    setSubject,
-    body,
-    setBody,
+    ...draft,
+    setListId: (listId: string | null) => updateDraft({ listId }),
+    setUnsubscribeTopicId: (unsubscribeTopicId: string | null) =>
+      updateDraft({ unsubscribeTopicId }),
+    setFromAddress: (fromAddress: string) => updateDraft({ fromAddress }),
+    setSubject: (subject: string) => updateDraft({ subject }),
+    setBody: (body: string) => updateDraft({ body }),
     handleSend,
     canSend,
     loading,

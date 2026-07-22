@@ -10,11 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type SendMessageCampaignParams = {
-  listId: string;
-  unsubscribeTopicId?: string;
-  subject: string;
-  body: string;
-  fromAddress: string;
+  campaignId: string;
 };
 
 export const useSendMessageCampaign = () => {

@@ -61,7 +61,12 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 type SendCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
-  listId: string;
+  campaignId: string;
+};
+
+type SendCampaignTestArgs = {
+  workspaceId: string;
+  toAddress: string;
   subject: string;
   html: string;
   fromAddress: string;
@@ -136,31 +141,35 @@ export class MessageCampaignService {
   async send({
     workspaceId,
     userWorkspaceId,
-    unsubscribeTopicId,
-    subject,
-    html,
-    fromAddress,
-    listId,
+    campaignId,
   }: SendCampaignArgs): Promise<SendCampaignResult> {
-    const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
-
-    const emailingDomain = await this.emailingDomainRepository.findOne(
-      workspaceId,
-      { where: { domain: fromDomain, status: EmailingDomainStatus.VERIFIED } },
-    );
-
-    if (emailingDomain === null) {
-      throw new Error(
-        `No verified emailing domain matches the from address ${fromAddress}`,
-      );
-    }
-
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
 
-    const { campaignId, recipients, skipped } =
+    const { fromAddress, listId } =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const campaign = await this.findSendableDraftCampaignOrThrow(
+            workspaceId,
+            campaignId,
+            roleId,
+          );
+
+          return {
+            fromAddress: campaign.fromAddress?.primaryEmail ?? '',
+            listId: campaign.listId ?? '',
+          };
+        },
+      );
+
+    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+      workspaceId,
+      fromAddress,
+    );
+
+    const { recipients, skipped } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const rawRecipients = await this.resolveRecipientsFromList(
@@ -174,18 +183,17 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const newCampaignId = await this.createCampaign({
+          const campaignRepository = await this.getUserRepository(
             workspaceId,
+            MessageCampaignWorkspaceEntity,
             roleId,
-            subject,
-            html,
-            fromAddress,
-            unsubscribeTopicId,
-            listId,
+          );
+
+          await campaignRepository.update(campaignId, {
+            status: CAMPAIGN_STATUS.SENDING,
           });
 
           return {
-            campaignId: newCampaignId,
             recipients: normalized.recipients,
             skipped: normalized.skipped,
           };
@@ -212,6 +220,61 @@ export class MessageCampaignService {
     );
 
     return { campaignId, queuedCount: recipients.length, skipped };
+  }
+
+  async sendTest({
+    workspaceId,
+    toAddress,
+    subject,
+    html,
+    fromAddress,
+    unsubscribeTopicId,
+  }: SendCampaignTestArgs): Promise<EmailingDomainSendEmailResult> {
+    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+      workspaceId,
+      fromAddress,
+    );
+
+    const variables = this.buildTemplateVariables(null);
+    const renderedSubject = renderCampaignTemplate(subject, variables, {
+      escapeValues: false,
+    });
+    const renderedHtml = renderCampaignTemplate(html, variables, {
+      escapeValues: true,
+    });
+
+    return this.emailingDomainSenderService.sendEmail(
+      workspaceId,
+      emailingDomain.id,
+      {
+        from: fromAddress,
+        to: [toAddress],
+        subject: renderedSubject,
+        text: this.htmlToText(renderedHtml),
+        html: renderedHtml,
+        unsubscribeTopicId,
+      },
+    );
+  }
+
+  private async findVerifiedEmailingDomainOrThrow(
+    workspaceId: string,
+    fromAddress: string,
+  ): Promise<EmailingDomainEntity> {
+    const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
+
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      workspaceId,
+      { where: { domain: fromDomain, status: EmailingDomainStatus.VERIFIED } },
+    );
+
+    if (emailingDomain === null) {
+      throw new Error(
+        `No verified emailing domain matches the from address ${fromAddress}`,
+      );
+    }
+
+    return emailingDomain;
   }
 
   async processMaterializeJob(data: MaterializeCampaignJobData): Promise<void> {
@@ -500,39 +563,44 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async createCampaign({
-    workspaceId,
-    roleId,
-    subject,
-    html,
-    fromAddress,
-    unsubscribeTopicId,
-    listId,
-  }: {
-    workspaceId: string;
-    roleId: string;
-    subject: string;
-    html: string;
-    fromAddress: string;
-    unsubscribeTopicId?: string;
-    listId: string;
-  }): Promise<string> {
+  private async findSendableDraftCampaignOrThrow(
+    workspaceId: string,
+    campaignId: string,
+    roleId: string,
+  ): Promise<MessageCampaignWorkspaceEntity> {
     const campaignRepository = await this.getUserRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
     );
 
-    const { identifiers } = await campaignRepository.insert({
-      subject,
-      bodyTemplate: html,
-      fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
-      status: CAMPAIGN_STATUS.SENDING,
-      unsubscribeTopicId: unsubscribeTopicId ?? null,
-      listId,
+    const campaign = await campaignRepository.findOne({
+      where: { id: campaignId },
     });
 
-    return identifiers[0].id;
+    if (campaign === null) {
+      throw new Error(`Campaign ${campaignId} not found`);
+    }
+
+    if (campaign.status !== CAMPAIGN_STATUS.DRAFT) {
+      throw new Error(
+        `Campaign ${campaignId} is not a draft (status: ${campaign.status})`,
+      );
+    }
+
+    if (!isNonEmptyString(campaign.subject)) {
+      throw new Error(`Campaign ${campaignId} has no subject`);
+    }
+
+    if (!isNonEmptyString(campaign.fromAddress?.primaryEmail)) {
+      throw new Error(`Campaign ${campaignId} has no from address`);
+    }
+
+    if (!isNonEmptyString(campaign.listId)) {
+      throw new Error(`Campaign ${campaignId} has no recipient list`);
+    }
+
+    return campaign;
   }
 
   private async materializeCampaignMessages({

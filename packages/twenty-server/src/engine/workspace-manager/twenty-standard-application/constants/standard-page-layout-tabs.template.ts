@@ -152,6 +152,12 @@ export const TAB_PROPS = {
     icon: 'IconSettings',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
+  composer: {
+    title: 'Composer',
+    position: 20,
+    icon: 'IconPencil',
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  },
   flowSecondary: {
     title: 'Flow',
     position: 20,
@@ -218,6 +224,12 @@ export const WIDGET_PROPS = {
   workflow: {
     title: 'Flow',
     type: WidgetType.WORKFLOW,
+    gridPosition: GRID_POSITIONS.FULL_WIDTH,
+    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+  },
+  messageCampaign: {
+    title: 'Composer',
+    type: WidgetType.MESSAGE_CAMPAIGN,
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },

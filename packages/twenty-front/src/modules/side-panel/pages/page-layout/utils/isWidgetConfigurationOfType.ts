@@ -11,6 +11,7 @@ import {
   type FrontComponentConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
+  type MessageCampaignConfiguration,
   type NotesConfiguration,
   type PieChartConfiguration,
   type RecordTableConfiguration,
@@ -49,6 +50,12 @@ type WidgetConfigurationTypenameMap = {
     'configurationType'
   > & {
     configurationType: WidgetConfigurationType.EMAIL_THREAD;
+  };
+  MessageCampaignConfiguration: Omit<
+    MessageCampaignConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN;
   };
   EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.EMAILS;
