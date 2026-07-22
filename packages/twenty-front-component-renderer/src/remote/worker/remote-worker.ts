@@ -98,20 +98,19 @@ self.addEventListener('message', (event) => {
     return;
   }
 
-  hostThread = new ThreadMessagePort<
+  const nextHostThread = new ThreadMessagePort<
     FrontComponentHostThreadExports,
     WorkerExports
   >(transferredPort, {
     exports: workerExports,
   });
+  hostThread = nextHostThread;
 
   workerGeometryStore.connectTransport({
     observeElementGeometry: (remoteElementIds) =>
-      hostThread?.imports.observeElementGeometry(remoteElementIds) ??
-      Promise.resolve(),
+      nextHostThread.imports.observeElementGeometry(remoteElementIds),
     unobserveElementGeometry: (remoteElementIds) =>
-      hostThread?.imports.unobserveElementGeometry(remoteElementIds) ??
-      Promise.resolve(),
+      nextHostThread.imports.unobserveElementGeometry(remoteElementIds),
   });
 
   transferredPort.start();

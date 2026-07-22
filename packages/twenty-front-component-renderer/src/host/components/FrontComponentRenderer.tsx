@@ -57,13 +57,9 @@ export const FrontComponentRenderer = ({
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
 
-  const [geometryRootRef] = useState(() => (element: Element | null) => {
-    geometryTracker.setRoot(element);
-  });
-
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div ref={geometryRootRef} style={ROOT_CONTAINER_STYLE}>
+      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           applicationAccessToken={applicationAccessToken}

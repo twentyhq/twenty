@@ -6,7 +6,7 @@ import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 import { syncValuePreservingCaret } from '@/host/utils/syncValuePreservingCaret';
 
 export const useCaretPreservingElementRef = (
-  composedElementRef: ElementRefCallback | undefined,
+  composedElementRef: ElementRefCallback,
   value: unknown,
 ): ElementRefCallback => {
   const latestComposedElementRefRef = useRef(composedElementRef);
@@ -17,7 +17,7 @@ export const useCaretPreservingElementRef = (
   const [caretPreservingElementRef] = useState(
     () => (element: Element | null) => {
       attachedElementRef.current = element;
-      latestComposedElementRefRef.current?.(element);
+      latestComposedElementRefRef.current(element);
     },
   );
 

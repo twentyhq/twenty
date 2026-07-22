@@ -19,7 +19,7 @@ type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
   reactBindableProps: Record<string, unknown>;
   hostEnforcedProps: Record<string, unknown>;
-  composedElementRef: ElementRefCallback | undefined;
+  composedElementRef: ElementRefCallback;
 };
 
 export const useHtmlHostElementProps = (

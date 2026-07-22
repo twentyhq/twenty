@@ -1,11 +1,10 @@
 import { useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 
 export const useComposedElementRef = (
   elementRefs: (ElementRefCallback | undefined)[],
-): ElementRefCallback | undefined => {
+): ElementRefCallback => {
   const latestElementRefsRef = useRef(elementRefs);
   latestElementRefsRef.current = elementRefs;
 
@@ -15,5 +14,5 @@ export const useComposedElementRef = (
     }
   });
 
-  return elementRefs.some(isDefined) ? composedElementRef : undefined;
+  return composedElementRef;
 };

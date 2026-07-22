@@ -3,6 +3,7 @@ import React from 'react';
 import { useCaretPreservingElementRef } from '@/host/hooks/useCaretPreservingElementRef';
 import { useHtmlHostElementProps } from '@/host/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
+import { createPlainHostElement } from '@/host/utils/createPlainHostElement';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
 
 const VOID_ELEMENTS = new Set([
@@ -33,15 +34,14 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       const { reactBindableProps, hostEnforcedProps, composedElementRef } =
         useHtmlHostElementProps(props, htmlTag);
 
-      return React.createElement(
+      return createPlainHostElement({
         htmlTag,
-        {
-          ...reactBindableProps,
-          ...hostEnforcedProps,
-          ref: composedElementRef,
-        },
-        isVoid ? undefined : children,
-      );
+        isVoid,
+        reactBindableProps,
+        hostEnforcedProps,
+        composedElementRef,
+        children,
+      });
     };
   }
 
@@ -73,14 +73,13 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       });
     }
 
-    return React.createElement(
+    return createPlainHostElement({
       htmlTag,
-      {
-        ...reactBindableProps,
-        ...hostEnforcedProps,
-        ref: composedElementRef,
-      },
-      isVoid ? undefined : children,
-    );
+      isVoid,
+      reactBindableProps,
+      hostEnforcedProps,
+      composedElementRef,
+      children,
+    });
   };
 };

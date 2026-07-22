@@ -47,12 +47,6 @@ describe('useComposedElementRef', () => {
     });
   };
 
-  it('should return undefined when every input ref is undefined', () => {
-    renderWith([undefined, undefined]);
-
-    expect(seenComposedElementRefs[0]).toBeUndefined();
-  });
-
   it('should call every defined ref with the element', () => {
     const firstRef = jest.fn();
     const secondRef = jest.fn();

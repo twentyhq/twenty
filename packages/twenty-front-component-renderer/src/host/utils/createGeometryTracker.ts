@@ -311,9 +311,6 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
   };
 
-  const getViewportGeometry = (): ViewportGeometrySnapshot =>
-    readViewportGeometry();
-
   const reset = (): void => {
     pushGeometryUpdates = null;
 
@@ -339,7 +336,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     measure,
     setRoot,
     setPushGeometryUpdates,
-    getViewportGeometry,
+    getViewportGeometry: readViewportGeometry,
     reset,
   };
 };
