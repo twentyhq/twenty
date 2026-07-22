@@ -173,18 +173,28 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion?: number,
   ): Promise<void> {
-    const metadataVersionSuffix = isDefined(metadataVersion)
-      ? `${metadataVersion}`
-      : '*';
+    const { MetadataVersion, ...versionedCacheKeys } =
+      METADATA_VERSIONED_WORKSPACE_CACHE_KEY;
 
-    await Promise.all(
-      Object.values(METADATA_VERSIONED_WORKSPACE_CACHE_KEY).map(
-        async (key) =>
-          await this.cacheStorageService.del(
-            `${key}:${workspaceId}:${metadataVersionSuffix}`,
-          ),
+    await Promise.all([
+      this.cacheStorageService.del(`${MetadataVersion}:${workspaceId}`),
+      ...Object.values(versionedCacheKeys).flatMap((key) =>
+        isDefined(metadataVersion)
+          ? [
+              this.cacheStorageService.del(
+                `${key}:${workspaceId}:${metadataVersion}`,
+              ),
+              this.cacheStorageService.flushByPattern(
+                `${key}:${workspaceId}:${metadataVersion}:*`,
+              ),
+            ]
+          : [
+              this.cacheStorageService.flushByPattern(
+                `${key}:${workspaceId}:*`,
+              ),
+            ],
       ),
-    );
+    ]);
   }
 
   async flush(workspaceId: string, metadataVersion?: number): Promise<void> {

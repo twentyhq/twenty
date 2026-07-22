@@ -100,7 +100,9 @@ export const useProcessTableWithGroupRecordDrop = () => {
       }
 
       processGroupDrop({
-        groupDropResult: result,
+        droppableId: destinationRecordGroupId,
+        draggableId: result.draggableId,
+        targetIndex: result.destination.index,
         store,
         selectedRecordIds,
         recordIdsByGroupFamilyState,
