@@ -24,8 +24,8 @@ const createGeometryStore = (
     connectTransport: jest.fn(),
     applyGeometryBatch: jest.fn(),
     getViewportSnapshot,
-    resolveElementSnapshot: () => null,
-    isElementMirrored: () => false,
+    resolveMirroredElementState: () => ({ isMirrored: false, snapshot: null }),
+    resolveElementByRemoteElementId: () => null,
   }) as never;
 
 describe('installWindowGeometryPolyfill', () => {

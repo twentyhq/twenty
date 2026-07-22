@@ -94,13 +94,14 @@ export const installElementGeometryPolyfill = ({
         return resolveDocumentScopedSnapshot();
       }
 
-      const mirroredSnapshot = geometryStore.resolveElementSnapshot(element);
+      const { isMirrored, snapshot } =
+        geometryStore.resolveMirroredElementState(element);
 
-      if (isDefined(mirroredSnapshot)) {
-        return mirroredSnapshot;
+      if (isDefined(snapshot)) {
+        return snapshot;
       }
 
-      if (geometryStore.isElementMirrored(element)) {
+      if (isMirrored) {
         return null;
       }
 
@@ -170,10 +171,10 @@ export const installElementGeometryPolyfill = ({
   Object.defineProperty(elementPrototype, 'offsetParent', {
     get(this: object) {
       try {
+        const { isMirrored, snapshot } =
+          geometryStore.resolveMirroredElementState(this);
         const offsetParentRemoteElementId =
-          geometryStore.resolveElementSnapshot(
-            this,
-          )?.offsetParentRemoteElementId;
+          snapshot?.offsetParentRemoteElementId;
 
         if (isDefined(offsetParentRemoteElementId)) {
           const offsetParentElement =
@@ -186,9 +187,7 @@ export const installElementGeometryPolyfill = ({
           }
         }
 
-        return geometryStore.isElementMirrored(this)
-          ? (documentTarget.body ?? null)
-          : null;
+        return isMirrored ? (documentTarget.body ?? null) : null;
       } catch {
         return null;
       }

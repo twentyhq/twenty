@@ -1,3 +1,4 @@
+import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 
@@ -30,9 +31,8 @@ const createSnapshot = (
 
 const createGeometryStore = (
   overrides: Partial<{
-    resolveElementSnapshot: (element: object) => ElementGeometrySnapshot | null;
+    resolveMirroredElementState: (element: object) => MirroredElementState;
     resolveElementByRemoteElementId: (remoteElementId: string) => object | null;
-    isElementMirrored: (element: object) => boolean;
     getViewportSnapshot: () => ReturnType<() => Record<string, unknown>> | null;
   }> = {},
 ) =>
@@ -41,10 +41,11 @@ const createGeometryStore = (
     connectTransport: jest.fn(),
     applyGeometryBatch: jest.fn(),
     getViewportSnapshot: overrides.getViewportSnapshot ?? (() => null),
-    resolveElementSnapshot: overrides.resolveElementSnapshot ?? (() => null),
+    resolveMirroredElementState:
+      overrides.resolveMirroredElementState ??
+      (() => ({ isMirrored: false, snapshot: null })),
     resolveElementByRemoteElementId:
       overrides.resolveElementByRemoteElementId ?? (() => null),
-    isElementMirrored: overrides.isElementMirrored ?? (() => false),
   }) as never;
 
 const installOn = (
@@ -78,7 +79,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should return the mirrored rect after a push', () => {
     installOn(
-      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot(),
+        }),
+      }),
     );
 
     const rect = (
@@ -92,7 +98,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should expose the mirrored numeric metrics', () => {
     installOn(
-      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot(),
+        }),
+      }),
     );
 
     const element = new FakeElement() as unknown as HTMLElement;
@@ -134,7 +145,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should return a single entry array from getClientRects', () => {
     installOn(
-      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot(),
+        }),
+      }),
     );
 
     const rects = (new FakeElement() as unknown as Element).getClientRects();
@@ -145,7 +161,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should expose item on getClientRects', () => {
     installOn(
-      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot(),
+        }),
+      }),
     );
 
     const rects = (new FakeElement() as unknown as Element).getClientRects();
@@ -167,10 +188,18 @@ describe('installElementGeometryPolyfill', () => {
   });
 
   it('should not fall back to text measurement for a mirrored element', () => {
-    installOn(createGeometryStore({ isElementMirrored: () => true }), () => ({
-      width: 120,
-      height: 16,
-    }));
+    installOn(
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: null,
+        }),
+      }),
+      () => ({
+        width: 120,
+        height: 16,
+      }),
+    );
 
     const element = new FakeElement();
     element.textContent = 'hello';
@@ -182,7 +211,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should not throw when scrollTop is assigned and should keep reading the mirrored value', () => {
     installOn(
-      createGeometryStore({ resolveElementSnapshot: () => createSnapshot() }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot(),
+        }),
+      }),
     );
 
     const element = new FakeElement() as unknown as HTMLElement;
@@ -195,7 +229,12 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should return the document body from offsetParent for a mirrored element', () => {
     const { documentBody } = installOn(
-      createGeometryStore({ isElementMirrored: () => true }),
+      createGeometryStore({
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: null,
+        }),
+      }),
     );
 
     expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
@@ -207,8 +246,10 @@ describe('installElementGeometryPolyfill', () => {
     const mirroredParent = new FakeElement();
     installOn(
       createGeometryStore({
-        resolveElementSnapshot: () =>
-          createSnapshot({ offsetParentRemoteElementId: '9' }),
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot({ offsetParentRemoteElementId: '9' }),
+        }),
         resolveElementByRemoteElementId: (remoteElementId) =>
           remoteElementId === '9' ? mirroredParent : null,
       }),
@@ -222,9 +263,10 @@ describe('installElementGeometryPolyfill', () => {
   it('should fall back to the document body when the parent id cannot be resolved', () => {
     const { documentBody } = installOn(
       createGeometryStore({
-        resolveElementSnapshot: () =>
-          createSnapshot({ offsetParentRemoteElementId: '9' }),
-        isElementMirrored: () => true,
+        resolveMirroredElementState: () => ({
+          isMirrored: true,
+          snapshot: createSnapshot({ offsetParentRemoteElementId: '9' }),
+        }),
       }),
     );
 
@@ -244,7 +286,7 @@ describe('installElementGeometryPolyfill', () => {
   it('should return a zero rect when snapshot resolution throws', () => {
     installOn(
       createGeometryStore({
-        resolveElementSnapshot: () => {
+        resolveMirroredElementState: () => {
           throw new Error('boom');
         },
       }),

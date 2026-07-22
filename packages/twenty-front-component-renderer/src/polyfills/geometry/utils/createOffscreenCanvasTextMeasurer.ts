@@ -43,6 +43,11 @@ export const createOffscreenCanvasTextMeasurer = (
     return canvasContext;
   };
 
+  const measuredTextGeometries = new WeakMap<
+    object,
+    { textContent: string; fontShorthand: string; textGeometry: TextGeometry }
+  >();
+
   return (element: object): TextGeometry | null => {
     const textContent = (element as ElementWithTextContent).textContent;
 
@@ -65,6 +70,15 @@ export const createOffscreenCanvasTextMeasurer = (
       defaultFontShorthand,
     );
 
+    const measuredTextGeometry = measuredTextGeometries.get(element);
+
+    if (
+      measuredTextGeometry?.textContent === textContent &&
+      measuredTextGeometry.fontShorthand === fontShorthand
+    ) {
+      return measuredTextGeometry.textGeometry;
+    }
+
     try {
       context.font = fontShorthand;
 
@@ -76,12 +90,20 @@ export const createOffscreenCanvasTextMeasurer = (
         Number.isFinite(descent) &&
         ascent + descent > 0;
 
-      return {
+      const textGeometry: TextGeometry = {
         width: metrics.width,
         height: hasVerticalMetrics
           ? ascent + descent
           : parseFontSizeInPixels(fontShorthand) * DEFAULT_LINE_HEIGHT_RATIO,
       };
+
+      measuredTextGeometries.set(element, {
+        textContent,
+        fontShorthand,
+        textGeometry,
+      });
+
+      return textGeometry;
     } catch {
       return null;
     }

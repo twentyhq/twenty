@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
+import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -69,35 +70,37 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     return remoteElementId;
   };
 
-  const resolveElementSnapshot = (
+  const resolveMirroredElementState = (
     element: object,
-  ): ElementGeometrySnapshot | null => {
+  ): MirroredElementState => {
     const enrolledRemoteElementId = enrolledRemoteElementIds.get(element);
 
     if (isDefined(enrolledRemoteElementId)) {
       if (observedRemoteElementIds.has(enrolledRemoteElementId)) {
-        return elementSnapshots.get(enrolledRemoteElementId) ?? null;
+        return {
+          isMirrored: true,
+          snapshot: elementSnapshots.get(enrolledRemoteElementId) ?? null,
+        };
       }
 
       enrolledRemoteElementIds.delete(element);
     }
 
     if (!isElementUnderRemoteRoot(element, rootElement)) {
-      return null;
+      return { isMirrored: false, snapshot: null };
     }
 
     const remoteElementId = enrollElement(element);
 
     if (!isDefined(remoteElementId)) {
-      return null;
+      return { isMirrored: true, snapshot: null };
     }
 
-    return elementSnapshots.get(remoteElementId) ?? null;
+    return {
+      isMirrored: true,
+      snapshot: elementSnapshots.get(remoteElementId) ?? null,
+    };
   };
-
-  const isElementMirrored = (element: object): boolean =>
-    isDefined(enrolledRemoteElementIds.get(element)) ||
-    isElementUnderRemoteRoot(element, rootElement);
 
   const applyGeometryBatch = (batch: GeometryUpdateBatch): void => {
     if (isDefined(batch.viewport)) {
@@ -143,9 +146,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     },
     applyGeometryBatch,
     getViewportSnapshot: () => viewportSnapshot,
-    resolveElementSnapshot,
+    resolveMirroredElementState,
     resolveElementByRemoteElementId: (remoteElementId: string) =>
       enrolledElementsByRemoteElementId.get(remoteElementId)?.deref() ?? null,
-    isElementMirrored,
   };
 };

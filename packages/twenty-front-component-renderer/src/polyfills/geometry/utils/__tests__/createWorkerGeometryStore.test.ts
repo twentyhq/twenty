@@ -74,7 +74,9 @@ describe('createWorkerGeometryStore', () => {
   it('should return null for an element outside the remote root', () => {
     const { store } = createRootedStore();
 
-    expect(store.resolveElementSnapshot({ parentNode: null })).toBeNull();
+    expect(
+      store.resolveMirroredElementState({ parentNode: null }).snapshot,
+    ).toBeNull();
   });
 
   it('should not mint a remote id for an element outside the remote root', async () => {
@@ -85,7 +87,7 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    store.resolveElementSnapshot({ parentNode: null });
+    store.resolveMirroredElementState({ parentNode: null });
     await flushMicrotasks();
 
     expect(observeElementGeometry).not.toHaveBeenCalled();
@@ -101,8 +103,8 @@ describe('createWorkerGeometryStore', () => {
 
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
+    store.resolveMirroredElementState(element);
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
@@ -117,9 +119,9 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
     });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
@@ -129,7 +131,7 @@ describe('createWorkerGeometryStore', () => {
   it('should retain enrollments and flush them when the transport connects later', async () => {
     const { store, rootElement } = createRootedStore();
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
     await flushMicrotasks();
 
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
@@ -145,10 +147,10 @@ describe('createWorkerGeometryStore', () => {
     const { store, rootElement } = createRootedStore();
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
     store.applyGeometryBatch({ elements: { '0': createSnapshot(42) } });
 
-    expect(store.resolveElementSnapshot(element)?.width).toBe(42);
+    expect(store.resolveMirroredElementState(element).snapshot?.width).toBe(42);
   });
 
   it('should merge successive batches rather than replacing the element map', () => {
@@ -156,25 +158,25 @@ describe('createWorkerGeometryStore', () => {
     const first = { parentNode: rootElement };
     const second = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(first);
-    store.resolveElementSnapshot(second);
+    store.resolveMirroredElementState(first);
+    store.resolveMirroredElementState(second);
 
     store.applyGeometryBatch({ elements: { '0': createSnapshot(1) } });
     store.applyGeometryBatch({ elements: { '1': createSnapshot(2) } });
 
-    expect(store.resolveElementSnapshot(first)?.width).toBe(1);
-    expect(store.resolveElementSnapshot(second)?.width).toBe(2);
+    expect(store.resolveMirroredElementState(first).snapshot?.width).toBe(1);
+    expect(store.resolveMirroredElementState(second).snapshot?.width).toBe(2);
   });
 
   it('should delete entries listed in removedRemoteElementIds', () => {
     const { store, rootElement } = createRootedStore();
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
     store.applyGeometryBatch({ elements: { '0': createSnapshot(5) } });
     store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
 
-    expect(store.resolveElementSnapshot(element)).toBeNull();
+    expect(store.resolveMirroredElementState(element).snapshot).toBeNull();
   });
 
   it('should replace the viewport snapshot on each batch that carries one', () => {
@@ -199,7 +201,7 @@ describe('createWorkerGeometryStore', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 600; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveMirroredElementState({ parentNode: rootElement });
     }
     await flushMicrotasks();
 
@@ -211,7 +213,7 @@ describe('createWorkerGeometryStore', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 600; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveMirroredElementState({ parentNode: rootElement });
     }
 
     expect(warn).toHaveBeenCalledTimes(1);
@@ -228,17 +230,17 @@ describe('createWorkerGeometryStore', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     for (let index = 0; index < 500; index += 1) {
-      store.resolveElementSnapshot({ parentNode: rootElement });
+      store.resolveMirroredElementState({ parentNode: rootElement });
     }
     await flushMicrotasks();
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
     await flushMicrotasks();
     expect(observeElementGeometry).toHaveBeenCalledTimes(1);
 
     store.applyGeometryBatch({ removedRemoteElementIds: ['0', '1'] });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
@@ -254,12 +256,12 @@ describe('createWorkerGeometryStore', () => {
 
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
     await flushMicrotasks();
 
     store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
     await flushMicrotasks();
 
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
@@ -275,8 +277,8 @@ describe('createWorkerGeometryStore', () => {
       unobserveElementGeometry,
     });
 
-    store.resolveElementSnapshot({ parentNode: rootElement });
-    store.resolveElementSnapshot({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
+    store.resolveMirroredElementState({ parentNode: rootElement });
     await flushMicrotasks();
 
     store.applyGeometryBatch({ removedRemoteElementIds: ['0', 'unknown'] });
@@ -302,7 +304,7 @@ describe('createWorkerGeometryStore', () => {
     const { store, rootElement } = createRootedStore();
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
 
     expect(store.resolveElementByRemoteElementId('0')).toBe(element);
     expect(store.resolveElementByRemoteElementId('404')).toBeNull();
@@ -312,7 +314,7 @@ describe('createWorkerGeometryStore', () => {
     const { store, rootElement } = createRootedStore();
     const element = { parentNode: rootElement };
 
-    store.resolveElementSnapshot(element);
+    store.resolveMirroredElementState(element);
     store.applyGeometryBatch({ removedRemoteElementIds: ['0'] });
 
     expect(store.resolveElementByRemoteElementId('0')).toBeNull();
@@ -321,7 +323,11 @@ describe('createWorkerGeometryStore', () => {
   it('should report an element under the remote root as mirrored', () => {
     const { store, rootElement } = createRootedStore();
 
-    expect(store.isElementMirrored({ parentNode: rootElement })).toBe(true);
-    expect(store.isElementMirrored({ parentNode: null })).toBe(false);
+    expect(
+      store.resolveMirroredElementState({ parentNode: rootElement }).isMirrored,
+    ).toBe(true);
+    expect(
+      store.resolveMirroredElementState({ parentNode: null }).isMirrored,
+    ).toBe(false);
   });
 });
