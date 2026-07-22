@@ -1357,6 +1357,11 @@ msgstr "新規追加"
 msgid "Add node"
 msgstr "ノードを追加する"
 
+#. js-lingui-id: NeOuRn
+#: src/modules/activities/notes/components/NotesCard.tsx
+msgid "Add note"
+msgstr "メモを追加"
+
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -1432,6 +1437,11 @@ msgstr "並び替えを追加"
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSOアイデンティティプロバイダーを追加"
+
+#. js-lingui-id: hWkQMS
+#: src/modules/activities/tasks/components/AddTaskButton.tsx
+msgid "Add task"
+msgstr "タスクを追加"
 
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1878,6 +1888,8 @@ msgid "Alert"
 msgstr "アラート"
 
 #. js-lingui-id: N40H+G
+#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/notes/components/NotesCard.tsx
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AgentChatThreadLastActivityFilterLabels.ts
@@ -4165,11 +4177,6 @@ msgstr "完了したジョブの保持期間: {completedDuration}、失敗した
 msgid "Component name"
 msgstr "コンポーネント名"
 
-#. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
-msgid "Compose"
-msgstr ""
-
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 msgid "Computed at"
@@ -5905,8 +5912,8 @@ msgstr "削除"
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9650,6 +9657,11 @@ msgstr "非アクティブなオブジェクトのオプション"
 msgid "Inactive Skill Options"
 msgstr "非アクティブなスキルのオプション"
 
+#. js-lingui-id: Gp4Yi6
+#: src/modules/activities/emails/components/EmailsCard.tsx
+msgid "Inbox"
+msgstr "受信トレイ"
+
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Include emails where all participants share the same domain."
@@ -11060,7 +11072,7 @@ msgid "Make private"
 msgstr "非公開にする"
 
 #. js-lingui-id: wckWOP
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "管理"
@@ -11629,16 +11641,16 @@ msgstr "下へ移動"
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Move left"
 msgstr "左に移動"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Move right"
 msgstr "右に移動"
 
@@ -12008,7 +12020,6 @@ msgstr "新しいモデル"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
 msgid "New note"
 msgstr "新しいノート"
 
@@ -12059,7 +12070,6 @@ msgid "New Tab"
 msgstr "新しいタブ"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "New task"
 msgstr "新しいタスク"
@@ -12371,8 +12381,8 @@ msgid "No Date field"
 msgstr "日付フィールドなし"
 
 #. js-lingui-id: lAfu/q
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "このタブには既定の設定はありません"
 
@@ -13969,7 +13979,7 @@ msgid "Pie Chart"
 msgstr "パイチャート"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "タブをピン留め"
 
@@ -13992,7 +14002,7 @@ msgid "Placeholder"
 msgstr "プレースホルダー"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "配置"
@@ -15065,8 +15075,8 @@ msgstr "メールを再送信"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
@@ -15094,10 +15104,10 @@ msgstr "レコードページのレイアウトをリセット"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Reset to default"
@@ -18082,8 +18092,8 @@ msgid "This week"
 msgstr "今週"
 
 #. js-lingui-id: DF2voz
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "これにより、タブおよびそのウィジェットに加えたすべての変更が取り消されます。編集モードが解除され、ページが再読み込みされます。この操作は元に戻せません。"
 
@@ -19792,7 +19802,7 @@ msgid "Visibility"
 msgstr "可視性"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "表示範囲の制限"
 
