@@ -170,6 +170,17 @@ Veröffentlicht Ihre App mit Herkunftsnachweis auf npm, wenn Sie ein Versions-Ta
 
 Öffnen Sie auf npmjs.com Ihr Paket > **Settings → Trusted Publisher** und registrieren Sie dieses Repository mit dem `publish.yml`-Workflow (siehe die [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Das Veröffentlichen mit Provenance bestätigt, welches GitHub-Repository das Paket gebaut hat; zugleich beanspruchen Sie damit die Inhaberschaft Ihrer App in einem Twenty-Marktplatz.
 
+<Note>
+npm akzeptiert Herkunftsnachweise nur aus **öffentlichen** Quellcode-Repositories. Wenn du aus einem privaten Repository veröffentlichst, weist npm das OIDC-Provenance-Bundle mit einem `E422  Unsupported GitHub Actions source repository visibility: "private"`-Fehler. Um aus einem privaten Repository zu veröffentlichen, deaktiviere Herkunftsnachweise, indem du `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` im `env`-Block des Veröffentlichungs-Schritts setzt (ein auskommentierter Hinweis ist in der generierten `publish.yml` enthalten):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Fixieren der wiederverwendbaren Actions
 
 Die Workflows `ci.yml` und `cd.yml` verweisen auf wiederverwendbare Actions mit `@main`, sodass Aktualisierungen der Actions im Repository `twentyhq/twenty` automatisch übernommen werden. Wenn Sie deterministische Builds möchten, ersetzen Sie `@main` in jeder `uses:`-Zeile durch eine Commit-SHA oder einen Release-Tag.

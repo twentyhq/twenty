@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "react-markdown": "^10.1.0",
-    "twenty-client-sdk": "2.23.0-alpha.1",
-    "twenty-sdk": "2.23.0-alpha.1",
+    "twenty-client-sdk": "2.23.0-alpha.2",
+    "twenty-sdk": "2.23.0-alpha.2",
     "zod": "^4.1.11"
   },
   "devDependencies": {

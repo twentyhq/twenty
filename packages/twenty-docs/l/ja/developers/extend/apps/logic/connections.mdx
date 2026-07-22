@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ export default defineApplication({
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="接続時にロジック関数を実行する" description="接続が確立された瞬間に反応する">
+
+一部のプロバイダは、接続時に、接続が実際に利用可能になる前に永続化しておく必要があるデータを渡してきます。典型的な例は Slack で、OAuth レスポンスに、受信イベントのキーとして使用されるワークスペースの `team_id` が含まれます。 `onConnectLogicFunction` を、同じアプリ内のロジック関数を `universalIdentifier` で参照するように設定すると、`ConnectedAccount` が作成された直後にその関数が実行されます。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+このフックは**接続中のワークスペース内で非同期に**実行されます（待機されずにキューに入れられるため）、フックの実行が遅かったり失敗したりしても OAuth コールバックをブロックしたり壊したりすることは決してありません。冪等性を持たせ、自身でリトライ処理を行うようにしてください。 ハンドラーは次の内容を受け取ります:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+そこから `getConnection(connectedAccountId)` を使用して最新のアクセストークンを読み取り、プロバイダーの API（例: Slack `auth.test`）を呼び出すか、[key-value store](/l/ja/developers/extend/apps/logic/key-value-store) を使ってマッピングを永続化します。
 
 </Accordion>
 

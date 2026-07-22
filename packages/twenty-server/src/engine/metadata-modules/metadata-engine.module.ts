@@ -7,11 +7,13 @@ import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.mod
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
+import { ApplicationKeyValueModule } from 'src/engine/core-modules/application/application-key-value/application-key-value.module';
 import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
@@ -48,6 +50,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiGenerateTextModule,
     AiWorkspaceStatsModule,
     ApplicationConnectionsModule,
+    ApplicationKeyValueModule,
     MinimalMetadataModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
@@ -66,6 +69,10 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     {
       provide: APP_FILTER,
       useClass: FlatEntityMapsGraphqlApiExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: PermissionsGraphqlApiExceptionFilter,
     },
   ],
   exports: [

@@ -37,9 +37,7 @@ const StyledBadge = styled.div<{ hasClusterLeading: boolean }>`
   overflow: hidden;
   padding: 0 10px 0
     ${({ hasClusterLeading }) =>
-      hasClusterLeading
-        ? themeCssVariables.spacing['0.5']
-        : themeCssVariables.spacing[1]};
+      hasClusterLeading ? '10px' : themeCssVariables.spacing[1]};
 `;
 
 const StyledSeal = styled.img`

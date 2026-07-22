@@ -38,7 +38,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     (start: DragStart) => {
       const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
 
-      startRecordDrag(start, currentSelectedRecordIds);
+      startRecordDrag(start.draggableId, currentSelectedRecordIds);
     },
     [selectedRowIds, startRecordDrag, store],
   );

@@ -589,10 +589,7 @@ export class WorkspaceService {
 
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
 
-    await this.workspaceCacheStorageService.flush(
-      workspace.id,
-      workspace.metadataVersion,
-    );
+    await this.workspaceCacheStorageService.flush(workspace.id);
     await this.flatEntityMapsCacheService.flushFlatEntityMaps({
       workspaceId: workspace.id,
     });

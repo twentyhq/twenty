@@ -164,6 +164,7 @@ export class MicrosoftGetMessagesService {
           ? [response.parentFolderId]
           : [],
         isDraft: response.isDraft ?? false,
+        messageHeaders: response.internetMessageHeaders ?? [],
       };
     });
 

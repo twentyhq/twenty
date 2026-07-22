@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationGaugeService } from 'src/engine/core-modules/application/application-gauge.service';
+import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -40,10 +41,15 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FeatureFlagModule,
     MetricsModule,
   ],
-  exports: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
+  exports: [
+    ApplicationService,
+    ApplicationStopService,
+    WorkspaceFlatApplicationMapCacheService,
+  ],
   providers: [
     ApplicationResolver,
     ApplicationService,
+    ApplicationStopService,
     ApplicationGaugeService,
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),

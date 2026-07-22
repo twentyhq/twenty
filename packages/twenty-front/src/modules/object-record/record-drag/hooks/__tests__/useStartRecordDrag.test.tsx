@@ -56,7 +56,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds = ['record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -98,7 +98,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds = ['record-1'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -140,7 +140,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -190,7 +190,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds: string[] = [];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -232,7 +232,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds = ['record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -274,7 +274,7 @@ describe('useStartRecordDrag', () => {
     const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart, selectedRecordIds);
+      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);

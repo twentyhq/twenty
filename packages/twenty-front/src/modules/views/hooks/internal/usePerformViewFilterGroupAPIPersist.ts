@@ -1,23 +1,38 @@
 import { useCallback } from 'react';
 
-import { CREATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createViewFilterGroup';
-import { DESTROY_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyViewFilterGroup';
-import { UPDATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateViewFilterGroup';
+import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { usePerformViewEntityAPIPersistOperation } from '@/views/hooks/internal/usePerformViewEntityAPIPersistOperation';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { useApolloClient } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ViewFilterGroup as GqlViewFilterGroup } from '~/generated-metadata/graphql';
+import {
+  CreateViewFilterGroupDocument,
+  DestroyViewFilterGroupDocument,
+  UpdateViewFilterGroupDocument,
+} from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterGroupAPIPersist = () => {
-  const apolloClient = useApolloClient();
+  const [createViewFilterGroupMutation] = useMutation(
+    CreateViewFilterGroupDocument,
+  );
+  const [updateViewFilterGroupMutation] = useMutation(
+    UpdateViewFilterGroupDocument,
+  );
+  const [destroyViewFilterGroupMutation] = useMutation(
+    DestroyViewFilterGroupDocument,
+  );
+
+  const {
+    performViewEntityAPIPersistOperation,
+    performViewEntityAPIPersistBatchOperation,
+  } = usePerformViewEntityAPIPersistOperation('viewFilterGroup');
 
   const createViewFilterGroupRecord = useCallback(
     async (viewFilterGroup: ViewFilterGroup, view: Pick<GraphQLView, 'id'>) => {
-      const result = await apolloClient.mutate<{
-        createViewFilterGroup: ViewFilterGroup;
-      }>({
-        mutation: CREATE_VIEW_FILTER_GROUP,
+      const result = await createViewFilterGroupMutation({
         variables: {
           input: {
             id: viewFilterGroup.id,
@@ -26,27 +41,26 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             logicalOperator: viewFilterGroup.logicalOperator,
             positionInViewFilterGroup:
               viewFilterGroup.positionInViewFilterGroup,
-          } satisfies Partial<GqlViewFilterGroup>,
+          },
         },
       });
 
-      if (!result.data) {
+      if (!isDefined(result.data)) {
         throw new Error('Failed to create view filter group');
       }
 
-      return { newRecordId: result.data.createViewFilterGroup.id };
+      return { newRecord: result.data.createViewFilterGroup };
     },
-    [apolloClient],
+    [createViewFilterGroupMutation],
   );
 
   const performViewFilterGroupAPICreate = useCallback(
     async (
       viewFilterGroupsToCreate: ViewFilterGroup[],
       view: Pick<GraphQLView, 'id'>,
-    ) => {
-      if (!viewFilterGroupsToCreate.length) return [];
-
+    ): Promise<MetadataRequestResult<string[]>> => {
       const oldToNewId = new Map<string, string>();
+      const newRecordIds: string[] = [];
 
       for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
         const newParentViewFilterGroupId = isDefined(
@@ -56,37 +70,50 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             viewFilterGroupToCreate.parentViewFilterGroupId)
           : undefined;
 
-        const { newRecordId } = await createViewFilterGroupRecord(
-          {
-            ...viewFilterGroupToCreate,
-            parentViewFilterGroupId: newParentViewFilterGroupId,
+        const result = await performViewEntityAPIPersistOperation({
+          persist: () =>
+            createViewFilterGroupRecord(
+              {
+                ...viewFilterGroupToCreate,
+                parentViewFilterGroupId: newParentViewFilterGroupId,
+              },
+              view,
+            ),
+          applyResultToDraft: ({ newRecord }, { addToDraft }) => {
+            const { __typename, ...viewFilterGroup } = newRecord;
+            return addToDraft({
+              key: 'viewFilterGroups',
+              items: [viewFilterGroup as FlatViewFilterGroup],
+            });
           },
-          view,
-        );
+          operationType: CrudOperationType.CREATE,
+        });
 
-        oldToNewId.set(viewFilterGroupToCreate.id, newRecordId);
+        if (result.status === 'failed') {
+          return result;
+        }
+
+        oldToNewId.set(
+          viewFilterGroupToCreate.id,
+          result.response.newRecord.id,
+        );
+        newRecordIds.push(result.response.newRecord.id);
       }
 
-      const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
-        const newId = oldToNewId.get(viewFilterGroup.id);
-        if (!newId) {
-          throw new Error('Failed to create view filter group');
-        }
-        return newId;
-      });
-
-      return newRecordIds;
+      return {
+        status: 'successful',
+        response: newRecordIds,
+      };
     },
-    [createViewFilterGroupRecord],
+    [createViewFilterGroupRecord, performViewEntityAPIPersistOperation],
   );
 
   const performViewFilterGroupAPIUpdate = useCallback(
-    (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
-      if (!viewFilterGroupsToUpdate.length) return;
-      return Promise.all(
-        viewFilterGroupsToUpdate.map((viewFilterGroup) =>
-          apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
-            mutation: UPDATE_VIEW_FILTER_GROUP,
+    (viewFilterGroupsToUpdate: ViewFilterGroup[]) =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: viewFilterGroupsToUpdate,
+        mutate: (viewFilterGroup) =>
+          updateViewFilterGroupMutation({
             variables: {
               id: viewFilterGroup.id,
               input: {
@@ -95,30 +122,43 @@ export const usePerformViewFilterGroupAPIPersist = () => {
                 logicalOperator: viewFilterGroup.logicalOperator,
                 positionInViewFilterGroup:
                   viewFilterGroup.positionInViewFilterGroup,
-              } satisfies Partial<GqlViewFilterGroup>,
+              },
             },
           }),
-        ),
-      );
-    },
-    [apolloClient],
+        applyResultToDraft: (fulfilledMutations, { updateInDraft }) =>
+          updateInDraft(
+            'viewFilterGroups',
+            fulfilledMutations
+              .map(({ result }) => result.data?.updateViewFilterGroup)
+              .filter(isDefined)
+              .map(
+                ({ __typename, ...viewFilterGroup }) =>
+                  viewFilterGroup as FlatViewFilterGroup,
+              ),
+          ),
+        operationType: CrudOperationType.UPDATE,
+      }),
+    [updateViewFilterGroupMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewFilterGroupAPIDestroy = useCallback(
-    (viewFilterGroupIdsToDestroy: string[]) => {
-      if (!viewFilterGroupIdsToDestroy.length) return;
-      return Promise.all(
-        viewFilterGroupIdsToDestroy.map((viewFilterGroupId) =>
-          apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
-            mutation: DESTROY_VIEW_FILTER_GROUP,
+    (viewFilterGroupIdsToDestroy: string[]) =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: viewFilterGroupIdsToDestroy,
+        mutate: (viewFilterGroupId) =>
+          destroyViewFilterGroupMutation({
             variables: {
               id: viewFilterGroupId,
             },
           }),
-        ),
-      );
-    },
-    [apolloClient],
+        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
+          removeFromDraft({
+            key: 'viewFilterGroups',
+            itemIds: fulfilledMutations.map(({ input }) => input),
+          }),
+        operationType: CrudOperationType.DESTROY,
+      }),
+    [destroyViewFilterGroupMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   return {

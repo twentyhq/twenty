@@ -18,6 +18,8 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
+import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -237,6 +239,18 @@ export class AgentAsyncExecutorService {
           hasNoMoreAvailableCredits,
         providerOptions,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        experimental_onToolCallFinish: (event) => {
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
+            value: event.durationMs,
+            unit: 'ms',
+            attributes: {
+              model: registeredModel.modelId,
+              tool: getToolMetricName(event.toolCall.toolName),
+            },
+            bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
+          });
+        },
         onStepFinish: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
             await this.aiBillingService.decrementAndCheckAvailableCredits(
@@ -283,6 +297,7 @@ export class AgentAsyncExecutorService {
               ),
               unit: 'token',
               attributes: toolAttributes,
+              bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
             });
           }
         },

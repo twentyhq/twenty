@@ -306,7 +306,6 @@ describe('WorkspaceService', () => {
       ).toHaveBeenCalledWith(mockWorkspace.id);
       expect(workspaceCacheStorageService.flush).toHaveBeenCalledWith(
         mockWorkspace.id,
-        mockWorkspace.metadataVersion,
       );
       expect(messageQueueService.add).toHaveBeenCalled();
       expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);

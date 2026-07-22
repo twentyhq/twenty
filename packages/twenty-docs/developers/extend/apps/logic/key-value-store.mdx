@@ -1,153 +1,57 @@
 ---
 title: Key-Value Store
-description: Persist intermediate results, cache data, and share state across logic function runs with a simple key-value object.
+description: Persist intermediate results, cache data, and share state across logic function runs with the built-in application key-value store.
 icon: "database"
 ---
 
-Logic functions run sandboxed in short-lived Node.js processes — once a run finishes, nothing it kept in memory survives. When you need to **remember something between runs** (cache an expensive API response, store a cursor for incremental syncs, debounce work, or hand state from one function to another), persist it in the workspace database.
+Logic functions run sandboxed in short-lived Node.js processes — once a run finishes, nothing it kept in memory survives. When you need to **remember something between runs** (cache an expensive API response, store a cursor for incremental syncs, debounce work, or hand state from one function to another), persist it in the built-in key-value store.
 
-You don't need a dedicated storage primitive for this: a small **technical object** with a `key` field and a `value` field gives you a durable key-value store, scoped to the workspace, queryable through the same [typed API client](/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) you already use for records.
+Every application gets its own isolated namespace: entries are keyed by the authenticated app, so your keys can never collide with — or be read by — another application.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Define the store object
+## Get, set, delete
 
-Declare a custom object with two fields — `key` (a unique `TEXT`) and `value` (a `RAW_JSON` so you can store any JSON-serializable payload). See [Objects](/developers/extend/apps/data/objects) for the full `defineObject` reference.
+Import `kv` from `twenty-sdk/logic-function`. Values can be any JSON-serializable payload.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Scopes
+
+Each entry has a scope, passed as an option on every call. The default is `WORKSPACE`.
+
+- **`WORKSPACE`** (default) — the entry is private to the current workspace install of your app. Each workspace that installs the app gets its own independent set of keys. This is what you want for caches, cursors, and per-workspace state.
+- **`SERVER`** — the entry is shared across **every install** of your app on the server. Server entries behave like **claims**: the stored value is always the workspaceId that claimed the key (omit `value` on `set` to claim the key for the current workspace), and only that workspace can overwrite or delete it. Any install can read the entry.
+
+Server claims exist for cross-workspace routing. A [server-route resolver](/developers/extend/apps/logic/logic-functions#server-route-trigger) runs in the application registration owner workspace, but an inbound webhook usually only carries an external account id — not a Twenty workspaceId. Have each workspace claim its external id at connect time, then resolve it in the route:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Enforce key uniqueness
-
-Add a **unique index** on `key` so the same key can never have two rows. This is the recommended primitive for uniqueness — see [Data → Unique indexes](/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Read and write from a logic function
-
-Wrap the object behind a few small helpers so the rest of your code reads like a key-value API — `get`, `set`, and `del`. They use [`CoreApiClient`](/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), which is generated from your workspace schema and fully typed against the `kvStore` object.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-The unique index protects against duplicates, but two runs writing the **same new key** at the same instant can still race between the lookup and the create. Treat a create that fails on the uniqueness constraint as "someone else won" — catch it and re-read, or retry as an update.
-</Note>
+Because a server key can only be claimed for the caller's own workspace and never overwritten by another one, a workspace can't hijack a mapping that belongs to someone else. `kv.set` throws when the key is already claimed by another workspace.
 
 ## Use it: cache an expensive call
 
@@ -155,15 +59,15 @@ A typical use is caching a slow or rate-limited third-party response so repeated
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Patterns & tips
 
-- **Namespacing.** Prefix keys to keep different concerns apart and to make bulk lookups easy — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Filter with `key: { like: 'cache:%' }` to list or clear a whole namespace.
-- **Expiry (TTL).** The store has no built-in expiration. Store a timestamp inside the `value` (as in the cache example) and check it on read, or add a `DATE_TIME` field and periodically clear stale rows from a [cron-triggered function](/developers/extend/apps/logic/logic-functions).
-- **What to store.** `RAW_JSON` holds any JSON-serializable value — numbers, strings, arrays, objects. Keep entries small; this is for coordination and caching, not large blobs or files. For files, use a `FILES` field and [`uploadFile`](/developers/extend/apps/logic/logic-functions#uploading-files).
+- **Namespacing.** Prefix keys to keep different concerns apart — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+- **Expiry (TTL).** The store has no built-in expiration. Store a timestamp inside the value (as in the cache example) and check it on read, or clear stale keys from a [cron-triggered function](/developers/extend/apps/logic/logic-functions).
+- **What to store.** Any JSON-serializable value — numbers, strings, arrays, objects. Keep entries small; this is for coordination and caching, not large blobs or files. For files, use a `FILES` field and [`uploadFile`](/developers/extend/apps/logic/logic-functions#uploading-files).
+- **Visibility.** Entries live in the instance database, not as workspace records — they never show up in the workspace UI, aren't part of your app's data model, and need no role or object permissions.
+
+## Alternative: a queryable store object
+
+The built-in store is deliberately opaque: entries aren't records, so you can't browse them in the UI, relate them to other objects, or filter them with record queries. When you need any of that — say a visible sync log, or per-record state — define a small **technical object** with a unique `key` field and a `RAW_JSON` `value` field instead, and query it through the [typed API client](/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). See [Objects](/developers/extend/apps/data/objects) for the `defineObject` reference and [Data → Unique indexes](/developers/extend/apps/data/overview#unique-indexes) for enforcing key uniqueness.
+
+- **Scoping to a record.** Add a [relation](/developers/extend/apps/data/relations) from the store object to the target object rather than encoding the id into the key.
 - **Visibility & permissions.** Rows live in the workspace database like any other record, so they're queryable through the API and respect your app's [role](/developers/extend/apps/config/roles). To keep the store out of the main UI, leave it off your [navigation menu](/developers/extend/apps/layout/navigation-menu-items).
-- **Scoping to a record.** Need per-record state instead of global keys? Add a [relation](/developers/extend/apps/data/relations) from the store object to the target object rather than encoding the id into the key.
 
 <Note>
-This is a convention, not a separate feature — the "KV Store" is just a regular custom object you define and query with the standard API. That means it benefits from the same sync, permissions, and tooling as the rest of your app's data.
+Unlike the built-in store, a custom object is always scoped to one workspace — it can't share entries across installs the way `SERVER` keys do.
 </Note>

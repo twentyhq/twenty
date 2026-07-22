@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ URL zpětného volání OAuth, kterou musí váš poskytovatel zařadit na sezna
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Spusťte logickou funkci při připojení" description="Reagujte ve chvíli, kdy je připojení navázáno">
+
+Někteří poskytovatelé vám při připojení předají data, která je potřeba uložit dříve, než lze připojení používat — klasickým příkladem je Slack, kde odpověď OAuth určuje `team_id` pracovního prostoru, podle kterého budou příchozí události indexovány. Nastavte `onConnectLogicFunction` tak, aby odkazovala na logickou funkci ve stejné aplikaci (podle jejího `universalIdentifier`), a ta se spustí hned poté, co je vytvořen `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Hook běží **asynchronně v připojujícím se pracovním prostoru** (je zařazen do fronty, nečeká se na něj), takže pomalý nebo chybující hook nikdy neblokuje ani nenaruší OAuth callback — udělejte jej idempotentní a zajistěte, aby sám zpracovával opakované pokusy. Obslužná funkce přijímá:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Odtud použijte `getConnection(connectedAccountId)` ke čtení čerstvého přístupového tokenu a zavolejte API poskytovatele (např. Slack `auth.test`) nebo uložte mapování pomocí [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
 
 </Accordion>
 

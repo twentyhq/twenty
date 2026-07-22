@@ -170,6 +170,17 @@ yarn twenty app:publish --private
 
 npmjs.com에서 패키지를 연 다음 **Settings → Trusted Publisher**로 이동하여 이 저장소를 `publish.yml` 워크플로에 등록하세요([npm trusted publishing 문서](https://docs.npmjs.com/trusted-publishers)를 참고하세요). provenance와 함께 게시하면 어떤 GitHub 저장소가 패키지를 빌드했는지 증명되며, 이는 Twenty 마켓플레이스에서 앱 소유권을 주장하는 방법이기도 합니다.
 
+<Note>
+npm은 **공개(public)** 소스 저장소의 provenance만 허용합니다. 비공개 저장소에서 publish를 수행하면, npm은 OIDC provenance 번들을 `E422 ...` 오류와 함께 거부합니다. 지원되지 않는 GitHub Actions 소스 저장소 가시성: "private"`오류입니다. 비공개 저장소에서 publish하려면, publish 단계의`env`에서 `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'`를 설정하여 provenance를 사용하지 않도록(opt out) 해야 합니다(스캐폴딩된 `publish.yml\`에 주석으로 된 힌트가 포함되어 있습니다):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### 재사용 가능한 액션 고정하기
 
 `ci.yml` 및 `cd.yml` 워크플로는 `@main`의 재사용 가능한 액션을 참조하므로, `twentyhq/twenty` 저장소의 액션 업데이트가 자동으로 반영됩니다. 결정적 빌드를 원한다면, 각 `uses:` 줄에서 `@main`을 커밋 SHA 또는 릴리스 태그로 바꾸세요.

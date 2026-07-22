@@ -1,153 +1,57 @@
 ---
 title: 키-값 저장소
-description: 간단한 키-값 객체를 사용하여 중간 결과를 유지하고, 데이터를 캐시하며, 논리 함수 실행 간 상태를 공유하세요.
+description: 기본 제공 애플리케이션 키-값 스토어를 사용해 중간 결과를 유지하고, 데이터를 캐시하며, 논리 함수 실행 간 상태를 공유하세요.
 icon: database
 ---
 
-로직 함수는 단기간 실행되는 샌드박스된 Node.js 프로세스에서 동작하며, 한 번 실행이 끝나면 메모리에 남아 있는 것은 아무것도 유지되지 않습니다. 실행 사이에서 **어떤 값을 기억해야 할 때**(비용이 큰 API 응답을 캐시하거나, 증분 동기화를 위한 커서를 저장하거나, 작업을 디바운스하거나, 한 함수에서 다른 함수로 상태를 넘길 때)는 워크스페이스 데이터베이스에 상태를 저장하세요.
+로직 함수는 단기간 실행되는 샌드박스된 Node.js 프로세스에서 동작하며, 한 번 실행이 끝나면 메모리에 남아 있는 것은 아무것도 유지되지 않습니다. 실행 사이에서 **어떤 값을 기억해야 할 때**(비용이 큰 API 응답을 캐시하거나, 증분 동기화를 위한 커서를 저장하거나, 작업을 디바운스하거나, 한 함수에서 다른 함수로 상태를 넘길 때)는 기본 제공 키-값 스토어에 상태를 저장하세요.
 
-이를 위해 별도의 저장용 프리미티브가 필요하지는 않습니다. `key` 필드와 `value` 필드가 있는 작은 **기술용 객체**만 있으면, 워크스페이스 범위에서 내구성이 있는 키-값 저장소를 만들 수 있으며, 이미 레코드에 사용 중인 동일한 [typed API client](/l/ko/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)를 통해 조회할 수 있습니다.
+각 애플리케이션은 자체적으로 격리된 네임스페이스를 갖습니다. 항목은 인증된 앱을 기준으로 키가 지정되므로, 키가 다른 애플리케이션과 충돌하거나 다른 애플리케이션에 의해 읽히는 일은 없습니다.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## 스토어 객체 정의하기
+## 가져오기, 설정, 삭제
 
-두 개의 필드가 있는 커스텀 객체를 선언합니다. `key`(고유한 `TEXT`)와 `value`(`RAW_JSON`으로, JSON으로 직렬화할 수 있는 어떤 페이로드든 저장할 수 있음)입니다. 전체 `defineObject` 레퍼런스는 [Objects](/l/ko/developers/extend/apps/data/objects)를 참고하세요.
+`twenty-sdk/logic-function`에서 `kv`를 임포트하세요. 값은 JSON으로 직렬화할 수 있는 모든 페이로드가 될 수 있습니다.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## 범위
+
+각 항목에는 스코프가 있으며, 모든 호출에서 옵션으로 전달됩니다. 기본값은 `WORKSPACE`입니다.
+
+* **`WORKSPACE`** (기본값) — 항목은 현재 워크스페이스에 설치된 앱 인스턴스에만 비공개입니다. 앱을 설치한 각 워크스페이스는 자체적인 독립 키 집합을 가집니다. 캐시, 커서, 워크스페이스별 상태에는 이 스코프를 사용하는 것이 적합합니다.
+* **`SERVER`** — 항목은 서버에서 실행 중인 앱의 모든 설치 간에 공유됩니다. 서버 항목은 \*\*클레임(claim)\*\*처럼 동작합니다. 저장된 값은 항상 해당 키를 클레임한 workspaceId이며(`set`에서 `value`를 생략하면 현재 워크스페이스에 대해 키를 클레임합니다), 그 워크스페이스만 해당 값을 덮어쓰거나 삭제할 수 있습니다. 어떤 설치에서든 해당 항목을 읽을 수 있습니다.
+
+서버 클레임은 워크스페이스 간 라우팅을 위해 존재합니다. [server-route resolver](/l/ko/developers/extend/apps/logic/logic-functions#server-route-trigger)는 애플리케이션 등록 소유자 워크스페이스에서 실행되지만, 인바운드 웹후크는 일반적으로 Twenty workspaceId가 아닌 외부 계정 ID만을 포함합니다. 각 워크스페이스가 연결 시점에 자신의 외부 ID를 클레임하게 한 다음, 라우트에서 이를 해결하세요:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### 키 고유성 강제하기
-
-`key`에 **고유 인덱스**를 추가해서 동일한 키에 두 개의 행이 존재하지 못하도록 합니다. 이는 고유성을 위한 권장 프리미티브입니다. 자세한 내용은 [Data → Unique indexes](/l/ko/developers/extend/apps/data/overview#unique-indexes)를 참고하세요.
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## 로직 함수에서 읽기 및 쓰기
-
-객체를 몇 개의 작은 헬퍼 뒤에 래핑해서, 나머지 코드가 `get`, `set`, `del` 같은 키-값 API를 사용하는 것처럼 보이도록 만드세요. 이들은 워크스페이스 스키마에서 생성되며 `kvStore` 객체에 대해 완전히 타입이 지정된 [`CoreApiClient`](/l/ko/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)를 사용합니다.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-고유 인덱스는 중복을 방지하지만, 두 번의 실행이 **동일한 새로운 키**를 정확히 같은 시점에 쓰려고 하면 조회와 생성 사이에서 여전히 경쟁 상태가 발생할 수 있습니다. 생성이 고유성 제약 조건으로 실패하면 이를 "다른 누군가가 먼저 썼다"라고 간주하고, 예외를 처리해 다시 읽거나, 업데이트로 재시도하세요.
-</Note>
+서버 키는 호출자의 워크스페이스에 대해서만 클레임할 수 있고 다른 워크스페이스가 덮어쓸 수 없기 때문에, 한 워크스페이스가 다른 워크스페이스에 속한 매핑을 가로채는 일은 일어날 수 없습니다. 키가 이미 다른 워크스페이스에 의해 클레임된 경우 `kv.set`은 예외를 발생시킵니다.
 
 ## 사용 예: 비용이 큰 호출 캐시하기
 
@@ -155,15 +59,15 @@ export const del = async (key: string): Promise<void> => {
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## 패턴 및 팁
 
-* **네임스페이스 구성.** 서로 다른 관심사를 분리하고 대량 조회를 쉽게 하기 위해 키에 접두사를 붙이세요 — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. 전체 네임스페이스를 나열하거나 비우려면 `key: { like: 'cache:%' }`으로 필터링하세요.
-* **만료(TTL).** 이 스토어에는 내장된 만료 기능이 없습니다. 읽을 때 확인할 수 있도록 `value` 안에 타임스탬프를 저장(캐시 예제처럼)하거나, `DATE_TIME` 필드를 추가하고 [cron-triggered function](/l/ko/developers/extend/apps/logic/logic-functions)을 통해 주기적으로 오래된 행을 정리하세요.
-* **무엇을 저장할지.** `RAW_JSON`은 숫자, 문자열, 배열, 객체 등 JSON으로 직렬화 가능한 어떤 값이든 저장할 수 있습니다. 엔트리는 작게 유지하세요. 이 스토어는 대용량 blob이나 파일이 아니라, 조정 및 캐싱용입니다. 파일의 경우 `FILES` 필드와 [`uploadFile`](/l/ko/developers/extend/apps/logic/logic-functions#uploading-files)을 사용하세요.
+* **네임스페이스 구성.** 서로 다른 관심사를 분리하기 위해 키에 접두사를 붙이세요 — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **만료(TTL).** 이 스토어에는 내장된 만료 기능이 없습니다. 값 안에 타임스탬프를 저장해(캐시 예제처럼) 읽을 때 확인하거나, [cron-triggered function](/l/ko/developers/extend/apps/logic/logic-functions)을 통해 오래된 키를 주기적으로 정리하세요.
+* **무엇을 저장할지.** 숫자, 문자열, 배열, 객체 등 JSON으로 직렬화 가능한 어떤 값이든 저장할 수 있습니다. 엔트리는 작게 유지하세요. 이 스토어는 대용량 blob이나 파일이 아니라, 조정 및 캐싱용입니다. 파일의 경우 `FILES` 필드와 [`uploadFile`](/l/ko/developers/extend/apps/logic/logic-functions#uploading-files)을 사용하세요.
+* **가시성.** 항목은 워크스페이스 레코드가 아니라 인스턴스 데이터베이스에 저장됩니다. 따라서 워크스페이스 UI에 나타나지 않고, 앱의 데이터 모델의 일부도 아니며, 역할이나 객체 권한도 필요하지 않습니다.
+
+## 대안: 조회 가능한 스토어 객체
+
+기본 제공 스토어는 의도적으로 불투명합니다. 항목이 레코드가 아니기 때문에 UI에서 탐색하거나, 다른 객체와 관계를 맺거나, 레코드 쿼리로 필터링할 수 없습니다. 이러한 기능이 필요할 때(예: 눈에 보이는 동기화 로그나 레코드별 상태 등)에는 고유한 `key` 필드와 `RAW_JSON` `value` 필드를 가진 작은 **technical object**를 정의하고, [typed API client](/l/ko/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk)를 통해 이를 쿼리하세요. `defineObject` 레퍼런스는 [Objects](/l/ko/developers/extend/apps/data/objects)를, 키의 고유성을 강제하려면 [Data → Unique indexes](/l/ko/developers/extend/apps/data/overview#unique-indexes)를 참고하세요.
+
+* **레코드에 스코프 지정하기.** ID를 키에 인코딩하지 말고, 스토어 객체에서 대상 객체로 [relation](/l/ko/developers/extend/apps/data/relations)을 추가하세요.
 * **가시성 및 권한.** 행은 다른 레코드와 마찬가지로 워크스페이스 데이터베이스에 저장되므로, API를 통해 조회할 수 있고 앱의 [role](/l/ko/developers/extend/apps/config/roles)을 그대로 따릅니다. 스토어를 기본 UI에서 숨기고 싶다면, [navigation menu](/l/ko/developers/extend/apps/layout/navigation-menu-items)에 추가하지 마세요.
-* **레코드 단위 스코핑.** 전역 키 대신 레코드별 상태가 필요하신가요? 스토어 객체에서 대상 객체로 [relation](/l/ko/developers/extend/apps/data/relations)을 추가하고, id를 키에 인코딩하지 마세요.
 
 <Note>
-이는 별도의 기능이 아니라 하나의 컨벤션일 뿐입니다. "KV Store"는 여러분이 정의하고 표준 API로 조회하는 일반 커스텀 객체입니다. 즉, 앱의 다른 데이터와 동일한 동기화, 권한, 도구의 이점을 모두 누릴 수 있습니다.
+기본 제공 스토어와 달리 커스텀 객체는 항상 하나의 워크스페이스에만 스코프가 지정되며, `SERVER` 키처럼 설치 간에 항목을 공유할 수 없습니다.
 </Note>

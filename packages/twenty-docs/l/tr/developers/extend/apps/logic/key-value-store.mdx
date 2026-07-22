@@ -1,153 +1,57 @@
 ---
 title: Anahtar-Değer Deposu
-description: Basit bir anahtar-değer nesnesiyle ara sonuçları kalıcı hale getirin, verileri önbelleğe alın ve mantık işlevi çalıştırmaları arasında durumu paylaşın.
+description: Yerleşik uygulama anahtar-değer deposuyla ara sonuçları kalıcı hale getirin, verileri önbelleğe alın ve mantık işlevi çalıştırmaları arasında durumu paylaşın.
 icon: database
 ---
 
-Mantık işlevleri, kısa ömürlü, izole Node.js süreçlerinde çalışır — bir çalıştırma tamamlandıktan sonra, bellekte tutulan hiçbir şey kalıcı olmaz. Çalıştırmalar arasında **bir şeyi hatırlamanız** gerektiğinde (maliyetli bir API yanıtını önbelleğe almak, artımlı eşitlemeler için bir imleç saklamak, işleri ertelemek ya da durumu bir işlevden diğerine aktarmak için), bunu çalışma alanı veritabanında kalıcı hale getirin.
+Mantık işlevleri, kısa ömürlü, izole Node.js süreçlerinde çalışır — bir çalıştırma tamamlandıktan sonra, bellekte tutulan hiçbir şey kalıcı olmaz. Çalıştırmalar arasında **bir şeyi hatırlamanız** gerektiğinde (maliyetli bir API yanıtını önbelleğe almak, artımlı eşitlemeler için bir imleç saklamak, işleri ertelemek ya da durumu bir işlevden diğerine aktarmak için), bunu yerleşik anahtar-değer deposunda kalıcı hale getirin.
 
-Bunun için özel bir depolama ilkeline ihtiyacınız yok: `key` alanı ve `value` alanı olan küçük bir **teknik nesne**, çalışma alanıyla sınırlı, kalıcı bir anahtar-değer deposu sağlar ve kayıtlar için zaten kullandığınız aynı [typed API client](/l/tr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) üzerinden sorgulanabilir.
+Her uygulamanın kendi yalıtılmış ad alanı vardır: girişler, kimliği doğrulanmış uygulamaya göre anahtarlanır, böylece anahtarlarınız başka bir uygulamayla asla çakışamaz veya başka bir uygulama tarafından okunamaz.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Depo nesnesini tanımlayın
+## Getir, ayarla, sil
 
-İki alanı olan özel bir nesne tanımlayın — `key` (benzersiz bir `TEXT`) ve `value` (her türlü JSON-serileştirilebilir yükü saklayabilmeniz için bir `RAW_JSON`). Tam `defineObject` referansı için [Objects](/l/tr/developers/extend/apps/data/objects) bölümüne bakın.
+`kv` öğesini `twenty-sdk/logic-function` içinden içe aktarın. Değerler, JSON olarak serileştirilebilir herhangi bir veri yükü olabilir.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Kapsamlar
+
+Her girişin, her çağrıda bir seçenek olarak iletilen bir kapsamı vardır. Varsayılan `WORKSPACE` değeridir.
+
+* **`WORKSPACE`** (varsayılan) — giriş, uygulamanızın geçerli çalışma alanı kurulumuna özeldir. Uygulamayı kuran her çalışma alanı kendi bağımsız anahtar setini alır. Önbellekler, imleçler ve çalışma alanı başına durum için istediğiniz budur.
+* **`SERVER`** — giriş, sunucudaki uygulamanızın **her kurulumuyla** paylaşılır. Sunucu girişleri **claim** gibi davranır: saklanan değer, anahtarı talep eden çalışma alanı kimliği (geçerli çalışma alanı için anahtarı talep etmek üzere `set` çağrısında `value` belirtmeyin) olur ve yalnızca o çalışma alanı bu değeri üzerine yazabilir veya silebilir. Her kurulum girişi okuyabilir.
+
+Sunucu claim'leri, çalışma alanları arası yönlendirme için vardır. [server-route resolver](/l/tr/developers/extend/apps/logic/logic-functions#server-route-trigger), uygulama kaydı sahibinin çalışma alanında çalışır, ancak gelen bir web kancası genellikle yalnızca harici bir hesap kimliği taşır — bir Twenty çalışma alanı kimliği taşımaz. Her çalışma alanının, bağlanma anında kendi harici kimliğini talep etmesini sağlayın, ardından bunu rotada çözümleyin:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Anahtar benzersizliğini zorunlu kılın
-
-Aynı anahtarın asla iki satıra sahip olmaması için `key` üzerinde **benzersiz bir indeks** ekleyin. Bu, benzersizlik için önerilen ilkeldir — bkz. [Data → Unique indexes](/l/tr/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Bir mantık işlevinden okuma ve yazma
-
-Nesneyi, geri kalan kodunuzun `get`, `set` ve `del` ile bir anahtar-değer API'si gibi okunmasını sağlamak için birkaç küçük yardımcı işlevin arkasına alın. Bunlar, çalışma alanı şemanızdan üretilen ve tamamen `kvStore` nesnesine göre türlendirilmiş [`CoreApiClient`](/l/tr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) kullanır.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-Benzersiz indeks çoğaltmalara karşı koruma sağlar, ancak aynı anda **aynı yeni anahtarı** yazan iki çalıştırma, yine de arama ve oluşturma arasında yarışabilir. Benzersizlik kısıtlamasında başarısız olan bir oluşturma işlemini "başka biri kazandı" olarak ele alın — hatayı yakalayın ve yeniden okuyun ya da bir güncelleme olarak tekrar deneyin.
-</Note>
+Bir sunucu anahtarı yalnızca çağıranın kendi çalışma alanı için talep edilebildiğinden ve başka bir çalışma alanı tarafından asla üzerine yazılamadığından, bir çalışma alanı başkasına ait bir eşlemeyi ele geçiremez. Anahtar zaten başka bir çalışma alanı tarafından talep edilmişse `kv.set` hata fırlatır.
 
 ## Kullanın: maliyetli bir çağrıyı önbelleğe alın
 
@@ -155,15 +59,15 @@ Yaygın bir kullanım, yavaş veya hız sınırına tabi üçüncü taraf yanıt
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Kalıplar ve ipuçları
 
-* **Ad alanları.** Farklı konuları birbirinden ayırmak ve toplu aramaları kolaylaştırmak için anahtarlara ön ek ekleyin — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Bir ad alanının tamamını listelemek veya temizlemek için `key: { like: 'cache:%' }` ile filtreleyin.
-* **Sona erme (TTL).** Depoda yerleşik bir sona erme özelliği yoktur. Okuma sırasında kontrol etmek için `value` içinde bir zaman damgası saklayın (önbellek örneğinde olduğu gibi) veya bir `DATE_TIME` alanı ekleyip, düzenli aralıklarla [cron-triggered function](/l/tr/developers/extend/apps/logic/logic-functions) içinden eski satırları temizleyin.
-* **Ne saklanmalı.** `RAW_JSON`, sayılar, dizeler, diziler ve nesneler gibi JSON-serileştirilebilir herhangi bir değeri tutar. Kayıtları küçük tutun; bu, koordinasyon ve önbelleğe alma içindir, büyük blob'lar veya dosyalar için değil. Dosyalar için bir `FILES` alanı ve [`uploadFile`](/l/tr/developers/extend/apps/logic/logic-functions#uploading-files) kullanın.
+* **Ad alanları.** Farklı konuları birbirinden ayırmak için anahtarlara ön ek ekleyin — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Sona erme (TTL).** Depoda yerleşik bir sona erme özelliği yoktur. Okuma sırasında kontrol etmek için değerin içinde (önbellek örneğinde olduğu gibi) bir zaman damgası saklayın veya eski anahtarları bir [cron-triggered function](/l/tr/developers/extend/apps/logic/logic-functions) içinden temizleyin.
+* **Ne saklanmalı.** Sayılar, dizeler, diziler, nesneler gibi JSON olarak serileştirilebilir herhangi bir değer. Kayıtları küçük tutun; bu, koordinasyon ve önbelleğe alma içindir, büyük blob'lar veya dosyalar için değil. Dosyalar için bir `FILES` alanı ve [`uploadFile`](/l/tr/developers/extend/apps/logic/logic-functions#uploading-files) kullanın.
+* **Görünürlük.** Girişler, çalışma alanı kayıtları olarak değil, instance veritabanında tutulur — çalışma alanı arayüzünde asla görünmezler, uygulamanızın veri modelinin parçası değildirler ve herhangi bir rol veya nesne iznine ihtiyaç duymazlar.
+
+## Alternatif: sorgulanabilir bir depo nesnesi
+
+Yerleşik depo kasıtlı olarak opaktır: girişler kayıt değildir, bu nedenle onları arayüzde gezemez, diğer nesnelerle ilişkilendiremez veya kayıt sorgularıyla filtreleyemezsiniz. Bunlardan herhangi birine ihtiyaç duyduğunuzda — örneğin görünür bir eşitleme günlüğü veya kayıt başına durum — bunun yerine benzersiz bir `key` alanına ve bir `RAW_JSON` `value` alanına sahip küçük bir **teknik nesne** tanımlayın ve onu [typed API client](/l/tr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) aracılığıyla sorgulayın. `defineObject` başvurusu için [Objects](/l/tr/developers/extend/apps/data/objects) bölümüne ve anahtar benzersizliğini zorlamak için [Data → Unique indexes](/l/tr/developers/extend/apps/data/overview#unique-indexes) bölümüne bakın.
+
+* **Bir kayda kapsam belirleme.** Kimliği anahtarın içine kodlamak yerine, depo nesnesinden hedef nesneye bir [relation](/l/tr/developers/extend/apps/data/relations) ekleyin.
 * **Görünürlük ve izinler.** Satırlar, diğer kayıtlar gibi çalışma alanı veritabanında yaşar; bu nedenle API üzerinden sorgulanabilirler ve uygulamanızın [role](/l/tr/developers/extend/apps/config/roles) yapılandırmasına uyarlar. Depoyu ana arayüzün dışında tutmak için, onu [navigation menu](/l/tr/developers/extend/apps/layout/navigation-menu-items) dışında bırakın.
-* **Bir kayda kapsamlamak.** Genel anahtarlar yerine kayıt başına duruma mı ihtiyacınız var? Kimliği anahtarın içine kodlamak yerine, depo nesnesinden hedef nesneye bir [relation](/l/tr/developers/extend/apps/data/relations) ekleyin.
 
 <Note>
-Bu bir kuraldır, ayrı bir özellik değildir — "KV Store", sizin tanımladığınız ve standart API ile sorguladığınız normal bir özel nesnedir. Bu da, uygulamanızın verilerinin geri kalanıyla aynı eşitleme, izinler ve araç setinden yararlanması anlamına gelir.
+Yerleşik depodan farklı olarak, özel bir nesne her zaman tek bir çalışma alanına kapsamlanır — `SERVER` anahtarlarının yaptığı gibi kurulumlar arasında girişleri paylaşamaz.
 </Note>

@@ -305,6 +305,54 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       },
     );
   });
+  it('should not create contacts for non-sender group email participants when excludeGroupEmails is enabled', async () => {
+    await service.saveMessagesAndEnqueueContactCreation(
+      [
+        {
+          ...mockMessages[1],
+          participants: [
+            {
+              role: MessageParticipantRole.FROM,
+              handle: 'tim@apple.com',
+              displayName: 'Tim',
+            },
+            {
+              role: MessageParticipantRole.REPLY_TO,
+              handle: 'no-reply@mail.instagram.com',
+              displayName: 'Instagram',
+            },
+            {
+              role: MessageParticipantRole.CC,
+              handle: 'support@company.com',
+              displayName: 'Support',
+            },
+          ],
+        },
+      ],
+      mockMessageChannel,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      CreateCompanyAndContactJob.name,
+      {
+        workspaceId,
+        connectedAccount: mockConnectedAccount,
+        source: FieldActorSource.EMAIL,
+        contactsToCreate: [
+          {
+            handle: 'tim@apple.com',
+            displayName: 'Tim',
+            role: MessageParticipantRole.FROM,
+            shouldCreateContact: true,
+            messageId: 'db-message-id-2',
+          },
+        ],
+      },
+    );
+  });
+
   it('should not create contact if the participant is the connected account', async () => {
     const mockMessagesWithConnectedAccount = [
       {

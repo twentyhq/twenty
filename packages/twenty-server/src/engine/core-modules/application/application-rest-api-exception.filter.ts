@@ -45,6 +45,7 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.UPGRADE_FAILED:
     case ApplicationExceptionCode.INVALID_SERVER_VERSION:
     case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
+    case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
       return 500;
     default:
       return assertUnreachable(code);

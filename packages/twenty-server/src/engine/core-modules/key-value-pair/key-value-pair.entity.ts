@@ -14,6 +14,8 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -21,6 +23,7 @@ export enum KeyValuePairType {
   USER_VARIABLE = 'USER_VARIABLE',
   FEATURE_FLAG = 'FEATURE_FLAG',
   CONFIG_VARIABLE = 'CONFIG_VARIABLE',
+  APPLICATION_VARIABLE = 'APPLICATION_VARIABLE',
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
@@ -35,7 +38,7 @@ export enum KeyValuePairType {
   ['key', 'workspaceId'],
   {
     unique: true,
-    where: '"userId" is NULL',
+    where: '"userId" is NULL AND "applicationId" is NULL',
   },
 )
 @Index(
@@ -51,9 +54,27 @@ export enum KeyValuePairType {
   ['key'],
   {
     unique: true,
-    where: '"userId" is NULL AND "workspaceId" is NULL',
+    where:
+      '"userId" is NULL AND "workspaceId" is NULL AND "applicationId" is NULL',
   },
 )
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_APPLICATION_ID_WORKSPACE_UNIQUE',
+  ['key', 'applicationId'],
+  {
+    unique: true,
+    where: '"applicationId" is NOT NULL AND "workspaceId" is NOT NULL',
+  },
+)
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_APPLICATION_ID_GLOBAL_UNIQUE',
+  ['key', 'applicationId'],
+  {
+    unique: true,
+    where: '"applicationId" is NOT NULL AND "workspaceId" is NULL',
+  },
+)
+@Index('IDX_KEY_VALUE_PAIR_APPLICATION_ID', ['applicationId'])
 export class KeyValuePairEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -76,6 +97,20 @@ export class KeyValuePairEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   workspaceId: string | null;
+
+  @ManyToOne(() => ApplicationEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddApplicationIdToKeyValuePairFastInstanceCommand_1784659343818',
+  })
+  applicationId: string | null;
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })

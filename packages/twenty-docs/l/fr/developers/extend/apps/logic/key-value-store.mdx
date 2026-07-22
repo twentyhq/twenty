@@ -1,153 +1,57 @@
 ---
 title: Stockage clé-valeur
-description: Conservez des résultats intermédiaires, mettez les données en cache et partagez l’état entre les exécutions de fonctions logiques à l’aide d’un simple objet clé-valeur.
+description: Conservez des résultats intermédiaires, mettez les données en cache et partagez l’état entre les exécutions de fonctions logiques avec le magasin clé-valeur intégré à l’application.
 icon: database
 ---
 
-Les fonctions logiques s'exécutent dans des processus Node.js isolés et de courte durée — une fois une exécution terminée, rien de ce qui était conservé en mémoire ne survit. Lorsque vous avez besoin de **vous souvenir de quelque chose entre les exécutions** (mettre en cache une réponse d’API coûteuse, stocker un curseur pour des synchronisations incrémentales, appliquer un anti-rebond, ou transférer l’état d’une fonction à une autre), conservez-le dans la base de données de l’espace de travail.
+Les fonctions logiques s'exécutent dans des processus Node.js isolés et de courte durée — une fois une exécution terminée, rien de ce qui était conservé en mémoire ne survit. Lorsque vous avez besoin de **vous souvenir de quelque chose entre les exécutions** (mettre en cache une réponse d’API coûteuse, stocker un curseur pour des synchronisations incrémentales, appliquer un anti-rebond, ou transférer l’état d’une fonction à une autre), conservez-le dans le magasin clé-valeur intégré.
 
-Vous n'avez pas besoin d'un mécanisme de stockage dédié pour cela : un petit **objet technique** avec un champ `key` et un champ `value` vous fournit un stockage clé-valeur durable, limité à l'espace de travail, interrogeable via le même [client d'API typé](/l/fr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) que vous utilisez déjà pour les enregistrements.
+Chaque application dispose de son propre espace de noms isolé : les entrées sont associées à l’application authentifiée, de sorte que vos clés ne peuvent jamais entrer en collision avec celles d’une autre application, ni être lues par celle-ci.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Définir l'objet de stockage
+## Obtenir, définir, supprimer
 
-Déclarez un objet personnalisé avec deux champs — `key` (un `TEXT` unique) et `value` (un `RAW_JSON` afin que vous puissiez stocker n'importe quelle charge utile sérialisable en JSON). Voir [Objets](/l/fr/developers/extend/apps/data/objects) pour la référence complète de `defineObject`.
+Importez `kv` depuis `twenty-sdk/logic-function`. Les valeurs peuvent être n’importe quelle charge utile sérialisable en JSON.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Périmètres
+
+Chaque entrée possède une portée, passée comme option à chaque appel. La valeur par défaut est `WORKSPACE`.
+
+* **`WORKSPACE`** (par défaut) — l’entrée est réservée à l’installation actuelle de votre application dans l’espace de travail. Chaque espace de travail qui installe l’application obtient son propre ensemble indépendant de clés. C’est ce qu’il vous faut pour les caches, les curseurs et l’état par espace de travail.
+* **`SERVER`** — l’entrée est partagée entre **toutes les installations** de votre application sur le serveur. Les entrées serveur se comportent comme des **revendications** : la valeur stockée est toujours le workspaceId qui a revendiqué la clé (omettre `value` lors de `set` pour revendiquer la clé pour l’espace de travail actuel), et seul cet espace de travail peut la remplacer ou la supprimer. N’importe quelle installation peut lire l’entrée.
+
+Les revendications serveur existent pour le routage inter-espaces de travail. Un [résolveur de route serveur](/l/fr/developers/extend/apps/logic/logic-functions#server-route-trigger) s’exécute dans l’espace de travail propriétaire de l’enregistrement de l’application, mais un webhook entrant ne transporte généralement qu’un identifiant de compte externe — pas un workspaceId Twenty. Faites en sorte que chaque espace de travail revendique son identifiant externe au moment de la connexion, puis résolvez-le dans la route :
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Appliquer l'unicité de la clé
-
-Ajoutez un **index unique** sur `key` pour que la même clé ne puisse jamais avoir deux lignes. Ceci est le mécanisme recommandé pour l'unicité — voir [Données → Index uniques](/l/fr/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Lire et écrire depuis une fonction logique
-
-Placez l'objet derrière quelques petits utilitaires afin que le reste de votre code se lise comme une API clé-valeur — `get`, `set` et `del`. Ils utilisent [`CoreApiClient`](/l/fr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), qui est généré à partir du schéma de votre espace de travail et entièrement typé par rapport à l'objet `kvStore`.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-L'index unique protège contre les doublons, mais deux exécutions qui écrivent **la même nouvelle clé** au même instant peuvent toujours entrer en concurrence entre la recherche et la création. Considérez une création qui échoue sur la contrainte d'unicité comme « quelqu'un d'autre a gagné » — interceptez-la et relisez, ou réessayez sous forme de mise à jour.
-</Note>
+Comme une clé serveur ne peut être revendiquée que pour l’espace de travail de l’appelant et jamais écrasée par un autre, un espace de travail ne peut pas détourner un mappage appartenant à quelqu’un d’autre. `kv.set` lève une exception lorsque la clé est déjà revendiquée par un autre espace de travail.
 
 ## Utilisez-le : mettez en cache un appel coûteux
 
@@ -155,15 +59,15 @@ Un cas d'utilisation typique consiste à mettre en cache une réponse tierce len
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Modèles et conseils
 
-* **Espaces de noms.** Préfixez les clés pour séparer les différentes préoccupations et faciliter les recherches en masse — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Filtrez avec `key: { like: 'cache:%' }` pour lister ou vider un espace de noms entier.
-* **Expiration (TTL).** Le store n'a pas d'expiration intégrée. Stockez un horodatage dans le `value` (comme dans l'exemple de cache) et vérifiez-le à la lecture, ou ajoutez un champ `DATE_TIME` et effacez périodiquement les lignes obsolètes à partir d'une [fonction déclenchée par cron](/l/fr/developers/extend/apps/logic/logic-functions).
-* **Que stocker.** `RAW_JSON` contient toute valeur sérialisable en JSON — nombres, chaînes de caractères, tableaux, objets. Gardez les entrées petites ; ceci sert à la coordination et à la mise en cache, pas aux blobs volumineux ni aux fichiers. Pour les fichiers, utilisez un champ `FILES` et [`uploadFile`](/l/fr/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Espaces de noms.** Préfixez les clés pour séparer les différentes préoccupations — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expiration (TTL).** Le store n'a pas d'expiration intégrée. Stockez un horodatage dans la valeur (comme dans l’exemple de cache) et vérifiez-le à la lecture, ou effacez les clés obsolètes à partir d’une [fonction déclenchée par cron](/l/fr/developers/extend/apps/logic/logic-functions).
+* **Que stocker.** Toute valeur sérialisable en JSON — nombres, chaînes de caractères, tableaux, objets. Gardez les entrées petites ; ceci sert à la coordination et à la mise en cache, pas aux blobs volumineux ni aux fichiers. Pour les fichiers, utilisez un champ `FILES` et [`uploadFile`](/l/fr/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Visibilité.** Les entrées résident dans la base de données de l’instance, et non comme enregistrements d’espace de travail — elles n’apparaissent jamais dans l’interface utilisateur de l’espace de travail, ne font pas partie du modèle de données de votre application et ne nécessitent aucun droit ni aucune permission d’objet.
+
+## Alternative : un objet de stockage interrogeable
+
+Le magasin intégré est délibérément opaque : les entrées ne sont pas des enregistrements, vous ne pouvez donc pas les parcourir dans l’interface utilisateur, les relier à d’autres objets, ni les filtrer avec des requêtes sur les enregistrements. Lorsque vous avez besoin de tout cela — par exemple un journal de synchronisation visible, ou un état par enregistrement — définissez plutôt un petit **objet technique** avec un champ `key` unique et un champ `RAW_JSON` `value`, puis interrogez-le via le [client d’API typé](/l/fr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Consultez [Objets](/l/fr/developers/extend/apps/data/objects) pour la référence `defineObject` et [Données → Index uniques](/l/fr/developers/extend/apps/data/overview#unique-indexes) pour faire appliquer l’unicité des clés.
+
+* **Délimiter la portée à un enregistrement.** Ajoutez une [relation](/l/fr/developers/extend/apps/data/relations) de l’objet de stockage vers l’objet cible plutôt que de coder l’identifiant dans la clé.
 * **Visibilité et autorisations.** Les lignes résident dans la base de données de l'espace de travail comme n'importe quel autre enregistrement, elles sont donc interrogeables via l'API et respectent le [rôle](/l/fr/developers/extend/apps/config/roles) de votre application. Pour garder le store hors de l'interface principale, ne l'ajoutez pas à votre [menu de navigation](/l/fr/developers/extend/apps/layout/navigation-menu-items).
-* **Portée à un enregistrement.** Besoin d'un état par enregistrement plutôt que de clés globales ? Ajoutez une [relation](/l/fr/developers/extend/apps/data/relations) de l'objet de stockage vers l'objet cible plutôt que de coder l'identifiant dans la clé.
 
 <Note>
-Il s'agit d'une convention, pas d'une fonctionnalité distincte — le « KV Store » est simplement un objet personnalisé classique que vous définissez et interrogez avec l'API standard. Cela signifie qu'il bénéficie de la même synchronisation, des mêmes autorisations et des mêmes outils que le reste des données de votre application.
+Contrairement au magasin intégré, un objet personnalisé est toujours limité à un seul espace de travail — il ne peut pas partager des entrées entre installations comme le font les clés `SERVER`.
 </Note>

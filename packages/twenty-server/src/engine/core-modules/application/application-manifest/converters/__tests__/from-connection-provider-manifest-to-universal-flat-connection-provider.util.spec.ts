@@ -50,9 +50,30 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      onConnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
     });
+  });
+
+  it('resolves the onConnectLogicFunction universalIdentifier into the flat field when provided', () => {
+    const onConnectLogicFunctionUniversalIdentifier =
+      'c1c1c1c1-c1c1-4c1c-c1c1-c1c1c1c1c1c1';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          onConnectLogicFunction: {
+            universalIdentifier: onConnectLogicFunctionUniversalIdentifier,
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.onConnectLogicFunctionUniversalIdentifier).toBe(
+      onConnectLogicFunctionUniversalIdentifier,
+    );
   });
 
   it('passes through optional oauth config when provided', () => {

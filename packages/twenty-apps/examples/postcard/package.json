@@ -29,8 +29,8 @@
     "playwright": "^1.60.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "2.23.0-alpha.1",
-    "twenty-sdk": "2.23.0-alpha.1",
+    "twenty-client-sdk": "2.23.0-alpha.2",
+    "twenty-sdk": "2.23.0-alpha.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.0"
   }

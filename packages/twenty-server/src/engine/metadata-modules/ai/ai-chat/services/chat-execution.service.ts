@@ -15,6 +15,9 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
+import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
+import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -430,6 +433,7 @@ export class ChatExecutionService {
         value: performance.now() - streamStartedAt,
         unit: 'ms',
         attributes: modelAttr,
+        bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
       });
     };
 
@@ -475,8 +479,21 @@ export class ChatExecutionService {
             value: performance.now() - streamStartedAt,
             unit: 'ms',
             attributes: { model: registeredModel.modelId },
+            bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
           });
         }
+      },
+      experimental_onToolCallFinish: (event) => {
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.AiChatToolExecutionDurationMs,
+          value: event.durationMs,
+          unit: 'ms',
+          attributes: {
+            model: registeredModel.modelId,
+            tool: getToolMetricName(event.toolCall.toolName),
+          },
+          bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
+        });
       },
       onStepFinish: async (step) => {
         this.metricsService.recordHistogram({
@@ -484,6 +501,7 @@ export class ChatExecutionService {
           value: performance.now() - stepStartedAt,
           unit: 'ms',
           attributes: { model: registeredModel.modelId },
+          bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
@@ -544,6 +562,7 @@ export class ChatExecutionService {
             value: outputTokens,
             unit: 'token',
             attributes: executionAttributes,
+            bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
           });
         }
       },

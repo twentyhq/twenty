@@ -59,7 +59,7 @@ Pentru a apela o funcție logică declanșată de o rută dintr-o componentă fr
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
 * **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
 > de ex. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul deținător și returnează atât workspace-ul țintă, cât și funcția logică țintă către care se face trimiterea; platforma rulează apoi acea funcție **țintă** și returnează răspunsul acesteia. Consultați [declanșatorul de rută de server](#server-route-trigger).
+* **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul proprietar și returnează atât workspace-ul țintă, cât și funcția logică țintă către care se face trimiterea; platforma confirmă cu `202` și rulează acea funcție **țintă** în coada de worker. Consultați [declanșatorul de rută de server](#server-route-trigger).
 
 <Note>
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
@@ -290,7 +290,7 @@ Pentru semnăturile cererilor, majoritatea furnizorilor semnează cu HMAC-SHA256
 Exemplul de resolver de mai sus arată deja fluxul GitHub HMAC-SHA256 — adaptați numele headerului, codificarea digestului și șirul de payload semnat în funcție de furnizorul cu care vă integrați.
 
 <Note>
-Ținta rulează **sincron**, iar valoarea returnată devine răspunsul HTTP, astfel încât apelanții văd codul de stare și pot reîncerca pentru coduri non-2xx. Mențineți ambii handler-i rapizi — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece resolver-ul este accesibil ca endpoint public, protejați-l cu limitare de rată la marginea infrastructurii dvs.
+Ruta răspunde cu `202 { queued: true }` imediat după ce resolver-ul își încheie execuția, iar ținta rulează în coada worker-ului — apelantul nu observă niciodată latența, rezultatul sau erorile țintei (acestea sunt înregistrate în jurnalele de execuție). Acest lucru împiedică retrimiterile expeditorului să amplifice încetinirile procesării, ceea ce este de dorit pentru ingestia de webhook-uri. Pentru endpoint-urile al căror apelant trebuie să citească corpul răspunsului (challenge handshakes, comenzi Slack), folosiți în schimb o rută `httpRouteTriggerSettings`. Mențineți resolver-ul rapid — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece resolver-ul este accesibil ca endpoint public, protejați-l cu limitare de rată la marginea infrastructurii dvs.
 </Note>
 
 #### Payload-ul declanșatorului de eveniment al bazei de date

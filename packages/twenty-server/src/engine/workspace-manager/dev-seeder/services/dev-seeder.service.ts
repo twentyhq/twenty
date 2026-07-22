@@ -191,7 +191,7 @@ export class DevSeederService {
       light,
     });
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
   private async seedCoreSchema({

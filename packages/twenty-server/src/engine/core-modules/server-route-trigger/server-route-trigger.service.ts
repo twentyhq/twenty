@@ -11,22 +11,32 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
-  type RouteTriggerResponse,
-  buildRouteTriggerResponse,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+  LogicFunctionTriggerJob,
+  type LogicFunctionTriggerJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 type ResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
 };
+
+const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 @Injectable()
 export class ServerRouteTriggerService {
@@ -36,6 +46,8 @@ export class ServerRouteTriggerService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async handle({
@@ -89,22 +101,13 @@ export class ServerRouteTriggerService {
     });
     const resolved = this.parseResolverResult(resolverResult);
 
-    const targetResult = await this.runFunction({
+    return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
         resolved.targetLogicFunctionUniversalIdentifier,
       workspaceId: resolved.workspaceId,
       payload: resolved.payload ?? event,
       applicationRegistrationId,
     });
-
-    if (isDefined(targetResult.error)) {
-      throw new ServerRouteTriggerException(
-        targetResult.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-      );
-    }
-
-    return buildRouteTriggerResponse(targetResult.data);
   }
 
   private async findResolver({
@@ -169,7 +172,7 @@ export class ServerRouteTriggerService {
     };
   }
 
-  private async runFunction({
+  private async enqueueTargetFunction({
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
@@ -178,8 +181,38 @@ export class ServerRouteTriggerService {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
+    applicationRegistrationId: string;
+  }): Promise<RouteTriggerResponse> {
+    const logicFunction = await this.findLogicFunctionOrFail({
+      logicFunctionUniversalIdentifier,
+      workspaceId,
+      applicationRegistrationId,
+    });
+
+    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: logicFunction.id,
+          workspaceId,
+          payload,
+        },
+      ],
+      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+    );
+
+    return { statusCode: 202, headers: {}, body: { queued: true } };
+  }
+
+  private async findLogicFunctionOrFail({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    applicationRegistrationId,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
     applicationRegistrationId?: string;
-  }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
+  }): Promise<LogicFunctionEntity> {
     const logicFunction = await this.logicFunctionRepository.findOne({
       where: {
         universalIdentifier: logicFunctionUniversalIdentifier,
@@ -199,6 +232,23 @@ export class ServerRouteTriggerService {
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
+
+    return logicFunction;
+  }
+
+  private async runFunction({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    payload,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
+    payload: object;
+  }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
+    const logicFunction = await this.findLogicFunctionOrFail({
+      logicFunctionUniversalIdentifier,
+      workspaceId,
+    });
 
     try {
       return await this.logicFunctionExecutorService.execute({
@@ -228,6 +278,8 @@ export class ServerRouteTriggerService {
         return 'Rate limit exceeded';
       case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return 'Logic function not found';
+      case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED:
+        return 'Logic function execution is disabled';
       default:
         return 'An unexpected error occurred while handling the server route';
     }
@@ -236,6 +288,13 @@ export class ServerRouteTriggerService {
   private mapExecutorErrorToServerRouteCode(
     error: unknown,
   ): ServerRouteTriggerExceptionCode {
+    if (
+      error instanceof LogicFunctionException &&
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+    ) {
+      return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED;
+    }
+
     if (!(error instanceof LogicFunctionExecutionException)) {
       return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
     }

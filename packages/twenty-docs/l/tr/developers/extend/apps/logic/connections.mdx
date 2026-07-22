@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ Sağlayıcınızın beyaz listeye alması gereken OAuth geri çağrı URL'si şu
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Bağlanıldığında bir mantık fonksiyonu çalıştırın" description="Bir bağlantı kurulur kurulmaz tepki verin">
+
+Bazı sağlayıcılar, bağlantı anında size, bağlantı kullanılabilir hale gelmeden önce kalıcı hale getirmeniz gereken veriler verir — klasik örnek Slack'tir; burada OAuth yanıtı, gelen olayların anahtarlanacağı çalışma alanının `team_id` bilgisini sağlar. `onConnectLogicFunction` değerini, aynı uygulamadaki bir mantık fonksiyonuna (onun `universalIdentifier` değeriyle) referans verecek şekilde ayarlayın; böylece `ConnectedAccount` oluşturulduktan hemen sonra çalışır.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Kanca, **bağlanan çalışma alanında eşzamansız olarak** çalışır (kuyruğa alınır, beklenmez), bu nedenle yavaşlayan veya başarısız olan bir kanca hiçbir zaman OAuth geri çağrısını engellemez veya bozmaz — onu idempotent yapın ve kendi tekrar denemelerini kendisi yönetsin. İşleyici şunları alır:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Buradan `getConnection(connectedAccountId)` kullanarak yeni erişim belirtecini okuyun ve sağlayıcının API'sini (ör. Slack `auth.test`) çağırın veya [key-value store](/l/tr/developers/extend/apps/logic/key-value-store) ile bir eşleme kalıcı hale getirin.
 
 </Accordion>
 

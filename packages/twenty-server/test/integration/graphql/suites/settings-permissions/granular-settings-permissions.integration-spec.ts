@@ -300,6 +300,34 @@ describe('Granular settings permissions', () => {
       expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
+    it('should deny access to applications operations when user does not have APPLICATIONS setting permission', async () => {
+      const findOneApplicationQuery = {
+        query: `
+          query FindOneApplication {
+            findOneApplication(id: "20202020-1c25-4d02-bf25-6aeccf7ea419") {
+              applicationVariables {
+                key
+                value
+              }
+            }
+          }
+        `,
+      };
+
+      const response = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+        .send(findOneApplicationQuery);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    });
+
     it('should deny access to API keys operations when user does not have API_KEYS_AND_WEBHOOKS setting permission', async () => {
       // Test creating an API key (requires API_KEYS_AND_WEBHOOKS permission)
       const createApiKeyQuery = {

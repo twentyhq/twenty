@@ -170,6 +170,17 @@ yarn twenty app:publish --private
 
 على npmjs.com افتح الحزمة الخاصة بك > **Settings → Trusted Publisher** وسجّل هذا المستودع مع سير عمل `publish.yml` (راجع [وثائق النشر الموثوق من npm](https://docs.npmjs.com/trusted-publishers)). يُصادِق النشر مع بيانات provenance على مستودع GitHub الذي بنى الحزمة، وهو أيضًا ما يتيح لك المطالبة بملكية تطبيقك في سوق Twenty.
 
+<Note>
+npm يقبل إثبات المصدر (provenance) فقط من مستودعات المصدر **العامّة**. إذا قمت بالنشر من مستودع خاص، يرفض npm حزمة إثبات المصدر عبر OIDC برسالة `E422 ... خطأ Unsupported GitHub Actions source repository visibility: "private"`. لنشر الحزمة (publish) من مستودع خاص، يمكنك إيقاف استخدام إثبات المصدر (provenance) عبر تعيين `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` في متغيّر `env` لخطوة النشر (publish step) (تلميح مضاف كتعليق موجود في ملف `publish.yml` المُنشأ تلقائيًا):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### تثبيت الإجراءات القابلة لإعادة الاستخدام
 
 يشير سيرَا العمل `ci.yml` و`cd.yml` إلى إجراءات قابلة لإعادة الاستخدام عند `@main`، لذا تُلتقط تحديثات الإجراءات في مستودع `twentyhq/twenty` تلقائيًا. إذا كنت تريد بناءات حتمية، فاستبدِل `@main` بقيمة SHA لالتزام أو بوسم إصدار في كل سطر `uses:`.

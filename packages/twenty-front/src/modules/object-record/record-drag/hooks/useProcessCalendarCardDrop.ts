@@ -1,12 +1,10 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type DropResult } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
-import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
@@ -37,19 +35,18 @@ export const useProcessCalendarCardDrop = () => {
     );
 
   const processCalendarCardDrop = useCallback(
-    async (calendarCardDropResult: DropResult) => {
-      if (
-        !calendarCardDropResult.destination ||
-        !currentView?.calendarFieldMetadataId
-      )
-        return;
-
-      const recordId = getRecordIdFromRecordCalendarCardDraggableId(
-        calendarCardDropResult.draggableId,
-      );
-      const destinationDate = calendarCardDropResult.destination.droppableId;
-      const destinationIndex = calendarCardDropResult.destination.index;
-      const sourceDate = calendarCardDropResult.source.droppableId;
+    async ({
+      recordId,
+      sourceDate,
+      destinationDate,
+      destinationIndex,
+    }: {
+      recordId: string;
+      sourceDate: string;
+      destinationDate: string;
+      destinationIndex: number;
+    }) => {
+      if (!currentView?.calendarFieldMetadataId) return;
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);

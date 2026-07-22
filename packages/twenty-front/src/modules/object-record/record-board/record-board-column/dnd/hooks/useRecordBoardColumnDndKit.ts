@@ -11,8 +11,8 @@ import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/reco
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
-import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -23,17 +23,17 @@ import { ViewType } from '@/views/types/ViewType';
 
 type DragStartPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
   >
 >[0];
 type DragMovePayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
   >
 >[0];
 type DragEndPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
   >
 >[0];
 
@@ -107,7 +107,7 @@ export const useRecordBoardColumnDndKit = (): {
       return null;
     }
 
-    return resolveDragDropColumnDrop({
+    return resolveDragDropItemDrop({
       pointerX,
       sourceIndex,
       scrollWrapperElement,
