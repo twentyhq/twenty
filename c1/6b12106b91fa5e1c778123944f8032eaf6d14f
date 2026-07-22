@@ -1,0 +1,24 @@
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_c3fbc446206706::t_9c5662db8918ae 2
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+  s_c3fbc446206706::t_1968e8193a5a51 48-55
+  s_c3fbc446206706::t_4aa1e646f91385 99
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util.ts
+  s_c3fbc446206706::t_2f6616befcfd50 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c16b12106b91fa5e1c778123944f8032eaf6d14f",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
