@@ -192,9 +192,6 @@ export class ViewWidgetUpsertService {
     };
 
     if (isDefined(input.view)) {
-      // Both record table widgets and field widgets in table display mode are
-      // backed by a widget view whose layout settings may be updated; the
-      // widget-type guard above already rejected every other widget kind.
       if (
         isDefined(input.view.type) &&
         !ALLOWED_WIDGET_VIEW_TYPES.includes(input.view.type)
