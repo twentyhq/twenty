@@ -21,6 +21,16 @@ const toFlatViewFilterGroup = (
   positionInViewFilterGroup: viewFilterGroup.positionInViewFilterGroup,
 });
 
+const getFirstRejectedReason = (
+  settledResults: PromiseSettledResult<unknown>[],
+): unknown | undefined => {
+  const firstRejected = settledResults.find(
+    (settledResult) => settledResult.status === 'rejected',
+  );
+
+  return firstRejected?.reason;
+};
+
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
 
@@ -64,34 +74,38 @@ export const usePerformViewFilterGroupAPIPersist = () => {
       const oldToNewId = new Map<string, string>();
       const createdFlatViewFilterGroups: FlatViewFilterGroup[] = [];
 
-      for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
-        const newParentViewFilterGroupId = isDefined(
-          viewFilterGroupToCreate.parentViewFilterGroupId,
-        )
-          ? (oldToNewId.get(viewFilterGroupToCreate.parentViewFilterGroupId) ??
-            viewFilterGroupToCreate.parentViewFilterGroupId)
-          : undefined;
+      try {
+        for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
+          const newParentViewFilterGroupId = isDefined(
+            viewFilterGroupToCreate.parentViewFilterGroupId,
+          )
+            ? (oldToNewId.get(
+                viewFilterGroupToCreate.parentViewFilterGroupId,
+              ) ?? viewFilterGroupToCreate.parentViewFilterGroupId)
+            : undefined;
 
-        const { newRecord } = await createViewFilterGroupRecord(
-          {
-            ...viewFilterGroupToCreate,
-            parentViewFilterGroupId: newParentViewFilterGroupId,
-          },
-          view,
-        );
+          const { newRecord } = await createViewFilterGroupRecord(
+            {
+              ...viewFilterGroupToCreate,
+              parentViewFilterGroupId: newParentViewFilterGroupId,
+            },
+            view,
+          );
 
-        oldToNewId.set(viewFilterGroupToCreate.id, newRecord.id);
-        createdFlatViewFilterGroups.push(toFlatViewFilterGroup(newRecord));
+          oldToNewId.set(viewFilterGroupToCreate.id, newRecord.id);
+          createdFlatViewFilterGroups.push(toFlatViewFilterGroup(newRecord));
+        }
+      } finally {
+        // Write created view filter groups to the metadata store even when a
+        // later create fails, so a subsequent save doesn't diff against stale
+        // view data and re-send the same create, which fails server-side on
+        // duplicate id
+        addToDraft({
+          key: 'viewFilterGroups',
+          items: createdFlatViewFilterGroups,
+        });
+        applyChanges();
       }
-
-      // Write created view filter groups to the metadata store immediately so
-      // a subsequent save doesn't diff against stale view data and re-send
-      // the same create, which fails server-side on duplicate id
-      addToDraft({
-        key: 'viewFilterGroups',
-        items: createdFlatViewFilterGroups,
-      });
-      applyChanges();
 
       const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
         const newId = oldToNewId.get(viewFilterGroup.id);
@@ -109,7 +123,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
   const performViewFilterGroupAPIUpdate = useCallback(
     async (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
       if (!viewFilterGroupsToUpdate.length) return;
-      const results = await Promise.all(
+      const settledResults = await Promise.allSettled(
         viewFilterGroupsToUpdate.map((viewFilterGroup) =>
           apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
             mutation: UPDATE_VIEW_FILTER_GROUP,
@@ -127,6 +141,12 @@ export const usePerformViewFilterGroupAPIPersist = () => {
         ),
       );
 
+      const results = settledResults
+        .filter((settledResult) => settledResult.status === 'fulfilled')
+        .map((settledResult) => settledResult.value);
+
+      // Sync successful updates even when a sibling mutation fails, so the
+      // store doesn't go stale on partial success
       const updatedFlatViewFilterGroups = results
         .map((result) => result.data?.updateViewFilterGroup)
         .filter(isDefined)
@@ -134,6 +154,12 @@ export const usePerformViewFilterGroupAPIPersist = () => {
 
       updateInDraft('viewFilterGroups', updatedFlatViewFilterGroups);
       applyChanges();
+
+      const firstRejectedReason = getFirstRejectedReason(settledResults);
+
+      if (isDefined(firstRejectedReason)) {
+        throw firstRejectedReason;
+      }
 
       return results;
     },
@@ -143,7 +169,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
   const performViewFilterGroupAPIDestroy = useCallback(
     async (viewFilterGroupIdsToDestroy: string[]) => {
       if (!viewFilterGroupIdsToDestroy.length) return;
-      const results = await Promise.all(
+      const settledResults = await Promise.allSettled(
         viewFilterGroupIdsToDestroy.map((viewFilterGroupId) =>
           apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: DESTROY_VIEW_FILTER_GROUP,
@@ -154,13 +180,28 @@ export const usePerformViewFilterGroupAPIPersist = () => {
         ),
       );
 
+      // Remove only the successfully destroyed groups from the store so
+      // partial failures don't leave it stale
+      const destroyedViewFilterGroupIds = viewFilterGroupIdsToDestroy.filter(
+        (_viewFilterGroupId, index) =>
+          settledResults[index].status === 'fulfilled',
+      );
+
       removeFromDraft({
         key: 'viewFilterGroups',
-        itemIds: viewFilterGroupIdsToDestroy,
+        itemIds: destroyedViewFilterGroupIds,
       });
       applyChanges();
 
-      return results;
+      const firstRejectedReason = getFirstRejectedReason(settledResults);
+
+      if (isDefined(firstRejectedReason)) {
+        throw firstRejectedReason;
+      }
+
+      return settledResults
+        .filter((settledResult) => settledResult.status === 'fulfilled')
+        .map((settledResult) => settledResult.value);
     },
     [apolloClient, removeFromDraft, applyChanges],
   );

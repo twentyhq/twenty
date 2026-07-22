@@ -23,7 +23,7 @@ export const usePerformViewSortAPIPersist = () => {
   const [deleteViewSortMutation] = useMutation(DeleteViewSortDocument);
   const [destroyViewSortMutation] = useMutation(DestroyViewSortDocument);
 
-  const { performViewEntityAPIPersistOperation } =
+  const { performViewEntityAPIPersistBatchOperation } =
     usePerformViewEntityAPIPersistOperation();
 
   const performViewSortAPICreate = useCallback(
@@ -33,36 +33,22 @@ export const usePerformViewSortAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof createViewSortMutation>>[]
       >
-    > => {
-      if (createViewSortInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            createViewSortInputs.map((variables) =>
-              createViewSortMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (results, { addToDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: createViewSortInputs,
+        mutate: (variables) => createViewSortMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { addToDraft }) =>
           addToDraft({
             key: 'viewSorts',
-            items: results
-              .map((result) => result.data?.createViewSort)
+            items: fulfilledMutations
+              .map(({ result }) => result.data?.createViewSort)
               .filter(isDefined)
               .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
           }),
         primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.CREATE,
-      });
-    },
-    [createViewSortMutation, performViewEntityAPIPersistOperation],
+      }),
+    [createViewSortMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewSortAPIUpdate = useCallback(
@@ -72,36 +58,22 @@ export const usePerformViewSortAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof updateViewSortMutation>>[]
       >
-    > => {
-      if (updateViewSortInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            updateViewSortInputs.map((variables) =>
-              updateViewSortMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (results, { updateInDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: updateViewSortInputs,
+        mutate: (variables) => updateViewSortMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewSorts',
-            results
-              .map((result) => result.data?.updateViewSort)
+            fulfilledMutations
+              .map(({ result }) => result.data?.updateViewSort)
               .filter(isDefined)
               .map(({ __typename, ...viewSort }) => viewSort as FlatViewSort),
           ),
         primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.UPDATE,
-      });
-    },
-    [updateViewSortMutation, performViewEntityAPIPersistOperation],
+      }),
+    [updateViewSortMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewSortAPIDelete = useCallback(
@@ -111,35 +83,19 @@ export const usePerformViewSortAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof deleteViewSortMutation>>[]
       >
-    > => {
-      if (deleteViewSortInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            deleteViewSortInputs.map((variables) =>
-              deleteViewSortMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (_results, { removeFromDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: deleteViewSortInputs,
+        mutate: (variables) => deleteViewSortMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewSorts',
-            itemIds: deleteViewSortInputs.map(
-              (variables) => variables.input.id,
-            ),
+            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
         primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.DELETE,
-      });
-    },
-    [deleteViewSortMutation, performViewEntityAPIPersistOperation],
+      }),
+    [deleteViewSortMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewSortAPIDestroy = useCallback(
@@ -149,35 +105,19 @@ export const usePerformViewSortAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof destroyViewSortMutation>>[]
       >
-    > => {
-      if (destroyViewSortInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            destroyViewSortInputs.map((variables) =>
-              destroyViewSortMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (_results, { removeFromDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: destroyViewSortInputs,
+        mutate: (variables) => destroyViewSortMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewSorts',
-            itemIds: destroyViewSortInputs.map(
-              (variables) => variables.input.id,
-            ),
+            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
         primaryMetadataName: 'viewSort',
         operationType: CrudOperationType.DESTROY,
-      });
-    },
-    [destroyViewSortMutation, performViewEntityAPIPersistOperation],
+      }),
+    [destroyViewSortMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   return {

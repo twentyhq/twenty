@@ -23,7 +23,7 @@ export const usePerformViewFilterAPIPersist = () => {
   const [deleteViewFilterMutation] = useMutation(DeleteViewFilterDocument);
   const [destroyViewFilterMutation] = useMutation(DestroyViewFilterDocument);
 
-  const { performViewEntityAPIPersistOperation } =
+  const { performViewEntityAPIPersistBatchOperation } =
     usePerformViewEntityAPIPersistOperation();
 
   const performViewFilterAPICreate = useCallback(
@@ -33,28 +33,15 @@ export const usePerformViewFilterAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof createViewFilterMutation>>[]
       >
-    > => {
-      if (createViewFilterInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            createViewFilterInputs.map((variables) =>
-              createViewFilterMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (results, { addToDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: createViewFilterInputs,
+        mutate: (variables) => createViewFilterMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { addToDraft }) =>
           addToDraft({
             key: 'viewFilters',
-            items: results
-              .map((result) => result.data?.createViewFilter)
+            items: fulfilledMutations
+              .map(({ result }) => result.data?.createViewFilter)
               .filter(isDefined)
               .map(
                 ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
@@ -62,9 +49,8 @@ export const usePerformViewFilterAPIPersist = () => {
           }),
         primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.CREATE,
-      });
-    },
-    [createViewFilterMutation, performViewEntityAPIPersistOperation],
+      }),
+    [createViewFilterMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewFilterAPIUpdate = useCallback(
@@ -74,28 +60,15 @@ export const usePerformViewFilterAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof updateViewFilterMutation>>[]
       >
-    > => {
-      if (updateViewFilterInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            updateViewFilterInputs.map((variables) =>
-              updateViewFilterMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (results, { updateInDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: updateViewFilterInputs,
+        mutate: (variables) => updateViewFilterMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { updateInDraft }) =>
           updateInDraft(
             'viewFilters',
-            results
-              .map((result) => result.data?.updateViewFilter)
+            fulfilledMutations
+              .map(({ result }) => result.data?.updateViewFilter)
               .filter(isDefined)
               .map(
                 ({ __typename, ...viewFilter }) => viewFilter as FlatViewFilter,
@@ -103,9 +76,8 @@ export const usePerformViewFilterAPIPersist = () => {
           ),
         primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.UPDATE,
-      });
-    },
-    [updateViewFilterMutation, performViewEntityAPIPersistOperation],
+      }),
+    [updateViewFilterMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewFilterAPIDelete = useCallback(
@@ -115,35 +87,19 @@ export const usePerformViewFilterAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof deleteViewFilterMutation>>[]
       >
-    > => {
-      if (deleteViewFilterInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            deleteViewFilterInputs.map((variables) =>
-              deleteViewFilterMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (_results, { removeFromDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: deleteViewFilterInputs,
+        mutate: (variables) => deleteViewFilterMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFilters',
-            itemIds: deleteViewFilterInputs.map(
-              (variables) => variables.input.id,
-            ),
+            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
         primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.DELETE,
-      });
-    },
-    [deleteViewFilterMutation, performViewEntityAPIPersistOperation],
+      }),
+    [deleteViewFilterMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   const performViewFilterAPIDestroy = useCallback(
@@ -153,35 +109,19 @@ export const usePerformViewFilterAPIPersist = () => {
       MetadataRequestResult<
         Awaited<ReturnType<typeof destroyViewFilterMutation>>[]
       >
-    > => {
-      if (destroyViewFilterInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      return performViewEntityAPIPersistOperation({
-        persist: () =>
-          Promise.all(
-            destroyViewFilterInputs.map((variables) =>
-              destroyViewFilterMutation({
-                variables,
-              }),
-            ),
-          ),
-        syncMetadataStore: (_results, { removeFromDraft }) =>
+    > =>
+      performViewEntityAPIPersistBatchOperation({
+        inputs: destroyViewFilterInputs,
+        mutate: (variables) => destroyViewFilterMutation({ variables }),
+        syncMetadataStore: (fulfilledMutations, { removeFromDraft }) =>
           removeFromDraft({
             key: 'viewFilters',
-            itemIds: destroyViewFilterInputs.map(
-              (variables) => variables.input.id,
-            ),
+            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
           }),
         primaryMetadataName: 'viewFilter',
         operationType: CrudOperationType.DESTROY,
-      });
-    },
-    [destroyViewFilterMutation, performViewEntityAPIPersistOperation],
+      }),
+    [destroyViewFilterMutation, performViewEntityAPIPersistBatchOperation],
   );
 
   return {

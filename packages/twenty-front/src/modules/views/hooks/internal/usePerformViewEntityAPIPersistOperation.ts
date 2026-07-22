@@ -8,24 +8,41 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type MetadataStoreDraftUtils = Pick<
   ReturnType<typeof useUpdateMetadataStoreDraft>,
   'addToDraft' | 'updateInDraft' | 'removeFromDraft'
 >;
 
-type PerformViewEntityAPIPersistOperationArgs<TResponse> = {
-  persist: () => Promise<TResponse>;
-  // Writes the mutation response to the metadata store immediately so a
-  // subsequent save doesn't diff against stale view data and re-send the
-  // same create, which fails server-side on duplicate id
-  syncMetadataStore: (
-    response: TResponse,
-    draftUtils: MetadataStoreDraftUtils,
-  ) => void;
+type PersistErrorContext = {
   primaryMetadataName: AllMetadataName;
   operationType: CrudOperationType;
 };
+
+type PerformViewEntityAPIPersistOperationArgs<TResponse> =
+  PersistErrorContext & {
+    persist: () => Promise<TResponse>;
+    // Writes the mutation response to the metadata store immediately so a
+    // subsequent save doesn't diff against stale view data and re-send the
+    // same create, which fails server-side on duplicate id
+    syncMetadataStore: (
+      response: TResponse,
+      draftUtils: MetadataStoreDraftUtils,
+    ) => void;
+  };
+
+type PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult> =
+  PersistErrorContext & {
+    inputs: TInput[];
+    mutate: (input: TInput) => Promise<TResult>;
+    // Receives only the fulfilled mutations so successful items are written to
+    // the metadata store even when a sibling mutation in the batch fails
+    syncMetadataStore: (
+      fulfilledMutations: { input: TInput; result: TResult }[],
+      draftUtils: MetadataStoreDraftUtils,
+    ) => void;
+  };
 
 export const usePerformViewEntityAPIPersistOperation = () => {
   const { addToDraft, updateInDraft, removeFromDraft, applyChanges } =
@@ -33,6 +50,23 @@ export const usePerformViewEntityAPIPersistOperation = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const handlePersistError = useCallback(
+    (
+      error: unknown,
+      { primaryMetadataName, operationType }: PersistErrorContext,
+    ) => {
+      if (CombinedGraphQLErrors.is(error)) {
+        handleMetadataError(error, {
+          primaryMetadataName,
+          operationType,
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+    },
+    [handleMetadataError, enqueueErrorSnackBar],
+  );
 
   const performViewEntityAPIPersistOperation = useCallback(
     async <TResponse>({
@@ -58,14 +92,7 @@ export const usePerformViewEntityAPIPersistOperation = () => {
           response,
         };
       } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          handleMetadataError(error, {
-            primaryMetadataName,
-            operationType,
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
+        handlePersistError(error, { primaryMetadataName, operationType });
 
         return {
           status: 'failed',
@@ -78,10 +105,74 @@ export const usePerformViewEntityAPIPersistOperation = () => {
       updateInDraft,
       removeFromDraft,
       applyChanges,
-      handleMetadataError,
-      enqueueErrorSnackBar,
+      handlePersistError,
     ],
   );
 
-  return { performViewEntityAPIPersistOperation };
+  const performViewEntityAPIPersistBatchOperation = useCallback(
+    async <TInput, TResult>({
+      inputs,
+      mutate,
+      syncMetadataStore,
+      primaryMetadataName,
+      operationType,
+    }: PerformViewEntityAPIPersistBatchOperationArgs<TInput, TResult>): Promise<
+      MetadataRequestResult<TResult[]>
+    > => {
+      if (inputs.length === 0) {
+        return {
+          status: 'successful',
+          response: [],
+        };
+      }
+
+      const settledMutations = await Promise.allSettled(inputs.map(mutate));
+
+      const fulfilledMutations = settledMutations.flatMap(
+        (settledMutation, index) =>
+          settledMutation.status === 'fulfilled'
+            ? [{ input: inputs[index], result: settledMutation.value }]
+            : [],
+      );
+
+      syncMetadataStore(fulfilledMutations, {
+        addToDraft,
+        updateInDraft,
+        removeFromDraft,
+      });
+      applyChanges();
+
+      const firstRejectedMutation = settledMutations.find(
+        (settledMutation) => settledMutation.status === 'rejected',
+      );
+
+      if (isDefined(firstRejectedMutation)) {
+        const error = firstRejectedMutation.reason;
+
+        handlePersistError(error, { primaryMetadataName, operationType });
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
+
+      return {
+        status: 'successful',
+        response: fulfilledMutations.map(({ result }) => result),
+      };
+    },
+    [
+      addToDraft,
+      updateInDraft,
+      removeFromDraft,
+      applyChanges,
+      handlePersistError,
+    ],
+  );
+
+  return {
+    performViewEntityAPIPersistOperation,
+    performViewEntityAPIPersistBatchOperation,
+  };
 };
