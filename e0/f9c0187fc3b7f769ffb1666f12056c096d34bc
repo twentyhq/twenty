@@ -1,0 +1,55 @@
+packages/twenty-front/src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+  s_11e59742733dbd::t_fafae5a3fc1cd0 7,25
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286709000-add-emailing-domain-sender-identity.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-21
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 10
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_11e59742733dbd::t_93e34618e2bf3d 56
+  s_11e59742733dbd::t_fafae5a3fc1cd0 57-58
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 24-29,136-156
+  s_11e59742733dbd::t_548eb955bd28d6 157-158
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/updateEmailingDomainSenderIdentity.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-12
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/update-emailing-domain-sender-identity.input.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-15
+packages/twenty-front/src/modules/settings/emailing-domains/components/SettingsEmailingDomainSenderFieldInput.tsx
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-89
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_11e59742733dbd::t_fafae5a3fc1cd0 5,11-12,24,30
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-from-header.util.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-22
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 19,61-64
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 10
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 118,236
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_70ac01162fa346 10
+  s_11e59742733dbd::t_55f018d810c728 59-73
+packages/twenty-front/src/modules/settings/workspace/components/SettingsEmailGroupPlanPill.tsx
+  s_11e59742733dbd::t_fafae5a3fc1cd0 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto.ts
+  s_11e59742733dbd::t_fafae5a3fc1cd0 33-35
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_11e59742733dbd::t_0c8459017aba8d 12
+  s_11e59742733dbd::t_8ab626df991e00 221-236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e0f9c0187fc3b7f769ffb1666f12056c096d34bc",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
