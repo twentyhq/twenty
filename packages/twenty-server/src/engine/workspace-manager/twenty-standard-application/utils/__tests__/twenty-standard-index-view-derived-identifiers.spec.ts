@@ -73,7 +73,9 @@ describe('twenty-standard INDEX view derived identifiers', () => {
           flatViewField.fieldMetadataUniversalIdentifier,
       });
 
-      expect(flatViewField.universalIdentifier).toBe(derivedUniversalIdentifier);
+      expect(flatViewField.universalIdentifier).toBe(
+        derivedUniversalIdentifier,
+      );
       expect(flatViewField.isSystemSideEffect).toBe(true);
     }
   });
