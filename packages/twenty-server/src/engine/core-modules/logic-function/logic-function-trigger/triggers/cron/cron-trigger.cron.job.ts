@@ -94,7 +94,6 @@ export class CronTriggerCronJob {
                 payload: {},
               },
             ],
-            { retryLimit: 10 },
           );
         }
       } catch (error) {

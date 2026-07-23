@@ -265,7 +265,6 @@ export class ConnectionProviderOAuthFlowService {
             },
           },
         ],
-        { retryLimit: 3 },
       );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {

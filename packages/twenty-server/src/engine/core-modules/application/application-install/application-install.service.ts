@@ -566,7 +566,6 @@ export class ApplicationInstallService {
             payload,
           },
         ],
-        { retryLimit: 3 },
       );
       return;
     }

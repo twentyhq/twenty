@@ -72,7 +72,6 @@ export class CallDatabaseEventTriggerJobsJob {
       await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
         LogicFunctionTriggerJob.name,
         logicFunctionPayloadsChunk,
-        { retryLimit: 3 },
       );
     }
   }

@@ -512,7 +512,6 @@ describe('ConnectionProviderOAuthFlowService', () => {
               },
             },
           ],
-          { retryLimit: 3 },
         );
       });
 

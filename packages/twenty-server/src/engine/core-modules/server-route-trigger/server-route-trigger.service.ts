@@ -36,8 +36,6 @@ type ResolverResult = {
   payload?: object;
 };
 
-const QUEUED_TARGET_RETRY_LIMIT = 3;
-
 @Injectable()
 export class ServerRouteTriggerService {
   private readonly logger = new Logger(ServerRouteTriggerService.name);
@@ -198,7 +196,6 @@ export class ServerRouteTriggerService {
           payload,
         },
       ],
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
     );
 
     return { statusCode: 202, headers: {}, body: { queued: true } };

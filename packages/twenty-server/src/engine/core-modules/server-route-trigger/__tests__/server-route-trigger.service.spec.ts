@@ -153,7 +153,6 @@ describe('ServerRouteTriggerService', () => {
           payload: { from: 'resolver' },
         },
       ],
-      { retryLimit: 3 },
     );
     expect(result).toEqual(
       expect.objectContaining({
