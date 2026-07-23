@@ -61,6 +61,7 @@ const mockTargetObjectMetadata = {
   nameSingular: 'agent',
   labelIdentifierFieldMetadataId: labelFieldMetadataId,
   universalIdentifier: 'agent-object-universal-id',
+  fieldIds: [labelFieldMetadataId],
 };
 
 const flatObjectMetadataMaps = {

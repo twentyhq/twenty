@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -122,42 +123,61 @@ export class ChartRelationLabelService {
   }): Promise<Map<string, Map<string, string>>> {
     const rawLabelsByTargetObjectId = new Map<string, Map<string, string>>();
 
+    const axesByTargetObjectId = new Map<
+      string,
+      {
+        targetFlatObjectMetadata: FlatObjectMetadata;
+        labelIdentifierColumnNames: string[];
+        recordIds: Set<string>;
+      }
+    >();
+
     for (const resolvableAxis of resolvableAxes) {
       const targetObjectId = resolvableAxis.targetFlatObjectMetadata.id;
+      const existingAxesGroup = axesByTargetObjectId.get(targetObjectId);
 
-      if (rawLabelsByTargetObjectId.has(targetObjectId)) {
+      if (!isDefined(existingAxesGroup)) {
+        axesByTargetObjectId.set(targetObjectId, {
+          targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
+          labelIdentifierColumnNames: resolvableAxis.labelIdentifierColumnNames,
+          recordIds: new Set(resolvableAxis.recordIds),
+        });
         continue;
       }
 
-      const recordIdsForTargetObject = [
-        ...new Set(
-          resolvableAxes
-            .filter(
-              (axis) => axis.targetFlatObjectMetadata.id === targetObjectId,
-            )
-            .flatMap((axis) => axis.recordIds),
-        ),
-      ];
-
-      const records = await this.fetchLabelIdentifierRecords({
-        targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
-        labelIdentifierColumnNames: resolvableAxis.labelIdentifierColumnNames,
-        recordIds: recordIdsForTargetObject,
-        workspaceId,
-        authContext,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
-
-      rawLabelsByTargetObjectId.set(
-        targetObjectId,
-        buildRawLabelByRecordId({
-          records,
-          targetFlatObjectMetadata: resolvableAxis.targetFlatObjectMetadata,
-          flatFieldMetadataMaps,
-        }),
-      );
+      for (const recordId of resolvableAxis.recordIds) {
+        existingAxesGroup.recordIds.add(recordId);
+      }
     }
+
+    await Promise.all(
+      [...axesByTargetObjectId.values()].map(
+        async ({
+          targetFlatObjectMetadata,
+          labelIdentifierColumnNames,
+          recordIds,
+        }) => {
+          const records = await this.fetchLabelIdentifierRecords({
+            targetFlatObjectMetadata,
+            labelIdentifierColumnNames,
+            recordIds: [...recordIds],
+            workspaceId,
+            authContext,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          });
+
+          rawLabelsByTargetObjectId.set(
+            targetFlatObjectMetadata.id,
+            buildRawLabelByRecordId({
+              records,
+              targetFlatObjectMetadata,
+              flatFieldMetadataMaps,
+            }),
+          );
+        },
+      ),
+    );
 
     return rawLabelsByTargetObjectId;
   }
@@ -224,16 +244,18 @@ export class ChartRelationLabelService {
             ),
           );
 
-          return rawRowChunks
-            .flat()
-            .map((rawRow) =>
-              formatResult<Record<string, unknown>>(
-                rawRow,
-                targetFlatObjectMetadata,
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-              ),
-            );
+          const fieldMapsForObject = buildFieldMapsFromFlatObjectMetadata(
+            flatFieldMetadataMaps,
+            targetFlatObjectMetadata,
+          );
+
+          return formatResult<Record<string, unknown>[]>(
+            rawRowChunks.flat(),
+            targetFlatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            fieldMapsForObject,
+          );
         },
         authContext,
       );
