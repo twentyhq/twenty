@@ -6,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CommunityStats } from './get-community-stats';
 import { readFiniteNumber } from './read-finite-number';
 
-// Reuses the worker's existing OpenNext R2 cache bucket; the key lives outside
-// its incremental-cache/ prefix so the two never collide.
 const STORE_KEY = 'community-stats/latest.json';
 
 type CommunityStatsBucket = {
@@ -33,23 +31,34 @@ const getBucket = async (): Promise<CommunityStatsBucket | null> => {
   }
 };
 
+const readStoredStats = async (
+  bucket: CommunityStatsBucket,
+): Promise<CommunityStats | null> => {
+  const storedObject = await bucket.get(STORE_KEY);
+  if (!isDefined(storedObject)) return null;
+
+  const raw = await storedObject.text();
+  try {
+    const parsed = JSON.parse(raw) as {
+      githubStars?: unknown;
+      discordMembers?: unknown;
+    };
+    return {
+      githubStars: readFiniteNumber(parsed.githubStars),
+      discordMembers: readFiniteNumber(parsed.discordMembers),
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const communityStatsStore = {
   read: async (): Promise<CommunityStats | null> => {
     const bucket = await getBucket();
     if (!isDefined(bucket)) return null;
 
     try {
-      const storedObject = await bucket.get(STORE_KEY);
-      if (!isDefined(storedObject)) return null;
-
-      const parsed = JSON.parse(await storedObject.text()) as {
-        githubStars?: unknown;
-        discordMembers?: unknown;
-      };
-      return {
-        githubStars: readFiniteNumber(parsed.githubStars),
-        discordMembers: readFiniteNumber(parsed.discordMembers),
-      };
+      return await readStoredStats(bucket);
     } catch {
       return null;
     }
@@ -59,11 +68,15 @@ export const communityStatsStore = {
     const bucket = await getBucket();
     if (!isDefined(bucket)) return;
 
-    const entry = { ...stats, fetchedAt: Date.now() };
     try {
+      const stored = await readStoredStats(bucket);
+      const entry: CommunityStats = {
+        githubStars: stats.githubStars ?? stored?.githubStars ?? null,
+        discordMembers: stats.discordMembers ?? stored?.discordMembers ?? null,
+      };
       await bucket.put(STORE_KEY, JSON.stringify(entry));
     } catch {
-      // Best-effort persistence: a write failure must not break the render.
+      return;
     }
   },
 };

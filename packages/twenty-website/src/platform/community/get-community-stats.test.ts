@@ -25,6 +25,7 @@ const failedResponse = () => new Response('rate limited', { status: 403 });
 describe('getCommunityStats', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     mockedReadCache.mockResolvedValue(null);
     mockedWriteCache.mockResolvedValue(undefined);
   });

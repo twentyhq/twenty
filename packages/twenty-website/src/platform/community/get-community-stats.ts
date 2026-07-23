@@ -27,7 +27,12 @@ async function fetchGithubStars(): Promise<number | null> {
       },
       next: { revalidate: REVALIDATE_SECONDS },
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error(
+        `community stats: ${GITHUB_REPO_URL} -> ${response.status}`,
+      );
+      return null;
+    }
     const body = (await response.json()) as { stargazers_count?: unknown };
     return readFiniteNumber(body.stargazers_count);
   } catch {
@@ -40,7 +45,12 @@ async function fetchDiscordMembers(): Promise<number | null> {
     const response = await fetch(DISCORD_INVITE_URL, {
       next: { revalidate: REVALIDATE_SECONDS },
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error(
+        `community stats: ${DISCORD_INVITE_URL} -> ${response.status}`,
+      );
+      return null;
+    }
     const body = (await response.json()) as {
       approximate_member_count?: unknown;
     };
