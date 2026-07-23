@@ -330,14 +330,13 @@ export class BullMQDriver
   private buildJobsOptions({
     queueName,
     options,
-    jobIdSuffix,
   }: {
     queueName: MessageQueue;
     options?: QueueJobOptions;
-    jobIdSuffix: string;
   }): JobsOptions {
     return {
-      jobId: options?.id ? `${options.id}-${jobIdSuffix}` : undefined,
+      // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
+      jobId: options?.id ? `${options.id}-${v4()}` : undefined,
       priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: {
@@ -377,12 +376,7 @@ export class BullMQDriver
       }
     }
 
-    // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
-    const queueOptions = this.buildJobsOptions({
-      queueName,
-      options,
-      jobIdSuffix: v4(),
-    });
+    const queueOptions = this.buildJobsOptions({ queueName, options });
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
@@ -403,15 +397,18 @@ export class BullMQDriver
       return;
     }
 
+    const queueOptions = this.buildJobsOptions({ queueName, options });
+
     await this.queueMap[queueName].addBulk(
       dataItems.map((data, index) => ({
         name: jobName,
         data,
-        opts: this.buildJobsOptions({
-          queueName,
-          options,
-          jobIdSuffix: String(index),
-        }),
+        opts: {
+          ...queueOptions,
+          jobId: queueOptions.jobId
+            ? `${queueOptions.jobId}-${index}`
+            : undefined,
+        },
       })),
     );
   }
