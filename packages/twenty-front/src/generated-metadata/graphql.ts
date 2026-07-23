@@ -6421,10 +6421,16 @@ export type WorkspaceAiStats = {
   toolsCount: Scalars['Int']['output'];
 };
 
+export enum WorkspaceCompanyEnrichmentOutcome {
+  matched = 'matched',
+  transientError = 'transientError',
+  unavailable = 'unavailable'
+}
+
 export type WorkspaceCompanyEnrichmentResult = {
   __typename?: 'WorkspaceCompanyEnrichmentResult';
   enrichment?: Maybe<Scalars['JSON']['output']>;
-  outcome: Scalars['String']['output'];
+  outcome: WorkspaceCompanyEnrichmentOutcome;
 };
 
 export type WorkspaceCreationDefaultsDto = {
@@ -7494,7 +7500,7 @@ export type MostlyEmptyFieldMetadataIdsQuery = { __typename?: 'Query', mostlyEmp
 export type EnrichWorkspaceCompanyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EnrichWorkspaceCompanyMutation = { __typename?: 'Mutation', enrichWorkspaceCompany: { __typename?: 'WorkspaceCompanyEnrichmentResult', outcome: string, enrichment?: any | null } };
+export type EnrichWorkspaceCompanyMutation = { __typename?: 'Mutation', enrichWorkspaceCompany: { __typename?: 'WorkspaceCompanyEnrichmentResult', outcome: WorkspaceCompanyEnrichmentOutcome, enrichment?: any | null } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 

@@ -1813,10 +1813,12 @@ export interface MarketplaceAppDetail {
 }
 
 export interface WorkspaceCompanyEnrichmentResult {
-    outcome: Scalars['String']
+    outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
     __typename: 'WorkspaceCompanyEnrichmentResult'
 }
+
+export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
 
 export interface Relation {
     type: RelationType
@@ -9331,6 +9333,12 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumWorkspaceCompanyEnrichmentOutcome = {
+   matched: 'matched' as const,
+   unavailable: 'unavailable' as const,
+   transientError: 'transientError' as const
 }
 
 export const enumRelationType = {

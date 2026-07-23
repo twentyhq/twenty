@@ -2135,8 +2135,14 @@ type MarketplaceAppDetail {
 }
 
 type WorkspaceCompanyEnrichmentResult {
-  outcome: String!
+  outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
+}
+
+enum WorkspaceCompanyEnrichmentOutcome {
+  matched
+  unavailable
+  transientError
 }
 
 type Relation {

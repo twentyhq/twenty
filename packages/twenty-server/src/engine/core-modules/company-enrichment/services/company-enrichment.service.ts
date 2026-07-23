@@ -18,7 +18,10 @@ import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/c
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
 import { getCompanyEnrichmentCacheKey } from 'src/engine/core-modules/company-enrichment/utils/get-company-enrichment-cache-key.util';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -78,7 +81,10 @@ export class CompanyEnrichmentService {
         COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS,
       );
     } catch (error) {
-      if (error instanceof ThrottlerException) {
+      if (
+        error instanceof ThrottlerException &&
+        error.code === ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
         return { outcome: 'transientError', enrichment: null };
       }
 

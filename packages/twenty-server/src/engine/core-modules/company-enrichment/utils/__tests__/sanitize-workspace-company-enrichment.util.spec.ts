@@ -66,6 +66,18 @@ describe('sanitizeWorkspaceCompanyEnrichment', () => {
     });
   });
 
+  it('should keep numeric counts', () => {
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      employeeCount: 250,
+      founded: 2012,
+    });
+
+    expect(result?.employeeCount).toBe(250);
+    expect(result?.founded).toBe(2012);
+  });
+
   it('should cap oversized fields', () => {
     const result = sanitizeWorkspaceCompanyEnrichment({
       domain: 'acme.com',
@@ -74,7 +86,10 @@ describe('sanitizeWorkspaceCompanyEnrichment', () => {
       summary: 'b'.repeat(
         WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH + 100,
       ),
-      tags: Array.from({ length: 20 }, (_, index) => `tag-${index}`),
+      tags: [
+        'c'.repeat(WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH + 100),
+        ...Array.from({ length: 20 }, (_, index) => `tag-${index}`),
+      ],
     });
 
     expect(result?.name).toHaveLength(
@@ -84,5 +99,8 @@ describe('sanitizeWorkspaceCompanyEnrichment', () => {
       WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH,
     );
     expect(result?.tags).toHaveLength(WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS);
+    expect(result?.tags[0]).toHaveLength(
+      WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+    );
   });
 });
