@@ -370,6 +370,45 @@ export class BullMQDriver
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
+  async bulkAdd<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+    options?: QueueJobOptions,
+  ): Promise<void> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    if (dataItems.length === 0) {
+      return;
+    }
+
+    const queueOptions: JobsOptions = {
+      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
+      attempts: 1 + (options?.retryLimit || 0),
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
+      delay: options?.delay,
+    };
+
+    await this.queueMap[queueName].addBulk(
+      dataItems.map((data) => ({
+        name: jobName,
+        data,
+        opts: queueOptions,
+      })),
+    );
+  }
+
   async getInFlightJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]> {

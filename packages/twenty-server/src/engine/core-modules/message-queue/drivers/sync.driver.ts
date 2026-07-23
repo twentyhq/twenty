@@ -25,6 +25,16 @@ export class SyncDriver implements MessageQueueDriver {
     await this.processJob(queueName, { id: '', name: jobName, data });
   }
 
+  async bulkAdd<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+  ): Promise<void> {
+    for (const data of dataItems) {
+      await this.processJob(queueName, { id: '', name: jobName, data });
+    }
+  }
+
   async addCron<T extends MessageQueueJobData | undefined>({
     queueName,
     jobName,
