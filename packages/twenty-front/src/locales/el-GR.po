@@ -13505,8 +13505,6 @@ msgstr ""
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 #: src/modules/settings/billing/hooks/useSwitchBillingPlan.ts
-#: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
-#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 #: src/pages/settings/enterprise/components/OrganizationAdornment.tsx
 msgid "Organization"
 msgstr "Οργανωτικός"
