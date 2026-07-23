@@ -58,6 +58,15 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Ensure twenty-shared dist
+        uses: ./.github/actions/ensure-twenty-shared-dist
+        with:
+          app-path: ${{ matrix.app.path }}
+
+      - name: Lambda layer install simulation
+        working-directory: ${{ github.workspace }}
+        run: bash packages/twenty-utils/simulate-lambda-layer-install.sh ${{ matrix.app.path }}
+
       - name: Lint
         run: yarn lint
 

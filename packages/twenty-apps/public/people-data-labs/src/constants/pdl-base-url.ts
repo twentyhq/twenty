@@ -1,1 +1,1 @@
-export const PDL_BASE_URL = 'https://api.peopledatalabs.com/v5';
+export { PEOPLE_DATA_LABS_BASE_URL as PDL_BASE_URL } from 'twenty-shared/people-data-labs';

@@ -7,6 +7,7 @@ import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
 import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
@@ -79,6 +80,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     CoreEntityCacheModule,
     UpgradeModule,
     SdkClientModule,
+    CompanyEnrichmentModule,
   ],
   exports: [WorkspaceService, CheckCustomDomainValidRecordsCronCommand],
   providers: [

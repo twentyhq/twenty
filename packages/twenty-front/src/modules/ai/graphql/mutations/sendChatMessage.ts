@@ -6,6 +6,7 @@ export const SEND_CHAT_MESSAGE = gql`
     $text: String!
     $messageId: UUID!
     $browsingContext: JSON
+    $companyContext: JSON
     $modelId: String
     $fileAttachments: [FileAttachmentInput!]
   ) {
@@ -14,6 +15,7 @@ export const SEND_CHAT_MESSAGE = gql`
       text: $text
       messageId: $messageId
       browsingContext: $browsingContext
+      companyContext: $companyContext
       modelId: $modelId
       fileAttachments: $fileAttachments
     ) {

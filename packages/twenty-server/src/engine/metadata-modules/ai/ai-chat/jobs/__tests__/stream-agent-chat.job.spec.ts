@@ -74,6 +74,7 @@ describe('StreamAgentChatJob', () => {
     workspaceId: 'workspace-id',
     messages: [],
     browsingContext: null,
+    companyContext: null,
     lastUserMessageText: 'hello',
     lastUserMessageParts: [{ type: 'text', text: 'hello' }],
     hasTitle: true,

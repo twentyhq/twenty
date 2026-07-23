@@ -32,6 +32,7 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -180,6 +181,8 @@ export const useAgentChat = (
           text: contentToSend,
           messageId,
           browsingContext: browsingContextToSend,
+          companyContext:
+            store.get(companyEnrichmentState.atom)?.enrichment ?? null,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,

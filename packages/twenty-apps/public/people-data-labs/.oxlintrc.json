@@ -1,13 +1,29 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../.oxlintrc.base.json"],
-  "plugins": ["react", "typescript", "import", "unicorn"],
+  "extends": [
+    "../../.oxlintrc.base.json"
+  ],
+  "plugins": [
+    "react",
+    "typescript",
+    "import",
+    "unicorn"
+  ],
   "categories": {
     "correctness": "off"
   },
-  "ignorePatterns": ["node_modules", "dist"],
+  "ignorePatterns": [
+    "node_modules",
+    "dist"
+  ],
   "rules": {
-    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "func-style": [
+      "error",
+      "declaration",
+      {
+        "allowArrowFunctions": true
+      }
+    ],
     "no-console": "off",
     "no-control-regex": "off",
     "no-debugger": "error",
@@ -51,8 +67,28 @@
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-no-useless-fragment": "off",
-    "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+    "react/jsx-props-no-spreading": [
+      "error",
+      {
+        "explicitSpread": "ignore"
+      }
+    ],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "twenty-shared",
+              "twenty-shared/*",
+              "!twenty-shared/people-data-labs"
+            ],
+            "message": "twenty-apps applications must not import from twenty-shared directly, except the people-data-labs protocol domain this app canonically shares with twenty-server."
+          }
+        ]
+      }
+    ]
   }
 }

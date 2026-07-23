@@ -14,6 +14,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -85,6 +86,7 @@ export type ChatExecutionOptions = {
   turnId?: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
+  companyContext: WorkspaceCompanyEnrichment | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   onCompaction?: () => void;
   modelId?: string;
@@ -125,6 +127,7 @@ export class ChatExecutionService {
     turnId,
     messages,
     browsingContext,
+    companyContext,
     onCodeExecutionUpdate,
     onCompaction,
     modelId,
@@ -286,6 +289,7 @@ export class ChatExecutionService {
       storedFiles,
       workspace.aiAdditionalInstructions ?? undefined,
       userContext,
+      companyContext ?? undefined,
     );
 
     this.logger.log(

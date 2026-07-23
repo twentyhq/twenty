@@ -32,6 +32,11 @@ runs:
       working-directory: ${{ inputs.app-path }}
       run: yarn install --immutable
 
+    - name: Ensure twenty-shared dist
+      uses: ./.github/actions/ensure-twenty-shared-dist
+      with:
+        app-path: ${{ inputs.app-path }}
+
     - name: Configure remote
       shell: bash
       run: |

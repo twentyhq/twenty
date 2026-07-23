@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -45,6 +46,7 @@ type StreamAgentChatOptions = {
   workspace: WorkspaceEntity;
   text: string;
   browsingContext: BrowsingContextType | null;
+  companyContext: WorkspaceCompanyEnrichment | null;
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
@@ -156,6 +158,7 @@ export class AgentChatStreamingService {
     workspace,
     text,
     browsingContext,
+    companyContext,
     modelId,
     messageId,
     fileAttachments,
@@ -262,6 +265,7 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages: previousMessages,
           browsingContext,
+          companyContext,
           modelId,
           lastUserMessageText: text,
           lastUserMessageParts: userMessageParts,
@@ -389,6 +393,7 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages,
           browsingContext: null,
+          companyContext: null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
           lastUserMessageParts: retriedMessage.parts,
@@ -458,6 +463,7 @@ export class AgentChatStreamingService {
         workspaceId: workspace.id,
         messages,
         browsingContext: null,
+        companyContext: null,
         modelId,
         lastUserMessageText: '',
         lastUserMessageParts: [],
@@ -583,6 +589,7 @@ export class AgentChatStreamingService {
           workspaceId,
           messages: uiMessages,
           browsingContext: null,
+          companyContext: null,
           lastUserMessageText: messageText,
           lastUserMessageParts,
           hasTitle,

@@ -1,0 +1,33 @@
+name: Ensure twenty-shared dist
+description: >
+  Builds the twenty-shared dist when the given app depends on twenty-shared
+  through the portal protocol, so app typecheck, tests and builds can resolve
+  it. No-ops for apps without the dependency.
+
+inputs:
+  app-path:
+    description: Path to the app directory (relative to repo root)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check twenty-shared dependency
+      id: check
+      shell: bash
+      run: |
+        if grep -q '"twenty-shared"' "${{ inputs.app-path }}/package.json"; then
+          echo "needed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "needed=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install monorepo dependencies
+      if: steps.check.outputs.needed == 'true'
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Build twenty-shared
+      if: steps.check.outputs.needed == 'true'
+      shell: bash
+      run: npx nx build twenty-shared
