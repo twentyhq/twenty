@@ -64,9 +64,8 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
     name: 'CommandBlock',
     node: <CommandBlock commands={['npm install', 'npm run start']} />,
   },
-  // KNOWN ISSUE: LinkChip renders a react-router Link and crashes because the
-  // sandbox provides no router context. Kept failing until a router-context
-  // fix lands in the SDK build.
+  // LinkChip relies on the router provider injected by the SDK build
+  // (react-router Links navigate through the host navigate API).
   {
     name: 'LinkChip',
     node: <LinkChip to="/example" label="Link chip" />,

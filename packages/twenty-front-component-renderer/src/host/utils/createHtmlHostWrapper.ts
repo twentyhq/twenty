@@ -32,6 +32,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
   const isIframe = htmlTag === 'iframe';
   const isForm = htmlTag === 'form';
+  const isAnchor = htmlTag === 'a';
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
@@ -55,6 +56,16 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
           reactBindableProps.onSubmit,
         ),
       }),
+      // A native anchor click would navigate the host page before the async
+      // worker round-trip can preventDefault: suppress it and let the worker
+      // decide (react-router links navigate through the host navigate API).
+      // target="_blank" keeps native new-tab behavior.
+      ...(isAnchor &&
+        reactBindableProps.target !== '_blank' && {
+          onClick: preventDefaultThenForwardToRemote(
+            reactBindableProps.onClick,
+          ),
+        }),
     };
 
     if (
