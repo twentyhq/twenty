@@ -51,6 +51,7 @@ export const createStandardViewFieldFlatMetadata = <
     viewFieldGroupName = null,
   },
   standardObjectMetadataRelatedEntityIds,
+  dependencyFlatEntityMaps,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFieldArgs<O, V>): FlatViewField => {
@@ -78,6 +79,13 @@ export const createStandardViewFieldFlatMetadata = <
       `Invalid configuration ${objectName} ${viewName.toString()} ${viewFieldName}`,
     );
   }
+
+  // A view field's lifecycle is owned by whoever owns its view: engine-owned
+  // views (INDEX, FIELDS_WIDGET) carry engine-owned view fields.
+  const parentView =
+    dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
+      viewDefinition.universalIdentifier
+    ];
 
   let viewFieldGroupId: string | null = null;
   let viewFieldGroupUniversalIdentifier: string | null = null;
@@ -121,7 +129,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation,
     isActive: true,
-    isSystemSideEffect: false,
+    isSystemSideEffect: parentView?.isSystemSideEffect ?? false,
     overrides: null,
     universalOverrides: null,
     createdAt: now,
