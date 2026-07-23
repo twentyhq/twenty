@@ -1,11 +1,11 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Mutation } from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
 import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceCompanyEnrichmentResultDTO } from 'src/engine/core-modules/company-enrichment/dtos/workspace-company-enrichment-result.dto';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -25,7 +25,7 @@ export class CompanyEnrichmentResolver {
     private readonly companyEnrichmentService: CompanyEnrichmentService,
   ) {}
 
-  @Mutation(() => GraphQLJSON)
+  @Mutation(() => WorkspaceCompanyEnrichmentResultDTO)
   @UseGuards(NoPermissionGuard)
   async enrichWorkspaceCompany(
     @AuthUser() user: AuthContextUser,

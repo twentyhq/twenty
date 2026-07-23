@@ -2,7 +2,8 @@ name: Ensure twenty-shared dist
 description: >
   Builds the twenty-shared dist when the given app depends on twenty-shared
   through the portal protocol, so app typecheck, tests and builds can resolve
-  it. No-ops for apps without the dependency.
+  it. No-ops for apps without the dependency and when the dist was already
+  built earlier in the job.
 
 inputs:
   app-path:
@@ -15,8 +16,12 @@ runs:
     - name: Check twenty-shared dependency
       id: check
       shell: bash
+      env:
+        APP_PATH: ${{ inputs.app-path }}
       run: |
-        if grep -q '"twenty-shared"' "${{ inputs.app-path }}/package.json"; then
+        if [ -f packages/twenty-shared/dist/index.mjs ]; then
+          echo "needed=false" >> "$GITHUB_OUTPUT"
+        elif grep -q '"twenty-shared"' "$APP_PATH/package.json"; then
           echo "needed=true" >> "$GITHUB_OUTPUT"
         else
           echo "needed=false" >> "$GITHUB_OUTPUT"

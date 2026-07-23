@@ -65,7 +65,9 @@ jobs:
 
       - name: Lambda layer install simulation
         working-directory: ${{ github.workspace }}
-        run: bash packages/twenty-utils/simulate-lambda-layer-install.sh ${{ matrix.app.path }}
+        env:
+          APP_PATH: ${{ matrix.app.path }}
+        run: bash packages/twenty-utils/simulate-lambda-layer-install.sh "$APP_PATH"
 
       - name: Lint
         run: yarn lint

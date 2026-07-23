@@ -44,6 +44,16 @@ describe('toWorkspaceCompanyEnrichment', () => {
     expect(result.name).toBe('Acme Inc');
   });
 
+  it('should fall back to name when display_name is empty', () => {
+    const result = toWorkspaceCompanyEnrichment({
+      domain,
+      enrichedAt,
+      data: { name: 'acme inc', display_name: '' },
+    });
+
+    expect(result.name).toBe('acme inc');
+  });
+
   it('should flatten the location', () => {
     const result = toWorkspaceCompanyEnrichment({
       domain,

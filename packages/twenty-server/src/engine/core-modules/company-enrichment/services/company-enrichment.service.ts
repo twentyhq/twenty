@@ -18,6 +18,7 @@ import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/c
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
 import { getCompanyEnrichmentCacheKey } from 'src/engine/core-modules/company-enrichment/utils/get-company-enrichment-cache-key.util';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -45,13 +46,6 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `company-enrichment:throttler:${workspaceId}`,
-      1,
-      COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS,
-      COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS,
-    );
-
     const isWorkspaceCreator = await this.isWorkspaceCreator({
       userId,
       workspaceId,
@@ -74,6 +68,21 @@ export class CompanyEnrichmentService {
 
     if (isDefined(cachedEnrichment)) {
       return { outcome: 'matched', enrichment: cachedEnrichment };
+    }
+
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `company-enrichment:throttler:${workspaceId}`,
+        1,
+        COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS,
+        COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS,
+      );
+    } catch (error) {
+      if (error instanceof ThrottlerException) {
+        return { outcome: 'transientError', enrichment: null };
+      }
+
+      throw error;
     }
 
     const result =

@@ -43,14 +43,13 @@ export class PeopleDataLabsCompanyClientService {
     }
 
     try {
-      const response = await this.httpClient.post(
-        '/company/enrich',
-        {
+      const response = await this.httpClient.get('/company/enrich', {
+        params: {
           website: domain,
           min_likelihood: PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD,
         },
-        { headers: { 'X-Api-Key': apiKey } },
-      );
+        headers: { 'X-Api-Key': apiKey },
+      });
 
       const responseBody = isObject(response.data)
         ? (response.data as Record<string, unknown>)

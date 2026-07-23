@@ -5,6 +5,10 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { COMPANY_ENRICHMENT_CACHE_TTL_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-cache-ttl-ms.constant';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
@@ -174,9 +178,51 @@ describe('CompanyEnrichmentService', () => {
     },
   );
 
-  it('should throttle before any other work', async () => {
+  it('should not consume throttle tokens for a non creator', async () => {
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: 'someone-else',
+      email: 'someone@acme.com',
+      workspaceId,
+    });
+
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('should not consume throttle tokens on a cache hit', async () => {
+    cacheStorageService.get.mockResolvedValue({ domain: 'acme.com' });
+
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('should return transientError without calling the client when throttled', async () => {
     throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
-      new Error('Limit reached'),
+      new ThrottlerException(
+        'Limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      ),
+    );
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'transientError', enrichment: null });
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should rethrow non throttler errors from the throttler', async () => {
+    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+      new Error('redis down'),
     );
 
     await expect(
@@ -185,11 +231,6 @@ describe('CompanyEnrichmentService', () => {
         email: 'foo@acme.com',
         workspaceId,
       }),
-    ).rejects.toThrow('Limit reached');
-
-    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
+    ).rejects.toThrow('redis down');
   });
 });

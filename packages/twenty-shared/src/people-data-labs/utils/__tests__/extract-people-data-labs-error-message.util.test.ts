@@ -10,6 +10,24 @@ describe('extractPeopleDataLabsErrorMessage', () => {
     ).toBe('boom');
   });
 
+  it('reads a top level error string', () => {
+    expect(
+      extractPeopleDataLabsErrorMessage({
+        json: { error: 'rate limit' },
+        httpStatus: 429,
+      }),
+    ).toBe('rate limit');
+  });
+
+  it('reads a top level message string', () => {
+    expect(
+      extractPeopleDataLabsErrorMessage({
+        json: { message: 'not found' },
+        httpStatus: 404,
+      }),
+    ).toBe('not found');
+  });
+
   it('joins an array of error messages', () => {
     expect(
       extractPeopleDataLabsErrorMessage({

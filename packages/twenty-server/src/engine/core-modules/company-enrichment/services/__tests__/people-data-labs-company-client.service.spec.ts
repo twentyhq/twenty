@@ -7,13 +7,13 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('PeopleDataLabsCompanyClientService', () => {
   let service: PeopleDataLabsCompanyClientService;
-  let httpClient: { post: jest.Mock };
+  let httpClient: { get: jest.Mock };
   let twentyConfigService: { get: jest.Mock };
 
   const domain = 'acme.com';
 
   beforeEach(async () => {
-    httpClient = { post: jest.fn() };
+    httpClient = { get: jest.fn() };
     twentyConfigService = { get: jest.fn().mockReturnValue('pdl-key') };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -47,30 +47,29 @@ describe('PeopleDataLabsCompanyClientService', () => {
       const result = await service.enrichCompanyByDomain(domain);
 
       expect(result).toEqual({ outcome: 'skipped' });
-      expect(httpClient.post).not.toHaveBeenCalled();
+      expect(httpClient.get).not.toHaveBeenCalled();
     },
   );
 
-  it('should send the domain and minimum likelihood in the request body', async () => {
-    httpClient.post.mockResolvedValue({
+  it('should send the domain and minimum likelihood as query parameters', async () => {
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { name: 'Acme Inc' },
     });
 
     await service.enrichCompanyByDomain(domain);
 
-    expect(httpClient.post).toHaveBeenCalledWith(
-      '/company/enrich',
-      {
+    expect(httpClient.get).toHaveBeenCalledWith('/company/enrich', {
+      params: {
         website: domain,
         min_likelihood: PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD,
       },
-      { headers: { 'X-Api-Key': 'pdl-key' } },
-    );
+      headers: { 'X-Api-Key': 'pdl-key' },
+    });
   });
 
   it('should treat a body level 404 under an HTTP 200 as not found', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { status: 404 },
     });
@@ -81,7 +80,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should treat an HTTP 404 as not found', async () => {
-    httpClient.post.mockResolvedValue({ status: 404, data: {} });
+    httpClient.get.mockResolvedValue({ status: 404, data: {} });
 
     await expect(service.enrichCompanyByDomain(domain)).resolves.toEqual({
       outcome: 'notFound',
@@ -91,7 +90,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   it.each([429, 500, 503])(
     'should classify HTTP %i as a transient error',
     async (status) => {
-      httpClient.post.mockResolvedValue({ status, data: {} });
+      httpClient.get.mockResolvedValue({ status, data: {} });
 
       await expect(service.enrichCompanyByDomain(domain)).resolves.toEqual({
         outcome: 'transientError',
@@ -102,7 +101,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   );
 
   it('should classify HTTP 401 as a permanent error', async () => {
-    httpClient.post.mockResolvedValue({ status: 401, data: {} });
+    httpClient.get.mockResolvedValue({ status: 401, data: {} });
 
     await expect(service.enrichCompanyByDomain(domain)).resolves.toEqual({
       outcome: 'permanentError',
@@ -112,7 +111,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should match on data nested under the data key', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { status: 200, likelihood: 9, data: { name: 'Acme Inc' } },
     });
@@ -124,7 +123,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should match on top level data and strip the envelope fields', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { status: 200, likelihood: 9, name: 'Acme Inc' },
     });
@@ -136,7 +135,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should treat an envelope only body as not found', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { status: 200, likelihood: 2 },
     });
@@ -147,7 +146,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should treat a non object 2xx body as a transient error', async () => {
-    httpClient.post.mockResolvedValue({ status: 200, data: '<html></html>' });
+    httpClient.get.mockResolvedValue({ status: 200, data: '<html></html>' });
 
     await expect(service.enrichCompanyByDomain(domain)).resolves.toEqual({
       outcome: 'transientError',
@@ -157,7 +156,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should surface the People Data Labs error message when present', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 402,
       data: { error: { message: 'payment required' } },
     });
@@ -170,7 +169,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should treat a match below the minimum likelihood as not found', async () => {
-    httpClient.post.mockResolvedValue({
+    httpClient.get.mockResolvedValue({
       status: 200,
       data: { status: 200, likelihood: 1, data: { name: 'Acme Inc' } },
     });
@@ -181,7 +180,7 @@ describe('PeopleDataLabsCompanyClientService', () => {
   });
 
   it('should treat a rejected request as a transient error', async () => {
-    httpClient.post.mockRejectedValue(new Error('socket hang up'));
+    httpClient.get.mockRejectedValue(new Error('socket hang up'));
 
     await expect(service.enrichCompanyByDomain(domain)).resolves.toEqual({
       outcome: 'transientError',

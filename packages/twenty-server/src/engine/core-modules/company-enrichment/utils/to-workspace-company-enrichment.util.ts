@@ -15,7 +15,7 @@ export const toWorkspaceCompanyEnrichment = ({
 }): WorkspaceCompanyEnrichment => ({
   domain,
   enrichedAt: enrichedAt.toISOString(),
-  name: data.display_name ?? data.name ?? null,
+  name: data.display_name || data.name || null,
   website: data.website ?? null,
   industry: data.industry ?? null,
   employeeCount: data.employee_count ?? null,
