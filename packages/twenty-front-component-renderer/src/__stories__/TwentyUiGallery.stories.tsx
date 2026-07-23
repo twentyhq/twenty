@@ -151,6 +151,38 @@ export const ModalOpenPreact: Story = {
   play: modalOpenTest,
 };
 
+// KNOWN ISSUE: monaco cannot load inside the sandbox worker (no script
+// loading in the polyfilled DOM, opaque-origin CSP), so CodeEditor never
+// becomes interactive. This story fails until front components get a
+// supported code editor path; it documents the limitation empirically.
+const codeEditorTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const codeEditor = await canvas.findByTestId(
+    'code-editor-component',
+    {},
+    { timeout: 30000 },
+  );
+
+  await waitFor(
+    () => {
+      expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'mounted');
+    },
+    { timeout: 15000 },
+  );
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+export const CodeEditorReact: Story = {
+  ...createGalleryStory('twenty-ui-code-editor-gallery'),
+  play: codeEditorTest,
+};
+export const CodeEditorPreact: Story = {
+  ...createGalleryStory('twenty-ui-code-editor-gallery', 'preact'),
+  play: codeEditorTest,
+};
+
 export const TypographyReact: Story = createGalleryStory(
   'twenty-ui-typography-gallery',
 );
