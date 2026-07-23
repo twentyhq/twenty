@@ -92,3 +92,9 @@ export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 export type WorkspaceCacheResult<K extends WorkspaceCacheKeyName[]> = {
   [P in K[number]]: WorkspaceCacheDataMap[P];
 };
+
+export type WorkspaceCacheResultWithHashes<K extends WorkspaceCacheKeyName[]> =
+  {
+    data: WorkspaceCacheResult<K>;
+    hashes: { [P in K[number]]: string };
+  };
