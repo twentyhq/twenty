@@ -43,10 +43,7 @@ export const registerDevFunctionCommands = (program: Command): void => {
       '--postUninstall',
       'Execute post-uninstall logic function if defined',
     )
-    .option(
-      '--preUninstall',
-      'Execute pre-uninstall logic function if defined',
-    )
+    .option('--preUninstall', 'Execute pre-uninstall logic function if defined')
     .option(
       '-p, --payload <payload>',
       'JSON payload to send to the function',

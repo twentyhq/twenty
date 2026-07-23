@@ -8,9 +8,7 @@ export const definePreUninstallLogicFunction: DefineEntity<
   const errors = [];
 
   if (!config.universalIdentifier) {
-    errors.push(
-      'Pre uninstall logic function must have a universalIdentifier',
-    );
+    errors.push('Pre uninstall logic function must have a universalIdentifier');
   }
 
   if (!config.handler) {
