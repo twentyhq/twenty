@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
@@ -120,6 +121,10 @@ export const MultipleRecordPicker = ({
   const canCreateRecordForCreate =
     isDefined(objectMetadataItemForCreate) &&
     canCreateRecordsForObjectMetadataItem({
+      objectPermissions: objectPermissionsForCreate,
+      objectMetadataItem: objectMetadataItemForCreate,
+    }) &&
+    !isObjectMetadataReadOnly({
       objectPermissions: objectPermissionsForCreate,
       objectMetadataItem: objectMetadataItemForCreate,
     });
