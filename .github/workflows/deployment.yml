@@ -18,10 +18,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Registry
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: 100.85.153.173:5000
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -32,8 +31,8 @@ jobs:
           file: packages/twenty-docker/twenty/Dockerfile
           push: true
           tags: |
-            100.85.153.173:5000/twenty-custom:latest
-            100.85.153.173:5000/twenty-custom:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/twenty-custom:latest
+            ${{ secrets.DOCKER_USERNAME }}/twenty-custom:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -49,7 +48,7 @@ jobs:
       - name: Deploy
         run: |
           kubectl set image deployment/twenty-crm \
-            twenty-crm=100.85.153.173:5000/twenty-custom:${{ github.sha }} \
+            twenty-crm=${{ secrets.DOCKER_USERNAME }}/twenty-custom:${{ github.sha }} \
             -n default
 
           kubectl rollout status deployment/twenty-crm \
