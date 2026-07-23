@@ -44,7 +44,9 @@ describe('SubdomainManagerService', () => {
         {
           provide: TwentyConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue('app'),
+            get: jest.fn((key: string) =>
+              key === 'SUBDOMAIN_MIN_LENGTH' ? 3 : 'app',
+            ),
           },
         },
       ],
