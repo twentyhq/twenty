@@ -1,0 +1,31 @@
+packages/twenty-front/src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+  s_c3fbc446206706::t_cfe6c81e25cca1 217
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_54aa8c1bc24853 30-37
+  s_c3fbc446206706::t_a38ee6ae295ecd 85,98
+  s_c3fbc446206706::t_b4a09b8249fbf5 9,12-13,17
+  s_c3fbc446206706::t_6d498e127b93a0 71-78
+  s_c3fbc446206706::t_de5b97bded3d29 86-97
+packages/twenty-front/src/modules/settings/usage/utils/getOperationTypeLabel.ts
+  s_c3fbc446206706::t_65b4eef8542c50 13-14
+packages/twenty-docs/user-guide/billing/capabilities/credits.mdx
+  s_c3fbc446206706::t_a2c8398806750a 3
+  s_c3fbc446206706::t_1838615c98acf4 8
+  s_c3fbc446206706::t_013af4274808f7 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "64c9bae3996b03853fcb698869d9c783719020af",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
