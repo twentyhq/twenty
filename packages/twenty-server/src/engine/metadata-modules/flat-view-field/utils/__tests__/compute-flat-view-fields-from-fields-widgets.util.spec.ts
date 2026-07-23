@@ -790,8 +790,10 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
     });
   });
 
-  describe('INDEX view propagation', () => {
-    it('should add a hidden, flagged view field to the object INDEX view even without a fields widget', () => {
+  describe('INDEX view non-propagation', () => {
+    // INDEX view fields are provisioned by the fieldIndexViewFieldOnCreate
+    // metadata side effect, not by this caller-side util.
+    it('should not target the object INDEX view without a fields widget', () => {
       const result = computeFlatViewFieldsFromFieldsWidgets({
         fieldsToCreate: [
           {
@@ -817,81 +819,10 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toMatchObject({
-        viewUniversalIdentifier: 'index-view-uid',
-        fieldMetadataUniversalIdentifier: 'field-uid-1',
-        isVisible: false,
-        isSystemSideEffect: true,
-      });
-    });
-
-    it('should not target a standalone non-INDEX view without a widget', () => {
-      const result = computeFlatViewFieldsFromFieldsWidgets({
-        fieldsToCreate: [
-          {
-            objectMetadataUniversalIdentifier:
-              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
-            fieldMetadataUniversalIdentifier: 'field-uid-1',
-          },
-        ],
-        flatPageLayoutWidgetMaps:
-          buildEmptyFlatEntityMaps() as unknown as FlatPageLayoutWidgetMaps,
-        flatViewFieldMaps: buildFlatViewFieldMaps(),
-        flatViewMaps: buildFlatViewMaps([
-          {
-            id: 'plain-view-db-id',
-            universalIdentifier: 'plain-view-uid',
-            key: null,
-            objectMetadataUniversalIdentifier:
-              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
-          },
-        ]),
-        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
       expect(result).toEqual([]);
     });
 
-    it('should skip an inactive or soft-deleted INDEX view', () => {
-      const result = computeFlatViewFieldsFromFieldsWidgets({
-        fieldsToCreate: [
-          {
-            objectMetadataUniversalIdentifier:
-              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
-            fieldMetadataUniversalIdentifier: 'field-uid-1',
-          },
-        ],
-        flatPageLayoutWidgetMaps:
-          buildEmptyFlatEntityMaps() as unknown as FlatPageLayoutWidgetMaps,
-        flatViewFieldMaps: buildFlatViewFieldMaps(),
-        flatViewMaps: buildFlatViewMaps([
-          {
-            id: 'inactive-index-view-db-id',
-            universalIdentifier: 'inactive-index-view-uid',
-            key: ViewKey.INDEX,
-            isActive: false,
-            objectMetadataUniversalIdentifier:
-              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
-          },
-          {
-            id: 'deleted-index-view-db-id',
-            universalIdentifier: 'deleted-index-view-uid',
-            key: ViewKey.INDEX,
-            deletedAt: '2024-01-01T00:00:00.000Z',
-            objectMetadataUniversalIdentifier:
-              OBJECT_METADATA_UNIVERSAL_IDENTIFIER,
-          },
-        ]),
-        flatViewFieldGroupMaps: buildFlatViewFieldGroupMaps(),
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
-      expect(result).toEqual([]);
-    });
-
-    it('should not duplicate a field when a fields widget and the INDEX view share the same view', () => {
+    it('should still honor a fields widget explicitly targeting the INDEX view', () => {
       const result = computeFlatViewFieldsFromFieldsWidgets({
         fieldsToCreate: [
           {
@@ -919,6 +850,7 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].isVisible).toBe(true);
+      expect(result[0].viewUniversalIdentifier).toBe('index-view-uid');
     });
   });
 
