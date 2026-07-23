@@ -9,11 +9,13 @@ import { WelcomeAnimationAutoLeaveEffect } from '@/onboarding/components/Welcome
 import { WelcomeAnimationForcedTeardownEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect';
 import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
+import { WELCOME_TITLE_MESSAGE } from '@/onboarding/constants/WelcomeTitleMessage';
 import { WELCOME_TITLE_SOURCE_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleSourceElementId';
 import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledOverlay = styled.div`
@@ -258,27 +260,30 @@ export const WelcomeOverlay = () => {
     isWelcomeAnimationLeavingState,
   );
   const welcomeTitleFlight = useAtomStateValue(welcomeTitleFlightState);
+  const isMobile = useIsMobile();
 
   if (!isWelcomeAnimationVisible) {
     return null;
   }
 
-  const welcomeTitle = t`Welcome to your workspace`;
+  const activeWelcomeTitleFlight = isMobile ? null : welcomeTitleFlight;
+
+  const welcomeTitle = t(WELCOME_TITLE_MESSAGE);
   const welcomeTitleWords = welcomeTitle.split(' ');
 
   const leavingClassName = isWelcomeAnimationLeaving ? 'is-leaving' : undefined;
   const titleClassName = isWelcomeAnimationLeaving
-    ? isDefined(welcomeTitleFlight)
+    ? isDefined(activeWelcomeTitleFlight)
       ? 'is-flying'
       : 'is-leaving'
     : undefined;
 
-  const titleStyle = isDefined(welcomeTitleFlight)
+  const titleStyle = isDefined(activeWelcomeTitleFlight)
     ? ({
-        '--welcome-flight-x': `${welcomeTitleFlight.translateXInPx}px`,
-        '--welcome-flight-y': `${welcomeTitleFlight.translateYInPx}px`,
-        '--welcome-flight-scale': welcomeTitleFlight.scale,
-        '--welcome-flight-origin-x': `${welcomeTitleFlight.transformOriginXInPx}px`,
+        '--welcome-flight-x': `${activeWelcomeTitleFlight.translateXInPx}px`,
+        '--welcome-flight-y': `${activeWelcomeTitleFlight.translateYInPx}px`,
+        '--welcome-flight-scale': activeWelcomeTitleFlight.scale,
+        '--welcome-flight-origin-x': `${activeWelcomeTitleFlight.transformOriginXInPx}px`,
       } as CSSProperties)
     : undefined;
 

@@ -4,6 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
+import { WELCOME_TITLE_MESSAGE } from '@/onboarding/constants/WelcomeTitleMessage';
 import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -89,7 +90,7 @@ export const WorkspaceSetupChatPreamble = () => {
         id={WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID}
         className={revealClassName}
       >
-        {t`Welcome to your workspace`}
+        {t(WELCOME_TITLE_MESSAGE)}
         <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
       </StyledSingleLineHandoffRun>{' '}
       <StyledContinuation className={revealClassName}>

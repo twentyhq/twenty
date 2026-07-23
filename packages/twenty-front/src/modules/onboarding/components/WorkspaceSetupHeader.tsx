@@ -25,7 +25,7 @@ const StyledHeaderTitle = styled.div`
   flex: 1;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  height: 24px;
+  height: ${themeCssVariables.spacing[6]};
   line-height: 1.4;
   min-width: 0;
   overflow: hidden;

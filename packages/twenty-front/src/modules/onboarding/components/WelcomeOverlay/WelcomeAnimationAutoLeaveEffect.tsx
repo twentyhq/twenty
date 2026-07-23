@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
 import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
@@ -26,10 +25,7 @@ export const WelcomeAnimationAutoLeaveEffect = () => {
       }
       hasFired = true;
 
-      const canTitleFlyToChat = window.innerWidth > MOBILE_VIEWPORT;
-      setWelcomeTitleFlight(
-        canTitleFlyToChat ? measureWelcomeTitleFlight() : null,
-      );
+      setWelcomeTitleFlight(measureWelcomeTitleFlight());
       setIsWelcomeAnimationLeaving(true);
     };
 
