@@ -1,5 +1,4 @@
-import { type DragDropProvider } from '@dnd-kit/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -16,22 +15,15 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import {
+  type DragDropProviderDragEndEvent,
+  type DragDropProviderDragMoveEvent,
+  type DragDropProviderDragStartEvent,
+} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 export type RecordTableHeaderDndKitContextValues = {
   activeDropTargetIndex: number | null;

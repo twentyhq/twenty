@@ -15,7 +15,25 @@ export type PageLayoutWidgetListDropData = {
   tabId: string;
 };
 
+export type PageLayoutTabDragData = {
+  type: 'tab';
+  tabId: string;
+};
+
+// beforeTabId null means append after the last tab.
+export type PageLayoutTabListEndDropData = {
+  type: 'tab-list-end';
+  beforeTabId: string | null;
+};
+
+export type PageLayoutTabMoreButtonDropData = {
+  type: 'tab-more-button';
+};
+
 export type PageLayoutWidgetDndData =
   | PageLayoutWidgetDragData
   | PageLayoutTabWidgetDropData
-  | PageLayoutWidgetListDropData;
+  | PageLayoutWidgetListDropData
+  | PageLayoutTabDragData
+  | PageLayoutTabListEndDropData
+  | PageLayoutTabMoreButtonDropData;

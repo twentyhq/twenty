@@ -1,7 +1,6 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { useStore } from 'jotai';
-import { type ComponentProps, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
@@ -23,22 +22,15 @@ import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navi
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import {
+  type DragDropProviderDragEndEvent,
+  type DragDropProviderDragOverEvent,
+  type DragDropProviderDragStartEvent,
+} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragStart']
-  >
->[0];
-type DragOverPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragOver']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DraggableData>;
+type DragOverPayload = DragDropProviderDragOverEvent<DraggableData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DraggableData>;
 
 export type NavigationMenuItemDndKitContextValues = {
   dragSource: { sourceDroppableId: string | null };

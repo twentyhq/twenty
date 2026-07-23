@@ -1,6 +1,5 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { useStore } from 'jotai';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,22 +13,15 @@ import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDr
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import {
+  type DragDropProviderDragEndEvent,
+  type DragDropProviderDragMoveEvent,
+  type DragDropProviderDragStartEvent,
+} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 export type RecordCalendarDndKitContextValues = {
   activeDropTargetIndex: number | null;

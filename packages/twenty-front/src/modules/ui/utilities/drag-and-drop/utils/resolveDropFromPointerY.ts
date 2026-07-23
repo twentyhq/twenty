@@ -1,16 +1,11 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
-import { type ComponentProps } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { type DragDropProviderDropTarget } from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 import { resolveDropTarget } from '@/ui/utilities/drag-and-drop/utils/resolveDropTarget';
 
-type DropTarget = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
-  >
->[0]['operation']['target'];
+type DropTarget = DragDropProviderDropTarget<DragDropItemData>;
 
 export type ResolvedDrop = {
   droppableId: string;

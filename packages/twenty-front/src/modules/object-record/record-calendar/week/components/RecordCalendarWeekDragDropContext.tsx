@@ -5,30 +5,18 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropProvider } from '@dnd-kit/react';
 import { t } from '@lingui/core/macro';
-import {
-  type ComponentProps,
-  type ReactNode,
-  type RefObject,
-  useState,
-} from 'react';
+import { type ReactNode, type RefObject, useState } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { logError } from '~/utils/logError';
+import {
+  type DragDropProviderDragEndEvent,
+  type DragDropProviderDragStartEvent,
+} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordCalendarWeekDndData>
-    >['onDragStart']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordCalendarWeekDndData>
-    >['onDragEnd']
-  >
->[0];
+type DragStartPayload =
+  DragDropProviderDragStartEvent<RecordCalendarWeekDndData>;
+type DragEndPayload = DragDropProviderDragEndEvent<RecordCalendarWeekDndData>;
 
 type RecordCalendarWeekDragDropContextProps = {
   children: ReactNode;

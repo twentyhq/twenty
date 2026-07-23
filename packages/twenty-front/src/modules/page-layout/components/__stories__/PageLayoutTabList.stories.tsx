@@ -1,16 +1,14 @@
-import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
-import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
+import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -95,69 +93,6 @@ const PageLayoutTabListPlayground = ({
     setNextIndex((value) => value + 1);
   };
 
-  const handleReorder = (
-    result: DropResult,
-    _provided: ResponderProvided,
-  ): boolean => {
-    const { destination, source, draggableId } = result;
-
-    if (!destination) {
-      return false;
-    }
-
-    const isDroppedOnMoreButton =
-      destination.droppableId ===
-      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON;
-
-    if (isDroppedOnMoreButton) {
-      setTabs((prev) => {
-        const maxPosition = Math.max(...prev.map((tab) => tab.position), 0);
-        return prev.map((tab) =>
-          tab.id === draggableId ? { ...tab, position: maxPosition + 1 } : tab,
-        );
-      });
-      return true;
-    }
-
-    setTabs((prev) => {
-      const sorted = [...prev].sort((a, b) => a.position - b.position);
-
-      if (
-        destination.droppableId === source.droppableId &&
-        destination.index === source.index
-      ) {
-        return prev;
-      }
-
-      const draggedTab = sorted.find((tab) => tab.id === draggableId);
-      if (!draggedTab) {
-        return prev;
-      }
-
-      const withoutDragged = sorted.filter((tab) => tab.id !== draggableId);
-
-      const movingBetweenDroppables =
-        destination.droppableId !== source.droppableId;
-
-      const destinationIndexAdjusted =
-        movingBetweenDroppables && destination.index > source.index
-          ? destination.index - 1
-          : destination.index;
-
-      const newPosition = calculateNewPosition({
-        destinationIndex: destinationIndexAdjusted,
-        sourceIndex: source.index,
-        items: withoutDragged,
-      });
-
-      return prev.map((tab) =>
-        tab.id === draggableId ? { ...tab, position: newPosition } : tab,
-      );
-    });
-
-    return false;
-  };
-
   return (
     <StyledContainer>
       <PageLayoutTabListEffect
@@ -165,20 +100,21 @@ const PageLayoutTabListPlayground = ({
         componentInstanceId="page-layout-tab-list-story"
       />
 
-      <PageLayoutTabList
-        tabs={sortedTabs}
-        componentInstanceId="page-layout-tab-list-story"
-        behaveAsLinks={false}
-        loading={false}
-        addTabStrategy={
-          isReorderEnabled
-            ? { mode: 'direct', onCreate: handleAddTab }
-            : undefined
-        }
-        isReorderEnabled={isReorderEnabled}
-        onReorder={isReorderEnabled ? handleReorder : undefined}
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <PageLayoutWidgetDndProvider>
+        <PageLayoutTabList
+          tabs={sortedTabs}
+          componentInstanceId="page-layout-tab-list-story"
+          behaveAsLinks={false}
+          loading={false}
+          addTabStrategy={
+            isReorderEnabled
+              ? { mode: 'direct', onCreate: handleAddTab }
+              : undefined
+          }
+          isReorderEnabled={isReorderEnabled}
+          pageLayoutType={PageLayoutType.DASHBOARD}
+        />
+      </PageLayoutWidgetDndProvider>
     </StyledContainer>
   );
 };

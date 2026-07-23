@@ -4,7 +4,10 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutWidgetDndType';
+import { pageLayoutGridDragHoveredTabIdComponentState } from '@/page-layout/states/pageLayoutGridDragHoveredTabIdComponentState';
 import { type PageLayoutTabWidgetDropData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledDropTarget = styled.div<{ isActive: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -30,12 +33,23 @@ export const PageLayoutTabWidgetDropTarget = ({
 
   const { ref, isDropTarget } = useDroppable({
     id: `page-layout-tab-widget-drop-${tabId}`,
+    accept: PAGE_LAYOUT_WIDGET_DND_TYPE,
     collisionDetector: pointerIntersection,
     data,
   });
 
+  // Grid drags come from react-grid-layout, outside dnd-kit; their hover
+  // highlight is driven by pointer hit-testing instead of isDropTarget.
+  const pageLayoutGridDragHoveredTabId = useAtomComponentStateValue(
+    pageLayoutGridDragHoveredTabIdComponentState,
+  );
+
   return (
-    <StyledDropTarget ref={ref} isActive={isDropTarget}>
+    <StyledDropTarget
+      ref={ref}
+      isActive={isDropTarget || pageLayoutGridDragHoveredTabId === tabId}
+      data-page-layout-tab-drop-target-id={tabId}
+    >
       {children}
     </StyledDropTarget>
   );

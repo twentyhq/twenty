@@ -1,5 +1,4 @@
-import { type DragDropProvider } from '@dnd-kit/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
@@ -20,22 +19,15 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
+import {
+  type DragDropProviderDragEndEvent,
+  type DragDropProviderDragMoveEvent,
+  type DragDropProviderDragStartEvent,
+} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 type PendingReorder = {
   fromIndex: number;
