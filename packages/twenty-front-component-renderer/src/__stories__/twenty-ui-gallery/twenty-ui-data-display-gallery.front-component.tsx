@@ -8,6 +8,7 @@ import {
   Chip,
   ColorSample,
   CommandBlock,
+  LinkChip,
   NotificationCounter,
   Pill,
   Status,
@@ -64,8 +65,12 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
     node: <CommandBlock commands={['npm install', 'npm run start']} />,
   },
   // KNOWN ISSUE: LinkChip renders a react-router Link and crashes because the
-  // sandbox provides no router context ("Cannot destructure property
-  // 'basename' of 'useContext(...)' as it is null").
+  // sandbox provides no router context. Kept failing until a router-context
+  // fix lands in the SDK build.
+  {
+    name: 'LinkChip',
+    node: <LinkChip to="/example" label="Link chip" />,
+  },
   {
     name: 'NotificationCounter',
     node: <NotificationCounter count={3} />,

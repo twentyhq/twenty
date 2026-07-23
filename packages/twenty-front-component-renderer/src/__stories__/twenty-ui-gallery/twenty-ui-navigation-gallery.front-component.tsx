@@ -31,6 +31,7 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
   StyledMenuItemSelect,
+  UndecoratedLink,
 } from 'twenty-ui/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -213,10 +214,9 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
       />
     ),
   },
-  // KNOWN ISSUE: RawLink (kept to expose the failure) and UndecoratedLink
-  // (excluded) render a react-router Link and crash because the sandbox
-  // provides no router context ("Cannot destructure property 'basename' of
-  // 'useContext(...)' as it is null").
+  // KNOWN ISSUE: RawLink and UndecoratedLink render a react-router Link and
+  // crash because the sandbox provides no router context. Kept failing until
+  // a router-context fix lands in the SDK build.
   {
     name: 'RawLink',
     node: <RawLink href="/path">Raw link</RawLink>,
@@ -230,6 +230,10 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: (
       <SocialLink href="https://twitter.com/twenty" type={LinkType.Twitter} />
     ),
+  },
+  {
+    name: 'UndecoratedLink',
+    node: <UndecoratedLink to="/path">Undecorated link</UndecoratedLink>,
   },
 ];
 

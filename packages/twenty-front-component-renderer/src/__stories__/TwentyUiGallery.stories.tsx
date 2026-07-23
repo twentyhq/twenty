@@ -122,6 +122,35 @@ export const SurfacesPreact: Story = createGalleryStory(
   'preact',
 );
 
+// KNOWN ISSUE: the open Modal hangs the React-runtime sandbox render, so this
+// story fails on a timeout instead of an assertion. Shorter timeout to keep
+// the expected failure fast.
+const modalOpenTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const status = await canvas.findByTestId(
+    'gallery-status',
+    {},
+    { timeout: 15000 },
+  );
+
+  await waitFor(() => {
+    expect(status).toHaveAttribute('data-failed-messages', '');
+    expect(status).toHaveAttribute('data-failed-count', '0');
+  });
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+export const ModalOpenReact: Story = {
+  ...createGalleryStory('twenty-ui-modal-open-gallery'),
+  play: modalOpenTest,
+};
+export const ModalOpenPreact: Story = {
+  ...createGalleryStory('twenty-ui-modal-open-gallery', 'preact'),
+  play: modalOpenTest,
+};
+
 export const TypographyReact: Story = createGalleryStory(
   'twenty-ui-typography-gallery',
 );

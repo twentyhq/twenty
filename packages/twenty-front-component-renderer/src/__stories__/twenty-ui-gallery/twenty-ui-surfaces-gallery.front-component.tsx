@@ -46,8 +46,8 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
     name: 'CardHeader',
     node: <CardHeader>Card header</CardHeader>,
   },
-  // KNOWN ISSUE: an open Modal (base-ui Dialog portal) hangs the React-runtime
-  // sandbox render; it works under Preact. Rendered closed until fixed.
+  // Rendered closed here so a hang cannot mask the rest of this gallery; the
+  // open-Modal known issue is exposed by twenty-ui-modal-open-gallery.
   {
     name: 'Modal',
     node: (
