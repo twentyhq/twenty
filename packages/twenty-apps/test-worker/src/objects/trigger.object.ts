@@ -12,7 +12,8 @@ export default defineObject({
   namePlural: 'triggers',
   labelSingular: 'Trigger',
   labelPlural: 'Triggers',
-  description: 'One record per sleep logic function execution',
+  description:
+    'Creating a record enqueues a sleep job; the record is marked done when the job completes',
   icon: 'IconMoon',
   labelIdentifierFieldMetadataUniversalIdentifier:
     TRIGGER_NAME_FIELD_UNIVERSAL_IDENTIFIER,

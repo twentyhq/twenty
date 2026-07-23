@@ -20,11 +20,19 @@ const handler = async (): Promise<{ triggerName: string }> => {
 export default defineLogicFunction({
   universalIdentifier: '85fd2022-cb22-466a-b5fc-0c4403b8f898',
   name: 'run-in-workflow',
-  description:
-    'Creates a trigger when a workflowRunTrigger record is created',
+  description: 'Workflow step that creates a trigger record',
   timeoutSeconds: 5,
   handler,
-  databaseEventTriggerSettings: {
-    eventName: 'workflowRunTrigger.created',
+  workflowActionTriggerSettings: {
+    label: 'Create trigger record',
+    icon: 'IconBolt',
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          triggerName: { type: 'string' },
+        },
+      },
+    ],
   },
 });

@@ -1,55 +1,45 @@
-import { RestApiClient } from 'twenty-client-sdk/rest';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 const DEFAULT_TRIGGER_COUNT = 10;
-const FLUSH_TIMEOUT_MS = 1_000;
-
-// Fire-and-forget: a timeout only means the request was flushed,
-// not that the target run failed.
-const fireSleep = async (client: RestApiClient): Promise<boolean> => {
-  try {
-    await client.post(
-      '/s/sleep',
-      {},
-      { signal: AbortSignal.timeout(FLUSH_TIMEOUT_MS) },
-    );
-
-    return true;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      (error.name === 'TimeoutError' || error.name === 'AbortError')
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-};
+const CREATE_BATCH_SIZE = 50;
 
 const handler = async (params: {
   count?: number;
   body?: { count?: number } | null;
-}): Promise<{ acknowledged: number; failed: number }> => {
+}): Promise<{ created: number }> => {
   const count = params?.count ?? params?.body?.count ?? DEFAULT_TRIGGER_COUNT;
 
-  const client = new RestApiClient();
+  const client = new CoreApiClient();
 
-  const results = await Promise.all(
-    Array.from({ length: count }, () => fireSleep(client)),
-  );
+  let created = 0;
 
-  const failed = results.filter((flushed) => !flushed).length;
+  while (created < count) {
+    const batchSize = Math.min(CREATE_BATCH_SIZE, count - created);
 
-  return { acknowledged: count - failed, failed };
+    await client.mutation({
+      createTriggers: {
+        __args: {
+          data: Array.from({ length: batchSize }, () => ({
+            name: `Trigger ${Math.random().toString(36).slice(2, 8)}`,
+          })),
+        },
+        id: true,
+      },
+    });
+
+    created += batchSize;
+  }
+
+  return { created };
 };
 
 export default defineLogicFunction({
   universalIdentifier: '1e5327ce-1646-4923-8609-9bb6e2edcd60',
   name: 'trigger-sleep',
   description:
-    'Fires the sleep logic function N times (default 10) without awaiting completion',
-  timeoutSeconds: 5,
+    'Creates N trigger records (default 10); each one enqueues a sleep job on the logic function queue',
+  timeoutSeconds: 30,
   handler,
   httpRouteTriggerSettings: {
     path: '/trigger-sleep',
