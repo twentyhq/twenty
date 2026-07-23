@@ -5,29 +5,19 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 
 type StopApplicationCommandOptions = {
-  workspaceId: string;
   applicationUniversalIdentifier: string;
 };
 
 @Command({
   name: 'application:stop',
   description:
-    'Workspace-level kill switch: block all logic function executions of one installed application. Reverse with application:start.',
+    'Temporarily block all logic function executions of an application across all workspaces. Reverse with application:start.',
 })
 export class StopApplicationCommand extends CommandRunner {
   private readonly logger = new Logger(StopApplicationCommand.name);
 
   constructor(private readonly applicationStopService: ApplicationStopService) {
     super();
-  }
-
-  @Option({
-    flags: '-w, --workspace-id <workspace_id>',
-    description: 'id of the workspace the application is installed in',
-    required: true,
-  })
-  parseWorkspaceId(value: string): string {
-    return value;
   }
 
   @Option({
@@ -43,13 +33,12 @@ export class StopApplicationCommand extends CommandRunner {
     _passedParams: string[],
     options: StopApplicationCommandOptions,
   ): Promise<void> {
-    const application = await this.applicationStopService.stopApplication({
-      workspaceId: options.workspaceId,
+    await this.applicationStopService.stopApplication({
       applicationUniversalIdentifier: options.applicationUniversalIdentifier,
     });
 
     this.logger.log(
-      `Stopped application "${application.name}" (universalIdentifier ${application.universalIdentifier}) in workspace ${application.workspaceId}. All its logic function executions are now blocked.`,
+      `Stopped application ${options.applicationUniversalIdentifier} across all workspaces for up to 24 hours.`,
     );
   }
 }

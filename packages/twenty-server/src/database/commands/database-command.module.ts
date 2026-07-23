@@ -12,9 +12,7 @@ import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
-import { StartApplicationRegistrationCommand } from 'src/database/commands/start-application-registration.command';
 import { StartApplicationCommand } from 'src/database/commands/start-application.command';
-import { StopApplicationRegistrationCommand } from 'src/database/commands/stop-application-registration.command';
 import { StopApplicationCommand } from 'src/database/commands/stop-application.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
@@ -116,8 +114,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     InstallPreInstalledAppsCommand,
     StopApplicationCommand,
     StartApplicationCommand,
-    StopApplicationRegistrationCommand,
-    StartApplicationRegistrationCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })
