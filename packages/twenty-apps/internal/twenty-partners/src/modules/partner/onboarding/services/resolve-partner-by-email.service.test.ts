@@ -25,11 +25,11 @@ describe('resolvePartnerByEmail', () => {
     await expect(resolvePartnerByEmail(client, 'a@b.com')).resolves.toBeNull();
   });
 
-  it('returns null when the matched partner is already linked', async () => {
+  it('returns the partner id even when already linked (classification deferred to linkPartnerUser)', async () => {
     query.mockResolvedValueOnce({
       people: { edges: [{ node: { id: 'p-1', partner: { id: 'partner-1', validationStage: 'VALIDATED', partnerUserId: 'member-9' } } }] },
     });
-    await expect(resolvePartnerByEmail(client, 'a@b.com')).resolves.toBeNull();
+    await expect(resolvePartnerByEmail(client, 'a@b.com')).resolves.toBe('partner-1');
   });
 
   it('returns null when the matched partner is not VALIDATED', async () => {

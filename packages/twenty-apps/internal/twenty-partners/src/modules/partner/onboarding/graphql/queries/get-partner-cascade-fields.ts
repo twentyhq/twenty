@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-// ponytail: single 200-cap page for persons/applications; a partner has a handful of each.
+// ponytail: applications are capped at 200 (first: 200); persons fetch a single default page.
+// A partner has only a handful of each, so neither cap is expected to bind in practice.
 export function getPartnerCascadeFields(client: CoreApiClient, partnerId: string) {
   return client.query({
     partner: {

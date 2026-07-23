@@ -8,7 +8,7 @@ export async function resolvePartnerByEmail(
 ): Promise<string | null> {
   const res = await findPartnerByPersonEmail(client, email);
   const partner = res.people?.edges?.[0]?.node?.partner;
-  if (partner?.id && partner.validationStage === 'VALIDATED' && !partner.partnerUserId) {
+  if (partner?.id && partner.validationStage === 'VALIDATED') {
     return partner.id;
   }
   return null;

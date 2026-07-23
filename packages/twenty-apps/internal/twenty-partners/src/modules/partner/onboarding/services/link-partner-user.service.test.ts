@@ -63,9 +63,8 @@ describe('linkPartnerUser', () => {
       partner: { id: 'partner-1', companyId: null, partnerUserId: null, persons: { edges: [{ node: { id: 'person-1' } }] } },
       applications: { edges: [] },
     });
-    mutation
-      .mockResolvedValueOnce({})               // updatePartner ok
-      .mockRejectedValueOnce(new Error('boom')); // person stamp fails
+    mutation.mockRejectedValueOnce(new Error('boom')); // person stamp fails, before the partner is ever touched
     await expect(linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' })).rejects.toThrow(/cascade write/);
+    expect(mutation).not.toHaveBeenCalledWith(expect.objectContaining({ updatePartner: expect.anything() }));
   });
 });

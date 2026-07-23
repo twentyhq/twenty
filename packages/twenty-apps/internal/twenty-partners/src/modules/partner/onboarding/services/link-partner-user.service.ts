@@ -27,8 +27,6 @@ export async function linkPartnerUser(
       : { linked: false, reason: 'partner_already_linked_other' };
   }
 
-  await updatePartnerPartnerUser(client, partnerId, memberId, new Date().toISOString());
-
   const personIds = collectIds(detail.partner?.persons?.edges);
   const applicationIds = collectIds(detail.applications?.edges);
   const companyId = detail.partner?.companyId;
@@ -44,5 +42,8 @@ export async function linkPartnerUser(
     throw new Error(`link-partner-user: ${failed} cascade write(s) failed for ${partnerId} — retrying`);
   }
 
+  // Stamp the partner LAST: it is the commit marker resolvePartnerByEmail keys on, so a
+  // throw above leaves the partner unstamped and the whole cascade re-runs on retry.
+  await updatePartnerPartnerUser(client, partnerId, memberId, new Date().toISOString());
   return { linked: true, partnerId };
 }
