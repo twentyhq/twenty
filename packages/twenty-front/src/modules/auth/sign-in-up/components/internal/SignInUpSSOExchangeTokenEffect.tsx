@@ -8,8 +8,8 @@ export const SignInUpSSOExchangeTokenEffect = () => {
   const { redeemSSOExchangeToken } = useRedeemSSOExchangeToken();
 
   useEffect(() => {
-    // window.location is read live because the replace below synchronously
-    // strips the fragment, which latches StrictMode's second invocation out
+    // window.location is read live so a re-invoked effect reads the already
+    // stripped fragment and cannot redeem the single use token twice
     const ssoExchangeToken = new URLSearchParams(
       window.location.hash.substring(1),
     ).get('ssoExchangeToken');
