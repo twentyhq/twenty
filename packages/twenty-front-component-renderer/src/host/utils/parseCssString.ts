@@ -1,6 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
+import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
+
 export const parseCssString = (
   styleString: string | undefined,
 ): CSSProperties | undefined => {
@@ -9,9 +11,8 @@ export const parseCssString = (
   }
 
   const style: Record<string, string> = {};
-  const declarations = styleString.split(';').filter(Boolean);
 
-  for (const declaration of declarations) {
+  for (const declaration of splitCssDeclarations(styleString)) {
     const colonIndex = declaration.indexOf(':');
     if (colonIndex === -1) {
       continue;

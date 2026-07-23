@@ -32,4 +32,22 @@ describe('parseCssString', () => {
       background: 'url(http://example.com)',
     });
   });
+
+  it('should keep semicolons inside url() values', () => {
+    expect(
+      parseCssString(
+        'background-image: url(data:image/png;base64,abc); color: red',
+      ),
+    ).toEqual({
+      backgroundImage: 'url(data:image/png;base64,abc)',
+      color: 'red',
+    });
+  });
+
+  it('should keep semicolons inside quoted values', () => {
+    expect(parseCssString('content: "a;b"; color: red')).toEqual({
+      content: '"a;b"',
+      color: 'red',
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import { isNumber, isString } from '@sniptt/guards';
 
-import { splitCssDeclarations } from '@/polyfills/dom/utils/splitCssDeclarations';
+import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 const camelToKebab = (property: string): string =>
   property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
