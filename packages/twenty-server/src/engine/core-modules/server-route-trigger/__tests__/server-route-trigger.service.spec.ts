@@ -12,6 +12,10 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 const RESOLVER_UID = 'resolver-uid';
@@ -299,6 +303,20 @@ describe('ServerRouteTriggerService', () => {
 
     await expect(handle()).rejects.toMatchObject({
       code: ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED,
+    });
+  });
+
+  it('maps a LogicFunctionException(LOGIC_FUNCTION_DISABLED) to the server-route disabled code', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockRejectedValue(
+      new LogicFunctionException(
+        'application is stopped',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+      ),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED,
     });
   });
 
