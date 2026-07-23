@@ -74,7 +74,42 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
+type RLSPredicateEvaluation = 'invalid' | boolean;
+
+const isRecordFilterObject = (
+  filter: unknown,
+): filter is RecordGqlOperationFilter =>
+  isObject(filter) && !Array.isArray(filter);
+
+const combineAndResults = (
+  results: RLSPredicateEvaluation[],
+): RLSPredicateEvaluation => {
+  if (results.length === 0) {
+    return true;
+  }
+
+  if (results.some((result) => result === 'invalid')) {
+    return 'invalid';
+  }
+
+  return results.every((result) => result === true);
+};
+
+const combineOrResults = (
+  results: RLSPredicateEvaluation[],
+): RLSPredicateEvaluation => {
+  if (results.length === 0) {
+    return true;
+  }
+
+  if (results.some((result) => result === 'invalid')) {
+    return 'invalid';
+  }
+
+  return results.some((result) => result === true);
+};
+
+const evaluateRLSRowLevelPermissionPredicate = ({
   record,
   filter,
   flatObjectMetadata,
@@ -87,20 +122,26 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter?: boolean;
-}): boolean => {
+}): RLSPredicateEvaluation => {
+  if (!isRecordFilterObject(filter)) {
+    return 'invalid';
+  }
+
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
   }
 
   if (isImplicitAndFilter(filter)) {
-    return Object.entries(filter).every(([filterKey, value]) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record,
-        filter: { [filterKey]: value },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      }),
+    return combineAndResults(
+      Object.entries(filter).map(([filterKey, value]) =>
+        evaluateRLSRowLevelPermissionPredicate({
+          record,
+          filter: { [filterKey]: value },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter,
+        }),
+      ),
     );
   }
 
@@ -108,20 +149,19 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     const filterValue = filter.and;
 
     if (!Array.isArray(filterValue)) {
-      return false;
+      return 'invalid';
     }
 
-    return (
-      filterValue.length === 0 ||
-      filterValue.every((andFilter) =>
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+    return combineAndResults(
+      filterValue.map((andFilter) =>
+        evaluateRLSRowLevelPermissionPredicate({
           record,
           filter: andFilter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
           shouldIgnoreSoftDeleteDefaultFilter,
         }),
-      )
+      ),
     );
   }
 
@@ -129,23 +169,22 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     const filterValue = filter.or;
 
     if (Array.isArray(filterValue)) {
-      return (
-        filterValue.length === 0 ||
-        filterValue.some((orFilter) =>
-          isRecordMatchingRLSRowLevelPermissionPredicate({
+      return combineOrResults(
+        filterValue.map((orFilter) =>
+          evaluateRLSRowLevelPermissionPredicate({
             record,
             filter: orFilter,
             flatObjectMetadata,
             flatFieldMetadataMaps,
             shouldIgnoreSoftDeleteDefaultFilter,
           }),
-        )
+        ),
       );
     }
 
     if (isObject(filterValue)) {
       // The API considers "or" with an object as an "and"
-      return isRecordMatchingRLSRowLevelPermissionPredicate({
+      return evaluateRLSRowLevelPermissionPredicate({
         record,
         filter: filterValue,
         flatObjectMetadata,
@@ -154,26 +193,33 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       });
     }
 
-    return false;
+    return 'invalid';
   }
 
   if (isNotFilter(filter)) {
     const filterValue = filter.not;
 
-    if (!isDefined(filterValue)) {
-      return false;
+    if (!isDefined(filterValue) || !isRecordFilterObject(filterValue)) {
+      return 'invalid';
     }
 
-    return (
-      isEmptyObject(filterValue) ||
-      !isRecordMatchingRLSRowLevelPermissionPredicate({
-        record,
-        filter: filterValue,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      })
-    );
+    if (isEmptyObject(filterValue)) {
+      return true;
+    }
+
+    const childResult = evaluateRLSRowLevelPermissionPredicate({
+      record,
+      filter: filterValue,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      shouldIgnoreSoftDeleteDefaultFilter,
+    });
+
+    if (childResult === 'invalid') {
+      return 'invalid';
+    }
+
+    return childResult === false;
   }
 
   const shouldTakeDeletedAtIntoAccount =
@@ -193,244 +239,273 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     flatFieldMetadataMaps,
   );
 
-  return Object.entries(filter).every(([filterKey, filterValue]) => {
-    if (!isDefined(filterValue)) {
-      return false;
-    }
-
-    if (isEmptyObject(filterValue)) return true;
-
-    const objectMetadataField =
-      objectFields.find((field) => field.name === filterKey) ??
-      objectFields.find(
-        (field) =>
-          (field.type === FieldMetadataType.RELATION ||
-            field.type === FieldMetadataType.MORPH_RELATION) &&
-          computeMorphOrRelationFieldJoinColumnName({ name: field.name }) ===
-            filterKey,
-      );
-
-    if (!isDefined(objectMetadataField)) {
-      return false;
-    }
-
-    const recordFieldValue = record[filterKey];
-
-    if (!isDefined(recordFieldValue)) {
-      if (isObject(filterValue)) {
-        return (filterValue as { is?: IsFilter })?.is === 'NULL';
+  return combineAndResults(
+    Object.entries(filter).map(([filterKey, filterValue]) => {
+      if (!isDefined(filterValue)) {
+        return 'invalid';
       }
 
-      return false;
-    }
+      if (isEmptyObject(filterValue)) {
+        return true;
+      }
 
-    switch (objectMetadataField.type) {
-      case FieldMetadataType.RATING:
-        return isMatchingRatingFilter({
-          ratingFilter: filterValue as RatingFilter,
-          value: recordFieldValue,
-        });
-      case FieldMetadataType.TEXT: {
-        return isMatchingStringFilter({
-          stringFilter: filterValue as StringFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.RICH_TEXT: {
-        return isMatchingRichTextFilter({
-          richTextFilter: filterValue as RichTextFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.SELECT:
-        return isMatchingSelectFilter({
-          selectFilter: filterValue as SelectFilter,
-          value: recordFieldValue,
-        });
-      case FieldMetadataType.MULTI_SELECT:
-        return isMatchingMultiSelectFilter({
-          multiSelectFilter: filterValue as MultiSelectFilter,
-          value: recordFieldValue,
-        });
-      case FieldMetadataType.ARRAY: {
-        return isMatchingArrayFilter({
-          arrayFilter: filterValue as ArrayFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.RAW_JSON: {
-        return isMatchingRawJsonFilter({
-          rawJsonFilter: filterValue as RawJsonFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.FULL_NAME: {
-        const fullNameFilter = filterValue as FullNameFilter;
-
-        return (
-          (fullNameFilter.firstName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.firstName,
-              value: recordFieldValue.firstName,
-            })) &&
-          (fullNameFilter.lastName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.lastName,
-              value: recordFieldValue.lastName,
-            }))
+      const objectMetadataField =
+        objectFields.find((field) => field.name === filterKey) ??
+        objectFields.find(
+          (field) =>
+            (field.type === FieldMetadataType.RELATION ||
+              field.type === FieldMetadataType.MORPH_RELATION) &&
+            computeMorphOrRelationFieldJoinColumnName({ name: field.name }) ===
+              filterKey,
         );
+
+      if (!isDefined(objectMetadataField)) {
+        return 'invalid';
       }
-      case FieldMetadataType.ADDRESS: {
-        const addressFilter = filterValue as AddressFilter;
 
-        const keys = [
-          'addressStreet1',
-          'addressStreet2',
-          'addressCity',
-          'addressState',
-          'addressCountry',
-          'addressPostcode',
-        ] as const;
+      const recordFieldValue = record[filterKey];
 
-        return keys.some((key) => {
-          const value = addressFilter[key];
+      if (!isDefined(recordFieldValue)) {
+        if (isObject(filterValue)) {
+          return (filterValue as { is?: IsFilter })?.is === 'NULL';
+        }
 
-          if (value === undefined) {
-            return false;
-          }
+        return false;
+      }
 
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
+      switch (objectMetadataField.type) {
+        case FieldMetadataType.RATING:
+          return isMatchingRatingFilter({
+            ratingFilter: filterValue as RatingFilter,
+            value: recordFieldValue,
           });
-        });
-      }
-      case FieldMetadataType.LINKS: {
-        const linksFilter = filterValue as LinksFilter;
-
-        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
-
-        return keys.some((key) => {
-          const value = linksFilter[key];
-
-          if (value === undefined) {
-            return false;
-          }
-
+        case FieldMetadataType.TEXT: {
           return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
+            stringFilter: filterValue as StringFilter,
+            value: recordFieldValue,
           });
-        });
-      }
-      case FieldMetadataType.DATE:
-      case FieldMetadataType.DATE_TIME: {
-        return isMatchingDateFilter({
-          dateFilter: filterValue as DateFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC: {
-        return isMatchingFloatFilter({
-          floatFilter: filterValue as FloatFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.UUID: {
-        return isMatchingUUIDFilter({
-          uuidFilter: filterValue as UUIDFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.BOOLEAN: {
-        return isMatchingBooleanFilter({
-          booleanFilter: filterValue as BooleanFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.CURRENCY: {
-        return isMatchingCurrencyFilter({
-          currencyFilter: filterValue as CurrencyFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.ACTOR: {
-        const actorFilter = filterValue as ActorFilter;
-
-        if (isDefined(actorFilter.source)) {
+        }
+        case FieldMetadataType.RICH_TEXT: {
+          return isMatchingRichTextFilter({
+            richTextFilter: filterValue as RichTextFilter,
+            value: recordFieldValue,
+          });
+        }
+        case FieldMetadataType.SELECT:
           return isMatchingSelectFilter({
-            selectFilter: actorFilter.source,
-            value: recordFieldValue.source,
+            selectFilter: filterValue as SelectFilter,
+            value: recordFieldValue,
+          });
+        case FieldMetadataType.MULTI_SELECT:
+          return isMatchingMultiSelectFilter({
+            multiSelectFilter: filterValue as MultiSelectFilter,
+            value: recordFieldValue,
+          });
+        case FieldMetadataType.ARRAY: {
+          return isMatchingArrayFilter({
+            arrayFilter: filterValue as ArrayFilter,
+            value: recordFieldValue,
           });
         }
-
-        return (
-          actorFilter.name === undefined ||
-          isMatchingStringFilter({
-            stringFilter: actorFilter.name,
-            value: recordFieldValue.name,
-          })
-        );
-      }
-      case FieldMetadataType.EMAILS: {
-        const emailsFilter = filterValue as EmailsFilter;
-
-        if (emailsFilter.primaryEmail === undefined) {
-          return false;
-        }
-
-        return isMatchingStringFilter({
-          stringFilter: emailsFilter.primaryEmail,
-          value: recordFieldValue.primaryEmail,
-        });
-      }
-      case FieldMetadataType.PHONES: {
-        const phonesFilter = filterValue as PhonesFilter;
-
-        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
-
-        return keys.some((key) => {
-          const value = phonesFilter[key];
-
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
+        case FieldMetadataType.RAW_JSON: {
+          return isMatchingRawJsonFilter({
+            rawJsonFilter: filterValue as RawJsonFilter,
+            value: recordFieldValue,
           });
-        });
-      }
-      case FieldMetadataType.RELATION:
-      case FieldMetadataType.MORPH_RELATION: {
-        const isJoinColumn =
-          computeMorphOrRelationFieldJoinColumnName({
-            name: objectMetadataField.name,
-          }) === filterKey;
+        }
+        case FieldMetadataType.FULL_NAME: {
+          const fullNameFilter = filterValue as FullNameFilter;
 
-        if (isJoinColumn) {
+          return (
+            (fullNameFilter.firstName === undefined ||
+              isMatchingStringFilter({
+                stringFilter: fullNameFilter.firstName,
+                value: recordFieldValue.firstName,
+              })) &&
+            (fullNameFilter.lastName === undefined ||
+              isMatchingStringFilter({
+                stringFilter: fullNameFilter.lastName,
+                value: recordFieldValue.lastName,
+              }))
+          );
+        }
+        case FieldMetadataType.ADDRESS: {
+          const addressFilter = filterValue as AddressFilter;
+
+          const keys = [
+            'addressStreet1',
+            'addressStreet2',
+            'addressCity',
+            'addressState',
+            'addressCountry',
+            'addressPostcode',
+          ] as const;
+
+          return keys.some((key) => {
+            const value = addressFilter[key];
+
+            if (value === undefined) {
+              return false;
+            }
+
+            return isMatchingStringFilter({
+              stringFilter: value,
+              value: recordFieldValue[key],
+            });
+          });
+        }
+        case FieldMetadataType.LINKS: {
+          const linksFilter = filterValue as LinksFilter;
+
+          const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
+
+          return keys.some((key) => {
+            const value = linksFilter[key];
+
+            if (value === undefined) {
+              return false;
+            }
+
+            return isMatchingStringFilter({
+              stringFilter: value,
+              value: recordFieldValue[key],
+            });
+          });
+        }
+        case FieldMetadataType.DATE:
+        case FieldMetadataType.DATE_TIME: {
+          return isMatchingDateFilter({
+            dateFilter: filterValue as DateFilter,
+            value: recordFieldValue,
+          });
+        }
+        case FieldMetadataType.NUMBER:
+        case FieldMetadataType.NUMERIC: {
+          return isMatchingFloatFilter({
+            floatFilter: filterValue as FloatFilter,
+            value: recordFieldValue,
+          });
+        }
+        case FieldMetadataType.UUID: {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
             value: recordFieldValue,
           });
         }
+        case FieldMetadataType.BOOLEAN: {
+          return isMatchingBooleanFilter({
+            booleanFilter: filterValue as BooleanFilter,
+            value: recordFieldValue,
+          });
+        }
+        case FieldMetadataType.CURRENCY: {
+          return isMatchingCurrencyFilter({
+            currencyFilter: filterValue as CurrencyFilter,
+            value: recordFieldValue,
+          });
+        }
+        case FieldMetadataType.ACTOR: {
+          const actorFilter = filterValue as ActorFilter;
 
-        return isMatchingUUIDFilter({
-          uuidFilter: filterValue as UUIDFilter,
-          value: recordFieldValue?.id ?? null,
-        });
+          if (isDefined(actorFilter.source)) {
+            return isMatchingSelectFilter({
+              selectFilter: actorFilter.source,
+              value: recordFieldValue.source,
+            });
+          }
+
+          return (
+            actorFilter.name === undefined ||
+            isMatchingStringFilter({
+              stringFilter: actorFilter.name,
+              value: recordFieldValue.name,
+            })
+          );
+        }
+        case FieldMetadataType.EMAILS: {
+          const emailsFilter = filterValue as EmailsFilter;
+
+          if (emailsFilter.primaryEmail === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: emailsFilter.primaryEmail,
+            value: recordFieldValue.primaryEmail,
+          });
+        }
+        case FieldMetadataType.PHONES: {
+          const phonesFilter = filterValue as PhonesFilter;
+
+          const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
+
+          return keys.some((key) => {
+            const value = phonesFilter[key];
+
+            if (value === undefined) {
+              return false;
+            }
+
+            return isMatchingStringFilter({
+              stringFilter: value,
+              value: recordFieldValue[key],
+            });
+          });
+        }
+        case FieldMetadataType.RELATION:
+        case FieldMetadataType.MORPH_RELATION: {
+          const isJoinColumn =
+            computeMorphOrRelationFieldJoinColumnName({
+              name: objectMetadataField.name,
+            }) === filterKey;
+
+          if (isJoinColumn) {
+            return isMatchingUUIDFilter({
+              uuidFilter: filterValue as UUIDFilter,
+              value: recordFieldValue,
+            });
+          }
+
+          return isMatchingUUIDFilter({
+            uuidFilter: filterValue as UUIDFilter,
+            value: recordFieldValue?.id ?? null,
+          });
+        }
+        case FieldMetadataType.TS_VECTOR: {
+          return isMatchingTSVectorFilter({
+            tsVectorFilter: filterValue as TSVectorFilter,
+            value: recordFieldValue,
+          });
+        }
+        default: {
+          return 'invalid';
+        }
       }
-      case FieldMetadataType.TS_VECTOR: {
-        return isMatchingTSVectorFilter({
-          tsVectorFilter: filterValue as TSVectorFilter,
-          value: recordFieldValue,
-        });
-      }
-      default: {
-        return false;
-      }
-    }
-  });
+    }),
+  );
+};
+
+export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
+  record,
+  filter,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+  shouldIgnoreSoftDeleteDefaultFilter,
+}: {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  record: any;
+  filter: RecordGqlOperationFilter;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  shouldIgnoreSoftDeleteDefaultFilter?: boolean;
+}): boolean => {
+  return (
+    evaluateRLSRowLevelPermissionPredicate({
+      record,
+      filter,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      shouldIgnoreSoftDeleteDefaultFilter,
+    }) === true
+  );
 };

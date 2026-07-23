@@ -388,4 +388,50 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       }),
     ).toBe(false);
   });
+
+  it('denies access for malformed logical combinators instead of granting it', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          not: {
+            unknownField: {
+              eq: 'value',
+            },
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          or: [
+            {
+              jobTitle: {
+                eq: 'Engineer',
+              },
+            },
+            null,
+          ],
+        } as Record<string, unknown>,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          and: [null],
+        } as Record<string, unknown>,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
 });
