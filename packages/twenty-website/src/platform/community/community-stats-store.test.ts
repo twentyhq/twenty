@@ -53,7 +53,10 @@ describe('communityStatsStore', () => {
     );
     bindBucket(bucket);
 
-    await communityStatsStore.write({ githubStars: 50123, discordMembers: null });
+    await communityStatsStore.write({
+      githubStars: 50123,
+      discordMembers: null,
+    });
 
     expect(bucket.put).toHaveBeenCalledWith(
       'community-stats/latest.json',
@@ -66,7 +69,10 @@ describe('communityStatsStore', () => {
     bucket.get.mockRejectedValue(new Error('bucket unavailable'));
     bindBucket(bucket);
 
-    await communityStatsStore.write({ githubStars: 50123, discordMembers: null });
+    await communityStatsStore.write({
+      githubStars: 50123,
+      discordMembers: null,
+    });
 
     expect(bucket.put).not.toHaveBeenCalled();
   });
@@ -76,7 +82,10 @@ describe('communityStatsStore', () => {
     bucket.get.mockResolvedValue({ text: async () => 'not json' });
     bindBucket(bucket);
 
-    await communityStatsStore.write({ githubStars: 50123, discordMembers: null });
+    await communityStatsStore.write({
+      githubStars: 50123,
+      discordMembers: null,
+    });
 
     expect(bucket.put).toHaveBeenCalledWith(
       'community-stats/latest.json',
