@@ -27,8 +27,12 @@ import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
+import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
+import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -44,6 +48,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -66,6 +71,7 @@ import {
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
@@ -317,6 +323,25 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
+  @Query(() => ClaimableApplicationRegistrationDTO, { nullable: true })
+  async findClaimableApplicationRegistration(
+    @Args()
+    {
+      sourcePackage,
+      universalIdentifier,
+    }: FindClaimableApplicationRegistrationInput,
+  ): Promise<ClaimableApplicationRegistrationDTO | null> {
+    return this.applicationRegistrationService.findClaimable({
+      sourcePackage,
+      universalIdentifier,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    AdminPanelGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @Mutation(() => ApplicationRegistrationEntity)
   async claimApplicationRegistrationOwnership(
     @Args()
@@ -327,6 +352,25 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       claimingWorkspaceId: workspaceId,
     });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @Query(() => String)
+  async githubClaimAuthorizationUrl(
+    @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+  ): Promise<string> {
+    return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
+      {
+        applicationRegistrationId,
+        workspaceId,
+        userId: user?.id ?? null,
+      },
+    );
   }
 
   @UseGuards(

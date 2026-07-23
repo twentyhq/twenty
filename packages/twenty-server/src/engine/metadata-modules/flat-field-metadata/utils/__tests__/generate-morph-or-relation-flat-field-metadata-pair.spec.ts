@@ -36,12 +36,15 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   canBeUninstalled: false,
+  autoUpgrade: false,
+  stoppedAt: null,
   applicationRegistrationId: null,
   primaryPublicDomainId: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
   isSdkLayerStale: true,
+  sdkClientCoreChecksum: null,
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<
@@ -69,7 +72,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -103,7 +107,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -137,7 +142,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -171,7 +177,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -206,7 +213,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -241,7 +249,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            flatApplication: MOCK_FLAT_APPLICATION,
+            applicationUniversalIdentifier:
+              MOCK_FLAT_APPLICATION.universalIdentifier,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -352,7 +361,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
         targetFlatFieldMetadataType: FieldMetadataType.RELATION,
         sourceFlatObjectMetadataJoinColumnName: 'petId',
-        flatApplication: MOCK_FLAT_APPLICATION,
+        applicationUniversalIdentifier:
+          MOCK_FLAT_APPLICATION.universalIdentifier,
         createFieldInput: {
           name: 'pets',
           label: 'Pets',

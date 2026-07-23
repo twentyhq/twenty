@@ -128,6 +128,7 @@ export class DevSeederService {
       applicationId: twentyStandardFlatApplication.id,
       applicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seed({
@@ -140,6 +141,7 @@ export class DevSeederService {
       applicationId: workspaceCustomFlatApplication.id,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seedRelations({
@@ -189,7 +191,7 @@ export class DevSeederService {
       light,
     });
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
   private async seedCoreSchema({

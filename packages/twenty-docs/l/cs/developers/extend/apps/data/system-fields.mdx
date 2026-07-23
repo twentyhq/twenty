@@ -86,6 +86,52 @@ Tentýž odvozený identifikátor funguje všude tam, kde se očekává `fieldMe
   vstupy změní, a předchází odchylkám, pokud se samotný způsob odvozování někdy změní.
 </Note>
 
+## Systémová relační pole
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` je k dispozici od verze `twenty-sdk`
+  2.23 a vyžaduje server Twenty ve verzi 2.23 nebo novější.
+</Note>
+
+Kromě výše uvedených skalárních systémových polí server také na každém objektu poskytuje čtyři **systémová relační pole**: `timelineActivities`, `attachments`, `noteTargets` a `taskTargets`, z nichž každé ukazuje na odpovídající standardní relační objekt.
+
+Tato pole nejsou řešena pomocí `getFieldUniversalIdentifier`: jejich identifikátor je odvozen **bez ohledu na název** z objektu, který pole obsahuje, a z objektu, na který pole odkazuje. Tím pádem přejmenování objektu nikdy nezmění identifikátory jeho relačních polí.
+
+Použijte `getSystemRelationFieldUniversalIdentifier` k jejich vyřešení:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` je objekt, který toto pole **obsahuje**.
+* `relationTargetObjectUniversalIdentifier` je objekt, na který toto pole **ukazuje**.
+
+Směr je zakódovaný pořadím argumentů. Pro vyřešení opačné strany (např. `attachment.targetRocket`, morph pole, které server vytvoří na standardním relačním objektu), je prohoďte:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Stejně jako u skalárních systémových polí funguje vyřešené ID všude tam, kde je očekáváno `fieldMetadataUniversalIdentifier`.
+
 ## Standardní objekty Twenty
 
 U **standardního** objektu Twenty (Person, Company, Opportunity, …) nemusíte nic odvozovat: identifikátory systémových polí jsou předpočítané konstanty, které můžete přímo importovat.

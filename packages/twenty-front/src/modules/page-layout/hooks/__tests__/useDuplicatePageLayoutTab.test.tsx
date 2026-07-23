@@ -132,6 +132,7 @@ const sourceRecordTableViewSnapshot: RecordTableWidgetViewSnapshot = {
   viewFilterGroups: [],
   viewFilters: [],
   viewSorts: [],
+  viewGroups: [],
 };
 
 describe('useDuplicatePageLayoutTab', () => {

@@ -125,7 +125,30 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   canBeUninstalled: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddAutoUpgradeToApplicationFastInstanceCommand_1784297307235',
+  })
+  autoUpgrade: boolean;
+
+  // Emergency kill switch: while set, every logic function execution of this
+  // application is blocked in this workspace (see `application:stop` command).
+  @Column({ nullable: true, type: 'timestamptz' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.24.0_AddStoppedAtToApplicationAndApplicationRegistrationFastInstanceCommand_1784734278506',
+  })
+  stoppedAt: Date | null;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
+  })
+  sdkClientCoreChecksum: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

@@ -8,7 +8,7 @@ const mockResetContent = jest.fn();
 const mockSetRecordIndexCalendarLayout = jest.fn();
 const mockUpdateCurrentView = jest.fn();
 const mockUseIsFeatureEnabled = jest.fn();
-const mockUseAtomStateValue = jest.fn();
+const mockUseCalendarLayoutValue = jest.fn();
 
 jest.mock(
   '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown',
@@ -45,13 +45,20 @@ jest.mock('@/ui/layout/selectable-list/components/SelectableListItem', () => ({
 }));
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
-  () => ({ useAtomComponentStateValue: jest.fn(() => null) }),
+  () => ({
+    useAtomComponentStateValue: (state: unknown) => {
+      const { recordIndexCalendarLayoutComponentState } = jest.requireActual(
+        '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState',
+      );
+
+      return state === recordIndexCalendarLayoutComponentState
+        ? mockUseCalendarLayoutValue()
+        : null;
+    },
+  }),
 );
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: (...args: unknown[]) => mockUseAtomStateValue(...args),
-}));
-jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomState', () => ({
-  useSetAtomState: jest.fn(() => mockSetRecordIndexCalendarLayout),
+jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomComponentState', () => ({
+  useSetAtomComponentState: jest.fn(() => mockSetRecordIndexCalendarLayout),
 }));
 jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
   useUpdateCurrentView: jest.fn(() => ({
@@ -88,7 +95,7 @@ jest.mock('twenty-ui/navigation', () => ({
 describe('ObjectOptionsDropdownCalendarViewContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAtomStateValue.mockReturnValue(ViewCalendarLayout.MONTH);
+    mockUseCalendarLayoutValue.mockReturnValue(ViewCalendarLayout.MONTH);
     mockUseIsFeatureEnabled.mockReturnValue(true);
     mockUpdateCurrentView.mockResolvedValue(undefined);
   });

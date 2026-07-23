@@ -13,11 +13,11 @@ const CardGrid = styled.div`
 
   ${mediaUp('md')} {
     gap: ${spacing(8)};
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   ${mediaUp('lg')} {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 
