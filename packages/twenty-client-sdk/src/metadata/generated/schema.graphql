@@ -869,7 +869,7 @@ type Workspace {
   viewFilterGroups: [ViewFilterGroup!]
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
-  metadataVersion: Float!
+  metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   databaseSchema: String
   subdomain: String!
   customDomain: String
