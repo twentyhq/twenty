@@ -318,4 +318,17 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
     });
   });
+  it('should defer to AppPath.Index when object metadata is loaded but empty while navigation menu items are not loaded yet', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      objectMetadataItems: [],
+      navigationMenuItems: [],
+      withNavigationMenuItemsLoaded: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
+    });
+  });
 });

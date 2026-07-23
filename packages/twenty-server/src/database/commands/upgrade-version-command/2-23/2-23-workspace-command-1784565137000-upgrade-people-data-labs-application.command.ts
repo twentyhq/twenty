@@ -1,13 +1,14 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import * as semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ensureApplicationRegistrationLogoFileIdColumn } from 'src/database/commands/upgrade-version-command/2-23/utils/ensure-application-registration-logo-file-id-column.util';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -17,30 +18,27 @@ const PEOPLE_DATA_LABS_APPLICATION_UNIVERSAL_IDENTIFIER =
   '4a1178c1-3535-4a47-b592-231d3216b36f';
 
 // First version whose views pin the re-derived name-free system relation
-// field universal identifiers, published ahead of the 2.23 release.
-const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.7';
+// field universal identifiers (introduced in 1.0.7) AND whose front components
+// bundle React 19 to match the twenty-sdk runtime (fixed in 1.0.9).
+const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.9';
 
-// The people-data-labs views reference the person/company forward system
-// relation fields (noteTargets/taskTargets/attachments/timelineActivities) by
-// universal identifier. The 2.23 reconcile command re-derives those
-// identifiers name-free, so installed versions <= 1.0.6 hold dangling
-// references and any re-sync of the stored manifest would fail. Upgrading the
-// app right after the backfill closes that desync window. The command pins
-// the target version rather than resolving latest, so the upgrade is
-// deterministic and idempotent; workspaces already at or above it are left
-// untouched.
 @RegisteredWorkspaceCommand('2.23.0', 1784565137000)
 @Command({
   name: 'upgrade:2-23:upgrade-people-data-labs-application',
   description:
-    'Upgrade the people-data-labs application to 1.0.7 right after the system relation field universal identifier backfill, so its views reference the re-derived name-free identifiers instead of the stale pre-2.23 ones. Workspaces already at or above 1.0.7 are left untouched.',
+    'Upgrade the people-data-labs application to 1.0.9 right after the system relation field universal identifier backfill, so its views reference the re-derived name-free identifiers instead of the stale pre-2.23 ones and its front components run on React 19. Workspaces already at or above 1.0.9 are left untouched.',
 })
 export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspaceCommandRunner {
+  // Instance-global DDL: run once per process, not per workspace.
+  private hasEnsuredLogoFileIdColumn = false;
+
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationUpgradeService: ApplicationUpgradeService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -50,6 +48,28 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    // The 2.21 logoFileId command was skipped on instances that ran a 2.21
+    // binary, so the column is absent and the findOne below crashes on it.
+    // Repair it here since this is the command that breaks.
+    if (!this.hasEnsuredLogoFileIdColumn) {
+      if (isDryRun) {
+        const columnExists = await this.logoFileIdColumnExists();
+
+        if (!columnExists) {
+          this.logger.log(
+            'Would repair the missing core."applicationRegistration"."logoFileId" column',
+          );
+
+          return;
+        }
+      } else {
+        await ensureApplicationRegistrationLogoFileIdColumn((sql) =>
+          this.coreDataSource.query(sql),
+        );
+        this.hasEnsuredLogoFileIdColumn = true;
+      }
+    }
 
     const application = await this.applicationRepository.findOne({
       where: {
@@ -95,7 +115,7 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
         appRegistrationId: applicationRegistration.id,
         targetVersion: PEOPLE_DATA_LABS_TARGET_VERSION,
         workspaceId,
-        // 1.0.7 pins engines.twenty >=2.23.0, but this command runs as part of
+        // 1.0.9 pins engines.twenty >=2.23.0, but this command runs as part of
         // the 2.23 workspace upgrade itself, so the workspace has not yet been
         // marked as completing 2.23 and the compatibility check would reject
         // the install. The server is already on 2.23, so skip the check here.
@@ -113,5 +133,20 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
         `Failed to upgrade people-data-labs for workspace ${workspaceId}: ${error}`,
       );
     }
+  }
+
+  private async logoFileIdColumnExists(): Promise<boolean> {
+    // pg_attribute scoped to the single table, not the instance-wide
+    // information_schema.columns view, which is slow on many-tenant instances.
+    const rows = await this.coreDataSource.query(
+      `SELECT EXISTS (
+        SELECT 1 FROM pg_attribute
+        WHERE attrelid = to_regclass('core."applicationRegistration"')
+          AND attname = 'logoFileId'
+          AND NOT attisdropped
+      ) AS "exists"`,
+    );
+
+    return rows[0]?.exists === true;
   }
 }

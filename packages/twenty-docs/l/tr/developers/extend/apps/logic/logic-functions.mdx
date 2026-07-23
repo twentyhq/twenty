@@ -59,7 +59,7 @@ Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksi
 * **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Kayıt kapsamına sahip tek bir HTTP rotasını erişime açar. Bir **resolver** fonksiyonu (`serverRouteTriggerSettings` ile tanımlanır) sahip çalışma alanında çalışır ve hedef çalışma alanını VE yönlendirilecek hedef mantık fonksiyonunu döndürür; platform daha sonra bu **hedef** fonksiyonu çalıştırır ve yanıtını döndürür. [Sunucu rota tetikleyicisine](#server-route-trigger) bakın.
+* **serverRoute**: Kayıt kapsamına sahip tek bir HTTP rotasını erişime açar. Bir **resolver** fonksiyonu (`serverRouteTriggerSettings` ile tanımlanır) sahip çalışma alanında çalışır ve hedef çalışma alanını VE yönlendirilecek hedef mantık fonksiyonunu döndürür; platform `202` ile onay verir ve bu **hedef** fonksiyonu worker kuyruğunda çalıştırır. [Sunucu rota tetikleyicisine](#server-route-trigger) bakın.
 
 <Note>
 Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
@@ -290,7 +290,7 @@ Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir.
 Yukarıdaki resolver örneği GitHub HMAC-SHA256 akışını zaten göstermektedir — tümleştirdiğiniz sağlayıcıya göre başlık adını, özet kodlamasını ve imzalanan payload dizesini uyarlayın.
 
 <Note>
-Hedef **senkron** olarak çalışır ve döndürdüğü değer HTTP yanıtı olur, böylece çağıranlar durum kodunuzu görür ve 2xx olmayanlarda yeniden deneyebilir. Her iki işleyiciyi de hızlı tutun — bazı sağlayıcılar (örn. Slack) birkaç saniye içinde zaman aşımına uğrar. Resolver herkese açık bir uç nokta olarak erişilebilir olduğundan, onu edge'inizde hız sınırlama ile koruyun.
+Yol, resolver döner dönmez `202 { queued: true }` yanıtını verir ve hedef worker kuyruğunda çalıştırılır — çağıran taraf hedefin gecikmesini, sonucunu veya hatalarını asla gözlemlemez (bunlar yürütme günlüklerinde kaydedilir). Bu, göndericinin yeniden gönderimlerinin işlem yavaşlamalarını artırmasını engeller; bu da webhook alımı için istediğiniz şeydir. Çağıranın yanıt gövdesini okuması gereken uç noktalar için (challenge el sıkışmaları, Slack komutları) bunun yerine bir `httpRouteTriggerSettings` yolu kullanın. Resolver’ı hızlı tutun — bazı sağlayıcılar (örn. Slack) birkaç saniye içinde zaman aşımına uğrar. Resolver herkese açık bir uç nokta olarak erişilebilir olduğundan, onu edge'inizde hız sınırlama ile koruyun.
 </Note>
 
 #### Veritabanı olay tetikleyicisi yükü
