@@ -90,6 +90,9 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
+    // Both stores are transiently empty during the post-login window;
+    // deciding the redirect before they are loaded could strand users on a
+    // wrong fallback (/settings/profile or the alphabetically-first object).
     if (!areObjectMetadataItemsLoaded || !areNavigationMenuItemsLoaded) {
       return AppPath.Index;
     }
