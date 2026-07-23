@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getRelationLabelIdentifierField } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-field.util';
 
 export const getRelationLabelIdentifierColumns = ({
   flatObjectMetadata,
@@ -20,18 +20,12 @@ export const getRelationLabelIdentifierColumns = ({
   labelIdentifierField: FlatFieldMetadata;
   columnNames: string[];
 } | null => {
-  const { labelIdentifierFieldMetadataId } = flatObjectMetadata;
-
-  if (!isDefined(labelIdentifierFieldMetadataId)) {
-    return null;
-  }
-
-  const labelIdentifierField = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityMaps: flatFieldMetadataMaps,
-    flatEntityId: labelIdentifierFieldMetadataId,
+  const labelIdentifierField = getRelationLabelIdentifierField({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   });
 
-  if (!isDefined(labelIdentifierField) || labelIdentifierField.name === 'id') {
+  if (!isDefined(labelIdentifierField)) {
     return null;
   }
 
@@ -53,13 +47,6 @@ export const getRelationLabelIdentifierColumns = ({
         ),
       ],
     };
-  }
-
-  if (
-    labelIdentifierField.type !== FieldMetadataType.TEXT &&
-    labelIdentifierField.type !== FieldMetadataType.UUID
-  ) {
-    return null;
   }
 
   return {
