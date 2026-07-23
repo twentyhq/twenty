@@ -41,6 +41,13 @@ describe('installDocumentGetElementById', () => {
     expect(documentTarget.getElementById('missing')).toBeNull();
   });
 
+  it('should return null for an empty id even when an element has an empty id attribute', () => {
+    const documentTarget = createDocumentTarget();
+    documentTarget.childNodes.push(createElementNode(''));
+
+    expect(documentTarget.getElementById('')).toBeNull();
+  });
+
   it('should find an id containing css selector characters', () => {
     const documentTarget = createDocumentTarget();
     const target = createElementNode('foo.bar:baz');

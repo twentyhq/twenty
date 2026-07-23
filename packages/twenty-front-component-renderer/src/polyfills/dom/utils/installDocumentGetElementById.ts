@@ -1,4 +1,4 @@
-import { isFunction } from '@sniptt/guards';
+import { isFunction, isNonEmptyString } from '@sniptt/guards';
 
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
@@ -15,6 +15,10 @@ export const installDocumentGetElementById = (
   }
 
   documentTarget.getElementById = (elementId: string) => {
+    if (!isNonEmptyString(elementId)) {
+      return null;
+    }
+
     for (const currentNode of iterateElementSubtree(documentTarget)) {
       if (
         isFunction(currentNode.getAttribute) &&
