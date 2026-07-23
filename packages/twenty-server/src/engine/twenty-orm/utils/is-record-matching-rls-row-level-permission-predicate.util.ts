@@ -108,9 +108,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     const filterValue = filter.and;
 
     if (!Array.isArray(filterValue)) {
-      throw new Error(
-        'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
-      );
+      return false;
     }
 
     return (
@@ -156,14 +154,14 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       });
     }
 
-    throw new Error('Unexpected value for "or" filter : ' + filterValue);
+    return false;
   }
 
   if (isNotFilter(filter)) {
     const filterValue = filter.not;
 
     if (!isDefined(filterValue)) {
-      throw new Error('Unexpected value for "not" filter : ' + filterValue);
+      return false;
     }
 
     return (
@@ -197,9 +195,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
-      throw new Error(
-        'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
-      );
+      return false;
     }
 
     if (isEmptyObject(filterValue)) return true;
@@ -215,12 +211,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       );
 
     if (!isDefined(objectMetadataField)) {
-      throw new Error(
-        'Field metadata item "' +
-          filterKey +
-          '" not found for object metadata item ' +
-          flatObjectMetadata.nameSingular,
-      );
+      return false;
     }
 
     const recordFieldValue = record[filterKey];
@@ -438,9 +429,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         });
       }
       default: {
-        throw new Error(
-          `Not implemented yet for field type "${objectMetadataField.type}"`,
-        );
+        return false;
       }
     }
   });
