@@ -19,22 +19,13 @@ describe('getLogicFunctionTriggerLabel', () => {
     ).toBe('Pre-install');
   });
 
-  it('returns Post-uninstall when the function matches the post-uninstall identifier', () => {
+  it('returns Uninstall when the function matches the uninstall identifier', () => {
     expect(
       getLogicFunctionTriggerLabel(
-        { universalIdentifier: 'uid-post-uninstall' },
-        { postUninstallUniversalIdentifier: 'uid-post-uninstall' },
+        { universalIdentifier: 'uid-uninstall' },
+        { uninstallUniversalIdentifier: 'uid-uninstall' },
       ),
-    ).toBe('Post-uninstall');
-  });
-
-  it('returns Pre-uninstall when the function matches the pre-uninstall identifier', () => {
-    expect(
-      getLogicFunctionTriggerLabel(
-        { universalIdentifier: 'uid-pre-uninstall' },
-        { preUninstallUniversalIdentifier: 'uid-pre-uninstall' },
-      ),
-    ).toBe('Pre-uninstall');
+    ).toBe('Uninstall');
   });
 
   it('does not match when both identifiers are undefined', () => {

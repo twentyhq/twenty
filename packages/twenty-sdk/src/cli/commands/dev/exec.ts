@@ -10,8 +10,7 @@ export class LogicFunctionExecuteCommand {
     appPath = CURRENT_EXECUTION_DIRECTORY,
     postInstall = false,
     preInstall = false,
-    postUninstall = false,
-    preUninstall = false,
+    uninstall = false,
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
@@ -19,8 +18,7 @@ export class LogicFunctionExecuteCommand {
     appPath?: string;
     postInstall?: boolean;
     preInstall?: boolean;
-    postUninstall?: boolean;
-    preUninstall?: boolean;
+    uninstall?: boolean;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
@@ -39,11 +37,9 @@ export class LogicFunctionExecuteCommand {
       ? 'post install'
       : preInstall
         ? 'pre install'
-        : postUninstall
-          ? 'post uninstall'
-          : preUninstall
-            ? 'pre uninstall'
-            : (functionUniversalIdentifier ?? functionName);
+        : uninstall
+          ? 'uninstall'
+          : (functionUniversalIdentifier ?? functionName);
 
     const remoteName = ConfigService.getActiveRemote();
 
@@ -56,21 +52,11 @@ export class LogicFunctionExecuteCommand {
       ? { appPath, postInstall: true as const, payload: parsedPayload }
       : preInstall
         ? { appPath, preInstall: true as const, payload: parsedPayload }
-        : postUninstall
-          ? { appPath, postUninstall: true as const, payload: parsedPayload }
-          : preUninstall
-            ? { appPath, preUninstall: true as const, payload: parsedPayload }
-            : functionUniversalIdentifier
-              ? {
-                  appPath,
-                  functionUniversalIdentifier,
-                  payload: parsedPayload,
-                }
-              : {
-                  appPath,
-                  functionName: functionName!,
-                  payload: parsedPayload,
-                };
+        : uninstall
+          ? { appPath, uninstall: true as const, payload: parsedPayload }
+          : functionUniversalIdentifier
+            ? { appPath, functionUniversalIdentifier, payload: parsedPayload }
+            : { appPath, functionName: functionName!, payload: parsedPayload };
 
     const result = await functionExecute(executeOptions);
 

@@ -1,4 +1,4 @@
-import { definePostUninstallLogicFunction } from '@/sdk/define/logic-functions/define-post-uninstall-logic-function';
+import { defineUninstallLogicFunction } from '@/sdk/define/logic-functions/define-uninstall-logic-function';
 import { type UninstallPayload } from '@/sdk/define/logic-functions/uninstall-payload-type';
 
 const mockHandler = async (payload: UninstallPayload) => ({
@@ -6,7 +6,7 @@ const mockHandler = async (payload: UninstallPayload) => ({
   version: payload.version,
 });
 
-describe('definePostUninstallLogicFunction', () => {
+describe('defineUninstallLogicFunction', () => {
   const validConfig = {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     name: 'Cleanup External Resources',
@@ -14,7 +14,7 @@ describe('definePostUninstallLogicFunction', () => {
   };
 
   it('should return the config when valid', () => {
-    const result = definePostUninstallLogicFunction(validConfig);
+    const result = defineUninstallLogicFunction(validConfig);
 
     expect(result.config).toEqual(validConfig);
   });
@@ -26,7 +26,7 @@ describe('definePostUninstallLogicFunction', () => {
       timeoutSeconds: 30,
     };
 
-    const result = definePostUninstallLogicFunction(config as any);
+    const result = defineUninstallLogicFunction(config as any);
 
     expect(result.config.description).toBe(
       'Deletes remaining bots on uninstall',
@@ -39,11 +39,11 @@ describe('definePostUninstallLogicFunction', () => {
       name: 'Cleanup External Resources',
       handler: mockHandler,
     };
-    const result = definePostUninstallLogicFunction(config as any);
+    const result = defineUninstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post uninstall logic function must have a universalIdentifier',
+      'Uninstall logic function must have a universalIdentifier',
     );
   });
 
@@ -53,11 +53,11 @@ describe('definePostUninstallLogicFunction', () => {
       name: 'Cleanup External Resources',
     };
 
-    const result = definePostUninstallLogicFunction(config as any);
+    const result = defineUninstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post uninstall logic function must have a handler',
+      'Uninstall logic function must have a handler',
     );
   });
 
@@ -68,11 +68,11 @@ describe('definePostUninstallLogicFunction', () => {
       handler: 'not-a-function',
     };
 
-    const result = definePostUninstallLogicFunction(config as any);
+    const result = defineUninstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post uninstall logic function handler must be a function',
+      'Uninstall logic function handler must be a function',
     );
   });
 });

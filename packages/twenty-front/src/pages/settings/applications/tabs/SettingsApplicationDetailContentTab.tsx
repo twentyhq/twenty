@@ -91,11 +91,8 @@ export const SettingsApplicationDetailContentTab = ({
     preInstallUniversalIdentifier:
       manifestContent?.application?.preInstallLogicFunction
         ?.universalIdentifier,
-    postUninstallUniversalIdentifier:
-      manifestContent?.application?.postUninstallLogicFunction
-        ?.universalIdentifier,
-    preUninstallUniversalIdentifier:
-      manifestContent?.application?.preUninstallLogicFunction
+    uninstallUniversalIdentifier:
+      manifestContent?.application?.uninstallLogicFunction
         ?.universalIdentifier,
   };
 

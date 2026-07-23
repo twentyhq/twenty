@@ -44,9 +44,8 @@ import {
   type PageLayoutTabManifest,
   type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
-  type PostUninstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
-  type PreUninstallLogicFunctionApplicationManifest,
+  type UninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
@@ -121,9 +120,7 @@ export const buildManifest = async (
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
-  const postUninstallLogicFunctions: PostUninstallLogicFunctionApplicationManifest[] =
-    [];
-  const preUninstallLogicFunctions: PreUninstallLogicFunctionApplicationManifest[] =
+  const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
@@ -346,18 +343,9 @@ export const buildManifest = async (
         }
 
         if (
-          targetFunctionName ===
-          TargetFunction.DefinePostUninstallLogicFunction
+          targetFunctionName === TargetFunction.DefineUninstallLogicFunction
         ) {
-          postUninstallLogicFunctions.push({
-            universalIdentifier: extract.config.universalIdentifier,
-          });
-        }
-
-        if (
-          targetFunctionName === TargetFunction.DefinePreUninstallLogicFunction
-        ) {
-          preUninstallLogicFunctions.push({
+          uninstallLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
           });
         }
@@ -565,15 +553,9 @@ export const buildManifest = async (
     );
   }
 
-  if (postUninstallLogicFunctions.length > 1) {
+  if (uninstallLogicFunctions.length > 1) {
     errors.push(
-      'Only one post uninstall logic function is allowed per application',
-    );
-  }
-
-  if (preUninstallLogicFunctions.length > 1) {
-    errors.push(
-      'Only one pre uninstall logic function is allowed per application',
+      'Only one uninstall logic function is allowed per application',
     );
   }
 
@@ -626,11 +608,8 @@ export const buildManifest = async (
             ...(preInstallLogicFunctions.length >= 1
               ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
               : {}),
-            ...(postUninstallLogicFunctions.length >= 1
-              ? { postUninstallLogicFunction: postUninstallLogicFunctions[0] }
-              : {}),
-            ...(preUninstallLogicFunctions.length >= 1
-              ? { preUninstallLogicFunction: preUninstallLogicFunctions[0] }
+            ...(uninstallLogicFunctions.length >= 1
+              ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
           };
         })()

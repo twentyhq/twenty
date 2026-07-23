@@ -84,9 +84,8 @@ export type {
 
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
-export { definePostUninstallLogicFunction } from '@/sdk/define/logic-functions/define-post-uninstall-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
-export { definePreUninstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-uninstall-logic-function';
+export { defineUninstallLogicFunction } from '@/sdk/define/logic-functions/define-uninstall-logic-function';
 export type {
   InstallHandler,
   InstallPayload,

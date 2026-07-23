@@ -102,8 +102,8 @@ yarn twenty dev:function:exec
 
 Run again after rebuilding to verify idempotency.
 
-## Uninstall Hooks
+## Uninstall Hook
 
-Use `definePostUninstallLogicFunction` for best-effort cleanup of external resources when the app is uninstalled (deprovision API resources, delete remaining bots, revoke webhooks). Failures are logged and never block the uninstall. Use `definePreUninstallLogicFunction` only to abort an uninstall that would strand unrecoverable state — if its handler fails, the uninstall is aborted.
+Use `defineUninstallLogicFunction` for best-effort cleanup of external resources when the app is uninstalled (deprovision API resources, delete remaining bots, revoke webhooks). Failures are logged and never block the uninstall.
 
-Both hooks run before the app's metadata, data, and code are removed, so handlers can still query the app's objects and records. Handlers receive `UninstallPayload` (`{ version?: string }`).
+The hook runs before the app's metadata, data, and code are removed, so handlers can still query the app's objects and records. Handlers receive `UninstallPayload` (`{ version?: string }`).

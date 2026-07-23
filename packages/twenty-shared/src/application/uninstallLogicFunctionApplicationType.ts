@@ -1,6 +1,6 @@
 import type { SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type PreUninstallLogicFunctionApplicationManifest =
+export type UninstallLogicFunctionApplicationManifest =
   SyncableEntityOptions & {
     universalIdentifier: string;
   };
