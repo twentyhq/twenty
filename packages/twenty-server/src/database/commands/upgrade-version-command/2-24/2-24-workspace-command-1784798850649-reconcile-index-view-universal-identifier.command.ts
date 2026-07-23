@@ -81,11 +81,9 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         continue;
       }
 
-      const applicationUniversalIdentifier =
-        flatObjectMetadata.applicationUniversalIdentifier;
-
       const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier,
+        applicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         viewKey: ViewKey.INDEX,
       });
@@ -113,9 +111,13 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
           continue;
         }
 
+        // A view field belongs to the application of the field it displays, not
+        // to its object's one: a custom field on a standard object yields a
+        // custom-application view field on the standard INDEX view.
         const derivedViewFieldUniversalIdentifier =
           getViewFieldUniversalIdentifier({
-            applicationUniversalIdentifier,
+            applicationUniversalIdentifier:
+              flatViewField.applicationUniversalIdentifier,
             viewUniversalIdentifier: derivedViewUniversalIdentifier,
             fieldMetadataUniversalIdentifier:
               flatViewField.fieldMetadataUniversalIdentifier,

@@ -1,8 +1,7 @@
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type AggregateOperations, ViewKey } from 'twenty-shared/types';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -56,7 +55,6 @@ export const createStandardViewFieldFlatMetadata = <
   now,
 }: CreateStandardViewFieldArgs<O, V>): FlatViewField => {
   const objectDefinition = STANDARD_OBJECTS[objectName] as {
-    universalIdentifier: string;
     fields: Record<
       AllStandardObjectFieldName<O>,
       { universalIdentifier: string }
@@ -80,20 +78,6 @@ export const createStandardViewFieldFlatMetadata = <
       `Invalid configuration ${objectName} ${viewName.toString()} ${viewFieldName}`,
     );
   }
-
-  // The INDEX table view and its view fields are owned by the metadata
-  // side-effect engine, so twenty-standard's INDEX view fields converge on
-  // isSystemSideEffect: true (like the engine-provisioned custom-object ones).
-  // Detection is name-free: a view field belongs to the INDEX view when its
-  // view's universal identifier equals the derived INDEX view identifier.
-  const isIndexViewField =
-    viewDefinition.universalIdentifier ===
-    getSystemViewUniversalIdentifier({
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      objectUniversalIdentifier: objectDefinition.universalIdentifier,
-      viewKey: ViewKey.INDEX,
-    });
 
   let viewFieldGroupId: string | null = null;
   let viewFieldGroupUniversalIdentifier: string | null = null;
@@ -137,7 +121,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation,
     isActive: true,
-    isSystemSideEffect: isIndexViewField,
+    isSystemSideEffect: false,
     overrides: null,
     universalOverrides: null,
     createdAt: now,

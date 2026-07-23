@@ -132,16 +132,13 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
   }: {
     sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
     parentFlatObjectMetadata: {
-      applicationUniversalIdentifier: string;
       labelIdentifierFieldMetadataUniversalIdentifier: string | null;
     };
     indexViewUniversalIdentifier: string;
     allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
   }): UniversalFlatViewField | undefined {
-    const {
-      applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-    } = parentFlatObjectMetadata;
+    const { labelIdentifierFieldMetadataUniversalIdentifier } =
+      parentFlatObjectMetadata;
 
     if (
       !isFlatFieldMetadataDisplayableInDefaultView({
@@ -185,7 +182,10 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     const [flatViewFieldToCreate] = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
       viewUniversalIdentifier: indexViewUniversalIdentifier,
-      applicationUniversalIdentifier,
+      // The view field belongs to the created field's application, not to its
+      // object's one, exactly like the existing-object branch below.
+      applicationUniversalIdentifier:
+        sourceFlatFieldMetadata.applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier,
       startPosition: position,
     });
