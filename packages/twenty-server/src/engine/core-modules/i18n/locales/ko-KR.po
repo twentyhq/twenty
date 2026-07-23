@@ -7670,6 +7670,11 @@ msgstr "해당 사람이 속한 목록"
 msgid "The list this campaign was sent to"
 msgstr "이 캠페인이 전송된 목록"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -7884,6 +7889,11 @@ msgstr "재시도할 실패한 메시지가 없습니다."
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "이 {fieldLabel} 값은 이미 사용 중입니다. 데이터를 확인하고 다시 시도하십시오."
+
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts

@@ -7670,6 +7670,11 @@ msgstr "Листа којој особа припада"
 msgid "The list this campaign was sent to"
 msgstr "Листа на коју је ова кампања послата"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -7884,6 +7889,11 @@ msgstr "Нема неуспеле поруке за поновни покуша�
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "Вредност поља {fieldLabel} се већ користи. Молимо проверите ваше податке и покушајте поново."
+
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
