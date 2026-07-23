@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
-  APPLICATION_KILL_SWITCH_TTL_MS,
+  APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS,
   ApplicationStopService,
 } from 'src/engine/core-modules/application/application-stop.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -14,8 +14,6 @@ describe('ApplicationStopService', () => {
 
   const cacheStorageService = {
     get: jest.fn(),
-    set: jest.fn(),
-    del: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -34,24 +32,8 @@ describe('ApplicationStopService', () => {
     applicationStopService = module.get(ApplicationStopService);
   });
 
-  it('sets a temporary global kill switch', async () => {
-    await applicationStopService.stopApplication({
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    });
-
-    expect(cacheStorageService.set).toHaveBeenCalledWith(
-      KILL_SWITCH_KEY,
-      true,
-      APPLICATION_KILL_SWITCH_TTL_MS,
-    );
-  });
-
-  it('removes the global kill switch', async () => {
-    await applicationStopService.startApplication({
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    });
-
-    expect(cacheStorageService.del).toHaveBeenCalledWith(KILL_SWITCH_KEY);
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('returns true when the kill switch exists', async () => {
@@ -62,6 +44,7 @@ describe('ApplicationStopService', () => {
         APPLICATION_UNIVERSAL_IDENTIFIER,
       ),
     ).resolves.toBe(true);
+    expect(cacheStorageService.get).toHaveBeenCalledWith(KILL_SWITCH_KEY);
   });
 
   it('returns false when the kill switch is absent', async () => {
@@ -74,13 +57,67 @@ describe('ApplicationStopService', () => {
     ).resolves.toBe(false);
   });
 
-  it('fails open when the cache cannot be read', async () => {
-    cacheStorageService.get.mockRejectedValue(new Error('Redis unavailable'));
+  it('caches the Redis value for one minute', async () => {
+    const dateNow = jest.spyOn(Date, 'now').mockReturnValue(1_000);
+
+    cacheStorageService.get
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce('stopped');
 
     await expect(
       applicationStopService.isApplicationStopped(
         APPLICATION_UNIVERSAL_IDENTIFIER,
       ),
     ).resolves.toBe(false);
+
+    dateNow.mockReturnValue(
+      1_000 + APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS - 1,
+    );
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(false);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
+
+    dateNow.mockReturnValue(1_000 + APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS);
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(true);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('deduplicates concurrent Redis reads', async () => {
+    cacheStorageService.get.mockResolvedValue(undefined);
+
+    await Promise.all(
+      Array.from({ length: 10 }, () =>
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
+      ),
+    );
+
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('fails open when the cache cannot be read', async () => {
+    cacheStorageService.get.mockRejectedValue(new Error('Redis unavailable'));
+
+    await expect(
+      Promise.all([
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
+      ]),
+    ).resolves.toEqual([false, false]);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
   });
 });
