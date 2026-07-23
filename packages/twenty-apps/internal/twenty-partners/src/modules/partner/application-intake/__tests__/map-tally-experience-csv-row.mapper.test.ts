@@ -4,7 +4,7 @@ import {
   mapMilestoneLabels,
   mapTallyExperienceCsvRow,
   TWENTY_EXPERIENCE_NOTES_MIN_LENGTH,
-} from '../utils/map-tally-experience-csv-row';
+} from '../mappers/map-tally-experience-csv-row.mapper';
 
 const VALID_PARTNER_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
