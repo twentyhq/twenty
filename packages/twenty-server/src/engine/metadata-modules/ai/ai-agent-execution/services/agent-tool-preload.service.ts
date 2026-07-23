@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -8,7 +9,9 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 
 const MAX_PRELOAD_TOOL_NAMES = 12;
-const AGENT_TOOL_PRELOAD_TTL_MS = 1000 * 60 * 60 * 24;
+// Aligned with the model's ephemeral prompt-cache window and slid on each read,
+// so a frequently-run agent keeps a stable warm set while an idle one expires.
+const AGENT_TOOL_PRELOAD_TTL_MS = 1000 * 60 * 5;
 
 type AgentToolPreloadKey = Pick<AgentEntity, 'id' | 'updatedAt'>;
 
@@ -23,11 +26,23 @@ export class AgentToolPreloadService {
   ) {}
 
   async getPreloadToolNames(agent: AgentToolPreloadKey): Promise<string[]> {
-    const storedToolNames = await this.cacheStorageService.get<string[]>(
-      this.buildCacheKey(agent),
+    const cacheKey = this.buildCacheKey(agent);
+    const storedToolNames =
+      await this.cacheStorageService.get<string[]>(cacheKey);
+
+    if (!isDefined(storedToolNames)) {
+      return [];
+    }
+
+    // Slide the TTL: consuming the set keeps it (and the model's prompt cache)
+    // alive for agents that run within the window.
+    await this.cacheStorageService.set(
+      cacheKey,
+      storedToolNames,
+      AGENT_TOOL_PRELOAD_TTL_MS,
     );
 
-    return storedToolNames ?? [];
+    return storedToolNames;
   }
 
   async recordToolUsage(
@@ -57,7 +72,9 @@ export class AgentToolPreloadService {
     );
   }
 
+  // Keyed by updatedAt so editing the agent (prompt, permissions, config)
+  // abandons the old learned set and relearns from scratch.
   private buildCacheKey(agent: AgentToolPreloadKey): string {
-    return agent.id;
+    return `${agent.id}:${new Date(agent.updatedAt).getTime()}`;
   }
 }
