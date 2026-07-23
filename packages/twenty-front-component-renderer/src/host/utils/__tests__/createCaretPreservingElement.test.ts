@@ -10,7 +10,7 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { type: 'text' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
       caretPreservingElementRef: () => {},
     });
@@ -23,7 +23,7 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'hello' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
       caretPreservingElementRef: () => {},
     });
@@ -35,7 +35,7 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'v', defaultValue: 'd' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
       caretPreservingElementRef: () => {},
     });
@@ -61,7 +61,7 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { onFocus },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
       caretPreservingElementRef: () => {},
     });
@@ -78,7 +78,7 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: {},
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
       caretPreservingElementRef: () => {},
     });

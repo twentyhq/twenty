@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/constants/GeometryIdleFrameThreshold';
+import { GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES } from '@/host/constants/GeometryUnregisteredObservationExpiryFrames';
 import { MAX_MEASURED_GEOMETRY_ELEMENTS } from '@/host/constants/MaxMeasuredGeometryElements';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/types/PushGeometryUpdates';
@@ -104,7 +105,8 @@ export const createGeometryTracker = (): GeometryTracker => {
 
         const hadSnapshot = lastElementSnapshots.delete(remoteElementId);
         const hasExpired =
-          unregisteredFrameCount >= GEOMETRY_IDLE_FRAME_THRESHOLD;
+          unregisteredFrameCount >=
+          GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES;
 
         if (hasExpired) {
           expiredRemoteElementIds.push(remoteElementId);
@@ -138,6 +140,13 @@ export const createGeometryTracker = (): GeometryTracker => {
     for (const remoteElementId of expiredRemoteElementIds) {
       observedRemoteElementIds.delete(remoteElementId);
       unregisteredObservedFrameCounts.delete(remoteElementId);
+    }
+
+    if (
+      expiredRemoteElementIds.length > 0 &&
+      observedRemoteElementIds.size === 0
+    ) {
+      wakeSources.detachElementSources();
     }
 
     const hasViewportChanged = !isViewportGeometryEqualWithinEpsilon(
@@ -174,6 +183,13 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const registerNode = (remoteElementId: string, node: Element): void => {
+    const previousNode = registeredNodes.get(remoteElementId);
+
+    if (isDefined(previousNode) && previousNode !== node) {
+      registeredRemoteElementIdsByNode.delete(previousNode);
+      wakeSources.stopObservingNode(previousNode);
+    }
+
     registeredNodes.set(remoteElementId, node);
     registeredRemoteElementIdsByNode.set(node, remoteElementId);
     unregisteredObservedFrameCounts.delete(remoteElementId);
@@ -199,7 +215,7 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const observe = (remoteElementIds: unknown): void => {
-    let hasObservedNewElement = false;
+    const newlyObservedRemoteElementIds: string[] = [];
 
     for (const remoteElementId of sanitizeRemoteElementIds(remoteElementIds)) {
       if (observedRemoteElementIds.size >= MAX_OBSERVED_GEOMETRY_ELEMENTS) {
@@ -211,16 +227,20 @@ export const createGeometryTracker = (): GeometryTracker => {
       }
 
       observedRemoteElementIds.add(remoteElementId);
-      hasObservedNewElement = true;
+      newlyObservedRemoteElementIds.push(remoteElementId);
     }
 
-    if (!hasObservedNewElement) {
+    if (newlyObservedRemoteElementIds.length === 0) {
       return;
     }
 
-    wakeSources.attachElementSources();
+    const didAttachElementSources = wakeSources.attachElementSources();
 
-    for (const remoteElementId of observedRemoteElementIds) {
+    const remoteElementIdsToStartObserving = didAttachElementSources
+      ? observedRemoteElementIds
+      : newlyObservedRemoteElementIds;
+
+    for (const remoteElementId of remoteElementIdsToStartObserving) {
       const node = registeredNodes.get(remoteElementId);
 
       if (isDefined(node)) {
@@ -249,6 +269,21 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
   };
 
+  // The freshly measured snapshots become the push-diffing baselines so the
+  // next frame does not re-push values the worker already received.
+  const rebaselineSnapshotsForPushDiffing = (
+    viewport: ViewportGeometrySnapshot,
+    elements: Record<string, ElementGeometrySnapshot>,
+  ): void => {
+    for (const [remoteElementId, snapshot] of Object.entries(elements)) {
+      if (observedRemoteElementIds.has(remoteElementId)) {
+        lastElementSnapshots.set(remoteElementId, snapshot);
+      }
+    }
+
+    lastViewportSnapshot = viewport;
+  };
+
   const measure = (remoteElementIds: unknown) => {
     const viewport = readViewportGeometry();
     const rootContainerOrigin = {
@@ -257,7 +292,9 @@ export const createGeometryTracker = (): GeometryTracker => {
     };
     const elements: Record<string, ElementGeometrySnapshot> = {};
 
-    if (!isDefined(pushGeometryUpdates)) {
+    const isTrackerArmed = isDefined(pushGeometryUpdates);
+
+    if (!isTrackerArmed) {
       return { viewport, elements };
     }
 
@@ -271,19 +308,14 @@ export const createGeometryTracker = (): GeometryTracker => {
         continue;
       }
 
-      const snapshot = measureNodeGeometry(
+      elements[remoteElementId] = measureNodeGeometry(
         node,
         rootContainerOrigin,
         resolveObservedRemoteElementIdForNode,
       );
-      elements[remoteElementId] = snapshot;
-
-      if (observedRemoteElementIds.has(remoteElementId)) {
-        lastElementSnapshots.set(remoteElementId, snapshot);
-      }
     }
 
-    lastViewportSnapshot = viewport;
+    rebaselineSnapshotsForPushDiffing(viewport, elements);
     wake();
 
     return { viewport, elements };

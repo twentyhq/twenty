@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 
 export function* iterateElementSubtree(
@@ -12,7 +14,7 @@ export function* iterateElementSubtree(
 
     const childNodes = currentNode.childNodes;
 
-    if (childNodes !== undefined) {
+    if (isDefined(childNodes)) {
       for (let index = childNodes.length - 1; index >= 0; index -= 1) {
         pendingNodes.push(childNodes[index] as ElementLike);
       }

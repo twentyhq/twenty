@@ -17,6 +17,8 @@ const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {
   characterData: true,
 };
 
+const MAX_ANIMATION_IN_FLIGHT_DURATION_MS = 10_000;
+
 export const createGeometryWakeSources = (
   onWake: () => void,
 ): GeometryWakeSources => {
@@ -27,6 +29,7 @@ export const createGeometryWakeSources = (
   let mutationObserver: MutationObserver | null = null;
   let documentStyleObserver: MutationObserver | null = null;
   let animationInFlightCount = 0;
+  let lastAnimationStartTimestamp = 0;
   let viewportDirty = false;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
@@ -60,15 +63,34 @@ export const createGeometryWakeSources = (
     }
 
     animationInFlightCount += 1;
+    lastAnimationStartTimestamp = performance.now();
     onWake();
   };
 
-  const handleAnimationEnd = (event: Event): void => {
-    if (!isEventTargetRelevantToRoot(event.target)) {
-      return;
+  // The end event is not filtered against the root: a node reparented outside
+  // the root between start and end would otherwise leak the counter, and a
+  // node removed mid-animation delivers no end event at all — the timestamp
+  // cap in hasAnimationInFlight covers that case.
+  const handleAnimationEnd = (): void => {
+    animationInFlightCount = Math.max(0, animationInFlightCount - 1);
+  };
+
+  const hasAnimationInFlight = (): boolean => {
+    if (animationInFlightCount === 0) {
+      return false;
     }
 
-    animationInFlightCount = Math.max(0, animationInFlightCount - 1);
+    const hasExceededMaxDuration =
+      performance.now() - lastAnimationStartTimestamp >=
+      MAX_ANIMATION_IN_FLIGHT_DURATION_MS;
+
+    if (hasExceededMaxDuration) {
+      animationInFlightCount = 0;
+
+      return false;
+    }
+
+    return true;
   };
 
   const handleScroll = (event: Event): void => {
@@ -161,9 +183,9 @@ export const createGeometryWakeSources = (
     }
   };
 
-  const attachElementSources = (): void => {
+  const attachElementSources = (): boolean => {
     if (areElementSourcesAttached) {
-      return;
+      return false;
     }
 
     areElementSourcesAttached = true;
@@ -181,6 +203,8 @@ export const createGeometryWakeSources = (
     if (isDefined(rootContainer)) {
       observeRootMutations(rootContainer);
     }
+
+    return true;
   };
 
   const detachElementSources = (): void => {
@@ -258,7 +282,7 @@ export const createGeometryWakeSources = (
     setRoot,
     startObservingNode,
     stopObservingNode,
-    hasAnimationInFlight: () => animationInFlightCount > 0,
+    hasAnimationInFlight,
     isViewportDirty: () => viewportDirty,
     clearViewportDirty: () => {
       viewportDirty = false;

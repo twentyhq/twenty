@@ -1,10 +1,8 @@
 import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
+import { camelToKebab, isDefined } from 'twenty-shared/utils';
 
 import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
-
-const camelToKebab = (property: string): string =>
-  property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 
 const UNITLESS_CSS_PROPERTIES = new Set([
   'animationIterationCount',
@@ -63,6 +61,8 @@ export const createStyleProxy = ({
   const styleStore: Record<string, string> = {};
   const stylePriorities: Record<string, string> = {};
 
+  let hasScheduledFlush = false;
+
   const serializeCssText = (): string =>
     Object.entries(styleStore)
       .map(([key, value]) =>
@@ -72,8 +72,18 @@ export const createStyleProxy = ({
       )
       .join(';');
 
+  // Coalesced per microtask so a burst of property writes serializes and
+  // reaches the host once instead of once per write.
   const flushSerializedCssText = (): void => {
-    flush?.(serializeCssText());
+    if (!isDefined(flush) || hasScheduledFlush) {
+      return;
+    }
+
+    hasScheduledFlush = true;
+    queueMicrotask(() => {
+      hasScheduledFlush = false;
+      flush(serializeCssText());
+    });
   };
 
   const applyCssText = (cssText: string): void => {
@@ -162,6 +172,13 @@ export const createStyleProxy = ({
 
       if (property === 'getPropertyPriority') {
         return (name: string): string => stylePriorities[name] ?? '';
+      }
+
+      // No CSS property collides with an Object.prototype member after
+      // camelToKebab, and shadowing them with '' breaks style.hasOwnProperty()
+      // calls and string coercion of the proxy.
+      if (property in Object.prototype) {
+        return Reflect.get(Object.prototype, property);
       }
 
       if (isString(property)) {

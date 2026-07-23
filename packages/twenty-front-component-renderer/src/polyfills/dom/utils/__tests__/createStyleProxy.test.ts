@@ -109,13 +109,29 @@ describe('createStyleProxy', () => {
     expect(other.cssText).toBe('color:red !important;width:10px');
   });
 
-  it('should flush the serialized priority to the host', () => {
+  it('should flush the serialized priority to the host', async () => {
     const flush = jest.fn();
     const style = createStyle({ flush });
 
     style.setProperty('color', 'red', 'important');
 
+    await Promise.resolve();
+
     expect(flush).toHaveBeenLastCalledWith('color:red !important');
+  });
+
+  it('should flush a burst of writes once with the final serialization', async () => {
+    const flush = jest.fn();
+    const style = createStyle({ flush });
+
+    style.setProperty('color', 'red');
+    style.setProperty('width', '10px');
+    style.removeProperty('color');
+
+    await Promise.resolve();
+
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(flush).toHaveBeenCalledWith('width:10px');
   });
 
   it('should keep semicolons inside url() values assigned through cssText', () => {
@@ -126,5 +142,16 @@ describe('createStyleProxy', () => {
     expect(style.getPropertyValue('background-image')).toBe(
       'url(data:image/png;base64,abc)',
     );
+  });
+
+  it('should keep Object.prototype methods callable', () => {
+    const style = createStyle();
+
+    style.setProperty('color', 'red');
+
+    expect(style.hasOwnProperty('color')).toBe(true);
+    expect(style.hasOwnProperty('background')).toBe(false);
+    expect(() => `${style}`).not.toThrow();
+    expect(String(style)).toBe('[object Object]');
   });
 });

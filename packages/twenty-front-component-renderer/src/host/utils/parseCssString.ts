@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
+import { kebabToCamelCase } from 'twenty-shared/utils';
 
 import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
@@ -29,11 +30,7 @@ export const parseCssString = (
 
     const isCssCustomProperty = property.startsWith('--');
 
-    const key = isCssCustomProperty
-      ? property
-      : property.replace(/-([a-z])/g, (_, letter: string) =>
-          letter.toUpperCase(),
-        );
+    const key = isCssCustomProperty ? property : kebabToCamelCase(property);
 
     style[key] = value;
   }

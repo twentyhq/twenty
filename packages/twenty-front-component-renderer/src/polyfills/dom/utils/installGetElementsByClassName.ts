@@ -91,10 +91,8 @@ const createLiveClassNameCollection = (
   );
 };
 
-export const installGetElementsByClassName = (
-  elementPrototype: object,
-): void => {
-  Object.defineProperty(elementPrototype, 'getElementsByClassName', {
+export const installGetElementsByClassName = (installTarget: object): void => {
+  Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
       const classNameTokens = String(classNames)
         .split(/\s+/)

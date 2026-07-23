@@ -2,14 +2,11 @@ import { isFunction, isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_FONT_FAMILY } from '@/constants/DefaultFontFamily';
 import { DEFAULT_FONT_SIZE_PIXELS } from '@/constants/DefaultFontSizePixels';
+import { type ElementWithStyle } from '@/polyfills/dom/types/ElementWithStyle';
 import { assembleFontShorthandFromLonghands } from '@/utils/assembleFontShorthandFromLonghands';
 
 type StyleDeclarationLike = {
   getPropertyValue?: (propertyName: string) => unknown;
-};
-
-type ElementWithStyle = {
-  style?: unknown;
 };
 
 const readStyleProperty = (

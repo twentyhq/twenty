@@ -42,15 +42,23 @@ export const installElementGeometryPolyfill = ({
     element === documentTarget.body ||
     element === documentTarget.documentElement;
 
-  const resolveDocumentScopedSnapshot = (): ElementGeometrySnapshot => {
+  // Element snapshots carry host-viewport x/y, so the document-scoped rects
+  // must live in the same frame for container-relative math to work.
+  const resolveDocumentScopedSnapshot = (
+    element: object,
+  ): ElementGeometrySnapshot => {
     const viewport = geometryStore.getViewportSnapshot();
 
     if (!isDefined(viewport)) {
       return EMPTY_ELEMENT_GEOMETRY_SNAPSHOT;
     }
 
+    const isDocumentElement = element === documentTarget.documentElement;
+
     return {
       ...EMPTY_ELEMENT_GEOMETRY_SNAPSHOT,
+      x: viewport.rootContainerX,
+      y: viewport.rootContainerY,
       width: viewport.rootContainerWidth,
       height: viewport.rootContainerHeight,
       offsetWidth: viewport.rootContainerWidth,
@@ -59,6 +67,8 @@ export const installElementGeometryPolyfill = ({
       clientHeight: viewport.rootContainerClientHeight,
       scrollWidth: viewport.rootContainerClientWidth,
       scrollHeight: viewport.rootContainerClientHeight,
+      scrollTop: isDocumentElement ? viewport.scrollY : 0,
+      scrollLeft: isDocumentElement ? viewport.scrollX : 0,
     };
   };
 
@@ -91,7 +101,7 @@ export const installElementGeometryPolyfill = ({
   const resolveSnapshot = (element: object): ElementGeometrySnapshot | null => {
     try {
       if (isDocumentScopedElement(element)) {
-        return resolveDocumentScopedSnapshot();
+        return resolveDocumentScopedSnapshot(element);
       }
 
       const { isMirrored, snapshot } =
@@ -121,9 +131,10 @@ export const installElementGeometryPolyfill = ({
 
   Object.defineProperty(elementPrototype, 'getClientRects', {
     value: function (this: object) {
-      const rects = [
-        createDomRectFromSnapshot(resolveSnapshot(this)),
-      ] as DOMRect[] & { item: (index: number) => DOMRect | null };
+      const snapshot = resolveSnapshot(this);
+      const rects = (
+        isDefined(snapshot) ? [createDomRectFromSnapshot(snapshot)] : []
+      ) as DOMRect[] & { item: (index: number) => DOMRect | null };
       rects.item = (index: number) => rects[index] ?? null;
 
       return rects;
@@ -134,11 +145,13 @@ export const installElementGeometryPolyfill = ({
 
   const defineGeometryGetter = (
     propertyName: keyof ElementGeometrySnapshot,
+    { hasNoOpSetter = false }: { hasNoOpSetter?: boolean } = {},
   ): void => {
     Object.defineProperty(elementPrototype, propertyName, {
       get(this: object) {
         return resolveSnapshot(this)?.[propertyName] ?? 0;
       },
+      ...(hasNoOpSetter && { set() {} }),
       configurable: true,
     });
   };
@@ -159,13 +172,7 @@ export const installElementGeometryPolyfill = ({
   }
 
   for (const propertyName of ['scrollTop', 'scrollLeft'] as const) {
-    Object.defineProperty(elementPrototype, propertyName, {
-      get(this: object) {
-        return resolveSnapshot(this)?.[propertyName] ?? 0;
-      },
-      set() {},
-      configurable: true,
-    });
+    defineGeometryGetter(propertyName, { hasNoOpSetter: true });
   }
 
   Object.defineProperty(elementPrototype, 'offsetParent', {

@@ -418,6 +418,80 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('should idle after a transitioning node is reparented outside the root before its end event', () => {
+    const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    const unrelatedContainer = document.createElement('div');
+    document.body.append(rootContainer, unrelatedContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    rootContainer.append(observed.node);
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+
+    const transitioningNode = document.createElement('div');
+    rootContainer.append(transitioningNode);
+    transitioningNode.dispatchEvent(
+      new Event('transitionrun', { bubbles: true }),
+    );
+
+    unrelatedContainer.append(transitioningNode);
+    transitioningNode.dispatchEvent(
+      new Event('transitionend', { bubbles: true }),
+    );
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('should idle after a transitioning node is removed and never delivers its end event', () => {
+    const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    document.body.append(rootContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    rootContainer.append(observed.node);
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+
+    let currentTimestamp = 0;
+    const nowSpy = jest
+      .spyOn(performance, 'now')
+      .mockImplementation(() => currentTimestamp);
+
+    const transitioningNode = document.createElement('div');
+    rootContainer.append(transitioningNode);
+    transitioningNode.dispatchEvent(
+      new Event('transitionrun', { bubbles: true }),
+    );
+    transitioningNode.remove();
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+
+    currentTimestamp = 10_000;
+    flushFrames(2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    nowSpy.mockRestore();
+  });
+
   it('should cap the observed set at the configured maximum', () => {
     const { tracker, pushGeometryUpdates } = createArmedTracker();
 
@@ -486,6 +560,55 @@ describe('createGeometryTracker', () => {
 
     expect(pushGeometryUpdates).toHaveBeenCalledTimes(3);
     expect(pushGeometryUpdates.mock.calls[2][0].elements['1'].width).toBe(1);
+  });
+
+  it('should push again when an id is re-observed after unobserve', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+    geometryGlobals.flushAnimationFrame();
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
+
+    tracker.unobserve(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    pushGeometryUpdates.mockClear();
+
+    tracker.observe(['1']);
+    geometryGlobals.flushAnimationFrame();
+
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
+    expect(pushGeometryUpdates.mock.calls[0][0].elements['1'].width).toBe(10);
+  });
+
+  it('should detach element wake sources when the last id is unobserved', () => {
+    const { tracker } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    tracker.unobserve(['1']);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
   it('should carry the offset parent id when the parent is observed', () => {

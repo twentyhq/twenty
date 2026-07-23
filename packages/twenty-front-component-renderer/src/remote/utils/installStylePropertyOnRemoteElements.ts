@@ -18,27 +18,27 @@ const createRemoteStyleProxy = (
   });
 
 export const installStylePropertyOnRemoteElements = (): void => {
+  const styleProxies = new WeakMap<Element, Record<string, unknown>>();
+
+  const resolveStyleProxy = (
+    element: RemoteElementLike,
+  ): Record<string, unknown> => {
+    let proxy = styleProxies.get(element);
+
+    if (!proxy) {
+      proxy = createRemoteStyleProxy(element);
+      styleProxies.set(element, proxy);
+    }
+
+    return proxy;
+  };
+
   for (const elementConfig of ALLOWED_HTML_ELEMENTS) {
     const elementConstructor = customElements.get(elementConfig.tag);
 
     if (!elementConstructor) {
       continue;
     }
-
-    const styleProxies = new WeakMap<Element, Record<string, unknown>>();
-
-    const resolveStyleProxy = (
-      element: RemoteElementLike,
-    ): Record<string, unknown> => {
-      let proxy = styleProxies.get(element);
-
-      if (!proxy) {
-        proxy = createRemoteStyleProxy(element);
-        styleProxies.set(element, proxy);
-      }
-
-      return proxy;
-    };
 
     Object.defineProperty(elementConstructor.prototype, 'style', {
       get(this: RemoteElementLike) {

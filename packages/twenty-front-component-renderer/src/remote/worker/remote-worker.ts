@@ -13,7 +13,7 @@ import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocu
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
-import { workerGeometryStore } from '@/polyfills/geometry/constants/workerGeometryStore';
+import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { createOffscreenCanvasTextMeasurer } from '@/polyfills/geometry/utils/createOffscreenCanvasTextMeasurer';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
@@ -35,6 +35,7 @@ installErrorEventBridge();
 
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
+installGetElementsByClassName(document);
 installLocalStyleOnBaseElements(Element.prototype);
 
 installGetComputedStyle({

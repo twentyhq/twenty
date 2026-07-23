@@ -136,7 +136,7 @@ export const RendersRechartsAreaChartWithTooltip: Story = createGeometryStory(
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByTestId(
+    const chart = await canvas.findByTestId(
       'recharts-component',
       {},
       { timeout: GEOMETRY_TIMEOUT },
@@ -144,6 +144,20 @@ export const RendersRechartsAreaChartWithTooltip: Story = createGeometryStory(
 
     expect(await canvas.findByText('Jan')).toBeVisible();
     expect(await canvas.findByText('Jun')).toBeVisible();
+
+    const chartRect = chart.getBoundingClientRect();
+
+    await waitFor(
+      async () => {
+        await userEvent.pointer({
+          target: chart,
+          coords: { x: chartRect.left + 240, y: chartRect.top + 140 },
+        });
+
+        expect(await canvas.findByText('revenue')).toBeVisible();
+      },
+      { timeout: GEOMETRY_TIMEOUT },
+    );
 
     expect(errorHandler).not.toHaveBeenCalled();
   },

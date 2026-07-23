@@ -1,6 +1,6 @@
 export type GeometryWakeSources = {
   attachViewportSources: () => void;
-  attachElementSources: () => void;
+  attachElementSources: () => boolean;
   detachElementSources: () => void;
   detachAllSources: () => void;
   setRoot: (node: Element | null) => void;

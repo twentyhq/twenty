@@ -28,9 +28,10 @@ export const createOffscreenCanvasTextMeasurer = (
   }
 
   let canvasContext: OffscreenCanvasRenderingContext2D | null = null;
+  let hasCanvasContextCreationFailed = false;
 
   const resolveCanvasContext = (): OffscreenCanvasRenderingContext2D | null => {
-    if (isDefined(canvasContext)) {
+    if (isDefined(canvasContext) || hasCanvasContextCreationFailed) {
       return canvasContext;
     }
 
@@ -39,6 +40,8 @@ export const createOffscreenCanvasTextMeasurer = (
     } catch {
       canvasContext = null;
     }
+
+    hasCanvasContextCreationFailed = !isDefined(canvasContext);
 
     return canvasContext;
   };

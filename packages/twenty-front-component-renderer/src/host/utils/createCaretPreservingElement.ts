@@ -9,7 +9,7 @@ type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 type CreateCaretPreservingElementParams = {
   htmlTag: 'input' | 'textarea';
   reactBindableProps: Record<string, unknown>;
-  hostEnforcedProps: Record<string, unknown> | undefined;
+  hostEnforcedProps: Record<string, unknown>;
   setEditableFocused: SetEditableFocused | null;
   caretPreservingElementRef: ElementRefCallback;
 };

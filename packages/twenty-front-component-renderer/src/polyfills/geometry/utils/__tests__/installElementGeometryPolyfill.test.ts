@@ -1,4 +1,5 @@
 import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
 import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 
@@ -104,12 +105,13 @@ describe('installElementGeometryPolyfill', () => {
   it('should synthesize body geometry from the viewport root container', () => {
     const { documentBody } = installOn(
       createGeometryStore({
-        getViewportSnapshot: () => ({
-          rootContainerWidth: 640,
-          rootContainerHeight: 480,
-          rootContainerClientWidth: 630,
-          rootContainerClientHeight: 470,
-        }),
+        getViewportSnapshot: () =>
+          createViewportGeometrySnapshotFixture({
+            rootContainerWidth: 640,
+            rootContainerHeight: 480,
+            rootContainerClientWidth: 630,
+            rootContainerClientHeight: 470,
+          }),
       }),
     );
 
@@ -118,6 +120,49 @@ describe('installElementGeometryPolyfill', () => {
     expect(rect.width).toBe(640);
     expect(rect.height).toBe(480);
     expect((documentBody as unknown as HTMLElement).clientWidth).toBe(630);
+  });
+
+  it('should place document-scoped rects at the root container host-viewport position', () => {
+    const { documentBody, documentElement } = installOn(
+      createGeometryStore({
+        getViewportSnapshot: () =>
+          createViewportGeometrySnapshotFixture({
+            rootContainerX: 120,
+            rootContainerY: 45,
+            rootContainerWidth: 640,
+            rootContainerHeight: 480,
+          }),
+      }),
+    );
+
+    const bodyRect = (
+      documentBody as unknown as Element
+    ).getBoundingClientRect();
+    const documentElementRect = (
+      documentElement as unknown as Element
+    ).getBoundingClientRect();
+
+    expect(bodyRect.x).toBe(120);
+    expect(bodyRect.y).toBe(45);
+    expect(documentElementRect.x).toBe(120);
+    expect(documentElementRect.y).toBe(45);
+  });
+
+  it('should mirror host scroll offsets on documentElement only', () => {
+    const { documentBody, documentElement } = installOn(
+      createGeometryStore({
+        getViewportSnapshot: () =>
+          createViewportGeometrySnapshotFixture({
+            scrollX: 30,
+            scrollY: 700,
+          }),
+      }),
+    );
+
+    expect((documentElement as unknown as HTMLElement).scrollTop).toBe(700);
+    expect((documentElement as unknown as HTMLElement).scrollLeft).toBe(30);
+    expect((documentBody as unknown as HTMLElement).scrollTop).toBe(0);
+    expect((documentBody as unknown as HTMLElement).scrollLeft).toBe(0);
   });
 
   it('should return a single entry array from getClientRects', () => {
@@ -150,6 +195,15 @@ describe('installElementGeometryPolyfill', () => {
 
     expect(rects.item(0)?.width).toBe(3);
     expect(rects.item(1)).toBeNull();
+  });
+
+  it('should return an empty list from getClientRects when no snapshot exists', () => {
+    installOn(createGeometryStore());
+
+    const rects = (new FakeElement() as unknown as Element).getClientRects();
+
+    expect(rects).toHaveLength(0);
+    expect(rects.item(0)).toBeNull();
   });
 
   it('should fall back to text measurement for an element outside the remote root', () => {

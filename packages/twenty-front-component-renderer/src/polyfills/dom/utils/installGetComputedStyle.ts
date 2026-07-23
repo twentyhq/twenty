@@ -1,12 +1,9 @@
 import { isFunction, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ElementWithStyle } from '@/polyfills/dom/types/ElementWithStyle';
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
-
-type ElementWithStyle = {
-  style?: unknown;
-};
 
 type InstallGetComputedStyleInput = {
   globalScope: Record<string, unknown>;
