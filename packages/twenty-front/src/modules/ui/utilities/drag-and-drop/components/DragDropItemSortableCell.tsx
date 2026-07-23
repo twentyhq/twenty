@@ -74,27 +74,33 @@ export const DragDropItemSortableCell = ({
   dropLine = 'none',
   type,
 }: DragDropItemSortableCellProps) => {
-  const { handleRef, ref, isDragging, isDropTarget } = useSortable({
-    id,
-    index,
-    group,
-    type,
-    accept,
-    collisionPriority: SORTABLE_COLLISION_PRIORITY,
-    data: {
-      droppableId: group,
+  const { handleRef, ref, isDragging, isDragSource, isDropTarget } =
+    useSortable({
+      id,
       index,
-      ...data,
-    },
-    disabled,
-    transition: hasTransition ? SORTABLE_TRANSITION : null,
-    plugins: PLUGINS_WITHOUT_OPTIMISTIC,
-    modifiers: [
-      ...(restrictMovementTo === 'x' ? [RestrictToHorizontalAxis] : []),
-      ...(restrictMovementTo === 'y' ? [RestrictToVerticalAxis] : []),
-    ],
-    feedback: 'clone',
-  });
+      group,
+      type,
+      accept,
+      collisionPriority: SORTABLE_COLLISION_PRIORITY,
+      data: {
+        droppableId: group,
+        index,
+        ...data,
+      },
+      disabled,
+      transition: hasTransition ? SORTABLE_TRANSITION : null,
+      plugins: PLUGINS_WITHOUT_OPTIMISTIC,
+      modifiers: [
+        ...(restrictMovementTo === 'x' ? [RestrictToHorizontalAxis] : []),
+        ...(restrictMovementTo === 'y' ? [RestrictToVerticalAxis] : []),
+      ],
+      feedback: 'clone',
+    });
+
+  // The drag source is its own initial drop target; rendering the line on it
+  // would bake a stale copy into the placeholder clone taken at drag start.
+  const shouldShowDropLine =
+    dropLine !== 'none' && isDropTarget && !isDragSource;
 
   return (
     <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
@@ -104,9 +110,7 @@ export const DragDropItemSortableCell = ({
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
         onDragStart={preventNativeDragStart}
       >
-        {dropLine !== 'none' && isDropTarget && (
-          <DragDropItemDropLine orientation={dropLine} />
-        )}
+        {shouldShowDropLine && <DragDropItemDropLine orientation={dropLine} />}
         {children}
       </StyledSortableRoot>
     </DragDropItemSortableHandleRefContext.Provider>
