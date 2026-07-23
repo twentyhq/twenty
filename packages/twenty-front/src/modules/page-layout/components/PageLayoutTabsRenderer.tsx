@@ -1,4 +1,3 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
@@ -7,13 +6,11 @@ import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
+import { usePageLayoutRenderableTabs } from '@/page-layout/hooks/usePageLayoutRenderableTabs';
 import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
-import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
-import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -22,7 +19,6 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -93,39 +89,12 @@ export const PageLayoutTabsRenderer = () => {
     currentPageLayout.id,
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
-    ? objectMetadataItems.find(
-        (item) =>
-          item.nameSingular === targetRecordIdentifier.targetObjectNameSingular,
-      )
-    : undefined;
-
-  const isMobile = useIsMobile();
-
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
     shouldEnableTabEditingFeatures(currentPageLayout.type);
 
-  const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: currentPageLayout.tabs,
-    isMobile,
-    isInSidePanel,
-    isEditMode: isPageLayoutInEditMode,
-  });
-
-  const renderableTabs = getTabsRenderableForTargetObject({
-    tabs: tabsWithVisibleWidgets,
-    targetObjectFields: targetObjectMetadataItem?.fields,
-  });
-
-  const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    tabs: renderableTabs,
-    pageLayoutType: currentPageLayout.type,
-    isMobile,
-    isInSidePanel,
-  });
+  const { tabsToRenderInTabList, pinnedLeftTab } =
+    usePageLayoutRenderableTabs();
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 
