@@ -1,0 +1,31 @@
+---
+title: Export FAQ
+description: Frequently asked questions about exporting data.
+---
+
+<AccordionGroup>
+<Accordion title="Can we export all workspace data before cancellation, including custom objects, custom fields, relationships, notes, tasks, opportunities, attachments, workflows, permissions, and audit history?">
+Workspace data can be exported before cancellation with some exceptions as dashboards, workflows and permissions must be transferred manually and audit logs are not transferrable.
+</Accordion>
+<Accordion title="Which elements cannot currently be exported or migrated?">
+Most elements can be exported or migrated with some exceptions:
+- workflows, dashboards and all settings (API keys, webhooks, audit logs, user's settings, etc.) must be migrated manually as currently there is no way to import or export them
+- app-created objects and fields can be migrated by installing said app in different workspace, they shouldn't be migrated manually
+- some records like workflow versions and workflow runs are not transferrable at all and expected to be lost
+- some objects like message and calendar related objects shouldn't be exported as they're created when account is connected and synced periodically and they'll be synchronized again once you connect your account (as long as you have an access to said account, if it's an account of team member who left your company, then those messages must be exported, otherwise they'll be lost)
+</Accordion>
+<Accordion title="Is there an official cloud to self-hosted migration procedure or an assisted migration service?">
+As of now, there is no official cloud-to-self-hosted migration procedure, the general idea is to:
+- first, reproduce all data model
+- using script with API keys or AI migrate all data from one workspace to another
+- all non-transferrable objects must be migrated manually
+
+Please be aware of few things:
+- you can send up to 50 requests per minute on Pro plan or 100 requests per minute on Organization plan before hitting a request/min limit
+- each API request can have up to 200 records
+- some data in fields like Created by, Timeline activities and Updated by will be lost during import and overwritten by the system
+</Accordion>
+<Accordion title="Are exported files provided in open and documented formats?">
+Exported files in UI are Excel format and all API requests can be saved in JSON format.
+</Accordion>
+</AccordionGroup>
