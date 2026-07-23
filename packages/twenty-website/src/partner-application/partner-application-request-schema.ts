@@ -4,10 +4,8 @@ import { PARTNER_COUNTRY_OPTIONS } from './data/partner-country-options';
 import { PARTNER_LANGUAGE_OPTIONS } from './data/partner-language-options';
 import { PARTNER_SCOPE_OPTIONS } from './data/partner-scope-options';
 import { PARTNER_TEAM_TYPE_OPTIONS } from './data/partner-team-type-options';
-import {
-  PARTNER_TWENTY_EXPERIENCE_OPTIONS,
-  TWENTY_EXPERIENCE_NOTES_MIN_LENGTH,
-} from './data/partner-twenty-experience-options';
+import { PARTNER_TWENTY_EXPERIENCE_OPTIONS } from './data/partner-twenty-experience-options';
+import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/twenty-experience-notes-min-length';
 import { emailFieldSchema } from './email-field-schema';
 import { httpUrlFieldSchema } from './http-url-field-schema';
 

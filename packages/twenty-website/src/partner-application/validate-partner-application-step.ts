@@ -2,7 +2,7 @@ import {
   PARTNER_APPLICATION_STEP_IDS,
   type PartnerApplicationStepId,
 } from './data/partner-application-step-ids';
-import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/partner-twenty-experience-options';
+import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/twenty-experience-notes-min-length';
 import { emailFieldSchema } from './email-field-schema';
 import { httpUrlFieldSchema } from './http-url-field-schema';
 import { nonNegativeAmountFieldSchema } from './non-negative-amount-field-schema';

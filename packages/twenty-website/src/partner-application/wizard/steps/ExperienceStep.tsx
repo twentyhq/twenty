@@ -1,5 +1,6 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 
 import { ChipMultiSelect, Field, TextareaField, TextField } from '@/ui';
@@ -31,6 +32,7 @@ export function ExperienceStep({
       >
         <ChipMultiSelect
           ariaLabel={i18n._(FIELDS.twentyExperience)}
+          invalid={state.fieldErrors.twentyExperience !== undefined}
           onToggle={toggleExperience}
           options={experienceOptions}
           values={state.twentyExperience}
@@ -61,7 +63,7 @@ export function ExperienceStep({
           onValueChange={(value) =>
             setField('twentyExperienceProofLink', value)
           }
-          placeholder="https://"
+          placeholder={i18n._(msg`https://`)}
           value={state.twentyExperienceProofLink}
         />
       </Field>
