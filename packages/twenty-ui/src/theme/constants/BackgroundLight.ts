@@ -28,6 +28,7 @@ export const BACKGROUND_LIGHT = {
   overlayPrimary: TRANSPARENT_COLORS_LIGHT.gray11,
   overlaySecondary: TRANSPARENT_COLORS_LIGHT.gray9,
   overlayTertiary: TRANSPARENT_COLORS_LIGHT.gray4,
+  overlayHoldToConfirm: RadixColors.blackP3A.blackA4,
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${GRAY_SCALE_LIGHT.gray9} 0%, ${GRAY_SCALE_LIGHT.gray10} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${GRAY_SCALE_LIGHT.gray10} 0%, ${GRAY_SCALE_LIGHT.gray11} 100%)`,
   primaryInverted: GRAY_SCALE_LIGHT.gray12,

@@ -6,6 +6,7 @@ import { CampaignTestSendSection } from '@/activities/emails/components/Campaign
 import { useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useCampaignSendQuota } from '@/activities/emails/hooks/useCampaignSendQuota';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { HoldToConfirmButton } from '@/ui/input/components/HoldToConfirmButton';
 import { t } from '@lingui/core/macro';
 import { IconSend } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -84,15 +85,19 @@ export const CampaignComposer = ({
           </StyledQuotaHint>
         )}
         <CampaignTestSendSection campaignState={campaignState} />
-        <Button
-          size="small"
-          variant="primary"
-          accent="blue"
-          title={t`Send campaign`}
-          Icon={IconSend}
-          onClick={campaignState.handleSend}
+        <HoldToConfirmButton
+          onConfirm={campaignState.handleSend}
           disabled={!campaignState.canSend}
-        />
+        >
+          <Button
+            size="small"
+            variant="primary"
+            accent="blue"
+            title={t`Hold to send`}
+            Icon={IconSend}
+            disabled={!campaignState.canSend}
+          />
+        </HoldToConfirmButton>
       </StyledFooter>
     </StyledContainer>
   );

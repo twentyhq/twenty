@@ -110,6 +110,7 @@
   --t-background-overlay-primary: color(display-p3 0 0 0 / 0.722);
   --t-background-overlay-secondary: color(display-p3 0 0 0 / 0.361);
   --t-background-overlay-tertiary: color(display-p3 0 0 0 / 0.071);
+  --t-background-overlay-hold-to-confirm: color(display-p3 0 0 0 / 0.2);
   --t-background-radial-gradient: radial-gradient(
     50% 62.62% at 50% 0%,
     color(display-p3 0.6 0.6 0.6) 0%,

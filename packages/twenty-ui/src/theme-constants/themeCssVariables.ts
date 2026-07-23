@@ -149,6 +149,7 @@ export const themeCssVariables = {
     overlayPrimary: 'var(--t-background-overlay-primary)',
     overlaySecondary: 'var(--t-background-overlay-secondary)',
     overlayTertiary: 'var(--t-background-overlay-tertiary)',
+    overlayHoldToConfirm: 'var(--t-background-overlay-hold-to-confirm)',
     radialGradient: 'var(--t-background-radial-gradient)',
     radialGradientHover: 'var(--t-background-radial-gradient-hover)',
     primaryInverted: 'var(--t-background-primary-inverted)',
