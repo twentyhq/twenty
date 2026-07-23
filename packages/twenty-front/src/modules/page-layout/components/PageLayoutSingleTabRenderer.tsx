@@ -1,4 +1,5 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
+import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutEditModeProvider } from '@/page-layout/components/PageLayoutEditModeProvider';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
@@ -75,7 +76,9 @@ const PageLayoutSingleTabRendererInner = () => {
           presentation,
         }}
       >
-        <PageLayoutContent />
+        <PageLayoutWidgetDndProvider>
+          <PageLayoutContent />
+        </PageLayoutWidgetDndProvider>
       </PageLayoutContentProvider>
     </>
   );

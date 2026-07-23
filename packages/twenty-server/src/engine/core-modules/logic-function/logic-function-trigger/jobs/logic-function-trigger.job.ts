@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -22,8 +22,6 @@ export type LogicFunctionTriggerJobData = {
   scope: Scope.REQUEST,
 })
 export class LogicFunctionTriggerJob {
-  private readonly logger = new Logger(LogicFunctionTriggerJob.name);
-
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
@@ -47,10 +45,6 @@ export class LogicFunctionTriggerJob {
             error instanceof LogicFunctionException &&
             error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
           ) {
-            this.logger.warn(
-              `Skipping execution of logic function ${logicFunctionPayload.logicFunctionId} in workspace ${logicFunctionPayload.workspaceId}: ${error.message}`,
-            );
-
             return;
           }
 

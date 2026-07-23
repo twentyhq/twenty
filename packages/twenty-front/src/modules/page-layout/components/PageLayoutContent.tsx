@@ -6,7 +6,6 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
-import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { styled } from '@linaria/react';
@@ -24,8 +23,6 @@ export const PageLayoutContent = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const { tabId } = usePageLayoutContentContext();
-
-  const { reorderWidgets } = useReorderPageLayoutWidgets(tabId);
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
 
@@ -60,8 +57,6 @@ export const PageLayoutContent = () => {
     return (
       <PageLayoutVerticalListEditor
         widgets={activeTab.widgets}
-        onReorder={reorderWidgets}
-        isReorderEnabled={true}
         trailingElement={<RecordPageAddWidgetSection />}
       />
     );
