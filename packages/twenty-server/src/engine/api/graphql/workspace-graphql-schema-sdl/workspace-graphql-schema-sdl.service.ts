@@ -17,7 +17,9 @@ import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export type WorkspaceGraphqlSchemaSDLResult = {
@@ -46,21 +48,20 @@ export class WorkspaceGraphqlSchemaSDLService {
     }
 
     const {
-      flatObjectMetadataMaps: allFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: allFlatFieldMetadataMaps,
-      flatIndexMaps: allFlatIndexMaps,
-      flatApplicationMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId: workspace.id,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-          'flatIndexMaps',
-          'flatApplicationMaps',
-        ],
+      data: {
+        flatObjectMetadataMaps: allFlatObjectMetadataMaps,
+        flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+        flatIndexMaps: allFlatIndexMaps,
+        flatApplicationMaps,
       },
-    );
+      hashes,
+    } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: [...SCHEMA_SDL_CACHE_DEPENDENCIES],
+        },
+      );
 
     if (!isDefined(allFlatObjectMetadataMaps)) {
       throw new FlatEntityMapsException(
@@ -113,28 +114,20 @@ export class WorkspaceGraphqlSchemaSDLService {
       }
     }
 
-    let metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
-
-    if (!isDefined(metadataVersion)) {
-      metadataVersion = isDefined(workspace.metadataVersion)
-        ? workspace.metadataVersion
-        : 0;
-      await this.workspaceCacheStorageService.setMetadataVersion(
-        workspace.id,
-        metadataVersion,
-      );
-    }
+    const metadataCacheHash = combineCacheHashes(
+      hashes,
+      SCHEMA_SDL_CACHE_DEPENDENCIES,
+    );
 
     let sdl = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
       workspace.id,
-      metadataVersion,
+      metadataCacheHash,
       applicationId,
     );
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
         workspace.id,
-        metadataVersion,
+        metadataCacheHash,
         applicationId,
       );
 
@@ -152,13 +145,13 @@ export class WorkspaceGraphqlSchemaSDLService {
 
       await this.workspaceCacheStorageService.setGraphQLTypeDefs(
         workspace.id,
-        metadataVersion,
+        metadataCacheHash,
         sdl,
         applicationId,
       );
       await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
         workspace.id,
-        metadataVersion,
+        metadataCacheHash,
         usedScalarNames,
         applicationId,
       );

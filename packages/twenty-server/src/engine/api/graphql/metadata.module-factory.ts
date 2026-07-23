@@ -4,6 +4,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -19,6 +20,7 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const metadataModuleFactory = async (
   twentyConfigService: TwentyConfigService,
@@ -28,6 +30,7 @@ export const metadataModuleFactory = async (
   metricsService: MetricsService,
   i18nService: I18nService,
   _featureFlagService: FeatureFlagService,
+  workspaceCacheService: WorkspaceCacheService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -51,7 +54,11 @@ export const metadataModuleFactory = async (
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
-        operationsToCache: ['ObjectMetadataItems', 'FindAllViews'],
+        operationsToCache: METADATA_GRAPHQL_OPERATIONS_TO_CACHE,
+        dependencyHashGetter:
+          workspaceCacheService.getOrRecomputeCombinedHash.bind(
+            workspaceCacheService,
+          ),
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,

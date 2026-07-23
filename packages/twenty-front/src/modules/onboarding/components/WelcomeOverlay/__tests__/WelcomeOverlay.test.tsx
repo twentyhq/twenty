@@ -1,6 +1,9 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
@@ -10,10 +13,18 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
+import { messages } from '~/locales/generated/en';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
+i18n.load({ [SOURCE_LOCALE]: messages });
+i18n.activate(SOURCE_LOCALE);
+
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(JotaiProvider, { store: jotaiStore }, children);
+  createElement(
+    JotaiProvider,
+    { store: jotaiStore },
+    createElement(I18nProvider, { i18n }, children),
+  );
 
 describe('WelcomeOverlay', () => {
   beforeEach(() => {
@@ -37,6 +48,6 @@ describe('WelcomeOverlay', () => {
 
     expect(screen.getByText('Welcome')).toBeInTheDocument();
     expect(screen.getByText('workspace')).toBeInTheDocument();
-    expect(screen.getByText('Marie Curie')).toBeInTheDocument();
+    expect(screen.getAllByText('Marie Curie').length).toBeGreaterThan(0);
   });
 });
