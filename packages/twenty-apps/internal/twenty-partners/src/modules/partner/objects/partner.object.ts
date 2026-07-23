@@ -500,5 +500,13 @@ export default defineObject({
       icon: 'IconClock',
       isNullable: true,
     },
+    {
+      universalIdentifier: 'fcfd5b9e-1ea0-4c26-a40c-43631bb3e0d0',
+      type: FieldType.DATE_TIME,
+      name: 'partnerUserLinkedAt',
+      label: 'Partner User Linked At',
+      icon: 'IconLink',
+      isNullable: true,
+    },
   ],
 });
