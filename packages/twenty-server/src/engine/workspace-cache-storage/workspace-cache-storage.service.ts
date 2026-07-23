@@ -13,7 +13,6 @@ export const HASH_KEYED_WORKSPACE_CACHE_KEYS = {
   GraphQLUsedScalarNames: 'graphql:used-scalar-names',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
-  MetadataVersion: 'metadata:workspace-metadata-version',
   GraphQLOperations: 'graphql:operations',
   GraphQLFeatureFlag: 'graphql:feature-flag',
   FeatureFlagMap: 'feature-flag:feature-flag-map',
@@ -38,23 +37,6 @@ export class WorkspaceCacheStorageService {
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
-
-  setMetadataVersion(
-    workspaceId: string,
-    metadataVersion: number,
-  ): Promise<void> {
-    return this.cacheStorageService.set<number>(
-      `${WORKSPACE_CACHE_KEYS.MetadataVersion}:${workspaceId}`,
-      metadataVersion,
-      TTL_ONE_WEEK,
-    );
-  }
-
-  getMetadataVersion(workspaceId: string): Promise<number | undefined> {
-    return this.cacheStorageService.get<number>(
-      `${WORKSPACE_CACHE_KEYS.MetadataVersion}:${workspaceId}`,
-    );
-  }
 
   setGraphQLTypeDefs(
     workspaceId: string,

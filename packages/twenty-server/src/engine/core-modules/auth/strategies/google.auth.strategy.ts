@@ -18,10 +18,7 @@ import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/t
 import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type GoogleRequest = Omit<
-  Request,
-  'user' | 'workspace' | 'workspaceMetadataVersion'
-> & {
+export type GoogleRequest = Omit<Request, 'user' | 'workspace'> & {
   user: {
     firstName?: string | null;
     lastName?: string | null;

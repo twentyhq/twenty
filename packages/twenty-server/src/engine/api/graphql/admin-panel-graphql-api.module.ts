@@ -9,6 +9,8 @@ import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-pane
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -25,6 +27,7 @@ import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
         DataloaderModule,
         MetricsModule,
         I18nModule,
+        WorkspaceCacheModule,
       ],
       inject: [
         TwentyConfigService,
@@ -32,6 +35,7 @@ import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
         DataloaderService,
         MetricsService,
         I18nService,
+        WorkspaceCacheService,
       ],
     }),
     AdminPanelModule,

@@ -35,7 +35,7 @@ import {
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
-const SCHEMA_VERSION_HEADER = 'x-schema-version';
+const METADATA_HASHES_HEADER = 'x-metadata-hashes';
 const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
 const APP_VERSION_HEADER = 'x-app-version';
 const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
@@ -52,6 +52,8 @@ type GraphQLErrorHandlerHookOptions = {
   i18nService: I18nService;
 
   twentyConfigService: TwentyConfigService;
+
+  schemaMetadataHashesGetter: (workspaceId: string) => string | undefined;
   /**
    * The key of the event id in the error's extension. `null` to disable.
    * @default exceptionEventId
@@ -267,8 +269,14 @@ export const useGraphQLErrorHandlerHook = <
 
       if (Array.isArray(errors) && errors.length > 0) {
         const headers = context.req.headers;
-        const currentMetadataVersion = context.req.workspaceMetadataVersion;
-        const requestMetadataVersion = headers[SCHEMA_VERSION_HEADER];
+        const metadataHashesHeaderValue = headers[METADATA_HASHES_HEADER];
+        const requestMetadataHashes = Array.isArray(metadataHashesHeaderValue)
+          ? metadataHashesHeaderValue[0]
+          : metadataHashesHeaderValue;
+        const workspaceId = context.req.workspace?.id;
+        const currentMetadataHashes = isDefined(workspaceId)
+          ? options.schemaMetadataHashesGetter(workspaceId)
+          : undefined;
         const backendAppVersion =
           options.twentyConfigService.get('APP_VERSION');
         const appVersionHeaderValue = headers[APP_VERSION_HEADER];
@@ -278,12 +286,12 @@ export const useGraphQLErrorHandlerHook = <
             : appVersionHeaderValue;
 
         if (
-          requestMetadataVersion &&
-          isDefined(currentMetadataVersion) &&
-          requestMetadataVersion !== `${currentMetadataVersion}`
+          isDefined(requestMetadataHashes) &&
+          isDefined(currentMetadataHashes) &&
+          requestMetadataHashes !== currentMetadataHashes
         ) {
           void options.metricsService.incrementCounterForEvent({
-            key: MetricsKeys.SchemaVersionMismatch,
+            key: MetricsKeys.MetadataHashMismatch,
           });
 
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {

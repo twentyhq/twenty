@@ -19,7 +19,6 @@ declare module 'express-serve-static-core' {
     locale: keyof typeof APP_LOCALES;
     workspace?: FlatWorkspace;
     workspaceId?: string;
-    workspaceMetadataVersion?: number;
     workspaceMemberId?: string;
     workspaceMember?: WorkspaceMemberWorkspaceEntity;
     userWorkspaceId?: string;

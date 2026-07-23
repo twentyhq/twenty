@@ -11,10 +11,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 
-export type OIDCRequest = Omit<
-  Request,
-  'user' | 'workspace' | 'workspaceMetadataVersion'
-> & {
+export type OIDCRequest = Omit<Request, 'user' | 'workspace'> & {
   user: {
     identityProviderId: string;
     email: string;

@@ -44,7 +44,7 @@ export enum MetricsKeys {
   AiChatOutputTokens = 'ai-chat/output-tokens',
   AiChatCacheReadTokens = 'ai-chat/cache-read-tokens',
   AiChatCacheWriteTokens = 'ai-chat/cache-write-tokens',
-  SchemaVersionMismatch = 'schema-version/mismatch',
+  MetadataHashMismatch = 'metadata-hash/mismatch',
   AppVersionMismatch = 'app-version/mismatch',
   AppInstallSucceeded = 'app-install/succeeded',
   AppInstallFailed = 'app-install/failed',

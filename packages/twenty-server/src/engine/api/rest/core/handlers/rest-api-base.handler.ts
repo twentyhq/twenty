@@ -190,22 +190,6 @@ export abstract class RestApiBaseHandler {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
-
-    if (currentCacheVersion === undefined) {
-      if (isDefined(workspace.metadataVersion)) {
-        await this.workspaceCacheStorageService.setMetadataVersion(
-          workspace.id,
-          workspace.metadataVersion,
-        );
-      } else {
-        throw new BadRequestException(
-          'Workspace metadata version not found in database',
-        );
-      }
-    }
-
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

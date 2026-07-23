@@ -86,6 +86,7 @@ export class ApolloFactory implements ApolloManager {
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
   private appVersion?: string;
+  private metadataHashes?: string;
 
   constructor(opts: Options) {
     const {
@@ -147,6 +148,9 @@ export class ApolloFactory implements ApolloManager {
             ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
+            ...(isDefined(this.metadataHashes) && {
+              'X-Metadata-Hashes': this.metadataHashes,
+            }),
             ...(this.appVersion && { 'X-App-Version': this.appVersion }),
           },
         };
@@ -423,6 +427,10 @@ export class ApolloFactory implements ApolloManager {
 
   updateAppVersion(appVersion?: string) {
     this.appVersion = appVersion;
+  }
+
+  updateMetadataHashes(metadataHashes: string | undefined) {
+    this.metadataHashes = metadataHashes;
   }
 
   getClient() {

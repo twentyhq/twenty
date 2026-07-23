@@ -201,6 +201,25 @@ export class WorkspaceCacheService implements OnModuleInit {
     return result as WorkspaceCacheResultWithHashes<K>;
   }
 
+  public peekLocalHashes(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Partial<Record<WorkspaceCacheKeyName, string>> {
+    const hashes: Partial<Record<WorkspaceCacheKeyName, string>> = {};
+
+    for (const cacheKeyName of cacheKeyNames) {
+      const entry = this.localCache.get(
+        this.buildCacheKey(workspaceId, cacheKeyName),
+      );
+
+      if (isDefined(entry) && entry.latestHash !== '') {
+        hashes[cacheKeyName] = entry.latestHash;
+      }
+    }
+
+    return hashes;
+  }
+
   public async getOrRecomputeCombinedHash(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],

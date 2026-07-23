@@ -9,16 +9,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   private readonly logger = new Logger(JwtAuthGuard.name);
 
-  constructor(
-    private readonly accessTokenService: AccessTokenService,
-    private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
-  ) {}
+  constructor(private readonly accessTokenService: AccessTokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -26,11 +22,6 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const data =
         await this.accessTokenService.validateTokenByRequest(request);
-      const metadataVersion = data.workspace
-        ? await this.workspaceStorageCacheService.getMetadataVersion(
-            data.workspace.id,
-          )
-        : undefined;
 
       if (
         !isDefined(data.apiKey) &&
@@ -44,7 +35,7 @@ export class JwtAuthGuard implements CanActivate {
         return false;
       }
 
-      bindDataToRequestObject(data, request, metadataVersion);
+      bindDataToRequestObject(data, request);
 
       return true;
     } catch (error) {

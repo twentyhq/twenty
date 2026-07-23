@@ -5,6 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
+import { buildSchemaMetadataHashesGetter } from 'src/engine/api/graphql/graphql-config/utils/build-schema-metadata-hashes-getter.util';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -50,6 +51,9 @@ export const metadataModuleFactory = async (
         exceptionHandlerService,
         i18nService,
         twentyConfigService,
+        schemaMetadataHashesGetter: buildSchemaMetadataHashesGetter(
+          workspaceCacheService,
+        ),
       }),
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),

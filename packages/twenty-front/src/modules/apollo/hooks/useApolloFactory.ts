@@ -1,5 +1,5 @@
 import { InMemoryCache } from '@apollo/client';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
@@ -12,8 +12,10 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { appVersionState } from '@/client-config/states/appVersionState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
@@ -32,6 +34,10 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
     currentWorkspaceState,
   );
   const appVersion = useAtomStateValue(appVersionState);
+  const { currentCollectionHash: objectMetadataCollectionHash } =
+    useAtomFamilyStateValue(metadataStoreState, 'objectMetadataItems');
+  const { currentCollectionHash: fieldMetadataCollectionHash } =
+    useAtomFamilyStateValue(metadataStoreState, 'fieldMetadataItems');
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
@@ -138,6 +144,18 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       apolloRef.current.updateAppVersion(appVersion);
     }
   }, [appVersion]);
+
+  const metadataHashes =
+    isDefined(objectMetadataCollectionHash) &&
+    isDefined(fieldMetadataCollectionHash)
+      ? `${objectMetadataCollectionHash}.${fieldMetadataCollectionHash}`
+      : undefined;
+
+  useEffect(() => {
+    if (isDefined(apolloRef.current)) {
+      apolloRef.current.updateMetadataHashes(metadataHashes);
+    }
+  }, [metadataHashes]);
 
   return apolloClient;
 };

@@ -12,7 +12,6 @@ import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/g
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
@@ -20,14 +19,12 @@ import {
   handleException,
   handleExceptionAndConvertToGraphQLError,
 } from 'src/engine/utils/global-exception-handler.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class MiddlewareService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
@@ -100,9 +97,6 @@ export class MiddlewareService {
 
   public async hydrateRestRequest(request: Request) {
     const data = await this.accessTokenService.validateTokenByRequest(request);
-    const metadataVersion = data.workspace
-      ? await this.getOrSeedMetadataVersion(data.workspace)
-      : undefined;
 
     if (!data.workspace) {
       throw new Error('No data sources found');
@@ -112,7 +106,7 @@ export class MiddlewareService {
       throw new Error('No data sources found');
     }
 
-    bindDataToRequestObject(data, request, metadataVersion);
+    bindDataToRequestObject(data, request);
   }
 
   public async hydrateGraphqlRequest(request: Request) {
@@ -125,31 +119,8 @@ export class MiddlewareService {
     }
 
     const data = await this.accessTokenService.validateTokenByRequest(request);
-    const metadataVersion = data.workspace
-      ? await this.getOrSeedMetadataVersion(data.workspace)
-      : undefined;
 
-    bindDataToRequestObject(data, request, metadataVersion);
-  }
-
-  private async getOrSeedMetadataVersion(
-    workspace: Pick<FlatWorkspace, 'id' | 'metadataVersion'>,
-  ): Promise<number | undefined> {
-    const cachedMetadataVersion =
-      await this.workspaceStorageCacheService.getMetadataVersion(workspace.id);
-
-    if (isDefined(cachedMetadataVersion)) {
-      return cachedMetadataVersion;
-    }
-
-    if (isDefined(workspace.metadataVersion)) {
-      await this.workspaceStorageCacheService.setMetadataVersion(
-        workspace.id,
-        workspace.metadataVersion,
-      );
-    }
-
-    return workspace.metadataVersion;
+    bindDataToRequestObject(data, request);
   }
 
   private hasErrorStatus(error: unknown): error is { status: number } {

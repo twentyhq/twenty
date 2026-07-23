@@ -19,6 +19,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
+import { buildSchemaMetadataHashesGetter } from 'src/engine/api/graphql/graphql-config/utils/build-schema-metadata-hashes-getter.util';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -27,6 +28,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: FlatAuthContextUser;
@@ -46,6 +48,7 @@ export class GraphQLConfigService implements GqlOptionsFactory<
     private readonly i18nService: I18nService,
     private readonly directExecutionService: DirectExecutionService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
@@ -61,6 +64,9 @@ export class GraphQLConfigService implements GqlOptionsFactory<
         exceptionHandlerService: this.exceptionHandlerService,
         i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
+        schemaMetadataHashesGetter: buildSchemaMetadataHashesGetter(
+          this.workspaceCacheService,
+        ),
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,

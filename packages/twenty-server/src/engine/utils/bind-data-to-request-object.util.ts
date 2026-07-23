@@ -6,7 +6,6 @@ import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth
 export const bindDataToRequestObject = (
   data: RawAuthContext,
   request: Request,
-  metadataVersion: number | undefined,
 ) => {
   request.user = data.user;
   request.apiKey = data.apiKey;
@@ -14,7 +13,6 @@ export const bindDataToRequestObject = (
   request.userWorkspace = data.userWorkspace;
   request.workspace = data.workspace;
   request.workspaceId = data.workspace?.id;
-  request.workspaceMetadataVersion = metadataVersion;
   request.workspaceMemberId = data.workspaceMemberId;
   request.workspaceMember = data.workspaceMember;
   request.userWorkspaceId = data.userWorkspaceId;

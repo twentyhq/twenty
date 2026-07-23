@@ -13,8 +13,10 @@ import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graph
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildSchemaMetadataHashesGetter } from 'src/engine/api/graphql/graphql-config/utils/build-schema-metadata-hashes-getter.util';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const adminPanelModuleFactory = async (
   twentyConfigService: TwentyConfigService,
@@ -22,6 +24,7 @@ export const adminPanelModuleFactory = async (
   dataloaderService: DataloaderService,
   metricsService: MetricsService,
   i18nService: I18nService,
+  workspaceCacheService: WorkspaceCacheService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -39,6 +42,9 @@ export const adminPanelModuleFactory = async (
         exceptionHandlerService,
         i18nService,
         twentyConfigService,
+        schemaMetadataHashesGetter: buildSchemaMetadataHashesGetter(
+          workspaceCacheService,
+        ),
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,

@@ -39,10 +39,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
 
-export type SAMLRequest = Omit<
-  Request,
-  'user' | 'workspace' | 'workspaceMetadataVersion'
-> & {
+export type SAMLRequest = Omit<Request, 'user' | 'workspace'> & {
   user: {
     identityProviderId: string;
     workspaceInviteHash?: string;
