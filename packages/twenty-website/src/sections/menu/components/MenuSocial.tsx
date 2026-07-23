@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { formatCompactCount } from '@/platform/community/format-compact-count';
 import { type CommunityStats } from '@/platform/community';
@@ -83,7 +82,6 @@ export function MenuSocial({ links, stats }: MenuSocialProps) {
       {desktopLinks.map((link, index) => {
         const IconComponent = link.icon;
         const isWideOnly = link.statKey === 'discordMembers';
-        const statValue = link.statKey ? stats[link.statKey] : null;
         return (
           <SocialItem
             data-wide-only={isWideOnly ? '' : undefined}
@@ -92,8 +90,8 @@ export function MenuSocial({ links, stats }: MenuSocialProps) {
             {index > 0 && <VerticalDivider aria-hidden />}
             <SocialAnchor aria-label={i18n._(link.ariaLabel)} href={link.href}>
               <IconComponent aria-hidden size={14} />
-              {isDefined(statValue)
-                ? formatCompactCount(statValue, locale)
+              {link.statKey
+                ? formatCompactCount(stats[link.statKey], locale)
                 : null}
               <ExternalArrow />
             </SocialAnchor>
