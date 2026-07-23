@@ -2128,9 +2128,6 @@ msgid "Amount Micros"
 msgstr "Beløb i mikroenheder"
 
 #. js-lingui-id: Vw8l6h
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
 msgstr "Der opstod en fejl"
@@ -2178,23 +2175,8 @@ msgstr "Der opstod en fejl under upload af billedet."
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 msgid "An error occurred."
@@ -2616,6 +2598,7 @@ msgstr "Stigende"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "Spørg AI"
 
@@ -3928,6 +3911,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "Udklipsholderen kræver en sikker forbindelse (HTTPS). Tilgå venligst denne app via HTTPS for at aktivere kopiering."
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Luk"
@@ -4002,6 +3986,11 @@ msgstr "Skjul"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "Fold mappe sammen"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7790,6 +7779,11 @@ msgstr "Afslut import flow"
 msgid "Expand"
 msgstr "Udvid"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10204,6 +10198,11 @@ msgstr "Er i dag{timeZoneAbbreviationSuffix}"
 msgid "Issuer URI"
 msgstr "Udsteder URI"
 
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr ""
+
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
@@ -10962,6 +10961,7 @@ msgstr "Registrer en ny aftale (virksomhed, beløb, fase, forventet lukkedato). 
 
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Log out"
@@ -13267,6 +13267,11 @@ msgstr "kun på hverdage"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "På hvilket objekt(er) skal denne udløser være tilgængelig"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr ""
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -16061,6 +16066,11 @@ msgstr "Vælg handling"
 msgid "Select Action"
 msgstr "Vælg handling"
 
+#. js-lingui-id: /fhMKz
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
+msgid "Select all rows"
+msgstr ""
+
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -16140,6 +16150,11 @@ msgstr "Vælg operand"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Select options"
 msgstr "Vælg valgmuligheder"
+
+#. js-lingui-id: 9c44h0
+#: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox.tsx
+msgid "Select row"
+msgstr ""
 
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -16792,6 +16807,16 @@ msgstr "Nogle logdata blev udeladt for at overholde størrelsesgrænsen ({0} pos
 #: src/pages/auth/Authorize.tsx
 msgid "Something went wrong"
 msgstr "Noget gik galt"
+
+#. js-lingui-id: oxbT4Q
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Something went wrong while contacting our billing service."
+msgstr ""
+
+#. js-lingui-id: GEfZAW
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+msgid "Something went wrong while contacting our billing service. Please try again."
+msgstr ""
 
 #. js-lingui-id: i34/fH
 #: src/pages/onboarding/WorkspaceActivation.tsx
@@ -18529,6 +18554,12 @@ msgstr "Udløser funktionen med en HTTP-anmodning"
 msgid "True"
 msgstr "Sand"
 
+#. js-lingui-id: KDw4GX
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "Try again"
+msgstr ""
+
 #. js-lingui-id: 64tOpZ
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Try our REST or GraphQL API playgrounds"
@@ -19936,6 +19967,12 @@ msgstr ""
 msgid "We couldn't confirm your payment method. Please retry."
 msgstr "Vi kunne ikke bekræfte din betalingsmetode. Prøv igen."
 
+#. js-lingui-id: TvNBSn
+#: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+#: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+msgid "We couldn't load the plans"
+msgstr ""
+
 #. js-lingui-id: 6eMAkI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "We encountered an issue verifying"
@@ -20079,6 +20116,7 @@ msgid "Welcome to Twenty"
 msgstr "Velkommen til Twenty"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Velkommen til dit arbejdsområde"

@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ export default defineApplication({
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="تشغيل دالة منطقية عند الاتصال" description="التفاعل فور إنشاء الاتصال">
+
+بعض المزوّدين يسلّمونك بيانات وقت الاتصال تحتاج إلى الاحتفاظ بها قبل أن يصبح الاتصال قابلاً للاستخدام — المثال الكلاسيكي هو Slack، حيث يحدّد رد OAuth معرّف الفريق `team_id` الخاص بمساحة العمل الذي ستُربط به الأحداث الواردة. عيِّن `onConnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه (حسب `universalIdentifier` الخاص بها)، وسيتم تشغيلها مباشرة بعد إنشاء `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+يعمل الـ hook **بشكل غير متزامن في مساحة العمل التي تجري الاتصال** (يتم وضعه في قائمة الانتظار، ولا يُنتظر انتهاؤه)، لذلك لن يؤدي hook بطيء أو فاشل إلى حظر أو تعطيل رد نداء OAuth — اجعله قابلاً للتكرار دون آثار جانبية (idempotent) ويتولى إعادة المحاولات بنفسه. يتلقى المعالج:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+من هناك استخدم `getConnection(connectedAccountId)` لقراءة رمز الوصول الجديد واستدعاء واجهة برمجة تطبيقات المزوّد (على سبيل المثال، Slack `auth.test`) أو حفظ تعيين باستخدام [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store).
 
 </Accordion>
 

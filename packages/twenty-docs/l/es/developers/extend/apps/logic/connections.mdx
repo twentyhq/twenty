@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ La URL de callback de OAuth que tu proveedor debe autorizar es:
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Ejecutar una función de lógica al conectar" description="Reaccionar en el momento en que se establece una conexión">
+
+Algunos proveedores te entregan datos en el momento de la conexión que necesitas conservar antes de que la conexión sea utilizable: el ejemplo clásico es Slack, donde la respuesta de OAuth identifica el `team_id` del espacio de trabajo con el que se asociarán los eventos entrantes. Establece `onConnectLogicFunction` para que haga referencia a una función de lógica en la misma aplicación (por su `universalIdentifier`), y se ejecutará justo después de que se cree el `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+El hook se ejecuta **de forma asíncrona en el espacio de trabajo que se está conectando** (se pone en cola, no se espera su finalización), por lo que un hook lento o con fallos nunca bloquea ni interrumpe el callback de OAuth; hazlo idempotente y haz que gestione sus propios reintentos. El controlador recibe:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+A partir de ahí, usa `getConnection(connectedAccountId)` para leer el token de acceso reciente y llamar a la API del proveedor (por ejemplo, Slack `auth.test`) o para conservar un mapeo con el [almacenamiento de pares clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
 
 </Accordion>
 

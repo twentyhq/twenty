@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -15,7 +15,8 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
-    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
     "test:watch": "vitest",
     "seed": "tsx src/scripts/seed.ts",
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
@@ -26,8 +27,8 @@
   },
   "dependencies": {
     "react-markdown": "^10.1.0",
-    "twenty-client-sdk": "2.23.0-alpha.1",
-    "twenty-sdk": "2.23.0-alpha.1",
+    "twenty-client-sdk": "2.23.0-alpha.2",
+    "twenty-sdk": "2.23.0-alpha.2",
     "zod": "^4.1.11"
   },
   "devDependencies": {

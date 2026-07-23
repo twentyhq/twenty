@@ -19,7 +19,7 @@ export class AddStatusesToBillingSubscriptionIndexSlowInstanceCommand
     }
 
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE"',
+      'DROP INDEX IF EXISTS "core"."IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE"',
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE" ON "core"."billingSubscription" ("workspaceId") WHERE status IN ('trialing', 'active', 'past_due', 'incomplete', 'incomplete_expired', 'unpaid', 'paused')`,
@@ -36,7 +36,7 @@ export class AddStatusesToBillingSubscriptionIndexSlowInstanceCommand
     }
 
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE"',
+      'DROP INDEX IF EXISTS "core"."IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE"',
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE" ON "core"."billingSubscription" ("workspaceId") WHERE status IN ('trialing', 'active', 'past_due')`,
