@@ -1753,6 +1753,15 @@ export class ConfigVariables {
   AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Evict stale tool outputs from the in-flight AI chat context sent to the model: outputs older than the last 2 user turns and beyond the newest 40k tokens of tool output are replaced with compact stubs. Persisted chat history is never modified.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_CHAT_STALE_TOOL_OUTPUT_EVICTION_ENABLED = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

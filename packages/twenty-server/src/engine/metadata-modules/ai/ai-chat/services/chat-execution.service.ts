@@ -55,6 +55,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
+import { StaleToolOutputEvictionService } from 'src/engine/metadata-modules/ai/ai-chat/services/stale-tool-output-eviction.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   ASK_QUESTIONS_TOOL_NAME,
@@ -117,6 +118,7 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly staleToolOutputEvictionService: StaleToolOutputEvictionService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -306,7 +308,16 @@ export class ChatExecutionService {
       parts: finalizeDanglingToolParts(message.parts),
     }));
 
-    const rawModelMessages = await convertToModelMessages(sanitizedMessages);
+    // In-flight only: evicts stale tool outputs from the copy sent to the
+    // model; persisted message parts are untouched.
+    const evictionResult =
+      this.staleToolOutputEvictionService.evictStaleToolOutputs(
+        sanitizedMessages,
+      );
+
+    const rawModelMessages = await convertToModelMessages(
+      evictionResult.messages,
+    );
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(

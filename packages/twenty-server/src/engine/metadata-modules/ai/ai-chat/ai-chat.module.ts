@@ -39,6 +39,7 @@ import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
+import { StaleToolOutputEvictionService } from './services/stale-tool-output-eviction.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
 @Module({
@@ -78,6 +79,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,
+    StaleToolOutputEvictionService,
     StreamAgentChatJob,
     SystemPromptBuilderService,
     AiGraphqlApiExceptionInterceptor,
