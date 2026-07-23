@@ -28,6 +28,8 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
         throw new UserInputError(exception);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_TEST_RATE_LIMITED:
+        throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);
       }

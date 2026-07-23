@@ -48,10 +48,6 @@ export class CampaignSendQuotaService {
   }
 
   private async getDailyLimit(workspaceId: string): Promise<number> {
-    if (!this.billingService.isBillingEnabled()) {
-      return Number.POSITIVE_INFINITY;
-    }
-
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { id: true, messageCampaignDailySendLimit: true },
@@ -59,6 +55,10 @@ export class CampaignSendQuotaService {
 
     if (isDefined(workspace?.messageCampaignDailySendLimit)) {
       return workspace.messageCampaignDailySendLimit;
+    }
+
+    if (!this.billingService.isBillingEnabled()) {
+      return Number.POSITIVE_INFINITY;
     }
 
     const { currentBillingSubscription } =

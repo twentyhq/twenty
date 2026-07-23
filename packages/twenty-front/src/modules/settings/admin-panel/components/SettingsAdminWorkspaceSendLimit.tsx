@@ -54,7 +54,9 @@ export const SettingsAdminWorkspaceSendLimit = ({
 
   const isValid =
     trimmedValue === '' ||
-    (Number.isInteger(parsedLimit) && parsedLimit >= 0 && parsedLimit <= 1000000);
+    (Number.isInteger(parsedLimit) &&
+      parsedLimit >= 0 &&
+      parsedLimit <= 1000000);
 
   const handleSave = async () => {
     if (!isValid) {
@@ -70,7 +72,9 @@ export const SettingsAdminWorkspaceSendLimit = ({
       });
       enqueueSuccessSnackBar({ message: t`Daily send limit updated` });
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to update the daily send limit` });
+      enqueueErrorSnackBar({
+        message: t`Failed to update the daily send limit`,
+      });
     }
   };
 

@@ -10,9 +10,10 @@ describe('getMessageCampaignStatusBadge', () => {
   });
 
   it('should badge sent campaigns as green', () => {
-    expect(getMessageCampaignStatusBadge(MessageCampaignStatus.SENT)).toEqual(
-      { color: 'green', label: 'Sent' },
-    );
+    expect(getMessageCampaignStatusBadge(MessageCampaignStatus.SENT)).toEqual({
+      color: 'green',
+      label: 'Sent',
+    });
   });
 
   it('should badge partially failed campaigns as orange', () => {

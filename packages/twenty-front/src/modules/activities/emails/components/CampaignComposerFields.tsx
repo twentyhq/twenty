@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
-import { useCampaignSendQuota } from '@/activities/emails/hooks/useCampaignSendQuota';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -31,15 +30,6 @@ const StyledHint = styled.div`
   font-size: ${themeCssVariables.font.size.xs};
   padding: ${themeCssVariables.spacing[1]} 0;
 `;
-
-const StyledHintExternalLink = styled.a`
-  color: ${themeCssVariables.font.color.primary};
-`;
-
-const buildQuotaIncreaseSupportUrl = () =>
-  `mailto:support@twenty.com?subject=${encodeURIComponent('Raise my email sending limit')}&body=${encodeURIComponent(
-    'Hi, I would like a higher daily email sending limit.\n\nWhat we send and to whom:\n',
-  )}`;
 
 type CampaignAudiencePreview = NonNullable<
   ReturnType<typeof useCampaignAudiencePreview>
@@ -99,10 +89,6 @@ export const CampaignComposerFields = ({
     unsubscribeTopicId: campaignState.unsubscribeTopicId,
   });
 
-  const sendQuota = useCampaignSendQuota();
-  const remainingEmails = sendQuota?.remaining;
-  const dailyEmailLimit = sendQuota?.dailyLimit;
-
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
     .map((channel) => channel.connectedAccount?.handle)
@@ -137,20 +123,6 @@ export const CampaignComposerFields = ({
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
-      {isDefined(remainingEmails) && isDefined(dailyEmailLimit) && (
-        <StyledHint>
-          {remainingEmails === 0
-            ? t`You cannot send campaigns yet.`
-            : t`${remainingEmails} of your ${dailyEmailLimit} daily emails left.`}{' '}
-          <StyledHintExternalLink
-            href={buildQuotaIncreaseSupportUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t`Ask support to raise it`}
-          </StyledHintExternalLink>
-        </StyledHint>
-      )}
       {topicOptions.length > 0 && (
         <>
           <Select
@@ -164,9 +136,6 @@ export const CampaignComposerFields = ({
               campaignState.setUnsubscribeTopicId(value === '' ? null : value)
             }
           />
-          <StyledHint>
-            {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-          </StyledHint>
         </>
       )}
       <FormTextFieldInput
@@ -180,7 +149,6 @@ export const CampaignComposerFields = ({
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}
-        maxWidth={600}
         contentType="html"
       />
     </StyledFieldsContainer>

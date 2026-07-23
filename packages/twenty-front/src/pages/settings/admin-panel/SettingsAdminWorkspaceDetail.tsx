@@ -39,6 +39,7 @@ import {
   IconCreditCard,
   IconEyeShare,
   IconFlag,
+  IconGauge,
   IconMessage,
   IconSettings2,
   IconUsers,
@@ -64,6 +65,7 @@ const WORKSPACE_DETAIL_TAB_IDS = {
   BILLING: 'billing',
   MEMBERS: 'members',
   FEATURE_FLAGS: 'feature-flags',
+  RATE_LIMITS: 'rate-limits',
   CHATS: 'chats',
 };
 
@@ -184,6 +186,11 @@ export const SettingsAdminWorkspaceDetail = () => {
             id: WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS,
             title: t`Feature Flags`,
             Icon: IconFlag,
+          },
+          {
+            id: WORKSPACE_DETAIL_TAB_IDS.RATE_LIMITS,
+            title: t`Rate Limits`,
+            Icon: IconGauge,
           },
         ]
       : []),
@@ -326,7 +333,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           </Section>
         )}
 
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
+        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.RATE_LIMITS &&
           workspace && (
             <SettingsAdminWorkspaceSendLimit
               workspaceId={workspace.id}

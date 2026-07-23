@@ -7,6 +7,8 @@ import { v4, v5 } from 'uuid';
 
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
+  CAMPAIGN_TEST_SEND_THROTTLE_LIMIT,
+  CAMPAIGN_TEST_SEND_THROTTLE_WINDOW_MS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   MATERIALIZE_CAMPAIGN_JOB,
@@ -51,6 +53,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
@@ -131,6 +134,7 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendQuotaService: CampaignSendQuotaService,
+    private readonly throttlerService: ThrottlerService,
     private readonly emailBillingService: EmailBillingService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
@@ -265,6 +269,20 @@ export class MessageCampaignService {
     fromAddress,
     unsubscribeTopicId,
   }: SendCampaignTestArgs): Promise<EmailingDomainSendEmailResult> {
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `${workspaceId}-campaign-test-send`,
+        1,
+        CAMPAIGN_TEST_SEND_THROTTLE_LIMIT,
+        CAMPAIGN_TEST_SEND_THROTTLE_WINDOW_MS,
+      );
+    } catch {
+      throw new EmailingDomainException(
+        `Campaign test send rate limit exceeded for workspace ${workspaceId}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_TEST_RATE_LIMITED,
+      );
+    }
+
     const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
       workspaceId,
       fromAddress,

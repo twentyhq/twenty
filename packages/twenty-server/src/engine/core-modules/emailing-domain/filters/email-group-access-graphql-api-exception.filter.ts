@@ -19,6 +19,8 @@ export class EmailGroupAccessGraphqlApiExceptionFilter implements ExceptionFilte
     switch (exception.code) {
       case EmailGroupAccessExceptionCode.EMAIL_GROUP_ENTERPRISE_PLAN_REQUIRED:
         throw new ForbiddenError(exception);
+      case EmailGroupAccessExceptionCode.CAMPAIGN_SEND_QUOTA_EXCEEDED:
+        throw new ForbiddenError(exception);
       case EmailGroupAccessExceptionCode.INTERNAL_SERVER_ERROR:
         throw new InternalServerError(exception);
       default: {

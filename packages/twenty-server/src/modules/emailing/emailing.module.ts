@@ -12,6 +12,7 @@ import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/messag
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
@@ -29,6 +30,7 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
 
 @Module({
   imports: [
+    ThrottlerModule,
     EmailingDomainModule,
     MessageChannelMetadataModule,
     FeatureFlagModule,

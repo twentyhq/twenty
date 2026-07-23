@@ -50,6 +50,8 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
         throw new UserInputError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_TEST_RATE_LIMITED:
+        throw new ForbiddenError(error);
       default: {
         return assertUnreachable(error.code);
       }
