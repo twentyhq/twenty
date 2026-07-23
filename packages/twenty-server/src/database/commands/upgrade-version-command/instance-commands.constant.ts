@@ -121,6 +121,7 @@ import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
+import { AddCompactionSummaryToAgentChatThreadFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784811292342-add-compaction-summary-to-agent-chat-thread';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -244,4 +245,5 @@ export const INSTANCE_COMMANDS = [
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
+  AddCompactionSummaryToAgentChatThreadFastInstanceCommand,
 ];

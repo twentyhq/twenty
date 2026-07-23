@@ -54,6 +54,7 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import { MessageCompactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-compaction.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
@@ -117,6 +118,7 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly messageCompactionService: MessageCompactionService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -239,10 +241,25 @@ export class ChatExecutionService {
       ),
     };
 
+    const compactionResult =
+      await this.messageCompactionService.compactIfOverBudget({
+        messages,
+        threadId,
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        contextWindowTokens: modelConfig.contextWindowTokens,
+        conversationSizeTokens,
+        threadModel: registeredModel,
+      });
+
+    if (compactionResult.wasCompacted) {
+      onCompaction?.();
+    }
+
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
     let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
-      messages,
+      compactionResult.messages,
       modelConfig.modalities,
       isCodeInterpreterEnabled,
     );
@@ -308,12 +325,20 @@ export class ChatExecutionService {
 
     const rawModelMessages = await convertToModelMessages(sanitizedMessages);
 
-    const pruningResult =
-      this.messagePruningService.pruneIfOverContextWindowLimit(
-        rawModelMessages,
-        modelConfig.contextWindowTokens,
-        conversationSizeTokens,
-      );
+    // Hard-overflow fallback: when summarization just rewrote the context,
+    // conversationSizeTokens still measures the pre-compaction request, so
+    // pruning on it would misfire.
+    const pruningResult = compactionResult.wasCompacted
+      ? {
+          messages: rawModelMessages,
+          wasPruned: false,
+          isStillOverLimit: false,
+        }
+      : this.messagePruningService.pruneIfOverContextWindowLimit(
+          rawModelMessages,
+          modelConfig.contextWindowTokens,
+          conversationSizeTokens,
+        );
 
     if (pruningResult.isStillOverLimit) {
       throw new AiException(
