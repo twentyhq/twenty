@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    timeout-minutes: 5
+    timeout-minutes: 30
     runs-on:
       - self-hosted
       - k3s
