@@ -1,0 +1,1151 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-workspace-command-1784567000000-backfill-message-list-members-junction-target.command.ts
+  s_c3fbc446206706::t_a0701dbb5b14ba 5,14,71,73-80
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_363d40971e8ed2 120,125,247,250
+package.json
+  s_c3fbc446206706::t_8e42a8f116334e 58-66,75
+packages/create-twenty-app/package.json
+  s_c3fbc446206706::t_031ffc49d53aa8 3
+packages/twenty-apps/internal/twenty-partners/AGENTS.md
+  s_c3fbc446206706::t_4cd5fb1e732f8a 1-104
+packages/twenty-apps/internal/twenty-partners/CLAUDE.md
+  s_c3fbc446206706::t_08266b707eeb96 1
+packages/twenty-apps/internal/twenty-partners/package.json
+  s_c3fbc446206706::t_1439f2559e0bed 3,18-19
+packages/twenty-apps/internal/twenty-partners/src/modules/application/__tests__/on-application-created.test.ts
+  s_c3fbc446206706::t_ca4f2f47ae20b7 14
+packages/twenty-apps/internal/twenty-partners/src/modules/application/__tests__/on-application-set-name.test.ts
+  s_c3fbc446206706::t_995b4857eeb7f9 14
+packages/twenty-apps/internal/twenty-partners/src/modules/application/fields/applications-as-partner-user-on-workspace-member.field.ts
+  s_c3fbc446206706::t_6a2bccf1c6f60b 12
+packages/twenty-apps/internal/twenty-partners/src/modules/application/fields/applications-on-partner.field.ts
+  s_c3fbc446206706::t_09fd80125a12f3 8
+packages/twenty-apps/internal/twenty-partners/src/modules/application/graphql/mutations/delete-application.ts
+  s_c3fbc446206706::t_9edf559b216ded 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/application/graphql/mutations/update-application.ts
+  s_c3fbc446206706::t_a65522cb01a1c7 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/application/graphql/queries/find-application-with-relations.ts
+  s_c3fbc446206706::t_ede571f20fea57 1-12
+packages/twenty-apps/internal/twenty-partners/src/modules/application/graphql/queries/find-duplicate-application.ts
+  s_c3fbc446206706::t_e93b78489ac0e4 1-20
+packages/twenty-apps/internal/twenty-partners/src/modules/application/graphql/queries/find-partner-by-member.ts
+  s_c3fbc446206706::t_b4f7c22fac3b6e 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/application/navigation-menu-items/applications-by-opportunity.navigation-menu-item.ts
+  s_c3fbc446206706::t_3d2c6aaf12006b 3
+packages/twenty-apps/internal/twenty-partners/src/modules/application/navigation-menu-items/applications-review.navigation-menu-item.ts
+  s_c3fbc446206706::t_1d110c9a1cf205 3
+packages/twenty-apps/internal/twenty-partners/src/modules/application/navigation-menu-items/followup-applications.navigation-menu-item.ts
+  s_c3fbc446206706::t_74677fec4cccb9 3
+packages/twenty-apps/internal/twenty-partners/src/modules/application/navigation-menu-items/my-applications.navigation-menu-item.ts
+  s_c3fbc446206706::t_5c59f247f62ec9 3,5
+packages/twenty-apps/internal/twenty-partners/src/modules/application/on-application-created.logic-function.ts
+  s_c3fbc446206706::t_318aee30b05c2a 1-23
+packages/twenty-apps/internal/twenty-partners/src/modules/application/on-application-set-name.logic-function.ts
+  s_c3fbc446206706::t_32a57984bdd614 8-10,18,23,29
+packages/twenty-apps/internal/twenty-partners/src/modules/application/page-layouts/application.page-layout.ts
+  s_c3fbc446206706::t_50d3e3d0b94a37 3-4
+packages/twenty-apps/internal/twenty-partners/src/modules/application/services/resolve-candidacy.service.ts
+  s_c3fbc446206706::t_3a87f98c762f53 1-4,7-14,21-24,32,38,43,49-53,57
+packages/twenty-apps/internal/twenty-partners/src/modules/application/views/application-record-page-fields.view.ts
+  s_c3fbc446206706::t_cd71f81b15a6d7 10
+packages/twenty-apps/internal/twenty-partners/src/modules/application/views/applications-by-opportunity.view.ts
+  s_c3fbc446206706::t_d31c56dbf9aebb 10
+packages/twenty-apps/internal/twenty-partners/src/modules/application/views/applications-review.view.ts
+  s_c3fbc446206706::t_e8f97f43620633 11
+packages/twenty-apps/internal/twenty-partners/src/modules/application/views/followup-applications.view.ts
+  s_c3fbc446206706::t_1259a08b6e4b06 11
+packages/twenty-apps/internal/twenty-partners/src/modules/application/views/my-applications.view.ts
+  s_c3fbc446206706::t_26186120ed7276 9
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/fields/applications-on-opportunity.field.ts
+  s_c3fbc446206706::t_2f1bbfe2ace3ed 12
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/graphql/mutations/create-opportunity.ts
+  s_c3fbc446206706::t_8a0a202fe0ec51 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/graphql/queries/find-opportunity-by-dedupe-key.ts
+  s_c3fbc446206706::t_ce053b0fe325a1 1-13
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/import-opportunity-from-tft.logic-function.ts
+  s_c3fbc446206706::t_8fc629f82b1de0 1-36
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/import-opportunity-from-tft.test.ts
+  s_c3fbc446206706::t_ddcfa26706bae5 16-17
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/mappers/build-requirements-text.mapper.ts
+  s_c3fbc446206706::t_cff6359f9c6035 3,22-25
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/mappers/import-opportunity-from-tft.mapper.ts
+  s_c3fbc446206706::t_61bdfeb56347df 1-75
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/services/import-opportunity-from-tft.service.ts
+  s_c3fbc446206706::t_6bc5cca760cae6 6-13,19-20,79-83,95,106-108,110-111,119
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/services/submit-client-brief.service.ts
+  s_c3fbc446206706::t_2a267c93aa8271 1-55
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/submit-client-brief.integration-test.ts
+  s_c3fbc446206706::t_64aa5be7801cd8 4-5
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/submit-client-brief.logic-function.ts
+  s_c3fbc446206706::t_086f0f0119df14 1-34
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/intake/submit-client-brief.test.ts
+  s_c3fbc446206706::t_432b5391235feb 3
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/mutations/update-application-state.ts
+  s_c3fbc446206706::t_3500a10201965a 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/mutations/update-company-partner-user.ts
+  s_c3fbc446206706::t_ac5c657d714f0b 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/mutations/update-opportunity-partner-user.ts
+  s_c3fbc446206706::t_577dbd32c8cc98 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/mutations/update-person-partner-user.ts
+  s_c3fbc446206706::t_249e0ebbdfacba 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/find-opportunity-still-using-company.ts
+  s_c3fbc446206706::t_4611568b4adb87 1-26
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/get-company-partner-user.ts
+  s_c3fbc446206706::t_f0a33f6a115565 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/get-opportunity-cascade-fields.ts
+  s_c3fbc446206706::t_a24f33343668df 1-12
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/get-partner-partner-user.ts
+  s_c3fbc446206706::t_a59ca8ad880594 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/list-applications-by-opportunity.ts
+  s_c3fbc446206706::t_1b93937ae914bd 1-21
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/graphql/queries/list-people-by-filter.ts
+  s_c3fbc446206706::t_1a0f0ee9682a40 1-17
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/on-opportunity-partner-assigned.integration-test.ts
+  s_c3fbc446206706::t_69aa34a9b7972d 4,6
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/on-opportunity-partner-assigned.logic-function.ts
+  s_c3fbc446206706::t_716cc2b398911f 1-25
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/on-opportunity-partner-won.logic-function.ts
+  s_c3fbc446206706::t_0e8c34d9b49489 1-27
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/on-opportunity-partner-won.test.ts
+  s_c3fbc446206706::t_f31ec37fdd345b 13
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/services/propagate-partner-user.service.ts
+  s_c3fbc446206706::t_8e954b2fbb0229 1-4,7-15,17-19,25-29,41,51-59,73,78,88-91,98,100,117,121,130,136,147
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/matching/services/sync-application-outcomes.service.ts
+  s_c3fbc446206706::t_2560bf3d981d0c 1,3-5,10-14,16-19,21,30,41
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/navigation-menu-items/briefs-to-match.navigation-menu-item.ts
+  s_c3fbc446206706::t_6c89750a0fd658 3
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/navigation-menu-items/deals-board.navigation-menu-item.ts
+  s_c3fbc446206706::t_72dea703c05039 3
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/navigation-menu-items/followup-briefs.navigation-menu-item.ts
+  s_c3fbc446206706::t_417138421e5aca 3
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/navigation-menu-items/my-deals.navigation-menu-item.ts
+  s_c3fbc446206706::t_17024c96f9e2a1 3,5
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/navigation-menu-items/open-briefs.navigation-menu-item.ts
+  s_c3fbc446206706::t_ee2defe74cc37d 3,5
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/view-fields/opportunity-record-page-applications.view-field.ts
+  s_c3fbc446206706::t_59bf13d7e401db 7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/view-fields/opportunity-record-page-is-listed.view-field.ts
+  s_c3fbc446206706::t_647a98249e60e8 7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/view-fields/opportunity-record-page-need.view-field.ts
+  s_c3fbc446206706::t_bff53f0a31cefd 7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/view-fields/opportunity-record-page-partner.view-field.ts
+  s_c3fbc446206706::t_a6c011f3cebcfc 7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/view-fields/opportunity-record-page-requirements.view-field.ts
+  s_c3fbc446206706::t_1bcf2ec496216c 7
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/all-opportunities.view.ts
+  s_c3fbc446206706::t_a6e2ef7b49f604 8-9
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/briefs-to-match.view.ts
+  s_c3fbc446206706::t_510246812f2d45 8-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/deals-board.view.ts
+  s_c3fbc446206706::t_f5087890b85663 8-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/followup-briefs.view.ts
+  s_c3fbc446206706::t_3ea5899e9ea06f 8-11
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/my-deals.view.ts
+  s_c3fbc446206706::t_459b76a43da15c 8-9
+packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/views/open-briefs.view.ts
+  s_c3fbc446206706::t_5536b97b9c3103 8-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/derive-deployment-expertise.test.ts
+  s_c3fbc446206706::t_dc5d3105338038 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/derive-region.test.ts
+  s_c3fbc446206706::t_a52cc0787ade01 3-4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/map-tally-experience-csv-row.mapper.test.ts
+  s_c3fbc446206706::t_4098382fce3c4a 1-176
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/on-partner-application-created.test.ts
+  s_c3fbc446206706::t_d1178116e09e6a 12-13
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/submit-partner-application.integration-test.ts
+  s_c3fbc446206706::t_52453adeb06aea 283-364
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/__tests__/submit-partner-application.schema.test.ts
+  s_c3fbc446206706::t_b9272f45511248 3,73-145
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/connector/discord/config.ts
+  s_c3fbc446206706::t_79d8f047629cad 1-9
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/connector/discord/discord.connector.ts
+  s_c3fbc446206706::t_633339c58a9b8a 1-32
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/connector/discord/types.ts
+  s_c3fbc446206706::t_0caca9d9240e0d 1-5
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/mutations/create-company.ts
+  s_c3fbc446206706::t_9b4d03fb810920 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/mutations/create-partner.ts
+  s_c3fbc446206706::t_b01520a9159fa1 1-13
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/mutations/create-person.ts
+  s_c3fbc446206706::t_94adfcbf2cd76f 1-13
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/mutations/update-partner.ts
+  s_c3fbc446206706::t_d0eb77b2a08f7d 1-14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/mutations/update-person.ts
+  s_c3fbc446206706::t_01f63eed554a6c 1-14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/queries/find-companies-by-domain.ts
+  s_c3fbc446206706::t_9ad49a027a0422 1-19
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/queries/find-partner-for-embed.ts
+  s_c3fbc446206706::t_0373a3ca6ff981 1-22
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/graphql/queries/find-person-by-email.ts
+  s_c3fbc446206706::t_0e55aba93cdb15 1-18
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/mappers/application-embed.mapper.ts
+  s_c3fbc446206706::t_e852772f503bef 1-3,5
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/mappers/build-partner-fields.mapper.ts
+  s_c3fbc446206706::t_0df97bcb8aaf33 1,3-7,20,34-36,39,62-73,77-78,80-91
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/mappers/map-tally-experience-csv-row.mapper.ts
+  s_c3fbc446206706::t_e8856c0362d1d3 1-219
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/navigation-menu-items/partner-applications.navigation-menu-item.ts
+  s_c3fbc446206706::t_7b3d429100aee5 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/on-partner-application-created.logic-function.ts
+  s_c3fbc446206706::t_48ffb6863bc661 1-39
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/services/find-or-create-company.service.ts
+  s_c3fbc446206706::t_319b7b7ef47f72 1-61
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/services/notify-partner-application.service.ts
+  s_c3fbc446206706::t_7680caaa322c52 1-46
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/services/submit-partner-application-input.schema.ts
+  s_c3fbc446206706::t_88fb768149d04b 1-86
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/services/submit-partner-application.service.ts
+  s_c3fbc446206706::t_f56e9571e4185e 1-68
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/submit-partner-application.logic-function.ts
+  s_c3fbc446206706::t_5fe1f9a37a72c3 1-39
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/application-intake/views/partner-applications.view.ts
+  s_c3fbc446206706::t_6782d06f14dec7 11-13,15,20,57-58,61-76,82,89,97-98
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/constants/partner-field-universal-identifiers.ts
+  s_c3fbc446206706::t_2786e27af35e61 64-72
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/constants/partner-option-values.constant.ts
+  s_c3fbc446206706::t_01d74a634b5c91 1-23
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/navigation-menu-items/partners-per-country.navigation-menu-item.ts
+  s_c3fbc446206706::t_74e65e097ca483 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/navigation-menu-items/partners-per-stage.navigation-menu-item.ts
+  s_c3fbc446206706::t_0094c9829a77ed 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/navigation-menu-items/partners-validated.navigation-menu-item.ts
+  s_c3fbc446206706::t_73f38ec4a74562 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/page-layouts/partner-content.page-layout.ts
+  s_c3fbc446206706::t_cb30b2f4d3060d 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/page-layouts/partner-link.page-layout.ts
+  s_c3fbc446206706::t_2583efff5ad511 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/page-layouts/partner-service.page-layout.ts
+  s_c3fbc446206706::t_51fbeda52006e2 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/page-layouts/partner.page-layout.ts
+  s_c3fbc446206706::t_12f31567842bcd 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partner-content-record-page-fields.view.ts
+  s_c3fbc446206706::t_0bb2842579c52f 4,13
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partner-content.view.ts
+  s_c3fbc446206706::t_30350b91440bf5 16
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partner-link-record-page-fields.view.ts
+  s_c3fbc446206706::t_b0403dda2d5bb6 4,9
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partner-record-page-fields.view.ts
+  s_c3fbc446206706::t_394a09b985bdef 21-23,27,31-32,35,38-39,49-50,71-72,78-79,84-86,91-92,97-99,103-116,120,125-127,132-134,139-141,147,153,159,164-166,171-173,179,185,190-192,198,204,210,215-217,223,229,235
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partner-service-record-page-fields.view.ts
+  s_c3fbc446206706::t_93cea42ff43a43 4,9
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partners-per-country.view.ts
+  s_c3fbc446206706::t_631f6ad17f3d62 8,14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partners-per-stage.view.ts
+  s_c3fbc446206706::t_c20e54d7074aaf 8,10,81-88,92
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/directory/views/partners-validated.view.ts
+  s_c3fbc446206706::t_7f749fa1f7e7bf 7,9,11,13,48-62,66,73
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/__tests__/marketplace-api.integration-test.ts
+  s_c3fbc446206706::t_f14a1eed326a9a 4-5
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/get-partner-by-slug.logic-function.ts
+  s_c3fbc446206706::t_66ab7c188f25ae 1-22
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/graphql/queries/get-partner-by-slug.ts
+  s_c3fbc446206706::t_f995b0ea82abf3 1,5
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/graphql/queries/list-available-partners.ts
+  s_c3fbc446206706::t_4ab6ac8932e79c 1,7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/list-available-partners.logic-function.ts
+  s_c3fbc446206706::t_6c6625da0f6db6 1-21
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/mappers/map-partner-for-marketplace.mapper.test.ts
+  s_c3fbc446206706::t_003ec6234d0e05 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/mappers/map-partner-for-marketplace.mapper.ts
+  s_c3fbc446206706::t_ff2a6bbadd4291 3-6
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/services/get-partner-by-slug.service.ts
+  s_c3fbc446206706::t_5b747f1d9900e7 1-55
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/marketplace/services/list-available-partners.service.ts
+  s_c3fbc446206706::t_1fabcc177cd5e2 1-44
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/objects/partner.object.ts
+  s_c3fbc446206706::t_0bcbff2adb6b63 495-548
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/__tests__/resolve-partner-from-request.integration-test.ts
+  s_c3fbc446206706::t_91cb81fcc72448 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/__tests__/save-my-partner-content.integration-test.ts
+  s_c3fbc446206706::t_2fda3a9665211a 7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/__tests__/save-my-partner-links.integration-test.ts
+  s_c3fbc446206706::t_924dcda4858f8f 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/__tests__/save-my-partner-services.integration-test.ts
+  s_c3fbc446206706::t_bfeb175c80bd4b 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/__tests__/submit-partner-content-for-review.integration-test.ts
+  s_c3fbc446206706::t_49fbb5d7fdac72 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/front-components/my-case-studies.front-component.tsx
+  s_c3fbc446206706::t_75c2b63ae5925e 5-6
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/front-components/my-profile.front-component.tsx
+  s_c3fbc446206706::t_343bc3107c5bec 5-6,9
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/front-components/my-profile/types.ts
+  s_c3fbc446206706::t_33bacf6beb527e 1-8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/get-my-partner-profile.logic-function.ts
+  s_c3fbc446206706::t_09c046e642a292 1-25
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/create-partner-content.ts
+  s_c3fbc446206706::t_2b09731f468d84 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/create-partner-link.ts
+  s_c3fbc446206706::t_1ed719a25f3d14 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/create-partner-service.ts
+  s_c3fbc446206706::t_68ecef8670de06 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/delete-partner-content.ts
+  s_c3fbc446206706::t_857647a46d523d 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/delete-partner-link.ts
+  s_c3fbc446206706::t_a07daab57c77b2 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/delete-partner-service.ts
+  s_c3fbc446206706::t_a58abb8d54f595 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/update-partner-content.ts
+  s_c3fbc446206706::t_9787dbc72767d0 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/update-partner-link.ts
+  s_c3fbc446206706::t_fb659f62440a0c 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/update-partner-service.ts
+  s_c3fbc446206706::t_dbe411446fd937 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/mutations/update-partner.ts
+  s_c3fbc446206706::t_f259379048ce91 1-11
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-my-partner-profile.ts
+  s_c3fbc446206706::t_5c28bf1619ce8c 1-72
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-by-member.ts
+  s_c3fbc446206706::t_e1863b4fe1d4b1 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-content-ids.ts
+  s_c3fbc446206706::t_cbaa7abf590cd1 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-content-owner.ts
+  s_c3fbc446206706::t_6c8274c055cf4e 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-content-rows.ts
+  s_c3fbc446206706::t_c5a588eb80206b 1-22
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-link-ids.ts
+  s_c3fbc446206706::t_bec010a8567edb 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-link-rows.ts
+  s_c3fbc446206706::t_428efaa3a7e7f2 1-17
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-service-ids.ts
+  s_c3fbc446206706::t_72bad694e1316d 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/graphql/queries/find-partner-service-rows.ts
+  s_c3fbc446206706::t_a68b7ff96b891c 1-17
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/get-my-partner-profile.mapper.test.ts
+  s_c3fbc446206706::t_9ed6b16aaca51d 3
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/get-my-partner-profile.mapper.ts
+  s_c3fbc446206706::t_c5e48a64ef7109 1-3,45
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-content.mapper.test.ts
+  s_c3fbc446206706::t_cedc97119f6753 7-8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-content.mapper.ts
+  s_c3fbc446206706::t_0f9f1fbe5e84b8 1-70
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-links.mapper.ts
+  s_c3fbc446206706::t_82bad9a59ac257 1-25
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-profile.mapper.test.ts
+  s_c3fbc446206706::t_5e1fb4de010a28 7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-profile.mapper.ts
+  s_c3fbc446206706::t_c87c581665adf3 4-5
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/save-my-partner-services.mapper.ts
+  s_c3fbc446206706::t_e73a97baab14de 1,3-9,11,13-21
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/mappers/submit-partner-content-for-review.mapper.ts
+  s_c3fbc446206706::t_5becb90dbc0595 1-13
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/navigation-menu-items/my-case-studies.navigation-menu-item.ts
+  s_c3fbc446206706::t_766c53a3cc8281 5-6
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/navigation-menu-items/my-profile.navigation-menu-item.ts
+  s_c3fbc446206706::t_18a2ba7d722624 6,8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/on-partner-content-created.logic-function.ts
+  s_c3fbc446206706::t_e6be768d4dee2e 1-14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/on-partner-link-created.logic-function.ts
+  s_c3fbc446206706::t_481fa27e1093b0 1-14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/on-partner-service-created.logic-function.ts
+  s_c3fbc446206706::t_932a72465dbad9 1-14
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/page-layouts/my-case-studies.page-layout.ts
+  s_c3fbc446206706::t_f44e7693d00375 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/page-layouts/my-profile.page-layout.ts
+  s_c3fbc446206706::t_7de0248ddbfa55 8
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/save-my-partner-content.logic-function.ts
+  s_c3fbc446206706::t_c1e49645d9a016 1-25
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/save-my-partner-links.logic-function.ts
+  s_c3fbc446206706::t_46866d965d3485 1-24
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/save-my-partner-profile.logic-function.ts
+  s_c3fbc446206706::t_fcdcedba100ef8 1-24
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/save-my-partner-services.logic-function.ts
+  s_c3fbc446206706::t_78065ded7b3840 1-25
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/get-my-partner-profile.service.ts
+  s_c3fbc446206706::t_0f506fefeaa0c8 1-39
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/on-partner-content-created.service.ts
+  s_c3fbc446206706::t_5b8a4c2945092d 7-9,21,35-36,39-44,53
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/on-partner-link-created.service.ts
+  s_c3fbc446206706::t_4686cd7848ee62 7-9,11,25-26,29-31
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/on-partner-service-created.service.ts
+  s_c3fbc446206706::t_c9fe315350ef14 7-9,11,25-26,29-31
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/resolve-partner-from-request.service.ts
+  s_c3fbc446206706::t_d362a835e14138 3-4,50
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/resolve-partner-from-request.test.ts
+  s_c3fbc446206706::t_93828b0ff9a397 7
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/save-my-partner-content.service.ts
+  s_c3fbc446206706::t_3ad1137de64f01 1-22,32,42,57-59,79,98,102
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/save-my-partner-links.service.ts
+  s_c3fbc446206706::t_faf6c642dbd339 2-19,27,32,41-43,60-64,71-74,79
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/save-my-partner-profile.service.ts
+  s_c3fbc446206706::t_81c4b632f971fb 1-42
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/save-my-partner-services.service.ts
+  s_c3fbc446206706::t_f7abc787c8eeb2 2-19,29,37,46-48,65-69,76-79,84
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/stamp-partner-user-on-child.test.ts
+  s_c3fbc446206706::t_24e5065f7b6076 4
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/services/submit-partner-content-for-review.service.ts
+  s_c3fbc446206706::t_c5227a9540a50c 2-15,25,31,53-54
+packages/twenty-apps/internal/twenty-partners/src/modules/partner/self-service/submit-partner-content-for-review.logic-function.ts
+  s_c3fbc446206706::t_26f9c503af7542 1-26
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/graphql/mutations/create-company.ts
+  s_c3fbc446206706::t_3f9df869944a8c 1-7
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/graphql/mutations/create-person.ts
+  s_c3fbc446206706::t_25e53f6dcb98ff 1-23
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/graphql/queries/find-company-by-name.ts
+  s_c3fbc446206706::t_c9dc6c08f2e960 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/graphql/queries/find-person-by-email.ts
+  s_c3fbc446206706::t_a9c86a3f6c36ac 1-10
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/http/read-secret-guarded-event.test.ts
+  s_c3fbc446206706::t_1f57af56d1c097 1-64
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/http/read-secret-guarded-event.ts
+  s_c3fbc446206706::t_ffb5521145c008 1-21
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/services/find-or-create-company-and-person.service.ts
+  s_c3fbc446206706::t_fa5fa3df72b909 3-7,14,27,39,62
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/utils/http-url.util.test.ts
+  s_c3fbc446206706::t_e9f59738a6bc81 3
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/utils/is-non-empty-string.util.ts
+  s_c3fbc446206706::t_03272f2c071674 1-3
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/utils/paginate.util.ts
+  s_c3fbc446206706::t_a92353b600bc48 1-4,6-16,18-19,21-22
+packages/twenty-apps/internal/twenty-partners/src/modules/shared/utils/strip-markdown.util.test.ts
+  s_c3fbc446206706::t_56392d4e571d8e 3
+packages/twenty-apps/internal/twenty-partners/src/roles/partner.role.ts
+  s_c3fbc446206706::t_57accdd2e201ea 23,30-52
+packages/twenty-apps/internal/twenty-partners/src/scripts/backfill-partner-user-on-children.ts
+  s_c3fbc446206706::t_37d07879185920 6
+packages/twenty-apps/internal/twenty-partners/vitest.config.ts
+  s_c3fbc446206706::t_4bbd67c637eb15 21-45
+packages/twenty-apps/public/call-recorder/package.json
+  s_c3fbc446206706::t_0a3a5b9ff4fa51 3
+packages/twenty-apps/public/call-recorder/src/logic-functions/__tests__/schedule-recall-bot-on-call-recording-update.test.ts
+  s_c3fbc446206706::t_8b83392909d842 3-5,135-149
+packages/twenty-apps/public/call-recorder/src/logic-functions/schedule-recall-bot-on-call-recording-update.ts
+  s_c3fbc446206706::t_d8faac940f95aa 128
+packages/twenty-apps/public/people-data-labs/package.json
+  s_c3fbc446206706::t_8292284fe3b52e 3,27,30-31
+packages/twenty-apps/public/people-data-labs/yarn.lock
+  s_c3fbc446206706::t_1ed6400830e647 951,954-955,1022-1024,1027
+packages/twenty-client-sdk/package.json
+  s_c3fbc446206706::t_b2326946ac184e 3
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_c3fbc446206706::t_d638d7911a0cf1 872,1505-1571,1745,3775
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_c3fbc446206706::t_e987345006fefc 614,1172-1238,1400,3729,4306-4375,6436,7454-7461,7470-7513,9301-9306,9340
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_c3fbc446206706::t_7bde9ddfac112c 47-53,55,102,105,108,1736,1742,1745,2731,2739,2742,2745,2756,2765,2791,2794,2800,2817,2834,2837,2854,2857,2883-2912,2924-2926,2928-2929,2931-2932,2934,2937-2952,2955-2956,2958-2970,2975-3034,3041,3055,3084,3087,3090,3093,3120,3123,3173,3210,3243,3269,3278,3290,3305,3317,3328,3331,6129,6132,6166,6292,6304,6315,6318,6321,6324,7205,7214,7223,7232,7241,7250,7259,7282,7294,7297,7306,7315,7324,7333,7342,7351,7364,7677,7680,7706,7709,7713,7726,7729,7733,7750,7753,7756,7759,7762,7765,7774,7777,7789,7798,7810,7828,8060,9056,9525,9908-9910,12175
+packages/twenty-codex-plugin/scripts/validators/cross-doc-contracts.js
+  s_c3fbc446206706::t_bb6c98c27298ca 179
+packages/twenty-docs/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_8681153f504ef3 45-47,93-126
+packages/twenty-docs/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_02f92eaf9de2f1 62,293
+packages/twenty-docs/l/ar/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_45fc336d1d9696 45-47,93-126
+packages/twenty-docs/l/ar/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_df151c1368120e 62,292
+packages/twenty-docs/l/cs/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_01a6bf8463871d 45-47,93-126
+packages/twenty-docs/l/cs/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_797ebda40a9005 62,293
+packages/twenty-docs/l/de/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_cc5de3452b8afb 45-47,93-126
+packages/twenty-docs/l/de/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_296e8ee4ad9bdd 62,292
+packages/twenty-docs/l/es/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_629cd9b668bb70 45-47,93-126
+packages/twenty-docs/l/es/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_a20f78eb59a51a 62,293
+packages/twenty-docs/l/fr/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_21e8d9be8ab807 45-47,93-126
+packages/twenty-docs/l/fr/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_c9dbddbdb8e617 62,293
+packages/twenty-docs/l/it/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_b7ed579336fae1 45-47,93-126
+packages/twenty-docs/l/it/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_09a59fc8765d73 62,292
+packages/twenty-docs/l/ja/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_df34466b87810c 45-47,93-126
+packages/twenty-docs/l/ja/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_ba9325d7338db5 62,293
+packages/twenty-docs/l/ko/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_533771364a546b 45-47,93-126
+packages/twenty-docs/l/ko/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_085afaf2a2f8c1 62,292
+packages/twenty-docs/l/pt/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_5d346dbb14c8db 45-47,93-126
+packages/twenty-docs/l/pt/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_5a2213e7fddaae 62,292
+packages/twenty-docs/l/ro/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_2e59d522736958 45-47,93-126
+packages/twenty-docs/l/ro/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_a7b3ec64c34601 62,293
+packages/twenty-docs/l/tr/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_fab2f68c596a6b 45-47,93-126
+packages/twenty-docs/l/tr/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_0ee024c03e5dc4 62,293
+packages/twenty-docs/l/zh/developers/extend/apps/logic/connections.mdx
+  s_c3fbc446206706::t_1b3cc3b5a82f7b 45-47,93-126
+packages/twenty-docs/l/zh/developers/extend/apps/logic/logic-functions.mdx
+  s_c3fbc446206706::t_fea2c5e2cc4626 62,293
+packages/twenty-front/src/generated-admin/graphql.ts
+  s_c3fbc446206706::t_d3a0c8f165a8cd 329
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c3fbc446206706::t_18fdc823d50d6c 1774,5939,6422,8530,8552,8997,9239
+packages/twenty-front/src/hooks/__tests__/usePageChangeEffectNavigateLocation.test.ts
+  s_c3fbc446206706::t_b52cbc23300e06 89-90,99-101,120-121,123-132,391-398,421-422,439-440,470-477
+packages/twenty-front/src/hooks/usePageChangeEffectNavigateLocation.ts
+  s_c3fbc446206706::t_f38caa8fa0caf0 13-14,84-94,186-193
+packages/twenty-front/src/locales/af-ZA.po
+  s_c3fbc446206706::t_dea6e9f3f21bca 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/ar-SA.po
+  s_c3fbc446206706::t_071ac82b790ff6 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/ca-ES.po
+  s_c3fbc446206706::t_113d08f6be6b3b 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/cs-CZ.po
+  s_c3fbc446206706::t_ecea62c8aba7ae 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/da-DK.po
+  s_c3fbc446206706::t_74f41f23a900d5 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/de-DE.po
+  s_c3fbc446206706::t_e475e636235aeb 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/el-GR.po
+  s_c3fbc446206706::t_341b15f0fd9688 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16811-16820,18557-18562,19970-19975,20121
+packages/twenty-front/src/locales/en.po
+  s_c3fbc446206706::t_ff44bf2db6f066 2174,2596,3909,3985-3989,7777-7781,10196-10200,10959,13266-13270,16062-16066,16147-16151,16804-16813,18550-18555,19963-19968,20112
+packages/twenty-front/src/locales/es-ES.po
+  s_c3fbc446206706::t_375716b30332db 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/fi-FI.po
+  s_c3fbc446206706::t_d6f90495e5a603 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/fr-FR.po
+  s_c3fbc446206706::t_688b2740975f8c 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/generated/af-ZA.ts
+  s_c3fbc446206706::t_2762297e99e814 1
+packages/twenty-front/src/locales/generated/ar-SA.ts
+  s_c3fbc446206706::t_3fe14311169531 1
+packages/twenty-front/src/locales/generated/ca-ES.ts
+  s_c3fbc446206706::t_cfa828ac9f2447 1
+packages/twenty-front/src/locales/generated/cs-CZ.ts
+  s_c3fbc446206706::t_b600ece8f2fb9e 1
+packages/twenty-front/src/locales/generated/da-DK.ts
+  s_c3fbc446206706::t_a5ddff347d0dd4 1
+packages/twenty-front/src/locales/generated/de-DE.ts
+  s_c3fbc446206706::t_809c8342351399 1
+packages/twenty-front/src/locales/generated/el-GR.ts
+  s_c3fbc446206706::t_f53bc00d352fb6 1
+packages/twenty-front/src/locales/generated/en.ts
+  s_c3fbc446206706::t_f6746042c37d61 1
+packages/twenty-front/src/locales/generated/es-ES.ts
+  s_c3fbc446206706::t_8d3c62b761d573 1
+packages/twenty-front/src/locales/generated/fi-FI.ts
+  s_c3fbc446206706::t_a5b9b1801c2fca 1
+packages/twenty-front/src/locales/generated/fr-FR.ts
+  s_c3fbc446206706::t_fffa4cfa89a219 1
+packages/twenty-front/src/locales/generated/he-IL.ts
+  s_c3fbc446206706::t_030de0efd2d813 1
+packages/twenty-front/src/locales/generated/hu-HU.ts
+  s_c3fbc446206706::t_18c5667418c306 1
+packages/twenty-front/src/locales/generated/it-IT.ts
+  s_c3fbc446206706::t_e86a09ed55e51d 1
+packages/twenty-front/src/locales/generated/ja-JP.ts
+  s_c3fbc446206706::t_97fcaa484e9342 1
+packages/twenty-front/src/locales/generated/ko-KR.ts
+  s_c3fbc446206706::t_1819e6a495ff1e 1
+packages/twenty-front/src/locales/generated/nl-NL.ts
+  s_c3fbc446206706::t_7b96fef49d6d15 1
+packages/twenty-front/src/locales/generated/no-NO.ts
+  s_c3fbc446206706::t_f893bbddf60043 1
+packages/twenty-front/src/locales/generated/pl-PL.ts
+  s_c3fbc446206706::t_fb3170074a42b9 1
+packages/twenty-front/src/locales/generated/pseudo-en.ts
+  s_c3fbc446206706::t_a9050b5c1f25a3 1
+packages/twenty-front/src/locales/generated/pt-BR.ts
+  s_c3fbc446206706::t_1866009790bfc6 1
+packages/twenty-front/src/locales/generated/pt-PT.ts
+  s_c3fbc446206706::t_9efabaf1be89bc 1
+packages/twenty-front/src/locales/generated/ro-RO.ts
+  s_c3fbc446206706::t_7351990f9246ac 1
+packages/twenty-front/src/locales/generated/ru-RU.ts
+  s_c3fbc446206706::t_928b9f10b26277 1
+packages/twenty-front/src/locales/generated/sr-Cyrl.ts
+  s_c3fbc446206706::t_fe24c9009b890b 1
+packages/twenty-front/src/locales/generated/sv-SE.ts
+  s_c3fbc446206706::t_9c03afac3ae9ed 1
+packages/twenty-front/src/locales/generated/tr-TR.ts
+  s_c3fbc446206706::t_ff2988207d4532 1
+packages/twenty-front/src/locales/generated/uk-UA.ts
+  s_c3fbc446206706::t_4d2fb0fb51855f 1
+packages/twenty-front/src/locales/generated/vi-VN.ts
+  s_c3fbc446206706::t_8dc8853ed01f57 1
+packages/twenty-front/src/locales/generated/zh-CN.ts
+  s_c3fbc446206706::t_f3638be73b4285 1
+packages/twenty-front/src/locales/generated/zh-TW.ts
+  s_c3fbc446206706::t_681ceeb90e300d 1
+packages/twenty-front/src/locales/he-IL.po
+  s_c3fbc446206706::t_b43a0b09e50a32 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/hu-HU.po
+  s_c3fbc446206706::t_481f431658c94b 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/it-IT.po
+  s_c3fbc446206706::t_7e1aa01981c881 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/ja-JP.po
+  s_c3fbc446206706::t_6590b007e7c849 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/ko-KR.po
+  s_c3fbc446206706::t_569c831d57d72c 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/nl-NL.po
+  s_c3fbc446206706::t_8efd498ca31a8f 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/no-NO.po
+  s_c3fbc446206706::t_5c15c66cb05268 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/pl-PL.po
+  s_c3fbc446206706::t_c6af934c8ecc74 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/pseudo-en.po
+  s_c3fbc446206706::t_c1e3adc501333a 2174,2596,3909,3985-3989,7777-7781,10173-10177,10936,13243-13247,16039-16043,16124-16128,16781-16790,18495-18500,19908-19913,20057
+packages/twenty-front/src/locales/pt-BR.po
+  s_c3fbc446206706::t_e41314f65fed33 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/pt-PT.po
+  s_c3fbc446206706::t_f0e7fd585fc452 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/ro-RO.po
+  s_c3fbc446206706::t_06119f367799bc 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/sr-Cyrl.po
+  s_c3fbc446206706::t_62a034a44330e7 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/sv-SE.po
+  s_c3fbc446206706::t_b4ba8b478e457f 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13273-13277,16071-16075,16156-16160,16813-16822,18561-18566,19974-19979,20123
+packages/twenty-front/src/locales/tr-TR.po
+  s_c3fbc446206706::t_3557836f60df20 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/uk-UA.po
+  s_c3fbc446206706::t_d177cbfa070ba2 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18555-18560,19968-19973,20117
+packages/twenty-front/src/locales/vi-VN.po
+  s_c3fbc446206706::t_e68c46a37f5ddf 2179,2601,3914,3990-3994,7782-7786,10201-10205,10964,13271-13275,16067-16071,16152-16156,16809-16818,18553-18558,19966-19971,20115
+packages/twenty-front/src/locales/zh-CN.po
+  s_c3fbc446206706::t_0f6a94850e5cdb 2179,2601,3914,3990-3994,7782-7786,10178-10182,10941,13248-13252,16044-16048,16129-16133,16786-16795,18500-18505,19913-19918,20062
+packages/twenty-front/src/locales/zh-TW.po
+  s_c3fbc446206706::t_4e87431f889095 2179,2601,3914,3990-3994,7782-7786,10178-10182,10941,13248-13252,16044-16048,16129-16133,16786-16795,18500-18505,19913-19918,20062
+packages/twenty-front/src/modules/ai/components/AgentChatHasBeenOpenedEffect.tsx
+  s_c3fbc446206706::t_6e304e6159bab7 1-16
+packages/twenty-front/src/modules/ai/components/AgentChatRuntimeEffects.tsx
+  s_c3fbc446206706::t_1406eb7b65c90c 10
+packages/twenty-front/src/modules/ai/components/AiChatCloseButton.tsx
+  s_c3fbc446206706::t_9d93f51b777271 1-28
+packages/twenty-front/src/modules/ai/components/AiChatCollapseButton.tsx
+  s_c3fbc446206706::t_91ad696d028a76 1-28
+packages/twenty-front/src/modules/ai/components/AiChatTab.tsx
+  s_c3fbc446206706::t_10238e8a90156a 6-8,50-52
+packages/twenty-front/src/modules/ai/components/AiChatTabMessageList.tsx
+  s_c3fbc446206706::t_514b53e7dae00c 11,16-17,29-36,45,55-62,75
+packages/twenty-front/src/modules/ai/components/__tests__/AgentChatRuntimeEffects.test.tsx
+  s_c3fbc446206706::t_934dd41eaccaaf 1-60
+packages/twenty-front/src/modules/ai/components/__tests__/AiChatTabMessageList.test.tsx
+  s_c3fbc446206706::t_b5d74b66bdbaf3 1-91
+packages/twenty-front/src/modules/ai/contexts/AiChatMessageListPreambleContext.ts
+  s_c3fbc446206706::t_74f114ba7df081 1-3
+packages/twenty-front/src/modules/ai/hooks/useReturnFromExpandedAiChat.ts
+  s_c3fbc446206706::t_516f51a5e7f2f2 1-44
+packages/twenty-front/src/modules/ai/states/aiChatExpandedReturnLocationState.ts
+  s_c3fbc446206706::t_2b8d871e6f4073 1-8
+packages/twenty-front/src/modules/app/effect-components/PageChangeEffect.tsx
+  s_c3fbc446206706::t_3322bbff00457f 13,161-167,177
+packages/twenty-front/src/modules/app/hooks/useCreateWorkspaceAppRouter.tsx
+  s_c3fbc446206706::t_82d10660f11888 114-119,133,150-157,159-162,229,237
+packages/twenty-front/src/modules/auth/utils/__tests__/isValidReturnToPath.test.ts
+  s_c3fbc446206706::t_88be0de9279a57 40-43
+packages/twenty-front/src/modules/navigation/hooks/__tests__/useDefaultHomePagePath.test.ts
+  s_c3fbc446206706::t_83ef6a6302aaf2 317-329
+packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts
+  s_c3fbc446206706::t_50c42bda131210 93-97,100-101
+packages/twenty-front/src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdownToMany.tsx
+  s_c3fbc446206706::t_5493aca27264e7 310-314
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput.tsx
+  s_c3fbc446206706::t_74a9def2804609 239-243
+packages/twenty-front/src/modules/object-record/record-table-widget/components/RecordTableWidgetProvider.tsx
+  s_c3fbc446206706::t_00e3c2fa333d9c 11-14,18,82-100,106-107,109-111,114-134,136-137,139-152
+packages/twenty-front/src/modules/object-record/record-table-widget/contexts/RecordTableWidgetContext.ts
+  s_c3fbc446206706::t_06f2ab45bc58b4 1-10
+packages/twenty-front/src/modules/object-record/record-table-widget/utils/__tests__/computeRecordTableWidgetViewLoadContentSignature.test.ts
+  s_c3fbc446206706::t_cb1d3f6370200d 1-31
+packages/twenty-front/src/modules/object-record/record-table-widget/utils/computeRecordTableWidgetViewLoadContentSignature.ts
+  s_c3fbc446206706::t_cd21c176bcb03b 14
+packages/twenty-front/src/modules/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation.tsx
+  s_c3fbc446206706::t_475b0e1504fb89 5-9,16-18,24-43,45,50-58,65-79,88
+packages/twenty-front/src/modules/onboarding/components/OnboardingStepLayout.tsx
+  s_c3fbc446206706::t_fa749780c37922 3,11
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect.tsx
+  s_c3fbc446206706::t_3447f9d0211b06 2,4-8,10-17,20-46,49-51,53
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect.tsx
+  s_c3fbc446206706::t_582a8132b7be25 1-36
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/WelcomeOverlay.tsx
+  s_c3fbc446206706::t_6bd43a69c1852c 2-3,5,9,12-14,16,18,28,108-127,131-133,144-221,226,255,259-260,262-263,269-279,281-288,292-297,299,301-315,317-319,321,323-329
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/WelcomePersonChip.tsx
+  s_c3fbc446206706::t_7397e6492f2e2d 2,9-11,14-17,19-26,38-46,53,56
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/__tests__/WelcomeAnimationAutoLeaveEffect.test.tsx
+  s_c3fbc446206706::t_22216850159804 1-88
+packages/twenty-front/src/modules/onboarding/components/WelcomeOverlay/__tests__/WelcomeOverlay.test.tsx
+  s_c3fbc446206706::t_848aed7387472e 1-2,6,16,19-21,23-27,51
+packages/twenty-front/src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+  s_c3fbc446206706::t_9831791fc7d9bb 1-101
+packages/twenty-front/src/modules/onboarding/components/WorkspaceSetupHeader.tsx
+  s_c3fbc446206706::t_6e30bae111d0e9 2,4-6,8,10-12,14-17,20,22-34,37-38,41-47
+packages/twenty-front/src/modules/onboarding/components/__tests__/WorkspaceSetupChatPreamble.test.tsx
+  s_c3fbc446206706::t_9844fed4344e4b 1-46
+packages/twenty-front/src/modules/onboarding/components/import-contacts/OnboardingTrustBadges.tsx
+  s_c3fbc446206706::t_cc5d5192b5ea6f 40
+packages/twenty-front/src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
+  s_c3fbc446206706::t_65c9dfa2b58c2d 1-54
+packages/twenty-front/src/modules/onboarding/constants/WelcomeTitleHandoffTargetElementId.ts
+  s_c3fbc446206706::t_ef229630675a38 1-2
+packages/twenty-front/src/modules/onboarding/constants/WelcomeTitleMessage.ts
+  s_c3fbc446206706::t_51ed01d3b070ac 1-3
+packages/twenty-front/src/modules/onboarding/constants/WelcomeTitleSourceElementId.ts
+  s_c3fbc446206706::t_05744f067496c7 1
+packages/twenty-front/src/modules/onboarding/effect-components/PrefetchPlanRequiredStepEffect.tsx
+  s_c3fbc446206706::t_4cd1aa6332ad47 1-2,5-12
+packages/twenty-front/src/modules/onboarding/hooks/__tests__/useIsPlanRequired.test.ts
+  s_c3fbc446206706::t_df93a9df121051 1-79
+packages/twenty-front/src/modules/onboarding/hooks/__tests__/useSetNextOnboardingStatus.test.ts
+  s_c3fbc446206706::t_4f5b2f73088192 11,20,33,42,57-59,68,84-89,103-104,110,115-119,122,126-130,133-146,150-154,157,161-165,168,172-178,181,185-193,196,200-204,207,211-218,221,225-232,235,239-243,246,250-254,257-275
+packages/twenty-front/src/modules/onboarding/hooks/useIsPlanRequired.ts
+  s_c3fbc446206706::t_479c0bf38d8b84 1-14
+packages/twenty-front/src/modules/onboarding/hooks/usePreloadStripeForPlanRequiredStep.ts
+  s_c3fbc446206706::t_5a568afc3dc4d2 5,11
+packages/twenty-front/src/modules/onboarding/hooks/useSetNextOnboardingStatus.ts
+  s_c3fbc446206706::t_36a991c973a02f 13,17,20,44-47,76-78,103-106,108-114
+packages/twenty-front/src/modules/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout.ts
+  s_c3fbc446206706::t_b99cc56b23943f 2-3,6,8,24-28,31-34
+packages/twenty-front/src/modules/onboarding/states/isWelcomeAnimationLeavingState.ts
+  s_c3fbc446206706::t_0dbcdadc4f3cad 1-6
+packages/twenty-front/src/modules/onboarding/states/shouldOpenAiChatAfterOnboardingState.ts
+  s_c3fbc446206706::t_0f45bb5888c0bd 1-7
+packages/twenty-front/src/modules/onboarding/states/welcomeTitleFlightState.ts
+  s_c3fbc446206706::t_0419ad953d96c0 1-8
+packages/twenty-front/src/modules/onboarding/types/WelcomeTitleFlight.ts
+  s_c3fbc446206706::t_680b1ec165cd0a 1-6
+packages/twenty-front/src/modules/onboarding/utils/__tests__/getWelcomeTitleFlight.test.ts
+  s_c3fbc446206706::t_ece22c5ef166eb 1-80
+packages/twenty-front/src/modules/onboarding/utils/__tests__/measureWelcomeTitleFlight.test.ts
+  s_c3fbc446206706::t_6da57a74ba3a19 1-68
+packages/twenty-front/src/modules/onboarding/utils/getWelcomeTitleFlight.ts
+  s_c3fbc446206706::t_bf2f1941fc0ded 1-28
+packages/twenty-front/src/modules/onboarding/utils/measureWelcomeTitleFlight.ts
+  s_c3fbc446206706::t_09727c3c816780 1-44
+packages/twenty-front/src/modules/page-layout/components/PageLayoutSingleTabRenderer.tsx
+  s_c3fbc446206706::t_302bd4a0007f00 2,69-71
+packages/twenty-front/src/modules/page-layout/components/PageLayoutTabList.tsx
+  s_c3fbc446206706::t_5bbb9bb73546ba 52-55,326-337,389,455
+packages/twenty-front/src/modules/page-layout/components/PageLayoutTabListReorderableTab.tsx
+  s_c3fbc446206706::t_9bbef3101aebe2 3,16,32,40-41,73-82
+packages/twenty-front/src/modules/page-layout/components/PageLayoutTabListVisibleTabs.tsx
+  s_c3fbc446206706::t_27d1559465e775 26,49,85
+packages/twenty-front/src/modules/page-layout/components/PageLayoutTabsRenderer.tsx
+  s_c3fbc446206706::t_0f4d7c998d443d 4,196-203,206-208,211-249
+packages/twenty-front/src/modules/page-layout/components/PageLayoutVerticalListEditor.tsx
+  s_c3fbc446206706::t_9ed271595a1765 1-4,6,9,14,35-43,55,67-76,79-81,83-97
+packages/twenty-front/src/modules/page-layout/components/dnd/PageLayoutTabWidgetDropTarget.tsx
+  s_c3fbc446206706::t_4f32d2fb5f3928 1-42
+packages/twenty-front/src/modules/page-layout/components/dnd/PageLayoutWidgetDndProvider.tsx
+  s_c3fbc446206706::t_7d158a8c3441dd 1-30
+packages/twenty-front/src/modules/page-layout/components/dnd/PageLayoutWidgetDropLine.tsx
+  s_c3fbc446206706::t_ae87746b7f6a2d 1-24
+packages/twenty-front/src/modules/page-layout/components/dnd/PageLayoutWidgetSortableItem.tsx
+  s_c3fbc446206706::t_54db1e9d90940b 1-64
+packages/twenty-front/src/modules/page-layout/hooks/__tests__/useMoveWidgetToTab.test.tsx
+  s_c3fbc446206706::t_11742295f72fed 3-7
+packages/twenty-front/src/modules/page-layout/hooks/useMoveWidgetToTab.ts
+  s_c3fbc446206706::t_c2231011d2519f 3,24-26
+packages/twenty-front/src/modules/page-layout/hooks/usePageLayoutWidgetDragAndDrop.ts
+  s_c3fbc446206706::t_d0211197d79b81 1-5,8-12,15-23,25,40-133,135,138
+packages/twenty-front/src/modules/page-layout/hooks/useSaveRecordTableWidgetViews.ts
+  s_c3fbc446206706::t_b2caaaf11039e5 118
+packages/twenty-front/src/modules/page-layout/testing/pageLayoutDraftFixtures.ts
+  s_c3fbc446206706::t_d961f01f092c37 1-59
+packages/twenty-front/src/modules/page-layout/types/PageLayoutWidgetDndData.ts
+  s_c3fbc446206706::t_d57bb5450eea9c 1-21
+packages/twenty-front/src/modules/page-layout/utils/__tests__/moveWidgetToTabInDraft.test.ts
+  s_c3fbc446206706::t_5db9405b24b448 1-156
+packages/twenty-front/src/modules/page-layout/utils/__tests__/moveWidgetWithinTabInDraft.test.ts
+  s_c3fbc446206706::t_4effebc84b0c39 1-108
+packages/twenty-front/src/modules/page-layout/utils/moveWidgetToTabInDraft.ts
+  s_c3fbc446206706::t_5d5a19aae12c5d 1-82
+packages/twenty-front/src/modules/page-layout/utils/moveWidgetWithinTabInDraft.ts
+  s_c3fbc446206706::t_62b296cba4b95a 1-44
+packages/twenty-front/src/modules/page-layout/utils/reindexWidgetsToVerticalListPositions.ts
+  s_c3fbc446206706::t_13b57dbdfd3ee1 1-14
+packages/twenty-front/src/modules/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks.ts
+  s_c3fbc446206706::t_838f87299872ef 3,26-29
+packages/twenty-front/src/modules/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate.ts
+  s_c3fbc446206706::t_9bf5ec07521455 1-57
+packages/twenty-front/src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
+  s_c3fbc446206706::t_83a573a709ac9c 11,33,61
+packages/twenty-front/src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
+  s_c3fbc446206706::t_950517233973ee 1-40
+packages/twenty-front/src/modules/settings/billing/hooks/__tests__/usePlans.test.tsx
+  s_c3fbc446206706::t_4b68907c68ec83 1-96
+packages/twenty-front/src/modules/settings/billing/hooks/usePlans.ts
+  s_c3fbc446206706::t_465028d98d501f 10,21
+packages/twenty-front/src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+  s_c3fbc446206706::t_6d5543923f0f3d 1-50
+packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+  s_c3fbc446206706::t_1d62b4dc187099 4,215
+packages/twenty-front/src/modules/side-panel/components/__tests__/SidePanelTopBar.test.tsx
+  s_c3fbc446206706::t_dc07851b809ba9 31-34
+packages/twenty-front/src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+  s_c3fbc446206706::t_69ed729a8a9fde 1,5,15-17,30-31,40
+packages/twenty-front/src/modules/ui/layout/page/components/BlankLayout.tsx
+  s_c3fbc446206706::t_0bdb60018ca918 5-7,21-23
+packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
+  s_c3fbc446206706::t_edd04dc014cfad 333
+packages/twenty-front/src/modules/ui/utilities/drag-and-drop/components/DragDropItemSortableCell.tsx
+  s_c3fbc446206706::t_c93cfd5c936b2a 8,11
+packages/twenty-front/src/modules/ui/utilities/drag-and-drop/utils/preventNativeDragStart.ts
+  s_c3fbc446206706::t_4c58f2d8ef910d 1-7
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
+  s_c3fbc446206706::t_395a937a523a8f 3-4,6,8,13,15,26-27,36-45,47-52,54-61,63-72,74,76-82,84-86,88,93,102-112
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
+  s_c3fbc446206706::t_93ce7c288a7f3f 4,9-10,13-24,27-34,37-41,46-54,56-58,60-67,69-74,76,80,83,92-96,100-107,109,116,118-123,125-130,132-134,136-137,139,146-150,152-158,162-163
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
+  s_c3fbc446206706::t_bc03ea2bf6fdd7 3,5,7-8,28-31,51-64,66,71,76-88,90-92,102-113,123-134
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+  s_c3fbc446206706::t_c1d75f4ea546cf 3,5,7-8,14,21-31,38-39,48-62,72-82,84-86,96-107,117-128
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewFilterGroupAPIPersist.ts
+  s_c3fbc446206706::t_db41cca7517eba 3-5,8-9,11-15,18-31,35,44,48,52,54,61,63,73-87,89-90,92-93,96-106,108,112-116,125,128-141,145-149,154-161
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
+  s_c3fbc446206706::t_3bb818578d6e3c 3,5,25-26,43-56,58,76-89,91
+packages/twenty-front/src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+  s_c3fbc446206706::t_1e68c186b9bc06 3,5,7-8,26-27,36-50,60-70,72-74,84-95,105-116
+packages/twenty-front/src/modules/views/hooks/useCreateViewFromCurrentView.ts
+  s_c3fbc446206706::t_47567c9be3b461 210-219
+packages/twenty-front/src/modules/views/hooks/useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters.ts
+  s_c3fbc446206706::t_3d8cd66936ec17 87,91-100,193-198
+packages/twenty-front/src/pages/onboarding/ChooseYourPlan.tsx
+  s_c3fbc446206706::t_b78e04a85bd09e 3-4,11,15-28
+packages/twenty-front/src/pages/onboarding/PaymentSuccess.tsx
+  s_c3fbc446206706::t_fa14539e67b27f 7,25,42-44,51,53,83
+packages/twenty-front/src/pages/onboarding/WorkspaceSetup.tsx
+  s_c3fbc446206706::t_4a4e88c5319b9e 2-4,6-14,16,18-22,24,26-27,30,32-36,39-47,49-56,59-66,68
+packages/twenty-front/src/pages/onboarding/__stories__/ChooseYourPlan.stories.tsx
+  s_c3fbc446206706::t_1ffe4784165c0b 6,16,24-26,56-78
+packages/twenty-front/src/pages/onboarding/__tests__/WorkspaceSetup.test.tsx
+  s_c3fbc446206706::t_cdbc4ea120f9ad 1-113
+packages/twenty-sdk/package.json
+  s_c3fbc446206706::t_2b08e170673da3 3
+packages/twenty-sdk/src/cli/utilities/build/manifest/__tests__/manifest-validate.spec.ts
+  s_c3fbc446206706::t_4fbd0ce42ab976 199-229
+packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-validate.ts
+  s_c3fbc446206706::t_6dcd5d87b47022 75-76
+packages/twenty-sdk/src/sdk/define/connection-providers/__tests__/define-connection-provider.spec.ts
+  s_c3fbc446206706::t_35cf968f2995b0 85-108
+packages/twenty-sdk/src/sdk/define/connection-providers/define-connection-provider.ts
+  s_c3fbc446206706::t_313176108c40f0 39-47
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_c3fbc446206706::t_bac652afeb0202 30,60,155-158
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_c3fbc446206706::t_e60bd40f50b766 56,68
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration.ts
+  s_c3fbc446206706::t_480ca955e0ccdb 1-28
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-workspace-command-1784565137000-upgrade-people-data-labs-application.command.ts
+  s_c3fbc446206706::t_430c1791cc25f2 1,6,11,21-24,29,32-34,40-41,52-73,118,137-151
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/utils/ensure-application-registration-logo-file-id-column.util.ts
+  s_c3fbc446206706::t_67b235856a44a4 1-36
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider.ts
+  s_c3fbc446206706::t_938108cf85a15a 1-21
+packages/twenty-server/src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant.ts
+  s_c3fbc446206706::t_2be6d2753e6201 1-32
+packages/twenty-server/src/engine/api/graphql/graphql-config/hooks/__tests__/use-cached-metadata.spec.ts
+  s_c3fbc446206706::t_d859163a76521a 7,44,51,56-62,144-229,254-274
+packages/twenty-server/src/engine/api/graphql/graphql-config/hooks/use-cached-metadata.ts
+  s_c3fbc446206706::t_1ae89016075710 8-13,20-24,28,30-31,35-42,45,47-50,52,59-69,71-101,136,138,143,145,152,154-155,158-162,186,194-198
+packages/twenty-server/src/engine/api/graphql/metadata-graphql-api.module.ts
+  s_c3fbc446206706::t_c16f0970c1de4a 19-20,32,42
+packages/twenty-server/src/engine/api/graphql/metadata.module-factory.ts
+  s_c3fbc446206706::t_52fd410ec1099f 7,23,33,57-61
+packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant.ts
+  s_c3fbc446206706::t_e26e27288d221b 1-6
+packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service.ts
+  s_c3fbc446206706::t_811a6cec5d8f86 20,22,51-55,57-64,117-120,124,130,148,154
+packages/twenty-server/src/engine/api/mcp/services/mcp-tool-executor.service.ts
+  s_c3fbc446206706::t_d0fa29a405294a 7-8,83-84,91-98,114,124-131
+packages/twenty-server/src/engine/core-modules/application/__tests__/application-stop.service.spec.ts
+  s_c3fbc446206706::t_d4fed6c6888108 1-123
+packages/twenty-server/src/engine/core-modules/application/application-install/application-install.service.ts
+  s_c3fbc446206706::t_c14244d1d56b11 560,562-566
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/__tests__/from-connection-provider-manifest-to-universal-flat-connection-provider.util.spec.ts
+  s_c3fbc446206706::t_f2061ac5607730 53,59-78
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util.ts
+  s_c3fbc446206706::t_a5df737c05dcf6 46-48
+packages/twenty-server/src/engine/core-modules/application/application-stop.service.ts
+  s_c3fbc446206706::t_af2618fd3254ea 1-55
+packages/twenty-server/src/engine/core-modules/application/application.module.ts
+  s_c3fbc446206706::t_60af1f283f82e3 6,44-48,52
+packages/twenty-server/src/engine/core-modules/application/connection-provider/__tests__/connection-provider-oauth-flow.service.spec.ts
+  s_c3fbc446206706::t_0581ae3ca52b39 22,26-27,31,54-56,105-111,130-141,466-565
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum.ts
+  s_c3fbc446206706::t_b1d8a72315db40 12
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service.ts
+  s_c3fbc446206706::t_ed5a2e0fbd42de 24,26-32,37,75-78,202-207,216-274
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.entity.ts
+  s_c3fbc446206706::t_31e427dae890e3 15,43-49
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+  s_c3fbc446206706::t_3136a2e79a3e68 32-33
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.module.ts
+  s_c3fbc446206706::t_ae7d98f402b9e9 17,33
+packages/twenty-server/src/engine/core-modules/cache-storage/services/__tests__/cache-storage.service.spec.ts
+  s_c3fbc446206706::t_20fa0e5fdecb69 1-112
+packages/twenty-server/src/engine/core-modules/cache-storage/services/cache-storage.service.ts
+  s_c3fbc446206706::t_0e2e2cc5df49e8 32-33,62,65,74,76,98-120,128-129,132,152-153,177-178,193-194,203-204,215,219,240,246,281,285,296,304-305,317,321,335,339,353,357,383,387,404,408,414-415,429,431
+packages/twenty-server/src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum.ts
+  s_c3fbc446206706::t_f43c9ac0ec7663 2
+packages/twenty-server/src/engine/core-modules/i18n/locales/af-ZA.po
+  s_c3fbc446206706::t_c29c040954c659 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ar-SA.po
+  s_c3fbc446206706::t_73c0b83ca34ece 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ca-ES.po
+  s_c3fbc446206706::t_7ebb02ca27a956 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/cs-CZ.po
+  s_c3fbc446206706::t_2129f1f9085b84 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/da-DK.po
+  s_c3fbc446206706::t_ff19ac26535090 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/de-DE.po
+  s_c3fbc446206706::t_b5641ede28fe2b 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/el-GR.po
+  s_c3fbc446206706::t_9fb89cddbd305a 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/en.po
+  s_c3fbc446206706::t_1ff659442cb02f 7668-7672,7888-7892
+packages/twenty-server/src/engine/core-modules/i18n/locales/es-ES.po
+  s_c3fbc446206706::t_c0284d4394dd57 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/fi-FI.po
+  s_c3fbc446206706::t_a2d60b344e842e 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/fr-FR.po
+  s_c3fbc446206706::t_c419750753f93c 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/af-ZA.ts
+  s_c3fbc446206706::t_5fcb86ca8793aa 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ar-SA.ts
+  s_c3fbc446206706::t_d893fdaf2b4455 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ca-ES.ts
+  s_c3fbc446206706::t_ed41e6079ea3b6 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/cs-CZ.ts
+  s_c3fbc446206706::t_1b527a75b4e58f 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/da-DK.ts
+  s_c3fbc446206706::t_1b0ef6861b9aef 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/de-DE.ts
+  s_c3fbc446206706::t_499af4d829f628 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/el-GR.ts
+  s_c3fbc446206706::t_0cb5abf1655834 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/en.ts
+  s_c3fbc446206706::t_d95e6e37d4d8a3 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/es-ES.ts
+  s_c3fbc446206706::t_645aaea7b3b3ba 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/fi-FI.ts
+  s_c3fbc446206706::t_1cd8a744624939 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/fr-FR.ts
+  s_c3fbc446206706::t_b5248a0f4bd3b4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/he-IL.ts
+  s_c3fbc446206706::t_509451d8c85cff 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/hu-HU.ts
+  s_c3fbc446206706::t_df957198cebc34 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/it-IT.ts
+  s_c3fbc446206706::t_8c16397af0ce49 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ja-JP.ts
+  s_c3fbc446206706::t_e2369cb95646f9 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ko-KR.ts
+  s_c3fbc446206706::t_0dedd3587aa6a4 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/nl-NL.ts
+  s_c3fbc446206706::t_226d655fc2c283 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/no-NO.ts
+  s_c3fbc446206706::t_171946a9d287c2 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pl-PL.ts
+  s_c3fbc446206706::t_a8aa25db17f858 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pseudo-en.ts
+  s_c3fbc446206706::t_4499097db84c6f 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pt-BR.ts
+  s_c3fbc446206706::t_3fa854459b4d3b 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/pt-PT.ts
+  s_c3fbc446206706::t_f7bc45702c2d1d 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ro-RO.ts
+  s_c3fbc446206706::t_084a3b4465d7a9 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/ru-RU.ts
+  s_c3fbc446206706::t_7b2f2b1cf6bfd3 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/sr-Cyrl.ts
+  s_c3fbc446206706::t_7ce1452745f685 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/sv-SE.ts
+  s_c3fbc446206706::t_2b0ff89736cf70 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/tr-TR.ts
+  s_c3fbc446206706::t_1c38ee684f15be 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/uk-UA.ts
+  s_c3fbc446206706::t_b693c0510f30d0 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/vi-VN.ts
+  s_c3fbc446206706::t_c5847c8f834b94 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/zh-CN.ts
+  s_c3fbc446206706::t_5a449604e9792d 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/generated/zh-TW.ts
+  s_c3fbc446206706::t_f4c1871bde009f 1
+packages/twenty-server/src/engine/core-modules/i18n/locales/he-IL.po
+  s_c3fbc446206706::t_60fa89f5e0f526 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/hu-HU.po
+  s_c3fbc446206706::t_9b88257bbd3c21 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/it-IT.po
+  s_c3fbc446206706::t_06e0e7cfe59be8 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ja-JP.po
+  s_c3fbc446206706::t_8662d5df10b28c 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ko-KR.po
+  s_c3fbc446206706::t_1ff8413617cc3c 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/nl-NL.po
+  s_c3fbc446206706::t_af4ae8658602dc 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/no-NO.po
+  s_c3fbc446206706::t_5ad2c2d26755da 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/pl-PL.po
+  s_c3fbc446206706::t_f50b93d6cea1fa 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/pseudo-en.po
+  s_c3fbc446206706::t_7ebe4805b4fd49 7668-7672,7888-7892
+packages/twenty-server/src/engine/core-modules/i18n/locales/pt-BR.po
+  s_c3fbc446206706::t_7082701381600f 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/pt-PT.po
+  s_c3fbc446206706::t_ed82533d0abd0a 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ro-RO.po
+  s_c3fbc446206706::t_b94c770d574acd 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/ru-RU.po
+  s_c3fbc446206706::t_717446e7f0b5de 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/sr-Cyrl.po
+  s_c3fbc446206706::t_8833ba4d6b6951 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/sv-SE.po
+  s_c3fbc446206706::t_5107695ed68627 7679-7683,7899-7903
+packages/twenty-server/src/engine/core-modules/i18n/locales/tr-TR.po
+  s_c3fbc446206706::t_ca89209d73a040 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/uk-UA.po
+  s_c3fbc446206706::t_e4b20ed338da5f 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/vi-VN.po
+  s_c3fbc446206706::t_fa71e1696be412 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/zh-CN.po
+  s_c3fbc446206706::t_2fc906f731cab3 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/i18n/locales/zh-TW.po
+  s_c3fbc446206706::t_f96aaa88212290 7673-7677,7893-7897
+packages/twenty-server/src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
+  s_c3fbc446206706::t_4e8e8c193864ba 24,96,124-129,242-256
+packages/twenty-server/src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job.ts
+  s_c3fbc446206706::t_46af49568ae57f 7-10,30-57
+packages/twenty-server/src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job.ts
+  s_c3fbc446206706::t_70e97e79584793 88,90-94
+packages/twenty-server/src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job.ts
+  s_c3fbc446206706::t_4e6296dd18d3c9 59-60,62
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts
+  s_c3fbc446206706::t_33df90be0ff973 330-353,379,384-415
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface.ts
+  s_c3fbc446206706::t_5e66e75dbb319e 17-22
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/sync.driver.ts
+  s_c3fbc446206706::t_b5f78a762719bc 3-4,30-51
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.explorer.ts
+  s_c3fbc446206706::t_1c5a5c8ef71b1e 21,24-25,46,66-99,106,111-122
+packages/twenty-server/src/engine/core-modules/message-queue/services/message-queue.service.ts
+  s_c3fbc446206706::t_2d3866971e572d 41-48
+packages/twenty-server/src/engine/core-modules/message-queue/utils/__tests__/should-create-worker-for-queue.util.spec.ts
+  s_c3fbc446206706::t_e30f8ff19fc676 1-65
+packages/twenty-server/src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util.ts
+  s_c3fbc446206706::t_8d09cba71308b7 1,3-13,15-17
+packages/twenty-server/src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant.ts
+  s_c3fbc446206706::t_9f6b6d847a5a12 1-4
+packages/twenty-server/src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant.ts
+  s_c3fbc446206706::t_cb63a890f2d925 1-3
+packages/twenty-server/src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant.ts
+  s_c3fbc446206706::t_e7129ea268922d 1-3
+packages/twenty-server/src/engine/core-modules/metrics/metrics.service.ts
+  s_c3fbc446206706::t_f086312581cba1 232,238,240-247
+packages/twenty-server/src/engine/core-modules/metrics/types/metrics-keys.type.ts
+  s_c3fbc446206706::t_532f1b4fe10623 28-30,33,36,39
+packages/twenty-server/src/engine/core-modules/server-route-trigger/__tests__/server-route-trigger.service.spec.ts
+  s_c3fbc446206706::t_4a8ade1ff4923d 10-11,15-18,81,111,113,117-127,133,137,140-141,147-149,153-154,158-159,195-209,217,267,276,307-313,315-318,321,323-325
+packages/twenty-server/src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger-rest-api-exception-filter.ts
+  s_c3fbc446206706::t_3d1ce736ff8530 33-41
+packages/twenty-server/src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+  s_c3fbc446206706::t_93a6dd59dd0bb5 9,23-24
+packages/twenty-server/src/engine/core-modules/server-route-trigger/server-route-trigger.service.ts
+  s_c3fbc446206706::t_c588c1ceafa011 15-22,28-31,39-40,49-50,104,175,184-211,213,234-250,279-280,289-295
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_c3fbc446206706::t_6a97b2511d7a29 1264-1283
+packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts
+  s_c3fbc446206706::t_4043cb1c8a88b4 10
+packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-next-versions.constant.ts
+  s_c3fbc446206706::t_e7cc17910ee570 11
+packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant.ts
+  s_c3fbc446206706::t_114da9333ccc79 38
+packages/twenty-server/src/engine/core-modules/workspace/services/workspace.service.ts
+  s_c3fbc446206706::t_550c4c1b30d775 592
+packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+  s_c3fbc446206706::t_06d09ce67dfa4e 249-252
+packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service.ts
+  s_c3fbc446206706::t_6028225c11265f 21-22,242-253,300
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver.ts
+  s_c3fbc446206706::t_3e884a2237727b 354-364
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/agent-chat-streaming.service.answer.spec.ts
+  s_c3fbc446206706::t_a93ebaee882b35 1-167
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/agent-chat-streaming.service.claim.spec.ts
+  s_c3fbc446206706::t_155b8376686356 108-110,114-119,128,151-156,169
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service.ts
+  s_c3fbc446206706::t_a944f7608c12d0 5,139-140,148-149,428-497,697
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts
+  s_c3fbc446206706::t_1250866bd33c0d 18-20,436,482,486-497,504,565
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/__tests__/provider-options.util.spec.ts
+  s_c3fbc446206706::t_8822b3a75d9b7f 8,69-98
+packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util.ts
+  s_c3fbc446206706::t_756a91f44d4b48 7,42-46
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/__tests__/__snapshots__/all-universal-flat-entity-properties-to-compare-and-stringify.constant.spec.ts.snap
+  s_c3fbc446206706::t_84b4fd7f3a38be 63
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts
+  s_c3fbc446206706::t_7ff71bb94c8cfc 1805-1809
+packages/twenty-server/src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service.ts
+  s_c3fbc446206706::t_54c7e569c095e8 6-9,28-44
+packages/twenty-server/src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-field.input.ts
+  s_c3fbc446206706::t_be09adf4ddb25b 3-10,47-51
+packages/twenty-server/src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+  s_c3fbc446206706::t_b3ae9bd24223b2 492-495,500-502,525-527,594
+packages/twenty-server/src/engine/middlewares/middleware.service.ts
+  s_c3fbc446206706::t_ab324ab45c52b6 15,104,129,135-154
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_c3fbc446206706::t_a5550fd6bc7c65 250
+packages/twenty-server/src/engine/workspace-cache-storage/workspace-cache-storage.service.ts
+  s_c3fbc446206706::t_67d5500b79c27c 11,16,47,55,61,68,76,82,88,95,103,109,157-160,162,165-166
+packages/twenty-server/src/engine/workspace-cache/services/workspace-cache.service.ts
+  s_c3fbc446206706::t_b2bf276ba8efaf 32,35,48-52,71-73,124-127,129-139,152,155,168,171,178,185-196,201-227,290-305,392,395,399,418-419,426,433-434,477-478,519-520,529-530
+packages/twenty-server/src/engine/workspace-cache/types/workspace-cache-key.type.ts
+  s_c3fbc446206706::t_babdd43787d426 95-100
+packages/twenty-server/src/engine/workspace-cache/utils/combine-cache-hashes.util.ts
+  s_c3fbc446206706::t_06ecea4dcd6ae5 1,3,5,7-13,15-16,18-20,22,25-26
+packages/twenty-server/src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util.ts
+  s_c3fbc446206706::t_cb9702b8de49bd 53-57
+packages/twenty-server/src/engine/workspace-manager/dev-seeder/services/dev-seeder.service.ts
+  s_c3fbc446206706::t_acf1009c7004c3 194
+packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util.ts
+  s_c3fbc446206706::t_1d7ecd0f8483c1 40-71,80,88-95,98-114,193,210,225,234,236-238,240,245-300,302-306,309-313,316-320,322-327,330-334,337-403,406-421,423-444,446-448,450-458,460-486,488-530,532-536,538-543,545-620,622-626,628,630-703,705-707,709-720,722-726,728-733,735-789,792-867,871,877-914
+packages/twenty-server/src/modules/workflow/workflow-core-consistency/crons/commands/workflow-core-consistency-cron.command.ts
+  s_c3fbc446206706::t_17f90096324176 1-35
+packages/twenty-server/src/modules/workflow/workflow-core-consistency/crons/jobs/workflow-core-consistency-cron.job.ts
+  s_c3fbc446206706::t_6b0d35f923b696 1-31
+packages/twenty-server/src/modules/workflow/workflow-core-consistency/services/__tests__/workflow-core-consistency.service.spec.ts
+  s_c3fbc446206706::t_d768c339a25723 1-223
+packages/twenty-server/src/modules/workflow/workflow-core-consistency/services/workflow-core-consistency.service.ts
+  s_c3fbc446206706::t_96a4a7693dfdb3 1-251
+packages/twenty-server/src/modules/workflow/workflow-core-consistency/workflow-core-consistency.module.ts
+  s_c3fbc446206706::t_fdb1b342e7432b 1-18
+packages/twenty-server/src/modules/workflow/workflow-trigger/workflow-trigger.module.ts
+  s_c3fbc446206706::t_baba80c9fc4325 9,21
+packages/twenty-server/test/integration/metadata/suites/application/successful-manifest-update-connection-provider.integration-spec.ts
+  s_c3fbc446206706::t_19296577b71c81 86
+packages/twenty-server/test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util.ts
+  s_c3fbc446206706::t_abf0a6e221f61b 12,21
+packages/twenty-server/test/integration/metadata/suites/graphql-operation-cache/metadata-graphql-operations-cache-dependencies.integration-spec.ts
+  s_c3fbc446206706::t_7754719150f891 1-295
+packages/twenty-server/test/integration/metadata/suites/view/upsert-view-widget.integration-spec.ts
+  s_c3fbc446206706::t_8d42bebf40490c 24,307-442
+packages/twenty-server/test/integration/server-route-trigger/suites/server-route-trigger-authorization.integration-spec.ts
+  s_c3fbc446206706::t_a63ce51dd86869 171,176-177
+packages/twenty-server/test/integration/utils/get-app-provider-by-class-name.util.ts
+  s_c3fbc446206706::t_68fb4c3df01a94 1-30
+packages/twenty-shared/src/application/connectionProviderManifestType.ts
+  s_c3fbc446206706::t_3cbab7091cb1ff 9
+packages/twenty-shared/src/types/AppPath.ts
+  s_c3fbc446206706::t_0b0ed80e6988e2 20
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_c3fbc446206706::t_12b4c4d7a8d299 10
+packages/twenty-website/src/partners-marketplace/PartnerCard.tsx
+  s_c3fbc446206706::t_f61d2b54646824 9,21,26-27,31,34,43,49-53,58,80-82,86,92-93,95,98-100,102-105,108-119,122-132,144,154-155,161,168-170,175,177,179-184
+yarn.lock
+  s_c3fbc446206706::t_b51ba0509726e8 23531-23532,23534-23535,23539,23543,23547-23549,23552-23553,23560-23561,23622-23624,23628-23629,23632,23636-23638,23640,23651,23673-23675,23678,23682-23684,23686,23688,23692-23694,23696-23697,23700,23713-23716,23741-23743,23745,23748,38870-38872,38877,55208-55217,55235-55240,55270-55271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "a5ee17c3af3339bfe10641291434b429af9825d5",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
