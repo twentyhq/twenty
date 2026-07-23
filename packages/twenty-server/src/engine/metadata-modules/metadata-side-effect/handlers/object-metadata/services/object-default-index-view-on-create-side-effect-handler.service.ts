@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import {
@@ -20,23 +19,13 @@ export class ObjectDefaultIndexViewOnCreateSideEffectHandlerService extends Meta
     metadataName: 'objectMetadata',
     name: 'objectDefaultIndexViewOnCreate',
     description:
-      'When an object is created, provision its default INDEX table view ("All {objectLabelPlural}") and one view field per displayable field, all isSystemSideEffect so the engine owns their lifecycle. The view identifier is name-free (keyed on the object identifier + the INDEX view key), so an object rename keeps the same view. Registered last among create:objectMetadata handlers so it reads the caller field plus the system fields already emitted into the expanded matrix. Returns noop for twenty-standard (which authors its own curated INDEX view/fields) and when the caller already provides the INDEX view (override).',
+      'When an object is created, provision its default INDEX table view ("All {objectLabelPlural}") and one view field per displayable field, all isSystemSideEffect so the engine owns their lifecycle. The view identifier is name-free (keyed on the object identifier + the INDEX view key), so an object rename keeps the same view. Registered last among create:objectMetadata handlers so it reads the caller field plus the system fields already emitted into the expanded matrix. Returns noop when the caller already provides the INDEX view (override). twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated INDEX view/fields.',
   },
 ) {
   buildSideEffects({
     flatEntity: flatObjectMetadata,
     allFlatEntityOperationRecordByMetadataName,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    // twenty-standard authors its own curated INDEX view + view fields (a
-    // different set than the generic default), so collision-skip alone would
-    // wrongly add unwanted view fields: gate it out entirely.
-    if (
-      flatObjectMetadata.applicationUniversalIdentifier ===
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-    ) {
-      return { status: 'noop' };
-    }
-
     const sourceFlatObjectMetadata =
       flatObjectMetadata as UniversalFlatObjectMetadata;
 

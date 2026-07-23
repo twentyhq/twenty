@@ -2,7 +2,6 @@ import {
   getFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   getViewFieldUniversalIdentifier,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 
@@ -149,18 +148,6 @@ describe('ObjectDefaultIndexViewOnCreateSideEffectHandlerService', () => {
     )) {
       expect(viewField.isSystemSideEffect).toBe(true);
     }
-  });
-
-  it('should noop for twenty-standard objects', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        pendingFieldMetadatas: [NAME_FIELD],
-      }),
-    );
-
-    expect(result.status).toBe('noop');
   });
 
   it('should noop when the caller already provides the INDEX view (override)', () => {
