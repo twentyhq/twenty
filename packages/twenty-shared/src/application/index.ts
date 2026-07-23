@@ -85,7 +85,7 @@ export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export {
   getViewUniversalIdentifier,
-  getIndexViewUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
   getFieldsWidgetViewUniversalIdentifier,
 } from './deterministic-identifier/get-view-universal-identifier.util';
 export { SyncableEntity } from './enums/syncable-entities.enum';

@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type AggregateOperations } from 'twenty-shared/types';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -51,6 +51,7 @@ export const createStandardViewFieldFlatMetadata = <
     viewFieldGroupName = null,
   },
   standardObjectMetadataRelatedEntityIds,
+  dependencyFlatEntityMaps,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFieldArgs<O, V>): FlatViewField => {
@@ -78,6 +79,13 @@ export const createStandardViewFieldFlatMetadata = <
       `Invalid configuration ${objectName} ${viewName.toString()} ${viewFieldName}`,
     );
   }
+
+  // A view field's lifecycle is owned by whoever owns its view: engine-owned
+  // views (INDEX, FIELDS_WIDGET) carry engine-owned view fields.
+  const parentView =
+    dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
+      viewDefinition.universalIdentifier
+    ];
 
   let viewFieldGroupId: string | null = null;
   let viewFieldGroupUniversalIdentifier: string | null = null;
@@ -121,7 +129,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation,
     isActive: true,
-    isSystemSideEffect: false,
+    isSystemSideEffect: parentView?.isSystemSideEffect ?? false,
     overrides: null,
     universalOverrides: null,
     createdAt: now,
