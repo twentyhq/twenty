@@ -31,12 +31,13 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     );
   }
 
-  if (isNonEmptyString(config.roleUniversalIdentifier)) {
-    if (!uuidValidate(config.roleUniversalIdentifier)) {
-      errors.push(
-        `Agent '${config.name}' roleUniversalIdentifier must be a valid UUID`,
-      );
-    }
+  if (
+    isNonEmptyString(config.roleUniversalIdentifier) &&
+    !uuidValidate(config.roleUniversalIdentifier)
+  ) {
+    errors.push(
+      `Agent '${config.name}' roleUniversalIdentifier must be a valid UUID`,
+    );
   }
 
   return createValidationResult({ config, errors, warnings });
