@@ -27,6 +27,7 @@ import { AgentRunResolver } from './resolvers/agent-run.resolver';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
 import { AgentRunService } from './services/agent-run.service';
+import { AgentToolPreloadService } from './services/agent-tool-preload.service';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { AgentRunService } from './services/agent-run.service';
     AgentMessagePartResolver,
     AgentRunResolver,
     AgentRunService,
+    AgentToolPreloadService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentEntity),
   ],

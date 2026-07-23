@@ -39,7 +39,9 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
+import { AgentToolPreloadService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-tool-preload.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { extractExecutedRegistryToolNames } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/extract-executed-registry-tool-names.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -99,6 +101,7 @@ export class AgentAsyncExecutorService {
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly metricsService: MetricsService,
+    private readonly agentToolPreloadService: AgentToolPreloadService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -164,6 +167,9 @@ export class AgentAsyncExecutorService {
       let systemPrompt = `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${
         agent ? agent.prompt : ''
       }`;
+      // Registry tool names available this run, used after execution to record
+      // which tools were actually called for the next run's preload set.
+      let recordableToolNames: Set<string> | null = null;
       let providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
@@ -240,7 +246,32 @@ export class AgentAsyncExecutorService {
             })
           ).filter((entry) => !excludedToolNames.has(entry.name));
 
+          const catalogToolNames = new Set(
+            toolCatalog.map((entry) => entry.name),
+          );
+
+          recordableToolNames = catalogToolNames;
+
+          // Preload the schemas of tools this agent used in recent runs so the
+          // common path skips the learn_tools round-trip. Names no longer in the
+          // catalog (permissions or metadata changed) are dropped.
+          const historicalToolNames =
+            await this.agentToolPreloadService.getPreloadToolNames(agent);
+          const preloadToolNames = historicalToolNames.filter((name) =>
+            catalogToolNames.has(name),
+          );
+
+          const preloadedTools =
+            preloadToolNames.length > 0
+              ? await this.toolRegistry.getToolsByName(
+                  preloadToolNames,
+                  toolContext,
+                  { compactOutput: true, spillLargeOutput: true },
+                )
+              : {};
+
           registryTools = {
+            ...preloadedTools,
             [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
               this.toolRegistry,
               toolContext,
@@ -259,7 +290,7 @@ export class AgentAsyncExecutorService {
 
           systemPrompt = `${systemPrompt}\n\n${buildWorkflowAgentToolCatalogSection(
             toolCatalog,
-            [],
+            Object.keys(preloadedTools),
           )}`;
         }
 
@@ -378,6 +409,24 @@ export class AgentAsyncExecutorService {
         textResponse.steps,
       );
       executionSteps = textResponse.steps;
+
+      if (agent && isDefined(recordableToolNames)) {
+        try {
+          await this.agentToolPreloadService.recordToolUsage(
+            agent,
+            extractExecutedRegistryToolNames(
+              textResponse.steps,
+              recordableToolNames,
+            ),
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to record agent tool usage for preload: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        }
+      }
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'
