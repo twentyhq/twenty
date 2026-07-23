@@ -53,6 +53,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -276,7 +277,11 @@ export class MessageCampaignService {
         CAMPAIGN_TEST_SEND_THROTTLE_LIMIT,
         CAMPAIGN_TEST_SEND_THROTTLE_WINDOW_MS,
       );
-    } catch {
+    } catch (error) {
+      if (!(error instanceof ThrottlerException)) {
+        throw error;
+      }
+
       throw new EmailingDomainException(
         `Campaign test send rate limit exceeded for workspace ${workspaceId}`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_TEST_RATE_LIMITED,

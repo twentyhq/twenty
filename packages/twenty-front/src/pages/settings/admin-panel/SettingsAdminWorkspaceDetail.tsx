@@ -336,6 +336,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.RATE_LIMITS &&
           workspace && (
             <SettingsAdminWorkspaceSendLimit
+              key={workspace.id}
               workspaceId={workspace.id}
               messageCampaignDailySendLimit={
                 workspace.messageCampaignDailySendLimit

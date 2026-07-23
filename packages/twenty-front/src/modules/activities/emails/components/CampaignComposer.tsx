@@ -70,7 +70,7 @@ export const CampaignComposer = ({
 
   const navigateSettings = useNavigateSettings();
 
-  const { channels } = useMyMessageChannels();
+  const { channels, loading: channelsLoading } = useMyMessageChannels();
 
   const hasEmailGroupChannel = channels.some(
     (channel) => channel.type === MessageChannelType.EMAIL_GROUP,
@@ -82,7 +82,7 @@ export const CampaignComposer = ({
 
   return (
     <StyledContainer>
-      {!hasEmailGroupChannel && (
+      {!channelsLoading && !hasEmailGroupChannel && (
         <StyledCalloutWrapper>
           <Callout
             variant="info"
@@ -121,7 +121,7 @@ export const CampaignComposer = ({
         <CampaignTestSendSection campaignState={campaignState} />
         <HoldToConfirmButton
           onConfirm={campaignState.handleSend}
-          disabled={!campaignState.canSend}
+          disabled={!campaignState.canSend || remainingEmails === 0}
         >
           <Button
             size="small"
@@ -129,7 +129,7 @@ export const CampaignComposer = ({
             accent="blue"
             title={t`Hold to send`}
             Icon={IconSend}
-            disabled={!campaignState.canSend}
+            disabled={!campaignState.canSend || remainingEmails === 0}
           />
         </HoldToConfirmButton>
       </StyledFooter>

@@ -1,5 +1,11 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+  useEffect,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -50,6 +56,21 @@ export const HoldToConfirmButton = ({
 
   const isHolding = isDefined(holdTimeoutId);
 
+  useEffect(() => {
+    if (!isDefined(holdTimeoutId)) {
+      return;
+    }
+
+    if (disabled) {
+      clearTimeout(holdTimeoutId);
+      setHoldTimeoutId(null);
+
+      return;
+    }
+
+    return () => clearTimeout(holdTimeoutId);
+  }, [holdTimeoutId, disabled]);
+
   const handleHoldStart = () => {
     if (disabled || isHolding) {
       return;
@@ -72,12 +93,49 @@ export const HoldToConfirmButton = ({
     setHoldTimeoutId(null);
   };
 
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    handleHoldStart();
+  };
+
+  const isConfirmationKey = (event: KeyboardEvent<HTMLDivElement>) =>
+    event.key === 'Enter' || event.key === ' ';
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isConfirmationKey(event)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.repeat) {
+      return;
+    }
+
+    handleHoldStart();
+  };
+
+  const handleKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isConfirmationKey(event)) {
+      return;
+    }
+
+    event.preventDefault();
+    handleHoldEnd();
+  };
+
   return (
     <StyledContainer
-      onPointerDown={handleHoldStart}
+      onPointerDown={handlePointerDown}
       onPointerUp={handleHoldEnd}
       onPointerLeave={handleHoldEnd}
       onPointerCancel={handleHoldEnd}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onBlur={handleHoldEnd}
     >
       {children}
       <StyledOverlay data-holding={isHolding} holdDurationMs={holdDurationMs} />

@@ -222,10 +222,14 @@ export class AdminPanelResolver {
   async updateWorkspaceMessageCampaignDailySendLimit(
     @Args() input: UpdateWorkspaceMessageCampaignDailySendLimitInput,
   ): Promise<boolean> {
-    await this.workspaceRepository.update(
+    const { affected } = await this.workspaceRepository.update(
       { id: input.workspaceId },
       { messageCampaignDailySendLimit: input.dailySendLimit ?? null },
     );
+
+    if (affected === 0) {
+      throw new UserInputError(`Workspace ${input.workspaceId} not found`);
+    }
 
     return true;
   }
