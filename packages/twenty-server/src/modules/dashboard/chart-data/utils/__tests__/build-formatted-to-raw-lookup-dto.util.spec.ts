@@ -65,6 +65,21 @@ describe('buildFormattedToRawLookupDto', () => {
     });
   });
 
+  it('should keep an entry whose formatted value is __proto__', () => {
+    const result = buildFormattedToRawLookupDto({
+      axisLookups: [
+        {
+          formattedToRawLookup: new Map<string, RawDimensionValue>([
+            ['__proto__', 'agent-id-1'],
+          ]),
+          relationLabelResolution: undefined,
+        },
+      ],
+    });
+
+    expect(Object.entries(result)).toEqual([['__proto__', 'agent-id-1']]);
+  });
+
   it('should let later axis entries win formatted key collisions', () => {
     expect(
       buildFormattedToRawLookupDto({

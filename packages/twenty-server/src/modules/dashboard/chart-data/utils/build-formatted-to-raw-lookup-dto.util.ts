@@ -13,7 +13,7 @@ export const buildFormattedToRawLookupDto = ({
 }: {
   axisLookups: AxisLookup[];
 }): Record<string, RawDimensionValue> => {
-  const mergedLookup: Record<string, RawDimensionValue> = {};
+  const mergedLookup = new Map<string, RawDimensionValue>();
 
   for (const { formattedToRawLookup, relationLabelResolution } of axisLookups) {
     const unresolvedRecordIds = relationLabelResolution?.unresolvedRecordIds;
@@ -27,9 +27,9 @@ export const buildFormattedToRawLookupDto = ({
         continue;
       }
 
-      mergedLookup[formattedValue] = rawValue;
+      mergedLookup.set(formattedValue, rawValue);
     }
   }
 
-  return mergedLookup;
+  return Object.fromEntries(mergedLookup);
 };
