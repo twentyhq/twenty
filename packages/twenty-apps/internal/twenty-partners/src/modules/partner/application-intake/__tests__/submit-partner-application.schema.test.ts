@@ -112,4 +112,35 @@ describe('submitPartnerApplicationSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('rejects a partial experience triad', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['WORKFLOWS'],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a non-http twentyExperienceProofLink', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['WORKFLOWS'],
+        twentyExperienceNotes: validExperienceNotes,
+        twentyExperienceProofLink: 'javascript:alert(1)',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects an empty twentyExperience array when other experience fields are set', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: [],
+        twentyExperienceNotes: validExperienceNotes,
+        twentyExperienceProofLink: 'https://www.loom.com/share/example',
+      }).success,
+    ).toBe(false);
+  });
 });

@@ -2,7 +2,10 @@
 // Used by the local (uncommitted) raise-bar import ops script.
 // Match key is partnerId only — never email.
 
-export const TWENTY_EXPERIENCE_NOTES_MIN_LENGTH = 200;
+import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from 'src/modules/partner/constants/partner-option-values.constant';
+import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
+
+export { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH };
 
 export const MILESTONE_LABEL_TO_ENUM = {
   'Custom apps': 'CUSTOM_APPS',
@@ -36,21 +39,17 @@ const MILESTONES_HEADER_ALIASES = [
   "what you've built in twenty",
   'what youve built in twenty',
   'twenty experience',
-  'milestones',
 ] as const;
 
 const NOTES_HEADER_ALIASES = [
   'tell us about the implementation',
   'twenty experience notes',
-  'implementation',
-  'narrative',
 ] as const;
 
 const PROOF_HEADER_ALIASES = [
   'proof url',
   'twenty experience proof link',
   'proof link',
-  'proof',
 ] as const;
 
 const PARTNER_ID_UUID_PATTERN =
@@ -63,9 +62,6 @@ const normalizeHeader = (header: string): string =>
     .replace(/[^a-z0-9]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === 'string' && value.trim().length > 0;
 
 export const getTallyExperienceCsvCell = (
   row: Record<string, string | undefined | null>,

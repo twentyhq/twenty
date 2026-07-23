@@ -18,3 +18,6 @@ export const TWENTY_EXPERIENCE_VALUES = [
   'WORKFLOWS',
   'FRONT_COMPONENTS',
 ] as const;
+
+export const TWENTY_EXPERIENCE_NOTES_MIN_LENGTH = 200;
+
