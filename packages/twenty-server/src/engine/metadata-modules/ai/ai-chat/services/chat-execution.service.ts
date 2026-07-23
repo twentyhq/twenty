@@ -61,6 +61,11 @@ import {
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import {
+  buildRepeatedToolCallStopReminderMessage,
+  buildRepeatedToolCallWarningMessage,
+  buildStepCheckpointReminderMessage,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/agent-loop-reminder-messages.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -68,6 +73,11 @@ import {
   getCallLevelProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import {
+  buildToolCallHistoryFromSteps,
+  createRepeatedToolCallGuardState,
+  evaluateRepeatedToolCallGuard,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/repeated-tool-call-guard.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -333,6 +343,8 @@ export class ChatExecutionService {
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
+    let repeatedToolCallGuardState = createRepeatedToolCallGuardState();
+    let wrapUpStartedAtStep: number | null = null;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -445,7 +457,10 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
+        hasNoMoreAvailableCredits ||
+        (wrapUpStartedAtStep !== null &&
+          step.steps.length >=
+            wrapUpStartedAtStep + AGENT_CONFIG.CHECKPOINT_GRACE_STEPS),
       experimental_telemetry: {
         ...AI_TELEMETRY_CONFIG,
         functionId: 'ai-chat-stream',
@@ -461,11 +476,76 @@ export class ChatExecutionService {
         providerOptions: undefined,
         promptCacheKey: threadId,
       }),
-      prepareStep: ({ messages }) => {
+      prepareStep: ({ messages, stepNumber, steps }) => {
         stepStartedAt = performance.now();
 
+        const toolCallHistory = buildToolCallHistoryFromSteps(steps);
+
+        repeatedToolCallGuardState = evaluateRepeatedToolCallGuard({
+          toolCallHistory,
+          previousState: repeatedToolCallGuardState,
+        });
+
+        const hasReachedCheckpoint =
+          stepNumber >= AGENT_CONFIG.CHECKPOINT_STEPS;
+        const isGuardStopped = repeatedToolCallGuardState.status === 'stopped';
+
+        if (
+          (hasReachedCheckpoint || isGuardStopped) &&
+          wrapUpStartedAtStep === null
+        ) {
+          wrapUpStartedAtStep = stepNumber;
+        }
+
+        // Reminders go after the cache breakpoint so the stable
+        // conversation prefix keeps its cache hit.
+        const stepMessages = injectCacheBreakpoint(
+          messages,
+          registeredModel.sdkPackage,
+        );
+
+        if (isGuardStopped) {
+          return {
+            messages: [
+              ...stepMessages,
+              buildRepeatedToolCallStopReminderMessage(
+                repeatedToolCallGuardState.repeatedToolName ?? 'unknown',
+              ),
+            ],
+          };
+        }
+
+        if (hasReachedCheckpoint) {
+          return {
+            messages: [
+              ...stepMessages,
+              buildStepCheckpointReminderMessage(AGENT_CONFIG.CHECKPOINT_STEPS),
+            ],
+          };
+        }
+
+        // The reminder is only injected on the step right after detection:
+        // prepareStep message overrides are not persisted into the
+        // conversation, so callCountAtWarning still equals the history
+        // length only on that first step.
+        const isWarningStep =
+          repeatedToolCallGuardState.status === 'warned' &&
+          repeatedToolCallGuardState.callCountAtWarning ===
+            toolCallHistory.length;
+
+        if (isWarningStep) {
+          return {
+            messages: [
+              ...stepMessages,
+              buildRepeatedToolCallWarningMessage(
+                repeatedToolCallGuardState.repeatedToolName ?? 'unknown',
+              ),
+            ],
+          };
+        }
+
         return {
-          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+          messages: stepMessages,
         };
       },
       onChunk: ({ chunk }) => {
