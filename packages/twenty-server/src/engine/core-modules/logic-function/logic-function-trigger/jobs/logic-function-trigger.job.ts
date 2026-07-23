@@ -30,7 +30,7 @@ export class LogicFunctionTriggerJob {
   async handle(
     jobData: LogicFunctionTriggerJobData | LogicFunctionTriggerJobData[],
   ) {
-    // Jobs enqueued before the single-payload migration still carry arrays
+    // Jobs enqueued in version <=2.24.x carry arrays, remove this case once those jobs are drained
     const logicFunctionPayloads = Array.isArray(jobData) ? jobData : [jobData];
 
     for (const logicFunctionPayload of logicFunctionPayloads) {
