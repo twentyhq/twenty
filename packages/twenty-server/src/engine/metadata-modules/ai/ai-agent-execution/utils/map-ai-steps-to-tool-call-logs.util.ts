@@ -2,6 +2,7 @@ import { type StepResult, type ToolSet } from 'ai';
 
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
+import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import {
   TRUNCATION_SENTINEL,
   truncateStringToUtf8ByteBudget,
@@ -98,7 +99,9 @@ export const mapAiStepsToToolCallLogs = (
 
       if (part.type === 'tool-call') {
         const entry: AiToolCallLog = {
-          toolName: part.toolName,
+          // Unwrap execute_tool calls to the underlying tool name so progressive
+          // disclosure keeps the run log readable (e.g. find_many_customers).
+          toolName: resolveToolName(part),
           toolCallId: part.toolCallId,
           input: truncateUnknownForLog(part.input, maxToolInputBytes),
           state: 'started',

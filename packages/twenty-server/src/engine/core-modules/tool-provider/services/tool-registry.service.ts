@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet, jsonSchema } from 'ai';
+import { type ToolCategory } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -31,17 +32,28 @@ export class ToolRegistryService {
     private readonly toolOutputSpillService: ToolOutputSpillService,
   ) {}
 
-  async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
-    const results = await Promise.all(
-      this.providers.map(async (provider) => {
-        if (await provider.isAvailable(context)) {
-          return provider.generateDescriptors(context, {
-            includeSchemas: false,
-          });
-        }
+  async getCatalog(
+    context: ToolProviderContext,
+    options?: { categories?: ToolCategory[] },
+  ): Promise<ToolIndexEntry[]> {
+    const categorySet = options?.categories
+      ? new Set(options.categories)
+      : undefined;
 
-        return [];
-      }),
+    const results = await Promise.all(
+      this.providers
+        .filter(
+          (provider) => !categorySet || categorySet.has(provider.category),
+        )
+        .map(async (provider) => {
+          if (await provider.isAvailable(context)) {
+            return provider.generateDescriptors(context, {
+              includeSchemas: false,
+            });
+          }
+
+          return [];
+        }),
     );
 
     return results.flat();

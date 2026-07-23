@@ -24,9 +24,17 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import {
+  createExecuteToolTool,
+  createLearnToolsTool,
+  EXECUTE_TOOL_TOOL_NAME,
+  LEARN_TOOLS_TOOL_NAME,
+} from 'src/engine/core-modules/tool-provider/tools';
+import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
+import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -35,6 +43,7 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { buildWorkflowAgentToolCatalogSection } from 'src/engine/metadata-modules/ai/ai-agent/utils/build-workflow-agent-tool-catalog-section.util';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -152,6 +161,9 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
+      let systemPrompt = `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${
+        agent ? agent.prompt : ''
+      }`;
       let providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
@@ -170,11 +182,31 @@ export class AgentAsyncExecutorService {
             agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
 
+        const nativeTools = this.nativeToolBinder.bind(
+          registeredModel,
+          nativeModelToolOptions,
+        );
+
         let registryTools: ToolSet = {};
 
         // Workflow agent registry tools are scoped exclusively by the agent
         // permission-tab role. No role means no registry tools.
+        //
+        // Tools use progressive disclosure: the model sees a lightweight
+        // catalog (names + descriptions) in the system prompt and pulls a
+        // tool's input schema on demand via learn_tools/execute_tool. This
+        // avoids eagerly serializing every CRUD schema for every object the
+        // role can access, which otherwise dominates the prompt token cost.
         if (isDefined(agentRoleId)) {
+          const userId =
+            isDefined(authContext) && isUserAuthContext(authContext)
+              ? authContext.user.id
+              : undefined;
+          const userWorkspaceId =
+            isDefined(authContext) && isUserAuthContext(authContext)
+              ? authContext.userWorkspaceId
+              : undefined;
+
           const agentRolePermissionConfig: RolePermissionConfig = {
             unionOf: [agentRoleId],
           };
@@ -185,30 +217,51 @@ export class AgentAsyncExecutorService {
             rolePermissionConfig: agentRolePermissionConfig,
             authContext,
             actorContext,
-            userId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.user.id
-                : undefined,
-            userWorkspaceId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.userWorkspaceId
-                : undefined,
+            userId,
+            userWorkspaceId,
           };
 
-          registryTools = await this.toolRegistry.getToolsByCategories(
-            toolProviderContext,
-            {
-              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-              excludeTools: [...OUTPUT_NAVIGATION_TOOL_NAMES],
-              wrapWithErrorContext: false,
-            },
-          );
-        }
+          const toolContext: ToolContext = {
+            workspaceId: agent.workspaceId,
+            roleId: agentRoleId,
+            authContext,
+            actorContext,
+            userId,
+            userWorkspaceId,
+          };
 
-        const nativeTools = this.nativeToolBinder.bind(
-          registeredModel,
-          nativeModelToolOptions,
-        );
+          const excludedToolNames = new Set<string>(
+            OUTPUT_NAVIGATION_TOOL_NAMES,
+          );
+
+          const toolCatalog = (
+            await this.toolRegistry.getCatalog(toolProviderContext, {
+              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+            })
+          ).filter((entry) => !excludedToolNames.has(entry.name));
+
+          registryTools = {
+            [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
+              this.toolRegistry,
+              toolContext,
+              excludedToolNames,
+            ),
+            [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
+              this.toolRegistry,
+              toolContext,
+              {
+                excludeTools: excludedToolNames,
+                compactOutput: true,
+                spillLargeOutput: true,
+              },
+            ),
+          };
+
+          systemPrompt = `${systemPrompt}\n\n${buildWorkflowAgentToolCatalogSection(
+            toolCatalog,
+            [],
+          )}`;
+        }
 
         tools = {
           ...registryTools,
@@ -230,7 +283,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
+        system: systemPrompt,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
@@ -246,7 +299,7 @@ export class AgentAsyncExecutorService {
             unit: 'ms',
             attributes: {
               model: registeredModel.modelId,
-              tool: getToolMetricName(event.toolCall.toolName),
+              tool: getToolMetricName(resolveToolName(event.toolCall)),
             },
             bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
           });
@@ -279,7 +332,7 @@ export class AgentAsyncExecutorService {
 
             const toolAttributes = {
               model: registeredModel.modelId,
-              tool: getToolMetricName(part.toolName),
+              tool: getToolMetricName(resolveToolName(part)),
             };
 
             this.metricsService.incrementCounterBy({
