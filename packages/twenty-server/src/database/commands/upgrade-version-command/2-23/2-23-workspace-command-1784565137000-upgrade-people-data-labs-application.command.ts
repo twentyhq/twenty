@@ -136,10 +136,17 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
   }
 
   private async logoFileIdColumnExists(): Promise<boolean> {
+    // pg_attribute scoped to the single table, not the instance-wide
+    // information_schema.columns view, which is slow on many-tenant instances.
     const rows = await this.coreDataSource.query(
-      `SELECT 1 FROM information_schema.columns WHERE table_schema = 'core' AND table_name = 'applicationRegistration' AND column_name = 'logoFileId'`,
+      `SELECT EXISTS (
+        SELECT 1 FROM pg_attribute
+        WHERE attrelid = to_regclass('core."applicationRegistration"')
+          AND attname = 'logoFileId'
+          AND NOT attisdropped
+      ) AS "exists"`,
     );
 
-    return rows.length > 0;
+    return rows[0]?.exists === true;
   }
 }
