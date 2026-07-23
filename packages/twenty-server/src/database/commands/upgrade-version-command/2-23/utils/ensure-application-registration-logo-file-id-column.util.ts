@@ -1,8 +1,6 @@
 type QueryExecutor = (sql: string) => Promise<unknown>;
 
-// Verbatim copy of the 2.21 add-logo-file-id-to-application-registration DDL.
-// Kept in one place so the 2.23 repair (workspace command + fast instance
-// command) and the original migration stay byte-for-byte identical.
+// Verbatim 2.21 add-logo-file-id DDL, shared so both 2.23 repair paths match.
 export const ensureApplicationRegistrationLogoFileIdColumn = async (
   query: QueryExecutor,
 ): Promise<void> => {

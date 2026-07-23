@@ -7,11 +7,9 @@ import {
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-// Re-run of the 2.21 add-logo-file-id command, which shipped in the 2.21 slot
-// but only landed after the 2.22 version bump. Instances that already ran a
-// 2.21 binary have their upgrade cursor past that slot, so the original command
-// is skipped forever and the column never gets created. This re-slots the same
-// idempotent DDL at the end of the 2.23 fast segment to reach those cursors.
+// Re-slots the 2.21 add-logo-file-id DDL at the end of the 2.23 fast segment:
+// the 2.21 command landed after the 2.22 bump and is skipped forever on
+// instances whose cursor is already past that slot.
 @RegisteredInstanceCommand('2.23.0', 1784823473532)
 export class AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand
   implements FastInstanceCommand

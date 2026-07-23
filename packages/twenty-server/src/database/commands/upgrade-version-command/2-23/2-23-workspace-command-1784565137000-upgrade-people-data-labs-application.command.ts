@@ -29,8 +29,7 @@ const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.9';
     'Upgrade the people-data-labs application to 1.0.9 right after the system relation field universal identifier backfill, so its views reference the re-derived name-free identifiers instead of the stale pre-2.23 ones and its front components run on React 19. Workspaces already at or above 1.0.9 are left untouched.',
 })
 export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspaceCommandRunner {
-  // core."applicationRegistration" is instance-global, so the DDL runs once per
-  // process rather than once per workspace.
+  // Instance-global DDL: run once per process, not per workspace.
   private hasEnsuredLogoFileIdColumn = false;
 
   constructor(
@@ -50,13 +49,9 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    // logoFileId was shipped as a 2.21 instance command that got re-slotted
-    // after the 2.22 version bump, so instances that ran a 2.21 binary skip it
-    // permanently and reach this command with the column absent. The findOne
-    // below selects logoFileId through the applicationRegistration relation and
-    // crashes without it, so repair the instance-global column before anything
-    // else. Instance-level DDL lives here because this is the command that
-    // breaks on affected instances.
+    // The 2.21 logoFileId command was skipped on instances that ran a 2.21
+    // binary, so the column is absent and the findOne below crashes on it.
+    // Repair it here since this is the command that breaks.
     if (!this.hasEnsuredLogoFileIdColumn) {
       if (isDryRun) {
         const columnExists = await this.logoFileIdColumnExists();
