@@ -12,7 +12,6 @@ import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
-import { UpgradeApplicationCommand } from 'src/database/commands/upgrade-application.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -20,7 +19,6 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
@@ -60,11 +58,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      RoleEntity,
-      ApplicationRegistrationEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
     // Cron command dependencies
     MessagingImportManagerModule,
@@ -117,7 +111,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     GenerateApiKeyCommand,
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
-    UpgradeApplicationCommand,
     InstallPreInstalledAppsCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
