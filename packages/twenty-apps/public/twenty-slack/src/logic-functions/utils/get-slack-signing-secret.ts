@@ -5,13 +5,13 @@ import { getApplicationVariableValue } from 'src/logic-functions/utils/get-appli
 export const getSlackSigningSecret = ():
   | { success: true; secret: string }
   | { success: false; error: string } => {
-  const secret = getApplicationVariableValue('SLACK_SIGNING_SECRET');
+  const secret = getApplicationVariableValue('SLACK_WEBHOOK_SIGNATURE');
 
   if (!isNonEmptyString(secret)) {
     return {
       success: false,
       error:
-        'SLACK_SIGNING_SECRET is not configured. Set it in the application registration settings (Settings > Applications > Twenty Slack).',
+        'SLACK_WEBHOOK_SIGNATURE is not configured. Set it in the application registration settings (Settings > Applications > Twenty Slack).',
     };
   }
 
