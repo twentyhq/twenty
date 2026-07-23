@@ -1,0 +1,22 @@
+packages/twenty-front/src/modules/settings/admin-panel/components/SettingsAdminWorkspaceSendLimit.tsx
+  s_c3fbc446206706::t_bc1b18a206bdee 40-42
+  s_c3fbc446206706::t_74186cc5e29b09 5
+  s_c3fbc446206706::t_b89a0f4aaa5b92 74
+  s_c3fbc446206706::t_eeac227b23e04a 57,60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9125397a1bfb460f5fa80aa6a14d1581d4486ae2",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
