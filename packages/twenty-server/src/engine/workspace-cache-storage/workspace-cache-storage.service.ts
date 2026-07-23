@@ -154,18 +154,6 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flushGraphQLOperation({
-    operationName,
-    workspaceId,
-  }: {
-    operationName: string;
-    workspaceId: string;
-  }): Promise<void> {
-    await this.cacheStorageService.flushByPattern(
-      `${WORKSPACE_CACHE_KEYS.GraphQLOperations}:${operationName}:${workspaceId}:*`,
-    );
-  }
-
   async flushHashKeyedWorkspaceCache(workspaceId: string): Promise<void> {
     await Promise.all(
       Object.values(HASH_KEYED_WORKSPACE_CACHE_KEYS).map((key) =>

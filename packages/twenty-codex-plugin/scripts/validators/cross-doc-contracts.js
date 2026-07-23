@@ -176,7 +176,7 @@ const assertCliGuidanceSplit = (fail) => {
   const requiredDevelopFragments = [
     'references/develop-app/app-structure.md',
     'yarn twenty dev:add',
-    'yarn twenty dev --once',
+    'yarn twenty apply',
     'switch to `manage-app`',
   ];
 
