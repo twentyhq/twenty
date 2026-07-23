@@ -382,7 +382,6 @@ export class WorkflowDatabaseEventTriggerListener {
                 workflowId: eventListener.workflowId,
                 payload: eventPayload,
               },
-              { retryLimit: 3 },
             );
           }
         }

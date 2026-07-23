@@ -105,7 +105,6 @@ export class WorkflowCronTriggerCronJob {
             workflowId: trigger.workflowId,
             payload: {},
           },
-          { retryLimit: 3 },
         );
       } catch (error) {
         this.logger.error(`Error processing cached trigger: ${error}`);
@@ -205,7 +204,6 @@ export class WorkflowCronTriggerCronJob {
               workflowId: trigger.workflowId,
               payload: {},
             },
-            { retryLimit: 3 },
           );
         }
       }

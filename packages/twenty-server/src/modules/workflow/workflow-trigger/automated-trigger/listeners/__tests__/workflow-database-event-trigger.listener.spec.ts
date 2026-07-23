@@ -136,7 +136,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: mockPayload.events[0],
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -221,7 +220,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: createPayload.events[0],
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -258,7 +256,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: deletePayload.events[0],
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -295,7 +292,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: destroyPayload.events[0],
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -338,7 +334,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: batchPayload.events[0],
         },
-        { retryLimit: 3 },
       );
       expect(messageQueueService.add).toHaveBeenNthCalledWith(
         2,
@@ -348,7 +343,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: batchPayload.events[1],
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -386,7 +380,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workflowId,
           payload: positionOnlyPayload.events[0],
         },
-        { retryLimit: 3 },
       );
     });
 

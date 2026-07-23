@@ -123,7 +123,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-1',
           payload: {},
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -287,7 +286,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-1',
           payload: {},
         },
-        { retryLimit: 3 },
       );
     });
 
@@ -321,7 +319,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-1',
           payload: {},
         },
-        { retryLimit: 3 },
       );
     });
   });
