@@ -71,30 +71,9 @@ const createMatchMediaStub =
       dispatchEvent: () => false,
     }) as unknown as MediaQueryList;
 
-// @remote-dom/polyfill ships MutationObserver as an empty stub class: any
-// library calling observe()/disconnect() on it crashes at render time.
-const patchIncompleteMutationObserver = (scope: Record<string, unknown>) => {
-  const mutationObserver = scope.MutationObserver as
-    | (new () => unknown)
-    | undefined;
-
-  if (mutationObserver === undefined) {
-    scope.MutationObserver = ObserverStub;
-
-    return;
-  }
-
-  const prototype = mutationObserver.prototype as Record<string, unknown>;
-
-  prototype.observe ??= () => {};
-  prototype.disconnect ??= () => {};
-  prototype.takeRecords ??= () => [];
-};
-
 export const installBrowserApiStubs = (): void => {
   const globalScope = globalThis as Record<string, unknown>;
 
-  patchIncompleteMutationObserver(globalScope);
   globalScope.ResizeObserver ??= ObserverStub;
   globalScope.IntersectionObserver ??= ObserverStub;
   globalScope.getComputedStyle ??= createEmptyComputedStyle;
@@ -103,7 +82,6 @@ export const installBrowserApiStubs = (): void => {
   const windowScope = globalScope.window as Record<string, unknown> | undefined;
 
   if (windowScope !== undefined && windowScope !== globalScope) {
-    patchIncompleteMutationObserver(windowScope);
     windowScope.ResizeObserver ??= ObserverStub;
     windowScope.IntersectionObserver ??= ObserverStub;
     windowScope.getComputedStyle ??= createEmptyComputedStyle;
