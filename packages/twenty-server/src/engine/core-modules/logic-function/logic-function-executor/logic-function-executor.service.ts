@@ -123,7 +123,7 @@ export class LogicFunctionExecutorService {
 
     // Checked before the shared workspace throttle so a flood from a stopped
     // application cannot exhaust the token bucket of the other applications.
-    await this.assertApplicationNotStopped(flatApplication);
+    await this.assertApplicationNotStopped(flatApplication, workspaceId);
 
     await this.throttleExecution(workspaceId);
 
@@ -241,10 +241,12 @@ export class LogicFunctionExecutorService {
 
   private async assertApplicationNotStopped(
     flatApplication: FlatApplication,
+    workspaceId: string,
   ): Promise<void> {
     if (
       await this.applicationStopService.isApplicationStopped(
         flatApplication.universalIdentifier,
+        workspaceId,
       )
     ) {
       throw new LogicFunctionException(

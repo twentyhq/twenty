@@ -8,6 +8,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier-1';
 const KILL_SWITCH_KEY = `kill-switch:${APPLICATION_UNIVERSAL_IDENTIFIER}`;
+const WORKSPACE_ID = 'workspace-id-1';
+const WORKSPACE_KILL_SWITCH_KEY = `kill-switch:${APPLICATION_UNIVERSAL_IDENTIFIER}:workspace:${WORKSPACE_ID}`;
 
 describe('ApplicationStopService', () => {
   let applicationStopService: ApplicationStopService;
@@ -44,6 +46,51 @@ describe('ApplicationStopService', () => {
       KILL_SWITCH_KEY,
       'stopped',
     );
+  });
+
+  it('sets a workspace-scoped kill switch when stopping for a single workspace', async () => {
+    await applicationStopService.stop(
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+      WORKSPACE_ID,
+    );
+
+    expect(cacheStorageService.set).toHaveBeenCalledWith(
+      WORKSPACE_KILL_SWITCH_KEY,
+      'stopped',
+    );
+  });
+
+  it('returns true only for the targeted workspace when its kill switch exists', async () => {
+    cacheStorageService.get.mockImplementation((key: string) =>
+      Promise.resolve(
+        key === WORKSPACE_KILL_SWITCH_KEY ? 'stopped' : undefined,
+      ),
+    );
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+        WORKSPACE_ID,
+      ),
+    ).resolves.toBe(true);
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(false);
+  });
+
+  it('returns true for any workspace when the global kill switch exists', async () => {
+    cacheStorageService.get.mockImplementation((key: string) =>
+      Promise.resolve(key === KILL_SWITCH_KEY ? 'stopped' : undefined),
+    );
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+        WORKSPACE_ID,
+      ),
+    ).resolves.toBe(true);
   });
 
   it('returns true when the kill switch exists', async () => {

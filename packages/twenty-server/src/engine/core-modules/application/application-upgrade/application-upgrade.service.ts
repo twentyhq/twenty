@@ -111,21 +111,21 @@ export class ApplicationUpgradeService {
     }
   }
 
-  async upgradeAllApplications({
+  async findApplicationsToUpgrade({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
     workspaceIds,
     workspaceCountLimit,
-    dryRun = false,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    batchSize?: number;
     workspaceIds?: string[];
     workspaceCountLimit?: number;
-    dryRun?: boolean;
-  }): Promise<void> {
+  }): Promise<{
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string | null;
+    applicationsToUpgrade: ApplicationEntity[];
+  }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
     });
@@ -133,7 +133,11 @@ export class ApplicationUpgradeService {
     const targetVersion = appRegistration.latestAvailableVersion;
 
     if (!isDefined(targetVersion)) {
-      return;
+      return {
+        appRegistration,
+        targetVersion: null,
+        applicationsToUpgrade: [],
+      };
     }
 
     const applications = await this.applicationRepository.find({
@@ -157,19 +161,31 @@ export class ApplicationUpgradeService {
       );
     }
 
-    if (dryRun) {
-      const workspaceList = applicationsToUpgrade
-        .map((application) => application.workspaceId)
-        .join(', ');
+    return { appRegistration, targetVersion, applicationsToUpgrade };
+  }
 
-      this.logger.log(
-        `[DRY RUN] Would upgrade ${applicationsToUpgrade.length} installation(s) to version ${targetVersion}${
-          applicationsToUpgrade.length > 0
-            ? ` on workspaces: ${workspaceList}`
-            : ''
-        }`,
-      );
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    batchSize?: number;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<void> {
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
+      await this.findApplicationsToUpgrade({
+        applicationRegistrationId,
+        onlyAutoUpgrade,
+        workspaceIds,
+        workspaceCountLimit,
+      });
 
+    if (!isDefined(targetVersion)) {
       return;
     }
 

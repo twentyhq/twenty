@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 
@@ -120,7 +121,19 @@ export class UpgradeApplicationCommand extends CommandRunner {
       );
     }
 
-    if (!isDefined(registration.latestAvailableVersion)) {
+    const workspaceIds = isDefined(options.workspaceId)
+      ? Array.from(options.workspaceId)
+      : undefined;
+
+    const { targetVersion, applicationsToUpgrade } =
+      await this.applicationUpgradeService.findApplicationsToUpgrade({
+        applicationRegistrationId: registration.id,
+        onlyAutoUpgrade: false,
+        workspaceIds,
+        workspaceCountLimit: options.workspaceCountLimit,
+      });
+
+    if (!isDefined(targetVersion)) {
       this.logger.warn(
         `Application "${registration.name}" (${registration.universalIdentifier}) has no latest available version, nothing to upgrade`,
       );
@@ -128,21 +141,54 @@ export class UpgradeApplicationCommand extends CommandRunner {
       return;
     }
 
-    const dryRun = options.dryRun ?? false;
+    const impactedWorkspaceIds = applicationsToUpgrade.map(
+      (application) => application.workspaceId,
+    );
+
+    if (options.dryRun ?? false) {
+      this.logger.log(
+        `[DRY RUN] Would upgrade "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)${
+          impactedWorkspaceIds.length > 0
+            ? `: ${impactedWorkspaceIds.join(', ')}`
+            : ''
+        }`,
+      );
+
+      return;
+    }
+
+    if (impactedWorkspaceIds.length === 0) {
+      this.logger.log(
+        `No workspace to upgrade, every targeted installation of "${registration.name}" already runs version ${targetVersion}`,
+      );
+
+      return;
+    }
+
+    const confirmationTarget = isDefined(workspaceIds)
+      ? `workspace(s) ${workspaceIds.join(', ')}`
+      : `${impactedWorkspaceIds.length} workspace(s)`;
+
+    const isConfirmed = await askCommandConfirmation(
+      `Confirm upgrading application ${registration.universalIdentifier} to version ${targetVersion} on ${confirmationTarget}`,
+    );
+
+    if (!isConfirmed) {
+      this.logger.log('Aborted, no upgrade performed');
+
+      return;
+    }
 
     this.logger.log(
-      `${dryRun ? '[DRY RUN] ' : ''}Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${registration.latestAvailableVersion} on workspaces that have it installed...`,
+      `Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)...`,
     );
 
     await this.applicationUpgradeService.upgradeAllApplications({
       applicationRegistrationId: registration.id,
       onlyAutoUpgrade: false,
       batchSize: options.batchSize,
-      workspaceIds: isDefined(options.workspaceId)
-        ? Array.from(options.workspaceId)
-        : undefined,
+      workspaceIds,
       workspaceCountLimit: options.workspaceCountLimit,
-      dryRun,
     });
 
     this.logger.log(chalk.blue('Command completed!'));
