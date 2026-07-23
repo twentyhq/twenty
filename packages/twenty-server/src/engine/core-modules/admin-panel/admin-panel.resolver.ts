@@ -59,14 +59,6 @@ import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/applica
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
-import {
-  BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
-  type BackfillApplicationInstallationJobData,
-} from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
-import {
-  UPGRADE_APPLICATIONS_JOB_NAME,
-  type UpgradeApplicationsJobData,
-} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -153,8 +145,6 @@ export class AdminPanelResolver {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly cronQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -533,59 +523,6 @@ export class AdminPanelResolver {
     @Args('input') input: UpdateApplicationRegistrationInput,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.updateGlobal(input);
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async backfillApplicationInstallation(
-    @Args('applicationRegistrationId') applicationRegistrationId: string,
-  ): Promise<boolean> {
-    const registration =
-      await this.applicationRegistrationService.findOneByIdGlobal(
-        applicationRegistrationId,
-      );
-
-    if (!registration.isPreInstalled) {
-      throw new UserInputError(
-        'Only pre-installed apps can be backfilled. Enable pre-install first.',
-      );
-    }
-
-    await this.workspaceQueueService.add<BackfillApplicationInstallationJobData>(
-      BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
-      { applicationRegistrationId },
-      {
-        id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
-      }, // Avoids triggering multiple pending jobs for the same app
-    );
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async upgradeRegistrationApplications(
-    @Args('applicationRegistrationId') applicationRegistrationId: string,
-    @Args('batchSize', { type: () => Int, nullable: true })
-    batchSize?: number,
-  ): Promise<boolean> {
-    await this.applicationRegistrationService.findOneByIdGlobal(
-      applicationRegistrationId,
-    );
-
-    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
-      UPGRADE_APPLICATIONS_JOB_NAME,
-      {
-        applicationRegistrationId,
-        onlyAutoUpgrade: false,
-        ...(isDefined(batchSize) ? { batchSize } : {}),
-      },
-      {
-        id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
-      }, // Avoids triggering multiple pending jobs for the same app
-    );
-
-    return true;
   }
 
   @UseGuards(AdminPanelGuard)
