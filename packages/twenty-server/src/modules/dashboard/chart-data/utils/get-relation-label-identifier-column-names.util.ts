@@ -10,16 +10,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getRelationLabelIdentifierField } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-field.util';
 
-export const getRelationLabelIdentifierColumns = ({
+export const getRelationLabelIdentifierColumnNames = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): {
-  labelIdentifierField: FlatFieldMetadata;
-  columnNames: string[];
-} | null => {
+}): string[] | null => {
   const labelIdentifierField = getRelationLabelIdentifierField({
     flatObjectMetadata,
     flatFieldMetadataMaps,
@@ -38,19 +35,13 @@ export const getRelationLabelIdentifierColumns = ({
       return null;
     }
 
-    return {
-      labelIdentifierField,
-      columnNames: [
-        'id',
-        ...compositeType.properties.map((property) =>
-          computeCompositeColumnName(labelIdentifierField.name, property),
-        ),
-      ],
-    };
+    return [
+      'id',
+      ...compositeType.properties.map((property) =>
+        computeCompositeColumnName(labelIdentifierField.name, property),
+      ),
+    ];
   }
 
-  return {
-    labelIdentifierField,
-    columnNames: ['id', labelIdentifierField.name],
-  };
+  return ['id', labelIdentifierField.name];
 };

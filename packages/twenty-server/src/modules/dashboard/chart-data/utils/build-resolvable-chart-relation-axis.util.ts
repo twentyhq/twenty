@@ -9,7 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type ChartRelationLabelAxisInput } from 'src/modules/dashboard/chart-data/types/chart-relation-label-axis-input.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type ResolvableChartRelationAxis } from 'src/modules/dashboard/chart-data/types/resolvable-chart-relation-axis.type';
-import { getRelationLabelIdentifierColumns } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-columns.util';
+import { getRelationLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-column-names.util';
 
 export const buildResolvableChartRelationAxis = ({
   dimensionIndex,
@@ -47,12 +47,12 @@ export const buildResolvableChartRelationAxis = ({
     return undefined;
   }
 
-  const labelIdentifierColumns = getRelationLabelIdentifierColumns({
+  const labelIdentifierColumnNames = getRelationLabelIdentifierColumnNames({
     flatObjectMetadata: targetFlatObjectMetadata,
     flatFieldMetadataMaps,
   });
 
-  if (!isDefined(labelIdentifierColumns)) {
+  if (!isDefined(labelIdentifierColumnNames)) {
     return undefined;
   }
 
@@ -71,7 +71,7 @@ export const buildResolvableChartRelationAxis = ({
   return {
     dimensionIndex,
     targetFlatObjectMetadata,
-    labelIdentifierColumnNames: labelIdentifierColumns.columnNames,
+    labelIdentifierColumnNames,
     recordIds,
   };
 };

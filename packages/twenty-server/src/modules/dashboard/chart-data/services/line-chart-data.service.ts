@@ -336,9 +336,10 @@ export class LineChartDataService {
       hasTooManyGroups:
         filteredRawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
         dateRangeWasTruncated,
-      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
-        relationLabelResolution?.unresolvedRecordIds,
-      ]),
+      formattedToRawLookup: buildFormattedToRawLookupDto({
+        formattedToRawLookup,
+        relationLabelResolutions: [relationLabelResolution],
+      }),
     };
   }
 
@@ -538,10 +539,13 @@ export class LineChartDataService {
       showLegend: configuration.displayLegend ?? true,
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups,
-      formattedToRawLookup: buildFormattedToRawLookupDto(mergedLookup, [
-        primaryRelationLabelResolution?.unresolvedRecordIds,
-        secondaryRelationLabelResolution?.unresolvedRecordIds,
-      ]),
+      formattedToRawLookup: buildFormattedToRawLookupDto({
+        formattedToRawLookup: mergedLookup,
+        relationLabelResolutions: [
+          primaryRelationLabelResolution,
+          secondaryRelationLabelResolution,
+        ],
+      }),
     };
   }
 

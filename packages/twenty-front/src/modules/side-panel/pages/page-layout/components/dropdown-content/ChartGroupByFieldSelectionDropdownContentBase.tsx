@@ -297,7 +297,11 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return (
       <ChartGroupByFieldSelectionRelationFieldView
         relationField={selectedRelationField}
-        currentSubFieldName={currentSubFieldName}
+        currentSubFieldName={
+          selectedRelationField.id === currentGroupByFieldMetadataId
+            ? currentSubFieldName
+            : undefined
+        }
         isCurrentGroupByField={
           selectedRelationField.id === currentGroupByFieldMetadataId
         }

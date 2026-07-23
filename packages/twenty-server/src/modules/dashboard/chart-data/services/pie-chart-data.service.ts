@@ -245,9 +245,10 @@ export class PieChartDataService {
       showCenterMetric: configuration.showCenterMetric ?? true,
       hasTooManyGroups:
         filteredRawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
-        relationLabelResolution?.unresolvedRecordIds,
-      ]),
+      formattedToRawLookup: buildFormattedToRawLookupDto({
+        formattedToRawLookup,
+        relationLabelResolutions: [relationLabelResolution],
+      }),
     };
   }
 }

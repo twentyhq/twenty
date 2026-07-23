@@ -339,9 +339,10 @@ export class BarChartDataService {
       hasTooManyGroups:
         filteredRawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
         dateRangeWasTruncated,
-      formattedToRawLookup: buildFormattedToRawLookupDto(formattedToRawLookup, [
-        relationLabelResolution?.unresolvedRecordIds,
-      ]),
+      formattedToRawLookup: buildFormattedToRawLookupDto({
+        formattedToRawLookup,
+        relationLabelResolutions: [relationLabelResolution],
+      }),
     };
   }
 
@@ -550,10 +551,13 @@ export class BarChartDataService {
       layout,
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups,
-      formattedToRawLookup: buildFormattedToRawLookupDto(mergedLookup, [
-        primaryRelationLabelResolution?.unresolvedRecordIds,
-        secondaryRelationLabelResolution?.unresolvedRecordIds,
-      ]),
+      formattedToRawLookup: buildFormattedToRawLookupDto({
+        formattedToRawLookup: mergedLookup,
+        relationLabelResolutions: [
+          primaryRelationLabelResolution,
+          secondaryRelationLabelResolution,
+        ],
+      }),
     };
   }
 
