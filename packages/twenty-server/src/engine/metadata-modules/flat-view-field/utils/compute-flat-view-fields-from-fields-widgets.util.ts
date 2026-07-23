@@ -1,4 +1,3 @@
-import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -33,14 +32,15 @@ const isFieldsWidgetConfiguration = (
   );
 };
 
+// INDEX views are NOT targeted here: their view fields are provisioned by the
+// fieldIndexViewFieldOnCreate metadata side effect, which also dedupes against
+// a fields widget explicitly targeting the INDEX view.
 const getFieldViewTargets = ({
   objectMetadataUniversalIdentifier,
   flatPageLayoutWidgetMaps,
-  flatViewMaps,
 }: {
   objectMetadataUniversalIdentifier: string;
   flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
-  flatViewMaps: FlatViewMaps;
 }): FieldViewTarget[] => {
   const targets: FieldViewTarget[] = [];
   const seenViewIds = new Set<string>();
@@ -70,24 +70,6 @@ const getFieldViewTargets = ({
 
     seenViewIds.add(viewId);
     targets.push({ viewId, isVisible: newFieldDefaultVisibility });
-  }
-
-  for (const view of Object.values(flatViewMaps.byUniversalIdentifier).filter(
-    isDefined,
-  )) {
-    if (
-      view.key !== ViewKey.INDEX ||
-      !view.isActive ||
-      isDefined(view.deletedAt) ||
-      view.objectMetadataUniversalIdentifier !==
-        objectMetadataUniversalIdentifier ||
-      seenViewIds.has(view.id)
-    ) {
-      continue;
-    }
-
-    seenViewIds.add(view.id);
-    targets.push({ viewId: view.id, isVisible: false });
   }
 
   return targets;
@@ -181,7 +163,6 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
     const targets = getFieldViewTargets({
       objectMetadataUniversalIdentifier,
       flatPageLayoutWidgetMaps,
-      flatViewMaps,
     });
 
     const fieldsForObject = fieldsToCreate.filter(

@@ -75,19 +75,11 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
       };
     }
 
-    const systemFieldUniversalIdentifiers = new Set(
-      systemFlatFieldMetadatas.map(
-        (flatFieldMetadata) => flatFieldMetadata.universalIdentifier,
-      ),
-    );
-
     const displayableCallerFlatFieldMetadatas =
       computeCallerFlatFieldMetadatasForObject({
         objectMetadataUniversalIdentifier: universalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier:
           sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        reservedSystemFieldUniversalIdentifiers:
-          systemFieldUniversalIdentifiers,
         allFlatEntityOperationRecordByMetadataName,
         displayableOnly: true,
       });
