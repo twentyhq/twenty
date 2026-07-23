@@ -1,0 +1,30 @@
+name: CI - Merge Queue
+
+# Runs when a PR is queued to merge. GitHub builds the merge candidate on top of
+# the current tip of main, so these checks validate against main's real state at
+# merge time rather than the PR's (possibly stale) base. This is what closes the
+# upgrade-command base-drift race: a command generated against an old version,
+# then left behind when main bumps, is caught here even if the PR-level guard
+# passed on a stale base.
+
+on:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  upgrade-mutation-guard:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merge candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
+      # merge_group has no PR labels, so the bypass labels are not honored here:
+      # the queue is the strict final gate against main.
+      - name: Validate upgrade command mutations against main
+        uses: ./.github/actions/upgrade-mutation-guard
+        with:
+          base_sha: ${{ github.event.merge_group.base_sha }}
