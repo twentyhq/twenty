@@ -21,7 +21,7 @@ import {
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
+import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';

@@ -23,6 +23,13 @@ export class ApplicationStopService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
+  async stop(applicationUniversalIdentifier: string): Promise<void> {
+    await this.cacheStorageService.set(
+      this.getKillSwitchKey(applicationUniversalIdentifier),
+      'stopped',
+    );
+  }
+
   async isApplicationStopped(
     applicationUniversalIdentifier: string,
   ): Promise<boolean> {
