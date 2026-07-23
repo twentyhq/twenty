@@ -59,7 +59,7 @@ Para invocar una función de lógica activada por una ruta desde un componente d
 * **cron**: Ejecuta tu función en un horario usando una expresión CRON.
 * **databaseEvent**: Se ejecuta en eventos del ciclo de vida de objetos del espacio de trabajo. Cuando la operación del evento es `updated`, se pueden especificar campos específicos que se deben escuchar en la matriz `updatedFields`. Si se deja sin definir o vacío, cualquier actualización activará la función.
 > p. ej. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve el espacio de trabajo de destino Y la función de lógica de destino a la que se debe enviar; la plataforma luego ejecuta esa función de **destino** y devuelve su respuesta. Consulta [Disparador de ruta de servidor](#server-route-trigger).
+* **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve el espacio de trabajo de destino Y la función de lógica de destino a la que se debe enviar; la plataforma confirma con `202` y ejecuta esa función de **destino** en la cola de workers. Consulta [Disparador de ruta de servidor](#server-route-trigger).
 
 <Note>
 También puedes ejecutar manualmente una función usando la CLI:
@@ -290,7 +290,7 @@ Para las firmas de solicitudes, la mayoría de los proveedores firman con HMAC-S
 El ejemplo de resolver anterior ya muestra el flujo HMAC-SHA256 de GitHub; adapta el nombre del encabezado, la codificación del digest y la cadena firmada del payload según el proveedor con el que te estés integrando.
 
 <Note>
-El destino se ejecuta de forma **sincrónica** y su valor devuelto se convierte en la respuesta HTTP, por lo que quienes llaman ven tu código de estado y pueden reintentar cuando no sea 2xx. Mantén ambos handlers rápidos: algunos proveedores (p. ej. Slack) agotan el tiempo de espera en pocos segundos. Como el resolver es accesible como un endpoint público, protégelo con limitación de tasa en el edge.
+La ruta responde `202 { queued: true }` justo después de que el resolver devuelve y el destino se ejecuta en la cola de workers — el solicitante nunca observa la latencia, el resultado ni los fallos del destino (estos se registran en los registros de ejecución). Esto evita que los reintentos del remitente amplifiquen las ralentizaciones del procesamiento, que es lo que se desea para la ingesta de webhooks. Para los endpoints cuyo solicitante debe leer el cuerpo de la respuesta (handshakes de verificación, comandos de Slack), usa en su lugar una ruta con `httpRouteTriggerSettings`. Mantén el resolver rápido: algunos proveedores (p. ej. Slack) agotan el tiempo de espera en pocos segundos. Como el resolver es accesible como un endpoint público, protégelo con limitación de tasa en el edge.
 </Note>
 
 #### Payload del disparador de evento de base de datos

@@ -21,6 +21,7 @@ import {
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -92,6 +93,7 @@ export class LogicFunctionExecutorService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationStopService: ApplicationStopService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -113,13 +115,17 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
-    await this.throttleExecution(workspaceId);
-
     const { flatApplication, flatLogicFunction, flatApplicationVariables } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
       });
+
+    // Checked before the shared workspace throttle so a flood from a stopped
+    // application cannot exhaust the token bucket of the other applications.
+    await this.assertApplicationNotStopped(flatApplication);
+
+    await this.throttleExecution(workspaceId);
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
@@ -231,6 +237,21 @@ export class LogicFunctionExecutorService {
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
     return driver.transpile(params);
+  }
+
+  private async assertApplicationNotStopped(
+    flatApplication: FlatApplication,
+  ): Promise<void> {
+    if (
+      await this.applicationStopService.isApplicationStopped(
+        flatApplication.universalIdentifier,
+      )
+    ) {
+      throw new LogicFunctionException(
+        `Application ${flatApplication.universalIdentifier} is temporarily stopped`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+      );
+    }
   }
 
   private async throttleExecution(workspaceId: string) {

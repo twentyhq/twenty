@@ -8,10 +8,13 @@ import { AgentChatScrollToBottomOnMountLayoutEffect } from '@/ai/components/Agen
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledScrollWrapperContainer = styled.div`
@@ -23,6 +26,14 @@ const StyledScrollWrapperContainer = styled.div`
   width: 100%;
 `;
 
+const StyledPreambleOutsideScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: ${themeCssVariables.spacing[4]};
+  width: 100%;
+`;
+
 const StyledMessageListContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,6 +42,7 @@ const StyledMessageListContent = styled.div`
 `;
 
 export const AiChatTabMessageList = () => {
+  const messageListPreamble = useContext(AiChatMessageListPreambleContext);
   const agentChatHasMessage = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
@@ -40,7 +52,14 @@ export const AiChatTabMessageList = () => {
   );
 
   if (!agentChatHasMessage) {
-    return null;
+    if (!isDefined(messageListPreamble)) {
+      return null;
+    }
+    return (
+      <StyledPreambleOutsideScrollContainer>
+        {messageListPreamble}
+      </StyledPreambleOutsideScrollContainer>
+    );
   }
 
   return (
@@ -53,6 +72,7 @@ export const AiChatTabMessageList = () => {
     >
       <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
         <StyledMessageListContent>
+          {messageListPreamble}
           <AiChatNonLastMessageIdsList />
           <AiChatLastMessageWithStreamingState />
           <AiChatPendingResponseIndicator />

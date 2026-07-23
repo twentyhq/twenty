@@ -20,6 +20,7 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
 import { AnimatedEaseInOut } from 'twenty-ui/layout';
 
@@ -28,6 +29,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledRecordCardContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: calc(100% - 2px);
 `;
 

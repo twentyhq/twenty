@@ -1,5 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 
+import { PageLayoutTabWidgetDropTarget } from '@/page-layout/components/dnd/PageLayoutTabWidgetDropTarget';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -12,6 +13,7 @@ type PageLayoutTabListReorderableTabProps = {
   index: number;
   isActive: boolean;
   disabled?: boolean;
+  isWidgetDropTarget?: boolean;
   onSelect: () => void;
 };
 
@@ -27,6 +29,7 @@ export const PageLayoutTabListReorderableTab = ({
   index,
   isActive,
   disabled,
+  isWidgetDropTarget = false,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
@@ -34,7 +37,8 @@ export const PageLayoutTabListReorderableTab = ({
   );
 
   const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
-  return (
+
+  const draggableTab = (
     <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
       {(draggableProvided, draggableSnapshot) => (
         <StyledTabContainer
@@ -65,5 +69,15 @@ export const PageLayoutTabListReorderableTab = ({
         </StyledTabContainer>
       )}
     </Draggable>
+  );
+
+  if (!isWidgetDropTarget) {
+    return draggableTab;
+  }
+
+  return (
+    <PageLayoutTabWidgetDropTarget tabId={tab.id}>
+      {draggableTab}
+    </PageLayoutTabWidgetDropTarget>
   );
 };
