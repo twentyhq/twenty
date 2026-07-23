@@ -2598,6 +2598,7 @@ msgstr "昇順"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "AIに尋ねる"
 
@@ -3910,6 +3911,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "クリップボードの使用にはセキュアな接続 (HTTPS) が必要です。コピーを有効にするには、HTTPS でこのアプリにアクセスしてください。"
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "閉じる"
@@ -3984,6 +3986,11 @@ msgstr "折りたたむ"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "フォルダーを折りたたむ"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7772,6 +7779,11 @@ msgstr "インポートフローを終了"
 msgid "Expand"
 msgstr "展開"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10185,6 +10197,11 @@ msgstr "が今日{timeZoneAbbreviationSuffix}"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
 msgstr "発行者URI"
+
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr ""
 
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -13250,6 +13267,11 @@ msgstr "平日のみ"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "このトリガーを利用できる対象オブジェクトはどれですか"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr ""
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -20092,6 +20114,7 @@ msgid "Welcome to Twenty"
 msgstr "Twentyへようこそ"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "ワークスペースへようこそ"
