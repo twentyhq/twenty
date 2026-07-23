@@ -61,6 +61,8 @@ import {
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import { buildAiChatZeroOutputError } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-ai-chat-zero-output-error.util';
+import { classifyStreamUsageRejection } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-stream-usage-rejection.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -333,6 +335,7 @@ export class ChatExecutionService {
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
+    let lastUnderlyingStreamError: unknown;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -483,6 +486,12 @@ export class ChatExecutionService {
           });
         }
       },
+      onError: ({ error }) => {
+        lastUnderlyingStreamError = error;
+        this.logger.error(
+          `Stream ${streamId} emitted an error: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
       experimental_onToolCallFinish: (event) => {
         this.metricsService.recordHistogram({
           key: MetricsKeys.AiChatToolExecutionDurationMs,
@@ -597,9 +606,33 @@ export class ChatExecutionService {
         await emitTurnUsageEvent(steps);
       })
       .catch((error) => {
-        if (error?.name === 'AbortError') {
+        const handling = classifyStreamUsageRejection(error);
+
+        if (handling === 'skip') {
           return;
         }
+
+        if (handling === 'enrich') {
+          // The SDK's bare NoOutputGeneratedError carries no troubleshooting
+          // information — replace it with one enriched error per stream.
+          this.exceptionHandlerService.captureExceptions([
+            buildAiChatZeroOutputError({
+              modelId: registeredModel.modelId,
+              sdkPackage: registeredModel.sdkPackage,
+              workspaceId: workspace.id,
+              threadId,
+              streamId,
+              turnId,
+              messageCount: messages.length,
+              conversationSizeTokens,
+              elapsedMs: performance.now() - streamStartedAt,
+              underlyingError: lastUnderlyingStreamError,
+            }),
+          ]);
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([error]);
       });
 
