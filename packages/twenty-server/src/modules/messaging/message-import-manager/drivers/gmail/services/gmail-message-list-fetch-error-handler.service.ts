@@ -16,21 +16,37 @@ export class GmailMessageListFetchErrorHandler {
   constructor() {}
 
   public handleError(error: unknown): void {
-    const constructorName = (error as unknown)?.constructor?.name ?? 'Unknown';
-
-    this.logger.error(
-      `Gmail: Error fetching message list: ${JSON.stringify(error)}, constructor: ${constructorName}`,
-    );
     if (isGmailNetworkError(error)) {
+      this.logger.warn(
+        `Gmail: Network error fetching message list: ${error.message}`,
+      );
       throw parseGmailNetworkError(error);
     }
 
     if (isGmailApiError(error)) {
-      throw parseGmailApiError(error);
+      const status = error.response?.status;
+      const parsedError = parseGmailApiError(error);
+      const logMessage = `Gmail: Error fetching message list (status ${status}): ${parsedError.message}`;
+
+      if (parsedError.code === MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR) {
+        this.logger.debug(logMessage);
+      } else if (
+        parsedError.code === MessageImportDriverExceptionCode.TEMPORARY_ERROR
+      ) {
+        this.logger.warn(logMessage);
+      } else {
+        this.logger.error(logMessage);
+      }
+
+      throw parsedError;
     }
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    this.logger.error(`Gmail: Error fetching message list: ${errorMessage}`);
+
     throw new MessageImportDriverException(
-      `Gmail message list fetch error: ${error instanceof Error ? error.message : String(error)}`,
+      `Gmail message list fetch error: ${errorMessage}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }

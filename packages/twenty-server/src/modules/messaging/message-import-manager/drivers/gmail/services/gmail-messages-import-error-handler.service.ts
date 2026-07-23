@@ -16,27 +16,46 @@ export class GmailMessagesImportErrorHandler {
   constructor() {}
 
   public handleError(error: unknown, messageExternalId: string): void {
-    this.logger.error(
-      `Gmail: Error importing message ${messageExternalId}: ${JSON.stringify(error)}`,
-    );
-
     if (isGmailNetworkError(error)) {
+      this.logger.warn(
+        `Gmail: Network error importing message ${messageExternalId}: ${error.message}`,
+      );
       throw parseGmailNetworkError(error);
     }
 
     if (isGmailApiError(error)) {
       const status = error.response?.status;
 
-      // 404/410 means message was deleted - skip silently
+      // 404/410 means message was deleted and is expected during sync.
       if (status === 404 || status === 410) {
+        this.logger.debug(
+          `Gmail: Message ${messageExternalId} is no longer available (status ${status})`,
+        );
         return;
       }
 
-      throw parseGmailApiError(error);
+      const parsedError = parseGmailApiError(error);
+      const logMessage = `Gmail: Error importing message ${messageExternalId} (status ${status}): ${parsedError.message}`;
+
+      if (
+        parsedError.code === MessageImportDriverExceptionCode.TEMPORARY_ERROR
+      ) {
+        this.logger.warn(logMessage);
+      } else {
+        this.logger.error(logMessage);
+      }
+
+      throw parsedError;
     }
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    this.logger.error(
+      `Gmail: Error importing message ${messageExternalId}: ${errorMessage}`,
+    );
+
     throw new MessageImportDriverException(
-      `Gmail message import error: ${error instanceof Error ? error.message : String(error)}`,
+      `Gmail message import error: ${errorMessage}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }

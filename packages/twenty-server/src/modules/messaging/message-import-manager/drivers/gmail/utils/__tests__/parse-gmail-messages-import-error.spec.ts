@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { getGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
@@ -9,6 +11,10 @@ describe('GmailMessagesImportErrorHandler', () => {
 
   beforeEach(() => {
     handler = new GmailMessagesImportErrorHandler();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should handle 400 Bad Request', () => {
@@ -97,6 +103,17 @@ describe('GmailMessagesImportErrorHandler', () => {
     expect(() => handler.handleError(error, messageExternalId)).not.toThrow();
   });
 
+  it('should log deleted messages at debug level', () => {
+    const debugSpy = jest.spyOn(Logger.prototype, 'debug');
+    const error = getGmailApiError({ code: 404 });
+
+    handler.handleError(error, messageExternalId);
+
+    expect(debugSpy).toHaveBeenCalledWith(
+      expect.stringContaining('is no longer available'),
+    );
+  });
+
   it('should handle 410 Gone by returning silently', () => {
     const error = getGmailApiError({ code: 410 });
 
@@ -110,6 +127,17 @@ describe('GmailMessagesImportErrorHandler', () => {
       expect.objectContaining({
         code: MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       }),
+    );
+  });
+
+  it('should log temporary API errors at warn level', () => {
+    const warnSpy = jest.spyOn(Logger.prototype, 'warn');
+    const error = getGmailApiError({ code: 429 });
+
+    expect(() => handler.handleError(error, messageExternalId)).toThrow();
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('status 429'),
     );
   });
 

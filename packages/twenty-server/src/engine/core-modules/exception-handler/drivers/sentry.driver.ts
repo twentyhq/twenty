@@ -9,10 +9,20 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
-import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    return (
+      exception instanceof MessageImportDriverException &&
+      exception.code === MessageImportDriverExceptionCode.TEMPORARY_ERROR
+    );
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -48,6 +58,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
