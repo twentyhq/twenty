@@ -42,7 +42,7 @@ export const getCallLevelProviderOptions = ({
     case AI_SDK_AZURE:
       return {
         ...(providerOptions ?? {}),
-        azure: { store: false },
+        azure: { store: false, ...(promptCacheKey ? { promptCacheKey } : {}) },
       };
     default:
       return providerOptions;

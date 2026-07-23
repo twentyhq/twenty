@@ -76,6 +76,20 @@ describe('provider-options.util', () => {
       );
     });
 
+    it('includes promptCacheKey for Azure when provided', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        azure: {
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
     it('merges existing provider options with Azure store false', () => {
       expect(
         getCallLevelProviderOptions({
@@ -96,7 +110,7 @@ describe('provider-options.util', () => {
       });
     });
 
-    it('omits promptCacheKey for non-OpenAI providers', () => {
+    it('omits promptCacheKey for Anthropic models', () => {
       expect(
         getCallLevelProviderOptions({
           sdkPackage: AI_SDK_ANTHROPIC,
@@ -106,6 +120,20 @@ describe('provider-options.util', () => {
         anthropic: {
           cacheControl: { type: 'ephemeral' },
         },
+      });
+    });
+
+    it('omits promptCacheKey for Bedrock models', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_BEDROCK,
+          providerOptions: {
+            bedrock: { additionalModelRequestFields: { top_k: 4 } },
+          },
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        bedrock: { additionalModelRequestFields: { top_k: 4 } },
       });
     });
   });
