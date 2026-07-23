@@ -41,7 +41,10 @@ const getNextOnboardingStatus = ({
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
-    return OnboardingStatus.APPS_INSTALLATION;
+    if (currentWorkspace?.workspaceMembersCount === 1) {
+      return OnboardingStatus.APPS_INSTALLATION;
+    }
+    return OnboardingStatus.PROFILE_CREATION;
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.APPS_INSTALLATION) {
