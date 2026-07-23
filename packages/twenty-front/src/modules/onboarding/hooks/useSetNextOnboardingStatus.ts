@@ -10,12 +10,14 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useCallback } from 'react';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
@@ -68,6 +70,9 @@ export const useSetNextOnboardingStatus = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const isOnboardingAiChatEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+  );
 
   return useCallback(() => {
     const nextOnboardingStatus = getNextOnboardingStatus({
@@ -92,6 +97,16 @@ export const useSetNextOnboardingStatus = () => {
       })
     ) {
       store.set(isWelcomeAnimationVisibleState.atom, true);
+      store.set(
+        shouldOpenAiChatAfterOnboardingState.atom,
+        isOnboardingAiChatEnabled,
+      );
     }
-  }, [currentUser, currentWorkspace, isBillingEnabled, store]);
+  }, [
+    currentUser,
+    currentWorkspace,
+    isBillingEnabled,
+    isOnboardingAiChatEnabled,
+    store,
+  ]);
 };
