@@ -340,8 +340,7 @@ export class BarChartDataService {
         filteredRawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS ||
         dateRangeWasTruncated,
       formattedToRawLookup: buildFormattedToRawLookupDto({
-        formattedToRawLookup,
-        relationLabelResolutions: [relationLabelResolution],
+        axisLookups: [{ formattedToRawLookup, relationLabelResolution }],
       }),
     };
   }
@@ -534,11 +533,6 @@ export class BarChartDataService {
 
     hasTooManyGroups = hasTooManyGroups || dateRangeWasTruncated;
 
-    const mergedLookup = new Map([
-      ...secondaryFormattedToRawLookup,
-      ...formattedToRawLookup,
-    ]);
-
     return {
       data: finalData,
       indexBy: indexByKey,
@@ -552,10 +546,15 @@ export class BarChartDataService {
       groupMode: configuration.groupMode ?? BarChartGroupMode.GROUPED,
       hasTooManyGroups,
       formattedToRawLookup: buildFormattedToRawLookupDto({
-        formattedToRawLookup: mergedLookup,
-        relationLabelResolutions: [
-          primaryRelationLabelResolution,
-          secondaryRelationLabelResolution,
+        axisLookups: [
+          {
+            formattedToRawLookup: secondaryFormattedToRawLookup,
+            relationLabelResolution: secondaryRelationLabelResolution,
+          },
+          {
+            formattedToRawLookup,
+            relationLabelResolution: primaryRelationLabelResolution,
+          },
         ],
       }),
     };

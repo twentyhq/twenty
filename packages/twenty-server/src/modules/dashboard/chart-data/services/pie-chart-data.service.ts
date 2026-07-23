@@ -246,8 +246,7 @@ export class PieChartDataService {
       hasTooManyGroups:
         filteredRawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
       formattedToRawLookup: buildFormattedToRawLookupDto({
-        formattedToRawLookup,
-        relationLabelResolutions: [relationLabelResolution],
+        axisLookups: [{ formattedToRawLookup, relationLabelResolution }],
       }),
     };
   }

@@ -1,30 +1,35 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 
-export const buildFormattedToRawLookupDto = ({
-  formattedToRawLookup,
-  relationLabelResolutions,
-}: {
+type AxisLookup = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  relationLabelResolutions: Array<RelationLabelResolution | undefined>;
-}): Record<string, RawDimensionValue> => {
-  const definedUnresolvedRecordIdSets = relationLabelResolutions
-    .filter(isDefined)
-    .map(
-      (relationLabelResolution) => relationLabelResolution.unresolvedRecordIds,
-    );
+  relationLabelResolution: RelationLabelResolution | undefined;
+};
 
-  if (!isNonEmptyArray(definedUnresolvedRecordIdSets)) {
-    return Object.fromEntries(formattedToRawLookup);
+export const buildFormattedToRawLookupDto = ({
+  axisLookups,
+}: {
+  axisLookups: AxisLookup[];
+}): Record<string, RawDimensionValue> => {
+  const mergedLookup: Record<string, RawDimensionValue> = {};
+
+  for (const { formattedToRawLookup, relationLabelResolution } of axisLookups) {
+    const unresolvedRecordIds = relationLabelResolution?.unresolvedRecordIds;
+
+    for (const [formattedValue, rawValue] of formattedToRawLookup) {
+      const isUnresolvedRecordId =
+        isDefined(unresolvedRecordIds) &&
+        unresolvedRecordIds.has(String(rawValue));
+
+      if (isUnresolvedRecordId) {
+        continue;
+      }
+
+      mergedLookup[formattedValue] = rawValue;
+    }
   }
 
-  return Object.fromEntries(
-    [...formattedToRawLookup].filter(([, rawValue]) =>
-      definedUnresolvedRecordIdSets.every(
-        (unresolvedRecordIds) => !unresolvedRecordIds.has(String(rawValue)),
-      ),
-    ),
-  );
+  return mergedLookup;
 };

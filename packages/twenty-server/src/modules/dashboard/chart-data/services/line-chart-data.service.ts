@@ -337,8 +337,7 @@ export class LineChartDataService {
         filteredRawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS ||
         dateRangeWasTruncated,
       formattedToRawLookup: buildFormattedToRawLookupDto({
-        formattedToRawLookup,
-        relationLabelResolutions: [relationLabelResolution],
+        axisLookups: [{ formattedToRawLookup, relationLabelResolution }],
       }),
     };
   }
@@ -519,16 +518,18 @@ export class LineChartDataService {
     const hasTooManyGroups =
       hasTooManySeries || hasTooManyDataPoints || dateRangeWasTruncated;
 
-    const mergedLookup = new Map([
-      ...secondaryFormattedToRawLookup,
-      ...formattedToRawLookup,
-    ]);
+    const secondaryLookupWithPrefixedSeriesIds = new Map(
+      secondaryFormattedToRawLookup,
+    );
 
     for (const seriesId of limitedSeriesIds) {
       const rawValue = secondaryFormattedToRawLookup.get(seriesId);
 
       if (isDefined(rawValue)) {
-        mergedLookup.set(`${seriesIdPrefix}${seriesId}`, rawValue);
+        secondaryLookupWithPrefixedSeriesIds.set(
+          `${seriesIdPrefix}${seriesId}`,
+          rawValue,
+        );
       }
     }
 
@@ -540,10 +541,15 @@ export class LineChartDataService {
       showDataLabels: configuration.displayDataLabel ?? false,
       hasTooManyGroups,
       formattedToRawLookup: buildFormattedToRawLookupDto({
-        formattedToRawLookup: mergedLookup,
-        relationLabelResolutions: [
-          primaryRelationLabelResolution,
-          secondaryRelationLabelResolution,
+        axisLookups: [
+          {
+            formattedToRawLookup: secondaryLookupWithPrefixedSeriesIds,
+            relationLabelResolution: secondaryRelationLabelResolution,
+          },
+          {
+            formattedToRawLookup,
+            relationLabelResolution: primaryRelationLabelResolution,
+          },
         ],
       }),
     };

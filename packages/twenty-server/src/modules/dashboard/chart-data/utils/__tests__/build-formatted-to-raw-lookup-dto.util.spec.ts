@@ -15,11 +15,12 @@ describe('buildFormattedToRawLookupDto', () => {
     ['Unknown', 'agent-id-2'],
   ]);
 
-  it('should keep every entry without unresolved sets', () => {
+  it('should keep every entry without an unresolved set', () => {
     expect(
       buildFormattedToRawLookupDto({
-        formattedToRawLookup: lookup,
-        relationLabelResolutions: [undefined],
+        axisLookups: [
+          { formattedToRawLookup: lookup, relationLabelResolution: undefined },
+        ],
       }),
     ).toEqual({
       Alice: 'agent-id-1',
@@ -27,26 +28,61 @@ describe('buildFormattedToRawLookupDto', () => {
     });
   });
 
-  it('should strip entries whose raw value is unresolved', () => {
+  it('should strip entries whose raw value is unresolved on their own axis', () => {
     expect(
       buildFormattedToRawLookupDto({
-        formattedToRawLookup: lookup,
-        relationLabelResolutions: [buildResolution(new Set(['agent-id-2']))],
+        axisLookups: [
+          {
+            formattedToRawLookup: lookup,
+            relationLabelResolution: buildResolution(new Set(['agent-id-2'])),
+          },
+        ],
       }),
     ).toEqual({
       Alice: 'agent-id-1',
     });
   });
 
-  it('should apply every provided unresolved set', () => {
+  it('should not strip an entry matching another axis unresolved record id', () => {
     expect(
       buildFormattedToRawLookupDto({
-        formattedToRawLookup: lookup,
-        relationLabelResolutions: [
-          buildResolution(new Set(['agent-id-1'])),
-          buildResolution(new Set(['agent-id-2'])),
+        axisLookups: [
+          {
+            formattedToRawLookup: new Map<string, RawDimensionValue>([
+              ['2024-01-01', 'agent-id-1'],
+            ]),
+            relationLabelResolution: undefined,
+          },
+          {
+            formattedToRawLookup: lookup,
+            relationLabelResolution: buildResolution(new Set(['agent-id-2'])),
+          },
         ],
       }),
-    ).toEqual({});
+    ).toEqual({
+      '2024-01-01': 'agent-id-1',
+      Alice: 'agent-id-1',
+    });
+  });
+
+  it('should let later axis entries win formatted key collisions', () => {
+    expect(
+      buildFormattedToRawLookupDto({
+        axisLookups: [
+          {
+            formattedToRawLookup: new Map<string, RawDimensionValue>([
+              ['Alice', 'secondary-id'],
+            ]),
+            relationLabelResolution: undefined,
+          },
+          {
+            formattedToRawLookup: lookup,
+            relationLabelResolution: buildResolution(new Set(['agent-id-2'])),
+          },
+        ],
+      }),
+    ).toEqual({
+      Alice: 'agent-id-1',
+    });
   });
 });
