@@ -1,0 +1,37 @@
+packages/twenty-ui/dist/theme-dark.css
+  s_c3fbc446206706::t_b80338d56d453d 113
+packages/twenty-ui/src/theme-constants/themeCssVariables.ts
+  s_c3fbc446206706::t_0f48f7bcacbb19 152
+packages/twenty-ui/dist/theme-light.css
+  s_c3fbc446206706::t_7f0e31396f3390 113
+packages/twenty-ui/src/theme-constants/theme-dark.css
+  s_c3fbc446206706::t_6a862d488abd8e 113
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_5f5e3b8fdb604d 88-89,91-100
+  s_c3fbc446206706::t_dc567262f9344c 9
+packages/twenty-ui/src/theme/constants/BackgroundLight.ts
+  s_c3fbc446206706::t_45dd917a207d70 31
+packages/twenty-ui/src/theme/constants/BackgroundDark.ts
+  s_c3fbc446206706::t_7fab54b267722e 31
+packages/twenty-ui/src/theme-constants/theme-light.css
+  s_c3fbc446206706::t_5371f7119c6386 113
+packages/twenty-front/src/modules/ui/input/components/HoldToConfirmButton.tsx
+  s_c3fbc446206706::t_6f2b3c6b42694e 20
+  s_c3fbc446206706::t_f52ea04a1a412e 1-19,21-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "92d152df8eb3ce89baf75027cb8b10656b7967d3",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
