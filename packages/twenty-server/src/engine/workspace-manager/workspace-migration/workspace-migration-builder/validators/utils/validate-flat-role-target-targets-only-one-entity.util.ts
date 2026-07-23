@@ -22,7 +22,7 @@ export const validateFlatRoleTargetTargetsOnlyOneEntity = ({
     errors.push({
       code: RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER,
       message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier`,
-      userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agent`,
+      userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier`,
     });
   }
 

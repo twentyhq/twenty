@@ -41,14 +41,28 @@ const buildManifest = (
     },
   });
 
+const findTestApplicationId = async (): Promise<string> => {
+  const rows = await global.testDataSource.query(
+    `SELECT id FROM core."application" WHERE "universalIdentifier" = $1`,
+    [TEST_APP_ID],
+  );
+
+  return rows[0].id;
+};
+
 const findAppAgent = async () => {
+  const testApplicationId = await findTestApplicationId();
   const { data } = await findAgents({
     gqlFields: AGENT_GQL_FIELDS,
     expectToFail: false,
     input: undefined,
   });
 
-  return data.findManyAgents.find((agent) => agent.name === 'sales-assistant');
+  return data.findManyAgents.find(
+    (agent) =>
+      agent.applicationId === testApplicationId &&
+      agent.name === 'sales-assistant',
+  );
 };
 
 describe('Manifest sync - agent roleTarget', () => {
