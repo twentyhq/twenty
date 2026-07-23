@@ -1,5 +1,6 @@
-import { isNumber, isString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 
+import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 const camelToKebab = (property: string): string =>
@@ -60,10 +61,15 @@ export const createStyleProxy = ({
   convertNumbersToPx = false,
 }: CreateStyleProxyOptions = {}): Record<string, unknown> => {
   const styleStore: Record<string, string> = {};
+  const stylePriorities: Record<string, string> = {};
 
   const serializeCssText = (): string =>
     Object.entries(styleStore)
-      .map(([key, value]) => `${key}:${value}`)
+      .map(([key, value]) =>
+        isNonEmptyString(stylePriorities[key])
+          ? `${key}:${value} !important`
+          : `${key}:${value}`,
+      )
       .join(';');
 
   const flushSerializedCssText = (): void => {
@@ -73,6 +79,7 @@ export const createStyleProxy = ({
   const applyCssText = (cssText: string): void => {
     for (const key of Object.keys(styleStore)) {
       delete styleStore[key];
+      delete stylePriorities[key];
     }
 
     for (const declaration of splitCssDeclarations(cssText)) {
@@ -84,9 +91,18 @@ export const createStyleProxy = ({
 
       const declarationKey = declaration.slice(0, colonIndex).trim();
       const declarationValue = declaration.slice(colonIndex + 1).trim();
+      const hasImportantPriority =
+        CSS_IMPORTANT_PRIORITY_PATTERN.test(declarationValue);
+      const declarationValueWithoutPriority = hasImportantPriority
+        ? declarationValue.replace(CSS_IMPORTANT_PRIORITY_PATTERN, '').trim()
+        : declarationValue;
 
-      if (declarationKey !== '' && declarationValue !== '') {
-        styleStore[declarationKey] = declarationValue;
+      if (declarationKey !== '' && declarationValueWithoutPriority !== '') {
+        styleStore[declarationKey] = declarationValueWithoutPriority;
+
+        if (hasImportantPriority) {
+          stylePriorities[declarationKey] = 'important';
+        }
       }
     }
   };
@@ -98,11 +114,21 @@ export const createStyleProxy = ({
       }
 
       if (property === 'setProperty') {
-        return (name: string, value: string | null) => {
+        return (name: string, value: string | null, priority?: string) => {
           if (value === null || value === '') {
             delete target[name];
+            delete stylePriorities[name];
           } else {
             target[name] = String(value);
+
+            if (
+              isNonEmptyString(priority) &&
+              priority.toLowerCase() === 'important'
+            ) {
+              stylePriorities[name] = 'important';
+            } else {
+              delete stylePriorities[name];
+            }
           }
 
           flushSerializedCssText();
@@ -113,6 +139,7 @@ export const createStyleProxy = ({
         return (name: string): string => {
           const previousValue = target[name] ?? '';
           delete target[name];
+          delete stylePriorities[name];
           flushSerializedCssText();
 
           return previousValue;
@@ -121,6 +148,10 @@ export const createStyleProxy = ({
 
       if (property === 'getPropertyValue') {
         return (name: string): string => target[name] ?? '';
+      }
+
+      if (property === 'getPropertyPriority') {
+        return (name: string): string => stylePriorities[name] ?? '';
       }
 
       if (isString(property)) {
@@ -142,6 +173,7 @@ export const createStyleProxy = ({
       }
 
       const kebabKey = camelToKebab(property);
+      delete stylePriorities[kebabKey];
 
       if (value === null || value === undefined || value === '') {
         delete target[kebabKey];

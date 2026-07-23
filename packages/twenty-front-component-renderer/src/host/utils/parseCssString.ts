@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
+import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 export const parseCssString = (
@@ -19,7 +20,12 @@ export const parseCssString = (
     }
 
     const property = declaration.slice(0, colonIndex).trim();
-    const value = declaration.slice(colonIndex + 1).trim();
+    // React style objects cannot carry a priority, and CSSOM rejects values
+    // that keep the "!important" suffix, so the priority is stripped.
+    const value = declaration
+      .slice(colonIndex + 1)
+      .trim()
+      .replace(CSS_IMPORTANT_PRIORITY_PATTERN, '');
 
     const isCssCustomProperty = property.startsWith('--');
 

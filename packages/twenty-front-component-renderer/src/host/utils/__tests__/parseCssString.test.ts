@@ -50,4 +50,11 @@ describe('parseCssString', () => {
       color: 'red',
     });
   });
+
+  it('should strip an important priority from values', () => {
+    expect(parseCssString('color: red !important; width: 10px')).toEqual({
+      color: 'red',
+      width: '10px',
+    });
+  });
 });
