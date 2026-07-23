@@ -60,7 +60,6 @@ const normalizeHeader = (header: string): string =>
   header
     .trim()
     .toLowerCase()
-    .replace(/['']/g, "'")
     .replace(/[^a-z0-9]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
