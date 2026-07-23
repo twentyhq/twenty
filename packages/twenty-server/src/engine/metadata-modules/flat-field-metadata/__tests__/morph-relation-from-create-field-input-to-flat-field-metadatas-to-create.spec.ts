@@ -42,12 +42,14 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   settingsCustomTabFrontComponentId: null,
   canBeUninstalled: false,
   autoUpgrade: false,
+  stoppedAt: null,
   applicationRegistrationId: null,
   primaryPublicDomainId: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
   isSdkLayerStale: true,
+  sdkClientCoreChecksum: null,
 };
 
 const flatObjectMetadataMaps = [

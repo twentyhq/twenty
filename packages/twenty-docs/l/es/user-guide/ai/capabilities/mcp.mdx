@@ -3,10 +3,6 @@ title: Servidor MCP
 description: Conecta asistentes de IA a tu espacio de trabajo de Twenty mediante el Model Context Protocol.
 ---
 
-<Warning>
-Actualmente, MCP está en **alfa** y solo está disponible en algunos espacios de trabajo. Es posible que aún no esté habilitado para tu espacio de trabajo.
-</Warning>
-
 Twenty expone un servidor [MCP](https://modelcontextprotocol.io/) para que los asistentes de IA — Claude Desktop, Claude Code, Cursor, ChatGPT y otros — puedan leer y escribir tus datos de CRM mediante lenguaje natural.
 
 Usa tu **URL del espacio de trabajo** (la URL que utilizas para acceder a Twenty) como el punto de acceso MCP. En Twenty Cloud, la URL de tu espacio de trabajo puede ser `https://{mycompany}.twenty.com` o un dominio personalizado. El servidor está disponible en:
@@ -72,20 +68,20 @@ Si tu cliente MCP no es compatible con OAuth o prefieres credenciales estáticas
 Tu clave de API concede acceso a los datos del espacio de trabajo. Manténla fuera del control de versiones y de dotfiles compartidos.
 </Warning>
 
-Para crear una clave de API, ve a **Settings > APIs & Webhooks > + Create key**. Consulta [APIs](/l/es/developers/extend/api#create-an-api-key) para más detalles.
+Para crear una clave de API, ve a **Settings → MCP & APIs → API → + Create key**. Consulta [APIs](/l/es/developers/extend/api#create-an-api-key) para más detalles.
 
 ## Inicio rápido
 
 ### 1. Copia la configuración
 
-Ve a **Settings > AI > More > MCP Server** en Twenty. Elige tu método de autenticación (OAuth o API Key), copia el fragmento JSON (ya usará la URL de tu espacio de trabajo) y pégalo en el archivo de configuración de tu cliente MCP.
+Ve a **Settings → MCP & APIs → MCP** en Twenty. Elige tu método de autenticación (OAuth o API Key), copia el fragmento JSON (ya usará la URL de tu espacio de trabajo) y pégalo en el archivo de configuración de tu cliente MCP.
 
 | Cliente            | Ubicación del archivo de configuración                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                 |
 | **Claude Code**    | `~/.claude.json` (usuario) o `.mcp.json` (proyecto)                                                                                                                 |
 | **Cursor**         | `.cursor/mcp.json` en tu proyecto, o `~/.cursor/mcp.json` de forma global                                                                                           |
-| **ChatGPT**        | Activa Developer Mode en **Settings > Apps & Connectors > Advanced settings**, luego usa **Create** en **Settings > Apps & Connectors** para añadir el servidor MCP |
+| **ChatGPT**        | Activa Developer Mode en **Settings → Apps & Connectors → Advanced settings**, luego usa **Create** en **Settings → Apps & Connectors** para añadir el servidor MCP |
 
 ### 2. Conectar
 
@@ -113,7 +109,7 @@ No necesitas recordar los nombres de las herramientas. Pregúntale a tu asistent
 Las conexiones MCP heredan los permisos del usuario autenticado (OAuth) o del rol asignado a la clave de API. Para restringir lo que puede hacer el servidor MCP:
 
 * **OAuth**: Se aplica el rol del espacio de trabajo del usuario.
-* **API Key**: Asigna un rol a la clave de API en **Settings > Roles**. Consulta [Permisos](/l/es/user-guide/permissions-access/capabilities/permissions).
+* **API Key**: Asigna un rol a la clave de API en **Settings → Members → Roles**. Consulta [Permisos](/l/es/user-guide/permissions-access/capabilities/permissions).
 
 ## Configuración autohospedada
 

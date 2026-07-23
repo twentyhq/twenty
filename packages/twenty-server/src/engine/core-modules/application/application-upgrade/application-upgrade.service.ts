@@ -21,7 +21,7 @@ const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
 
-const UPGRADE_APPLICATIONS_BATCH_SIZE = 20;
+const UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE = 5;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -114,9 +114,11 @@ export class ApplicationUpgradeService {
   async upgradeAllApplications({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
+    batchSize?: number;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -139,14 +141,16 @@ export class ApplicationUpgradeService {
       (application) => application.version !== targetVersion,
     );
 
+    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+
     for (
       let batchStart = 0;
       batchStart < applicationsToUpgrade.length;
-      batchStart += UPGRADE_APPLICATIONS_BATCH_SIZE
+      batchStart += sanitizedBatchSize
     ) {
       const batch = applicationsToUpgrade.slice(
         batchStart,
-        batchStart + UPGRADE_APPLICATIONS_BATCH_SIZE,
+        batchStart + sanitizedBatchSize,
       );
 
       await Promise.all(

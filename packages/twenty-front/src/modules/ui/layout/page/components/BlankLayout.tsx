@@ -2,6 +2,9 @@ import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
+
 const StyledLayout = styled.div`
   background: ${themeCssVariables.background.secondary};
   display: flex;
@@ -15,7 +18,9 @@ const StyledLayout = styled.div`
 export const BlankLayout = () => {
   return (
     <StyledLayout>
-      <Outlet />
+      <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
+        <Outlet />
+      </AppErrorBoundary>
     </StyledLayout>
   );
 };

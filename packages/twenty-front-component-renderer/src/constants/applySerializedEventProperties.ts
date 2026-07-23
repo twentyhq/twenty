@@ -1,3 +1,4 @@
+import { applySerializedEventClipboardData } from '@/constants/applySerializedEventClipboardData';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const SERIALIZED_EVENT_PROPERTY_KEYS = [
@@ -32,6 +33,8 @@ const SERIALIZED_EVENT_PROPERTY_KEYS = [
   'key',
   'code',
   'repeat',
+  'inputType',
+  'data',
   'deltaX',
   'deltaY',
   'deltaZ',
@@ -47,4 +50,6 @@ export const applySerializedEventProperties = (
       event[key] = eventData[key];
     }
   }
+
+  applySerializedEventClipboardData(event, eventData);
 };

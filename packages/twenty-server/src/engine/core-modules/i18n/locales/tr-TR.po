@@ -2062,11 +2062,6 @@ msgstr "Gösterge Panelleri"
 msgid "Data structure is invalid."
 msgstr "Veri yapısı geçersiz."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Veri sürümü uyuşmuyor. Lütfen yenileyip tekrar deneyin."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
@@ -6981,6 +6976,11 @@ msgstr "Eylül"
 msgid "Server administrator access changed"
 msgstr "Sunucu yöneticisi erişimi değiştirildi"
 
+#. js-lingui-id: uK5uBy
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "Server keys require the application publisher workspace to have the application installed."
+msgstr ""
+
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Server logic function not found."
@@ -7509,6 +7509,11 @@ msgstr "Uygulamanın kaynak kanalı beklenen türle uyuşmuyor."
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Uygulamaya geçerli bir rol atanmadı. Lütfen uygulama yapılandırmanızı kontrol edin."
 
+#. js-lingui-id: QyGlqv
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The application key-value entry could not be saved. Please try again."
+msgstr ""
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -7664,6 +7669,11 @@ msgstr "Kişinin ait olduğu liste"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "The list this campaign was sent to"
 msgstr "Bu kampanyanın gönderildiği liste"
+
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -7879,6 +7889,11 @@ msgstr "Yeniden denenecek başarısız bir ileti yok."
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "Bu {fieldLabel} değeri zaten kullanımda. Lütfen verilerinizi kontrol edin ve tekrar deneyin."
+
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -8176,6 +8191,11 @@ msgstr "Bu rol sistem rolü olduğu için değiştirilemez. Sadece özel roller 
 #: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
 msgid "This role cannot be modified."
 msgstr "Bu rol değiştirilemez."
+
+#. js-lingui-id: DEJJoY
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "This server key is already claimed by another workspace."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts

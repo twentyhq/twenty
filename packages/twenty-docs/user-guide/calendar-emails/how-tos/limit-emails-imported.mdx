@@ -12,8 +12,8 @@ By default, Twenty syncs all external emails from your connected mailbox. You ca
 Control which email folders sync with Twenty:
 
 1. Go to **Settings → Accounts**
-4. Select your connected email account
-5. Choose which folders to sync:
+2. Select your connected email account
+3. Choose which folders to sync:
 
 | Folder | Description |
 |--------|-------------|
@@ -22,7 +22,7 @@ Control which email folders sync with Twenty:
 | **Archive** | Archived messages |
 | **Custom Folders** | Any specific folders you want |
 
-6. Exclude folders you don't want synced (Spam, Trash, personal folders)
+4. Exclude folders you don't want synced (Spam, Trash, personal folders)
 
 <Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
 
@@ -37,14 +37,22 @@ Control when contacts are created from emails:
    - **Sent & Received**: Create contacts from all external emails
    - **Sent Only**: Only create contacts from emails you send
 
+## Internal emails
+
+Messages between colleagues (same domain) can be synchronized in Twenty:
+
+1. Go to **Settings → General → Security**
+2. Toggle **Sync Internal Emails** on/off
+
+<Note>By default, this option is turned off.</Note>
+
 ## What's Always Excluded
 
 These emails are never synced, regardless of settings:
 
-- **Internal emails**: Messages between colleagues (same domain)
 - **Group emails**: Distribution lists and group messages
 - **Spam/Trash**: System folders are typically excluded
 
 ## Important Note
 
-<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>
+<Note>We don't provide a CC email address for selective syncing yet. Use the folder selection feature above to achieve the same level of control.</Note>

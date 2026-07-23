@@ -2062,11 +2062,6 @@ msgstr "Cruscotti"
 msgid "Data structure is invalid."
 msgstr "Struttura dati non valida."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Versione dei dati non corrispondente. Aggiorna e riprova."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
@@ -6981,6 +6976,11 @@ msgstr "Settembre"
 msgid "Server administrator access changed"
 msgstr "Accesso dell'amministratore del server modificato"
 
+#. js-lingui-id: uK5uBy
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "Server keys require the application publisher workspace to have the application installed."
+msgstr ""
+
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Server logic function not found."
@@ -7509,6 +7509,11 @@ msgstr "Il canale di origine dell'applicazione non corrisponde al tipo previsto.
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "L'applicazione non ha un ruolo valido assegnato. Controllare la configurazione dell'applicazione."
 
+#. js-lingui-id: QyGlqv
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The application key-value entry could not be saved. Please try again."
+msgstr ""
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -7664,6 +7669,11 @@ msgstr "La lista a cui la persona appartiene"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "The list this campaign was sent to"
 msgstr "La lista a cui è stata inviata questa campagna"
+
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -7878,6 +7888,11 @@ msgstr "Non ci sono messaggi non riusciti da riprovare."
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
+msgstr ""
+
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
 msgstr ""
 
 #. js-lingui-id: Izdz+Y
@@ -8176,6 +8191,11 @@ msgstr "Questo ruolo non può essere modificato perché è un ruolo di sistema. 
 #: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
 msgid "This role cannot be modified."
 msgstr "Questo ruolo non può essere modificato."
+
+#. js-lingui-id: DEJJoY
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "This server key is already claimed by another workspace."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts

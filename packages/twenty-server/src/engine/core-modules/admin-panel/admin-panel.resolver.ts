@@ -566,6 +566,8 @@ export class AdminPanelResolver {
   @Mutation(() => Boolean)
   async upgradeRegistrationApplications(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
+    @Args('batchSize', { type: () => Int, nullable: true })
+    batchSize?: number,
   ): Promise<boolean> {
     await this.applicationRegistrationService.findOneByIdGlobal(
       applicationRegistrationId,
@@ -573,7 +575,11 @@ export class AdminPanelResolver {
 
     await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
       UPGRADE_APPLICATIONS_JOB_NAME,
-      { applicationRegistrationId, onlyAutoUpgrade: false },
+      {
+        applicationRegistrationId,
+        onlyAutoUpgrade: false,
+        ...(isDefined(batchSize) ? { batchSize } : {}),
+      },
       {
         id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
       }, // Avoids triggering multiple pending jobs for the same app

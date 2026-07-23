@@ -1586,6 +1586,13 @@ export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
     onAnimationEnd: { event: 'animationend' },
     onTransitionEnd: { event: 'transitionend' },
     onScrollEnd: { event: 'scrollend' },
+    onBeforeInput: { event: 'beforeinput' },
+    onCompositionStart: { event: 'compositionstart' },
+    onCompositionUpdate: { event: 'compositionupdate' },
+    onCompositionEnd: { event: 'compositionend' },
+    onCopy: { event: 'copy' },
+    onPaste: { event: 'paste' },
+    onCut: { event: 'cut' },
   },
 });
 export const HtmlTextarea = createRemoteComponent(
@@ -1637,6 +1644,13 @@ export const HtmlTextarea = createRemoteComponent(
       onAnimationEnd: { event: 'animationend' },
       onTransitionEnd: { event: 'transitionend' },
       onScrollEnd: { event: 'scrollend' },
+      onBeforeInput: { event: 'beforeinput' },
+      onCompositionStart: { event: 'compositionstart' },
+      onCompositionUpdate: { event: 'compositionupdate' },
+      onCompositionEnd: { event: 'compositionend' },
+      onCopy: { event: 'copy' },
+      onPaste: { event: 'paste' },
+      onCut: { event: 'cut' },
     },
   },
 );
