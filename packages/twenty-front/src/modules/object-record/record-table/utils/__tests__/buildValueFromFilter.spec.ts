@@ -38,6 +38,21 @@ describe('buildValueFromFilter', () => {
   describe('TEXT field type', () => {
     const testCases = [
       {
+        operand: ViewFilterOperand.IS,
+        value: 'test',
+        expected: 'test',
+      },
+      {
+        operand: ViewFilterOperand.IS_NOT,
+        value: 'test',
+        expected: undefined,
+      },
+      {
+        operand: ViewFilterOperand.STARTS_WITH,
+        value: 'test',
+        expected: 'test',
+      },
+      {
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
         expected: 'test',

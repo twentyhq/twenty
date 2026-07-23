@@ -47,6 +47,7 @@ import {
   getPeriodStart,
   isDefined,
   isRecordFilterValueValid,
+  escapeForIlike,
   resolveDateFilter,
   resolveDateTimeFilter,
   resolveRelativeDateFilterStringified,
@@ -208,18 +209,40 @@ const buildDirectFieldGqlOperationFilter = ({
 
   switch (filterType) {
     case 'TEXT':
+      const escapedFilterValue = escapeForIlike(recordFilter.value);
+
       switch (recordFilter.operand) {
+        case RecordFilterOperand.IS:
+          return {
+            [fieldMetadataItem.name]: {
+              ilike: escapedFilterValue,
+            } as StringFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                ilike: escapedFilterValue,
+              } as StringFilter,
+            },
+          };
+        case RecordFilterOperand.STARTS_WITH:
+          return {
+            [fieldMetadataItem.name]: {
+              ilike: `${escapedFilterValue}%`,
+            } as StringFilter,
+          };
         case RecordFilterOperand.CONTAINS:
           return {
             [fieldMetadataItem.name]: {
-              ilike: `%${recordFilter.value}%`,
+              ilike: `%${escapedFilterValue}%`,
             } as StringFilter,
           };
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             not: {
               [fieldMetadataItem.name]: {
-                ilike: `%${recordFilter.value}%`,
+                ilike: `%${escapedFilterValue}%`,
               } as StringFilter,
             },
           };

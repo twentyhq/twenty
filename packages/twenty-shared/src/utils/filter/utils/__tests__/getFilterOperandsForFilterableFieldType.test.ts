@@ -17,6 +17,19 @@ describe('getFilterOperandsForFilterableFieldType', () => {
     ]);
   });
 
+  it('should preserve contains as the default text operand', () => {
+    expect(
+      getFilterOperandsForFilterableFieldType({ filterType: 'TEXT' }),
+    ).toEqual([
+      ViewFilterOperand.CONTAINS,
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT,
+      ViewFilterOperand.STARTS_WITH,
+      ViewFilterOperand.DOES_NOT_CONTAIN,
+      ...emptyOperands,
+    ]);
+  });
+
   it('should preserve actor source subfield operands', () => {
     expect(
       getFilterOperandsForFilterableFieldType({

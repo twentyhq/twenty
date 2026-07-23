@@ -61,9 +61,13 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     ? relationTargetFieldMetadataItem
     : fieldMetadataItemUsedInDropdown;
 
-  const operandsForFilterType = isDefined(effectiveFieldMetadataItem)
+  const effectiveFilterType = isDefined(effectiveFieldMetadataItem)
+    ? getFilterTypeFromFieldType(effectiveFieldMetadataItem.type)
+    : undefined;
+
+  const operandsForFilterType = isDefined(effectiveFilterType)
     ? getRecordFilterOperands({
-        filterType: getFilterTypeFromFieldType(effectiveFieldMetadataItem.type),
+        filterType: effectiveFilterType,
         subFieldName: subFieldNameUsedInDropdown,
       })
     : [];
@@ -78,7 +82,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     : null;
 
   const options = operandsForFilterType.map((operand) => ({
-    label: getOperandLabel(operand, timeZoneAbbreviation),
+    label: getOperandLabel(operand, timeZoneAbbreviation, effectiveFilterType),
     value: operand,
   })) as SelectOption[];
 
