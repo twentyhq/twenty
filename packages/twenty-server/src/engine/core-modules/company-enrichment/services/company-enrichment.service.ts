@@ -2,21 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  type WorkspaceCompanyEnrichment,
-  type WorkspaceCompanyEnrichmentResult,
-} from 'twenty-shared/workspace';
+import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { COMPANY_ENRICHMENT_CACHE_TTL_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-cache-ttl-ms.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
-import { getCompanyEnrichmentCacheKey } from 'src/engine/core-modules/company-enrichment/utils/get-company-enrichment-cache-key.util';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import {
   ThrottlerException,
@@ -36,8 +27,6 @@ export class CompanyEnrichmentService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
     private readonly throttlerService: ThrottlerService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineCompanyEnrichment)
-    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async enrichCompanyForWorkspaceCreator({
@@ -62,15 +51,6 @@ export class CompanyEnrichmentService {
 
     if (!isNonEmptyString(domain) || !isWorkDomain(domain)) {
       return { outcome: 'unavailable', enrichment: null };
-    }
-
-    const cachedEnrichment =
-      await this.cacheStorageService.get<WorkspaceCompanyEnrichment>(
-        getCompanyEnrichmentCacheKey(domain),
-      );
-
-    if (isDefined(cachedEnrichment)) {
-      return { outcome: 'matched', enrichment: cachedEnrichment };
     }
 
     try {
@@ -119,12 +99,6 @@ export class CompanyEnrichmentService {
       data: result.data,
       enrichedAt: new Date(),
     });
-
-    await this.cacheStorageService.set<WorkspaceCompanyEnrichment>(
-      getCompanyEnrichmentCacheKey(domain),
-      enrichment,
-      COMPANY_ENRICHMENT_CACHE_TTL_MS,
-    );
 
     return { outcome: 'matched', enrichment };
   }

@@ -1,4 +1,5 @@
 export enum CacheStorageNamespace {
+  ModuleApplications = 'module:applications',
   ModuleMessaging = 'module:messaging',
   ModuleEmailing = 'module:emailing',
   ModuleCalendar = 'module:calendar',
@@ -11,6 +12,5 @@ export enum CacheStorageNamespace {
   EngineSubscriptions = 'engine:subscriptions',
   EngineBillingUsage = 'engine:billing-usage',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
-  EngineCompanyEnrichment = 'engine:company-enrichment',
   IntegrationTests = 'integration-tests',
 }

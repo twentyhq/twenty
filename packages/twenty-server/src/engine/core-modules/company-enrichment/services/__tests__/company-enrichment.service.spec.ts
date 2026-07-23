@@ -1,8 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { COMPANY_ENRICHMENT_CACHE_TTL_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-cache-ttl-ms.constant';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
 import {
@@ -17,7 +15,6 @@ describe('CompanyEnrichmentService', () => {
   let userWorkspaceRepository: { findOne: jest.Mock };
   let peopleDataLabsCompanyClientService: { enrichCompanyByDomain: jest.Mock };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
-  let cacheStorageService: { get: jest.Mock; set: jest.Mock };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -28,10 +25,6 @@ describe('CompanyEnrichmentService', () => {
     };
     peopleDataLabsCompanyClientService = { enrichCompanyByDomain: jest.fn() };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
-    cacheStorageService = {
-      get: jest.fn().mockResolvedValue(undefined),
-      set: jest.fn(),
-    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -47,10 +40,6 @@ describe('CompanyEnrichmentService', () => {
         {
           provide: ThrottlerService,
           useValue: throttlerService,
-        },
-        {
-          provide: CacheStorageNamespace.EngineCompanyEnrichment,
-          useValue: cacheStorageService,
         },
       ],
     }).compile();
@@ -91,30 +80,7 @@ describe('CompanyEnrichmentService', () => {
     },
   );
 
-  it('should return the cached enrichment without calling the client', async () => {
-    const cachedEnrichment = { domain: 'acme.com', name: 'Acme Inc' };
-
-    cacheStorageService.get.mockResolvedValue(cachedEnrichment);
-
-    const result = await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'Foo@ACME.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({
-      outcome: 'matched',
-      enrichment: cachedEnrichment,
-    });
-    expect(cacheStorageService.get).toHaveBeenCalledWith(
-      'company-enrichment:domain:acme.com',
-    );
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
-  });
-
-  it('should enrich, cache and return the mapped enrichment on a match', async () => {
+  it('should enrich and return the mapped enrichment on a match', async () => {
     peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
       outcome: 'matched',
       data: { name: 'Acme Inc', industry: 'computer software' },
@@ -122,7 +88,7 @@ describe('CompanyEnrichmentService', () => {
 
     const result = await service.enrichCompanyForWorkspaceCreator({
       userId: creatorUserId,
-      email: 'foo@acme.com',
+      email: 'Foo@ACME.com',
       workspaceId,
     });
 
@@ -132,14 +98,12 @@ describe('CompanyEnrichmentService', () => {
       name: 'Acme Inc',
       industry: 'computer software',
     });
-    expect(cacheStorageService.set).toHaveBeenCalledWith(
-      'company-enrichment:domain:acme.com',
-      result.enrichment,
-      COMPANY_ENRICHMENT_CACHE_TTL_MS,
-    );
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).toHaveBeenCalledWith('acme.com');
   });
 
-  it('should pass through a transient error without caching', async () => {
+  it('should pass through a transient error', async () => {
     peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
       outcome: 'transientError',
       httpStatus: 429,
@@ -153,7 +117,6 @@ describe('CompanyEnrichmentService', () => {
     });
 
     expect(result).toEqual({ outcome: 'transientError', enrichment: null });
-    expect(cacheStorageService.set).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -161,7 +124,7 @@ describe('CompanyEnrichmentService', () => {
     { outcome: 'notFound' },
     { outcome: 'permanentError', httpStatus: 401, message: 'unauthorized' },
   ])(
-    'should return unavailable on client outcome $outcome without caching',
+    'should return unavailable on client outcome $outcome',
     async (clientResult) => {
       peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue(
         clientResult,
@@ -174,7 +137,6 @@ describe('CompanyEnrichmentService', () => {
       });
 
       expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-      expect(cacheStorageService.set).not.toHaveBeenCalled();
     },
   );
 
@@ -182,18 +144,6 @@ describe('CompanyEnrichmentService', () => {
     await service.enrichCompanyForWorkspaceCreator({
       userId: 'someone-else',
       email: 'someone@acme.com',
-      workspaceId,
-    });
-
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-  });
-
-  it('should not consume throttle tokens on a cache hit', async () => {
-    cacheStorageService.get.mockResolvedValue({ domain: 'acme.com' });
-
-    await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'foo@acme.com',
       workspaceId,
     });
 
