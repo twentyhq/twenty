@@ -97,12 +97,22 @@ export const createStyleProxy = ({
         ? declarationValue.replace(CSS_IMPORTANT_PRIORITY_PATTERN, '').trim()
         : declarationValue;
 
-      if (declarationKey !== '' && declarationValueWithoutPriority !== '') {
-        styleStore[declarationKey] = declarationValueWithoutPriority;
+      if (declarationKey === '' || declarationValueWithoutPriority === '') {
+        continue;
+      }
 
-        if (hasImportantPriority) {
-          stylePriorities[declarationKey] = 'important';
-        }
+      const isExistingDeclarationImportant = isNonEmptyString(
+        stylePriorities[declarationKey],
+      );
+
+      if (isExistingDeclarationImportant && !hasImportantPriority) {
+        continue;
+      }
+
+      styleStore[declarationKey] = declarationValueWithoutPriority;
+
+      if (hasImportantPriority) {
+        stylePriorities[declarationKey] = 'important';
       }
     }
   };

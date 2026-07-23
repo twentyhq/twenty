@@ -72,6 +72,32 @@ describe('createStyleProxy', () => {
     expect(style.getPropertyPriority('width')).toBe('');
   });
 
+  it('should let the last duplicate declaration win in assigned cssText', () => {
+    const style = createStyle();
+
+    style.cssText = 'color: red; color: blue';
+
+    expect(style.getPropertyValue('color')).toBe('blue');
+  });
+
+  it('should keep an earlier important declaration over a later normal duplicate', () => {
+    const style = createStyle();
+
+    style.cssText = 'color: red !important; color: blue';
+
+    expect(style.getPropertyValue('color')).toBe('red');
+    expect(style.getPropertyPriority('color')).toBe('important');
+  });
+
+  it('should let a later important duplicate replace an earlier important one', () => {
+    const style = createStyle();
+
+    style.cssText = 'color: red !important; color: blue !important';
+
+    expect(style.getPropertyValue('color')).toBe('blue');
+    expect(style.getPropertyPriority('color')).toBe('important');
+  });
+
   it('should round trip priorities through cssText', () => {
     const style = createStyle();
     style.setProperty('color', 'red', 'important');
