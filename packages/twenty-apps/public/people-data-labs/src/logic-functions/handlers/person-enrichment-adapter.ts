@@ -6,14 +6,13 @@ import { readPeople } from 'src/logic-functions/utils/read-people';
 import { updatePeopleStatus } from 'src/logic-functions/utils/update-people-status';
 import { updatePersonRecord } from 'src/logic-functions/utils/update-person-record';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
-import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params';
+import { type PeopleDataLabsPersonData, type PeopleDataLabsPersonEnrichParams } from 'twenty-shared/people-data-labs';
 import { type PersonNode } from 'src/types/person-node';
 
 export const personEnrichmentAdapter: BatchEnrichmentAdapter<
   PersonNode,
-  PdlPersonData,
-  PdlPersonEnrichParams
+  PeopleDataLabsPersonData,
+  PeopleDataLabsPersonEnrichParams
 > = {
   objectNameSingular: 'Person',
   noIdentifierMessage:

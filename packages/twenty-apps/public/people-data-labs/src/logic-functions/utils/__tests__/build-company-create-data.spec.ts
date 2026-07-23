@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildCompanyCreateData } from 'src/logic-functions/utils/build-company-create-data';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
-
+import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
 describe('buildCompanyCreateData', () => {
   it('maps job_company_* onto Company standard and pdl fields', () => {
     const data = buildCompanyCreateData({
@@ -12,7 +11,7 @@ describe('buildCompanyCreateData', () => {
       job_company_linkedin_url: 'https://linkedin.com/company/acme',
       job_company_industry: 'accounting',
       job_company_size: '11-50',
-    } as PdlPersonData);
+    } as PeopleDataLabsPersonData);
 
     expect(data).toMatchObject({
       name: 'Acme',
@@ -30,7 +29,7 @@ describe('buildCompanyCreateData', () => {
     const data = buildCompanyCreateData({
       job_company_name: 'Acme',
       job_company_industry: 'not-a-real-industry',
-    } as PdlPersonData);
+    } as PeopleDataLabsPersonData);
 
     expect(data).toEqual({ name: 'Acme' });
   });

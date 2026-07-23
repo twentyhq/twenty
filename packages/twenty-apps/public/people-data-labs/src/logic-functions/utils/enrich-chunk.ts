@@ -12,7 +12,7 @@ import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter'
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type EnrichResult } from 'src/types/enrich-result';
-import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+import { type PeopleDataLabsEnrichResult } from 'twenty-shared/people-data-labs';
 import { isDefined } from 'src/utils/is-defined';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
@@ -246,7 +246,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   const enrichedAt = nowIso();
   const recordIdsToMarkAsError: string[] = [];
 
-  let pdlEnrichmentOutcomes: PdlEnrichResult<TData>[];
+  let pdlEnrichmentOutcomes: PeopleDataLabsEnrichResult<TData>[];
   try {
     pdlEnrichmentOutcomes = await adapter.enrichBatch(
       recordsToEnrich.map((recordToEnrich) => recordToEnrich.params),

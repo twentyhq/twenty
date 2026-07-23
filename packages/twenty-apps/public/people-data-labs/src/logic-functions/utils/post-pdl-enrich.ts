@@ -1,18 +1,19 @@
 import { isNumber, isObject } from '@sniptt/guards';
 
-import { PDL_BASE_URL } from 'src/constants/pdl-base-url';
-import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-error-message';
+import {
+  PEOPLE_DATA_LABS_BASE_URL,
+  type PeopleDataLabsEnrichResult,
+  extractPeopleDataLabsErrorMessage,
+  parsePeopleDataLabsResponseItem,
+} from 'twenty-shared/people-data-labs';
 import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
-import { parsePdlItem } from 'src/logic-functions/utils/parse-pdl-item';
-import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
-
 export const postPdlBulkEnrich = async <TData>({
   path,
   requests,
 }: {
   path: string;
   requests: Record<string, unknown>[];
-}): Promise<PdlEnrichResult<TData>[]> => {
+}): Promise<PeopleDataLabsEnrichResult<TData>[]> => {
   if (requests.length === 0) {
     return [];
   }
@@ -25,12 +26,12 @@ export const postPdlBulkEnrich = async <TData>({
   }: {
     message: string;
     httpStatus: number;
-  }): PdlEnrichResult<TData>[] =>
+  }): PeopleDataLabsEnrichResult<TData>[] =>
     requests.map(() => ({ outcome: 'error', httpStatus, message }));
 
   let response: Response;
   try {
-    response = await fetch(`${PDL_BASE_URL}${path}`, {
+    response = await fetch(`${PEOPLE_DATA_LABS_BASE_URL}${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ export const postPdlBulkEnrich = async <TData>({
 
   if (!response.ok) {
     const message = isObject(json)
-      ? extractPdlErrorMessage({
+      ? extractPeopleDataLabsErrorMessage({
           json: json as Record<string, unknown>,
           httpStatus: response.status,
         })
@@ -79,7 +80,7 @@ export const postPdlBulkEnrich = async <TData>({
   }
 
   return requests.map((requestParams, index) =>
-    parsePdlItem<TData>({
+    parsePeopleDataLabsResponseItem<TData>({
       item: responseItems[index],
       requestedMinLikelihood: isNumber(requestParams.min_likelihood)
         ? requestParams.min_likelihood

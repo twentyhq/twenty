@@ -7,13 +7,11 @@ import { updateCompaniesStatus } from 'src/logic-functions/utils/update-companie
 import { updateCompanyRecord } from 'src/logic-functions/utils/update-company-record';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type CompanyNode } from 'src/types/company-node';
-import { type PdlCompanyData } from 'src/types/pdl-company-data';
-import { type PdlCompanyEnrichParams } from 'src/types/pdl-company-enrich-params';
-
+import { type PeopleDataLabsCompanyData, type PeopleDataLabsCompanyEnrichParams } from 'twenty-shared/people-data-labs';
 export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   CompanyNode,
-  PdlCompanyData,
-  PdlCompanyEnrichParams
+  PeopleDataLabsCompanyData,
+  PeopleDataLabsCompanyEnrichParams
 > = {
   objectNameSingular: 'Company',
   noIdentifierMessage:

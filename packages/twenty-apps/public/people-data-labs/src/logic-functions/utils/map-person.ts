@@ -23,7 +23,7 @@ import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { salaryTransform } from 'src/logic-functions/utils/salary-transform';
 import { type MappedRecord } from 'src/types/mapped-record';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
+import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const SENIORITY_VALUES = buildAllowedValues(SENIORITY_OPTIONS);
@@ -35,7 +35,7 @@ const INFERRED_SALARY_VALUES = buildAllowedValues(INFERRED_SALARY_OPTIONS);
 const SEX_VALUES = buildAllowedValues(SEX_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
 
-export const mapPerson = (personData: PdlPersonData): MappedRecord => {
+export const mapPerson = (personData: PeopleDataLabsPersonData): MappedRecord => {
   const emailEntries = (isArray(personData.emails) ? personData.emails : []).map(
     (rawEmail) => (isString(rawEmail) ? rawEmail : rawEmail.address),
   );

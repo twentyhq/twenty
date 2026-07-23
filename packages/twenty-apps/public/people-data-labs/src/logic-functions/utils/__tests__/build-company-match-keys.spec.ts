@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-match-keys';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
-
+import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
 describe('buildCompanyMatchKeys', () => {
   it('extracts and trims the company identifiers from PDL data', () => {
     const keys = buildCompanyMatchKeys({
@@ -10,7 +9,7 @@ describe('buildCompanyMatchKeys', () => {
       job_company_website: 'acme.com',
       job_company_linkedin_url: 'https://linkedin.com/company/acme',
       job_company_name: 'Acme',
-    } as PdlPersonData);
+    } as PeopleDataLabsPersonData);
 
     expect(keys).toEqual({
       pdlId: 'pdl-co-1',
@@ -25,11 +24,11 @@ describe('buildCompanyMatchKeys', () => {
       buildCompanyMatchKeys({
         job_company_name: '   ',
         job_company_website: 'acme.com',
-      } as PdlPersonData),
+      } as PeopleDataLabsPersonData),
     ).toEqual({ website: 'acme.com' });
   });
 
   it('returns an empty object when no company identifiers are present', () => {
-    expect(buildCompanyMatchKeys({} as PdlPersonData)).toEqual({});
+    expect(buildCompanyMatchKeys({} as PeopleDataLabsPersonData)).toEqual({});
   });
 });

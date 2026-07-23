@@ -1,6 +1,5 @@
-import { type PdlCompanyData } from 'src/types/pdl-company-data';
-
-export const PDL_COMPANY_DATA_MOCK: PdlCompanyData = {
+import { type PeopleDataLabsCompanyData } from 'twenty-shared/people-data-labs';
+export const PDL_COMPANY_DATA_MOCK: PeopleDataLabsCompanyData = {
   id: 'pdl-company-1',
   display_name: 'Acme Corp',
   website: 'acme.com',

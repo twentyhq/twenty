@@ -1,15 +1,17 @@
 import { postPdlSingleEnrich } from 'src/logic-functions/utils/post-pdl-single-enrich';
-import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
-import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params';
+import {
+  type PeopleDataLabsEnrichResult,
+  type PeopleDataLabsPersonData,
+  type PeopleDataLabsPersonEnrichParams,
+} from 'twenty-shared/people-data-labs';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 export const enrichPerson = (
-  params: PdlPersonEnrichParams[],
-): Promise<PdlEnrichResult<PdlPersonData>[]> =>
+  params: PeopleDataLabsPersonEnrichParams[],
+): Promise<PeopleDataLabsEnrichResult<PeopleDataLabsPersonData>[]> =>
   Promise.all(
     params.map((entry) =>
-      postPdlSingleEnrich<PdlPersonData>({
+      postPdlSingleEnrich<PeopleDataLabsPersonData>({
         path: '/person/enrich',
         params: pruneUndefined({
           pdl_id: entry.pdlId,

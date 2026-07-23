@@ -2,8 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findOrCreateCurrentCompany } from 'src/logic-functions/utils/find-or-create-current-company';
-import { type PdlPersonData } from 'src/types/pdl-person-data';
-
+import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
 type CompanyQueryRequest = {
   companies: { __args: { filter: Record<string, unknown> } };
 };
@@ -26,7 +25,7 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      personData: {} as PdlPersonData,
+      personData: {} as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -44,7 +43,7 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      personData: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      personData: { job_company_id: 'pdl-co-1' } as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -59,7 +58,7 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      personData: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      personData: { job_company_id: 'pdl-co-1' } as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -79,7 +78,7 @@ describe('findOrCreateCurrentCompany', () => {
       client,
       personData: {
         job_company_name: 'Acme',
-      } as PdlPersonData,
+      } as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -103,7 +102,7 @@ describe('findOrCreateCurrentCompany', () => {
         job_company_id: 'pdl-co-2',
         job_company_name: 'Acme',
         job_company_website: 'acme.com',
-      } as PdlPersonData,
+      } as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -121,7 +120,7 @@ describe('findOrCreateCurrentCompany', () => {
         client,
         personData: {
           job_company_name: 'Acme',
-        } as PdlPersonData,
+        } as PeopleDataLabsPersonData,
         companyIdByMatchKeyCache: newCache(),
       }),
     ).rejects.toThrow('Failed to create company: no id returned.');
@@ -150,7 +149,7 @@ describe('findOrCreateCurrentCompany', () => {
       personData: {
         job_company_id: 'pdl-co-3',
         job_company_name: 'Acme',
-      } as PdlPersonData,
+      } as PeopleDataLabsPersonData,
       companyIdByMatchKeyCache: newCache(),
     });
 
@@ -167,7 +166,7 @@ describe('findOrCreateCurrentCompany', () => {
         client,
         personData: {
           job_company_name: 'Acme',
-        } as PdlPersonData,
+        } as PeopleDataLabsPersonData,
         companyIdByMatchKeyCache: newCache(),
       }),
     ).rejects.toThrow('network down');
@@ -183,7 +182,7 @@ describe('findOrCreateCurrentCompany', () => {
     const personData = {
       job_company_name: 'Acme',
       job_company_website: 'acme.com',
-    } as PdlPersonData;
+    } as PeopleDataLabsPersonData;
 
     const first = await findOrCreateCurrentCompany({
       client,
