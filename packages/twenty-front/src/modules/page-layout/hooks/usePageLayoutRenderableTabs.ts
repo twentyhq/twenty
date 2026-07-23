@@ -31,10 +31,14 @@ export const usePageLayoutRenderableTabs = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const renderableTabs = getTabsRenderableForTargetObject({
-    tabs: tabsWithVisibleWidgets,
-    targetObjectFields: targetObjectMetadataItem?.fields,
-  });
+  // Edit mode keeps every tab visible (like getTabsWithVisibleWidgets) so a
+  // widget the object does not support can still be reached and removed.
+  const renderableTabs = isPageLayoutInEditMode
+    ? tabsWithVisibleWidgets
+    : getTabsRenderableForTargetObject({
+        tabs: tabsWithVisibleWidgets,
+        targetObjectFields: targetObjectMetadataItem?.fields,
+      });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
     tabs: renderableTabs,
