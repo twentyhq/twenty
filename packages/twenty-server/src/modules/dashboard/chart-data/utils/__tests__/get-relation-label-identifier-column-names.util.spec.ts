@@ -46,6 +46,18 @@ describe('getRelationLabelIdentifierColumnNames', () => {
     ).toEqual(['id', 'name']);
   });
 
+  it('should return id and the column name for a UUID label identifier', () => {
+    expect(
+      getRelationLabelIdentifierColumnNames({
+        flatObjectMetadata: buildFlatObjectMetadata(labelFieldMetadataId),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
+          name: 'externalId',
+          type: FieldMetadataType.UUID,
+        }),
+      }),
+    ).toEqual(['id', 'externalId']);
+  });
+
   it('should return id and the composite column names for a FULL_NAME label identifier', () => {
     expect(
       getRelationLabelIdentifierColumnNames({

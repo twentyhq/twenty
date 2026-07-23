@@ -5,6 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 
 jest.mock(
@@ -48,6 +49,14 @@ const mockAuthContext = {
 
 const targetObjectMetadataId = 'agent-object-id';
 const labelFieldMetadataId = 'agent-name-field-id';
+const idFieldMetadataId = 'agent-id-field-id';
+
+const mockIdField = {
+  id: idFieldMetadataId,
+  name: 'id',
+  type: FieldMetadataType.UUID,
+  universalIdentifier: 'agent-id-field-universal-id',
+};
 
 const mockLabelField = {
   id: labelFieldMetadataId,
@@ -61,7 +70,7 @@ const mockTargetObjectMetadata = {
   nameSingular: 'agent',
   labelIdentifierFieldMetadataId: labelFieldMetadataId,
   universalIdentifier: 'agent-object-universal-id',
-  fieldIds: [labelFieldMetadataId],
+  fieldIds: [idFieldMetadataId, labelFieldMetadataId],
 };
 
 const flatObjectMetadataMaps = {
@@ -76,9 +85,11 @@ const flatObjectMetadataMaps = {
 
 const flatFieldMetadataMaps = {
   byUniversalIdentifier: {
+    'agent-id-field-universal-id': mockIdField,
     'agent-name-field-universal-id': mockLabelField,
   },
   universalIdentifierById: {
+    [idFieldMetadataId]: 'agent-id-field-universal-id',
     [labelFieldMetadataId]: 'agent-name-field-universal-id',
   },
   universalIdentifiersByApplicationId: {},
@@ -150,6 +161,32 @@ describe('ChartRelationLabelService', () => {
 
     expect(primary?.labelByRecordId.get('agent-id-1')).toBe('Alice');
     expect(primary?.labelByRecordId.get('agent-id-2')).toBe('Bob');
+    expect(primary?.unresolvedRecordIds.size).toBe(0);
+  });
+
+  it('should preserve the record id through the real formatResult so labels resolve', async () => {
+    const actualFormatResult = jest.requireActual(
+      'src/engine/twenty-orm/utils/format-result.util',
+    ).formatResult;
+
+    (formatResult as jest.Mock).mockImplementationOnce((...args) =>
+      actualFormatResult(...args),
+    );
+
+    mockGetRawMany.mockResolvedValue([{ id: 'agent-id-1', name: 'Alice' }]);
+
+    const { primary } = await service.resolveRelationLabels({
+      rawResults: [
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 3 },
+      ],
+      primaryAxis: { groupByField: relationGroupByField, subFieldName: null },
+      workspaceId,
+      authContext: mockAuthContext,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    expect(primary?.labelByRecordId.get('agent-id-1')).toBe('Alice');
     expect(primary?.unresolvedRecordIds.size).toBe(0);
   });
 
