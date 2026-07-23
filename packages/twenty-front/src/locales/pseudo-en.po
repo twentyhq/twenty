@@ -2123,9 +2123,6 @@ msgid "Amount Micros"
 msgstr ""
 
 #. js-lingui-id: Vw8l6h
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
 msgstr ""
@@ -2173,23 +2170,8 @@ msgstr ""
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 msgid "An error occurred."
@@ -2611,6 +2593,7 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr ""
 
@@ -3923,6 +3906,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr ""
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr ""
@@ -3996,6 +3980,11 @@ msgstr ""
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
+msgstr ""
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
 msgstr ""
 
 #. js-lingui-id: jZlrte
@@ -7785,6 +7774,11 @@ msgstr ""
 msgid "Expand"
 msgstr ""
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10174,6 +10168,11 @@ msgstr ""
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
+msgstr ""
+
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
 msgstr ""
 
 #. js-lingui-id: Lj7sBL
@@ -13239,6 +13238,11 @@ msgstr ""
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
+msgstr ""
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
 msgstr ""
 
 #. js-lingui-id: VwbV6P
@@ -20052,6 +20056,7 @@ msgid "Welcome to Twenty"
 msgstr ""
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr ""

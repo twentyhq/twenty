@@ -25,6 +25,10 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 type ResolverResult = {
   workspaceId: string;
@@ -274,6 +278,8 @@ export class ServerRouteTriggerService {
         return 'Rate limit exceeded';
       case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return 'Logic function not found';
+      case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED:
+        return 'Logic function execution is disabled';
       default:
         return 'An unexpected error occurred while handling the server route';
     }
@@ -282,6 +288,13 @@ export class ServerRouteTriggerService {
   private mapExecutorErrorToServerRouteCode(
     error: unknown,
   ): ServerRouteTriggerExceptionCode {
+    if (
+      error instanceof LogicFunctionException &&
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+    ) {
+      return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED;
+    }
+
     if (!(error instanceof LogicFunctionExecutionException)) {
       return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
     }

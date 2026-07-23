@@ -2128,9 +2128,6 @@ msgid "Amount Micros"
 msgstr "金額 (微單位)"
 
 #. js-lingui-id: Vw8l6h
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
 msgstr "發生錯誤"
@@ -2178,23 +2175,8 @@ msgstr "上傳圖片時發生錯誤。"
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
-#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 msgid "An error occurred."
@@ -2616,6 +2598,7 @@ msgstr "升序"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/pages/onboarding/WorkspaceSetup.tsx
 msgid "Ask AI"
 msgstr "詢問 AI"
 
@@ -3928,6 +3911,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "剪貼簿需要安全連線 (HTTPS)。請透過 HTTPS 存取此應用程式以啟用複製功能。"
 
 #. js-lingui-id: yz7wBu
+#: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "關閉"
@@ -4002,6 +3986,11 @@ msgstr "收起"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
 msgstr "收合資料夾"
+
+#. js-lingui-id: OQTRMK
+#: src/modules/ai/components/AiChatCollapseButton.tsx
+msgid "Collapse to side panel"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
@@ -7790,6 +7779,11 @@ msgstr "退出導入流程"
 msgid "Expand"
 msgstr "展開"
 
+#. js-lingui-id: 8ibXh3
+#: src/modules/side-panel/components/SidePanelExpandAiChatButton.tsx
+msgid "Expand chat"
+msgstr ""
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -10180,6 +10174,11 @@ msgstr "為今天{timeZoneAbbreviationSuffix}"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
 msgstr "發行者 URI"
+
+#. js-lingui-id: TulZsn
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+msgid "It natively comes with 7 standard objects."
+msgstr ""
 
 #. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -13245,6 +13244,11 @@ msgstr "僅限工作日"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "在哪些對象上應該可用此觸發器"
+
+#. js-lingui-id: gukxZ5
+#: src/pages/onboarding/WorkspaceSetup.tsx
+msgid "Onboarding"
+msgstr ""
 
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -20057,6 +20061,7 @@ msgid "Welcome to Twenty"
 msgstr "歡迎來到 Twenty"
 
 #. js-lingui-id: t8ZvkC
+#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "歡迎來到您的工作區"

@@ -7670,6 +7670,11 @@ msgstr "La lista a la que pertenece la persona"
 msgid "The list this campaign was sent to"
 msgstr "La lista a la que se envió esta campaña"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -7884,6 +7889,11 @@ msgstr "No hay ningún mensaje fallido para reintentar."
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "El valor de {fieldLabel} ya está en uso. Por favor, revise sus datos e intente de nuevo."
+
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts

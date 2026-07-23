@@ -59,7 +59,7 @@ Pour appeler une fonction logique déclenchée par une route depuis un composant
 * **cron** : Exécute votre fonction selon une planification à l’aide d’une expression CRON.
 * **databaseEvent**: S'exécute lors des événements du cycle de vie des objets de l'espace de travail. Lorsque l'opération de l'événement est `updated`, des champs spécifiques à surveiller peuvent être spécifiés dans le tableau `updatedFields`. S'il est laissé indéfini ou vide, toute mise à jour déclenchera la fonction.
 > p. ex. `person.updated`, `*.created`, `company.*`
-* **serverRoute** : expose une seule route HTTP à portée d’enregistrement. Une fonction de **résolution** (déclarée avec `serverRouteTriggerSettings`) s’exécute dans l’**espace de travail propriétaire** et renvoie l’espace de travail cible ET la fonction logique cible vers laquelle acheminer la requête ; la plateforme exécute ensuite cette fonction **cible** et renvoie sa réponse. Voir [déclencheur de route serveur](#server-route-trigger).
+* **serverRoute** : expose une seule route HTTP à portée d’enregistrement. Une fonction de **résolution** (déclarée avec `serverRouteTriggerSettings`) s’exécute dans l’espace de travail propriétaire et renvoie l’espace de travail cible ET la fonction logique cible vers laquelle acheminer la requête ; la plateforme accuse réception avec `202` et exécute cette fonction **cible** dans la file d’attente du worker. Voir [déclencheur de route serveur](#server-route-trigger).
 
 <Note>
 Vous pouvez également exécuter manuellement une fonction à l'aide de la CLI :
@@ -290,7 +290,7 @@ Pour les signatures de requêtes, la plupart des fournisseurs signent avec HMAC-
 L’exemple de résolveur ci-dessus montre déjà le flux GitHub HMAC-SHA256 — adaptez le nom de l’en-tête, l’encodage de l’empreinte et la chaîne de la charge utile signée en fonction du fournisseur avec lequel vous vous intégrez.
 
 <Note>
-La cible s’exécute **de manière synchrone** et sa valeur de retour devient la réponse HTTP, de sorte que les appelants voient votre code d’état et peuvent réessayer en cas de réponse non-2xx. Gardez les deux gestionnaires rapides — certains fournisseurs (par ex. Slack) expirent au bout de quelques secondes. Comme le résolveur est accessible en tant que point de terminaison public, protégez-le avec une limitation de débit à votre périphérie.
+La route répond `202 { queued: true }` juste après le retour du résolveur et la cible s’exécute dans la file d’attente du worker — l’appelant n’observe jamais la latence, le résultat ou les échecs de la cible (ceux-ci sont enregistrés dans les journaux d’exécution). Cela évite que les nouvelles tentatives d’envoi de l’émetteur n’amplifient les ralentissements de traitement, ce qui est souhaitable pour l’ingestion de webhook. Pour les endpoints dont l’appelant doit lire le corps de la réponse (handshakes de vérification, commandes Slack), utilisez plutôt une route `httpRouteTriggerSettings`. Gardez le résolveur rapide — certains fournisseurs (par ex. Slack) ont un délai d’attente de seulement quelques secondes. Comme le résolveur est accessible en tant que point de terminaison public, protégez-le avec une limitation de débit à votre périphérie.
 </Note>
 
 #### Charge utile du déclencheur d'événement de base de données
