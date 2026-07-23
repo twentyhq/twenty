@@ -81,7 +81,7 @@ export class SubdomainManagerService {
     const base =
       isDefined(derivedBase) && isSubdomainValid(derivedBase, minLength)
         ? derivedBase
-        : generateRandomSubdomain();
+        : this.generateValidRandomSubdomain(minLength);
 
     const candidates = this.buildSubdomainCandidates(base);
 
@@ -89,10 +89,22 @@ export class SubdomainManagerService {
       await this.filterFreeToUseSubdomains(candidates);
 
     if (availableSubdomains.length === 0) {
-      return [generateRandomSubdomain()];
+      return [this.generateValidRandomSubdomain(minLength)];
     }
 
     return availableSubdomains.slice(0, count);
+  }
+
+  private generateValidRandomSubdomain(minLength: number): string {
+    for (let attempt = 0; attempt < MAX_RANDOM_FALLBACK_ATTEMPTS; attempt++) {
+      const candidate = generateRandomSubdomain();
+
+      if (isSubdomainValid(candidate, minLength)) {
+        return candidate;
+      }
+    }
+
+    return generateRandomSubdomain();
   }
 
   private buildSubdomainCandidates(base: string): string[] {
