@@ -4,6 +4,7 @@ import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
@@ -244,6 +245,39 @@ describe('PieChartDataService', () => {
 
       expect(result.hasTooManyGroups).toBe(true);
       expect(result.data).toHaveLength(PIE_CHART_MAXIMUM_NUMBER_OF_SLICES);
+    });
+
+    it('should keep the highest-value slices when ordering by value with too many groups', async () => {
+      const extraSlices = 5;
+      const manyResults = Array.from(
+        { length: PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + extraSlices },
+        (_, index) => ({
+          groupByDimensionValues: [`Group ${index}`],
+          aggregateValue: index + 1,
+        }),
+      );
+
+      mockExecuteGroupByQuery.mockResolvedValue(manyResults);
+
+      const result = await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          orderBy: GraphOrderBy.VALUE_DESC,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(result.data).toHaveLength(PIE_CHART_MAXIMUM_NUMBER_OF_SLICES);
+      expect(result.data[0].value).toBe(
+        PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + extraSlices,
+      );
+      const smallestSurvivingValue = Math.min(
+        ...result.data.map((slice) => slice.value),
+      );
+
+      expect(smallestSurvivingValue).toBe(extraSlices + 1);
     });
 
     it('should respect displayLegend configuration', async () => {

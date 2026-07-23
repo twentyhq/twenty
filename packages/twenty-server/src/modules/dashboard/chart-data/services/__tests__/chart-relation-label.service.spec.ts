@@ -273,6 +273,34 @@ describe('ChartRelationLabelService', () => {
     expect(secondary?.labelByRecordId.get('agent-id-2')).toBe('Bob');
   });
 
+  it('should resolve labels when the group by field is a morph relation', async () => {
+    mockGetRawMany.mockResolvedValue([{ id: 'agent-id-1', name: 'Alice' }]);
+
+    const morphRelationGroupByField = {
+      id: 'morph-relation-field-id',
+      name: 'morphAgent',
+      type: FieldMetadataType.MORPH_RELATION,
+      relationTargetObjectMetadataId: targetObjectMetadataId,
+    } as unknown as FlatFieldMetadata;
+
+    const { primary } = await service.resolveRelationLabels({
+      rawResults: [
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 3 },
+      ],
+      primaryAxis: {
+        groupByField: morphRelationGroupByField,
+        subFieldName: null,
+      },
+      workspaceId,
+      authContext: mockAuthContext,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    expect(primary?.labelByRecordId.get('agent-id-1')).toBe('Alice');
+    expect(primary?.unresolvedRecordIds.size).toBe(0);
+  });
+
   it('should treat a label falling back to the record id as unresolved', async () => {
     mockGetRawMany.mockResolvedValue([{ id: 'agent-id-1', name: null }]);
 
