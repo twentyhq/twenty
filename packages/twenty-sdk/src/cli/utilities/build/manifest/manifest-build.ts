@@ -44,7 +44,9 @@ import {
   type PageLayoutTabManifest,
   type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
+  type PostUninstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
+  type PreUninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
@@ -118,6 +120,10 @@ export const buildManifest = async (
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
+    [];
+  const postUninstallLogicFunctions: PostUninstallLogicFunctionApplicationManifest[] =
+    [];
+  const preUninstallLogicFunctions: PreUninstallLogicFunctionApplicationManifest[] =
     [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
@@ -339,6 +345,23 @@ export const buildManifest = async (
           });
         }
 
+        if (
+          targetFunctionName ===
+          TargetFunction.DefinePostUninstallLogicFunction
+        ) {
+          postUninstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
+        if (
+          targetFunctionName === TargetFunction.DefinePreUninstallLogicFunction
+        ) {
+          preUninstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -542,6 +565,18 @@ export const buildManifest = async (
     );
   }
 
+  if (postUninstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one post uninstall logic function is allowed per application',
+    );
+  }
+
+  if (preUninstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one pre uninstall logic function is allowed per application',
+    );
+  }
+
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
@@ -590,6 +625,12 @@ export const buildManifest = async (
               : {}),
             ...(preInstallLogicFunctions.length >= 1
               ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+              : {}),
+            ...(postUninstallLogicFunctions.length >= 1
+              ? { postUninstallLogicFunction: postUninstallLogicFunctions[0] }
+              : {}),
+            ...(preUninstallLogicFunctions.length >= 1
+              ? { preUninstallLogicFunction: preUninstallLogicFunctions[0] }
               : {}),
           };
         })()

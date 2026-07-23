@@ -1,12 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
+import { Repository } from 'typeorm';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -23,6 +26,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -44,6 +48,9 @@ export class ApplicationSyncService {
     private readonly applicationTranslationSyncService: ApplicationTranslationSyncService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   public async synchronizeFromManifest({
@@ -257,9 +264,11 @@ export class ApplicationSyncService {
   public async uninstallApplication({
     workspaceId,
     applicationUniversalIdentifier,
+    shouldRunUninstallHooks = true,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
+    shouldRunUninstallHooks?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findOneApplicationOrThrow(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
@@ -270,6 +279,10 @@ export class ApplicationSyncService {
         'This application cannot be uninstalled.',
         ApplicationExceptionCode.FORBIDDEN,
       );
+    }
+
+    if (shouldRunUninstallHooks) {
+      await this.runUninstallHooks({ application, workspaceId });
     }
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
@@ -327,6 +340,173 @@ export class ApplicationSyncService {
     });
 
     return validateAndBuildResult.workspaceMigration;
+  }
+
+  // Uninstall hooks must run before the deletion migration: once the
+  // migration is applied, the hook's logic function metadata, code, and the
+  // application's data are gone, so nothing can be executed anymore.
+  private async runUninstallHooks({
+    application,
+    workspaceId,
+  }: {
+    application: ApplicationEntity;
+    workspaceId: string;
+  }): Promise<void> {
+    if (!isDefined(application.applicationRegistrationId)) {
+      return;
+    }
+
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: application.applicationRegistrationId },
+    });
+
+    const manifest = appRegistration?.manifest;
+
+    if (!isDefined(manifest)) {
+      return;
+    }
+
+    const payload = { version: application.version ?? undefined };
+
+    await this.runPreUninstallHook({
+      manifest,
+      workspaceId,
+      payload,
+      applicationUniversalIdentifier: application.universalIdentifier,
+    });
+
+    await this.runPostUninstallHook({
+      manifest,
+      workspaceId,
+      payload,
+      applicationUniversalIdentifier: application.universalIdentifier,
+    });
+  }
+
+  private async runPreUninstallHook({
+    manifest,
+    workspaceId,
+    payload,
+    applicationUniversalIdentifier,
+  }: {
+    manifest: Manifest;
+    workspaceId: string;
+    payload: { version?: string };
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const preUninstallLogicFunction =
+      manifest.application.preUninstallLogicFunction;
+
+    if (!isDefined(preUninstallLogicFunction)) {
+      return;
+    }
+
+    const flatLogicFunction = await this.findFlatLogicFunction({
+      workspaceId,
+      logicFunctionUniversalIdentifier:
+        preUninstallLogicFunction.universalIdentifier,
+    });
+
+    // An app must always stay removable: a missing hook function is logged,
+    // never a reason to block the uninstall.
+    if (!isDefined(flatLogicFunction)) {
+      this.logger.warn(
+        `Pre-uninstall logic function "${preUninstallLogicFunction.universalIdentifier}" not found for application "${applicationUniversalIdentifier}"; skipping hook`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `Executing pre-uninstall hook for app ${applicationUniversalIdentifier}`,
+    );
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: flatLogicFunction.id,
+      workspaceId,
+      payload,
+    });
+
+    if (isDefined(result.error)) {
+      throw new ApplicationException(
+        result.error.errorMessage,
+        ApplicationExceptionCode.PRE_UNINSTALL_ERROR,
+      );
+    }
+  }
+
+  private async runPostUninstallHook({
+    manifest,
+    workspaceId,
+    payload,
+    applicationUniversalIdentifier,
+  }: {
+    manifest: Manifest;
+    workspaceId: string;
+    payload: { version?: string };
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const postUninstallLogicFunction =
+      manifest.application.postUninstallLogicFunction;
+
+    if (!isDefined(postUninstallLogicFunction)) {
+      return;
+    }
+
+    // Post-uninstall is best-effort cleanup of external resources: a failure
+    // must never prevent the application from being removed.
+    try {
+      const flatLogicFunction = await this.findFlatLogicFunction({
+        workspaceId,
+        logicFunctionUniversalIdentifier:
+          postUninstallLogicFunction.universalIdentifier,
+      });
+
+      if (!isDefined(flatLogicFunction)) {
+        this.logger.warn(
+          `Post-uninstall logic function "${postUninstallLogicFunction.universalIdentifier}" not found for application "${applicationUniversalIdentifier}"; skipping hook`,
+        );
+
+        return;
+      }
+
+      this.logger.log(
+        `Executing post-uninstall hook for app ${applicationUniversalIdentifier}`,
+      );
+
+      const result = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: flatLogicFunction.id,
+        workspaceId,
+        payload,
+      });
+
+      if (isDefined(result.error)) {
+        this.logger.warn(
+          `Post-uninstall hook failed for application ${applicationUniversalIdentifier}: ${result.error.errorMessage}`,
+        );
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Post-uninstall hook failed for application ${applicationUniversalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async findFlatLogicFunction({
+    workspaceId,
+    logicFunctionUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    logicFunctionUniversalIdentifier: string;
+  }) {
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+
+    return flatLogicFunctionMaps.byUniversalIdentifier[
+      logicFunctionUniversalIdentifier
+    ];
   }
 
   private async cleanupApplicationRuntimeResources({

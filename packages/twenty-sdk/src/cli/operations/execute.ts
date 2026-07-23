@@ -17,6 +17,8 @@ export type FunctionExecuteOptions = {
 } & (
   | { postInstall: true }
   | { preInstall: true }
+  | { postUninstall: true }
+  | { preUninstall: true }
   | { functionUniversalIdentifier: string }
   | { functionName: string }
 );
@@ -41,6 +43,8 @@ const belongsToApplication = (
 const resolveIdentifier = (options: FunctionExecuteOptions): string => {
   if ('postInstall' in options) return 'post install';
   if ('preInstall' in options) return 'pre install';
+  if ('postUninstall' in options) return 'post uninstall';
+  if ('preUninstall' in options) return 'pre uninstall';
   if ('functionUniversalIdentifier' in options)
     return options.functionUniversalIdentifier;
   if ('functionName' in options) return options.functionName;
@@ -102,6 +106,18 @@ const innerFunctionExecute = async (
       return (
         logicFunction.universalIdentifier ===
         manifest.application.preInstallLogicFunction?.universalIdentifier
+      );
+    }
+    if ('postUninstall' in options && options.postUninstall) {
+      return (
+        logicFunction.universalIdentifier ===
+        manifest.application.postUninstallLogicFunction?.universalIdentifier
+      );
+    }
+    if ('preUninstall' in options && options.preUninstall) {
+      return (
+        logicFunction.universalIdentifier ===
+        manifest.application.preUninstallLogicFunction?.universalIdentifier
       );
     }
     if ('functionUniversalIdentifier' in options) {

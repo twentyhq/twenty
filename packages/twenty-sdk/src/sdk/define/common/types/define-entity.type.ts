@@ -9,7 +9,9 @@ import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-
 import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PostUninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-uninstall-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { type PreUninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-uninstall-logic-function-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import {
   type AgentManifest,
@@ -35,7 +37,9 @@ export type DefinableEntity =
   | IndexConfig
   | LogicFunctionConfig
   | PostInstallLogicFunctionConfig
+  | PostUninstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig
+  | PreUninstallLogicFunctionConfig
   | AgentManifest
   | ConnectionProviderManifest
   | RoleConfig

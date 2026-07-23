@@ -122,7 +122,9 @@ export type {
   PermissionFlagManifest,
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
+export type { PostUninstallLogicFunctionApplicationManifest } from './postUninstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { PreUninstallLogicFunctionApplicationManifest } from './preUninstallLogicFunctionApplicationType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,

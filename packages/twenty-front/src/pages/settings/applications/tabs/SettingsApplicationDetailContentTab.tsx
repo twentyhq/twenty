@@ -91,6 +91,12 @@ export const SettingsApplicationDetailContentTab = ({
     preInstallUniversalIdentifier:
       manifestContent?.application?.preInstallLogicFunction
         ?.universalIdentifier,
+    postUninstallUniversalIdentifier:
+      manifestContent?.application?.postUninstallLogicFunction
+        ?.universalIdentifier,
+    preUninstallUniversalIdentifier:
+      manifestContent?.application?.preUninstallLogicFunction
+        ?.universalIdentifier,
   };
 
   const logicFunctionRows: ApplicationContentRow[] = isDefined(
