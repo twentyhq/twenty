@@ -38,7 +38,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -49,6 +48,19 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   padding-left: ${themeCssVariables.spacing[1]};
   user-select: none;
   white-space: nowrap;
+`;
+
+const StyledChipLabel = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: inherit;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  margin: 0;
+  padding: 0;
 `;
 
 const StyledIcon = styled.div`
@@ -147,29 +159,33 @@ export const SortOrFilterChip = ({
   };
 
   return (
-    <StyledChip onClick={onClick} variant={variant}>
-      {Icon && (
-        <StyledIcon>
-          <Icon size={theme.icon.size.sm} />
-        </StyledIcon>
-      )}
-      <StyledKeyLabelContainer>
-        {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
-        {type === 'sort' ? (
-          <StyledSortValue>{labelValue}</StyledSortValue>
-        ) : (
-          <StyledFilterValue>{labelValue}</StyledFilterValue>
+    <StyledChip variant={variant}>
+      <StyledChipLabel type="button" onClick={onClick}>
+        {Icon && (
+          <StyledIcon>
+            <Icon size={theme.icon.size.sm} />
+          </StyledIcon>
         )}
-        {isDefined(labelSubField) && (
-          <>
-            <StyledSubFieldSeparator>·</StyledSubFieldSeparator>
-            <StyledSubFieldValue>{labelSubField}</StyledSubFieldValue>
-          </>
-        )}
-      </StyledKeyLabelContainer>
+        <StyledKeyLabelContainer>
+          {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
+          {type === 'sort' ? (
+            <StyledSortValue>{labelValue}</StyledSortValue>
+          ) : (
+            <StyledFilterValue>{labelValue}</StyledFilterValue>
+          )}
+          {isDefined(labelSubField) && (
+            <>
+              <StyledSubFieldSeparator>·</StyledSubFieldSeparator>
+              <StyledSubFieldValue>{labelSubField}</StyledSubFieldValue>
+            </>
+          )}
+        </StyledKeyLabelContainer>
+      </StyledChipLabel>
       <StyledDelete
+        type="button"
         variant={variant}
         onClick={handleDeleteClick}
+        aria-label={type === 'sort' ? 'Remove sort' : 'Remove filter'}
         data-testid={'remove-icon-' + testId}
       >
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
