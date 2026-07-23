@@ -1011,6 +1011,16 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Minimum number of characters allowed for a workspace subdomain',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SUBDOMAIN_MIN_LENGTH = 3;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
     isHiddenInAdminPanel: true,
