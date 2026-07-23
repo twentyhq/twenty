@@ -10,6 +10,8 @@ export const getOperationTypeLabel = (key: string): string => {
       return t`Workflow Execution`;
     case 'CODE_EXECUTION':
       return t`Code Execution`;
+    case 'EMAIL_SEND':
+      return t`Email Send`;
     default:
       return key;
   }

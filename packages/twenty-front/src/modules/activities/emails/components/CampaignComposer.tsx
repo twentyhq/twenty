@@ -6,11 +6,15 @@ import { CampaignTestSendSection } from '@/activities/emails/components/Campaign
 import { useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useCampaignSendQuota } from '@/activities/emails/hooks/useCampaignSendQuota';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { HoldToConfirmButton } from '@/ui/input/components/HoldToConfirmButton';
 import { t } from '@lingui/core/macro';
+import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
+import { Callout } from 'twenty-ui/feedback';
 import { IconSend } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -21,6 +25,14 @@ const StyledContainer = styled.div`
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
   width: 100%;
+`;
+
+const StyledCalloutWrapper = styled.div`
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]} 0;
+
+  > div {
+    max-width: none;
+  }
 `;
 
 const StyledFooter = styled.div`
@@ -56,12 +68,34 @@ export const CampaignComposer = ({
 }: CampaignComposerProps) => {
   const campaignState = useCampaignComposerState({ campaign, onSent });
 
+  const navigateSettings = useNavigateSettings();
+
+  const { channels } = useMyMessageChannels();
+
+  const hasEmailGroupChannel = channels.some(
+    (channel) => channel.type === MessageChannelType.EMAIL_GROUP,
+  );
+
   const sendQuota = useCampaignSendQuota();
   const remainingEmails = sendQuota?.remaining;
   const dailyEmailLimit = sendQuota?.dailyLimit;
 
   return (
     <StyledContainer>
+      {!hasEmailGroupChannel && (
+        <StyledCalloutWrapper>
+          <Callout
+            variant="info"
+            title={t`No sending address yet`}
+            description={t`Set up an email group channel before you can send campaigns.`}
+            action={{
+              label: t`Go to Communications`,
+              onClick: () =>
+                navigateSettings(SettingsPath.WorkspaceCommunications),
+            }}
+          />
+        </StyledCalloutWrapper>
+      )}
       <CampaignComposerFields campaignState={campaignState} />
       <StyledFooter>
         {isDefined(remainingEmails) && isDefined(dailyEmailLimit) && (

@@ -214,7 +214,7 @@ export const SettingsBillingCreditsSection = ({
     <Section>
       <H2Title
         title={t`Credits`}
-        description={t`Credits are used by workflows, AI chats, agents, and approved apps`}
+        description={t`Credits are used by workflows, AI chats, agents, approved apps, and emails`}
       />
       <StyledSettingsBillingCard>
         <StyledSettingsBillingCardHeader>
