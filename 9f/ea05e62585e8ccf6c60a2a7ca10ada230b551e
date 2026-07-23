@@ -1,0 +1,34 @@
+packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+  s_c3fbc446206706::t_921bcc3279dba6 339
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposer.tsx
+  s_c3fbc446206706::t_9e0f629f729e8d 124,132
+  s_c3fbc446206706::t_9794e7f2048249 73
+  s_c3fbc446206706::t_57c06af43e7515 85
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_8e8daadcc7c7fa 56
+  s_c3fbc446206706::t_6b87816131f33a 280-284
+packages/twenty-front/src/modules/ui/input/components/HoldToConfirmButton.tsx
+  s_c3fbc446206706::t_6c59531d8bd8d3 59-73
+  s_c3fbc446206706::t_5bf994991f0172 96-129,132,136-138
+  s_c3fbc446206706::t_c70e222ff82e8f 2-8
+packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel.resolver.ts
+  s_c3fbc446206706::t_72ccaf56cca65c 225,230,232
+  s_c3fbc446206706::t_5b5df5e6b5d3d4 231
+  s_c3fbc446206706::t_99069d9f58b295 233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9fea05e62585e8ccf6c60a2a7ca10ada230b551e",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
