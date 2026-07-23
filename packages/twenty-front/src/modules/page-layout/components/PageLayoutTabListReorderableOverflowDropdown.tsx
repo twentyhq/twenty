@@ -1,5 +1,3 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
@@ -22,7 +20,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -42,29 +40,15 @@ const StyledOverflowMenuItemWrapper = styled.div`
   }
 `;
 
-const StyledOverflowEndDropZone = styled.div`
-  min-height: ${themeCssVariables.spacing[2]};
-  position: relative;
+// Kept tall enough that appending after the last overflow tab stays an easy
+// target.
+const StyledOverflowEndDropZone = styled(DragDropItemEndDropZone)`
+  min-height: ${themeCssVariables.spacing[4]};
 `;
 
-const PageLayoutTabListOverflowEndDropZone = () => {
-  const endDropData: PageLayoutTabListEndDropData = {
-    type: 'tab-list-end',
-    beforeTabId: null,
-  };
-
-  const { ref, isDropTarget } = useDroppable({
-    id: `${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}-end`,
-    accept: PAGE_LAYOUT_TAB_DND_TYPE,
-    collisionDetector: pointerIntersection,
-    data: endDropData,
-  });
-
-  return (
-    <StyledOverflowEndDropZone ref={ref}>
-      {isDropTarget && <DragDropItemDropLine />}
-    </StyledOverflowEndDropZone>
-  );
+const OVERFLOW_END_DROP_DATA: PageLayoutTabListEndDropData = {
+  type: 'tab-list-end',
+  beforeTabId: null,
 };
 
 type PageLayoutTabListReorderableOverflowDropdownProps = {
@@ -190,7 +174,11 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                 </DragDropItemSortableCell>
               );
             })}
-            <PageLayoutTabListOverflowEndDropZone />
+            <StyledOverflowEndDropZone
+              id={`${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}-end`}
+              accept={PAGE_LAYOUT_TAB_DND_TYPE}
+              data={OVERFLOW_END_DROP_DATA}
+            />
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

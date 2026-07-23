@@ -1,5 +1,3 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { TabButton } from 'twenty-ui/input';
 
@@ -9,8 +7,9 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
+import { PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH } from '@/page-layout/constants/PageLayoutTabListEndDropZoneWidth';
 import { type PageLayoutTabListEndDropData } from '@/page-layout/types/PageLayoutWidgetDndData';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 
 type PageLayoutTabListVisibleTabsProps = {
   visibleTabs: SingleTabProps[];
@@ -38,35 +37,11 @@ const StyledTabContainer = styled.div`
 
 // Catches drops after the last visible tab; inserting before the first hidden
 // tab keeps the dropped tab visible instead of sending it to the overflow.
-const StyledEndDropZone = styled.div`
+// Its width is reserved by PageLayoutTabList's container measurement.
+const StyledEndDropZone = styled(DragDropItemEndDropZone)`
   align-self: stretch;
-  flex: 0 0 ${TAB_LIST_GAP * 2}px;
-  position: relative;
+  flex: 0 0 ${PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH}px;
 `;
-
-const PageLayoutTabListVisibleTabsEndDropZone = ({
-  firstHiddenTabId,
-}: {
-  firstHiddenTabId: string | null;
-}) => {
-  const endDropData: PageLayoutTabListEndDropData = {
-    type: 'tab-list-end',
-    beforeTabId: firstHiddenTabId,
-  };
-
-  const { ref, isDropTarget } = useDroppable({
-    id: `${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}-end`,
-    accept: PAGE_LAYOUT_TAB_DND_TYPE,
-    collisionDetector: pointerIntersection,
-    data: endDropData,
-  });
-
-  return (
-    <StyledEndDropZone ref={ref}>
-      {isDropTarget && <DragDropItemDropLine orientation="vertical" />}
-    </StyledEndDropZone>
-  );
-};
 
 export const PageLayoutTabListVisibleTabs = ({
   visibleTabs,
@@ -81,6 +56,11 @@ export const PageLayoutTabListVisibleTabs = ({
   firstHiddenTabId,
 }: PageLayoutTabListVisibleTabsProps) => {
   if (canReorder) {
+    const endDropData: PageLayoutTabListEndDropData = {
+      type: 'tab-list-end',
+      beforeTabId: firstHiddenTabId,
+    };
+
     return (
       <StyledTabContainer>
         {visibleTabs.slice(0, visibleTabCount).map((tab, index) => (
@@ -95,8 +75,11 @@ export const PageLayoutTabListVisibleTabs = ({
             onSelect={() => onSelectTab(tab.id)}
           />
         ))}
-        <PageLayoutTabListVisibleTabsEndDropZone
-          firstHiddenTabId={firstHiddenTabId}
+        <StyledEndDropZone
+          id={`${PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}-end`}
+          accept={PAGE_LAYOUT_TAB_DND_TYPE}
+          data={endDropData}
+          dropLine="vertical"
         />
       </StyledTabContainer>
     );

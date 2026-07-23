@@ -22,6 +22,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH } from '@/page-layout/constants/PageLayoutTabListEndDropZoneWidth';
 import { PageLayoutTabListNewTabDropdownContent } from '@/page-layout/components/PageLayoutTabListNewTabDropdownContent';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
@@ -253,6 +254,25 @@ export const PageLayoutTabList = ({
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
+  // The reorderable strip appends an end drop zone the tab measurement does
+  // not know about; reserve its width so visible tabs never get clipped.
+  const handleContainerWidthChange = useCallback(
+    (dimensions: { width: number; height: number }) => {
+      onContainerWidthChange(
+        isReorderEnabled
+          ? {
+              ...dimensions,
+              width: Math.max(
+                dimensions.width - PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH,
+                0,
+              ),
+            }
+          : dimensions,
+      );
+    },
+    [onContainerWidthChange, isReorderEnabled],
+  );
+
   const handleSelectTab = useCallback(
     (tabId: string) => {
       const shouldOpenSettings =
@@ -372,7 +392,7 @@ export const PageLayoutTabList = ({
         />
       )}
 
-      <NodeDimension onDimensionChange={onContainerWidthChange}>
+      <NodeDimension onDimensionChange={handleContainerWidthChange}>
         <StyledContainer className={className}>
           <PageLayoutTabListVisibleTabs
             visibleTabs={tabsWithIcons}

@@ -1,5 +1,3 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -19,7 +17,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 
@@ -31,7 +29,7 @@ const StyledFieldsDroppable = styled.div`
   flex-direction: column;
 `;
 
-const StyledEmptyGroupDropZone = styled.div`
+const StyledEmptyGroupDropZone = styled(DragDropItemEndDropZone)`
   align-items: center;
   border: 1px dashed ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -41,12 +39,12 @@ const StyledEmptyGroupDropZone = styled.div`
   justify-content: center;
   margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   min-height: ${themeCssVariables.spacing[10]};
-  position: relative;
 `;
 
-const StyledFieldsEndDropZone = styled.div`
-  min-height: ${themeCssVariables.spacing[2]};
-  position: relative;
+// Kept tall enough that appending after the group's last field stays an easy
+// target.
+const StyledFieldsEndDropZone = styled(DragDropItemEndDropZone)`
+  min-height: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
@@ -141,15 +139,6 @@ export const FieldsConfigurationGroupEditor = ({
     groupId: group.id,
   };
 
-  // Catches drops below the group's last field and drops into an empty group.
-  const { ref: fieldsEndDropRef, isDropTarget: isFieldsEndDropTarget } =
-    useDroppable({
-      id: `fields-configuration-group-${group.id}-end`,
-      accept: FIELDS_CONFIGURATION_FIELD_DND_TYPE,
-      collisionDetector: pointerIntersection,
-      data: fieldsEndDropData,
-    });
-
   const sortedFields = [...group.fields].sort(
     (a, b) => a.position - b.position,
   );
@@ -199,8 +188,11 @@ export const FieldsConfigurationGroupEditor = ({
 
       <StyledFieldsDroppable>
         {sortedFields.length === 0 ? (
-          <StyledEmptyGroupDropZone ref={fieldsEndDropRef}>
-            {isFieldsEndDropTarget && <DragDropItemDropLine />}
+          <StyledEmptyGroupDropZone
+            id={`fields-configuration-group-${group.id}-end`}
+            accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+            data={fieldsEndDropData}
+          >
             {t`Drop fields here`}
           </StyledEmptyGroupDropZone>
         ) : (
@@ -239,9 +231,11 @@ export const FieldsConfigurationGroupEditor = ({
                 </DragDropItemSortableCell>
               );
             })}
-            <StyledFieldsEndDropZone ref={fieldsEndDropRef}>
-              {isFieldsEndDropTarget && <DragDropItemDropLine />}
-            </StyledFieldsEndDropZone>
+            <StyledFieldsEndDropZone
+              id={`fields-configuration-group-${group.id}-end`}
+              accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+              data={fieldsEndDropData}
+            />
           </>
         )}
       </StyledFieldsDroppable>

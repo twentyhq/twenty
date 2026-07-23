@@ -1,5 +1,4 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { DragDropProvider, useDroppable } from '@dnd-kit/react';
+import { DragDropProvider } from '@dnd-kit/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
@@ -10,14 +9,13 @@ import {
   type FieldsConfigurationFieldListEndDropData,
 } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 import { IconNewSection } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -29,37 +27,9 @@ const StyledFieldsDroppable = styled.div`
   width: 100%;
 `;
 
-const StyledUngroupedFieldsEndDropZone = styled.div`
-  position: relative;
-`;
-
-type FieldsConfigurationUngroupedEndDropZoneProps = {
-  children: ReactNode;
-};
-
-// Catches drops below the last field; separate component so useDroppable
-// resolves the DragDropProvider rendered by the editor below.
-const FieldsConfigurationUngroupedEndDropZone = ({
-  children,
-}: FieldsConfigurationUngroupedEndDropZoneProps) => {
-  const endDropData: FieldsConfigurationFieldListEndDropData = {
-    type: 'field-list-end',
-    groupId: UNGROUPED_FIELDS_DROPPABLE_ID,
-  };
-
-  const { ref, isDropTarget } = useDroppable({
-    id: `${UNGROUPED_FIELDS_DROPPABLE_ID}-end`,
-    accept: FIELDS_CONFIGURATION_FIELD_DND_TYPE,
-    collisionDetector: pointerIntersection,
-    data: endDropData,
-  });
-
-  return (
-    <StyledUngroupedFieldsEndDropZone ref={ref}>
-      {isDropTarget && <DragDropItemDropLine />}
-      {children}
-    </StyledUngroupedFieldsEndDropZone>
-  );
+const UNGROUPED_END_DROP_DATA: FieldsConfigurationFieldListEndDropData = {
+  type: 'field-list-end',
+  groupId: UNGROUPED_FIELDS_DROPPABLE_ID,
 };
 
 type FieldsConfigurationUngroupedEditorProps = {
@@ -163,7 +133,11 @@ export const FieldsConfigurationUngroupedEditor = ({
           );
         })}
 
-        <FieldsConfigurationUngroupedEndDropZone>
+        <DragDropItemEndDropZone
+          id={`${UNGROUPED_FIELDS_DROPPABLE_ID}-end`}
+          accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+          data={UNGROUPED_END_DROP_DATA}
+        >
           <MenuItem
             LeftIcon={IconNewSection}
             text={t`Add a Group`}
@@ -171,7 +145,7 @@ export const FieldsConfigurationUngroupedEditor = ({
             withIconContainer
             withIconContainerBackground={false}
           />
-        </FieldsConfigurationUngroupedEndDropZone>
+        </DragDropItemEndDropZone>
       </StyledFieldsDroppable>
     </DragDropProvider>
   );

@@ -3,17 +3,12 @@ import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
 
 type MoveWidgetToGridTabInDraftParams = {
   widgetId: string;
   destinationTabId: string;
 };
-
-const getWidgetGridPosition = (widget: PageLayoutWidget) =>
-  isDefined(widget.position) &&
-  widget.position.__typename === 'PageLayoutWidgetGridPosition'
-    ? widget.position
-    : widget.gridPosition;
 
 // Moves a widget into a grid tab, placing it full-left below the lowest
 // existing widget so it never overlaps the destination layout.

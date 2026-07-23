@@ -1,5 +1,3 @@
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDroppable } from '@dnd-kit/react';
 import { getPageLayoutVerticalListViewerVariant } from '@/page-layout/components/utils/getPageLayoutVerticalListViewerVariant';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/PageLayoutVerticalListViewerVariant';
@@ -12,7 +10,7 @@ import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutW
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
@@ -36,15 +34,12 @@ const StyledVerticalListContainer = styled.div<{
       : themeCssVariables.spacing[2]};
 `;
 
-// Catches drops below the last widget (append) and drops into an empty tab,
-// where there is no sortable item to target.
-const StyledEndDropZone = styled.div`
+const StyledEndDropZone = styled(DragDropItemEndDropZone)`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-height: ${themeCssVariables.spacing[6]};
-  position: relative;
 `;
 
 type PageLayoutVerticalListEditorProps = {
@@ -72,13 +67,6 @@ export const PageLayoutVerticalListEditor = ({
     type: 'widget-list',
     tabId,
   };
-
-  const { ref: endDropRef, isDropTarget: isEndDropTarget } = useDroppable({
-    id: `page-layout-widget-list-${tabId}`,
-    accept: PAGE_LAYOUT_WIDGET_DND_TYPE,
-    collisionDetector: pointerIntersection,
-    data: endDropData,
-  });
 
   return (
     <StyledVerticalListContainer
@@ -110,8 +98,11 @@ export const PageLayoutVerticalListEditor = ({
           </DragDropItemSortableCell>
         );
       })}
-      <StyledEndDropZone ref={endDropRef}>
-        {isEndDropTarget && <DragDropItemDropLine />}
+      <StyledEndDropZone
+        id={`page-layout-widget-list-${tabId}`}
+        accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
+        data={endDropData}
+      >
         {trailingElement}
       </StyledEndDropZone>
     </StyledVerticalListContainer>

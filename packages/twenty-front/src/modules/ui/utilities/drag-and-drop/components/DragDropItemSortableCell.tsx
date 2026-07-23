@@ -82,10 +82,12 @@ export const DragDropItemSortableCell = ({
       type,
       accept,
       collisionPriority: SORTABLE_COLLISION_PRIORITY,
+      // Sortable metadata stays authoritative over consumer data so drag
+      // handlers always resolve the cell's real group and position.
       data: {
+        ...data,
         droppableId: group,
         index,
-        ...data,
       },
       disabled,
       transition: hasTransition ? SORTABLE_TRANSITION : null,

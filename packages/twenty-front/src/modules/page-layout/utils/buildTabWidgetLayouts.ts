@@ -2,38 +2,32 @@ import { type Layouts } from 'react-grid-layout';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
+
+const getWidgetMinimumSize = (widget: PageLayoutWidget) => {
+  const typeMinimum = WIDGET_SIZES[widget.type]?.minimum;
+
+  if (isDefined(typeMinimum)) {
+    return typeMinimum;
+  }
+
+  if (
+    isDefined(widget.configuration) &&
+    widget.configuration.__typename !== 'FieldsConfiguration'
+  ) {
+    return getWidgetSize(widget.configuration.configurationType, 'minimum');
+  }
+
+  return DEFAULT_WIDGET_SIZE.minimum;
+};
 
 export const buildTabWidgetLayouts = (widgets: PageLayoutWidget[]): Layouts => {
   const layouts = widgets.map((widget) => {
-    let minW = DEFAULT_WIDGET_SIZE.minimum.w;
-    let minH = DEFAULT_WIDGET_SIZE.minimum.h;
-
-    if (isDefined(widget.configuration)) {
-      if (widget.configuration.__typename === 'FieldsConfiguration') {
-        minW = DEFAULT_WIDGET_SIZE.minimum.w;
-        minH = DEFAULT_WIDGET_SIZE.minimum.h;
-      } else {
-        const minimumSize = getWidgetSize(
-          widget.configuration.configurationType,
-          'minimum',
-        );
-        minW = minimumSize.w;
-        minH = minimumSize.h;
-      }
-    }
-
-    const gridPos =
-      isDefined(widget.position) &&
-      widget.position.__typename === 'PageLayoutWidgetGridPosition'
-        ? {
-            row: widget.position.row,
-            column: widget.position.column,
-            rowSpan: widget.position.rowSpan,
-            columnSpan: widget.position.columnSpan,
-          }
-        : widget.gridPosition;
+    const minimumSize = getWidgetMinimumSize(widget);
+    const gridPos = getWidgetGridPosition(widget);
 
     return {
       i: widget.id,
@@ -41,8 +35,8 @@ export const buildTabWidgetLayouts = (widgets: PageLayoutWidget[]): Layouts => {
       y: gridPos?.row ?? 0,
       w: gridPos?.columnSpan ?? DEFAULT_WIDGET_SIZE.default.w,
       h: gridPos?.rowSpan ?? DEFAULT_WIDGET_SIZE.default.h,
-      minW,
-      minH,
+      minW: minimumSize.w,
+      minH: minimumSize.h,
     };
   });
 
