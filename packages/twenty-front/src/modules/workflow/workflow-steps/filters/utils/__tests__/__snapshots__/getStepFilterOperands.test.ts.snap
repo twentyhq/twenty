@@ -21,6 +21,9 @@ exports[`getStepFilterOperands ACTOR returns SELECT operands when subFieldName i
 exports[`getStepFilterOperands ACTOR returns TEXT operands when subFieldName is undefined 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -30,6 +33,9 @@ exports[`getStepFilterOperands ACTOR returns TEXT operands when subFieldName is 
 exports[`getStepFilterOperands ACTOR returns TEXT operands when subFieldName is unknown 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -70,6 +76,9 @@ exports[`getStepFilterOperands CURRENCY returns currencyCode operands when subFi
 exports[`getStepFilterOperands returns the expected operands for filterType=ADDRESS 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -122,6 +131,9 @@ exports[`getStepFilterOperands returns the expected operands for filterType=DATE
 exports[`getStepFilterOperands returns the expected operands for filterType=EMAILS 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -131,6 +143,9 @@ exports[`getStepFilterOperands returns the expected operands for filterType=EMAI
 exports[`getStepFilterOperands returns the expected operands for filterType=FULL_NAME 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -140,6 +155,9 @@ exports[`getStepFilterOperands returns the expected operands for filterType=FULL
 exports[`getStepFilterOperands returns the expected operands for filterType=LINKS 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -180,6 +198,9 @@ exports[`getStepFilterOperands returns the expected operands for filterType=NUME
 exports[`getStepFilterOperands returns the expected operands for filterType=PHONES 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
@@ -227,6 +248,9 @@ exports[`getStepFilterOperands returns the expected operands for filterType=SELE
 exports[`getStepFilterOperands returns the expected operands for filterType=TEXT 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",

@@ -216,6 +216,9 @@ exports[`getRecordFilterOperands returns the expected operands for filterType=SE
 exports[`getRecordFilterOperands returns the expected operands for filterType=TEXT 1`] = `
 [
   "CONTAINS",
+  "IS",
+  "IS_NOT",
+  "STARTS_WITH",
   "DOES_NOT_CONTAIN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",

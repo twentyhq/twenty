@@ -72,7 +72,11 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
         <SelectControl
           selectedOption={{
             label: filter?.operand
-              ? getOperandLabel(filter.operand, timeZoneAbbreviation)
+              ? getOperandLabel(
+                  filter.operand,
+                  timeZoneAbbreviation,
+                  filter.type,
+                )
               : t`Select operand`,
             value: null,
           }}
@@ -101,7 +105,11 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}
-                    text={getOperandLabel(filterOperand, timeZoneAbbreviation)}
+                    text={getOperandLabel(
+                      filterOperand,
+                      timeZoneAbbreviation,
+                      filter.type,
+                    )}
                   />
                 </SelectableListItem>
               ))}

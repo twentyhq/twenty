@@ -852,6 +852,46 @@ describe('evaluateFilterConditions', () => {
         );
       });
 
+      it('should compare text equality case-insensitively', () => {
+        const isMatching = createFilter(
+          ViewFilterOperand.IS,
+          'ACME',
+          'acme',
+          'TEXT',
+        );
+        const isNotMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'Acme',
+          'aCME',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [isMatching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [isNotMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should evaluate starts with case-insensitively for text', () => {
+        const matching = createFilter(
+          ViewFilterOperand.STARTS_WITH,
+          'ACME Corporation',
+          'acme',
+          'TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.STARTS_WITH,
+          'Example Acme',
+          'acme',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
       it('should match legacy Is operand on arrays by equality', () => {
         const matching = createFilter(
           ViewFilterOperand.IS,

@@ -29,7 +29,7 @@ export const WorkflowStepFilterOperandSelect = ({
 
   const options = operands.map((operand) => ({
     value: operand,
-    label: getOperandLabel(operand, WORKFLOW_TIMEZONE),
+    label: getOperandLabel(operand, WORKFLOW_TIMEZONE, stepFilter.type),
   }));
 
   const { getRelativeDateFilterWithUserTimezone } =

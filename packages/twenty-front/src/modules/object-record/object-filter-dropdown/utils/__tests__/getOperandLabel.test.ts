@@ -10,6 +10,7 @@ describe('getOperandLabel', () => {
   const testCases = [
     [ViewFilterOperand.CONTAINS, 'Contains'],
     [ViewFilterOperand.DOES_NOT_CONTAIN, "Doesn't contain"],
+    [ViewFilterOperand.STARTS_WITH, 'Starts with'],
     [ViewFilterOperand.GREATER_THAN_OR_EQUAL, 'Greater than or equal'],
     [ViewFilterOperand.LESS_THAN_OR_EQUAL, 'Less than or equal'],
     [ViewFilterOperand.IS, 'Is'],
@@ -26,6 +27,15 @@ describe('getOperandLabel', () => {
       expect(result).toBe(expectedLabel);
     });
   });
+
+  it('should use exact-match labels for text equality operands', () => {
+    expect(getOperandLabel(ViewFilterOperand.IS, undefined, 'TEXT')).toBe(
+      'Exactly equals',
+    );
+    expect(getOperandLabel(ViewFilterOperand.IS_NOT, undefined, 'TEXT')).toBe(
+      'Does not exactly equal',
+    );
+  });
 });
 
 describe('getOperandLabelShort', () => {
@@ -34,6 +44,7 @@ describe('getOperandLabelShort', () => {
     [ViewFilterOperand.CONTAINS, ': '],
     [ViewFilterOperand.IS_NOT, ': Not'],
     [ViewFilterOperand.DOES_NOT_CONTAIN, ': Not'],
+    [ViewFilterOperand.STARTS_WITH, ': Starts with '],
     [ViewFilterOperand.IS_NOT_NULL, ': NotNull'],
     [ViewFilterOperand.GREATER_THAN_OR_EQUAL, '\u00A0≥ '],
     [ViewFilterOperand.LESS_THAN_OR_EQUAL, '\u00A0≤ '],

@@ -204,6 +204,46 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
   });
 
   describe('TEXT filter', () => {
+    it.each([
+      [RecordFilterOperand.IS, 'Acme', { name: { ilike: 'Acme' } }],
+      [
+        RecordFilterOperand.IS_NOT,
+        'Acme',
+        { not: { name: { ilike: 'Acme' } } },
+      ],
+      [RecordFilterOperand.STARTS_WITH, 'Ac', { name: { ilike: 'Ac%' } }],
+    ])('should handle %s operand', (operand, value, expected) => {
+      expect(
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter('f-text', operand, value),
+          fieldMetadataItemById,
+        }),
+      ).toEqual(expected);
+    });
+
+    it.each([
+      [RecordFilterOperand.IS, '100%_off\\deal', '100\\%\\_off\\\\deal'],
+      [
+        RecordFilterOperand.STARTS_WITH,
+        '100%_off\\deal',
+        '100\\%\\_off\\\\deal%',
+      ],
+      [
+        RecordFilterOperand.CONTAINS,
+        '100%_off\\deal',
+        '%100\\%\\_off\\\\deal%',
+      ],
+    ])('should escape ILIKE metacharacters for %s', (operand, value, ilike) => {
+      expect(
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter('f-text', operand, value),
+          fieldMetadataItemById,
+        }),
+      ).toEqual({ name: { ilike } });
+    });
+
     it('should handle CONTAINS operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,

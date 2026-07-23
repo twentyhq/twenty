@@ -44,7 +44,7 @@ export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
       <SelectControl
         selectedOption={{
           label: filter?.operand
-            ? getOperandLabel(filter.operand, timeZoneAbbreviation)
+            ? getOperandLabel(filter.operand, timeZoneAbbreviation, filter.type)
             : t`Select operand`,
           value: null,
         }}

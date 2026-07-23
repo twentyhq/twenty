@@ -20,6 +20,9 @@ type FilterOperandMap = {
 export const FILTER_OPERANDS_MAP = {
   TEXT: [
     ViewFilterOperand.CONTAINS,
+    ViewFilterOperand.IS,
+    ViewFilterOperand.IS_NOT,
+    ViewFilterOperand.STARTS_WITH,
     ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
