@@ -107,10 +107,17 @@ export const useGetSecondaryRecordTableCellButton = () => {
     [FieldMetadataSettingsOnClickAction.OPEN_IN_APP]: IconMail,
   };
 
+  const ariaLabelByAction = {
+    [FieldMetadataSettingsOnClickAction.OPEN_LINK]: t`Open link`,
+    [FieldMetadataSettingsOnClickAction.COPY]: t`Copy to clipboard`,
+    [FieldMetadataSettingsOnClickAction.OPEN_IN_APP]: t`Open email in app`,
+  };
+
   return [
     {
       onClick: onClickByAction[secondaryActionOnClick],
       Icon: iconByAction[secondaryActionOnClick],
+      ariaLabel: ariaLabelByAction[secondaryActionOnClick],
     },
   ];
 };

@@ -24,6 +24,7 @@ const StyledButtonContainer = styled.div`
 type RecordTableCellButtonsProps = {
   onClick?: () => void;
   Icon: IconComponent;
+  ariaLabel: string;
 }[];
 
 export const RecordTableCellButtons = ({

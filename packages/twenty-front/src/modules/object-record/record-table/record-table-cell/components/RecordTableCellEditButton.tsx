@@ -6,6 +6,7 @@ import { RecordTableCellButtons } from '@/object-record/record-table/record-tabl
 import { useGetSecondaryRecordTableCellButton } from '@/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useContext } from 'react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/icon';
 
@@ -32,6 +33,9 @@ export const RecordTableCellEditButton = () => {
     }
   };
 
+  const mainButtonAriaLabel =
+    !isFieldInputOnly && isFirstColumn ? t`Open record` : t`Edit field`;
+
   return (
     <RecordTableCellButtons
       buttons={[
@@ -39,6 +43,7 @@ export const RecordTableCellEditButton = () => {
         {
           onClick: handleMainButtonClick,
           Icon: mainButtonIcon,
+          ariaLabel: mainButtonAriaLabel,
         },
       ]}
     />
