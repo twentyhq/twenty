@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -36,7 +37,9 @@ export const SettingsAdminWorkspaceSendLimit = ({
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [value, setValue] = useState(
-    messageCampaignDailySendLimit?.toString() ?? '',
+    isDefined(messageCampaignDailySendLimit)
+      ? messageCampaignDailySendLimit.toString()
+      : '',
   );
 
   const [updateSendLimit, { loading }] = useMutation(
@@ -51,9 +54,10 @@ export const SettingsAdminWorkspaceSendLimit = ({
 
   const trimmedValue = value.trim();
   const parsedLimit = Number(trimmedValue);
+  const hasCustomLimit = isNonEmptyString(trimmedValue);
 
   const isValid =
-    trimmedValue === '' ||
+    !hasCustomLimit ||
     (Number.isInteger(parsedLimit) &&
       parsedLimit >= 0 &&
       parsedLimit <= 1000000);
@@ -67,7 +71,7 @@ export const SettingsAdminWorkspaceSendLimit = ({
       await updateSendLimit({
         variables: {
           workspaceId,
-          dailySendLimit: trimmedValue === '' ? null : parsedLimit,
+          dailySendLimit: hasCustomLimit ? parsedLimit : null,
         },
       });
       enqueueSuccessSnackBar({ message: t`Daily send limit updated` });
