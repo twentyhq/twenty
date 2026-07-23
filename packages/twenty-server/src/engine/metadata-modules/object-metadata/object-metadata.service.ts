@@ -484,7 +484,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
 
     // The INDEX table view and its view fields are provisioned by the metadata
-    // side-effect engine (objectDefaultIndexViewOnCreate). The FIELDS_WIDGET
+    // side-effect engine (objectSystemFieldsAndIndexViewOnCreate). The FIELDS_WIDGET
     // record-page view below still references the caller-provided fields plus
     // the engine-owned reserved system fields, whose deterministic identifiers
     // we re-derive here (searchVector is never shown).
