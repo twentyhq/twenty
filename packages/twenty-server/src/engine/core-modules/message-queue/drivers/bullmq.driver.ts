@@ -327,6 +327,25 @@ export class BullMQDriver
     );
   }
 
+  private buildJobsOptions(
+    queueName: MessageQueue,
+    options?: QueueJobOptions,
+  ): JobsOptions {
+    return {
+      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
+      attempts: 1 + (options?.retryLimit || 0),
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
+      delay: options?.delay,
+    };
+  }
+
   async add<T>(
     queueName: MessageQueue,
     jobName: string,
@@ -354,17 +373,7 @@ export class BullMQDriver
 
     const queueOptions: JobsOptions = {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
-      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
-      attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
-      delay: options?.delay,
+      ...this.buildJobsOptions(queueName, options),
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
@@ -386,25 +395,16 @@ export class BullMQDriver
       return;
     }
 
-    const queueOptions: JobsOptions = {
-      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
-      attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
-      delay: options?.delay,
-    };
+    const queueOptions = this.buildJobsOptions(queueName, options);
 
     await this.queueMap[queueName].addBulk(
-      dataItems.map((data) => ({
+      dataItems.map((data, index) => ({
         name: jobName,
         data,
-        opts: queueOptions,
+        opts: {
+          ...queueOptions,
+          jobId: options?.id ? `${options.id}-${index}` : undefined,
+        },
       })),
     );
   }
