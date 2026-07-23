@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
@@ -115,10 +115,16 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     onlyAutoUpgrade = false,
     batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
+    dryRun = false,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
     batchSize?: number;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+    dryRun?: boolean;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -134,12 +140,38 @@ export class ApplicationUpgradeService {
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isNonEmptyArray(workspaceIds)
+          ? { workspaceId: In(workspaceIds) }
+          : {}),
       },
     });
 
-    const applicationsToUpgrade = applications.filter(
+    let applicationsToUpgrade = applications.filter(
       (application) => application.version !== targetVersion,
     );
+
+    if (isDefined(workspaceCountLimit)) {
+      applicationsToUpgrade = applicationsToUpgrade.slice(
+        0,
+        workspaceCountLimit,
+      );
+    }
+
+    if (dryRun) {
+      const workspaceList = applicationsToUpgrade
+        .map((application) => application.workspaceId)
+        .join(', ');
+
+      this.logger.log(
+        `[DRY RUN] Would upgrade ${applicationsToUpgrade.length} installation(s) to version ${targetVersion}${
+          applicationsToUpgrade.length > 0
+            ? ` on workspaces: ${workspaceList}`
+            : ''
+        }`,
+      );
+
+      return;
+    }
 
     const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
 

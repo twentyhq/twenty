@@ -12,6 +12,9 @@ import { ApplicationUpgradeService } from 'src/engine/core-modules/application/a
 type UpgradeApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
   batchSize?: number;
+  workspaceId?: Set<string>;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
 };
 
 @Command({
@@ -61,6 +64,46 @@ export class UpgradeApplicationCommand extends CommandRunner {
     return parsedValue;
   }
 
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description:
+      'Only upgrade the given workspace id. Can be repeated to target several workspaces. Upgrades all workspaces if not provided.',
+    required: false,
+  })
+  parseWorkspaceId(value: string, previous?: Set<string>): Set<string> {
+    const accumulator = previous ?? new Set<string>();
+
+    accumulator.add(value);
+
+    return accumulator;
+  }
+
+  @Option({
+    flags: '--workspace-count-limit [count]',
+    description: 'Limit the number of workspaces to upgrade',
+    required: false,
+  })
+  parseWorkspaceCountLimit(value: string): number {
+    const parsedValue = Number.parseInt(value, 10);
+
+    if (Number.isNaN(parsedValue) || parsedValue < 1) {
+      throw new Error(
+        `Invalid workspace count limit "${value}". Expected a positive integer`,
+      );
+    }
+
+    return parsedValue;
+  }
+
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'List the workspaces that would be upgraded without upgrading',
+    required: false,
+  })
+  parseDryRun(): boolean {
+    return true;
+  }
+
   override async run(
     _passedParams: string[],
     options: UpgradeApplicationCommandOptions,
@@ -85,14 +128,21 @@ export class UpgradeApplicationCommand extends CommandRunner {
       return;
     }
 
+    const dryRun = options.dryRun ?? false;
+
     this.logger.log(
-      `Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${registration.latestAvailableVersion} on all workspaces that have it installed...`,
+      `${dryRun ? '[DRY RUN] ' : ''}Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${registration.latestAvailableVersion} on workspaces that have it installed...`,
     );
 
     await this.applicationUpgradeService.upgradeAllApplications({
       applicationRegistrationId: registration.id,
       onlyAutoUpgrade: false,
       batchSize: options.batchSize,
+      workspaceIds: isDefined(options.workspaceId)
+        ? Array.from(options.workspaceId)
+        : undefined,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun,
     });
 
     this.logger.log(chalk.blue('Command completed!'));
