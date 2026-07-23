@@ -1,0 +1,75 @@
+packages/twenty-front/src/modules/settings/admin-panel/graphql/mutations/updateWorkspaceMessageCampaignDailySendLimit.ts
+  s_c3fbc446206706::t_d3d04c7120a45f 1-13
+packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+  s_c3fbc446206706::t_c694b13369ba4b 16,330-337
+  s_c3fbc446206706::t_936d9c3a61e894 338-339
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/user-lookup.dto.ts
+  s_c3fbc446206706::t_c6097eae98a0e4 1,61-63
+packages/twenty-front/src/modules/settings/admin-panel/components/SettingsAdminWorkspaceSendLimit.tsx
+  s_c3fbc446206706::t_d3d04c7120a45f 1-102
+packages/twenty-server/src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service.ts
+  s_c3fbc446206706::t_46dea535e70d93 128-129,208
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_c3fbc446206706::t_06f9f893621057 9,31,49,122-138
+  s_c3fbc446206706::t_01cc0f2bfa386a 139-140
+packages/twenty-server/src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784766200000-add-workspace-message-campaign-daily-send-limit.ts
+  s_c3fbc446206706::t_4a4274ad1715b0 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_c3fbc446206706::t_3443cf7302870a 13,21
+packages/twenty-server/src/engine/core-modules/admin-panel/dtos/update-workspace-message-campaign-daily-send-limit.input.ts
+  s_c3fbc446206706::t_e4520f9ea64445 1-27
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_c3fbc446206706::t_84a92229667d0c 22-25,54,133,163-164,205-210
+  s_c3fbc446206706::t_b40affeb39fcdb 211
+packages/twenty-front/src/generated-admin/graphql.ts
+  s_c3fbc446206706::t_b1440fcfe59af1 463,592-597,970,1227-1234,1306,1430,1441
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c3fbc446206706::t_f027122e2e34c2 57,254
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_c3fbc446206706::t_3443cf7302870a 20-23
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignSendQuota.ts
+  s_c3fbc446206706::t_00e17c8443a9a1 1-12
+packages/twenty-front/src/modules/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel.ts
+  s_c3fbc446206706::t_d3d04c7120a45f 35
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_c3fbc446206706::t_00e17c8443a9a1 4,35-43,102-105,140-152
+  s_c3fbc446206706::t_df50deba9c1cae 153
+packages/twenty-server/src/modules/emailing/services/campaign-send-quota.service.ts
+  s_c3fbc446206706::t_8a8ff5f0495954 74
+  s_c3fbc446206706::t_e4520f9ea64445 1-73,75-109
+packages/twenty-server/src/engine/core-modules/admin-panel/admin-panel.resolver.ts
+  s_c3fbc446206706::t_06f9f893621057 35,220-230
+  s_c3fbc446206706::t_b250e39cbbb198 231-232
+packages/twenty-front/src/modules/activities/emails/graphql/metadata-queries/campaignSendQuota.ts
+  s_c3fbc446206706::t_00e17c8443a9a1 1-11
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/campaign-send-quota.dto.ts
+  s_c3fbc446206706::t_e4520f9ea64445 1-13
+packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+  s_c3fbc446206706::t_3443cf7302870a 253-256
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_c3fbc446206706::t_295cc362b8e870 873,2591-2596,3196
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_c3fbc446206706::t_f441a2e818e2f9 615,2261-2267,2827,3744,5482-5489,6090,8471-8478
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_c3fbc446206706::t_06f6cf7c077fbb 74,79,81,5084-5085,5087-5092,5123,8514,8523
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c3fbc446206706::t_8696a9fdc6e268 853-859,4431,6445,6572-6576,9071
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_c3fbc446206706::t_47c50a6fdce020 18,25,45,53,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "982e0a55ce47358aa6928aca6273d37a3581efcd",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
