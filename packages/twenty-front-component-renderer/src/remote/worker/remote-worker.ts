@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+// import { installBrowserApiStubs } from '@/polyfills/installBrowserApiStubs';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -21,6 +22,8 @@ import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread'
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 
+// TDD: stubs disabled to catalog every sandbox DOM gap the gallery catches.
+// installBrowserApiStubs();
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
