@@ -15,9 +15,7 @@ import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadat
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
-import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
@@ -37,7 +35,6 @@ export class WorkspaceMigrationRunnerService {
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -62,28 +59,6 @@ export class WorkspaceMigrationRunnerService {
         this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
         ),
-      );
-    }
-
-    const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
-      'flatViewMaps',
-      'flatViewFilterMaps',
-      'flatViewGroupMaps',
-      'flatViewFieldMaps',
-      'flatViewFilterGroupMaps',
-    ];
-    const shouldInvalidateFindViewsGraphqlCacheOperation =
-      viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
-
-    if (
-      shouldInvalidateFindViewsGraphqlCacheOperation ||
-      shouldIncrementMetadataGraphqlSchemaVersion
-    ) {
-      asyncOperations.push(
-        this.workspaceCacheStorageService.flushGraphQLOperation({
-          operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
-          workspaceId,
-        }),
       );
     }
 
