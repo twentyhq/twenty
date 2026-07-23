@@ -147,9 +147,6 @@ export class ApolloFactory implements ApolloManager {
             ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
-            ...(isDefined(this.currentWorkspace?.metadataVersion) && {
-              'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
-            }),
             ...(this.appVersion && { 'X-App-Version': this.appVersion }),
           },
         };

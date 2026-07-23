@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { generateId } from 'ai';
 import {
+  type AskQuestionAnswer,
   type ExtendedFileUIPart,
   type ExtendedUIMessagePart,
   isExtendedFileUIPart,
@@ -135,6 +136,8 @@ export class AgentChatStreamingService {
     streamId: string;
     where: FindOptionsWhere<AgentChatThreadEntity>;
   }): Promise<boolean> {
+    await this.streamHeartbeatService.markClaimed(streamId);
+
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, activeStreamId: IsNull(), ...where },
@@ -142,10 +145,10 @@ export class AgentChatStreamingService {
     );
 
     if (!claim.affected) {
+      await this.streamHeartbeatService.clear(streamId);
+
       return false;
     }
-
-    await this.streamHeartbeatService.markClaimed(streamId);
 
     return true;
   }
@@ -422,7 +425,76 @@ export class AgentChatStreamingService {
     }
   }
 
-  async enqueueResumeStream({
+  async answerPendingQuestionAndResumeStream({
+    threadId,
+    messageId,
+    answers,
+    userWorkspaceId,
+    workspace,
+    modelId,
+  }: {
+    threadId: string;
+    messageId: string;
+    answers: AskQuestionAnswer[];
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    modelId?: string;
+  }): Promise<{ streamId: string; turnId: string | null }> {
+    const streamId = generateId();
+
+    await this.streamHeartbeatService.markClaimed(streamId);
+
+    let resolved: {
+      turnId: string | null;
+      rollback: { partId: string; previousOutput: Record<string, unknown> };
+    };
+
+    try {
+      resolved = await this.agentChatService.resolvePendingQuestion({
+        threadId,
+        messageId,
+        answers,
+        streamId,
+        workspaceId: workspace.id,
+      });
+    } catch (error) {
+      await this.streamHeartbeatService.clear(streamId);
+      throw error;
+    }
+
+    try {
+      await this.enqueueResumeStream({
+        threadId,
+        userWorkspaceId,
+        workspace,
+        turnId: resolved.turnId,
+        streamId,
+        modelId,
+      });
+    } catch (error) {
+      await this.agentChatService.restorePendingQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId: workspace.id,
+        rollback: resolved.rollback,
+      });
+      await this.streamHeartbeatService.clear(streamId);
+      throw error;
+    }
+
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'question-answered' },
+      })
+      .catch(() => {});
+
+    return { streamId, turnId: resolved.turnId };
+  }
+
+  private async enqueueResumeStream({
     threadId,
     userWorkspaceId,
     workspace,
@@ -446,8 +518,6 @@ export class AgentChatStreamingService {
       userWorkspaceId,
       workspace.id,
     );
-
-    await this.streamHeartbeatService.markClaimed(streamId);
 
     await this.messageQueueService.add<StreamAgentChatJobData>(
       STREAM_AGENT_CHAT_JOB_NAME,
@@ -624,6 +694,7 @@ export class AgentChatStreamingService {
           `Failed to release stream claim for thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
         );
       });
+    await this.streamHeartbeatService.clear(streamId);
   }
 
   private async loadMessagesFromDB(

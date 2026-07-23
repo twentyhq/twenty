@@ -239,27 +239,16 @@ export class LogicFunctionExecutorService {
     return driver.transpile(params);
   }
 
-  // Emergency kill switch checked on every execution: an application can be
-  // stopped for one workspace (application.stoppedAt) or server-wide for all
-  // workspaces (applicationRegistration.stoppedAt) when it degrades production.
   private async assertApplicationNotStopped(
     flatApplication: FlatApplication,
   ): Promise<void> {
-    if (isDefined(flatApplication.stoppedAt)) {
-      throw new LogicFunctionException(
-        `Application ${flatApplication.id} is stopped in workspace ${flatApplication.workspaceId}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
-      );
-    }
-
     if (
-      isDefined(flatApplication.applicationRegistrationId) &&
-      (await this.applicationStopService.isApplicationRegistrationStopped(
-        flatApplication.applicationRegistrationId,
-      ))
+      await this.applicationStopService.isApplicationStopped(
+        flatApplication.universalIdentifier,
+      )
     ) {
       throw new LogicFunctionException(
-        `Application registration ${flatApplication.applicationRegistrationId} is stopped server-wide`,
+        `Application ${flatApplication.universalIdentifier} is temporarily stopped`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
       );
     }

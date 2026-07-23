@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import {
   stampPartnerUserFromPartner,
   type PartnerChildObject,
-} from 'src/logic-functions/stamp-partner-user-on-child';
+} from 'src/modules/partner/self-service/services/stamp-partner-user-on-child.service';
 
 const PAGE_SIZE = 200;
 

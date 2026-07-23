@@ -501,17 +501,15 @@ describe('ConnectionProviderOAuthFlowService', () => {
         );
         expect(messageQueueService.add).toHaveBeenCalledWith(
           'LogicFunctionTriggerJob',
-          [
-            {
-              logicFunctionId: 'logic-function-1',
-              workspaceId: 'workspace-1',
-              payload: {
-                connectionProviderId: 'provider-1',
-                connectionProviderName: 'linear',
-                connectedAccountId: result.connectedAccountId,
-              },
+          {
+            logicFunctionId: 'logic-function-1',
+            workspaceId: 'workspace-1',
+            payload: {
+              connectionProviderId: 'provider-1',
+              connectionProviderName: 'linear',
+              connectedAccountId: result.connectedAccountId,
             },
-          ],
+          },
           { retryLimit: 3 },
         );
       });

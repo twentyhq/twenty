@@ -23,6 +23,7 @@ type PageLayoutTabListVisibleTabsProps = {
   onChangeTab?: (tabId: string) => void;
   onSelectTab: (tabId: string) => void;
   canReorder: boolean;
+  widgetDropTargetTabIds: Set<string>;
 };
 
 const StyledTabContainer = styled.div`
@@ -45,6 +46,7 @@ export const PageLayoutTabListVisibleTabs = ({
   onChangeTab,
   onSelectTab,
   canReorder,
+  widgetDropTargetTabIds,
 }: PageLayoutTabListVisibleTabsProps) => {
   if (canReorder) {
     return (
@@ -80,6 +82,7 @@ export const PageLayoutTabListVisibleTabs = ({
                 index={index}
                 isActive={tab.id === activeTabId}
                 disabled={tab.disabled ?? loading}
+                isWidgetDropTarget={widgetDropTargetTabIds.has(tab.id)}
                 onSelect={() => onSelectTab(tab.id)}
               />
             ))}

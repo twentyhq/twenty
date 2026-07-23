@@ -131,15 +131,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   autoUpgrade: boolean;
 
-  // Emergency kill switch: while set, every logic function execution of this
-  // application is blocked in this workspace (see `application:stop` command).
-  @Column({ nullable: true, type: 'timestamptz' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.24.0_AddStoppedAtToApplicationAndApplicationRegistrationFastInstanceCommand_1784734278506',
-  })
-  stoppedAt: Date | null;
-
   @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
 

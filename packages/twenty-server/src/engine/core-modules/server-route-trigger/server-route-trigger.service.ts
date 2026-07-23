@@ -189,15 +189,13 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: logicFunction.id,
-          workspaceId,
-          payload,
-        },
-      ],
+      {
+        logicFunctionId: logicFunction.id,
+        workspaceId,
+        payload,
+      },
       { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
     );
 

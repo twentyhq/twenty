@@ -86,6 +86,8 @@ const setupMockState = (
   currentWorkspace: object | null = { id: 'mock-workspace-id' },
   isBillingEnabled: boolean = true,
   isMinimalMetadataReady: boolean = true,
+  shouldOpenAiChatAfterOnboarding: boolean = false,
+  isOnboardingCheckoutPending: boolean = false,
 ) => {
   jest
     .mocked(useAtomStateValue)
@@ -94,7 +96,9 @@ const setupMockState = (
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(isMinimalMetadataReady)
     .mockReturnValueOnce(verifyEmailRedirectPath)
-    .mockReturnValueOnce(returnToPath ?? '');
+    .mockReturnValueOnce(returnToPath ?? '')
+    .mockReturnValueOnce(shouldOpenAiChatAfterOnboarding)
+    .mockReturnValueOnce(isOnboardingCheckoutPending);
 };
 
 // prettier-ignore
@@ -113,7 +117,19 @@ const testCases: {
   useQueryResult?: { data?: unknown; loading?: boolean };
   isBillingEnabled?: boolean;
   isMinimalMetadataReady?: boolean;
+  shouldOpenAiChatAfterOnboarding?: boolean;
+  isOnboardingCheckoutPending?: boolean;
 }[] = [
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.APPS_INSTALLATION, res: AppPath.InstallApps },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.WorkspaceSetup, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.Verify, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
@@ -372,6 +388,14 @@ const testCases: {
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
   { loc: AppPath.Index, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
 
+  { loc: AppPath.InviteTeam, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, shouldOpenAiChatAfterOnboarding: true, res: AppPath.WorkspaceSetup },
+  { loc: AppPath.InviteTeam, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, shouldOpenAiChatAfterOnboarding: false, res: defaultHomePagePath },
+  { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, res: AppPath.WorkspaceSetup },
+  { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, returnToPath: '/objects/tasks', res: '/objects/tasks' },
+
+  { loc: AppPath.PlanRequiredSuccess, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
+  { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: defaultHomePagePath },
+
   // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
@@ -394,6 +418,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
       useQueryResult,
       isBillingEnabled,
       isMinimalMetadataReady,
+      shouldOpenAiChatAfterOnboarding,
+      isOnboardingCheckoutPending,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
@@ -410,6 +436,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
         undefined,
         isBillingEnabled ?? true,
         isMinimalMetadataReady ?? true,
+        shouldOpenAiChatAfterOnboarding ?? false,
+        isOnboardingCheckoutPending ?? false,
       );
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
@@ -439,6 +467,14 @@ describe('usePageChangeEffectNavigateLocation', () => {
           [
             'billingDisabled:inviteTeamCompleted',
             'billingDisabled:planRequiredCompleted',
+          ].length +
+          [
+            'workspaceSetupPending:inviteTeamCompleted',
+            'workspaceSetupNotPending:inviteTeamCompleted',
+            'workspaceSetupPending:paymentSuccessCompleted',
+            'workspaceSetupPending:returnToPathWins',
+            'checkoutPending:paymentSuccessDefersRedirect',
+            'checkoutPending:verifyStillRedirects',
           ].length,
       );
     });

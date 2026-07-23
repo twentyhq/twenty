@@ -37,6 +37,10 @@ describe('isValidReturnToPath', () => {
     expect(isValidReturnToPath('/reset-password')).toBe(false);
   });
 
+  it('should return true for the workspace setup path', () => {
+    expect(isValidReturnToPath('/workspace-setup')).toBe(true);
+  });
+
   it('should return true for valid application paths', () => {
     expect(isValidReturnToPath('/objects/people')).toBe(true);
     expect(isValidReturnToPath('/settings/accounts')).toBe(true);

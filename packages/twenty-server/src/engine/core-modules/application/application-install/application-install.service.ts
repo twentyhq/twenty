@@ -557,15 +557,13 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: flatLogicFunction.id,
-            workspaceId,
-            payload,
-          },
-        ],
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        },
         { retryLimit: 3 },
       );
       return;

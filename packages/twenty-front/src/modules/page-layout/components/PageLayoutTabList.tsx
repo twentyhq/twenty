@@ -49,7 +49,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type PageLayoutType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -320,6 +323,18 @@ export const PageLayoutTabList = ({
 
   const shouldRenderStaticDropdown = hasHiddenTabs && !canReorderTabs;
 
+  // Widgets can only be dropped onto record-page vertical-list tabs; other tab
+  // types keep their native (canvas/grid) widget placement.
+  const widgetDropTargetTabIds = new Set(
+    pageLayoutType === PageLayoutType.RECORD_PAGE
+      ? tabs
+          .filter(
+            (tab) => tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST,
+          )
+          .map((tab) => tab.id)
+      : [],
+  );
+
   return (
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
@@ -371,6 +386,7 @@ export const PageLayoutTabList = ({
                 onChangeTab={onChangeTab}
                 onSelectTab={handleSelectTab}
                 canReorder={canReorderTabs}
+                widgetDropTargetTabIds={widgetDropTargetTabIds}
               />
 
               {shouldRenderReorderableDropdown && (
@@ -436,6 +452,7 @@ export const PageLayoutTabList = ({
               onChangeTab={onChangeTab}
               onSelectTab={handleSelectTab}
               canReorder={canReorderTabs}
+              widgetDropTargetTabIds={widgetDropTargetTabIds}
             />
             {shouldRenderStaticDropdown && (
               <StyledDropdownContainer>

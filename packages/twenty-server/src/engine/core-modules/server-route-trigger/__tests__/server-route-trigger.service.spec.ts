@@ -146,13 +146,11 @@ describe('ServerRouteTriggerService', () => {
     );
     expect(messageQueueService.add).toHaveBeenCalledWith(
       LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: 'target-id',
-          workspaceId: 'target-ws',
-          payload: { from: 'resolver' },
-        },
-      ],
+      {
+        logicFunctionId: 'target-id',
+        workspaceId: 'target-ws',
+        payload: { from: 'resolver' },
+      },
       { retryLimit: 3 },
     );
     expect(result).toEqual(

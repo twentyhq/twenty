@@ -1,243 +1,123 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationException } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS,
+  ApplicationStopService,
+} from 'src/engine/core-modules/application/application-stop.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
-const APPLICATION_ID = 'application-1';
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier-1';
-const APPLICATION_REGISTRATION_ID = 'application-registration-1';
-const APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER =
-  'application-registration-universal-identifier-1';
-const WORKSPACE_ID = 'workspace-1';
+const KILL_SWITCH_KEY = `kill-switch:${APPLICATION_UNIVERSAL_IDENTIFIER}`;
 
 describe('ApplicationStopService', () => {
   let applicationStopService: ApplicationStopService;
 
-  const applicationRepository = {
-    findOne: jest.fn(),
-    update: jest.fn(),
-    count: jest.fn(),
-  };
-
-  const applicationRegistrationRepository = {
-    findOne: jest.fn(),
-    update: jest.fn(),
-    count: jest.fn(),
-  };
-
-  const workspaceCacheService = {
-    invalidateAndRecompute: jest.fn(),
+  const cacheStorageService = {
+    get: jest.fn(),
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationStopService,
         {
-          provide: getRepositoryToken(ApplicationEntity),
-          useValue: applicationRepository,
-        },
-        {
-          provide: getRepositoryToken(ApplicationRegistrationEntity),
-          useValue: applicationRegistrationRepository,
-        },
-        {
-          provide: WorkspaceCacheService,
-          useValue: workspaceCacheService,
+          provide: CacheStorageNamespace.ModuleApplications,
+          useValue: cacheStorageService,
         },
       ],
     }).compile();
 
-    applicationStopService = module.get<ApplicationStopService>(
-      ApplicationStopService,
+    applicationStopService = module.get(ApplicationStopService);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('returns true when the kill switch exists', async () => {
+    cacheStorageService.get.mockResolvedValue('stopped');
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(true);
+    expect(cacheStorageService.get).toHaveBeenCalledWith(KILL_SWITCH_KEY);
+  });
+
+  it('returns false when the kill switch is absent', async () => {
+    cacheStorageService.get.mockResolvedValue(undefined);
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(false);
+  });
+
+  it('caches the Redis value for one minute', async () => {
+    const dateNow = jest.spyOn(Date, 'now').mockReturnValue(1_000);
+
+    cacheStorageService.get
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce('stopped');
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(false);
+
+    dateNow.mockReturnValue(
+      1_000 + APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS - 1,
     );
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(false);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
+
+    dateNow.mockReturnValue(1_000 + APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS);
+
+    await expect(
+      applicationStopService.isApplicationStopped(
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      ),
+    ).resolves.toBe(true);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(2);
   });
 
-  describe('stopApplication', () => {
-    it('should set stoppedAt and invalidate the workspace application cache', async () => {
-      applicationRepository.findOne.mockResolvedValue({
-        id: APPLICATION_ID,
-        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        workspaceId: WORKSPACE_ID,
-        stoppedAt: null,
-      });
+  it('deduplicates concurrent Redis reads', async () => {
+    cacheStorageService.get.mockResolvedValue(undefined);
 
-      const application = await applicationStopService.stopApplication({
-        workspaceId: WORKSPACE_ID,
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
-      expect(applicationRepository.update).toHaveBeenCalledWith(
-        APPLICATION_ID,
-        { stoppedAt: expect.any(Date) },
-      );
-      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        ['flatApplicationMaps'],
-      );
-      expect(application.stoppedAt).toBeInstanceOf(Date);
-    });
-
-    it('should throw when the application does not exist', async () => {
-      applicationRepository.findOne.mockResolvedValue(null);
-
-      await expect(
-        applicationStopService.stopApplication({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ).rejects.toThrow(ApplicationException);
-
-      expect(applicationRepository.update).not.toHaveBeenCalled();
-      expect(
-        workspaceCacheService.invalidateAndRecompute,
-      ).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('startApplication', () => {
-    it('should clear stoppedAt and invalidate the workspace application cache', async () => {
-      applicationRepository.findOne.mockResolvedValue({
-        id: APPLICATION_ID,
-        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        workspaceId: WORKSPACE_ID,
-        stoppedAt: new Date(),
-      });
-
-      const application = await applicationStopService.startApplication({
-        workspaceId: WORKSPACE_ID,
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
-      expect(applicationRepository.update).toHaveBeenCalledWith(
-        APPLICATION_ID,
-        { stoppedAt: null },
-      );
-      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        ['flatApplicationMaps'],
-      );
-      expect(application.stoppedAt).toBeNull();
-    });
-
-    it('should throw when the application does not exist', async () => {
-      applicationRepository.findOne.mockResolvedValue(null);
-
-      await expect(
-        applicationStopService.startApplication({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ).rejects.toThrow(ApplicationException);
-
-      expect(applicationRepository.update).not.toHaveBeenCalled();
-      expect(
-        workspaceCacheService.invalidateAndRecompute,
-      ).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('stopApplicationRegistration', () => {
-    it('should set stoppedAt on the registration and report the installed application count', async () => {
-      applicationRegistrationRepository.findOne.mockResolvedValue({
-        id: APPLICATION_REGISTRATION_ID,
-        universalIdentifier: APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        name: 'My App',
-        stoppedAt: null,
-      });
-      applicationRepository.count.mockResolvedValue(3);
-
-      const { applicationRegistration, installedApplicationCount } =
-        await applicationStopService.stopApplicationRegistration({
-          applicationRegistrationUniversalIdentifier:
-            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        });
-
-      expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
-        APPLICATION_REGISTRATION_ID,
-        { stoppedAt: expect.any(Date) },
-      );
-      expect(applicationRegistration.stoppedAt).toBeInstanceOf(Date);
-      expect(installedApplicationCount).toBe(3);
-    });
-
-    it('should throw when the registration does not exist', async () => {
-      applicationRegistrationRepository.findOne.mockResolvedValue(null);
-
-      await expect(
-        applicationStopService.stopApplicationRegistration({
-          applicationRegistrationUniversalIdentifier:
-            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ).rejects.toThrow(ApplicationRegistrationException);
-
-      expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('startApplicationRegistration', () => {
-    it('should clear stoppedAt on the registration', async () => {
-      applicationRegistrationRepository.findOne.mockResolvedValue({
-        id: APPLICATION_REGISTRATION_ID,
-        universalIdentifier: APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        name: 'My App',
-        stoppedAt: new Date(),
-      });
-      applicationRepository.count.mockResolvedValue(1);
-
-      const { applicationRegistration } =
-        await applicationStopService.startApplicationRegistration({
-          applicationRegistrationUniversalIdentifier:
-            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        });
-
-      expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
-        APPLICATION_REGISTRATION_ID,
-        { stoppedAt: null },
-      );
-      expect(applicationRegistration.stoppedAt).toBeNull();
-    });
-
-    it('should throw when the registration does not exist', async () => {
-      applicationRegistrationRepository.findOne.mockResolvedValue(null);
-
-      await expect(
-        applicationStopService.startApplicationRegistration({
-          applicationRegistrationUniversalIdentifier:
-            APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ).rejects.toThrow(ApplicationRegistrationException);
-
-      expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('isApplicationRegistrationStopped', () => {
-    it('should return true when a stopped registration matches', async () => {
-      applicationRegistrationRepository.count.mockResolvedValue(1);
-
-      await expect(
-        applicationStopService.isApplicationRegistrationStopped(
-          APPLICATION_REGISTRATION_ID,
+    await Promise.all(
+      Array.from({ length: 10 }, () =>
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
         ),
-      ).resolves.toBe(true);
-    });
+      ),
+    );
 
-    it('should return false when the registration is not stopped', async () => {
-      applicationRegistrationRepository.count.mockResolvedValue(0);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
+  });
 
-      await expect(
-        applicationStopService.isApplicationRegistrationStopped(
-          APPLICATION_REGISTRATION_ID,
+  it('fails open when the cache cannot be read', async () => {
+    cacheStorageService.get.mockRejectedValue(new Error('Redis unavailable'));
+
+    await expect(
+      Promise.all([
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
         ),
-      ).resolves.toBe(false);
-    });
+        applicationStopService.isApplicationStopped(
+          APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
+      ]),
+    ).resolves.toEqual([false, false]);
+    expect(cacheStorageService.get).toHaveBeenCalledTimes(1);
   });
 });
