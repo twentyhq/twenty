@@ -11,5 +11,9 @@ export const QUEUE_WORKER_OPTIONS: Partial<
     maxStalledCount: 0,
     boundedShutdownDrain: true,
   },
-  [MessageQueue.logicFunctionQueue]: { concurrency: 10 },
+  // Kept low because each job fans out to up to DATABASE_EVENT_JOBS_CHUNK_SIZE
+  // executions in parallel, and executions call back into the core API: with
+  // N worker pods the worst case is N * concurrency * chunkSize concurrent
+  // API calls competing with user traffic.
+  [MessageQueue.logicFunctionQueue]: { concurrency: 2 },
 };
