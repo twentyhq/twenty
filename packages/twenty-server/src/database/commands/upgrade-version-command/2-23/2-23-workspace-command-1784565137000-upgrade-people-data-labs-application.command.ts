@@ -1,13 +1,14 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import * as semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ensureApplicationRegistrationLogoFileIdColumn } from 'src/database/commands/upgrade-version-command/2-23/utils/ensure-application-registration-logo-file-id-column.util';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -28,11 +29,17 @@ const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.9';
     'Upgrade the people-data-labs application to 1.0.9 right after the system relation field universal identifier backfill, so its views reference the re-derived name-free identifiers instead of the stale pre-2.23 ones and its front components run on React 19. Workspaces already at or above 1.0.9 are left untouched.',
 })
 export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspaceCommandRunner {
+  // core."applicationRegistration" is instance-global, so the DDL runs once per
+  // process rather than once per workspace.
+  private hasEnsuredLogoFileIdColumn = false;
+
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationUpgradeService: ApplicationUpgradeService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -42,6 +49,32 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    // logoFileId was shipped as a 2.21 instance command that got re-slotted
+    // after the 2.22 version bump, so instances that ran a 2.21 binary skip it
+    // permanently and reach this command with the column absent. The findOne
+    // below selects logoFileId through the applicationRegistration relation and
+    // crashes without it, so repair the instance-global column before anything
+    // else. Instance-level DDL lives here because this is the command that
+    // breaks on affected instances.
+    if (!this.hasEnsuredLogoFileIdColumn) {
+      if (isDryRun) {
+        const columnExists = await this.logoFileIdColumnExists();
+
+        if (!columnExists) {
+          this.logger.log(
+            'Would repair the missing core."applicationRegistration"."logoFileId" column',
+          );
+
+          return;
+        }
+      } else {
+        await ensureApplicationRegistrationLogoFileIdColumn((sql) =>
+          this.coreDataSource.query(sql),
+        );
+        this.hasEnsuredLogoFileIdColumn = true;
+      }
+    }
 
     const application = await this.applicationRepository.findOne({
       where: {
@@ -105,5 +138,13 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
         `Failed to upgrade people-data-labs for workspace ${workspaceId}: ${error}`,
       );
     }
+  }
+
+  private async logoFileIdColumnExists(): Promise<boolean> {
+    const rows = await this.coreDataSource.query(
+      `SELECT 1 FROM information_schema.columns WHERE table_schema = 'core' AND table_name = 'applicationRegistration' AND column_name = 'logoFileId'`,
+    );
+
+    return rows.length > 0;
   }
 }
