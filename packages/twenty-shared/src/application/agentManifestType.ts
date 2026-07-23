@@ -9,4 +9,7 @@ export type AgentManifest = SyncableEntityOptions & {
   prompt: string;
   modelId?: string;
   responseFormat?: AgentResponseFormat;
+  // Optional role assigned to this agent on install (creates a roleTarget).
+  // The referenced role must have canBeAssignedToAgents: true.
+  roleUniversalIdentifier?: string;
 };
