@@ -138,19 +138,6 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;
 
-  // When true, executions of this app's logic functions do not consume the
-  // workspace's credits. Explicit chargeCredits calls and AI token usage from
-  // within those functions are still billed. Used for first-party maintenance
-  // apps (e.g. Last contact, Call Recorder) whose per-record triggers would
-  // otherwise drain the free-tier allowance during mailbox/calendar import.
-  @Field(() => Boolean)
-  @Column({ type: 'boolean', default: false })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.25.0_AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand_1784891916474',
-  })
-  hasFreeLogicFunctionExecutions: boolean;
-
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 

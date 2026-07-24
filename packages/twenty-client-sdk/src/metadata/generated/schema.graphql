@@ -975,7 +975,6 @@ type ApplicationRegistration {
   isListed: Boolean!
   isVetted: Boolean!
   isPreInstalled: Boolean!
-  hasFreeLogicFunctionExecutions: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   isConfigured: Boolean!
@@ -4270,7 +4269,6 @@ input UpdateApplicationRegistrationPayload {
   isListed: Boolean
   isPreInstalled: Boolean
   isVetted: Boolean
-  hasFreeLogicFunctionExecutions: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {

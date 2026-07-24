@@ -27,7 +27,7 @@ import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-a
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -83,7 +83,6 @@ export class LogicFunctionExecutorService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
@@ -525,14 +524,14 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Apps flagged as billing-exempt (e.g. first-party maintenance apps whose
-    // per-record triggers fire during mailbox/calendar import) do not consume
-    // the workspace's credits for the invocation itself. Explicit chargeCredits
+    // Billing-exempt apps (first-party maintenance apps whose per-record
+    // triggers fire during mailbox/calendar import) do not consume the
+    // workspace's credits for the invocation itself. Explicit chargeCredits
     // calls and AI token usage from within the function are billed separately
     // and stay untouched.
-    const creditsUsedMicro = (await this.hasFreeLogicFunctionExecutions(
-      flatApplication,
-    ))
+    const creditsUsedMicro = isBillingExemptApplication(
+      flatApplication.universalIdentifier,
+    )
       ? 0
       : 100;
 
@@ -571,33 +570,5 @@ export class LogicFunctionExecutorService {
       ],
       workspaceId,
     );
-  }
-
-  private async hasFreeLogicFunctionExecutions(
-    flatApplication: FlatApplication,
-  ): Promise<boolean> {
-    if (!isDefined(flatApplication.applicationRegistrationId)) {
-      return false;
-    }
-
-    // Resolving the exemption happens after the function already ran, so a
-    // cache/store failure must not surface as a failed invocation (which would
-    // trigger retries and duplicate side effects). Fall back to non-exempt so
-    // billing defaults to the standard credit charge.
-    try {
-      const isExempt = await this.coreEntityCacheService.get(
-        'applicationRegistrationHasFreeLogicFunctionExecutions',
-        flatApplication.applicationRegistrationId,
-      );
-
-      return isExempt === true;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to resolve billing exemption for application registration ${flatApplication.applicationRegistrationId}`,
-        error,
-      );
-
-      return false;
-    }
   }
 }

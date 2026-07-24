@@ -697,7 +697,6 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    hasFreeLogicFunctionExecutions: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isConfigured: Scalars['Boolean']
@@ -3786,7 +3785,6 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isVetted?: boolean | number
     isPreInstalled?: boolean | number
-    hasFreeLogicFunctionExecutions?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isConfigured?: boolean | number
@@ -6575,7 +6573,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],uni
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isVetted?: (Scalars['Boolean'] | null),hasFreeLogicFunctionExecutions?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isVetted?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 

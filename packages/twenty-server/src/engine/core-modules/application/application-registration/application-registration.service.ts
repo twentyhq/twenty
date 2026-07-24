@@ -14,7 +14,6 @@ import { v4 } from 'uuid';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-billing-exempt-applications.constant';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -80,7 +79,6 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'isListed',
     'isVetted',
     'isPreInstalled',
-    'hasFreeLogicFunctionExecutions',
     'logo',
     'logoFileId',
     'description',
@@ -411,9 +409,7 @@ export class ApplicationRegistrationService {
     const { id, update } = input;
 
     await this.findOneById(id, ownerWorkspaceId);
-    // Workspace-scoped path: tenants must not be able to grant their own apps
-    // free logic-function executions, so the billing exemption is admin-only.
-    await this.applyUpdate(id, update, { allowBillingExemption: false });
+    await this.applyUpdate(id, update);
 
     return this.findOneById(id, ownerWorkspaceId);
   }
@@ -424,7 +420,7 @@ export class ApplicationRegistrationService {
     const { id, update } = input;
 
     await this.findOneByIdGlobal(id);
-    await this.applyUpdate(id, update, { allowBillingExemption: true });
+    await this.applyUpdate(id, update);
 
     return this.findOneByIdGlobal(id);
   }
@@ -432,7 +428,6 @@ export class ApplicationRegistrationService {
   private async applyUpdate(
     id: string,
     update: UpdateApplicationRegistrationPayload,
-    { allowBillingExemption }: { allowBillingExemption: boolean },
   ): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
@@ -454,23 +449,9 @@ export class ApplicationRegistrationService {
       updateData.isPreInstalled = update.isPreInstalled;
     if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
 
-    const isUpdatingBillingExemption =
-      allowBillingExemption && isDefined(update.hasFreeLogicFunctionExecutions);
-
-    if (isUpdatingBillingExemption)
-      updateData.hasFreeLogicFunctionExecutions =
-        update.hasFreeLogicFunctionExecutions;
-
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
       await this.invalidateMarketplaceAppsCache();
-    }
-
-    if (isUpdatingBillingExemption) {
-      await this.coreEntityCacheService.invalidate(
-        'applicationRegistrationHasFreeLogicFunctionExecutions',
-        id,
-      );
     }
   }
 
@@ -640,11 +621,6 @@ export class ApplicationRegistrationService {
 
     const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
-    const hasFreeLogicFunctionExecutions =
-      MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS.includes(
-        params.universalIdentifier,
-      );
-
     if (isDefined(existing) && isDefined(params.manifest)) {
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
@@ -729,7 +705,6 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
       isVetted,
-      hasFreeLogicFunctionExecutions,
       manifest: params.manifest,
       ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       oAuthClientId: v4(),

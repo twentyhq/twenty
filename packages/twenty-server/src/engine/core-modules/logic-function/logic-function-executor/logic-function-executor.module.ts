@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
@@ -26,7 +25,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SecretEncryptionModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
-    CoreEntityCacheModule,
     BillingModule,
     FeatureFlagModule,
     WorkspaceDomainsModule,

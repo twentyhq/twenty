@@ -1882,9 +1882,6 @@ export default {
             "isPreInstalled": [
                 3
             ],
-            "hasFreeLogicFunctionExecutions": [
-                3
-            ],
             "createdAt": [
                 6
             ],
@@ -11049,9 +11046,6 @@ export default {
                 3
             ],
             "isVetted": [
-                3
-            ],
-            "hasFreeLogicFunctionExecutions": [
                 3
             ],
             "__typename": [
