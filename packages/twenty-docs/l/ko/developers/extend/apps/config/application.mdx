@@ -9,7 +9,7 @@ icon: rocket
 * **식별 정보** — 범용 식별자, 표시 이름, 설명.
 * **권한** — 로직 함수와 프런트 컴포넌트가 어떤 역할로 실행되는지.
 * **변수** *(선택 사항)* — 코드에 환경 변수로 노출되는 키–값 쌍.
-* **설치 전/후 훅** *(선택 사항)* — [Logic Functions](/l/ko/developers/extend/apps/logic/logic-functions)를 참조하세요.
+* **설치 전/설치 후/제거 훅** *(선택 사항)* — [Logic Functions](/l/ko/developers/extend/apps/logic/logic-functions)를 참조하세요.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ export default defineApplication({
 * `universalIdentifier` 필드는 여러분이 소유하는 변하지 않는 고유 ID입니다. 한 번만 생성하고 이후 동기화 동안에도 변하지 않도록 유지하세요.
 * `applicationVariables`는 함수와 프런트 컴포넌트의 환경 변수가 됩니다. 로직 함수(서버 사이드)에서는 `process.env.VARIABLE_NAME`으로 사용할 수 있습니다. 프런트 컴포넌트에서는 `twenty-sdk/front-component`의 `getApplicationVariable('VARIABLE_NAME')`을 사용하세요. `isSecret: true`로 표시된 변수는 로직 함수에만 주입됩니다. 프런트 컴포넌트는 비밀이 아닌 변수만 받습니다.
 * 기본 역할은 [`defineApplicationRole()`](/l/ko/developers/extend/apps/config/roles)로 표시된 역할 파일에서 자동으로 감지되므로, `defineApplication()`에서 이를 참조할 필요가 없습니다.
-* 설치 전/후 함수는 매니페스트 빌드 중 자동으로 감지됩니다 — `defineApplication()`에서 별도로 참조할 필요가 없습니다.
+* 설치 전, 설치 후, 제거 함수는 매니페스트 빌드 중 자동으로 감지됩니다 — `defineApplication()`에서 별도로 참조할 필요가 없습니다.
 * 하위 호환성을 위해 `defaultRoleUniversalIdentifier`를 명시적으로 전달하는 방식도 계속 지원되지만, 이제는 `defineApplicationRole()` 사용을 권장하며 이전 방식은 더 이상 권장되지 않습니다.
 * `serverVariables`는 인스턴스 범위의 구성 및 비밀(예: API 키)입니다. `applicationVariables`와 달리, 매니페스트에는 값을 선언하지 않으며, 워크스페이스 운영자가 앱 설정에서 값을 채워 넣으면 설정된 이후에만 로직 함수에 주입됩니다.
 

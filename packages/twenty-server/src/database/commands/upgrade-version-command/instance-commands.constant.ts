@@ -53,7 +53,6 @@ import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/
 import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
 import { AddSdkClientCoreChecksumToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784625638000-add-sdk-client-core-checksum-to-application';
 import { AddAutoUpgradeToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784297307235-add-auto-upgrade-to-application';
-import { AddStoppedAtToApplicationAndApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784734278506-add-stopped-at-to-application-and-application-registration';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
@@ -118,10 +117,12 @@ import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2
 import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626405-add-kanban-and-calendar-widget-view-types';
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
+import { AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand } from './2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
+import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1784898627359-add-app-token-sso-exchange-index';
 
 export const INSTANCE_COMMANDS = [
@@ -244,8 +245,9 @@ export const INSTANCE_COMMANDS = [
   AddAutoUpgradeToApplicationFastInstanceCommand,
   AddApplicationIdToKeyValuePairFastInstanceCommand,
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
+  AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
-  AddStoppedAtToApplicationAndApplicationRegistrationFastInstanceCommand,
+  AddAgentForeignKeyToRoleTargetFastInstanceCommand,
   AddAppTokenSsoExchangeIndexFastInstanceCommand,
 ];

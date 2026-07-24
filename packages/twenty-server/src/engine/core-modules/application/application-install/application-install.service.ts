@@ -298,7 +298,10 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
-      logo: resolvedPackage.manifest.application.logoUrl ?? null,
+      logo:
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -400,9 +403,12 @@ export class ApplicationInstallService {
       );
 
       if (!isVersionUpgrade) {
+        // Rollback of a failed fresh install: the app never finished
+        // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
+          shouldRunUninstallHook: false,
         });
       }
 
@@ -557,15 +563,13 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: flatLogicFunction.id,
-            workspaceId,
-            payload,
-          },
-        ],
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        },
         { retryLimit: 3 },
       );
       return;

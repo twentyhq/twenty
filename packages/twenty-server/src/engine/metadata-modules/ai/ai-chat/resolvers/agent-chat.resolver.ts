@@ -8,7 +8,6 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { generateId } from 'ai';
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -352,44 +351,17 @@ export class AgentChatResolver {
       );
     }
 
-    const streamId = generateId();
-
-    const { turnId, rollback } =
-      await this.agentChatService.resolvePendingQuestion({
-        threadId,
-        messageId,
-        answers,
-        streamId,
-        workspaceId: workspace.id,
-      });
-
-    await this.eventPublisherService
-      .publish({
-        threadId,
-        workspaceId: workspace.id,
-        event: { type: 'question-answered' },
-      })
-      .catch(() => {});
-
-    try {
-      await this.agentChatStreamingService.enqueueResumeStream({
-        threadId,
-        userWorkspaceId,
-        workspace,
-        turnId,
-        streamId,
-        modelId,
-      });
-    } catch (error) {
-      await this.agentChatService.restorePendingQuestion({
-        threadId,
-        messageId,
-        streamId,
-        workspaceId: workspace.id,
-        rollback,
-      });
-      throw error;
-    }
+    const { streamId, turnId } =
+      await this.agentChatStreamingService.answerPendingQuestionAndResumeStream(
+        {
+          threadId,
+          messageId,
+          answers,
+          userWorkspaceId,
+          workspace,
+          modelId,
+        },
+      );
 
     tagAiChatStreamScope({
       streamId,
