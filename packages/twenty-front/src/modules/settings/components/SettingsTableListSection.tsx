@@ -52,6 +52,7 @@ type SettingsTableListSectionProps<Item extends { id: string }> = {
   title: string;
   description: string;
   headerAdornment?: ReactNode;
+  toolbar?: ReactNode;
   items: Item[];
   columns: SettingsTableListSectionColumn<Item>[];
   gridAutoColumns: string;
@@ -67,6 +68,7 @@ export const SettingsTableListSection = <
   title,
   description,
   headerAdornment,
+  toolbar,
   items,
   columns,
   gridAutoColumns,
@@ -86,6 +88,7 @@ export const SettingsTableListSection = <
         description={description}
         adornment={headerAdornment}
       />
+      {isDefined(toolbar) && toolbar}
       {items.length > 0 && (
         <Table>
           <TableRow gridAutoColumns={resolvedGridAutoColumns}>
