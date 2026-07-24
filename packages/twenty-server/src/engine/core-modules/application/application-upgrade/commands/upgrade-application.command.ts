@@ -19,15 +19,24 @@ type UpgradeApplicationCommandOptions = {
   yes?: boolean;
 };
 
+const MAX_BATCH_SIZE = 50;
 const MAX_WORKSPACE_COUNT_LIMIT = 50;
 
-const parsePositiveInteger = (value: string, optionName: string): number => {
+const parseBoundedPositiveInteger = (
+  value: string,
+  optionName: string,
+  maximum: number,
+): number => {
   const parsedValue = Number(value);
 
   if (!Number.isInteger(parsedValue) || parsedValue < 1) {
     throw new Error(
       `Invalid ${optionName} "${value}". Expected a positive integer`,
     );
+  }
+
+  if (parsedValue > maximum) {
+    throw new Error(`Invalid ${optionName} "${value}". Maximum is ${maximum}`);
   }
 
   return parsedValue;
@@ -65,11 +74,11 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
   @Option({
     flags: '-b, --batch-size <batch_size>',
-    description: 'Number of workspaces upgraded in parallel (defaults to 5)',
+    description: `Number of workspaces upgraded in parallel (defaults to 5, max ${MAX_BATCH_SIZE})`,
     required: false,
   })
   parseBatchSize(value: string): number {
-    return parsePositiveInteger(value, 'batch size');
+    return parseBoundedPositiveInteger(value, 'batch size', MAX_BATCH_SIZE);
   }
 
   @Option({
@@ -92,15 +101,11 @@ export class UpgradeApplicationCommand extends CommandRunner {
     required: false,
   })
   parseWorkspaceCountLimit(value: string): number {
-    const parsedValue = parsePositiveInteger(value, 'workspace count limit');
-
-    if (parsedValue > MAX_WORKSPACE_COUNT_LIMIT) {
-      throw new Error(
-        `Invalid workspace count limit "${value}". Maximum is ${MAX_WORKSPACE_COUNT_LIMIT}`,
-      );
-    }
-
-    return parsedValue;
+    return parseBoundedPositiveInteger(
+      value,
+      'workspace count limit',
+      MAX_WORKSPACE_COUNT_LIMIT,
+    );
   }
 
   @Option({
