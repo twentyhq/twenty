@@ -282,13 +282,13 @@ The identifier is the resolver's `universalIdentifier` from your manifest. Regis
 **The application must be claimed and installed on its owner workspace.** Because the resolver runs in the **owner workspace** (the workspace that owns the application registration), a server route trigger only works once the application has been *claimed* — i.e. it has an owner workspace — **and** that application is **installed on the owner workspace**. Until both are true the resolver has nowhere to run, so the route cannot be dispatched. An application that exposes a `serverRouteTriggerSettings` logic function therefore cannot be listed in the marketplace until it is claimed and installed on its owner workspace.
 </Note>
 
-**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, both identifiers must be UUIDs and the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape is rejected with `502`.
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `workspaceId` | `string` | Workspace UUID where the target will run. |
 | `targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of the logic function to invoke in that workspace. |
-| `payload` | `object` (optional) | If set, replaces the request body sent to the target. Must be a JSON object. |
+| `payload` | `object` (optional) | If set, replaces the request body sent to the target. |
 
 <Warning>
 **Signature verification is your responsibility — verify in the resolver.** The platform does not verify request signatures. The resolver is the recommended place to do it: it runs first, with access to `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, and a thrown error (or any non-matching `workspaceId`) stops the dispatch before the target is invoked. If you instead push verification down into the target, the target must be careful not to lose `rawBody` and headers — i.e. the resolver must not return a `payload`. Always verify **before** any side effect and use a constant-time comparison.

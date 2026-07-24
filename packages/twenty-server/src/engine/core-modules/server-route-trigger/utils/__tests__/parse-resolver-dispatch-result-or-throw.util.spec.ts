@@ -34,6 +34,16 @@ describe('parseResolverDispatchResultOrThrow', () => {
     ).toEqual({ event: 'invoice.paid' });
   });
 
+  it('should accept any object as a payload', () => {
+    expect(
+      parseResolverDispatchResultOrThrow({
+        workspaceId: WORKSPACE_ID,
+        targetLogicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+        payload: [{ event: 'invoice.paid' }],
+      }).payload,
+    ).toEqual([{ event: 'invoice.paid' }]);
+  });
+
   it('should drop keys that are not part of the dispatch contract', () => {
     expect(
       parseResolverDispatchResultOrThrow({

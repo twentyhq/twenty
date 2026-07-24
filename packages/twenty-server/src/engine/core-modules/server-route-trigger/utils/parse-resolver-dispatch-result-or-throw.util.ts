@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { type ServerRouteDispatchResult } from 'twenty-shared/application';
 import { z } from 'zod';
 
@@ -9,7 +10,7 @@ import {
 const resolverDispatchResultSchema = z.object({
   workspaceId: z.uuid(),
   targetLogicFunctionUniversalIdentifier: z.uuid(),
-  payload: z.record(z.string(), z.unknown()).optional(),
+  payload: z.custom<object>((value) => isObject(value)).optional(),
 });
 
 export const parseResolverDispatchResultOrThrow = (
