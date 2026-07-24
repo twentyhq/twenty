@@ -59,7 +59,7 @@ Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksi
 * **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Kayıt kapsamına sahip tek bir HTTP rotasını erişime açar. Bir **resolver** fonksiyonu (`serverRouteTriggerSettings` ile tanımlanır) sahip çalışma alanında çalışır ve hedef çalışma alanını VE yönlendirilecek hedef mantık fonksiyonunu döndürür; platform `202` ile onay verir ve bu **hedef** fonksiyonu worker kuyruğunda çalıştırır. [Sunucu rota tetikleyicisine](#server-route-trigger) bakın.
+* **serverRoute**: Kayıt kapsamına sahip tek bir HTTP rotasını erişime açar. Bir **resolver** fonksiyonu (`serverRouteTriggerSettings` ile tanımlanır) sahip çalışma alanında çalışır ve ya senkron bir `Response` ya da kuyruğa eklenecek hedef çalışma alanını VE mantık fonksiyonunu döndürür; kuyruğa ekleme yolunda platform `202` ile onay verir ve bu **hedefi** worker kuyruğunda çalıştırır. [Sunucu rota tetikleyicisine](#server-route-trigger) bakın.
 
 <Note>
 Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
@@ -178,13 +178,18 @@ Durum kodu geçerli bir HTTP durum kodu olmalıdır (100 ile 599 arasında). Yan
 
 Tetikleyicinin iki parçası vardır:
 
-1. Bir **resolver** mantık fonksiyonu — `serverRouteTriggerSettings` ile tanımlanır — **sahip çalışma alanınızda** (uygulama kaydına sahip olan çalışma alanı) çalışır. Gelen isteği inceler ve `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` döndürerek hem hedef çalışma alanını hem de hedef fonksiyonu seçer. Resolver, yetkilendirmenin tek noktasıdır — URL yalnızca resolver'ın tanımlayıcısını taşır. **İstek imzalarını doğrulamak için tercih edilen yer burasıdır**: resolver, herhangi bir yan etkiden önce çalışır, orijinal `rawBody` ve iletilen başlıklara erişebilir ve hedefe hiç dokunmadan isteği reddedebilir.
-2. Ardından bir **hedef** mantık fonksiyonu — her çalışma alanı için normal bir mantık fonksiyonu — resolver tarafından döndürülen payload ile (veya resolver onu dönüştürmediyse orijinal istek payload'ı ile) çözümlenen çalışma alanında çalışır. Döndürdüğü değer HTTP yanıtı olur.
+1. Bir **resolver** mantık fonksiyonu — `serverRouteTriggerSettings` ile tanımlanır — **sahip çalışma alanınızda** (uygulama kaydına sahip olan çalışma alanı) çalışır. Gelen isteği inceler ve şu ikisinden birini döndürür:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — platform bu hedefi çözümlenen çalışma alanında kuyruğa ekler ve `202 { queued: true }` ile onay verir, veya
+   * `twenty-sdk/logic-function` içinden bir `Response` — platform bu HTTP yanıtını **senkron** şekilde yansıtır ve **hiçbir** hedefi kuyruğa eklemez (bunu Slack `url_verification` gibi doğrulama el sıkışmaları için kullanın).
+
+   Resolver, yetkilendirmenin tek noktasıdır — URL yalnızca resolver'ın tanımlayıcısını taşır. **İstek imzalarını doğrulamak için tercih edilen yer burasıdır**: resolver, herhangi bir yan etkiden önce çalışır, orijinal `rawBody` ve iletilen başlıklara erişebilir ve hedefe hiç dokunmadan isteği reddedebilir.
+2. Ardından bir **hedef** mantık fonksiyonu — her çalışma alanı için normal bir mantık fonksiyonu — resolver tarafından döndürülen payload ile (veya resolver onu dönüştürmediyse orijinal istek payload'ı ile) çözümlenen çalışma alanında çalışır. Çözümleyici kuyruğa alma yolunu seçtiğinde, döndürdüğü değer HTTP çağrıcısı tarafından **gözlemlenmez**.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +216,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +283,7 @@ Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir.
 **Uygulama, sahip çalışma alanında sahiplenilip kurulmalıdır.** Çözücü **sahip çalışma alanında** (uygulama kaydına sahip olan çalışma alanı) çalıştığı için, bir sunucu rota tetikleyicisi yalnızca uygulama *sahiplenildikten* — yani bir sahip çalışma alanına sahiptir — **ve** o uygulama **sahip çalışma alanına kurulduğunda** çalışır. Her ikisi de doğru olana kadar çözücünün çalışacağı bir yer yoktur, bu yüzden rota çalıştırılamaz. Bu nedenle, `serverRouteTriggerSettings` mantık işlevini sunan bir uygulama, sahip çalışma alanında sahiplenilip kurulana kadar pazaryerinde listelenemez.
 </Note>
 
-**Resolver sözleşmesi.** SDK'nin `LogicFunctionConfig` türü bunu derleme zamanında zorunlu kılar: `serverRouteTriggerSettings`'i ayarladığınız anda, işleyicinizin `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (veya bunun bir `Promise`'i) döndürmesi gerekir. `workspaceId`, hedef fonksiyonun kurulu olduğu bir çalışma alanı olmalıdır, aksi takdirde istek `404` ile reddedilir.
+**Resolver sözleşmesi.** SDK'nin `LogicFunctionConfig` türü bunu derleme zamanında zorunlu kılar: `serverRouteTriggerSettings`'i ayarladığınız anda, işleyicinizin ya bir `Response` ya da `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (veya bunlardan birinin `Promise`'i) döndürmesi gerekir. Dispatch yolunda, `workspaceId` hedef fonksiyonun kurulu olduğu bir çalışma alanı olmalıdır, aksi takdirde istek `404` ile reddedilir. Her iki şekille de eşleşmeyen bir sonuç — tanımlayıcıları UUID olmayanlar da dahil — `502` ile reddedilir.
 
 | Alan                                     | Tür                     | Notlar                                                                           |
 | ---------------------------------------- | ----------------------- | -------------------------------------------------------------------------------- |
@@ -290,7 +308,9 @@ Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir.
 Yukarıdaki resolver örneği GitHub HMAC-SHA256 akışını zaten göstermektedir — tümleştirdiğiniz sağlayıcıya göre başlık adını, özet kodlamasını ve imzalanan payload dizesini uyarlayın.
 
 <Note>
-Yol, resolver döner dönmez `202 { queued: true }` yanıtını verir ve hedef worker kuyruğunda çalıştırılır — çağıran taraf hedefin gecikmesini, sonucunu veya hatalarını asla gözlemlemez (bunlar yürütme günlüklerinde kaydedilir). Bu, göndericinin yeniden gönderimlerinin işlem yavaşlamalarını artırmasını engeller; bu da webhook alımı için istediğiniz şeydir. Çağıranın yanıt gövdesini okuması gereken uç noktalar için (challenge el sıkışmaları, Slack komutları) bunun yerine bir `httpRouteTriggerSettings` yolu kullanın. Resolver’ı hızlı tutun — bazı sağlayıcılar (örn. Slack) birkaç saniye içinde zaman aşımına uğrar. Resolver herkese açık bir uç nokta olarak erişilebilir olduğundan, onu edge'inizde hız sınırlama ile koruyun.
+Resolver bir dispatch nesnesi döndürdüğünde, yol `202 { queued: true }` yanıtını verir ve hedef worker kuyruğunda çalıştırılır — çağıran taraf hedefin gecikmesini, sonucunu veya hatalarını asla gözlemlemez (bunlar yürütme günlüklerinde kaydedilir). Bu, göndericinin yeniden gönderimlerinin işlem yavaşlamalarını artırmasını engeller; bu da webhook alımı için istediğiniz şeydir.
+
+Çağıran tarafın yanıt gövdesini aynı istek üzerinde okuması gerektiğinde (challenge el sıkışmaları, etkileşimli onaylar), bunun yerine **resolver**'dan bir `Response` döndürün. Platform bunu eşzamanlı olarak geri yansıtır ve kuyruğu atlar; başlıkları, HTTP route yanıtlarıyla aynı izin listesi üzerinden geçirilir. Resolver’ı hızlı tutun — bazı sağlayıcılar (örn. Slack) birkaç saniye içinde zaman aşımına uğrar. Resolver herkese açık bir uç nokta olarak erişilebilir olduğundan, onu edge'inizde hız sınırlama ile koruyun.
 </Note>
 
 #### Veritabanı olay tetikleyicisi yükü
@@ -593,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
+**Yükleme kancaları** — ön yükleme, yükleme sonrası ve kaldırma işleyicileri — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction`, `definePostInstallLogicFunction` ve `defineUninstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 </Note>
 
 ## Tipli API istemcileri (twenty-client-sdk)

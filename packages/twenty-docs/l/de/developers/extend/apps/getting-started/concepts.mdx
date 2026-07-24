@@ -69,7 +69,7 @@ your-app/
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
-│   generate SDK → [post-install]                         │
+│   generate SDK → [post-install] → … → [uninstall]       │
 ├─────────────────────────────────────────────────────────┤
 │ Publish                                                 │
 │   npm publish → appears in Twenty marketplace           │
@@ -78,13 +78,13 @@ your-app/
 
 * **`yarn twenty dev`** — überwacht Ihre Quelldateien und synchronisiert Änderungen in Echtzeit mit einem verbundenen Twenty-Server. Der typisierte API-Client wird automatisch neu erzeugt, wenn sich das Schema ändert.
 * **`yarn twenty dev:build`** — kompiliert TypeScript, bündelt Logikfunktionen und Frontend-Komponenten mit esbuild und erzeugt ein Manifest.
-* **Pre/Post-Install-Hooks** — optionale Funktionen, die während der Installation ausgeführt werden. Details finden Sie unter [Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
+* **Pre/Post-Install-Hooks und Uninstall-Hooks** — optionale Funktionen, die während der Installation oder direkt vor der Deinstallation ausgeführt werden. Details finden Sie unter [Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
 
 ## Nächste Schritte
 
 <CardGroup cols={2}>
   <Card title="Konfiguration" icon="screwdriver-wrench" href="/l/de/developers/extend/apps/config/overview">
-    App-Identität, Standardrolle und Install-Hooks.
+    App-Identität, Standardrolle sowie Install- und Uninstall-Hooks.
   </Card>
   <Card title="Daten" icon="database" href="/l/de/developers/extend/apps/data/overview">
     Objekte, Felder und bidirektionale Relationen.

@@ -7,7 +7,6 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
 import { usePageLayoutRenderableTabs } from '@/page-layout/hooks/usePageLayoutRenderableTabs';
-import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
@@ -85,10 +84,6 @@ export const PageLayoutTabsRenderer = () => {
     tabListInstanceId,
   });
 
-  const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
-    currentPageLayout.id,
-  );
-
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
     shouldEnableTabEditingFeatures(currentPageLayout.type);
@@ -127,16 +122,6 @@ export const PageLayoutTabsRenderer = () => {
               componentInstanceId={tabListInstanceId}
               addTabStrategy={addTabStrategy}
               isReorderEnabled={canEnableTabEditing}
-              onReorder={
-                canEnableTabEditing
-                  ? (result, provided) =>
-                      reorderRecordPageTabs(
-                        result,
-                        provided,
-                        isDefined(pinnedLeftTab),
-                      )
-                  : undefined
-              }
               pageLayoutType={currentPageLayout.type}
             />
           )}
