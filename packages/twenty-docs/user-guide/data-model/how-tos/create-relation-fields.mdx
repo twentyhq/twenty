@@ -23,7 +23,7 @@ See [Relation Fields](/user-guide/data-model/capabilities/relation-fields) for r
 
 1. Go to **Settings → Data Model**
 2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
+3. Click **+ New Field**
 4. Select **Relation** as the field type
 5. Choose the **target object**
 6. Select **One-to-Many** or **Many-to-One**
@@ -41,16 +41,26 @@ See [Relation Fields](/user-guide/data-model/capabilities/relation-fields) for r
 
 Now each Person can be linked to a Company, and each Company shows its People.
 
-## Deleting a Relation
+## Deactivating a Relation
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Go to **Settings → Data Model → object of choice**
+2. Find the relation field and click it
+3. Click **Deactivate** button
 
 Links are preserved but hidden. Reactivate to restore.
 
 <Note>
-**Deleting a relation doesn't delete records.** Only the link between them is removed.
+**Deactivating a relation doesn't delete records.** Only the link between them is removed.
+</Note>
+
+## Deleting a Relation
+
+1. Go to **Settings → Data Model → object of choice**
+2. Find the relation field and click it
+3. Click **Delete** button
+
+<Note>
+Applies only to custom relations, standard relations can be only deactivated.
 </Note>
 
 ## Related

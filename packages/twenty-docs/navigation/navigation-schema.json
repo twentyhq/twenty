@@ -337,6 +337,19 @@
               "pages": ["user-guide/settings/how-tos/settings-faq"]
             }
           ]
+        },
+        {
+          "key": "legal",
+          "label": "Legal",
+          "icon": "book",
+          "pages": [
+            "user-guide/legal/overview",
+            {
+              "key": "legalHowTos",
+              "label": "How-Tos",
+              "pages": ["user-guide/legal/how-tos/legal-faq"]
+            }
+          ]
         }
       ]
     },

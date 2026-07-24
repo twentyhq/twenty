@@ -1,0 +1,94 @@
+---
+title: Legal FAQ
+description: Frequently asked legal questions.
+---
+
+## Data residency and international transfers
+
+<AccordionGroup>
+<Accordion title="In which country and region would our workspace data, attachments, logs, and backups be stored?">
+Twenty Cloud runs on AWS servers located in Frankfurt, Germany.
+</Accordion>
+<Accordion title="Can the hosting region be contractually fixed for our workspace?">
+Hosting region can be contractually fixed for enterprise-sized customers (500+ users).
+</Accordion>
+<Accordion title="Which sub-processors may process or access our CRM data, and in which countries are they located?">
+A list of all sub-processors is available in [our Trust center](https://trust.twenty.com/?tab=subprocessors).
+</Accordion>
+<Accordion title="What safeguards apply to international data transfers?">
+EU Standard Contractual Clauses with the UK Addendum and Swiss amendments apply to international data transfers within EU and all sub-processors.
+</Accordion>
+</AccordionGroup>
+
+## Data Processing Agreement and legal roles
+
+<AccordionGroup>
+<Accordion title="Please provide the current Data Processing Agreement.">
+Latest DPA is available in your workspace at https://{your-domain}/settings/legal/dpa (e.g. https://getting-started.twenty.com/settings/legal/dpa).
+</Accordion>
+<Accordion title="Does Twenty act as the data processor for merchant and contact information stored in the CRM, while our company remains the data controller?">
+As per our [Privacy Policy](https://twenty.com/privacy-policy), Twenty acts as the data processor for merchant and contact information stored in the CRM, while your company remains the data controller.
+</Accordion>
+<Accordion title="Is CRM content ever used to train Twenty or third-party AI models?">
+CRM content is not used to train any AI model and Twenty does not have its own AI model, all AI models available on cloud are models provided by our sub-processors.
+</Accordion>
+<Accordion title="If optional AI processing exists, can it be fully disabled for our workspace?">
+AI can be turned off by disabling all AI models we offer in Settings → AI → Models, moreover no data is sent to AI if there is no interaction with AI chat and AI node in workflows.
+</Accordion>
+</AccordionGroup>
+
+## Security and access controls
+
+<AccordionGroup>
+<Accordion title="Is encryption used in transit and at rest, what are your key-management practices, and how tenant data is isolated?">
+All data are encrypted in transit and at rest, all tenant data are isolated thanks to schema-per-tenant setup and our keys are periodically rotated.
+</Accordion>
+<Accordion title="Which Twenty personnel or sub-processors may access customer workspaces, for what purposes, and how is access approved and logged?">
+Twenty engineering and support team can access customer workspaces only upon customer's issue report and when customer agrees to allow access to workspace in Settings → General → Security.
+</Accordion>
+<Accordion title="What is your incident-notification process and target notification timeframe following a confirmed security incident affecting our data?">
+In the event of a confirmed personal data breach affecting your data, we will notify you without undue delay and in any event within 48 hours of becoming aware of it. Our notification will include, to the extent known at the time: the nature of the breach, the categories and approximate volume of data and individuals affected, likely consequences, and the remediation and mitigation measures taken or planned. We will provide updates as the investigation progresses.
+</Accordion>
+</AccordionGroup>
+
+## Data retention and deletion
+
+<AccordionGroup>
+<Accordion title="When an individual CRM record is deleted, when is it removed from active systems?">
+When a record is removed, first it's soft-deleted and still possible to restore, once it's permanently removed, it's removed from active systems.
+</Accordion>
+<Accordion title="How long may that record remain in backups or technical logs?">
+Removed record is in backup for 30 days, after that it's permanently removed.
+</Accordion>
+<Accordion title="When a workspace is closed or full deletion is requested, what exact timeline applies to production data, attachments, logs, and backups?">
+Removed workspace's data are immediately removed from active systems and backups of said workspace are available for 7 days, after 7 days, all data are permanently removed.
+</Accordion>
+<Accordion title="During any backup-retention period, is deleted data isolated from operational access and use?">
+Yes, during any backup-retention period, deleted data is isolated from operational use.
+</Accordion>
+<Accordion title="Are any categories of data retained longer for legal, billing, fraud-prevention, security, or audit purposes? If so, which categories and for how long?">
+For more info about data retention, you can request our Data Management and Retention Policy available in [our Trust Center](https://trust.twenty.com/?tab=documents).
+</Accordion>
+<Accordion title="Can Twenty provide written confirmation when a full deletion request has been completed?">
+We acknowledge erasure requests and provide written confirmation once deletion is complete.
+</Accordion>
+</AccordionGroup>
+
+## Backups and resilience
+
+<AccordionGroup>
+<Accordion title="What are the backup frequency and retention period?">
+Backups are created daily and retention period is 30 days.
+</Accordion>
+<Accordion title="What are the recovery-point objective and recovery-time objective for Twenty Cloud?">
+RTO and RPO are both 6 hours (as per our DPA).
+</Accordion>
+<Accordion title="What is the process for requesting or performing a restoration?">
+To request a restoration, please reach out to team via support chat or mail to [contact@twenty.com](mailto:contact@twenty.com).
+</Accordion>
+<Accordion title="Are backups encrypted and stored in the same region as the primary workspace data?">
+All backups are encrypted and stored in geographically separate locations within the same jurisdiction (e.g. within EU for EU data).
+</Accordion>
+</AccordionGroup>
+
+If you have more questions, please check our [Terms and Conditions](https://twenty.com/terms), [Privacy Policy](https://twenty.com/privacy-policy) and [Trust Center](https://trust.twenty.com/), if your questions are still unanswered, send them to [contact@twenty.com](mailto:contact@twenty.com) or via support chat.
