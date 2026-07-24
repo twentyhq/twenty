@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -25,6 +26,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { COMPANY_CONTEXT_MESSAGE_IS_HIDDEN } from 'src/engine/metadata-modules/ai/ai-chat/constants/company-context-message-is-hidden.constant';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
@@ -46,6 +48,7 @@ type StreamAgentChatOptions = {
   workspace: WorkspaceEntity;
   text: string;
   browsingContext: BrowsingContextType | null;
+  companyContext: WorkspaceCompanyEnrichment | null;
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
@@ -159,6 +162,7 @@ export class AgentChatStreamingService {
     workspace,
     text,
     browsingContext,
+    companyContext,
     modelId,
     messageId,
     fileAttachments,
@@ -224,6 +228,15 @@ export class AgentChatStreamingService {
     }
 
     try {
+      if (isDefined(companyContext)) {
+        await this.agentChatService.seedCompanyContextMessage({
+          threadId,
+          workspaceId: workspace.id,
+          companyEnrichment: companyContext,
+          isHidden: COMPANY_CONTEXT_MESSAGE_IS_HIDDEN,
+        });
+      }
+
       const fileParts = await this.buildFilePartsFromAttachments(
         fileAttachments,
         workspace.id,
@@ -706,6 +719,7 @@ export class AgentChatStreamingService {
       threadId,
       userWorkspaceId,
       workspaceId,
+      includeHidden: true,
     });
 
     const filteredMessages = allMessages.filter(

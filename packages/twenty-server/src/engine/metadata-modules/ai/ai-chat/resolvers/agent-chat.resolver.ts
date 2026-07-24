@@ -11,10 +11,12 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { sanitizeWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-company-enrichment.util';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -155,6 +157,8 @@ export class AgentChatResolver {
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
     @Args('browsingContext', { type: () => GraphQLJSON, nullable: true })
     browsingContext: BrowsingContextType | null,
+    @Args('companyContext', { type: () => GraphQLJSON, nullable: true })
+    companyContext: WorkspaceCompanyEnrichment | null,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
     @Args('fileAttachments', {
@@ -238,6 +242,7 @@ export class AgentChatResolver {
     const result = await this.agentChatStreamingService.streamAgentChat({
       threadId,
       browsingContext: browsingContext ?? null,
+      companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
       modelId,
       userWorkspaceId,
       workspace,

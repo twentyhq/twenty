@@ -1,0 +1,1 @@
+export const COMPANY_CONTEXT_MESSAGE_IS_HIDDEN = true;

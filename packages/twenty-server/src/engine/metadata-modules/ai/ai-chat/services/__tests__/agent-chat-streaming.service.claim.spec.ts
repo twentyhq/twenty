@@ -83,6 +83,7 @@ describe('AgentChatStreamingService claim & reap', () => {
     workspace,
     text: 'hello',
     browsingContext: null,
+    companyContext: null,
   };
 
   describe('streamAgentChat', () => {
