@@ -555,10 +555,7 @@ export class LogicFunctionExecutorService {
           }),
         ])
         .catch((error) => {
-          this.logger.error(
-            'Failed to record logic function execution',
-            error,
-          );
+          this.logger.error('Failed to record logic function execution', error);
         });
     }
 

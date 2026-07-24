@@ -41,7 +41,8 @@ export class LogicFunctionTriggerJob {
     for (const logicFunctionPayload of logicFunctionPayloads) {
       try {
         const executionContext: LogicFunctionExecutionContext = {
-          source: logicFunctionPayload.source ?? LogicFunctionExecutionSource.MANUAL,
+          source:
+            logicFunctionPayload.source ?? LogicFunctionExecutionSource.MANUAL,
         };
 
         await this.logicFunctionExecutorService.execute({
