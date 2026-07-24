@@ -32,11 +32,6 @@ export type ApplicationManifest = SyncableEntityOptions & {
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
-  /**
-   * @deprecated Custom settings tabs are no longer supported. This property is
-   * kept for backward compatibility with older manifests but is now ignored.
-   * Use typed `applicationVariables` / `serverVariables` instead.
-   */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
