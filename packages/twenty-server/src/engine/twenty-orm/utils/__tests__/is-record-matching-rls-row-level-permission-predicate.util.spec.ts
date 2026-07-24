@@ -4,7 +4,7 @@ import {
   baseRecord,
   matchRLSRowLevelPermissionPredicate,
   recordWithPhones,
-} from 'src/engine/twenty-orm/utils/__tests__/is-record-matching-rls-row-level-permission-predicate.fixture';
+} from 'src/engine/twenty-orm/utils/__mocks__/is-record-matching-rls-row-level-permission-predicate.test.mock';
 
 describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   it('returns true for an empty filter on non-deleted record', () => {

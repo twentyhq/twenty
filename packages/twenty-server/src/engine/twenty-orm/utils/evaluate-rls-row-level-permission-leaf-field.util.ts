@@ -53,17 +53,18 @@ import {
 } from 'src/engine/twenty-orm/utils/evaluate-rls-row-level-permission-predicate-evaluation.util';
 
 export const evaluateRLSRowLevelPermissionLeafField = ({
+  record,
   filterKey,
   filterValue,
   objectMetadataField,
-  recordFieldValue,
 }: {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  record: any;
   filterKey: string;
   filterValue: unknown;
   objectMetadataField: FlatFieldMetadata;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  recordFieldValue: any;
 }): RLSPredicateEvaluation => {
+  const recordFieldValue = record[filterKey];
   switch (objectMetadataField.type) {
     case FieldMetadataType.RATING:
       return evaluateFieldMatchResult(() =>
@@ -410,10 +411,10 @@ export const evaluateRLSRowLevelPermissionLeafFields = ({
       }
 
       return evaluateRLSRowLevelPermissionLeafField({
+        record,
         filterKey,
         filterValue,
         objectMetadataField,
-        recordFieldValue,
       });
     }),
   );
