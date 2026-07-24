@@ -80,6 +80,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'isListed',
     'isVetted',
     'isPreInstalled',
+    'hasFreeLogicFunctionExecutions',
     'logo',
     'logoFileId',
     'description',
@@ -410,7 +411,9 @@ export class ApplicationRegistrationService {
     const { id, update } = input;
 
     await this.findOneById(id, ownerWorkspaceId);
-    await this.applyUpdate(id, update);
+    // Workspace-scoped path: tenants must not be able to grant their own apps
+    // free logic-function executions, so the billing exemption is admin-only.
+    await this.applyUpdate(id, update, { allowBillingExemption: false });
 
     return this.findOneById(id, ownerWorkspaceId);
   }
@@ -421,7 +424,7 @@ export class ApplicationRegistrationService {
     const { id, update } = input;
 
     await this.findOneByIdGlobal(id);
-    await this.applyUpdate(id, update);
+    await this.applyUpdate(id, update, { allowBillingExemption: true });
 
     return this.findOneByIdGlobal(id);
   }
@@ -429,6 +432,7 @@ export class ApplicationRegistrationService {
   private async applyUpdate(
     id: string,
     update: UpdateApplicationRegistrationPayload,
+    { allowBillingExemption }: { allowBillingExemption: boolean },
   ): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
@@ -449,7 +453,12 @@ export class ApplicationRegistrationService {
     if (isDefined(update.isPreInstalled))
       updateData.isPreInstalled = update.isPreInstalled;
     if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
-    if (isDefined(update.hasFreeLogicFunctionExecutions))
+
+    const isUpdatingBillingExemption =
+      allowBillingExemption &&
+      isDefined(update.hasFreeLogicFunctionExecutions);
+
+    if (isUpdatingBillingExemption)
       updateData.hasFreeLogicFunctionExecutions =
         update.hasFreeLogicFunctionExecutions;
 
@@ -458,7 +467,7 @@ export class ApplicationRegistrationService {
       await this.invalidateMarketplaceAppsCache();
     }
 
-    if (isDefined(update.hasFreeLogicFunctionExecutions)) {
+    if (isUpdatingBillingExemption) {
       await this.coreEntityCacheService.invalidate(
         'applicationRegistrationHasFreeLogicFunctionExecutions',
         id,

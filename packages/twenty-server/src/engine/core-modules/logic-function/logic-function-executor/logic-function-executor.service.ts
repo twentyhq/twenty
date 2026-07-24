@@ -580,11 +580,24 @@ export class LogicFunctionExecutorService {
       return false;
     }
 
-    const isExempt = await this.coreEntityCacheService.get(
-      'applicationRegistrationHasFreeLogicFunctionExecutions',
-      flatApplication.applicationRegistrationId,
-    );
+    // Resolving the exemption happens after the function already ran, so a
+    // cache/store failure must not surface as a failed invocation (which would
+    // trigger retries and duplicate side effects). Fall back to non-exempt so
+    // billing defaults to the standard credit charge.
+    try {
+      const isExempt = await this.coreEntityCacheService.get(
+        'applicationRegistrationHasFreeLogicFunctionExecutions',
+        flatApplication.applicationRegistrationId,
+      );
 
-    return isExempt === true;
+      return isExempt === true;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to resolve billing exemption for application registration ${flatApplication.applicationRegistrationId}`,
+        error,
+      );
+
+      return false;
+    }
   }
 }

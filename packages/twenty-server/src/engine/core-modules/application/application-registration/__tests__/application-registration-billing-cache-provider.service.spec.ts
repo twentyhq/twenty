@@ -37,6 +37,11 @@ describe('ApplicationRegistrationBillingCacheProviderService', () => {
     await expect(provider.computeForCache('registration-id')).resolves.toBe(
       true,
     );
+
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { id: 'registration-id' },
+      select: { id: true, hasFreeLogicFunctionExecutions: true },
+    });
   });
 
   it('should return false when the registration is not billing-exempt', async () => {
