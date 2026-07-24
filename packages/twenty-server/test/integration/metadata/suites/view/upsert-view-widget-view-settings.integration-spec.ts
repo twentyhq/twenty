@@ -20,6 +20,7 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
@@ -403,5 +404,111 @@ describe('upsertViewWidget view settings', () => {
         (viewField) => viewField.fieldMetadataId === selectFieldMetadataId,
       ),
     ).toBe(true);
+  });
+
+  describe('field widget in table display mode', () => {
+    let fieldWidgetId: string;
+    let fieldWidgetViewId: string;
+
+    beforeAll(async () => {
+      const { data: fieldViewData } = await createOneView({
+        expectToFail: false,
+        input: {
+          name: 'testFieldWidgetEmbeddedView',
+          objectMetadataId,
+          icon: 'IconTable',
+          type: ViewType.TABLE_WIDGET,
+        },
+      });
+
+      fieldWidgetViewId = fieldViewData.createView.id;
+
+      const { data: fieldWidgetData } = await createOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          title: 'Test Field Table Widget For View Settings',
+          type: WidgetType.FIELD,
+          pageLayoutTabId,
+          objectMetadataId,
+          gridPosition: { row: 1, column: 0, rowSpan: 1, columnSpan: 1 },
+          configuration: {
+            configurationType: WidgetConfigurationType.FIELD,
+            fieldMetadataId: selectFieldMetadataId,
+            fieldDisplayMode: FieldDisplayMode.TABLE,
+            viewId: fieldWidgetViewId,
+          },
+        },
+      });
+
+      fieldWidgetId = fieldWidgetData.createPageLayoutWidget.id;
+    });
+
+    afterAll(async () => {
+      await destroyOnePageLayoutWidget({
+        expectToFail: false,
+        input: { id: fieldWidgetId },
+      });
+      await destroyOneView({
+        expectToFail: false,
+        viewId: fieldWidgetViewId,
+      });
+    });
+
+    it('should switch a field table widget embedded view to KANBAN_WIDGET', async () => {
+      const { data } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: fieldWidgetId,
+          view: {
+            type: ViewType.KANBAN_WIDGET,
+            mainGroupByFieldMetadataId: selectFieldMetadataId,
+          },
+        },
+        gqlFields: VIEW_SETTINGS_GQL_FIELDS,
+      });
+
+      expect(data.upsertViewWidget.type).toBe(ViewType.KANBAN_WIDGET);
+      expect(data.upsertViewWidget.mainGroupByFieldMetadataId).toBe(
+        selectFieldMetadataId,
+      );
+    });
+
+    it('should switch a field table widget embedded view to CALENDAR_WIDGET', async () => {
+      const { data } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: fieldWidgetId,
+          view: {
+            type: ViewType.CALENDAR_WIDGET,
+            calendarLayout: ViewCalendarLayout.MONTH,
+            calendarFieldMetadataId: dateFieldMetadataId,
+            mainGroupByFieldMetadataId: null,
+          },
+        },
+        gqlFields: VIEW_SETTINGS_GQL_FIELDS,
+      });
+
+      expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
+      expect(data.upsertViewWidget.calendarFieldMetadataId).toBe(
+        dateFieldMetadataId,
+      );
+    });
+
+    it('should still reject a field table widget switching to KANBAN_WIDGET without a main group by field', async () => {
+      const { errors } = await upsertViewWidget({
+        expectToFail: true,
+        input: {
+          widgetId: fieldWidgetId,
+          view: {
+            type: ViewType.KANBAN_WIDGET,
+            mainGroupByFieldMetadataId: null,
+          },
+        },
+      });
+
+      expect(JSON.stringify(errors)).toContain(
+        'Kanban view must have a main group by field',
+      );
+    });
   });
 });

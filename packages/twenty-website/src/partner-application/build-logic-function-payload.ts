@@ -2,6 +2,7 @@ import { type PartnerCountryValue } from './data/partner-country-options';
 import { type PartnerLanguageValue } from './data/partner-language-options';
 import { type PartnerScopeValue } from './data/partner-scope-options';
 import { type PartnerTeamTypeValue } from './data/partner-team-type-options';
+import { type PartnerTwentyExperienceValue } from './data/partner-twenty-experience-options';
 import { type PartnerApplicationRequest } from './partner-application-request-schema';
 import { splitFullName } from './split-full-name';
 
@@ -21,7 +22,9 @@ export type PartnerApplicationLogicFunctionPayload = {
   typeOfTeam?: PartnerTeamTypeValue;
   partnerScope?: readonly PartnerScopeValue[];
   skills?: readonly string[];
-  applicationNotes?: string;
+  twentyExperience: readonly PartnerTwentyExperienceValue[];
+  twentyExperienceNotes: string;
+  twentyExperienceProofLink: string;
   hourlyRate?: number;
   projectBudgetMin?: number;
   calendarLink?: string;
@@ -37,6 +40,9 @@ export function buildLogicFunctionPayload(
     lastName,
     email: request.email,
     companyName: request.company,
+    twentyExperience: request.twentyExperience,
+    twentyExperienceNotes: request.twentyExperienceNotes,
+    twentyExperienceProofLink: request.twentyExperienceProofLink,
   };
 
   if (request.website !== undefined) payload.domainName = request.website;
@@ -50,8 +56,6 @@ export function buildLogicFunctionPayload(
     payload.partnerScope = request.partnerScope;
   if (request.skills !== undefined && request.skills.length > 0)
     payload.skills = request.skills;
-  if (request.applicationNotes !== undefined)
-    payload.applicationNotes = request.applicationNotes;
   if (request.hourlyRate !== undefined) payload.hourlyRate = request.hourlyRate;
   if (request.projectBudgetMin !== undefined)
     payload.projectBudgetMin = request.projectBudgetMin;

@@ -133,11 +133,13 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
+export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
+export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,

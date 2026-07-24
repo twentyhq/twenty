@@ -155,6 +155,7 @@ export class OAuthRegistrationController {
       createdByUserId: null,
       ownerWorkspaceId: null,
       sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      logo: body.logo_uri ?? null,
     });
 
     await this.applicationRegistrationRepository.save(registration);

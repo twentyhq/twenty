@@ -12,6 +12,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -68,6 +69,8 @@ export const CalendarEventsCard = () => {
 
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
     data?.getTimelineCalendarEventsFromObjectRecord ?? {};
+
+  usePublishWidgetHeaderInfo({ count: totalNumberOfCalendarEvents });
 
   const {
     calendarEventsByDayTime,

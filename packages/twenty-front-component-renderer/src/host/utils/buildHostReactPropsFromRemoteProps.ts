@@ -9,7 +9,7 @@ import { parseCssString } from '@/host/utils/parseCssString';
 import { wrapEventHandler } from '@/host/utils/wrapEventHandler';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
-const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
+const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
 
 // Both spellings are indexed: dblclick arrives as ondblclick or onDoubleClick.
 const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =

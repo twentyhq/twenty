@@ -9,7 +9,7 @@ Cada aplicación debe tener exactamente una llamada a `defineApplication`. Decla
 * **Identidad** — identificador universal, nombre para mostrar, descripción.
 * **Permisos** — bajo qué rol se ejecutan sus funciones de lógica y componentes de frontend.
 * **Variables** *(opcionales)* — pares clave–valor expuestos a tu código como variables de entorno.
-* **Hooks de preinstalación / postinstalación** *(opcionales)* — consulta [Funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions).
+* **Hooks de preinstalación / posinstalación / desinstalación** *(opcionales)* — consulta [Funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ Notas:
 * Los campos `universalIdentifier` son identificadores deterministas que te pertenecen. Genéralos una vez y mantenlos estables entre sincronizaciones.
 * `applicationVariables` se convierten en variables de entorno para tus funciones y componentes de frontend. En las funciones lógicas (del lado del servidor), están disponibles como `process.env.VARIABLE_NAME`. En los componentes de frontend, usa `getApplicationVariable('VARIABLE_NAME')` de `twenty-sdk/front-component`. Las variables marcadas con `isSecret: true` solo se inyectan en las funciones lógicas. Los componentes de frontend solo reciben variables no secretas.
 * El rol predeterminado se detecta automáticamente a partir del archivo de rol marcado con [`defineApplicationRole()`](/l/es/developers/extend/apps/config/roles); no necesitas hacer referencia a él desde `defineApplication()`.
-* Las funciones de preinstalación y posinstalación se detectan automáticamente durante la compilación del manifiesto; no necesitas referenciarlas en `defineApplication()`.
+* Las funciones de preinstalación, posinstalación y desinstalación se detectan automáticamente durante la compilación del manifiesto; no necesitas referenciarlas en `defineApplication()`.
 * Pasar `defaultRoleUniversalIdentifier` explícitamente sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
 * `serverVariables` son configuraciones y secretos con ámbito de instancia (por ejemplo, claves de API). A diferencia de `applicationVariables`, no declaran ningún valor en el manifiesto: el operador del espacio de trabajo los completa desde la configuración de la aplicación, y se inyectan en las funciones lógicas solo una vez que se han establecido.
 

@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -53,7 +53,7 @@ export default definePageLayout({
 
 * `type` est généralement `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
 * `objectUniversalIdentifier` spécifie à quel objet cette mise en page s'applique.
-* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` (`CANVAS` pour une mise en page libre).
+* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` (`VERTICAL_LIST` pour les pages d'enregistrement, `GRID` pour les tableaux de bord). Un onglet contenant un seul widget l'affiche automatiquement en pleine largeur ; avec plusieurs widgets, ils sont empilés sous forme de cartes.
 * Chaque `widget` à l'intérieur d'un onglet peut afficher un [front component](/l/fr/developers/extend/apps/layout/front-components), une liste de relations ou d'autres types de widgets intégrés.
 * La `position` des onglets contrôle leur ordre. Utilisez des valeurs plus élevées (p. ex., 50) pour placer les onglets personnalisés après les onglets intégrés.
 
@@ -77,7 +77,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { STACKED_WIDGET_MAX_HEIGHT } from '~/modules/page-layout/widgets/constants/StackedWidgetMaxHeight';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type WidgetCardContentStyledProps = {
@@ -8,6 +9,7 @@ type WidgetCardContentStyledProps = {
   isEditable: boolean;
   isInVerticalListTab: boolean;
   isMobile: boolean;
+  hasBoundedHeight: boolean;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
@@ -27,12 +29,15 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 
-  height: 100%;
+  height: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : '100%')};
 
   margin-top: ${({ hasHeader }) =>
     hasHeader ? themeCssVariables.spacing[2] : '0'};
 
-  overflow: hidden;
+  max-height: ${({ hasBoundedHeight }) =>
+    hasBoundedHeight ? `${STACKED_WIDGET_MAX_HEIGHT}px` : 'none'};
+
+  overflow: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : 'hidden')};
 
   padding: ${({ variant, isEditable }) => {
     if (variant === 'dashboard' || variant === 'standalone')
@@ -61,6 +66,7 @@ type WidgetCardContentProps = {
   isInVerticalListTab: boolean;
   isMobile: boolean;
   hasInteractiveContent?: boolean;
+  hasBoundedHeight?: boolean;
   className?: string;
   children?: React.ReactNode;
 };
@@ -72,6 +78,7 @@ export const WidgetCardContent = ({
   isInVerticalListTab,
   isMobile,
   hasInteractiveContent = false,
+  hasBoundedHeight = false,
   className,
   children,
 }: WidgetCardContentProps) => {
@@ -90,6 +97,7 @@ export const WidgetCardContent = ({
       isEditable={isEditable}
       isInVerticalListTab={isInVerticalListTab}
       isMobile={isMobile}
+      hasBoundedHeight={hasBoundedHeight}
       className={className}
       onClick={handleContentClick}
     >
