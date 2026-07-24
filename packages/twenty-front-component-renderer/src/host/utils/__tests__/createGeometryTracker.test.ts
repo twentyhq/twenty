@@ -469,11 +469,6 @@ describe('createGeometryTracker', () => {
     tracker.registerNode('1', observed.node);
     tracker.observe(['1']);
 
-    let currentTimestamp = 0;
-    const nowSpy = jest
-      .spyOn(performance, 'now')
-      .mockImplementation(() => currentTimestamp);
-
     const transitioningNode = document.createElement('div');
     rootContainer.append(transitioningNode);
     transitioningNode.dispatchEvent(
@@ -482,12 +477,63 @@ describe('createGeometryTracker', () => {
     transitioningNode.remove();
 
     flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
-
-    currentTimestamp = 10_000;
-    flushFrames(2);
 
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('should keep scheduling when an unrelated out-of-root animation ends during an in-root animation', () => {
+    const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    const unrelatedContainer = document.createElement('div');
+    document.body.append(rootContainer, unrelatedContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    rootContainer.append(observed.node);
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+
+    observed.node.dispatchEvent(new Event('transitionrun', { bubbles: true }));
+    unrelatedContainer.dispatchEvent(
+      new Event('transitionend', { bubbles: true }),
+    );
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+  });
+
+  it('should keep scheduling for a long-running in-root animation past the time an old watchdog would expire', () => {
+    const { tracker } = createArmedTracker();
+    const rootContainer = document.createElement('div');
+    document.body.append(rootContainer);
+    tracker.setRoot(rootContainer);
+
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+    rootContainer.append(observed.node);
+
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+
+    observed.node.dispatchEvent(new Event('transitionrun', { bubbles: true }));
+
+    const nowSpy = jest
+      .spyOn(performance, 'now')
+      .mockImplementation(() => 60_000);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
 
     nowSpy.mockRestore();
   });

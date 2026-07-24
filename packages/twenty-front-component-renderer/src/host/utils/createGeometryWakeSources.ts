@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type GeometryWakeSources } from '@/host/types/GeometryWakeSources';
@@ -17,19 +18,32 @@ const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {
   characterData: true,
 };
 
-const MAX_ANIMATION_IN_FLIGHT_DURATION_MS = 10_000;
+const resolveAnimationIdentity = (event: Event): string => {
+  const transitionProperty = (event as TransitionEvent).propertyName;
+
+  if (isNonEmptyString(transitionProperty)) {
+    return `transition:${transitionProperty}`;
+  }
+
+  const animationName = (event as AnimationEvent).animationName;
+
+  if (isNonEmptyString(animationName)) {
+    return `animation:${animationName}`;
+  }
+
+  return '';
+};
 
 export const createGeometryWakeSources = (
   onWake: () => void,
 ): GeometryWakeSources => {
   const resizeObservedNodes = new Set<Element>();
+  const activeAnimationIdentitiesByTarget = new Map<Element, Set<string>>();
 
   let rootContainer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let documentStyleObserver: MutationObserver | null = null;
-  let animationInFlightCount = 0;
-  let lastAnimationStartTimestamp = 0;
   let viewportDirty = false;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
@@ -58,39 +72,62 @@ export const createGeometryWakeSources = (
   };
 
   const handleAnimationStart = (event: Event): void => {
-    if (!isEventTargetRelevantToRoot(event.target)) {
+    if (
+      !isEventTargetRelevantToRoot(event.target) ||
+      !(event.target instanceof Element)
+    ) {
       return;
     }
 
-    animationInFlightCount += 1;
-    lastAnimationStartTimestamp = performance.now();
+    const activeIdentities =
+      activeAnimationIdentitiesByTarget.get(event.target) ?? new Set<string>();
+    activeIdentities.add(resolveAnimationIdentity(event));
+    activeAnimationIdentitiesByTarget.set(event.target, activeIdentities);
+
     onWake();
   };
 
-  // The end event is not filtered against the root: a node reparented outside
-  // the root between start and end would otherwise leak the counter, and a
-  // node removed mid-animation delivers no end event at all — the timestamp
-  // cap in hasAnimationInFlight covers that case.
-  const handleAnimationEnd = (): void => {
-    animationInFlightCount = Math.max(0, animationInFlightCount - 1);
+  // The end event is intentionally not filtered against the root: it clears the
+  // matching started animation by identity, so a node reparented outside the
+  // root between start and end still resolves, and an end for an animation that
+  // was never tracked (started outside the root) is a no-op.
+  const handleAnimationEnd = (event: Event): void => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+
+    const activeIdentities = activeAnimationIdentitiesByTarget.get(
+      event.target,
+    );
+
+    if (!isDefined(activeIdentities)) {
+      return;
+    }
+
+    activeIdentities.delete(resolveAnimationIdentity(event));
+
+    if (activeIdentities.size === 0) {
+      activeAnimationIdentitiesByTarget.delete(event.target);
+    }
   };
 
+  // A node removed mid-animation never delivers its end event; pruning
+  // disconnected targets here releases them without a time cap, so genuinely
+  // long-running animations on connected nodes keep the loop scheduling.
   const hasAnimationInFlight = (): boolean => {
-    if (animationInFlightCount === 0) {
-      return false;
+    for (const [
+      target,
+      activeIdentities,
+    ] of activeAnimationIdentitiesByTarget) {
+      if (!target.isConnected || activeIdentities.size === 0) {
+        activeAnimationIdentitiesByTarget.delete(target);
+        continue;
+      }
+
+      return true;
     }
 
-    const hasExceededMaxDuration =
-      performance.now() - lastAnimationStartTimestamp >=
-      MAX_ANIMATION_IN_FLIGHT_DURATION_MS;
-
-    if (hasExceededMaxDuration) {
-      animationInFlightCount = 0;
-
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const handleScroll = (event: Event): void => {
@@ -232,7 +269,7 @@ export const createGeometryWakeSources = (
     }
     resizeObservedNodes.clear();
 
-    animationInFlightCount = 0;
+    activeAnimationIdentitiesByTarget.clear();
   };
 
   const detachAllSources = (): void => {
