@@ -57,7 +57,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
-    widget.type === WidgetType.EMAIL_THREAD;
+    widget.type === WidgetType.EMAIL_THREAD ||
+    widget.type === WidgetType.MESSAGE_CAMPAIGN;
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 

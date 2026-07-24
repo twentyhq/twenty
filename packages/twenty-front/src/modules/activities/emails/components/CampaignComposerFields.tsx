@@ -10,7 +10,10 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { MessageChannelType } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  MessageChannelType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -48,12 +51,13 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
     parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
   }
 
-  const breakdown = parts.length > 0 ? ` (${parts.join(', ')})` : '';
+  if (parts.length === 0) {
+    return t`${preview.totalMembers} in this list`;
+  }
 
-  return (
-    t`${preview.totalMembers} in this list — ${preview.sendable} sendable` +
-    breakdown
-  );
+  const breakdown = parts.join(', ');
+
+  return t`${preview.totalMembers} in this list (${breakdown})`;
 };
 
 type CampaignComposerFieldsProps = {
@@ -66,7 +70,7 @@ export const CampaignComposerFields = ({
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
-    objectNameSingular: 'messageList',
+    objectNameSingular: CoreObjectNameSingular.MessageList,
   });
 
   const handleCreateList = async (searchInput?: string) => {
@@ -111,7 +115,7 @@ export const CampaignComposerFields = ({
       />
       <FormSingleRecordPicker
         label={t`To`}
-        objectNameSingulars={['messageList']}
+        objectNameSingulars={[CoreObjectNameSingular.MessageList]}
         defaultValue={campaignState.listId}
         onChange={campaignState.setListId}
         onCreate={handleCreateList}
@@ -119,20 +123,24 @@ export const CampaignComposerFields = ({
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
-      <Select
-        dropdownId="campaign-composer-unsubscribe-topic"
-        label={t`Unsubscribe topic`}
-        fullWidth
-        value={campaignState.unsubscribeTopicId ?? ''}
-        options={topicOptions}
-        emptyOption={{ label: t`No topic`, value: '' }}
-        onChange={(value) =>
-          campaignState.setUnsubscribeTopicId(value === '' ? null : value)
-        }
-      />
-      <StyledHint>
-        {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-      </StyledHint>
+      {topicOptions.length > 0 && (
+        <>
+          <Select
+            dropdownId="campaign-composer-unsubscribe-topic"
+            label={t`Unsubscribe topic`}
+            fullWidth
+            value={campaignState.unsubscribeTopicId ?? ''}
+            options={topicOptions}
+            emptyOption={{ label: t`No topic`, value: '' }}
+            onChange={(value) =>
+              campaignState.setUnsubscribeTopicId(value === '' ? null : value)
+            }
+          />
+          <StyledHint>
+            {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
+          </StyledHint>
+        </>
+      )}
       <FormTextFieldInput
         label={t`Subject`}
         defaultValue={campaignState.subject}
@@ -140,7 +148,7 @@ export const CampaignComposerFields = ({
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        defaultValue={campaignState.body}
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

@@ -119,6 +119,7 @@ import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
 import { AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand } from './2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration';
 import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784766000000-add-message-channel-display-name';
+import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784766100000-add-message-campaign-widget-type';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
@@ -246,6 +247,7 @@ export const INSTANCE_COMMANDS = [
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
   AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand,
   AddMessageChannelDisplayNameFastInstanceCommand,
+  AddMessageCampaignWidgetTypeFastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
 ];
