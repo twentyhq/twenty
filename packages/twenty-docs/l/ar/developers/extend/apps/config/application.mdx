@@ -9,7 +9,7 @@ icon: rocket
 * **الهوية** — المعرّف الشامل، واسم العرض، والوصف.
 * **الأذونات** — الدور الذي تعمل بموجبه دوال المنطق والمكوّنات الأمامية الخاصة به.
 * **المتغيرات** *(اختياري)* — أزواج مفتاح–قيمة تُتاح لكودك كمتغيرات بيئة.
-* **خطافات ما قبل التثبيت/ما بعد التثبيت** *(اختياري)* — راجع [Logic Functions](/l/ar/developers/extend/apps/logic/logic-functions).
+* **خطافات ما قبل التثبيت/ما بعد التثبيت/إلغاء التثبيت** *(اختياري)* — راجع [Logic Functions](/l/ar/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ export default defineApplication({
 * حقول `universalIdentifier` هي معرّفات حتمية تملكها أنت. أنشِئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
 * `applicationVariables` تصبح متغيرات بيئة لوظائفك ومكوّناتك الأمامية. في وظائف المنطق (على جانب الخادم)، تكون متاحة على شكل `process.env.VARIABLE_NAME`. في المكوّنات الأمامية، استخدم `getApplicationVariable('VARIABLE_NAME')` من `twenty-sdk/front-component`. يتم حقن المتغيّرات المعلَّمة بـ `isSecret: true` في وظائف المنطق فقط. المكوّنات الأمامية تتلقّى المتغيّرات غير السرّية فقط.
 * يتم اكتشاف الدور الافتراضي تلقائيًا من ملف الدور المميز بـ [`defineApplicationRole()`](/l/ar/developers/extend/apps/config/roles) — لست بحاجة إلى الإشارة إليه من `defineApplication()`.
-* يتم اكتشاف دوال ما قبل التثبيت وما بعده تلقائيًا أثناء بناء البيان — لا حاجة للإشارة إليها في `defineApplication()`.
+* يتم اكتشاف دوال ما قبل التثبيت وما بعد التثبيت وإلغاء التثبيت تلقائيًا أثناء بناء البيان — لا حاجة للإشارة إليها في `defineApplication()`.
 * لا يزال تمرير `defaultRoleUniversalIdentifier` بشكل صريح مدعومًا من أجل التوافق مع الإصدارات السابقة، ولكنه مُهمل لصالح `defineApplicationRole()`.
 * `serverVariables` هي تكوينات وأسرار بنطاق المثيل (مثل مفاتيح واجهة برمجة التطبيقات). على عكس `applicationVariables`، فهي لا تصرح عن أي قيمة في ملف manifest — حيث يقوم مشغّل مساحة العمل بملئها من إعدادات التطبيق، ويتم حقنها في دوال المنطق فقط بعد تعيينها.
 

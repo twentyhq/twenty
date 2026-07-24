@@ -613,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**インストールフック** — pre-install と post-install のハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction` と `definePostInstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
+**インストールフック** — pre-install、post-install、uninstall の各ハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction`、`definePostInstallLogicFunction`、`defineUninstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
 </Note>
 
 ## 型付き API クライアント（`twenty-client-sdk`）

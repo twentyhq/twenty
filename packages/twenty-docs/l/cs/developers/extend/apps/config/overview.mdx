@@ -24,6 +24,11 @@ icon: screwdriver-wrench
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## V této části
@@ -36,7 +41,7 @@ icon: screwdriver-wrench
     `defineRole` – deklaruje, co mohou logické funkce vaší aplikace číst a zapisovat.
   </Card>
   <Card title="Instalační hooky" icon="wrench" href="/l/cs/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` a `definePostInstallLogicFunction` – zálohují data, nastavují výchozí hodnoty, validují aktualizace.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction` — zálohují data, nastavují výchozí hodnoty, validují aktualizace, uklízejí při odebrání.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ icon: screwdriver-wrench
 
 * **Aplikace** je vstupní bod. Každá aplikace má právě jedno volání `defineApplication()`, které ukazuje na jednu **roli** jako výchozí.
 * **Role** určuje, co mohou logické funkce aplikace a front-endové komponenty číst a zapisovat. Dodržujte zásadu nejmenších oprávnění: udělujte pouze ta oprávnění, která váš kód skutečně potřebuje.
-* **Instalační hooky** se spouštějí během instalace nebo aktualizace – pre-install před migrací metadat (aby mohly odmítnout rizikovou aktualizaci), post-install po migraci (aby mohly proti novému schématu naplnit výchozí data).
+* **Instalační hooky** se spouštějí během instalace nebo aktualizace – pre-install před migrací metadat (aby mohly odmítnout rizikovou aktualizaci), post-install po migraci (aby mohly proti novému schématu naplnit výchozí data). Hook pro odinstalaci se spouští těsně před odebráním aplikace, takže může uklidit externí prostředky, zatímco data aplikace jsou stále čitelná.
 
 <Note>
 Instalační hooky sdílejí běhové prostředí [logických funkcí](/l/cs/developers/extend/apps/logic/logic-functions) – stejný podpis handleru, stejné proměnné prostředí, stejný typovaný klient API – ale deklarují se pomocí vlastních funkcí define a fungují mimo běžný model spouštěčů (HTTP, cron, databázové události).

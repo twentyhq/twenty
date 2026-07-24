@@ -612,7 +612,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**설치 훅** — 사전 설치 및 사후 설치 핸들러 — 는 이 런타임을 공유하지만, 각각의 `define` 함수로 선언되며 트리거 설정을 받지 않습니다. `definePreInstallLogicFunction` 및 `definePostInstallLogicFunction` 에 대해서는 [설치 훅](/l/ko/developers/extend/apps/config/install-hooks)을 참고하세요.
+**설치 훅** — 사전 설치, 사후 설치 및 제거 핸들러 — 는 이 런타임을 공유하지만, 각각의 `define` 함수로 선언되며 트리거 설정을 받지 않습니다. `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, 및 `defineUninstallLogicFunction` 에 대해서는 [설치 훅](/l/ko/developers/extend/apps/config/install-hooks)을 참고하세요.
 </Note>
 
 ## 타입이 지정된 API 클라이언트(twenty-client-sdk)

@@ -69,7 +69,7 @@ your-app/
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
-│   generate SDK → [post-install]                         │
+│   generate SDK → [post-install] → … → [uninstall]       │
 ├─────────────────────────────────────────────────────────┤
 │ Publish                                                 │
 │   npm publish → appears in Twenty marketplace           │
@@ -78,13 +78,13 @@ your-app/
 
 * **`yarn twenty dev`** — 소스 파일을 감시하고 연결된 Twenty 서버로 변경 사항을 실시간 동기화합니다. 스키마가 변경되면 타입이 지정된 API 클라이언트가 자동으로 재생성됩니다.
 * **`yarn twenty dev:build`** — TypeScript를 컴파일하고, 로직 함수와 프런트 컴포넌트를 esbuild로 번들링하며, 매니페스트를 생성합니다.
-* **사전/사후 설치 훅** — 설치 중에 실행되는 선택적 함수입니다. 자세한 내용은 [Install Hooks](/l/ko/developers/extend/apps/config/install-hooks)를 참조하세요.
+* **사전/사후 설치 및 제거 훅** — 설치 중이거나 제거 직전에 실행되는 선택적 함수입니다. 자세한 내용은 [Install Hooks](/l/ko/developers/extend/apps/config/install-hooks)를 참조하세요.
 
 ## 다음 단계
 
 <CardGroup cols={2}>
   <Card title="설정" icon="screwdriver-wrench" href="/l/ko/developers/extend/apps/config/overview">
-    애플리케이션 식별, 기본 역할, 설치 훅.
+    애플리케이션 식별, 기본 역할, 설치 및 제거 훅.
   </Card>
   <Card title="데이터" icon="database" href="/l/ko/developers/extend/apps/data/overview">
     객체, 필드, 양방향 관계.

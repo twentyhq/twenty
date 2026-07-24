@@ -612,7 +612,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction`.
+**خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت وإلغاء التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction` و `defineUninstallLogicFunction`.
 </Note>
 
 ## عملاء واجهة برمجة تطبيقات مضبوطة الأنواع (`twenty-client-sdk`)
