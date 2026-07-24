@@ -218,6 +218,39 @@ describe('CompanyEnrichmentService', () => {
     expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
+  it('should not record an enrichment attempt when the client skips (feature disabled)', async () => {
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'skipped',
+    });
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
+  });
+
+  it('should still return the enrichment when recording the attempt fails', async () => {
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'matched',
+      data: { name: 'Acme Inc' },
+    });
+    keyValuePairService.set.mockRejectedValue(
+      new Error('key-value store down'),
+    );
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('matched');
+  });
+
   it('should rethrow non throttler errors from the throttler', async () => {
     throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
       new Error('redis down'),

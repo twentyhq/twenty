@@ -90,11 +90,14 @@ export class CompanyEnrichmentService {
       domain,
     });
 
-    await this.recordEnrichmentAttempt({
-      workspaceId,
-      domain,
-      outcome: enrichmentResult.outcome,
-    });
+    // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
+    if (result.outcome !== 'skipped') {
+      await this.recordEnrichmentAttempt({
+        workspaceId,
+        domain,
+        outcome: enrichmentResult.outcome,
+      });
+    }
 
     return enrichmentResult;
   }
@@ -145,13 +148,22 @@ export class CompanyEnrichmentService {
     domain: string;
     outcome: WorkspaceCompanyEnrichmentResult['outcome'];
   }): Promise<void> {
-    await this.keyValuePairService.set({
-      userId: null,
-      workspaceId,
-      key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
-      value: { domain, outcome, attemptedAt: new Date().toISOString() },
-      type: KeyValuePairType.CONFIG_VARIABLE,
-    });
+    // Best-effort telemetry: never let a key-value write failure fail the enrichment.
+    try {
+      await this.keyValuePairService.set({
+        userId: null,
+        workspaceId,
+        key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
+        value: { domain, outcome, attemptedAt: new Date().toISOString() },
+        type: KeyValuePairType.CONFIG_VARIABLE,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to record company enrichment attempt for workspace ${workspaceId} (${domain}): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private async isWorkspaceCreator({
