@@ -203,6 +203,23 @@ describe('createStyleProxy', () => {
     expect(style.getPropertyValue('scale')).toBe('3');
   });
 
+  it('should round trip a custom property set through setProperty', () => {
+    const style = createStyle();
+
+    style.setProperty('--myVar', '1px');
+
+    expect(style.getPropertyValue('--myVar')).toBe('1px');
+  });
+
+  it('should preserve the exact custom property key on direct assignment', () => {
+    const style = createStyle();
+
+    style['--myVar'] = '2px';
+
+    expect(style.cssText).toBe('--myVar:2px');
+    expect(style['--myVar']).toBe('2px');
+  });
+
   it('should keep Object.prototype methods callable', () => {
     const style = createStyle();
 
