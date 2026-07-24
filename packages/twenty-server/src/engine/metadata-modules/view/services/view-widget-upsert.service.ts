@@ -463,21 +463,34 @@ export class ViewWidgetUpsertService {
     const fieldsToCreate: FlatViewField[] = [];
     const fieldsToUpdate: FlatViewField[] = [];
 
+    // Index the existing fields once instead of re-scanning them for every input
+    // (O(n*m) -> O(n+m)). First occurrence wins, matching the previous .find().
+    const existingFieldById = new Map<string, FlatViewField>();
+    const existingFieldByFieldMetadataId = new Map<string, FlatViewField>();
+
+    for (const existingField of existingViewFields) {
+      if (!existingFieldById.has(existingField.id)) {
+        existingFieldById.set(existingField.id, existingField);
+      }
+      if (!existingFieldByFieldMetadataId.has(existingField.fieldMetadataId)) {
+        existingFieldByFieldMetadataId.set(
+          existingField.fieldMetadataId,
+          existingField,
+        );
+      }
+    }
+
     for (const inputField of inputFields) {
       const existingFieldByViewFieldId = isDefined(inputField.viewFieldId)
-        ? existingViewFields.find((f) => f.id === inputField.viewFieldId)
+        ? existingFieldById.get(inputField.viewFieldId)
         : undefined;
 
-      const existingFieldByFieldMetadataId = isDefined(
-        inputField.fieldMetadataId,
-      )
-        ? existingViewFields.find(
-            (f) => f.fieldMetadataId === inputField.fieldMetadataId,
-          )
+      const existingFieldByMetadataId = isDefined(inputField.fieldMetadataId)
+        ? existingFieldByFieldMetadataId.get(inputField.fieldMetadataId)
         : undefined;
 
       const existingField =
-        existingFieldByViewFieldId ?? existingFieldByFieldMetadataId;
+        existingFieldByViewFieldId ?? existingFieldByMetadataId;
 
       if (isDefined(existingField)) {
         const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
@@ -636,9 +649,17 @@ export class ViewWidgetUpsertService {
       inputFilterGroups.map((g) => g.id).filter(isDefined),
     );
 
+    const existingFilterGroupById = new Map<string, FlatViewFilterGroup>();
+
+    for (const existingGroup of existingViewFilterGroups) {
+      if (!existingFilterGroupById.has(existingGroup.id)) {
+        existingFilterGroupById.set(existingGroup.id, existingGroup);
+      }
+    }
+
     for (const inputGroup of inputFilterGroups) {
       const existingGroup = isDefined(inputGroup.id)
-        ? existingViewFilterGroups.find((g) => g.id === inputGroup.id)
+        ? existingFilterGroupById.get(inputGroup.id)
         : undefined;
 
       if (!isDefined(existingGroup)) {
@@ -755,9 +776,17 @@ export class ViewWidgetUpsertService {
       inputFilters.map((f) => f.id).filter(isDefined),
     );
 
+    const existingFilterById = new Map<string, FlatViewFilter>();
+
+    for (const existingFilter of existingViewFilters) {
+      if (!existingFilterById.has(existingFilter.id)) {
+        existingFilterById.set(existingFilter.id, existingFilter);
+      }
+    }
+
     for (const inputFilter of inputFilters) {
       const existingFilter = isDefined(inputFilter.id)
-        ? existingViewFilters.find((f) => f.id === inputFilter.id)
+        ? existingFilterById.get(inputFilter.id)
         : undefined;
 
       if (!isDefined(existingFilter)) {
@@ -921,9 +950,17 @@ export class ViewWidgetUpsertService {
     const sortsToUpdate: FlatViewSort[] = [];
     const inputSortIds = new Set(inputSorts.map((s) => s.id).filter(isDefined));
 
+    const existingSortById = new Map<string, FlatViewSort>();
+
+    for (const existingSort of existingViewSorts) {
+      if (!existingSortById.has(existingSort.id)) {
+        existingSortById.set(existingSort.id, existingSort);
+      }
+    }
+
     for (const inputSort of inputSorts) {
       const existingSort = isDefined(inputSort.id)
-        ? existingViewSorts.find((s) => s.id === inputSort.id)
+        ? existingSortById.get(inputSort.id)
         : undefined;
 
       if (!isDefined(existingSort)) {
