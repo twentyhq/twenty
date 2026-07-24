@@ -368,7 +368,6 @@ export class StreamAgentChatJob {
               turnId: data.existingTurnId,
               messages: data.messages,
               browsingContext: data.browsingContext,
-              companyContext: data.companyContext,
               modelId: data.modelId,
               onCodeExecutionUpdate,
               onCompaction,

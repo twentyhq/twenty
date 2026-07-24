@@ -3,6 +3,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
+import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -15,6 +18,7 @@ describe('CompanyEnrichmentService', () => {
   let userWorkspaceRepository: { findOne: jest.Mock };
   let peopleDataLabsCompanyClientService: { enrichCompanyByDomain: jest.Mock };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
+  let keyValuePairService: { set: jest.Mock };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -25,6 +29,7 @@ describe('CompanyEnrichmentService', () => {
     };
     peopleDataLabsCompanyClientService = { enrichCompanyByDomain: jest.fn() };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
+    keyValuePairService = { set: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -40,6 +45,10 @@ describe('CompanyEnrichmentService', () => {
         {
           provide: ThrottlerService,
           useValue: throttlerService,
+        },
+        {
+          provide: KeyValuePairService,
+          useValue: keyValuePairService,
         },
       ],
     }).compile();
@@ -101,6 +110,18 @@ describe('CompanyEnrichmentService', () => {
     expect(
       peopleDataLabsCompanyClientService.enrichCompanyByDomain,
     ).toHaveBeenCalledWith('acme.com');
+    expect(keyValuePairService.set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: null,
+        workspaceId,
+        key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
+        type: KeyValuePairType.CONFIG_VARIABLE,
+        value: expect.objectContaining({
+          domain: 'acme.com',
+          outcome: 'matched',
+        }),
+      }),
+    );
   });
 
   it('should pass through a transient error', async () => {
@@ -168,6 +189,33 @@ describe('CompanyEnrichmentService', () => {
     expect(
       peopleDataLabsCompanyClientService.enrichCompanyByDomain,
     ).not.toHaveBeenCalled();
+  });
+
+  it('should not record an enrichment attempt when the client is never called', async () => {
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: 'someone-else',
+      email: 'someone@acme.com',
+      workspaceId,
+    });
+
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
+  });
+
+  it('should not record an enrichment attempt when throttled', async () => {
+    throttlerService.tokenBucketThrottleOrThrow.mockRejectedValue(
+      new ThrottlerException(
+        'Limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      ),
+    );
+
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {

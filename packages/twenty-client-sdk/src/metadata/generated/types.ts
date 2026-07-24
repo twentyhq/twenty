@@ -6775,12 +6775,7 @@ export default {
                 }
             ],
             "getAiSystemPromptPreview": [
-                320,
-                {
-                    "companyContext": [
-                        5
-                    ]
-                }
+                320
             ],
             "skills": [
                 316

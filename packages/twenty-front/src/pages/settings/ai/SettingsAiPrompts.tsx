@@ -16,9 +16,7 @@ import {
 import { H2Title, H3Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
-import { GET_AI_SYSTEM_PROMPT_PREVIEW } from '@/workspace/graphql/queries/getAiSystemPromptPreview';
-import { type GetAiSystemPromptPreviewQuery } from '~/generated-metadata/graphql';
+import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledFormContainer = styled.div`
@@ -36,14 +34,10 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsAiPrompts = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const companyEnrichment = useAtomStateValue(companyEnrichmentState);
 
-  const { data: previewData, loading: previewLoading } =
-    useQuery<GetAiSystemPromptPreviewQuery>(GET_AI_SYSTEM_PROMPT_PREVIEW, {
-      variables: {
-        companyContext: companyEnrichment?.enrichment ?? null,
-      },
-    });
+  const { data: previewData, loading: previewLoading } = useQuery(
+    GetAiSystemPromptPreviewDocument,
+  );
 
   const preview = previewData?.getAiSystemPromptPreview;
   const sections = preview?.sections ?? [];

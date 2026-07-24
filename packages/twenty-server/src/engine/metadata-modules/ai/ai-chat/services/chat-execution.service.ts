@@ -14,7 +14,6 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -89,7 +88,6 @@ export type ChatExecutionOptions = {
   turnId?: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
-  companyContext: WorkspaceCompanyEnrichment | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   onCompaction?: () => void;
   modelId?: string;
@@ -130,7 +128,6 @@ export class ChatExecutionService {
     turnId,
     messages,
     browsingContext,
-    companyContext,
     onCodeExecutionUpdate,
     onCompaction,
     modelId,
@@ -292,7 +289,6 @@ export class ChatExecutionService {
       storedFiles,
       workspace.aiAdditionalInstructions ?? undefined,
       userContext,
-      companyContext ?? undefined,
     );
 
     this.logger.log(

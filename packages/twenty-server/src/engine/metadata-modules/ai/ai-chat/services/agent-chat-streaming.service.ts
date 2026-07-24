@@ -26,6 +26,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { COMPANY_CONTEXT_MESSAGE_IS_HIDDEN } from 'src/engine/metadata-modules/ai/ai-chat/constants/company-context-message-is-hidden.constant';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
@@ -227,6 +228,15 @@ export class AgentChatStreamingService {
     }
 
     try {
+      if (isDefined(companyContext)) {
+        await this.agentChatService.seedCompanyContextMessage({
+          threadId,
+          workspaceId: workspace.id,
+          companyEnrichment: companyContext,
+          isHidden: COMPANY_CONTEXT_MESSAGE_IS_HIDDEN,
+        });
+      }
+
       const fileParts = await this.buildFilePartsFromAttachments(
         fileAttachments,
         workspace.id,
@@ -268,7 +278,6 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages: previousMessages,
           browsingContext,
-          companyContext,
           modelId,
           lastUserMessageText: text,
           lastUserMessageParts: userMessageParts,
@@ -396,7 +405,6 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages,
           browsingContext: null,
-          companyContext: null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
           lastUserMessageParts: retriedMessage.parts,
@@ -533,7 +541,6 @@ export class AgentChatStreamingService {
         workspaceId: workspace.id,
         messages,
         browsingContext: null,
-        companyContext: null,
         modelId,
         lastUserMessageText: '',
         lastUserMessageParts: [],
@@ -659,7 +666,6 @@ export class AgentChatStreamingService {
           workspaceId,
           messages: uiMessages,
           browsingContext: null,
-          companyContext: null,
           lastUserMessageText: messageText,
           lastUserMessageParts,
           hasTitle,
@@ -713,6 +719,7 @@ export class AgentChatStreamingService {
       threadId,
       userWorkspaceId,
       workspaceId,
+      includeHidden: true,
     });
 
     const filteredMessages = allMessages.filter(

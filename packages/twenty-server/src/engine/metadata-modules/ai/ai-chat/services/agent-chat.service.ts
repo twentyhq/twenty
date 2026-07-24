@@ -8,6 +8,7 @@ import {
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -34,6 +35,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
@@ -204,6 +206,9 @@ export class AgentChatService {
     turnId,
     id,
     workspaceId,
+    isHidden,
+    processedAt,
+    createdAt,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -212,6 +217,9 @@ export class AgentChatService {
     turnId?: string;
     id?: string;
     workspaceId: string;
+    isHidden?: boolean;
+    processedAt?: Date;
+    createdAt?: Date;
   }) {
     let actualTurnId = turnId;
 
@@ -230,7 +238,9 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: processedAt ?? new Date(),
+      ...(isDefined(isHidden) ? { isHidden } : {}),
+      ...(isDefined(createdAt) ? { createdAt } : {}),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -357,19 +367,62 @@ export class AgentChatService {
     threadId,
     userWorkspaceId,
     workspaceId,
+    includeHidden = false,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceId: string;
+    includeHidden?: boolean;
   }) {
     // getThreadById enforces ownership; messages then scoped by both
     // threadId and workspaceId.
     await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
 
     return this.messageRepository.find(workspaceId, {
-      where: { threadId },
+      where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
+    });
+  }
+
+  async seedCompanyContextMessage({
+    threadId,
+    workspaceId,
+    companyEnrichment,
+    isHidden,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    companyEnrichment: WorkspaceCompanyEnrichment;
+    isHidden: boolean;
+  }): Promise<void> {
+    const existingMessageCount = await this.messageRepository.count(
+      workspaceId,
+      { where: { threadId } },
+    );
+
+    if (existingMessageCount > 0) {
+      return;
+    }
+
+    // Sort before any real message and stay out of thread-ranking / latest-message queries.
+    const epochDate = new Date(0);
+
+    await this.addMessage({
+      threadId,
+      workspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [
+          {
+            type: 'text' as const,
+            text: buildCompanyContextMessageText(companyEnrichment),
+          },
+        ],
+      },
+      isHidden,
+      processedAt: epochDate,
+      createdAt: epochDate,
     });
   }
 

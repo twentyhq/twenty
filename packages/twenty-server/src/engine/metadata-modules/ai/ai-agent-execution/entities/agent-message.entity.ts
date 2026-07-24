@@ -77,6 +77,9 @@ export class AgentMessageEntity {
   @OneToMany(() => AgentMessagePartEntity, (part) => part.message)
   parts: Relation<AgentMessagePartEntity[]>;
 
+  @Column({ type: 'boolean', default: false })
+  isHidden: boolean;
+
   @Column({ type: 'timestamptz', nullable: true })
   processedAt: Date | null;
 

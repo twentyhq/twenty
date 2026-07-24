@@ -538,14 +538,11 @@ export class AgentChatResolver {
   async getAiSystemPromptPreview(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('companyContext', { type: () => GraphQLJSON, nullable: true })
-    companyContext: WorkspaceCompanyEnrichment | null,
   ) {
     return this.systemPromptBuilderService.buildPreview(
       workspace.id,
       userWorkspaceId,
       workspace.aiAdditionalInstructions ?? undefined,
-      sanitizeWorkspaceCompanyEnrichment(companyContext) ?? undefined,
     );
   }
 
