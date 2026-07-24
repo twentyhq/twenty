@@ -8,6 +8,26 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEvent = {
+  exception?: {
+    values?: Array<{
+      type?: string;
+    }>;
+  };
+};
+
+const isAbortErrorEvent = (event: SentryEvent) => {
+  return event.exception?.values?.some(
+    (exception) => exception.type === 'AbortError',
+  );
+};
+
+const isObjectMetadataItemNotFoundEvent = (event: SentryEvent) => {
+  return event.exception?.values?.some(
+    (exception) => exception.type === 'ObjectMetadataItemNotFoundError',
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +74,23 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isAbortErrorEvent(event)) {
+                return null;
+              }
+
+              if (isObjectMetadataItemNotFoundEvent(event)) {
+                event.fingerprint = ['object-metadata-item-not-found'];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  'error.category': 'metadata',
+                  'error.type': 'object-metadata-item-not-found',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

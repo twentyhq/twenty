@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
@@ -22,9 +23,14 @@ const isApolloError = (error: unknown): boolean =>
   UnconventionalError.is(error);
 
 const hasErrorCode = (
-  error: CustomError | any,
+  error: unknown,
 ): error is CustomError & { code: string } => {
-  return 'code' in error && isDefined(error.code);
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
+    'code' in error &&
+    isDefined(error.code)
+  );
 };
 
 export const PromiseRejectionEffect = () => {
@@ -44,20 +50,37 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
+
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
       try {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+          scope.setExtras({ mechanism: 'onUnhandledRejection' });
+          scope.setTag('error-handler', 'promise-rejection');
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
+          const fingerprint = hasErrorCode(error)
+            ? error.code
+            : error instanceof Error
+              ? error.message
+              : 'non-error-promise-rejection';
+
           scope.setFingerprint([fingerprint]);
-          error.name = error.message;
+
+          if (error instanceof ObjectMetadataItemNotFoundError) {
+            scope.setFingerprint(['object-metadata-item-not-found']);
+            scope.setLevel('warning');
+            scope.setTag('error.category', 'metadata');
+            scope.setTag('error.type', 'object-metadata-item-not-found');
+          } else if (!(error instanceof Error)) {
+            scope.setLevel('warning');
+          }
+
           return scope;
         });
       } catch (sentryError) {
