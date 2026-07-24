@@ -43,6 +43,7 @@ import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/res
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
+import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
@@ -301,10 +302,10 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const sanitizedMessages = processedMessages.map((message) => ({
-      ...message,
-      parts: finalizeDanglingToolParts(message.parts),
-    }));
+    const sanitizedMessages = this.sanitizeMessagePartsForModel(
+      processedMessages,
+      new Set(Object.keys(activeTools)),
+    );
 
     const rawModelMessages = await convertToModelMessages(sanitizedMessages);
 
@@ -608,6 +609,19 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private sanitizeMessagePartsForModel(
+    messages: ExtendedUIMessage[],
+    directlyCallableToolNames: Set<string>,
+  ): ExtendedUIMessage[] {
+    return messages.map((message) => ({
+      ...message,
+      parts: guideUncallableToolCallsToMetaTool(
+        finalizeDanglingToolParts(message.parts),
+        directlyCallableToolNames,
+      ),
+    }));
   }
 
   private injectBrowsingContextIntoLastUserMessage(

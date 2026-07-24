@@ -115,9 +115,9 @@ describe('finalizeDanglingToolParts', () => {
       errorText: 'boom',
     });
 
-    expect(
-      finalizeDanglingToolParts([typed, dynamicDuplicate]),
-    ).toEqual([typed]);
+    expect(finalizeDanglingToolParts([typed, dynamicDuplicate])).toEqual([
+      typed,
+    ]);
   });
 
   it('keeps the first part when a tool call id is duplicated across states', () => {
