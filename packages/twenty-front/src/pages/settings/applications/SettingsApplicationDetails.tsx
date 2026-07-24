@@ -22,7 +22,9 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
+  IconAlertTriangle,
   IconBox,
   IconCommand,
   IconGraph,
@@ -36,6 +38,7 @@ import {
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  IsApplicationStoppedDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
@@ -81,6 +84,21 @@ export const SettingsApplicationDetails = () => {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
     skip: !application?.universalIdentifier,
   });
+
+  const { data: isApplicationStoppedData } = useQuery(
+    IsApplicationStoppedDocument,
+    {
+      variables: {
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+      },
+      skip: !application?.universalIdentifier,
+      // The kill switch is toggled server-side, a cached value would hide it.
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const isApplicationStopped =
+    isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -349,6 +367,13 @@ export const SettingsApplicationDetails = () => {
         ]}
       >
         <SettingsPageContainer>
+          {isApplicationStopped && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
+            />
+          )}
           <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
           {renderActiveTabContent()}
         </SettingsPageContainer>

@@ -7,6 +7,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeResolver } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.resolver';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
+import { UpgradeApplicationCommand } from 'src/engine/core-modules/application/application-upgrade/commands/upgrade-application.command';
 import { ApplicationVersionCheckCronJob } from 'src/engine/core-modules/application/application-upgrade/crons/application-version-check.cron.job';
 import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -30,6 +31,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ApplicationUpgradeResolver,
     ApplicationVersionCheckCronJob,
     ApplicationVersionCheckCronCommand,
+    UpgradeApplicationCommand,
   ],
   exports: [ApplicationUpgradeService, ApplicationVersionCheckCronCommand],
 })

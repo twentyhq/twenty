@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
@@ -111,15 +111,21 @@ export class ApplicationUpgradeService {
     }
   }
 
-  async upgradeAllApplications({
+  async findApplicationsToUpgrade({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    batchSize?: number;
-  }): Promise<void> {
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<{
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string | null;
+    applicationsToUpgrade: ApplicationEntity[];
+  }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
     });
@@ -127,28 +133,56 @@ export class ApplicationUpgradeService {
     const targetVersion = appRegistration.latestAvailableVersion;
 
     if (!isDefined(targetVersion)) {
-      return;
+      return {
+        appRegistration,
+        targetVersion: null,
+        applicationsToUpgrade: [],
+      };
     }
 
     const applications = await this.applicationRepository.find({
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isNonEmptyArray(workspaceIds)
+          ? { workspaceId: In(workspaceIds) }
+          : {}),
       },
     });
 
-    const applicationsToUpgrade = applications.filter(
+    let applicationsToUpgrade = applications.filter(
       (application) => application.version !== targetVersion,
     );
 
+    if (isDefined(workspaceCountLimit)) {
+      applicationsToUpgrade = applicationsToUpgrade.slice(
+        0,
+        workspaceCountLimit,
+      );
+    }
+
+    return { appRegistration, targetVersion, applicationsToUpgrade };
+  }
+
+  async upgradeApplications({
+    appRegistration,
+    targetVersion,
+    applications,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    applications: ApplicationEntity[];
+    batchSize?: number;
+  }): Promise<void> {
     const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
 
     for (
       let batchStart = 0;
-      batchStart < applicationsToUpgrade.length;
+      batchStart < applications.length;
       batchStart += sanitizedBatchSize
     ) {
-      const batch = applicationsToUpgrade.slice(
+      const batch = applications.slice(
         batchStart,
         batchStart + sanitizedBatchSize,
       );
@@ -170,6 +204,39 @@ export class ApplicationUpgradeService {
         }),
       );
     }
+  }
+
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    batchSize?: number;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<void> {
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
+      await this.findApplicationsToUpgrade({
+        applicationRegistrationId,
+        onlyAutoUpgrade,
+        workspaceIds,
+        workspaceCountLimit,
+      });
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    await this.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
+      batchSize,
+    });
   }
 
   async upgradeApplication(params: {

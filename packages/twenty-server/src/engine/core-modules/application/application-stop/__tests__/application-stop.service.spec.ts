@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import {
   APPLICATION_KILL_SWITCH_LOCAL_CACHE_TTL_MS,
   ApplicationStopService,
-} from 'src/engine/core-modules/application/application-stop.service';
+} from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-identifier-1';
@@ -14,6 +14,8 @@ describe('ApplicationStopService', () => {
 
   const cacheStorageService = {
     get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -34,6 +36,21 @@ describe('ApplicationStopService', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  it('sets the kill switch when stopping an application', async () => {
+    await applicationStopService.stop(APPLICATION_UNIVERSAL_IDENTIFIER);
+
+    expect(cacheStorageService.set).toHaveBeenCalledWith(
+      KILL_SWITCH_KEY,
+      'stopped',
+    );
+  });
+
+  it('deletes the kill switch when removing it', async () => {
+    await applicationStopService.remove(APPLICATION_UNIVERSAL_IDENTIFIER);
+
+    expect(cacheStorageService.del).toHaveBeenCalledWith(KILL_SWITCH_KEY);
   });
 
   it('returns true when the kill switch exists', async () => {
