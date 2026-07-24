@@ -1474,11 +1474,6 @@ msgstr "לא ניתן לעדכן הגדרת דגל הרשאה סטנדרטית"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "לא ניתן לעדכן מאפייני מיומנות סטנדרטית (מותרות רק הפעלה/השבתה)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "לא ניתן לעדכן את מצב גרסת תהליך העבודה באופן ידני."
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -8012,6 +8007,11 @@ msgstr "תכונה זו אינה מופעלת."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "לא ניתן לשנות שדה זה."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
