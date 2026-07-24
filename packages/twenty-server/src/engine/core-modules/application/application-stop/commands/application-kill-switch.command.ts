@@ -11,18 +11,23 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
-type StopApplicationCommandOptions = {
+const KILL_SWITCH_ACTIONS = ['stop', 'start'] as const;
+
+type KillSwitchAction = (typeof KILL_SWITCH_ACTIONS)[number];
+
+type ApplicationKillSwitchCommandOptions = {
   applicationUniversalIdentifier: string;
   workspaceId?: string;
   yes?: boolean;
 };
 
 @Command({
-  name: 'stop-application',
+  name: 'application:kill-switch',
+  arguments: '[action]',
   description:
-    'Stop an application by enabling its kill switch: its logic functions stop executing until the switch is cleared. Applies to every workspace, or to a single one with --workspace-id',
+    'Toggle an application kill switch: "stop" (default) halts its logic function executions until "start" clears the switch. Applies to every workspace, or to a single one with --workspace-id',
 })
-export class StopApplicationCommand extends CommandRunner {
+export class ApplicationKillSwitchCommand extends CommandRunner {
   protected logger: CommandLogger;
 
   constructor(
@@ -52,7 +57,7 @@ export class StopApplicationCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-id <workspace_id>',
     description:
-      'Only stop the application on the given workspace id. Stops it on every workspace if not provided.',
+      'Only toggle the kill switch on the given workspace id. Applies to every workspace if not provided.',
     required: false,
   })
   parseWorkspaceId(value: string): string {
@@ -69,9 +74,17 @@ export class StopApplicationCommand extends CommandRunner {
   }
 
   override async run(
-    _passedParams: string[],
-    options: StopApplicationCommandOptions,
+    passedParams: string[],
+    options: ApplicationKillSwitchCommandOptions,
   ): Promise<void> {
+    const action = (passedParams[0] ?? 'stop') as KillSwitchAction;
+
+    if (!KILL_SWITCH_ACTIONS.includes(action)) {
+      throw new Error(
+        `Invalid action "${passedParams[0]}". Expected one of: ${KILL_SWITCH_ACTIONS.join(', ')}`,
+      );
+    }
+
     const registration = await this.applicationRegistrationRepository.findOne({
       where: {
         universalIdentifier: options.applicationUniversalIdentifier,
@@ -86,25 +99,33 @@ export class StopApplicationCommand extends CommandRunner {
 
     if (!(options.yes ?? false)) {
       const isConfirmed = await this.askForConfirmation(
+        action,
         options.applicationUniversalIdentifier,
         registration.id,
         options.workspaceId,
       );
 
       if (!isConfirmed) {
-        this.logger.log('Aborted, no kill switch enabled');
+        this.logger.log('Aborted, kill switch left unchanged');
 
         return;
       }
     }
 
-    await this.applicationStopService.stop(
-      options.applicationUniversalIdentifier,
-      options.workspaceId,
-    );
+    if (action === 'stop') {
+      await this.applicationStopService.stop(
+        options.applicationUniversalIdentifier,
+        options.workspaceId,
+      );
+    } else {
+      await this.applicationStopService.start(
+        options.applicationUniversalIdentifier,
+        options.workspaceId,
+      );
+    }
 
     this.logger.log(
-      `Kill switch enabled for "${registration.name}" (${options.applicationUniversalIdentifier})${
+      `Kill switch ${action === 'stop' ? 'enabled' : 'removed'} for "${registration.name}" (${options.applicationUniversalIdentifier})${
         isDefined(options.workspaceId)
           ? ` on workspace ${options.workspaceId}`
           : ''
@@ -115,6 +136,7 @@ export class StopApplicationCommand extends CommandRunner {
   }
 
   private async askForConfirmation(
+    action: KillSwitchAction,
     applicationUniversalIdentifier: string,
     applicationRegistrationId: string,
     workspaceId?: string,
@@ -125,8 +147,11 @@ export class StopApplicationCommand extends CommandRunner {
           where: { applicationRegistrationId },
         })} workspace(s)`;
 
+    const actionLabel =
+      action === 'stop' ? 'stopping' : 'removing the kill switch of';
+
     return askCommandConfirmation(
-      `Confirm stopping application ${applicationUniversalIdentifier} on ${target}`,
+      `Confirm ${actionLabel} application ${applicationUniversalIdentifier} on ${target}`,
     );
   }
 }

@@ -36,6 +36,15 @@ export class ApplicationStopService {
     );
   }
 
+  async start(
+    applicationUniversalIdentifier: string,
+    workspaceId?: string,
+  ): Promise<void> {
+    await this.cacheStorageService.del(
+      this.getKillSwitchKey(applicationUniversalIdentifier, workspaceId),
+    );
+  }
+
   async isApplicationStopped(
     applicationUniversalIdentifier: string,
     workspaceId?: string,

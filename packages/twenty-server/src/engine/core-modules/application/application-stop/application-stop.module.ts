@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
-import { StopApplicationCommand } from 'src/engine/core-modules/application/application-stop/commands/stop-application.command';
+import { ApplicationKillSwitchCommand } from 'src/engine/core-modules/application/application-stop/commands/application-kill-switch.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Module({
@@ -13,7 +13,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
       ApplicationEntity,
     ]),
   ],
-  providers: [ApplicationStopService, StopApplicationCommand],
+  providers: [ApplicationStopService, ApplicationKillSwitchCommand],
   exports: [ApplicationStopService],
 })
 export class ApplicationStopModule {}

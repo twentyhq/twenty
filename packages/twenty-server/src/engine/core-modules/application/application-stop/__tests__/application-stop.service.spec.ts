@@ -17,6 +17,7 @@ describe('ApplicationStopService', () => {
   const cacheStorageService = {
     get: jest.fn(),
     set: jest.fn(),
+    del: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -57,6 +58,23 @@ describe('ApplicationStopService', () => {
     expect(cacheStorageService.set).toHaveBeenCalledWith(
       WORKSPACE_KILL_SWITCH_KEY,
       'stopped',
+    );
+  });
+
+  it('deletes the kill switch when starting an application', async () => {
+    await applicationStopService.start(APPLICATION_UNIVERSAL_IDENTIFIER);
+
+    expect(cacheStorageService.del).toHaveBeenCalledWith(KILL_SWITCH_KEY);
+  });
+
+  it('deletes the workspace-scoped kill switch when starting for a single workspace', async () => {
+    await applicationStopService.start(
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+      WORKSPACE_ID,
+    );
+
+    expect(cacheStorageService.del).toHaveBeenCalledWith(
+      WORKSPACE_KILL_SWITCH_KEY,
     );
   });
 
