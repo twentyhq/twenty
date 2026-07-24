@@ -94,6 +94,7 @@ export class WorkflowVersionValidationWorkspaceService {
       'steps',
       'trigger',
       'status',
+      'position',
       'workflowId',
       'coreWorkflowVersionId',
     ];
@@ -106,7 +107,7 @@ export class WorkflowVersionValidationWorkspaceService {
     if (setsProtectedField || clearsName) {
       throw new WorkflowQueryValidationException(
         'Updating a workflowVersion through the generic mutation is restricted. ' +
-          'steps, trigger, status, workflowId and coreWorkflowVersionId cannot be changed, and the name cannot be cleared. ' +
+          'steps, trigger, status, position, workflowId and coreWorkflowVersionId cannot be changed, and the name cannot be cleared. ' +
           'Use the dedicated workflowVersion mutations (createWorkflowVersionStep, updateWorkflowVersionStep, ' +
           'deleteWorkflowVersionStep, updateWorkflowVersionTrigger, activateWorkflowVersion, ...) instead.',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
