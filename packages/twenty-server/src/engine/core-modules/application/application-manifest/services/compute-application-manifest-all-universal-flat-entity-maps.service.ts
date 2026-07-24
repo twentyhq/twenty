@@ -8,6 +8,7 @@ import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
@@ -366,6 +367,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatAgentMaps,
       });
+
+      if (isDefined(agentManifest.roleUniversalIdentifier)) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: fromAgentManifestToUniversalFlatRoleTarget({
+            agentUniversalIdentifier: agentManifest.universalIdentifier,
+            roleUniversalIdentifier: agentManifest.roleUniversalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRoleTargetMaps,
+        });
+      }
     }
 
     for (const viewManifest of manifest.views ?? []) {

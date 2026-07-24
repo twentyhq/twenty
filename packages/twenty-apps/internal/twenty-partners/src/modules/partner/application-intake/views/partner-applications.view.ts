@@ -7,8 +7,10 @@ import {
 
 import {
   PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
-  PARTNER_INTRODUCTION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_TWENTY_EXPERIENCE_NOTES_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import {
@@ -52,23 +54,39 @@ export default defineView({
       isVisible: true,
     },
     {
-      universalIdentifier: '2d198c8a-0199-4b9f-ae07-255172ab6e7e',
-      fieldMetadataUniversalIdentifier: PARTNER_INTRODUCTION_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: '88d68442-514d-43a5-b974-8aa22b65cac8',
+      fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 2,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier: '1bb5fa0a-7724-4b72-812b-494e3cda7e9a',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 220,
+    },
+    {
+      universalIdentifier: '5f520664-38ba-4151-b1b8-3dfe7b640707',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_TWENTY_EXPERIENCE_NOTES_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 4,
       isVisible: true,
       size: 280,
     },
     {
       universalIdentifier: '835c9a7e-72ec-46c5-8d90-39a02998f561',
       fieldMetadataUniversalIdentifier: PARTNER_CREATED_AT_FIELD_ID,
-      position: 3,
+      position: 5,
       isVisible: true,
       size: 180,
     },
     {
       universalIdentifier: '0175e169-377c-4ff5-b0f0-c3359cac48d9',
       fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
-      position: 4,
+      position: 6,
       isVisible: true,
       size: 200,
     },
@@ -76,7 +94,8 @@ export default defineView({
   filters: [
     {
       universalIdentifier: 'a1ef0bcd-6f2c-44fc-ab3d-11df2523a952',
-      fieldMetadataUniversalIdentifier: PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
       operand: ViewFilterOperand.IS,
       value: ['APPLICATION'],
     },
