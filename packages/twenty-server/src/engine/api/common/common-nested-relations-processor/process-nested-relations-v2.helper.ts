@@ -527,15 +527,38 @@ export class ProcessNestedRelationsV2Helper {
     relationType: RelationType;
     selectedFields: Record<string, unknown>;
   }): void {
+    // Index the relation rows once instead of re-scanning them for every parent
+    // record (O(n*m) -> O(n+m)). Parent ids are unique, so each bucket belongs to
+    // exactly one parent.
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const relationsByJoinField = new Map<unknown, any[]>();
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const relationById = new Map<unknown, any>();
+
+    if (relationType === RelationType.ONE_TO_MANY) {
+      for (const rel of relationResults) {
+        const bucket = relationsByJoinField.get(rel[joinField]);
+
+        if (bucket) {
+          bucket.push(rel);
+        } else {
+          relationsByJoinField.set(rel[joinField], [rel]);
+        }
+      }
+    } else {
+      for (const rel of relationResults) {
+        // first occurrence wins, matching Array.prototype.find
+        if (!relationById.has(rel.id)) {
+          relationById.set(rel.id, rel);
+        }
+      }
+    }
+
     parentRecords.forEach((item) => {
       if (relationType === RelationType.ONE_TO_MANY) {
-        item[sourceFieldName] = relationResults.filter(
-          (rel) => rel[joinField] === item.id,
-        );
+        item[sourceFieldName] = relationsByJoinField.get(item.id) ?? [];
       } else {
-        const matchedRelation = relationResults.find(
-          (rel) => rel.id === item[joinColumnName],
-        );
+        const matchedRelation = relationById.get(item[joinColumnName]);
 
         if (isDefined(matchedRelation?.deletedAt)) {
           item[sourceFieldName] = null;
