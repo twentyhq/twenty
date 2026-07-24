@@ -52,6 +52,8 @@ describe('CommonApiContextBuilderService', () => {
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
       restrictedFields: {},
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     },
   };
 
@@ -62,6 +64,8 @@ describe('CommonApiContextBuilderService', () => {
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
       restrictedFields: {},
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     },
   };
 
