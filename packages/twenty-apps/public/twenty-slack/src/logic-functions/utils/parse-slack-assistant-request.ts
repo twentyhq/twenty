@@ -5,10 +5,10 @@ import {
   type SlackEventsRequestBody,
 } from 'src/logic-functions/types/slack-event.type';
 
-const BOT_MENTION_PATTERN = /<@[A-Z0-9]+(\|[^>]*)?>/g;
+const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
 
-const stripBotMention = (text: string): string =>
-  text.replace(BOT_MENTION_PATTERN, ' ').replace(/\s+/g, ' ').trim();
+const stripLeadingBotMention = (text: string): string =>
+  text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -49,7 +49,10 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: 'Event is missing required fields' };
   }
 
-  const requestText = stripBotMention(event.text ?? '');
+  const rawText = event.text ?? '';
+  const requestText = isMention
+    ? stripLeadingBotMention(rawText)
+    : rawText.replace(/\s+/g, ' ').trim();
 
   if (requestText.length === 0) {
     return { request: null, skipReason: 'Empty request text' };

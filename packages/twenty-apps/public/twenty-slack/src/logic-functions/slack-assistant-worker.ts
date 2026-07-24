@@ -161,7 +161,7 @@ export const slackAssistantWorkerHandler = async (
       await subscribeSlackThread({
         channelId: slackChannelId,
         threadTimestamp: parentMessageTimestamp,
-      });
+      }).catch(() => undefined);
     }
 
     return { done: true };

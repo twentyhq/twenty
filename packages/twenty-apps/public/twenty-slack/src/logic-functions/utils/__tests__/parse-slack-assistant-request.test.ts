@@ -34,6 +34,47 @@ describe('parseSlackAssistantRequest', () => {
     });
   });
 
+  it('should keep other user mentions when stripping the leading bot mention', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        text: '<@UBOT> ask <@UALICE> about the ACME deal',
+      }),
+    );
+
+    expect(result.request?.requestText).toBe(
+      'ask <@UALICE> about the ACME deal',
+    );
+  });
+
+  it('should preserve user mentions on unmentioned thread follow-ups', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'EvFollowUp',
+      event: {
+        type: 'message',
+        channel_type: 'channel',
+        user: 'U123',
+        text: 'what about <@UALICE>?',
+        ts: '1700000000.000400',
+        thread_ts: '1699999999.000001',
+        channel: 'C123',
+      },
+    });
+
+    expect(result).toEqual({
+      request: {
+        slackEventId: 'EvFollowUp',
+        slackChannelId: 'C123',
+        slackChannelType: 'channel',
+        slackThreadTimestamp: '1699999999.000001',
+        slackMessageTimestamp: '1700000000.000400',
+        slackUserId: 'U123',
+        requestText: 'what about <@UALICE>?',
+      },
+      requiresActiveThreadSubscription: true,
+    });
+  });
+
   it('should keep the thread timestamp when mentioned inside a thread', () => {
     const result = parseSlackAssistantRequest(
       buildMentionBody({ thread_ts: '1699999999.000001' }),
