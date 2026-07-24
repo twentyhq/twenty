@@ -601,6 +601,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  isStopped: Boolean!
   logoUrl: String
 }
 

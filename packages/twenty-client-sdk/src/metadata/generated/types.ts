@@ -1199,6 +1199,9 @@ export default {
             "applicationRegistration": [
                 8
             ],
+            "isStopped": [
+                3
+            ],
             "logoUrl": [
                 1
             ],

@@ -415,6 +415,7 @@ export interface Application {
     objects: Object[]
     applicationVariables: ApplicationVariable[]
     applicationRegistration?: ApplicationRegistrationSummary
+    isStopped: Scalars['Boolean']
     logoUrl?: Scalars['String']
     __typename: 'Application'
 }
@@ -3518,6 +3519,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
     applicationRegistration?: ApplicationRegistrationSummaryGenqlSelection
+    isStopped?: boolean | number
     logoUrl?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
