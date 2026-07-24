@@ -122,6 +122,7 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
+  const settingsTabFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -377,6 +378,14 @@ export const buildManifest = async (
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
 
+        if (
+          targetFunctionName === TargetFunction.DefineSettingsTabFrontComponent
+        ) {
+          settingsTabFrontComponentUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
         break;
       }
       case ManifestEntityKey.Views: {
@@ -559,6 +568,12 @@ export const buildManifest = async (
     );
   }
 
+  if (settingsTabFrontComponentUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one settings tab front component is allowed per application',
+    );
+  }
+
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
@@ -610,6 +625,14 @@ export const buildManifest = async (
               : {}),
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
+              : {}),
+            ...(settingsTabFrontComponentUniversalIdentifiers.length >= 1
+              ? {
+                  settingsTabFrontComponent: {
+                    universalIdentifier:
+                      settingsTabFrontComponentUniversalIdentifiers[0],
+                  },
+                }
               : {}),
           };
         })()

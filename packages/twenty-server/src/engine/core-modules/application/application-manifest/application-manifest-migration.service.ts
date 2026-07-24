@@ -304,18 +304,19 @@ export class ApplicationManifestMigrationService {
 
     let settingsCustomTabFrontComponentId: string | null = null;
 
-    const settingsCustomTabUniversalIdentifier =
+    const settingsTabFrontComponentUniversalIdentifier =
+      manifest.application.settingsTabFrontComponent?.universalIdentifier ??
       manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
 
-    if (isDefined(settingsCustomTabUniversalIdentifier)) {
+    if (isDefined(settingsTabFrontComponentUniversalIdentifier)) {
       const flatFrontComponent = findFlatEntityByUniversalIdentifier({
         flatEntityMaps: refreshedFlatFrontComponentMaps,
-        universalIdentifier: settingsCustomTabUniversalIdentifier,
+        universalIdentifier: settingsTabFrontComponentUniversalIdentifier,
       });
 
       if (!isDefined(flatFrontComponent)) {
         throw new ApplicationException(
-          `Failed to resolve front component for settingsCustomTabFrontComponentUniversalIdentifier ${settingsCustomTabUniversalIdentifier}`,
+          `Failed to resolve front component for settings tab front component universalIdentifier ${settingsTabFrontComponentUniversalIdentifier}`,
           ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }

@@ -124,6 +124,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { SettingsTabFrontComponentApplicationManifest } from './settingsTabFrontComponentApplicationType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,

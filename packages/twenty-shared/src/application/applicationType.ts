@@ -1,5 +1,6 @@
 import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
+import { type SettingsTabFrontComponentApplicationManifest } from '@/application/settingsTabFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -32,6 +33,11 @@ export type ApplicationManifest = SyncableEntityOptions & {
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
+  settingsTabFrontComponent?: SettingsTabFrontComponentApplicationManifest;
+  /**
+   * @deprecated Use `defineSettingsTabFrontComponent()` (exposed on the manifest
+   * as `settingsTabFrontComponent`) instead.
+   */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;

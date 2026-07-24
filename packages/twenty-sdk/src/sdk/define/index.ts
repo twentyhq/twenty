@@ -70,10 +70,12 @@ export {
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
+export { defineSettingsTabFrontComponent } from '@/sdk/define/front-component/define-settings-tab-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+export type { SettingsTabFrontComponentConfig } from '@/sdk/define/front-component/settings-tab-front-component-config';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
 export type { IndexConfig } from '@/sdk/define/indexes/index-config';
