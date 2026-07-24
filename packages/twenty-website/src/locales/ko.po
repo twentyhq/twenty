@@ -59,7 +59,6 @@ msgstr "{count}개의 케이스 스터디"
 
 #. js-lingui-id: NSO/FI
 #: src/partners-marketplace/PartnerRatesPanel.tsx
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/시간"
 
@@ -1274,11 +1273,6 @@ msgstr ""
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"
 msgstr "카탈루냐어"
-
-#. js-lingui-id: NUrY9o
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "Categories"
-msgstr "카테고리"
 
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
@@ -2820,11 +2814,6 @@ msgstr "당신에겐 무료!"
 msgid "French"
 msgstr "프랑스어"
 
-#. js-lingui-id: weRlb1
-#: src/partners-marketplace/PartnerMoneyRow.tsx
-msgid "from {minBudget}"
-msgstr "{minBudget}부터"
-
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
@@ -3610,7 +3599,6 @@ msgstr "Labs"
 #. js-lingui-id: GAmD3h
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Languages"
 msgstr "언어"
@@ -4691,7 +4679,6 @@ msgstr "가격"
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr "가격"
 
@@ -4895,7 +4882,6 @@ msgstr "레코드"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr "지역"
@@ -6615,12 +6601,6 @@ msgstr "베트남 🇻🇳"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Vietnamese"
 msgstr "베트남어"
-
-#. js-lingui-id: BRBSny
-#. placeholder {0}: partner.name
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "View {0} on LinkedIn"
-msgstr "LinkedIn에서 {0} 보기"
 
 #. js-lingui-id: 9nyGVq
 #: src/partners-marketplace/CaseStudyModal.tsx
