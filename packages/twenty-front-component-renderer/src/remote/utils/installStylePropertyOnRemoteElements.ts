@@ -11,10 +11,10 @@ const createRemoteStyleProxy = (
   element: RemoteElementLike,
 ): Record<string, unknown> =>
   createStyleProxy({
-    flush: (cssText: string) => {
-      element.updateRemoteProperty('style', cssText || undefined);
+    flushSerializedCssTextToHost: (serializedCssText: string) => {
+      element.updateRemoteProperty('style', serializedCssText || undefined);
     },
-    convertNumbersToPx: true,
+    shouldConvertNumbersToPixels: true,
   });
 
 export const installStylePropertyOnRemoteElements = (): void => {

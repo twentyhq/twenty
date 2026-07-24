@@ -2,8 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 import { kebabToCamelCase } from 'twenty-shared/utils';
 
-import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
+import { extractImportantPriorityFromCssValue } from '@/utils/extractImportantPriorityFromCssValue';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
+
+const isCssCustomPropertyName = (propertyName: string): boolean =>
+  propertyName.startsWith('--');
 
 export const parseCssString = (
   styleString: string | undefined,
@@ -12,28 +15,29 @@ export const parseCssString = (
     return styleString as CSSProperties | undefined;
   }
 
-  const style: Record<string, string> = {};
+  const reactStyleProperties: Record<string, string> = {};
 
   for (const declaration of splitCssDeclarations(styleString)) {
-    const colonIndex = declaration.indexOf(':');
-    if (colonIndex === -1) {
+    const propertyNameEndIndex = declaration.indexOf(':');
+
+    if (propertyNameEndIndex === -1) {
       continue;
     }
 
-    const property = declaration.slice(0, colonIndex).trim();
-    // React style objects cannot carry a priority, and CSSOM rejects values
-    // that keep the "!important" suffix, so the priority is stripped.
-    const value = declaration
-      .slice(colonIndex + 1)
-      .trim()
-      .replace(CSS_IMPORTANT_PRIORITY_PATTERN, '');
+    const cssPropertyName = declaration.slice(0, propertyNameEndIndex).trim();
 
-    const isCssCustomProperty = property.startsWith('--');
+    const { cssValueWithoutImportantPriority } =
+      extractImportantPriorityFromCssValue(
+        declaration.slice(propertyNameEndIndex + 1).trim(),
+      );
 
-    const key = isCssCustomProperty ? property : kebabToCamelCase(property);
+    const reactStylePropertyName = isCssCustomPropertyName(cssPropertyName)
+      ? cssPropertyName
+      : kebabToCamelCase(cssPropertyName);
 
-    style[key] = value;
+    reactStyleProperties[reactStylePropertyName] =
+      cssValueWithoutImportantPriority;
   }
 
-  return style;
+  return reactStyleProperties;
 };

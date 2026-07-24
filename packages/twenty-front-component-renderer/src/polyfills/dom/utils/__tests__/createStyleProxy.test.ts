@@ -34,7 +34,7 @@ describe('createStyleProxy', () => {
 
   it('should ignore setProperty with an invalid priority', () => {
     const flush = jest.fn();
-    const style = createStyle({ flush });
+    const style = createStyle({ flushSerializedCssTextToHost: flush });
 
     style.setProperty('color', 'red', 'loud');
 
@@ -44,7 +44,7 @@ describe('createStyleProxy', () => {
 
   it('should not flush a setProperty call with an invalid priority', async () => {
     const flush = jest.fn();
-    const style = createStyle({ flush });
+    const style = createStyle({ flushSerializedCssTextToHost: flush });
 
     style.setProperty('color', 'red', 'loud');
 
@@ -143,7 +143,7 @@ describe('createStyleProxy', () => {
 
   it('should flush the serialized priority to the host', async () => {
     const flush = jest.fn();
-    const style = createStyle({ flush });
+    const style = createStyle({ flushSerializedCssTextToHost: flush });
 
     style.setProperty('color', 'red', 'important');
 
@@ -154,7 +154,7 @@ describe('createStyleProxy', () => {
 
   it('should flush a burst of writes once with the final serialization', async () => {
     const flush = jest.fn();
-    const style = createStyle({ flush });
+    const style = createStyle({ flushSerializedCssTextToHost: flush });
 
     style.setProperty('color', 'red');
     style.setProperty('width', '10px');
@@ -186,7 +186,7 @@ describe('createStyleProxy', () => {
   });
 
   it('should append px to numeric length values when converting', () => {
-    const style = createStyle({ convertNumbersToPx: true });
+    const style = createStyle({ shouldConvertNumbersToPixels: true });
 
     style.width = 10;
 
@@ -194,7 +194,7 @@ describe('createStyleProxy', () => {
   });
 
   it('should keep unitless numeric values unitless when converting', () => {
-    const style = createStyle({ convertNumbersToPx: true });
+    const style = createStyle({ shouldConvertNumbersToPixels: true });
 
     style.aspectRatio = 2;
     style.scale = 3;
