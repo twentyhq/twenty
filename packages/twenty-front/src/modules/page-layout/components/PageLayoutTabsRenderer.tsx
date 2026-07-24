@@ -11,7 +11,6 @@ import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/Widg
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
-import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
@@ -94,10 +93,6 @@ export const PageLayoutTabsRenderer = () => {
     pageLayoutId: currentPageLayout.id,
     tabListInstanceId,
   });
-
-  const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
-    currentPageLayout.id,
-  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -217,16 +212,6 @@ export const PageLayoutTabsRenderer = () => {
               componentInstanceId={tabListInstanceId}
               addTabStrategy={addTabStrategy}
               isReorderEnabled={canEnableTabEditing}
-              onReorder={
-                canEnableTabEditing
-                  ? (result, provided) =>
-                      reorderRecordPageTabs(
-                        result,
-                        provided,
-                        isDefined(pinnedLeftTab),
-                      )
-                  : undefined
-              }
               pageLayoutType={currentPageLayout.type}
             />
           )}

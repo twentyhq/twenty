@@ -12056,8 +12056,6 @@ msgstr "新标签页"
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
 msgid "New Tab"
 msgstr "新标签页"
 

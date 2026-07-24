@@ -3,6 +3,7 @@ import { Suspense, lazy } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -57,10 +58,11 @@ export const FrontComponentWidgetRenderer = ({
       isCanvasLayout={layoutMode === PageLayoutTabLayoutMode.CANVAS}
       isInEditMode={isPageLayoutInEditMode}
     >
-      <Suspense fallback={null}>
+      <Suspense fallback={<FrontComponentSkeletonLoader />}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
+          loadingFallback={<FrontComponentSkeletonLoader />}
         />
       </Suspense>
     </StyledContainer>
