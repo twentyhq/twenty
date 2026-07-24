@@ -1,0 +1,67 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignBodyState.ts
+  s_54aa6e3c579e2f::t_cb3ee10b422e24 35
+packages/twenty-front/src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
+  s_54aa6e3c579e2f::t_ccc3f5d545a185 53-57
+  s_54aa6e3c579e2f::t_4541101ab2b648 5
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784567000000-backfill-message-list-members-junction-target.command.ts
+  s_54aa6e3c579e2f::t_2750af51cea412 1-138
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_54aa6e3c579e2f::t_df72dc445766e1 970-974
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784900000000-configure-message-campaign-command-menu.command.ts
+  s_54aa6e3c579e2f::t_2750af51cea412 27,29,129
+packages/twenty-front/src/modules/activities/emails/components/CampaignDetailsFields.tsx
+  s_54aa6e3c579e2f::t_abe6b0e5e5dc2a 108
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_54aa6e3c579e2f::t_6e5483c72b2203 751
+  s_54aa6e3c579e2f::t_564408cf5fe3d0 767
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-upgrade-version-command.module.ts
+  s_54aa6e3c579e2f::t_9f0a5b28655c04 5-29
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_54aa6e3c579e2f::t_009a59da9d0816 47-53
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util.ts
+  s_54aa6e3c579e2f::t_16f656f9812584 182
+  s_54aa6e3c579e2f::t_c9b24678c5b338 210
+  s_54aa6e3c579e2f::t_91fbd381ac0a9e 145-155,157-168,170
+  s_54aa6e3c579e2f::t_3db7a77000b561 196
+  s_54aa6e3c579e2f::t_52c798a65ac44a 224
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-campaign-view-field-groups.util.ts
+  s_54aa6e3c579e2f::t_c1a3bbadd40500 1-24
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_54aa6e3c579e2f::t_e3df1f43e4e705 122
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1784766100000-add-message-campaign-widget-type.ts
+  s_54aa6e3c579e2f::t_2750af51cea412 1-52
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignDetailsState.ts
+  s_54aa6e3c579e2f::t_2560be814bf324 62
+packages/twenty-front/src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
+  s_54aa6e3c579e2f::t_9a6752bc79d363 123,126
+  s_54aa6e3c579e2f::t_67aade482edbb5 76
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784663000000-add-message-campaign-composer-tab.command.ts
+  s_54aa6e3c579e2f::t_2750af51cea412 17,34-39,72-76,78,109,116,179-187,240-248,254,256-257,290,303-307
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
+  s_54aa6e3c579e2f::t_a948870f5003ce 34
+packages/twenty-front/src/modules/activities/emails/components/CampaignBodyField.tsx
+  s_54aa6e3c579e2f::t_b1d8d0ce00cace 20,23
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/build-standard-flat-view-field-group-metadata-maps.util.ts
+  s_54aa6e3c579e2f::t_25d3c680b34b33 12
+  s_54aa6e3c579e2f::t_e6ae5969292704 38
+packages/twenty-server/src/database/commands/upgrade-version-command/workspace-command-provider.module.ts
+  s_54aa6e3c579e2f::t_e3df1f43e4e705 27,55
+packages/twenty-shared/src/metadata/__tests__/__snapshots__/standardObjectUniversalIdentifiers.test.ts.snap
+  s_54aa6e3c579e2f::t_82c7740cc5c083 1175-1179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "24fbb86c823104a511eebaaab05be9f6b983c20b",
+  "prompts": {},
+  "sessions": {
+    "s_54aa6e3c579e2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05F73216-CF79-404A-A6E7-839FA5D9EDC8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
