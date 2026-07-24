@@ -373,15 +373,6 @@ export class WorkflowCommonWorkspaceService {
       withDeleted: true,
     });
 
-    for (const workflowVersion of workflowVersions) {
-      if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
-        await this.cleanupCommandMenuItemForVersion(
-          workflowVersion.id,
-          workspaceId,
-        );
-      }
-    }
-
     const workspaceDataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
@@ -444,6 +435,15 @@ export class WorkflowCommonWorkspaceService {
       throw error;
     } finally {
       await queryRunner.release();
+    }
+
+    for (const workflowVersion of workflowVersions) {
+      if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
+        await this.cleanupCommandMenuItemForVersion(
+          workflowVersion.id,
+          workspaceId,
+        );
+      }
     }
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(

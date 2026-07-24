@@ -276,16 +276,6 @@ export class WorkflowVersionWorkspaceService {
             workspaceId,
           });
 
-        const insertVersionResult = await workflowVersionRepository.insert({
-          workflowId: newWorkflowId,
-          name: 'v1',
-          status: WorkflowVersionStatus.DRAFT,
-          position: versionPosition,
-        });
-
-        const newDraftVersion = insertVersionResult
-          .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
-
         const newTrigger = sourceVersion.trigger;
         const sourceToClonedPairs: Array<{
           source: WorkflowAction;
@@ -345,22 +335,36 @@ export class WorkflowVersionWorkspaceService {
           },
         );
 
+        let newDraftVersion: WorkflowVersionWorkspaceEntity | undefined;
+
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
           async (scopedRepository, entityManager) => {
-            await scopedRepository.update(
-              newDraftVersion.id,
+            const insertVersionResult = await scopedRepository.insert(
               {
+                workflowId: newWorkflowId,
+                name: 'v1',
+                status: WorkflowVersionStatus.DRAFT,
+                position: versionPosition,
                 steps: remappedSteps,
                 trigger: remappedTrigger,
               },
-              undefined,
               entityManager,
             );
+
+            newDraftVersion = insertVersionResult
+              .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
 
             return newDraftVersion.id;
           },
         );
+
+        if (!isDefined(newDraftVersion)) {
+          throw new WorkflowVersionStepException(
+            'Failed to duplicate workflow version',
+            WorkflowVersionStepExceptionCode.NOT_FOUND,
+          );
+        }
 
         return {
           ...newDraftVersion,
