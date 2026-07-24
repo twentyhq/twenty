@@ -3,6 +3,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -53,6 +54,11 @@ export const NavigationDrawerCollapseButton = ({
         }
         accent="secondary"
         size="small"
+        aria-label={
+          direction === 'left'
+            ? t`Collapse navigation panel`
+            : t`Expand navigation panel`
+        }
       />
     </StyledCollapseButton>
   );
