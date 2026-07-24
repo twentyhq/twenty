@@ -63,7 +63,7 @@ describe('buildRawLabelByRecordId', () => {
     expect(rawLabelByRecordId.get('agent-id-1')).toBe('Alice Ng');
   });
 
-  it('should skip records whose label falls back to the record id', () => {
+  it('should skip records whose label identifier value is empty', () => {
     const rawLabelByRecordId = buildRawLabelByRecordId({
       records: [{ id: 'agent-id-1', name: null }],
       targetFlatObjectMetadata,
@@ -74,5 +74,18 @@ describe('buildRawLabelByRecordId', () => {
     });
 
     expect(rawLabelByRecordId.has('agent-id-1')).toBe(false);
+  });
+
+  it('should keep a UUID label whose value equals the record id', () => {
+    const rawLabelByRecordId = buildRawLabelByRecordId({
+      records: [{ id: 'agent-id-1', externalId: 'agent-id-1' }],
+      targetFlatObjectMetadata,
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
+        name: 'externalId',
+        type: FieldMetadataType.UUID,
+      }),
+    });
+
+    expect(rawLabelByRecordId.get('agent-id-1')).toBe('agent-id-1');
   });
 });
