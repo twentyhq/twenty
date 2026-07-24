@@ -28,6 +28,7 @@ import { setFrontComponentExecutionContext } from '@/remote/worker/utils/setFron
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
+import { createClonableErrorThreadSerialization } from '@/utils/createClonableErrorThreadSerialization';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
@@ -104,6 +105,7 @@ self.addEventListener('message', (event) => {
     WorkerExports
   >(transferredPort, {
     exports: workerExports,
+    serialization: createClonableErrorThreadSerialization(),
   });
   hostThread = nextHostThread;
 

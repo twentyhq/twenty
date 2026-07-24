@@ -10,7 +10,7 @@ import {
   type RemoteReceiver,
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,6 +36,7 @@ type FrontComponentRendererProps = {
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
+  loadingFallback?: ReactNode;
 };
 
 export const FrontComponentRenderer = ({
@@ -49,6 +50,7 @@ export const FrontComponentRenderer = ({
   frontComponentHostCommunicationApi,
   onError,
   colorScheme,
+  loadingFallback,
 }: FrontComponentRendererProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<FrontComponentThread | null>(null);
@@ -56,6 +58,8 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
+
+  const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
@@ -95,7 +99,9 @@ export const FrontComponentRenderer = ({
           />
         )}
 
-        {isDefined(receiver) && isExecutionContextInitialized && (
+        {!isDefined(error) && !isReady && loadingFallback}
+
+        {isReady && (
           <ThemeProvider colorScheme={colorScheme}>
             <ErrorBoundary
               onError={setError}

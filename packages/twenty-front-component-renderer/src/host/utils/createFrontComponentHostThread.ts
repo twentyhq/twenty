@@ -6,6 +6,7 @@ import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHost
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type WorkerExports } from '@/types/WorkerExports';
+import { createClonableErrorThreadSerialization } from '@/utils/createClonableErrorThreadSerialization';
 
 type CreateFrontComponentHostThreadInput = {
   hostMessagePort: MessagePort;
@@ -32,6 +33,7 @@ export const createFrontComponentHostThread = ({
         geometryTracker.unobserve(remoteElementIds);
       },
     },
+    serialization: createClonableErrorThreadSerialization(),
   });
 
   hostMessagePort.start();
