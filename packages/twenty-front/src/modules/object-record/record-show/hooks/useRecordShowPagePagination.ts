@@ -9,10 +9,11 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/state
 import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/graphql/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
+import { resolveRecordShowPaginationObjectNameSingular } from '@/object-record/record-show/utils/resolveRecordShowPaginationObjectNameSingular';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { combineFilters, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -44,17 +45,11 @@ export const useRecordShowPagePagination = (
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const parentViewObjectNameSingular =
-    contextStoreRecordShowParentView?.parentViewObjectNameSingular;
-
-  const shouldUseParentViewObjectForPagination =
-    isDefined(parentViewObjectNameSingular) &&
-    parentViewObjectNameSingular !== propsOrParamObjectNameSingular &&
-    propsOrParamObjectNameSingular === CoreObjectNameSingular.Dashboard;
-
-  const objectNameSingular = shouldUseParentViewObjectForPagination
-    ? parentViewObjectNameSingular
-    : propsOrParamObjectNameSingular;
+  const objectNameSingular = resolveRecordShowPaginationObjectNameSingular({
+    propsOrParamObjectNameSingular,
+    parentViewObjectNameSingular:
+      contextStoreRecordShowParentView?.parentViewObjectNameSingular,
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
