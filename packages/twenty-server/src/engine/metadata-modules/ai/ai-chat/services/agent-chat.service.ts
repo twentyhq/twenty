@@ -147,7 +147,7 @@ export class AgentChatService {
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
       .addSelect('MAX(message.createdAt)', 'last_message_at')
-      .leftJoin('thread.messages', 'message')
+      .leftJoin('thread.messages', 'message', 'message.isHidden = false')
       .where(
         'thread.userWorkspaceId = :userWorkspaceId AND thread.workspaceId = :workspaceId',
         { userWorkspaceId, workspaceId },
@@ -191,7 +191,7 @@ export class AgentChatService {
       .createQueryBuilder('message')
       .select('MAX(message.createdAt)', 'last_message_at')
       .where(
-        'message.threadId = :threadId AND message.workspaceId = :workspaceId',
+        'message.threadId = :threadId AND message.workspaceId = :workspaceId AND message.isHidden = false',
         { threadId, workspaceId },
       )
       .getRawOne<{ last_message_at: Date | null }>();

@@ -249,6 +249,10 @@ describe('CompanyEnrichmentService', () => {
     });
 
     expect(result.outcome).toBe('matched');
+    expect(result.enrichment).toMatchObject({
+      domain: 'acme.com',
+      name: 'Acme Inc',
+    });
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {
