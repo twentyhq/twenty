@@ -129,7 +129,15 @@ export class WorkflowVersionCoreSyncService {
       ? workflowVersion.coreWorkflowVersionId
       : uuidv4();
 
-    await entityManager.query(
+    const queryRunner = entityManager.queryRunner;
+
+    if (!isDefined(queryRunner)) {
+      throw new Error(
+        'Transactional core mirror requires a transaction-scoped entity manager',
+      );
+    }
+
+    await queryRunner.query(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

@@ -86,7 +86,7 @@ describe('WorkflowVersionCoreSyncService.mirrorWorkflowVersionWrite (integration
 
         coreWorkflowVersionId = mirrorResult?.coreWorkflowVersionId;
 
-        const [rowInTransaction] = await queryRunner.manager.query(
+        const [rowInTransaction] = await queryRunner.query(
           `SELECT "id", "triggers", "steps" FROM core."workflowVersion" WHERE "id" = $1`,
           [coreWorkflowVersionId],
         );
