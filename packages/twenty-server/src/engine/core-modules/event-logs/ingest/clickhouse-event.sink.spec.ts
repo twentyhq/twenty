@@ -46,7 +46,11 @@ describe('ClickHouseEventSink', () => {
     expect(insert).toHaveBeenCalledWith('pageview', [first.row, second.row], {
       asyncInsertBusyTimeoutMaxMs: 100,
     });
-    expect(insert).toHaveBeenCalledWith('applicationLog', [applicationLog.row]);
+    expect(insert).toHaveBeenCalledWith(
+      'applicationLog',
+      [applicationLog.row],
+      undefined,
+    );
   });
 
   it('no-ops when ClickHouse is not configured', async () => {

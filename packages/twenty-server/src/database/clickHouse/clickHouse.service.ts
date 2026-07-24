@@ -13,7 +13,7 @@ import {
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type ClickHouseInsertOptions = {
+export type ClickHouseInsertOptions = {
   clientId?: string;
   asyncInsertBusyTimeoutMaxMs?: number;
 };
