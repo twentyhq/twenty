@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import {
   computeRecordGqlOperationFilter,
+  getFilterTypeFromFieldType,
   isDefined,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -22,10 +26,61 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
+type FilterMonitoringRecord = {
+  fieldMetadataId?: unknown;
+  operand?: unknown;
+};
+
+const getFilterConversionMetricAttributes = ({
+  recordFilters,
+  fieldMetadataItems,
+}: {
+  recordFilters: unknown;
+  fieldMetadataItems: { id: string; type: FieldMetadataType }[];
+}) => {
+  const fieldMetadataItemById = new Map(
+    fieldMetadataItems.map((fieldMetadataItem) => [
+      fieldMetadataItem.id,
+      fieldMetadataItem,
+    ]),
+  );
+  const filterTypes = new Set<string>();
+  const operands = new Set<string>();
+
+  if (Array.isArray(recordFilters)) {
+    for (const recordFilter of recordFilters) {
+      if (typeof recordFilter !== 'object' || recordFilter === null) {
+        continue;
+      }
+
+      const { fieldMetadataId, operand } = recordFilter as FilterMonitoringRecord;
+
+      if (typeof operand === 'string') {
+        operands.add(operand);
+      }
+
+      if (typeof fieldMetadataId === 'string') {
+        const fieldMetadataItem = fieldMetadataItemById.get(fieldMetadataId);
+
+        if (isDefined(fieldMetadataItem)) {
+          filterTypes.add(getFilterTypeFromFieldType(fieldMetadataItem.type));
+        }
+      }
+    }
+  }
+
+  return {
+    action_type: 'FIND_RECORDS',
+    filter_type: [...filterTypes].sort().join(',') || 'UNKNOWN',
+    operand: [...operands].sort().join(',') || 'UNKNOWN',
+  };
+};
+
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
+    private readonly metricsService: MetricsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
@@ -75,20 +130,39 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const gqlOperationFilter =
+    const fieldMetadataItems = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    let gqlOperationFilter = {};
+
+    if (
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
-        ? computeRecordGqlOperationFilter({
-            fieldMetadataItems: Object.values(
-              flatFieldMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
+    ) {
+      try {
+        gqlOperationFilter = computeRecordGqlOperationFilter({
+          fieldMetadataItems,
+          recordFilters: workflowActionInput.filter.recordFilters,
+          recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
+          filterValueDependencies: {
+            timeZone: 'UTC',
+          },
+        });
+      } catch (error) {
+        void this.metricsService.incrementCounterForEvent({
+          key: MetricsKeys.WorkflowFindRecordsFilterConversionFailed,
+          eventId: runInfo.workflowRunId,
+          attributes: getFilterConversionMetricAttributes({
             recordFilters: workflowActionInput.filter.recordFilters,
-            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {
-              timeZone: 'UTC',
-            },
-          })
-        : {};
+            fieldMetadataItems,
+          }),
+          shouldStoreInCache: false,
+        });
+
+        throw error;
+      }
+    }
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,

@@ -202,6 +202,20 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toEqual({ not: { name: { ilike: '%test%' } } });
     });
+
+    it('should handle IS_NOT_NULL operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-text',
+          RecordFilterOperand.IS_NOT_NULL,
+          '',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ name: { is: 'NOT_NULL' } });
+    });
   });
 
   describe('NUMBER filter', () => {

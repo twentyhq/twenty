@@ -46,12 +46,63 @@ import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executo
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/find-enclosing-iterator-with-continue-on-failure.util';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
+
+const getStringProperty = (
+  value: unknown,
+  propertyName: string,
+): string | undefined => {
+  if (typeof value !== 'object' || value === null) {
+    return undefined;
+  }
+
+  const propertyValue = (value as Record<string, unknown>)[propertyName];
+
+  return typeof propertyValue === 'string' ? propertyValue : undefined;
+};
+
+const getWorkflowActionExceptionContext = (step: WorkflowAction) => {
+  const context: Record<string, unknown> = {
+    actionType: step.type,
+    actionName: step.name,
+    stepId: step.id,
+  };
+
+  if (step.type !== WorkflowActionType.FIND_RECORDS) {
+    return context;
+  }
+
+  const recordFilters = step.settings.input.filter?.recordFilters;
+
+  context.objectName = step.settings.input.objectName;
+  context.filterCount = Array.isArray(recordFilters)
+    ? recordFilters.length
+    : 0;
+  context.filterOperands = Array.isArray(recordFilters)
+    ? recordFilters
+        .map((recordFilter: unknown) =>
+          getStringProperty(recordFilter, 'operand'),
+        )
+        .filter(isDefined)
+    : [];
+  context.filterFieldMetadataIds = Array.isArray(recordFilters)
+    ? recordFilters
+        .map((recordFilter: unknown) =>
+          getStringProperty(recordFilter, 'fieldMetadataId'),
+        )
+        .filter(isDefined)
+    : [];
+
+  return context;
+};
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -517,6 +568,10 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            ...getWorkflowActionExceptionContext(step),
+          },
         });
 
         await this.metricsService.incrementCounterForEvent({

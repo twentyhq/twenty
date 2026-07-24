@@ -176,6 +176,12 @@ const buildDirectFieldGqlOperationFilter = ({
               } as StringFilter,
             },
           };
+        case RecordFilterOperand.IS_NOT_NULL:
+          return {
+            [fieldMetadataItem.name]: {
+              is: 'NOT_NULL',
+            } as StringFilter,
+          };
         default:
           throw new CustomError(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
