@@ -25,7 +25,8 @@ export class UpsertManyRecordsService {
   ) {}
 
   async execute(params: UpsertManyRecordsParams): Promise<ToolOutput> {
-    const { objectName, objectRecords, authContext } = params;
+    const { objectName, objectRecords, authContext, rolePermissionConfig } =
+      params;
 
     try {
       const {
@@ -36,6 +37,7 @@ export class UpsertManyRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       if (

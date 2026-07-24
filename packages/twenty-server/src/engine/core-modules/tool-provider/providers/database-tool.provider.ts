@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
@@ -32,7 +28,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -77,12 +73,12 @@ export class DatabaseToolProvider implements ToolProvider {
         'rolesPermissions',
       ]);
 
-    const objectPermissions = this.getObjectPermissions(
+    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
-      context.rolePermissionConfig,
-    );
+      rolePermissionConfig: context.rolePermissionConfig,
+    });
 
-    if (!objectPermissions) {
+    if (Object.keys(objectPermissions).length === 0) {
       return descriptors;
     }
 
@@ -426,32 +422,5 @@ export class DatabaseToolProvider implements ToolProvider {
       toolNames.has(`delete_many_${snakePlural}`) ||
       toolNames.has(`upsert_many_${snakePlural}`)
     );
-  }
-
-  private getObjectPermissions(
-    rolesPermissions: ObjectsPermissionsByRoleId,
-    rolePermissionConfig: ToolProviderContext['rolePermissionConfig'],
-  ): ObjectsPermissions | null {
-    if ('intersectionOf' in rolePermissionConfig) {
-      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
-        (roleId: string) => rolesPermissions[roleId],
-      );
-
-      return allRolePermissions.length === 1
-        ? allRolePermissions[0]
-        : computePermissionIntersection(allRolePermissions);
-    }
-
-    if ('unionOf' in rolePermissionConfig) {
-      if (rolePermissionConfig.unionOf.length === 1) {
-        return rolesPermissions[rolePermissionConfig.unionOf[0]];
-      }
-
-      throw new Error(
-        'Union permission logic for multiple roles not yet implemented',
-      );
-    }
-
-    return null;
   }
 }

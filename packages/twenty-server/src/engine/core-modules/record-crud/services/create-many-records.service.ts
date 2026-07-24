@@ -24,7 +24,8 @@ export class CreateManyRecordsService {
   ) {}
 
   async execute(params: CreateManyRecordsParams): Promise<ToolOutput> {
-    const { objectName, objectRecords, authContext } = params;
+    const { objectName, objectRecords, authContext, rolePermissionConfig } =
+      params;
 
     try {
       const {
@@ -35,6 +36,7 @@ export class CreateManyRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       if (

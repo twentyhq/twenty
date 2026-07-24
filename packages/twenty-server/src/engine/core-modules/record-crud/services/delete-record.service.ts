@@ -24,7 +24,13 @@ export class DeleteRecordService {
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecordId, authContext, soft = true } = params;
+    const {
+      objectName,
+      objectRecordId,
+      authContext,
+      rolePermissionConfig,
+      soft = true,
+    } = params;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -39,6 +45,7 @@ export class DeleteRecordService {
         await this.commonApiContextBuilder.build({
           authContext,
           objectName,
+          rolePermissionConfig,
         });
 
       if (
