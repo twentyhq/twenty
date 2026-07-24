@@ -33,6 +33,11 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
   applicationUniversalIdentifier: string;
 };
 
+export type LogicFunctionWarmLayersParams = {
+  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
+};
+
 export type LogicFunctionTranspileParams = {
   sourceCode: string;
   sourceFileName: string;
@@ -62,6 +67,7 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
+  warmLayers(params: LogicFunctionWarmLayersParams): Promise<void>;
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;

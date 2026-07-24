@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -23,6 +25,8 @@ type LayerAppContext = {
 };
 
 export class LocalLayerManagerService {
+  private readonly logger = new Logger(LocalLayerManagerService.name);
+
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
@@ -52,6 +56,8 @@ export class LocalLayerManagerService {
           return;
         }
 
+        const buildStartedAt = Date.now();
+
         await fs.rm(depsLayerPath, { recursive: true, force: true });
 
         await this.logicFunctionResourceService.copyDependenciesInMemory({
@@ -61,6 +67,10 @@ export class LocalLayerManagerService {
         });
         await copyYarnEngineAndBuildDependencies(depsLayerPath);
         await fs.writeFile(depsReadySentinelPath, '');
+
+        this.logger.log(
+          `Built deps layer for application ${flatApplication.id} in ${Date.now() - buildStartedAt}ms`,
+        );
       },
       lockKey,
       {
@@ -106,6 +116,8 @@ export class LocalLayerManagerService {
           return;
         }
 
+        const buildStartedAt = Date.now();
+
         await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
         const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
@@ -123,6 +135,10 @@ export class LocalLayerManagerService {
         });
 
         await fs.writeFile(sdkReadySentinelPath, '');
+
+        this.logger.log(
+          `Built SDK layer for application ${flatApplication.id} in ${Date.now() - buildStartedAt}ms`,
+        );
       },
       lockKey,
       {

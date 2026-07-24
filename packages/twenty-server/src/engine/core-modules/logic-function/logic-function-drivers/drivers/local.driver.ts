@@ -11,6 +11,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type LogicFunctionWarmLayersParams,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
@@ -104,6 +105,20 @@ export class LocalDriver implements LogicFunctionDriver {
     return this.prebuiltBundle.getInstalledBundleChecksum(flatLogicFunction);
   }
 
+  async warmLayers({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LogicFunctionWarmLayersParams): Promise<void> {
+    await this.layerManager.ensureDepsLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+    await this.layerManager.ensureSdkLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+  }
+
   async execute({
     flatLogicFunction,
     flatApplication,
@@ -125,11 +140,7 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
-    await this.layerManager.ensureDepsLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    await this.layerManager.ensureSdkLayer({
+    await this.warmLayers({
       flatApplication,
       applicationUniversalIdentifier,
     });
