@@ -3,6 +3,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
+import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 jest.mock(
@@ -108,9 +109,13 @@ describe('ToolOutputSpillService', () => {
   });
 
   it.each(['extract_json_paths', 'search_output'])(
-    'never spills the output of the %s navigation tool',
+    'returns %s navigation output under the byte budget unchanged',
     async (toolName) => {
-      const output = buildLargeOutput();
+      const output: ToolOutput = {
+        success: true,
+        message: 'ok',
+        result: { matches: ['small'] },
+      };
 
       const result = await service.spillIfTooLarge(
         output,
@@ -123,10 +128,41 @@ describe('ToolOutputSpillService', () => {
     },
   );
 
-  it('falls back to the inline output with a warning when the spill write fails', async () => {
+  it.each(['extract_json_paths', 'search_output'])(
+    'caps oversized %s navigation output inline instead of spilling it',
+    async (toolName) => {
+      const output = buildLargeOutput();
+      const serialized = JSON.stringify(output);
+
+      const result = await service.spillIfTooLarge(
+        output,
+        { workspaceId: WORKSPACE_ID },
+        { toolName },
+      );
+
+      expect(writeFile).not.toHaveBeenCalled();
+
+      const capped = result.result as Record<string, unknown>;
+      const content = capped.content as string;
+
+      expect(capped.truncated).toBe(true);
+      expect(capped.originalSizeBytes).toBe(Buffer.byteLength(serialized));
+      expect(Buffer.byteLength(content)).toBeLessThanOrEqual(
+        MAX_INLINE_TOOL_OUTPUT_BYTES,
+      );
+      expect(content.startsWith(serialized.slice(0, 100))).toBe(true);
+      expect(content.endsWith(serialized.slice(-100))).toBe(true);
+      expect(content).toContain('TRUNCATED');
+      expect(content).toContain('offset');
+      expect(result.message).toBe(output.message);
+    },
+  );
+
+  it('truncates the output inline with a warning when the spill write fails', async () => {
     writeFile.mockRejectedValue(new Error('storage down'));
 
     const output = buildLargeOutput();
+    const serialized = JSON.stringify(output);
 
     const result = await service.spillIfTooLarge(
       output,
@@ -134,9 +170,42 @@ describe('ToolOutputSpillService', () => {
       { toolName: 'find_many_companies' },
     );
 
-    expect((result.result as Record<string, unknown>).items).toBeDefined();
+    const truncated = result.result as Record<string, unknown>;
+    const content = truncated.content as string;
+
+    expect(truncated.truncated).toBe(true);
+    expect(truncated.originalSizeBytes).toBe(Buffer.byteLength(serialized));
+    expect(Buffer.byteLength(content)).toBeLessThanOrEqual(
+      MAX_INLINE_TOOL_OUTPUT_BYTES,
+    );
+    expect(content.startsWith(serialized.slice(0, 100))).toBe(true);
+    expect(content.endsWith(serialized.slice(-100))).toBe(true);
+    expect(content).toContain(`${Buffer.byteLength(serialized)} bytes`);
+    expect(
+      Buffer.byteLength(JSON.stringify(result)),
+    ).toBeLessThan(Buffer.byteLength(serialized));
     expect(result.warnings).toEqual([
-      'Large output spill failed; the full output is returned inline.',
+      'Large output spill failed; the output was truncated inline.',
+    ]);
+  });
+
+  it('keeps pre-existing warnings when the spill write fails', async () => {
+    writeFile.mockRejectedValue(new Error('storage down'));
+
+    const output: ToolOutput = {
+      ...buildLargeOutput(),
+      warnings: ['existing warning'],
+    };
+
+    const result = await service.spillIfTooLarge(
+      output,
+      { workspaceId: WORKSPACE_ID },
+      { toolName: 'find_many_companies' },
+    );
+
+    expect(result.warnings).toEqual([
+      'existing warning',
+      'Large output spill failed; the output was truncated inline.',
     ]);
   });
 });
