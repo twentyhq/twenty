@@ -39,7 +39,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
   hasRightBorder = true,
   hasBottomBorder = true,
 }: {
-  className?: string;
   children?: ReactNode;
   isSelected?: boolean;
   isDragging?: boolean;
