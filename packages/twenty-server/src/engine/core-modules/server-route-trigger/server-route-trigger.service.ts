@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
 import { Request } from 'express';
+import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -19,7 +20,10 @@ import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import {
+  buildRouteTriggerResponse,
+  type RouteTriggerResponse,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
@@ -99,7 +103,22 @@ export class ServerRouteTriggerService {
       workspaceId: resolver.workspaceId,
       payload: event,
     });
-    const resolved = this.parseResolverResult(resolverResult);
+
+    if (isDefined(resolverResult.error)) {
+      throw new ServerRouteTriggerException(
+        resolverResult.error.errorMessage,
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+      );
+    }
+
+    // Providers that require a synchronous handshake on the webhook URL (Slack
+    // Events API url_verification) need the resolver to answer the caller itself
+    // instead of dispatching to a queued target function.
+    if (isLogicFunctionHttpResponse(resolverResult.data)) {
+      return buildRouteTriggerResponse(resolverResult.data);
+    }
+
+    const resolved = this.parseResolverResult(resolverResult.data);
 
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
@@ -134,18 +153,8 @@ export class ServerRouteTriggerService {
     );
   }
 
-  private parseResolverResult(result: {
-    data: object | null;
-    error?: { errorMessage: string };
-  }): ResolverResult {
-    if (isDefined(result.error)) {
-      throw new ServerRouteTriggerException(
-        result.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-      );
-    }
-
-    const data = result.data as {
+  private parseResolverResult(resolverData: object | null): ResolverResult {
+    const data = resolverData as {
       workspaceId?: unknown;
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;

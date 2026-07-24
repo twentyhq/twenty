@@ -2,6 +2,7 @@ import {
   type LogicFunctionManifest,
   type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
+import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
 export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
@@ -11,11 +12,17 @@ export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 // `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
 // payload?: object }`. The resolver is the single point of authorization —
 // the URL only carries the resolver's universalIdentifier.
-export type ServerRouteResolverResult = {
+export type ServerRouteDispatchResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
 };
+
+// Returning a `Response` instead answers the caller synchronously and skips the
+// dispatch, for providers whose webhook URL requires a handshake reply.
+export type ServerRouteResolverResult =
+  | ServerRouteDispatchResult
+  | LogicFunctionHttpResponse;
 
 export type ServerRouteResolverHandler = (
   ...args: any[]

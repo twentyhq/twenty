@@ -1,4 +1,5 @@
 import { type Request } from 'express';
+import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -227,6 +228,26 @@ describe('ServerRouteTriggerService', () => {
       code: ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
     });
     expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
+  });
+
+  it('answers the caller directly and enqueues nothing when the resolver returns an http response', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        status: 200,
+        body: { challenge: 'abc123' },
+      }),
+    );
+
+    const result = await handle();
+
+    expect(result).toEqual({
+      statusCode: 200,
+      headers: {},
+      body: { challenge: 'abc123' },
+    });
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
