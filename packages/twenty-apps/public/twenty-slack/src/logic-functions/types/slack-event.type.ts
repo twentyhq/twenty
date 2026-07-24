@@ -27,3 +27,10 @@ export type SlackAssistantRequestDraft = {
   slackUserId: string;
   requestText: string;
 };
+
+export type ParsedSlackAssistantRequest =
+  | {
+      request: SlackAssistantRequestDraft;
+      requiresActiveThreadSubscription: boolean;
+    }
+  | { request: null; skipReason: string };

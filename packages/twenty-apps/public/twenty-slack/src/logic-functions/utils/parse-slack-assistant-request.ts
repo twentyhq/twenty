@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
-  type SlackAssistantRequestDraft,
+  type ParsedSlackAssistantRequest,
   type SlackEventsRequestBody,
 } from 'src/logic-functions/types/slack-event.type';
 
@@ -12,9 +12,7 @@ const stripBotMention = (text: string): string =>
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
-):
-  | { request: SlackAssistantRequestDraft }
-  | { request: null; skipReason: string } => {
+): ParsedSlackAssistantRequest => {
   if (body.type !== 'event_callback') {
     return { request: null, skipReason: `Unhandled body type: ${body.type}` };
   }
@@ -28,8 +26,13 @@ export const parseSlackAssistantRequest = (
   const isMention = event.type === 'app_mention';
   const isDirectMessage =
     event.type === 'message' && event.channel_type === 'im';
+  const isChannelOrGroupMessage =
+    event.type === 'message' &&
+    (event.channel_type === 'channel' || event.channel_type === 'group');
+  const isThreadFollowUp =
+    isChannelOrGroupMessage && isNonEmptyString(event.thread_ts);
 
-  if (!isMention && !isDirectMessage) {
+  if (!isMention && !isDirectMessage && !isThreadFollowUp) {
     return { request: null, skipReason: `Unhandled event type: ${event.type}` };
   }
 
@@ -52,15 +55,20 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: 'Empty request text' };
   }
 
+  const slackChannelType =
+    event.channel_type ??
+    (isMention ? 'channel' : isDirectMessage ? 'im' : 'channel');
+
   return {
     request: {
       slackEventId: body.event_id,
       slackChannelId: event.channel,
-      slackChannelType: event.channel_type ?? (isMention ? 'channel' : 'im'),
+      slackChannelType,
       slackThreadTimestamp: event.thread_ts ?? '',
       slackMessageTimestamp: event.ts,
       slackUserId: event.user,
       requestText,
     },
+    requiresActiveThreadSubscription: isThreadFollowUp && !isMention,
   };
 };

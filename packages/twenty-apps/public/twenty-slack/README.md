@@ -20,15 +20,15 @@ below):
   about your CRM or make changes, e.g. `@twenty how many open opportunities do
   we have?` or `@twenty create a company called ACME`. The assistant is powered
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
-  runtime, and answers in the thread. Once it has replied in a thread it stays
-  active there, so follow-up messages in that thread are answered **without
-  re-mentioning** the bot. Channel threads stay active for **24 hours after the
-  last reply** (each reply renews the window); after a full day of silence,
-  re-mention the bot to continue. Direct-message threads never expire. Replies
-  are answered with the thread's recent history as context, so the assistant
-  follows up coherently across turns. It requires the extra setup below (signing
-  secret + event subscriptions); the agent's CRM role is bound automatically
-  via the app manifest on install.
+  runtime, and answers in the thread. Once it has successfully replied in a
+  thread it stays active there, so follow-up messages in that thread are
+  answered **without re-mentioning** the bot. Channel threads stay active for
+  **24 hours after the last reply** (each reply renews the window); after a
+  full day of silence, re-mention the bot to continue. Direct-message threads
+  never expire. Replies are answered with the thread's recent history as
+  context, so the assistant follows up coherently across turns. It requires
+  the extra setup below (signing secret + event subscriptions); the agent's
+  CRM role is bound automatically via the app manifest on install.
 
 ## Tools
 

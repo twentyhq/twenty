@@ -19,6 +19,7 @@ import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { subscribeSlackThread } from 'src/logic-functions/utils/slack-thread-subscription';
 
 const OBJECT_NAME = 'slackAssistantRequest';
 const PLACEHOLDER_TEXT = '_Looking into it…_';
@@ -150,7 +151,7 @@ export const slackAssistantWorkerHandler = async (
       ? await fetchSlackConversationContext({
           client: slackClientResult.client,
           channelId: record.slackChannelId,
-          threadTimestamp: record.slackThreadTimestamp ?? '',
+          threadTimestamp: parentMessageTimestamp ?? '',
           isDirectMessage,
         })
       : undefined;
@@ -192,6 +193,13 @@ export const slackAssistantWorkerHandler = async (
       status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
       responseText,
     });
+
+    if (isNonEmptyString(parentMessageTimestamp)) {
+      await subscribeSlackThread({
+        channelId: record.slackChannelId,
+        threadTimestamp: parentMessageTimestamp,
+      });
+    }
 
     return { done: true };
   } catch (error) {
