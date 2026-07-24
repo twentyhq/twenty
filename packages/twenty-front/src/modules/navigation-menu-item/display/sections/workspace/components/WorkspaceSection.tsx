@@ -152,6 +152,12 @@ export const WorkspaceSection = () => {
           pageIcon: IconLink,
         });
         break;
+      case NavigationMenuItemType.PAGE_LAYOUT:
+        openNavigationMenuItemInSidePanel({
+          pageTitle: getNavigationMenuItemLabel(item, objectMetadataItems, views) || t`Edit page`,
+          pageIcon: item.icon ? getIcon(item.icon) : undefined,
+        });
+        break;
       default:
         openViewOrRecordEditPanelAndNavigate(item, objectMetadataItem);
     }
