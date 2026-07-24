@@ -109,7 +109,15 @@ export class WorkflowVersionCoreSyncService {
     entityManager: WorkspaceEntityManager;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     applicationId?: string;
-  }): Promise<{ coreWorkflowVersionId: string }> {
+  }): Promise<{ coreWorkflowVersionId: string } | null> {
+    if (!(await this.workspaceHasCoreWorkflowVersionIdField(workspaceId))) {
+      this.logger.warn(
+        `workflowVersion.coreWorkflowVersionId field missing for workspace ${workspaceId}, skipping transactional core mirror`,
+      );
+
+      return null;
+    }
+
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
@@ -174,14 +182,19 @@ export class WorkflowVersionCoreSyncService {
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
     for (const workflowVersion of workflowVersions) {
-      const { coreWorkflowVersionId } = await this.mirrorWorkflowVersionWrite({
+      const result = await this.mirrorWorkflowVersionWrite({
         workspaceId,
         entityManager,
         workflowVersion,
         applicationId,
       });
 
-      coreIdByWorkspaceRecordId.set(workflowVersion.id, coreWorkflowVersionId);
+      if (isDefined(result)) {
+        coreIdByWorkspaceRecordId.set(
+          workflowVersion.id,
+          result.coreWorkflowVersionId,
+        );
+      }
     }
 
     return coreIdByWorkspaceRecordId;
@@ -228,14 +241,6 @@ export class WorkflowVersionCoreSyncService {
     coreWorkflowVersionId: string,
     entityManager: WorkspaceEntityManager,
   ): Promise<void> {
-    if (!(await this.workspaceHasCoreWorkflowVersionIdField(workspaceId))) {
-      this.logger.warn(
-        `workflowVersion.coreWorkflowVersionId field missing for workspace ${workspaceId}, skipping core id write-back`,
-      );
-
-      return;
-    }
-
     const workspaceWorkflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         workspaceId,

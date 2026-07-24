@@ -73,14 +73,18 @@ describe('WorkflowVersionCoreSyncService.mirrorWorkflowVersionWrite (integration
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      let coreWorkflowVersionId: string;
+      let coreWorkflowVersionId: string | undefined;
 
       try {
-        ({ coreWorkflowVersionId } = await service.mirrorWorkflowVersionWrite({
+        const mirrorResult = await service.mirrorWorkflowVersionWrite({
           workspaceId,
           entityManager: queryRunner.manager as WorkspaceEntityManager,
           workflowVersion,
-        }));
+        });
+
+        expect(mirrorResult).not.toBeNull();
+
+        coreWorkflowVersionId = mirrorResult?.coreWorkflowVersionId;
 
         const [rowInTransaction] = await queryRunner.manager.query(
           `SELECT "id", "triggers", "steps" FROM core."workflowVersion" WHERE "id" = $1`,
@@ -126,9 +130,11 @@ describe('WorkflowVersionCoreSyncService.mirrorWorkflowVersionWrite (integration
             workflowVersion,
           });
 
+          expect(result).not.toBeNull();
+
           await queryRunner.commitTransaction();
 
-          return result.coreWorkflowVersionId;
+          return result?.coreWorkflowVersionId;
         } catch (error) {
           await queryRunner.rollbackTransaction();
           throw error;
