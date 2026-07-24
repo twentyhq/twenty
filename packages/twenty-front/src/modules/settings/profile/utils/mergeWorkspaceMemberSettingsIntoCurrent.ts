@@ -1,7 +1,7 @@
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from 'twenty-ui/input';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,

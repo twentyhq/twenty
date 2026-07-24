@@ -1,0 +1,338 @@
+{
+  "entries": {
+    "src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts": [
+      "@apollo/client"
+    ],
+    "src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts": [
+      "@apollo/client"
+    ],
+    "src/modules/ui/field/display/components/ActorDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/ArrayDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/CurrencyDisplay.tsx": [
+      "@/localization/hooks/useNumberFormat",
+      "@/object-record/record-field/ui/types/FieldDefinition",
+      "@/object-record/record-field/ui/types/FieldMetadata",
+      "@/settings/data-model/constants/SettingsFieldCurrencyCodes"
+    ],
+    "src/modules/ui/field/display/components/DateDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata",
+      "@/users/contexts/UserContext"
+    ],
+    "src/modules/ui/field/display/components/DateTimeDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata",
+      "@/users/contexts/UserContext"
+    ],
+    "src/modules/ui/field/display/components/EmailsDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/FileChip.tsx": [
+      "@/file/components/FileIcon",
+      "@/object-record/record-field/ui/types/FieldMetadata",
+      "@/object-record/record-field/ui/utils/getFileCategoryFromExtension"
+    ],
+    "src/modules/ui/field/display/components/FilesDisplay.tsx": [
+      "@/activities/files/utils/downloadFile",
+      "@/client-config/states/isAttachmentPreviewEnabledState",
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx": [
+      "@/activities/files/components/DocumentViewer",
+      "@/activities/files/utils/downloadFile"
+    ],
+    "src/modules/ui/field/display/components/LinksDisplay.tsx": [
+      "@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks",
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/MoneyDisplay.tsx": [
+      "@/localization/hooks/useNumberFormat"
+    ],
+    "src/modules/ui/field/display/components/MultiSelectDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/components/PhonesDisplay.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/display/states/filePreviewState.ts": [
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/input/components/AddressInput.tsx": [
+      "@/geo-map/components/PlaceAutocompleteSelect",
+      "@/geo-map/constants/SelectAutocompleteListDropDownId",
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents",
+      "@/object-record/record-field/ui/types/FieldInputDraftValue",
+      "@/object-record/record-field/ui/types/FieldMetadata"
+    ],
+    "src/modules/ui/field/input/components/CurrencyInput.tsx": [
+      "@/localization/hooks/useNumberFormat",
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents",
+      "@/settings/data-model/constants/Currencies"
+    ],
+    "src/modules/ui/field/input/components/DateInput.tsx": [
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/field/input/components/DateTimeInput.tsx": [
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/field/input/components/DoubleTextInput.tsx": [
+      "@/object-record/record-field/ui/types/FieldDoubleText"
+    ],
+    "src/modules/ui/field/input/components/MultiSelectInput.tsx": [
+      "@/object-record/record-field/ui/types/FieldMetadata",
+      "@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem"
+    ],
+    "src/modules/ui/field/input/components/RatingInput.tsx": [
+      "@/object-record/record-field/ui/hooks/useClearField"
+    ],
+    "src/modules/ui/field/input/components/TextAreaInput.tsx": [
+      "@/object-record/record-field/ui/components/LightCopyIconButton",
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/field/input/components/TextInput.tsx": [
+      "@/object-record/record-field/ui/components/LightCopyIconButton",
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/field/input/hooks/useAddressAutocomplete.ts": [
+      "@/geo-map/constants/SelectAutocompleteListDropDownId",
+      "@/geo-map/hooks/useGetPlaceApiData",
+      "@/geo-map/types/placeApi",
+      "@/object-record/record-field/ui/types/FieldInputDraftValue"
+    ],
+    "src/modules/ui/field/input/hooks/useFocusManagement.ts": [
+      "@/object-record/record-field/ui/types/FieldInputDraftValue"
+    ],
+    "src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx": [
+      "@/settings/data-model/constants/Currencies"
+    ],
+    "src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx": [
+      "@/settings/data-model/constants/Currencies"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DatePicker.tsx": [
+      "@/activities/components/SkeletonLoader",
+      "@/auth/states/currentWorkspaceMemberState",
+      "@/localization/utils/detection/detectCalendarStartDay"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx": [
+      "@/auth/states/currentWorkspaceMemberState"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DatePickerInput.tsx": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DatePickerWithoutCalendar.tsx": [
+      "@/activities/components/SkeletonLoader",
+      "@/auth/states/currentWorkspaceMemberState",
+      "@/localization/utils/detection/detectCalendarStartDay"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DateTimePicker.tsx": [
+      "@/activities/components/SkeletonLoader"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx": [
+      "@/auth/states/currentWorkspaceMemberState",
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx": [
+      "@/auth/states/currentWorkspaceMemberState"
+    ],
+    "src/modules/ui/input/components/internal/date/components/RelativeDateTimeRangeText.tsx": [
+      "@/auth/states/currentWorkspaceMemberState"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString.ts": [
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useParseZonedDateTimeToIMaskDateTimeInputString.ts": [
+      "@/localization/constants/DateFormat",
+      "@/localization/hooks/useDateTimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useTimeInput.ts": [
+      "@/localization/constants/TimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useUserDateFormat.ts": [
+      "@/auth/states/currentWorkspaceMemberState",
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek.ts": [
+      "@/auth/states/currentWorkspaceMemberState",
+      "@/localization/utils/detection/detectCalendarStartDay"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useUserTimeFormat.ts": [
+      "@/auth/states/currentWorkspaceMemberState",
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/input/components/internal/date/hooks/useUserTimezone.ts": [
+      "@/auth/states/currentWorkspaceMemberState"
+    ],
+    "src/modules/ui/input/components/internal/date/utils/getDateTimeMask.ts": [
+      "@/localization/constants/DateFormat",
+      "@/localization/constants/TimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/utils/getTimeBlocks.ts": [
+      "@/localization/constants/TimeFormat"
+    ],
+    "src/modules/ui/input/components/internal/date/utils/getTimeMask.ts": [
+      "@/localization/constants/TimeFormat"
+    ],
+    "src/modules/ui/input/components/SelectInput.tsx": [
+      "@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem"
+    ],
+    "src/modules/ui/input/components/TitleInput.tsx": [
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem.tsx": [
+      "@/activities/components/SkeletonLoader"
+    ],
+    "src/modules/ui/layout/contexts/LayoutRenderingContext.tsx": [
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/layout/contexts/TargetRecordIdentifier.ts": [
+      "@/activities/types/ActivityTargetableEntity"
+    ],
+    "src/modules/ui/layout/dropdown/components/DropdownMenuInput.tsx": [
+      "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents"
+    ],
+    "src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx": [
+      "@/side-panel/constants/SidePanelFocusId"
+    ],
+    "src/modules/ui/layout/page/components/DefaultLayout.tsx": [
+      "@/error-handler/components/AppErrorBoundary",
+      "@/error-handler/components/AppFullScreenErrorFallback",
+      "@/error-handler/components/AppPageErrorFallback",
+      "@/file-upload/components/FileUploadProvider",
+      "@/information-banner/components/impersonate/InformationBannerIsImpersonating",
+      "@/keyboard-shortcut-menu/components/KeyboardShortcutMenu",
+      "@/layout-customization/components/LayoutCustomizationBar",
+      "@/navigation-menu-item/display/dnd/providers/PageDragDropProvider",
+      "@/navigation/components/AppNavigationDrawer",
+      "@/navigation/components/MobileNavigationBar"
+    ],
+    "src/modules/ui/layout/page/components/MainAppLayoutWithSidePanel.tsx": [
+      "@/command-menu/components/CommandMenuForMobile",
+      "@/command-menu/hooks/useCommandMenuHotKeys",
+      "@/side-panel/components/SidePanelForDesktop"
+    ],
+    "src/modules/ui/layout/page/components/PageCardHeader.tsx": [
+      "@/navigation/hooks/useNavigationDrawerExpanded",
+      "@/side-panel/constants/SidePanelTopBarHeight"
+    ],
+    "src/modules/ui/layout/page/components/PageCardLayout.tsx": [
+      "@/information-banner/components/InformationBannerWrapper"
+    ],
+    "src/modules/ui/layout/page/components/PageHeader.tsx": [
+      "@/navigation/hooks/useIsSettingsPage",
+      "@/navigation/hooks/useNavigationDrawerExpanded"
+    ],
+    "src/modules/ui/layout/show-page/components/FieldRichTextCard.tsx": [
+      "@/activities/components/ActivityRichTextEditor",
+      "@/activities/components/SkeletonLoader",
+      "@/object-record/record-store/states/selectors/recordStoreFamilySelector"
+    ],
+    "src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx": [
+      "@/activities/components/SkeletonLoader"
+    ],
+    "src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx": [
+      "@/navigation/hooks/useIsSettingsPage"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem.tsx": [
+      "@/auth/utils/availableWorkspacesUtils",
+      "@/domain-manager/hooks/useBuildWorkspaceUrl",
+      "@/domain-manager/hooks/useRedirectToWorkspaceDomain",
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx": [
+      "@/auth/states/availableWorkspacesState",
+      "@/auth/states/currentWorkspaceState"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx": [
+      "@/auth/states/availableWorkspacesState",
+      "@/auth/states/currentWorkspaceState"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent.tsx": [
+      "@/auth/states/currentWorkspaceState"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx": [
+      "@/auth/hooks/useAuth",
+      "@/auth/states/availableWorkspacesState",
+      "@/auth/states/currentWorkspaceState",
+      "@/auth/utils/availableWorkspacesUtils",
+      "@/client-config/states/isMultiWorkspaceEnabledState",
+      "@/client-config/states/supportChatState",
+      "@/domain-manager/hooks/useBuildWorkspaceUrl",
+      "@/domain-manager/hooks/useRedirectToDefaultDomain",
+      "@/domain-manager/hooks/useRedirectToWorkspaceDomain",
+      "@/navigation/hooks/useOpenSettings",
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx": [
+      "@/auth/states/availableWorkspacesState"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx": [
+      "@/layout-customization/states/isLayoutCustomizationModeEnabledState"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx": [
+      "@/navigation/hooks/useIsSettingsDrawer",
+      "@/navigation/hooks/useNavigationDrawerExpanded"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper.tsx": [
+      "@/navigation/hooks/useIsSettingsPage"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerBackButton.tsx": [
+      "@/navigation/states/currentMobileNavigationDrawerState",
+      "@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx": [
+      "@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx": [
+      "@/navigation/hooks/useNavigationDrawerExpanded"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer.tsx": [
+      "@/navigation/hooks/useIsSettingsPage"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent.tsx": [
+      "@/navigation/hooks/useIsSettingsDrawer"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerSection.tsx": [
+      "@/navigation/hooks/useIsSettingsDrawer"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle.tsx": [
+      "@/navigation/hooks/useIsSettingsPage"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader.tsx": [
+      "@/activities/components/SkeletonLoader"
+    ],
+    "src/modules/ui/navigation/navigation-drawer/hooks/useFilteredAvailableWorkspaces.ts": [
+      "@/auth/states/currentWorkspaceState",
+      "~/generated-metadata/graphql"
+    ],
+    "src/modules/ui/theme/hooks/useColorScheme.ts": [
+      "@/auth/states/currentWorkspaceMemberState",
+      "@/settings/profile/hooks/useUpdateWorkspaceMemberSettings"
+    ],
+    "src/modules/ui/utilities/page-favicon/components/PageFavicon.tsx": [
+      "@/auth/states/workspacePublicDataState"
+    ],
+    "src/modules/ui/utilities/state/jotai/jotaiStore.ts": [
+      "@/auth/utils/clearAllSessionLocalStorageKeys"
+    ]
+  }
+}

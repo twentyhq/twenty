@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from 'twenty-ui/input';
+
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSystemColorScheme = (): ColorScheme => {

@@ -3,10 +3,10 @@ import { type ReactNode, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
+import { panelResizeIsSettledState } from '@/ui/layout/resizable-panel/states/panelResizeIsSettledState';
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -89,26 +89,24 @@ export const NavigationDrawer = ({
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setTableWidthResizeIsActive = useSetAtomState(
-    tableWidthResizeIsActiveState,
-  );
+  const setPanelResizeIsSettled = useSetAtomState(panelResizeIsSettledState);
 
   const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setPanelResizeIsSettled(true);
   };
 
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setPanelResizeIsSettled(true);
   };
 
   const handleResizeStart = () => {
     setIsResizing(true);
-    setTableWidthResizeIsActive(false);
+    setPanelResizeIsSettled(false);
   };
 
   return (

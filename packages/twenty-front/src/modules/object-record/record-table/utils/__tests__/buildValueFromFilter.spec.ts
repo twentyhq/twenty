@@ -1,7 +1,7 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from 'twenty-ui/input';
 import {
   type FilterableFieldType,
   ViewFilterOperand,

@@ -1,10 +1,10 @@
+import { type ColorScheme } from 'twenty-ui/input';
+
 import {
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
-
-export type ColorScheme = 'Dark' | 'Light' | 'System';
 
 export type WorkspaceMember = {
   __typename: 'WorkspaceMember';
