@@ -1,12 +1,12 @@
 ---
 title: Instalační hooky
-description: Spouštějte logiku před instalací nebo po ní — naplňte data, zazálohujte záznamy, ověřte aktualizaci.
+description: Spouštějte logiku během životního cyklu instalace, upgradu nebo odinstalace – naplňte data, zálohujte záznamy, ověřte upgrade, vyčistěte externí zdroje.
 icon: wrench
 ---
 
-Instalační hooky jsou speciální logické funkce, které se spouštějí během životního cyklu instalace nebo upgradu. Sdílí stejný runtime handleru jako běžné [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) a přijímají `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` je při čisté instalaci `undefined`), ale deklarují se pomocí vlastních definičních funkcí a fungují mimo běžný model triggerů (HTTP, cron, databázové události).
+Instalační hooky jsou speciální logické funkce, které se spouštějí během životního cyklu instalace, upgradu nebo odinstalace. Sdílí stejný runtime handleru jako běžné [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions), ale deklarují se pomocí vlastních definičních funkcí a fungují mimo běžný model triggerů (HTTP, cron, databázové události). Instalační hooky přijímají `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` je při čisté instalaci `undefined`); hook pro odinstalaci přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).
 
-Každá aplikace může definovat **nanejvýš jednu pre-install** a **nanejvýš jednu post-install** funkci. Sestavení manifestu skončí chybou, pokud je zjištěno více než jedno z nich.
+Každá aplikace smí definovat **nanejvýš jeden** hook každého typu (předinstalační, poinstalační, odinstalační). Sestavení manifestu skončí chybou, pokud je zjištěn více než jeden hook daného typu.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## Odinstalační hook
+
+`defineUninstallLogicFunction` deklaruje hook, který se spustí, když uživatel odinstaluje vaši aplikaci. Spustí se **předtím**, než jsou odstraněna metadata, data a kód aplikace — jakmile se spustí migrační skript pro smazání, nezbude nic, co by se dalo vykonat — takže váš handler může stále dotazovat objekty a záznamy aplikace. Použijte ho k úklidu externích prostředků: zrušení přidělených API prostředků, smazání zbývajících botů, odvolání webhooks.
+
+Poznámky:
+
+* Hook pracuje v režimu best effort: běží synchronně, ale chyba se pouze zaloguje a **nikdy neblokuje odinstalaci** — úklid nesmí znemožnit odebrání aplikace.
+* Přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).
+* Nespouští se, pokud je neúspěšná čistá instalace vrácena zpět — aplikace nikdy nedokončila instalaci.
+* Hook nemůže běžet poté, co je aplikace pryč, takže externí úklid, který závisí na datech aplikace (např. ID botů uložená v záznamech), patří sem, ne do externí naplánované úlohy.
+* Stejně jako instalační hooky se **nespouští v dev módu** — místo toho ho vyvolejte ručně:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

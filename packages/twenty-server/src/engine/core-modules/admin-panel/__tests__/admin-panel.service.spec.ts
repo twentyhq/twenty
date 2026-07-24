@@ -337,7 +337,7 @@ describe('AdminPanelVersionService', () => {
 
       expect(result).toEqual({
         currentVersion: '1.0.0',
-        latestVersion: 'latest',
+        latestVersion: null,
       });
     });
 
@@ -353,7 +353,7 @@ describe('AdminPanelVersionService', () => {
 
       expect(result).toEqual({
         currentVersion: '1.0.0',
-        latestVersion: 'latest',
+        latestVersion: null,
       });
     });
 

@@ -133,6 +133,19 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
+  it('should create profile after syncing emails when more than 1 workspaceMember exist', () => {
+    const {
+      nextOnboardingStatus,
+      isWelcomeAnimationVisible,
+      shouldOpenAiChatAfterOnboarding,
+    } = renderHooks(OnboardingStatus.SYNC_EMAIL, {
+      withOneWorkspaceMember: false,
+    });
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
+    expect(isWelcomeAnimationVisible).toBe(false);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
   it('should create profile after installing apps', () => {
     const {
       nextOnboardingStatus,

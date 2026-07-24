@@ -70,4 +70,77 @@ describe('submitPartnerApplicationSchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  const validExperienceNotes =
+    'Built a custom Twenty app for a property-management client, modeled leases and ' +
+    'tenants as data models, automated renewal workflows, and shipped a front component ' +
+    'for the broker dashboard with role-based views.';
+
+  it('accepts twenty experience milestones, narrative, and proof link', () => {
+    const result = submitPartnerApplicationSchema.safeParse({
+      ...base,
+      twentyExperience: [
+        'CUSTOM_APPS',
+        'DATA_MODELS',
+        'WORKFLOWS',
+        'FRONT_COMPONENTS',
+      ],
+      twentyExperienceNotes: validExperienceNotes,
+      twentyExperienceProofLink: 'https://www.loom.com/share/example',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects unknown twentyExperience milestone values', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['INTEGRATIONS'],
+        twentyExperienceNotes: validExperienceNotes,
+        twentyExperienceProofLink: 'https://github.com/example/case',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects twentyExperienceNotes shorter than 200 characters', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['WORKFLOWS'],
+        twentyExperienceNotes: 'Too short for a real implementation narrative.',
+        twentyExperienceProofLink: 'https://www.loom.com/share/example',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a partial experience triad', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['WORKFLOWS'],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a non-http twentyExperienceProofLink', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: ['WORKFLOWS'],
+        twentyExperienceNotes: validExperienceNotes,
+        twentyExperienceProofLink: 'javascript:alert(1)',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects an empty twentyExperience array when other experience fields are set', () => {
+    expect(
+      submitPartnerApplicationSchema.safeParse({
+        ...base,
+        twentyExperience: [],
+        twentyExperienceNotes: validExperienceNotes,
+        twentyExperienceProofLink: 'https://www.loom.com/share/example',
+      }).success,
+    ).toBe(false);
+  });
 });
