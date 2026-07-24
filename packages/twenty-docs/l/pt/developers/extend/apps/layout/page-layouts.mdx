@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -53,7 +53,7 @@ export default definePageLayout({
 
 * `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
 * `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
-* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`VERTICAL_LIST` para páginas de registro, `GRID` para dashboards). Uma aba contendo um único widget o renderiza automaticamente em largura total; com vários widgets, eles são empilhados como cards.
 * Cada `widget` dentro de uma aba pode renderizar um [front component](/l/pt/developers/extend/apps/layout/front-components), uma lista de relações ou outros tipos de widget nativos.
 * `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
 
@@ -77,7 +77,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

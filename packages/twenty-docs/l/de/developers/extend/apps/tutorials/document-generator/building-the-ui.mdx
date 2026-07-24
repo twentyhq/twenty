@@ -220,8 +220,8 @@ export default defineFrontComponent({
 ```
 
 Mounten Sie es mit einem [page layout](/l/de/developers/extend/apps/layout/page-layouts). Ein
-`RECORD_PAGE` Layout fügt Tabs zur Datensatzansicht eines Objekts hinzu; ein `FRONT_COMPONENT`
-Widget in einem `CANVAS` Tab Hosts die Komponent:
+`RECORD_PAGE`-Layout fügt der Datensatzansicht eines Objekts Tabs hinzu; ein Tab mit einem einzelnen
+`FRONT_COMPONENT`-Widget zeigt die Komponente randlos in voller Breite an:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -236,7 +236,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

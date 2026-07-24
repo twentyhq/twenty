@@ -220,8 +220,8 @@ export default defineFrontComponent({
 ```
 
 Monta con un [layout pagina](/l/it/developers/extend/apps/layout/page-layouts). Un layout
-`RECORD_PAGE` aggiunge schede alla vista record di un oggetto; un widget `FRONT_COMPONENT`
-in una scheda `CANVAS` ospita il componente:
+`RECORD_PAGE` aggiunge schede alla vista del record di un oggetto; una scheda con un singolo widget
+`FRONT_COMPONENT` ospita il componente a tutta larghezza:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -236,7 +236,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

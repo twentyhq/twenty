@@ -213,8 +213,8 @@ export default defineFrontComponent({
 ```
 
 قم بتحميلها مع [تخطيط الصفحة](/l/ar/developers/extend/apps/layout/page-layouts). يضيف تخطيط
-`RECORD_PAGE` علامات تبويب إلى طريقة عرض تسجيل الكائن؛ ويستضيف عنصر التحكم 'FRONT_COMPONENT`
-في علامة تبويب 'CANVAS` المكون:
+`RECORD_PAGE` علامات تبويب إلى عرض سجل الكائن؛ تستضيف علامة تبويب تحتوي على أداة
+`FRONT_COMPONENT` واحدة المكوّن بكامل العرض:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -229,7 +229,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

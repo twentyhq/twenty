@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -53,7 +53,7 @@ export default definePageLayout({
 
 * `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
 * `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
-* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (kayıt sayfaları için `VERTICAL_LIST`, panolar için `GRID`). Tek bir bileşen içeren bir sekme, onu otomatik olarak tam genişlikte görüntüler; birden fazla bileşenle kartlar halinde üst üste dizilir.
 * Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
@@ -77,7 +77,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
