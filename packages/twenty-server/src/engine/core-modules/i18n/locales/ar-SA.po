@@ -1474,11 +1474,6 @@ msgstr "لا يمكن تحديث تعريف علم الإذن القياسي"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "لا يمكن تحديث خصائص المهارة القياسية (يسمح فقط بالتنشيط/التعطيل)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "لا يمكن تحديث حالة إصدار سير العمل يدويًا"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -8012,6 +8007,11 @@ msgstr "هذه الميزة غير مُمكَّنة."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "لا يمكن تعديل هذا الحقل."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

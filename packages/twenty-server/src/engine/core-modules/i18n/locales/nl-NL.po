@@ -1474,11 +1474,6 @@ msgstr "Standaarddefinitie van machtigingsvlag kan niet worden bijgewerkt"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "Kan eigenschappen van standaardvaardigheid niet bijwerken (alleen activering/deactivering toegestaan)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "Kan de status van de workflowversie niet handmatig bijwerken."
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -8012,6 +8007,11 @@ msgstr "Deze functie is niet ingeschakeld."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "Dit veld kan niet worden gewijzigd."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

@@ -1474,11 +1474,6 @@ msgstr "Impossible de mettre à jour la définition d'indicateur d'autorisation 
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "Impossible de modifier les propriétés d'une compétence standard (seules l'activation et la désactivation sont autorisées)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "Impossible de mettre à jour manuellement le statut de la version du flux de travail"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -8012,6 +8007,11 @@ msgstr "Cette fonctionnalité n'est pas activée."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "Ce champ ne peut pas être modifié."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
