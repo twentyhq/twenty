@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -165,6 +166,18 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             getWorkflowVersionOrFail: jest
               .fn()
               .mockResolvedValue(mockWorkflowVersion),
+          },
+        },
+        {
+          provide: WorkflowVersionCoreSyncService,
+          useValue: {
+            writeWorkflowVersionAndMirror: jest.fn(
+              async (_workspaceId: string, write: any) => {
+                await write(mockWorkflowVersionWorkspaceRepository, {});
+              },
+            ),
+            mirrorWorkflowVersionWrite: jest.fn(),
+            invalidateAutomatedTriggerMaps: jest.fn(),
           },
         },
       ],
