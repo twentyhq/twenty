@@ -15,19 +15,17 @@ permissions:
   pull-requests: read
 
 jobs:
-  upgrade-mutation-guard:
+  # merge_group carries no PR labels, so resolve them from the queued PR (its
+  # number is in the merge-queue ref). A deliberate, reviewed ci:allow-* bypass
+  # skips the guard, matching the PR-level behavior.
+  check-bypass:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.labels.outputs.skip }}
     steps:
-      - name: Checkout merge candidate
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          fetch-depth: 2
-      # merge_group carries no PR labels, so resolve them from the queued PR
-      # (its number is in the merge-queue ref) to honor the same ci:allow-*
-      # bypasses the PR-level guard uses for deliberate, reviewed sequence mutations.
-      - name: Resolve bypass labels from the queued PR
-        id: bypass
+      - name: Check queued PR for a bypass label
+        id: labels
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_REF: ${{ github.event.merge_group.head_ref }}
@@ -35,29 +33,33 @@ jobs:
           set -euo pipefail
           PR_NUMBER=$(echo "$HEAD_REF" | sed -n -E 's|.*/pr-([0-9]+)-[0-9a-f]+$|\1|p')
 
-          allow_previous_version_mutation=false
-          allow_timestamp_exception=false
-
+          skip=false
           if [ -n "$PR_NUMBER" ]; then
             LABELS=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
             echo "Queued PR #$PR_NUMBER labels:"
             echo "$LABELS"
 
-            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation'; then
-              allow_previous_version_mutation=true
-            fi
-            if echo "$LABELS" | grep -qxF 'ci:allow-upgrade-command-timestamp-exception'; then
-              allow_timestamp_exception=true
+            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation' \
+              || echo "$LABELS" | grep -qxF 'ci:allow-upgrade-command-timestamp-exception'; then
+              skip=true
             fi
           else
             echo "Could not parse a PR number from '$HEAD_REF'; enforcing strictly."
           fi
 
-          echo "allow_previous_version_mutation=$allow_previous_version_mutation" >> "$GITHUB_OUTPUT"
-          echo "allow_timestamp_exception=$allow_timestamp_exception" >> "$GITHUB_OUTPUT"
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
+  upgrade-mutation-guard:
+    needs: check-bypass
+    if: needs.check-bypass.outputs.skip != 'true'
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merge candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
       - name: Validate upgrade command mutations against main
         uses: ./.github/actions/upgrade-mutation-guard
         with:
           base_sha: ${{ github.event.merge_group.base_sha }}
-          allow_previous_version_mutation: ${{ steps.bypass.outputs.allow_previous_version_mutation }}
-          allow_timestamp_exception: ${{ steps.bypass.outputs.allow_timestamp_exception }}
