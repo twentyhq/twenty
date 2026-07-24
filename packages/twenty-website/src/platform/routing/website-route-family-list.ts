@@ -1,5 +1,11 @@
+import { CUSTOMER_STORIES_ROUTE_FAMILY } from '@/case-studies/customer-stories-route-family';
+import { PARTNER_PROFILES_ROUTE_FAMILY } from '@/partners-marketplace/partner-profiles-route-family';
+
 import { type WebsiteRouteFamily } from './website-route';
 
-// Dynamic families register here as their content migrates (articles,
-// releases, customer stories). The sitemap awaits every enumerator.
-export const WEBSITE_ROUTE_FAMILY_LIST: readonly WebsiteRouteFamily[] = [];
+// Dynamic families register here as their content migrates. The sitemap awaits
+// every enumerator and isolates a failing one to [] so it can't sink the build.
+export const WEBSITE_ROUTE_FAMILY_LIST: readonly WebsiteRouteFamily[] = [
+  CUSTOMER_STORIES_ROUTE_FAMILY,
+  PARTNER_PROFILES_ROUTE_FAMILY,
+];
