@@ -34,7 +34,7 @@ const parsePositiveInteger = (value: string, optionName: string): number => {
 };
 
 @Command({
-  name: 'upgrade-application',
+  name: 'application:upgrade',
   description:
     'Upgrade an application to its latest available version on every workspace that already has it installed',
 })
