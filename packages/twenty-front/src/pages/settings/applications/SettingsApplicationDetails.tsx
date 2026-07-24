@@ -23,7 +23,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  IconApps,
   IconBox,
   IconCommand,
   IconGraph,
@@ -255,9 +254,6 @@ export const SettingsApplicationDetails = () => {
         disabled: hasNothingToConfigure,
       };
     })(),
-    ...(isDefined(settingsCustomTabFrontComponentId)
-      ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
-      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -319,10 +315,6 @@ export const SettingsApplicationDetails = () => {
           />
         );
       case 'settings':
-        return (
-          <SettingsApplicationDetailSettingsTab application={application} />
-        );
-      case 'custom':
         return isDefined(settingsCustomTabFrontComponentId) ? (
           <SettingsApplicationCustomTab
             settingsCustomTabFrontComponentId={
@@ -330,7 +322,7 @@ export const SettingsApplicationDetails = () => {
             }
           />
         ) : (
-          <></>
+          <SettingsApplicationDetailSettingsTab application={application} />
         );
       default:
         return <></>;

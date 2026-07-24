@@ -36,7 +36,7 @@ Notes:
 - Pre-install, post-install, and uninstall functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
-- `settingsCustomTabFrontComponentUniversalIdentifier` *(optional)* takes the `universalIdentifier` of a [front component](/developers/extend/apps/layout/front-components). When set, the app's settings page gains a **Custom** tab that renders that front component.
+- `settingsCustomTabFrontComponentUniversalIdentifier` *(optional)* takes the `universalIdentifier` of a [front component](/developers/extend/apps/layout/front-components). When set, the app's **Settings** tab renders that front component instead of the default variable configuration UI.
 
 ## Variable types
 
