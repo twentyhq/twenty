@@ -137,9 +137,6 @@ export const SidePanelRecordPageFieldSettings = () => {
     [FieldDisplayMode.TABLE]: t`Table`,
   };
 
-  // The merged Layout row covers both inline display modes (Field / Card) and
-  // the embedded-view layouts (Table / Kanban / Calendar), so its label and
-  // icon reflect the embedded view's type while in table display mode.
   const layoutLabel = isTableDisplayMode
     ? isEmbeddedViewKanbanLayout
       ? t`Kanban`
