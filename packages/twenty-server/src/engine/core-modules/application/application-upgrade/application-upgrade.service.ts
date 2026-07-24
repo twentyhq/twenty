@@ -164,6 +164,48 @@ export class ApplicationUpgradeService {
     return { appRegistration, targetVersion, applicationsToUpgrade };
   }
 
+  async upgradeApplications({
+    appRegistration,
+    targetVersion,
+    applications,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    applications: ApplicationEntity[];
+    batchSize?: number;
+  }): Promise<void> {
+    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+
+    for (
+      let batchStart = 0;
+      batchStart < applications.length;
+      batchStart += sanitizedBatchSize
+    ) {
+      const batch = applications.slice(
+        batchStart,
+        batchStart + sanitizedBatchSize,
+      );
+
+      await Promise.all(
+        batch.map(async (application) => {
+          try {
+            await this.upgradeApplicationToVersion({
+              appRegistration,
+              targetVersion,
+              workspaceId: application.workspaceId,
+            });
+          } catch (error) {
+            this.logger.error(
+              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
+              error,
+            );
+          }
+        }),
+      );
+    }
+  }
+
   async upgradeAllApplications({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
@@ -189,35 +231,12 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
-
-    for (
-      let batchStart = 0;
-      batchStart < applicationsToUpgrade.length;
-      batchStart += sanitizedBatchSize
-    ) {
-      const batch = applicationsToUpgrade.slice(
-        batchStart,
-        batchStart + sanitizedBatchSize,
-      );
-
-      await Promise.all(
-        batch.map(async (application) => {
-          try {
-            await this.upgradeApplicationToVersion({
-              appRegistration,
-              targetVersion,
-              workspaceId: application.workspaceId,
-            });
-          } catch (error) {
-            this.logger.error(
-              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
-              error,
-            );
-          }
-        }),
-      );
-    }
+    await this.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
+      batchSize,
+    });
   }
 
   async upgradeApplication(params: {

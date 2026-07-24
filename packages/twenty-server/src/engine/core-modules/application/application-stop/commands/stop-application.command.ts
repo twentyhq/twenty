@@ -14,6 +14,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 type StopApplicationCommandOptions = {
   applicationUniversalIdentifier: string;
   workspaceId?: string;
+  yes?: boolean;
 };
 
 @Command({
@@ -49,13 +50,22 @@ export class StopApplicationCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspace-id [workspace_id]',
+    flags: '-w, --workspace-id <workspace_id>',
     description:
       'Only stop the application on the given workspace id. Stops it on every workspace if not provided.',
     required: false,
   })
   parseWorkspaceId(value: string): string {
     return value;
+  }
+
+  @Option({
+    flags: '-y, --yes',
+    description: 'Skip the confirmation prompt (for non-interactive usage)',
+    required: false,
+  })
+  parseYes(): boolean {
+    return true;
   }
 
   override async run(
@@ -74,16 +84,18 @@ export class StopApplicationCommand extends CommandRunner {
       );
     }
 
-    const isConfirmed = await this.askForConfirmation(
-      options.applicationUniversalIdentifier,
-      registration.id,
-      options.workspaceId,
-    );
+    if (!(options.yes ?? false)) {
+      const isConfirmed = await this.askForConfirmation(
+        options.applicationUniversalIdentifier,
+        registration.id,
+        options.workspaceId,
+      );
 
-    if (!isConfirmed) {
-      this.logger.log('Aborted, no kill switch enabled');
+      if (!isConfirmed) {
+        this.logger.log('Aborted, no kill switch enabled');
 
-      return;
+        return;
+      }
     }
 
     await this.applicationStopService.stop(

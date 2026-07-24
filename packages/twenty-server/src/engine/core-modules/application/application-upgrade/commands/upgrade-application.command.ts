@@ -16,6 +16,19 @@ type UpgradeApplicationCommandOptions = {
   workspaceId?: Set<string>;
   workspaceCountLimit?: number;
   dryRun?: boolean;
+  yes?: boolean;
+};
+
+const parsePositiveInteger = (value: string, optionName: string): number => {
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+    throw new Error(
+      `Invalid ${optionName} "${value}". Expected a positive integer`,
+    );
+  }
+
+  return parsedValue;
 };
 
 @Command({
@@ -54,19 +67,11 @@ export class UpgradeApplicationCommand extends CommandRunner {
     required: false,
   })
   parseBatchSize(value: string): number {
-    const parsedValue = Number.parseInt(value, 10);
-
-    if (Number.isNaN(parsedValue) || parsedValue < 1) {
-      throw new Error(
-        `Invalid batch size "${value}". Expected a positive integer`,
-      );
-    }
-
-    return parsedValue;
+    return parsePositiveInteger(value, 'batch size');
   }
 
   @Option({
-    flags: '-w, --workspace-id [workspace_id]',
+    flags: '-w, --workspace-id <workspace_id>',
     description:
       'Only upgrade the given workspace id. Can be repeated to target several workspaces. Upgrades all workspaces if not provided.',
     required: false,
@@ -80,20 +85,12 @@ export class UpgradeApplicationCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '--workspace-count-limit [count]',
+    flags: '--workspace-count-limit <count>',
     description: 'Limit the number of workspaces to upgrade',
     required: false,
   })
   parseWorkspaceCountLimit(value: string): number {
-    const parsedValue = Number.parseInt(value, 10);
-
-    if (Number.isNaN(parsedValue) || parsedValue < 1) {
-      throw new Error(
-        `Invalid workspace count limit "${value}". Expected a positive integer`,
-      );
-    }
-
-    return parsedValue;
+    return parsePositiveInteger(value, 'workspace count limit');
   }
 
   @Option({
@@ -102,6 +99,15 @@ export class UpgradeApplicationCommand extends CommandRunner {
     required: false,
   })
   parseDryRun(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-y, --yes',
+    description: 'Skip the confirmation prompt (for non-interactive usage)',
+    required: false,
+  })
+  parseYes(): boolean {
     return true;
   }
 
@@ -125,7 +131,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
       ? Array.from(options.workspaceId)
       : undefined;
 
-    const { targetVersion, applicationsToUpgrade } =
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
       await this.applicationUpgradeService.findApplicationsToUpgrade({
         applicationRegistrationId: registration.id,
         onlyAutoUpgrade: false,
@@ -165,30 +171,33 @@ export class UpgradeApplicationCommand extends CommandRunner {
       return;
     }
 
-    const confirmationTarget = isDefined(workspaceIds)
-      ? `workspace(s) ${workspaceIds.join(', ')}`
-      : `${impactedWorkspaceIds.length} workspace(s)`;
+    if (!(options.yes ?? false)) {
+      const confirmationTarget = isDefined(workspaceIds)
+        ? `workspace(s) ${workspaceIds.join(', ')}`
+        : `${impactedWorkspaceIds.length} workspace(s)`;
 
-    const isConfirmed = await askCommandConfirmation(
-      `Confirm upgrading application ${registration.universalIdentifier} to version ${targetVersion} on ${confirmationTarget}`,
-    );
+      const isConfirmed = await askCommandConfirmation(
+        `Confirm upgrading application ${registration.universalIdentifier} to version ${targetVersion} on ${confirmationTarget}`,
+      );
 
-    if (!isConfirmed) {
-      this.logger.log('Aborted, no upgrade performed');
+      if (!isConfirmed) {
+        this.logger.log('Aborted, no upgrade performed');
 
-      return;
+        return;
+      }
     }
 
     this.logger.log(
       `Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)...`,
     );
 
-    await this.applicationUpgradeService.upgradeAllApplications({
-      applicationRegistrationId: registration.id,
-      onlyAutoUpgrade: false,
+    // Runs on the exact set shown at confirmation time, so installations
+    // created or versions published while the operator answered are excluded.
+    await this.applicationUpgradeService.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
       batchSize: options.batchSize,
-      workspaceIds,
-      workspaceCountLimit: options.workspaceCountLimit,
     });
 
     this.logger.log(chalk.blue('Command completed!'));
