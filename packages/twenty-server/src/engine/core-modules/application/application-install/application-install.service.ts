@@ -298,7 +298,10 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
-      logo: resolvedPackage.manifest.application.logoUrl ?? null,
+      logo:
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,

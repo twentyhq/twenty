@@ -153,7 +153,7 @@ export class ApplicationSyncService {
       universalIdentifier: manifest.application.universalIdentifier,
       name: manifest.application.displayName,
       description: manifest.application.description ?? null,
-      logo: manifest.application.logoUrl ?? null,
+      logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
       logoFileId: null,
       version: null,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
@@ -252,7 +252,7 @@ export class ApplicationSyncService {
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
-      logo: manifest.application.logoUrl ?? null,
+      logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
