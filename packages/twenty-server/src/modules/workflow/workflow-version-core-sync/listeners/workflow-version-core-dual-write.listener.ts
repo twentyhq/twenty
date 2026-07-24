@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
   type ObjectRecordRestoreEvent,
-  type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,30 +20,6 @@ export class WorkflowVersionCoreDualWriteListener {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
-
-  @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.CREATED)
-  async handleCreated(
-    batchEvent: CustomWorkspaceEventBatch<
-      ObjectRecordCreateEvent<WorkflowVersionWorkspaceEntity>
-    >,
-  ): Promise<void> {
-    await this.upsertToCore(
-      batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after),
-    );
-  }
-
-  @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.UPDATED)
-  async handleUpdated(
-    batchEvent: CustomWorkspaceEventBatch<
-      ObjectRecordUpdateEvent<WorkflowVersionWorkspaceEntity>
-    >,
-  ): Promise<void> {
-    await this.upsertToCore(
-      batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after),
-    );
-  }
 
   @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.RESTORED)
   async handleRestored(
