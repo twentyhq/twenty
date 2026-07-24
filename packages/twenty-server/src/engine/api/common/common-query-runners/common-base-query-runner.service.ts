@@ -317,11 +317,13 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
 
-    const rolePermissionConfig = resolveRolePermissionConfig({
-      authContext: context.authContext,
-      userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-      apiKeyRoleMap: context.apiKeyRoleMap,
-    });
+    const rolePermissionConfig =
+      queryRunnerContext.rolePermissionConfig ??
+      resolveRolePermissionConfig({
+        authContext: context.authContext,
+        userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+        apiKeyRoleMap: context.apiKeyRoleMap,
+      });
 
     if (!rolePermissionConfig) {
       throw new CommonQueryRunnerException(
