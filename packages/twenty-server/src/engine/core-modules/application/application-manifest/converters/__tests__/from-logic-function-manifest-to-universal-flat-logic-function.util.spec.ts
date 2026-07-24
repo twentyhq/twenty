@@ -50,18 +50,21 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
   });
 
-  it('should fall back to LIVE for a packaged source without a checksum', () => {
-    const result = fromLogicFunctionManifestToUniversalFlatLogicFunction({
-      logicFunctionManifest: buildLogicFunctionManifest({
-        builtHandlerChecksum: '',
-      }),
-      applicationUniversalIdentifier,
-      applicationSourceType: ApplicationRegistrationSourceType.NPM,
-      now,
-    });
+  it.each([['empty', ''] as const, ['undefined', undefined] as const])(
+    'should fall back to LIVE for a packaged source with an %s checksum',
+    (_label, builtHandlerChecksum) => {
+      const result = fromLogicFunctionManifestToUniversalFlatLogicFunction({
+        logicFunctionManifest: buildLogicFunctionManifest({
+          builtHandlerChecksum,
+        }),
+        applicationUniversalIdentifier,
+        applicationSourceType: ApplicationRegistrationSourceType.NPM,
+        now,
+      });
 
-    expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
-  });
+      expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
+    },
+  );
 
   it('should derive the name from the handler when the manifest has no name', () => {
     const result = fromLogicFunctionManifestToUniversalFlatLogicFunction({

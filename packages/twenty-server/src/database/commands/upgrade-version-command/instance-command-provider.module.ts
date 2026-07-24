@@ -15,7 +15,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     // 2.5 cross-upgrade window closes and the encrypt-totp-secrets slow command
     // is retired.
     JwtModule,
-    // Required by the 2.23 set-packaged-application-logic-function-execution-mode
+    // Required by the 2.25 set-packaged-application-logic-function-execution-mode
     // slow command to install prebuilt bundles after the mode backfill.
     WorkspaceCacheModule,
   ],

@@ -229,10 +229,22 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    // The bundle can be missing on this node even though the function is
-    // legitimately PREBUILT: mode was backfilled by an upgrade migration, or
-    // the install ran on another server instance. Self-heal by installing
-    // from the stored build before failing the execution.
+    // A bundle installed under a different checksum is left untouched: this
+    // function's metadata may be a stale cache read, and reinstalling from it
+    // would roll a freshly updated bundle back to an older build.
+    if (isDefined(installedChecksum)) {
+      throw new LogicFunctionException(
+        `Prebuilt bundle is outdated for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `Rebuild and try again.`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    // Nothing installed on this node even though the function is legitimately
+    // PREBUILT: mode was backfilled by an upgrade migration, or the install ran
+    // on another server instance. Self-heal by installing from the stored build
+    // before failing the execution.
     try {
       await driver.installPrebuiltBundle({
         flatLogicFunction,
@@ -247,7 +259,7 @@ export class LogicFunctionExecutorService {
       );
       throw new LogicFunctionException(
         `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `(expected=${flatLogicFunction.checksum ?? 'none'}). ` +
           `Rebuild and try again.`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
