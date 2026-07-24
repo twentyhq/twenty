@@ -24,9 +24,12 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
 jest.mock('@/views/hooks/useQueryVariablesFromParentView', () => ({
   useQueryVariablesFromParentView: jest.fn(),
 }));
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue', () => ({
-  useAtomComponentStateValue: jest.fn(),
-}));
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+  () => ({
+    useAtomComponentStateValue: jest.fn(),
+  }),
+);
 jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomState', () => ({
   useSetAtomState: () => jest.fn(),
 }));
@@ -138,6 +141,20 @@ describe('useRecordShowPagePagination', () => {
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
         objectNameSingular: 'equipment',
+      }),
+    );
+  });
+
+  it('ignores stale parent view context when opening a different object record page', () => {
+    renderHook(() => useRecordShowPagePagination('person', 'person-record-id'));
+
+    expect(mockUseObjectMetadataItem).toHaveBeenCalledWith({
+      objectNameSingular: 'person',
+    });
+
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectNameSingular: 'person',
       }),
     );
   });

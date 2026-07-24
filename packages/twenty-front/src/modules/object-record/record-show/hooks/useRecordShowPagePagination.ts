@@ -12,7 +12,7 @@ import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { combineFilters, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -44,9 +44,17 @@ export const useRecordShowPagePagination = (
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const objectNameSingular =
-    contextStoreRecordShowParentView?.parentViewObjectNameSingular ??
-    propsOrParamObjectNameSingular;
+  const parentViewObjectNameSingular =
+    contextStoreRecordShowParentView?.parentViewObjectNameSingular;
+
+  const shouldUseParentViewObjectForPagination =
+    isDefined(parentViewObjectNameSingular) &&
+    parentViewObjectNameSingular !== propsOrParamObjectNameSingular &&
+    propsOrParamObjectNameSingular === CoreObjectNameSingular.Dashboard;
+
+  const objectNameSingular = shouldUseParentViewObjectForPagination
+    ? parentViewObjectNameSingular
+    : propsOrParamObjectNameSingular;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
