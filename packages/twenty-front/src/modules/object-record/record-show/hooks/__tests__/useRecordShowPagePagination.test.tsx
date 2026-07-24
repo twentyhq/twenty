@@ -3,6 +3,8 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { renderHook } from '@testing-library/react';
 
@@ -39,10 +41,7 @@ const mockUseFindManyRecords = jest.mocked(useFindManyRecords);
 const mockUseQueryVariablesFromParentView = jest.mocked(
   useQueryVariablesFromParentView,
 );
-const mockUseAtomComponentStateValue = jest.mocked(
-  require('@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue')
-    .useAtomComponentStateValue,
-);
+const mockUseAtomComponentStateValue = jest.mocked(useAtomComponentStateValue);
 
 describe('useRecordShowPagePagination', () => {
   const widgetObjectMetadataItem = {
@@ -66,7 +65,7 @@ describe('useRecordShowPagePagination', () => {
       loading: true,
       records: [],
       totalCount: 0,
-    } as ReturnType<typeof useFindManyRecords>);
+    } as unknown as ReturnType<typeof useFindManyRecords>);
 
     mockUseQueryVariablesFromParentView.mockReturnValue({
       filter: { status: { eq: 'OPEN' } },
@@ -74,19 +73,21 @@ describe('useRecordShowPagePagination', () => {
       isSoftDeleteFilterActive: false,
     });
 
-    mockUseAtomComponentStateValue.mockImplementation((state) => {
-      if (state === contextStoreRecordShowParentViewComponentState) {
-        return {
-          parentViewComponentId: 'widget-record-index-id',
-          parentViewObjectNameSingular: 'equipment',
-          parentViewFilterGroups: [],
-          parentViewFilters: [],
-          parentViewSorts: [],
-        };
-      }
+    mockUseAtomComponentStateValue.mockImplementation(
+      (state: ComponentState<unknown>) => {
+        if (state === contextStoreRecordShowParentViewComponentState) {
+          return {
+            parentViewComponentId: 'widget-record-index-id',
+            parentViewObjectNameSingular: 'equipment',
+            parentViewFilterGroups: [],
+            parentViewFilters: [],
+            parentViewSorts: [],
+          };
+        }
 
-      return undefined;
-    });
+        return undefined;
+      },
+    );
 
     mockUseObjectMetadataItem.mockImplementation(({ objectNameSingular }) => {
       if (objectNameSingular === 'equipment') {
