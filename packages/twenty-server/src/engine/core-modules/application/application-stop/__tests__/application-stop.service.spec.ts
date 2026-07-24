@@ -61,14 +61,14 @@ describe('ApplicationStopService', () => {
     );
   });
 
-  it('deletes the kill switch when starting an application', async () => {
-    await applicationStopService.start(APPLICATION_UNIVERSAL_IDENTIFIER);
+  it('deletes the kill switch when removing it', async () => {
+    await applicationStopService.remove(APPLICATION_UNIVERSAL_IDENTIFIER);
 
     expect(cacheStorageService.del).toHaveBeenCalledWith(KILL_SWITCH_KEY);
   });
 
-  it('deletes the workspace-scoped kill switch when starting for a single workspace', async () => {
-    await applicationStopService.start(
+  it('deletes the workspace-scoped kill switch when removing it for a single workspace', async () => {
+    await applicationStopService.remove(
       APPLICATION_UNIVERSAL_IDENTIFIER,
       WORKSPACE_ID,
     );

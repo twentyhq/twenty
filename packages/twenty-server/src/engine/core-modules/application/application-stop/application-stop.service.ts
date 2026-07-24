@@ -36,7 +36,7 @@ export class ApplicationStopService {
     );
   }
 
-  async start(
+  async remove(
     applicationUniversalIdentifier: string,
     workspaceId?: string,
   ): Promise<void> {

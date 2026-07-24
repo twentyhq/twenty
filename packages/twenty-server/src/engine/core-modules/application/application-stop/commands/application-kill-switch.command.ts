@@ -11,7 +11,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
-const KILL_SWITCH_ACTIONS = ['stop', 'start'] as const;
+const KILL_SWITCH_ACTIONS = ['stop', 'remove'] as const;
 
 type KillSwitchAction = (typeof KILL_SWITCH_ACTIONS)[number];
 
@@ -25,7 +25,7 @@ type ApplicationKillSwitchCommandOptions = {
   name: 'application:kill-switch',
   arguments: '[action]',
   description:
-    'Toggle an application kill switch: "stop" (default) halts its logic function executions until "start" clears the switch. Applies to every workspace, or to a single one with --workspace-id',
+    'Toggle an application kill switch: "stop" (default) halts its logic function executions until "remove" clears the switch. Applies to every workspace, or to a single one with --workspace-id',
 })
 export class ApplicationKillSwitchCommand extends CommandRunner {
   protected logger: CommandLogger;
@@ -118,7 +118,7 @@ export class ApplicationKillSwitchCommand extends CommandRunner {
         options.workspaceId,
       );
     } else {
-      await this.applicationStopService.start(
+      await this.applicationStopService.remove(
         options.applicationUniversalIdentifier,
         options.workspaceId,
       );
