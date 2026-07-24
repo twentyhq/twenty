@@ -23,11 +23,14 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
   {
     name: 'AppTooltip',
     node: (
-      <AppTooltip
-        anchorSelect="#gallery-tooltip-anchor"
-        content="Tooltip content"
-        isOpen={true}
-      />
+      <>
+        <span id="gallery-tooltip-anchor">Tooltip anchor</span>
+        <AppTooltip
+          anchorSelect="#gallery-tooltip-anchor"
+          content="Tooltip content"
+          isOpen={true}
+        />
+      </>
     ),
   },
   {

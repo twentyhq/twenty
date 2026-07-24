@@ -29,9 +29,15 @@ type Story = StoryObj<typeof FrontComponentRenderer>;
 // data-observed count on mutation-observer-count to become greater than 0 and
 // errorHandler not to have been called — a no-op stub cannot pass that.
 const mutationObserverTest: Story['play'] = async () => {
+  // Matching the message keeps an unrelated worker failure (bundle load,
+  // import error, ...) from being cataloged as the MutationObserver gap.
   await waitFor(
     () => {
-      expect(errorHandler).toHaveBeenCalled();
+      expect(errorHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('observe is not a function'),
+        }),
+      );
     },
     { timeout: 30000 },
   );

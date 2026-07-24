@@ -54,10 +54,11 @@ const createGalleryStory = (name: string, runtime?: 'preact'): Story => ({
 });
 
 // Golden known-failure test (TDD): PASSES while the documented sandbox gap
-// exists — some components fail, and every failing component belongs to the
-// expected set. It FAILS both on regression (an unexpected component starts
-// failing) and on fix (nothing fails anymore): when your fix lands, flip the
-// story back to the strict zero-failure `createGalleryStory` play.
+// exists — the failing component set matches the expected set EXACTLY. It
+// FAILS on regression (an unexpected component starts failing), on fix
+// (nothing fails anymore) and on partial fix (only some expected components
+// still fail): when your fix lands, flip the story back to the strict
+// zero-failure `createGalleryStory` play.
 const createKnownFailureGalleryTest =
   (expectedFailedComponents: string[]): Story['play'] =>
   async ({ canvasElement }) => {
@@ -69,19 +70,18 @@ const createKnownFailureGalleryTest =
       { timeout: 30000 },
     );
 
+    const expectedFailedComponentsSorted = [...expectedFailedComponents].sort();
+
+    // Failure reports arrive asynchronously: retry until the failed set
+    // matches the expected set exactly.
     await waitFor(() => {
-      expect(Number(status.getAttribute('data-failed-count'))).toBeGreaterThan(
-        0,
-      );
+      const failedComponents = (status.getAttribute('data-failed-names') ?? '')
+        .split(', ')
+        .filter((failedComponent) => failedComponent.length > 0)
+        .sort();
+
+      expect(failedComponents).toEqual(expectedFailedComponentsSorted);
     });
-
-    const failedComponents = (status.getAttribute('data-failed-names') ?? '')
-      .split(', ')
-      .filter((failedComponent) => failedComponent.length > 0);
-
-    for (const failedComponent of failedComponents) {
-      expect(expectedFailedComponents).toContain(failedComponent);
-    }
 
     expect(errorHandler).not.toHaveBeenCalled();
   };
@@ -134,35 +134,28 @@ export const InputPreact: Story = createKnownFailureGalleryStory(
 );
 
 // KNOWN ISSUE (TDD): base-ui Collapsible calls getComputedStyle, missing from
-// the remote-dom Window polyfill.
-const JSON_VISUALIZER_EXPECTED_FAILURES = [
-  'JsonTree',
-  'JsonArrayNode',
-  'JsonObjectNode',
-  'JsonNestedNode',
-];
+// the remote-dom Window polyfill. The runtimes diverge (observed
+// deterministically): under Preact only the first Collapsible consumer
+// crashes and later siblings render.
 export const JsonVisualizerReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-json-visualizer-gallery',
-  JSON_VISUALIZER_EXPECTED_FAILURES,
+  ['JsonTree', 'JsonArrayNode', 'JsonObjectNode', 'JsonNestedNode'],
 );
 export const JsonVisualizerPreact: Story = createKnownFailureGalleryStory(
   'twenty-ui-json-visualizer-gallery',
-  JSON_VISUALIZER_EXPECTED_FAILURES,
+  ['JsonTree'],
   'preact',
 );
 
-// KNOWN ISSUE (TDD): same getComputedStyle gap through base-ui Collapsible.
-const LAYOUT_EXPECTED_FAILURES = [
-  'AnimatedEaseInOut',
-  'AnimatedExpandableContainer',
-];
+// KNOWN ISSUE (TDD): same getComputedStyle gap through base-ui Collapsible,
+// with the same React/Preact divergence.
 export const LayoutReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-layout-gallery',
-  LAYOUT_EXPECTED_FAILURES,
+  ['AnimatedEaseInOut', 'AnimatedExpandableContainer'],
 );
 export const LayoutPreact: Story = createKnownFailureGalleryStory(
   'twenty-ui-layout-gallery',
-  LAYOUT_EXPECTED_FAILURES,
+  ['AnimatedEaseInOut'],
   'preact',
 );
 
