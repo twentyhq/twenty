@@ -55,11 +55,9 @@ export class ApplicationResolver {
   async isApplicationStopped(
     @Args('applicationUniversalIdentifier')
     applicationUniversalIdentifier: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     return this.applicationStopService.isApplicationStopped(
       applicationUniversalIdentifier,
-      workspace.id,
     );
   }
 
