@@ -140,5 +140,87 @@ export const computeStandardMessageCampaignViewFields = (
         size: 150,
       },
     }),
+
+    // messageCampaignRecordPageFields view fields
+    messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'status',
+          fieldName: 'status',
+          position: 0,
+          isVisible: true,
+          size: 120,
+        },
+      },
+    ),
+    messageCampaignRecordPageFieldsSentAt: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'sentAt',
+          fieldName: 'sentAt',
+          position: 1,
+          isVisible: true,
+          size: 150,
+        },
+      },
+    ),
+    messageCampaignRecordPageFieldsSentCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'sentCount',
+          fieldName: 'sentCount',
+          position: 2,
+          isVisible: true,
+          size: 100,
+        },
+      }),
+    messageCampaignRecordPageFieldsFailedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'failedCount',
+          fieldName: 'failedCount',
+          position: 3,
+          isVisible: true,
+          size: 100,
+        },
+      }),
+    messageCampaignRecordPageFieldsBouncedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'bouncedCount',
+          fieldName: 'bouncedCount',
+          position: 4,
+          isVisible: true,
+          size: 100,
+        },
+      }),
+    messageCampaignRecordPageFieldsComplainedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'complainedCount',
+          fieldName: 'complainedCount',
+          position: 5,
+          isVisible: true,
+          size: 120,
+        },
+      }),
   };
 };

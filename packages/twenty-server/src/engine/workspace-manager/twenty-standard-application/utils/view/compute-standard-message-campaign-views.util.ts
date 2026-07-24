@@ -22,5 +22,17 @@ export const computeStandardMessageCampaignViews = (
         icon: 'IconSend',
       },
     }),
+    messageCampaignRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'messageCampaignRecordPageFields',
+        name: 'Message Campaign Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconSend',
+      },
+    }),
   };
 };

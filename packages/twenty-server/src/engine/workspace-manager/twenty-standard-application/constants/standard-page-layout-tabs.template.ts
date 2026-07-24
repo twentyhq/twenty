@@ -153,10 +153,10 @@ export const TAB_PROPS = {
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   composer: {
-    title: 'Composer',
-    position: 20,
-    icon: 'IconPencil',
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    title: 'Email',
+    position: 15,
+    icon: 'IconMail',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   flowSecondary: {
     title: 'Flow',
@@ -228,10 +228,16 @@ export const WIDGET_PROPS = {
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   messageCampaign: {
-    title: 'Composer',
+    title: 'Email',
+    type: WidgetType.MESSAGE_CAMPAIGN,
+    gridPosition: GRID_POSITIONS.RICH_TEXT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+  },
+  messageCampaignDetails: {
+    title: 'Details',
     type: WidgetType.MESSAGE_CAMPAIGN,
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflowVersion: {
     title: 'Flow',

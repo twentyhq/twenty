@@ -83,7 +83,7 @@ export const WidgetContentRenderer = ({
       return <EmailThreadWidget widget={widget} />;
 
     case WidgetType.MESSAGE_CAMPAIGN:
-      return <MessageCampaignWidget />;
+      return <MessageCampaignWidget widget={widget} />;
 
     default:
       return null;

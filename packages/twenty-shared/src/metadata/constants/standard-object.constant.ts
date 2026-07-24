@@ -965,6 +965,29 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
+      messageCampaignRecordPageFields: {
+        universalIdentifier: '20202020-a009-4a09-8a09-fa9de11ca901',
+        viewFields: {
+          status: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca903',
+          },
+          sentAt: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca904',
+          },
+          sentCount: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca905',
+          },
+          failedCount: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca906',
+          },
+          bouncedCount: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca907',
+          },
+          complainedCount: {
+            universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca908',
+          },
+        },
+      },
     },
   },
   messageList: {

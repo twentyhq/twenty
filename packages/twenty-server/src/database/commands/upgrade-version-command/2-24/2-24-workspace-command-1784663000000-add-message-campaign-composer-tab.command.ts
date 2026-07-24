@@ -1,6 +1,9 @@
 import { Command } from 'nest-commander';
 
-import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -11,9 +14,21 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields
+    .universalIdentifier;
+
+const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS =
+  Object.values(
+    STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields
+      .viewFields,
+  ).map((viewField) => viewField.universalIdentifier);
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
@@ -31,16 +46,27 @@ const COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs
     .composer.widgets.messageCampaign.universalIdentifier;
 
-const HOME_TAB_STANDARD_WIDGET_UNIVERSAL_IDENTIFIERS = Object.values(
+const HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
-    .widgets,
-).map((widget) => widget.universalIdentifier);
+    .widgets.fields.universalIdentifier;
+
+const HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets.details.universalIdentifier;
+
+const HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets.list.universalIdentifier;
+
+const HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets.recipients.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.24.0', 1784663000000)
 @Command({
   name: 'upgrade:2-24:add-message-campaign-composer-tab',
   description:
-    'Adds the Composer canvas tab to the message campaign record page in existing workspaces',
+    'Aligns the message campaign record page with the Note layout: a home Fields tab (left column) plus an Email tab holding the composer editor',
 })
 export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -67,10 +93,14 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatPageLayoutMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
     ]);
 
     const existingPageLayout =
@@ -97,7 +127,10 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
       getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutTab>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutTabMaps,
         existingFlatEntityMaps: flatPageLayoutTabMaps,
-        universalIdentifiers: [COMPOSER_TAB_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [
+          HOME_TAB_UNIVERSAL_IDENTIFIER,
+          COMPOSER_TAB_UNIVERSAL_IDENTIFIER,
+        ],
       });
 
     const pageLayoutWidgetsToCreate =
@@ -105,59 +138,101 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
         standardFlatEntityMaps:
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
-        universalIdentifiers: [COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [
+          HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
+          COMPOSER_WIDGET_UNIVERSAL_IDENTIFIER,
+          HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
+          HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
+          HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
+        ],
       });
 
-    // The composer is the only tab, so the record page renders it full width
-    // instead of pinning the fields tab down the left side.
-    const existingHomeTab =
+    const viewsToCreate = getStandardFlatEntitiesToCreateOrThrow<FlatView>({
+      standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+      existingFlatEntityMaps: flatViewMaps,
+      universalIdentifiers: [
+        MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+      ],
+    });
+
+    const viewFieldsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+        existingFlatEntityMaps: flatViewFieldMaps,
+        universalIdentifiers:
+          MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+      });
+
+    const existingComposerTab =
       flatPageLayoutTabMaps.byUniversalIdentifier[
-        HOME_TAB_UNIVERSAL_IDENTIFIER
+        COMPOSER_TAB_UNIVERSAL_IDENTIFIER
+      ];
+    const standardComposerTab =
+      standardAllFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        COMPOSER_TAB_UNIVERSAL_IDENTIFIER
       ];
 
-    const existingHomeTabWidgets = isDefined(existingHomeTab)
-      ? Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier).filter(
-          (widget): widget is FlatPageLayoutWidget =>
-            isDefined(widget) && widget.pageLayoutTabId === existingHomeTab.id,
-        )
-      : [];
-
-    const pageLayoutWidgetsToDelete = existingHomeTabWidgets.filter((widget) =>
-      HOME_TAB_STANDARD_WIDGET_UNIVERSAL_IDENTIFIERS.includes(
-        widget.universalIdentifier,
-      ),
-    );
-
-    // A home tab holding user-added widgets is kept so their widgets survive
-    const hasOnlyStandardHomeTabWidgets =
-      pageLayoutWidgetsToDelete.length === existingHomeTabWidgets.length;
-
-    const pageLayoutTabsToDelete =
-      isDefined(existingHomeTab) && hasOnlyStandardHomeTabWidgets
-        ? [existingHomeTab]
+    const pageLayoutTabsToUpdate =
+      isDefined(existingComposerTab) &&
+      isDefined(standardComposerTab) &&
+      existingComposerTab.layoutMode !== standardComposerTab.layoutMode
+        ? [
+            {
+              ...existingComposerTab,
+              layoutMode: standardComposerTab.layoutMode,
+              title: standardComposerTab.title,
+            },
+          ]
         : [];
 
-    const shouldUpdateDefaultTab = isDefined(
-      existingPageLayout.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
-    );
+    const pageLayoutWidgetsToUpdate = [
+      HOME_DETAILS_WIDGET_UNIVERSAL_IDENTIFIER,
+      HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
+      HOME_LIST_WIDGET_UNIVERSAL_IDENTIFIER,
+      HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
+    ]
+      .map((universalIdentifier) => {
+        const existingWidget =
+          flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
+        const standardWidget =
+          standardAllFlatEntityMaps.flatPageLayoutWidgetMaps
+            .byUniversalIdentifier[universalIdentifier];
+
+        if (
+          !isDefined(existingWidget) ||
+          !isDefined(standardWidget) ||
+          existingWidget.conditionalAvailabilityExpression ===
+            standardWidget.conditionalAvailabilityExpression
+        ) {
+          return null;
+        }
+
+        return {
+          ...existingWidget,
+          conditionalAvailabilityExpression:
+            standardWidget.conditionalAvailabilityExpression,
+        };
+      })
+      .filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
     const totalOperationCount =
       pageLayoutTabsToCreate.length +
       pageLayoutWidgetsToCreate.length +
-      pageLayoutTabsToDelete.length +
-      pageLayoutWidgetsToDelete.length +
-      (shouldUpdateDefaultTab ? 1 : 0);
+      pageLayoutTabsToUpdate.length +
+      pageLayoutWidgetsToUpdate.length +
+      viewsToCreate.length +
+      viewFieldsToCreate.length;
 
     if (totalOperationCount === 0) {
       this.logger.log(
-        `Message campaign composer tab already the only tab for workspace ${workspaceId}, skipping`,
+        `Message campaign record page already has the home and email tabs for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} message campaign composer tab operation(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Applying ${totalOperationCount} message campaign record page operation(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -174,26 +249,23 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
           allFlatEntityOperationByMetadataName: {
             pageLayoutTab: {
               flatEntityToCreate: pageLayoutTabsToCreate,
-              flatEntityToDelete: pageLayoutTabsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: pageLayoutTabsToUpdate,
             },
             pageLayoutWidget: {
               flatEntityToCreate: pageLayoutWidgetsToCreate,
-              flatEntityToDelete: pageLayoutWidgetsToDelete,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: pageLayoutWidgetsToUpdate,
+            },
+            view: {
+              flatEntityToCreate: viewsToCreate,
+              flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
-            pageLayout: {
-              flatEntityToCreate: [],
+            viewField: {
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: shouldUpdateDefaultTab
-                ? [
-                    {
-                      ...existingPageLayout,
-                      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
-                        null,
-                    },
-                  ]
-                : [],
+              flatEntityToUpdate: [],
             },
           },
         },
@@ -201,7 +273,7 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to add the message campaign composer tab for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to align the message campaign record page for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -210,7 +282,7 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
     }
 
     this.logger.log(
-      `Added the message campaign composer tab for workspace ${workspaceId}`,
+      `Aligned the message campaign record page for workspace ${workspaceId}`,
     );
   }
 }
