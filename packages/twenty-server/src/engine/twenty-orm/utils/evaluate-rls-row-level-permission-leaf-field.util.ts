@@ -61,7 +61,8 @@ export const evaluateRLSRowLevelPermissionLeafField = ({
   filterKey: string;
   filterValue: unknown;
   objectMetadataField: FlatFieldMetadata;
-  recordFieldValue: unknown;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  recordFieldValue: any;
 }): RLSPredicateEvaluation => {
   switch (objectMetadataField.type) {
     case FieldMetadataType.RATING:

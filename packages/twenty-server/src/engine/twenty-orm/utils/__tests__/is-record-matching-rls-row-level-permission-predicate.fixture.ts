@@ -1,4 +1,9 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ObjectRecord,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -65,6 +70,7 @@ const fieldMetadata = [
     label: 'company',
     settings: {
       joinColumnName: 'companyId',
+      relationType: RelationType.MANY_TO_ONE,
     },
   }),
   getFlatFieldMetadataMock({
@@ -125,7 +131,7 @@ export const matchRLSRowLevelPermissionPredicate = ({
 }) =>
   isRecordMatchingRLSRowLevelPermissionPredicate({
     record,
-    filter,
+    filter: filter as RecordGqlOperationFilter,
     flatObjectMetadata,
     flatFieldMetadataMaps,
   });
