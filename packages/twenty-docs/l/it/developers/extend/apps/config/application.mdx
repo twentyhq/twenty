@@ -9,7 +9,7 @@ Ogni app deve avere esattamente una chiamata a `defineApplication`. Dichiara:
 * **Identità** — identificatore universale, nome visualizzato, descrizione.
 * **Autorizzazioni** — il ruolo sotto il quale vengono eseguite le sue funzioni logiche e i componenti front-end.
 * **Variabili** *(opzionali)* — coppie chiave–valore esposte al tuo codice come variabili d'ambiente.
-* **Hook di pre-installazione / post-installazione** *(opzionali)* — vedi [Funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions).
+* **Hook di pre-installazione / post-installazione / disinstallazione** *(opzionali)* — vedi [Funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici che possiedi. Generali una volta e mantienili stabili tra una sincronizzazione e l'altra.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni e i componenti front-end. Nelle funzioni di logica (lato server), sono disponibili come `process.env.VARIABLE_NAME`. Nei componenti front-end, usa `getApplicationVariable('VARIABLE_NAME')` da `twenty-sdk/front-component`. Le variabili contrassegnate con `isSecret: true` vengono iniettate solo nelle funzioni di logica. I componenti front-end ricevono solo variabili non segrete.
 * Il ruolo predefinito viene rilevato automaticamente dal file di ruolo contrassegnato con [`defineApplicationRole()`](/l/it/developers/extend/apps/config/roles): non è necessario farvi riferimento da `defineApplication()`.
-* Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante il build del manifest — non è necessario farne riferimento in `defineApplication()`.
+* Le funzioni di pre-installazione, post-installazione e disinstallazione vengono rilevate automaticamente durante il build del manifest — non è necessario farne riferimento in `defineApplication()`.
 * Il passaggio esplicito di `defaultRoleUniversalIdentifier` è ancora supportato per garantire la compatibilità con le versioni precedenti, ma è deprecato a favore di `defineApplicationRole()`.
 * `serverVariables` sono configurazioni e segreti con ambito di istanza (ad esempio chiavi API). A differenza di `applicationVariables`, non dichiarano alcun valore nel manifest — l’operatore dello spazio di lavoro li compila dalle impostazioni dell’app e vengono iniettati nelle funzioni di logica solo una volta impostati.
 

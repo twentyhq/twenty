@@ -612,7 +612,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Hook di installazione** — i gestori di pre-installazione e post-installazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction` e `definePostInstallLogicFunction`.
+**Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction`.
 </Note>
 
 ## Client API tipizzati (twenty-client-sdk)

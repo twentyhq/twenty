@@ -69,7 +69,7 @@ your-app/
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
-│   generate SDK → [post-install]                         │
+│   generate SDK → [post-install] → … → [uninstall]       │
 ├─────────────────────────────────────────────────────────┤
 │ Publish                                                 │
 │   npm publish → appears in Twenty marketplace           │
@@ -78,13 +78,13 @@ your-app/
 
 * **`yarn twenty dev`** — يراقب ملفات المصدر لديك ويزامن التغييرات مباشرةً إلى خادم Twenty متصل. يُعاد توليد عميل API مضبوط الأنواع تلقائيًا عند تغيّر المخطط.
 * **`yarn twenty dev:build`** — يجمّع TypeScript، ويضمّن الدوال المنطقية والمكوّنات الأمامية باستخدام esbuild، وينتج ملف بيان.
-* **خطّافات ما قبل/ما بعد التثبيت** — دوال اختيارية تعمل أثناء التثبيت. راجع [خطّافات التثبيت](/l/ar/developers/extend/apps/config/install-hooks) للتفاصيل.
+* **خطّافات ما قبل/ما بعد التثبيت وإلغاء التثبيت** — دوال اختيارية تعمل أثناء التثبيت أو مباشرة قبل الإزالة. راجع [خطّافات التثبيت](/l/ar/developers/extend/apps/config/install-hooks) للتفاصيل.
 
 ## الخطوات التالية
 
 <CardGroup cols={2}>
   <Card title="التهيئة" icon="screwdriver-wrench" href="/l/ar/developers/extend/apps/config/overview">
-    هوية التطبيق، الدور الافتراضي، وخطّافات التثبيت.
+    هوية التطبيق، الدور الافتراضي، وخطّافات التثبيت وإلغاء التثبيت.
   </Card>
   <Card title="بيانات" icon="database" href="/l/ar/developers/extend/apps/data/overview">
     الكائنات، الحقول، والعلاقات ثنائية الاتجاه.

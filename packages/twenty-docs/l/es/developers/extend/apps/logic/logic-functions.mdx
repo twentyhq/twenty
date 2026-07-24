@@ -613,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Hooks de instalación** — los controladores de preinstalación y postinstalación — comparten este entorno de ejecución, pero se declaran con sus propias funciones 'define' y no aceptan configuraciones de disparador. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction` y `definePostInstallLogicFunction`.
+**Hooks de instalación** — los controladores de preinstalación, postinstalación y desinstalación — comparten este entorno de ejecución, pero se declaran con sus propias funciones `define` y no aceptan configuraciones de disparador. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction`, `definePostInstallLogicFunction` y `defineUninstallLogicFunction`.
 </Note>
 
 ## Clientes de API tipados (twenty-client-sdk)
