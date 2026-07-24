@@ -191,7 +191,11 @@ export const createStyleProxy = ({
       }
 
       if (isString(property)) {
-        return target[camelToKebab(property)] ?? '';
+        const storeKey = property.startsWith('--')
+          ? property
+          : camelToKebab(property);
+
+        return target[storeKey] ?? '';
       }
 
       return undefined;
@@ -208,11 +212,13 @@ export const createStyleProxy = ({
         return true;
       }
 
-      const kebabKey = camelToKebab(property);
-      delete stylePriorities[kebabKey];
+      const storeKey = property.startsWith('--')
+        ? property
+        : camelToKebab(property);
+      delete stylePriorities[storeKey];
 
       if (value === null || value === undefined || value === '') {
-        delete target[kebabKey];
+        delete target[storeKey];
         flushSerializedCssText();
 
         return true;
@@ -224,7 +230,7 @@ export const createStyleProxy = ({
         value !== 0 &&
         !UNITLESS_CSS_PROPERTIES.has(property);
 
-      target[kebabKey] = shouldConvertToPx ? `${value}px` : String(value);
+      target[storeKey] = shouldConvertToPx ? `${value}px` : String(value);
       flushSerializedCssText();
 
       return true;
