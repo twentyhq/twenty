@@ -101,10 +101,23 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 2
+      # HEAD is the pull_request merge ref; its first parent is the exact main
+      # commit it was merged with. pull_request.base.sha can lag behind that,
+      # making commands merged into main since then look added by this PR.
+      - name: Resolve merged base commit
+        id: merged-base
+        shell: bash
+        run: |
+          if git rev-parse -q --verify HEAD^2 >/dev/null; then
+            BASE_SHA=$(git rev-parse HEAD^1)
+          else
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          fi
+          echo "sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
       - name: Validate upgrade command mutations
         uses: ./.github/actions/upgrade-mutation-guard
         with:
-          base_sha: ${{ github.event.pull_request.base.sha }}
+          base_sha: ${{ steps.merged-base.outputs.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
 
   server-validation:
