@@ -192,13 +192,6 @@ export class ViewWidgetUpsertService {
     };
 
     if (isDefined(input.view)) {
-      if (!isRecordTableWidget) {
-        throw new ViewException(
-          t`View settings can only be updated on record table widgets`,
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
-
       if (
         isDefined(input.view.type) &&
         !ALLOWED_WIDGET_VIEW_TYPES.includes(input.view.type)
