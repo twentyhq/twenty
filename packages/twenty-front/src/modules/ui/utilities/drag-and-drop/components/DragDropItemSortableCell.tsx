@@ -21,6 +21,7 @@ const SORTABLE_TRANSITION = {
 };
 
 const StyledSortableRoot = styled.div<{
+  $disabled?: boolean;
   $fill?: boolean;
   $isDraggingHighlighted?: boolean;
 }>`
@@ -30,6 +31,7 @@ const StyledSortableRoot = styled.div<{
       : 'transparent'};
   border-radius: ${({ $isDraggingHighlighted }) =>
     $isDraggingHighlighted ? themeCssVariables.border.radius.sm : '0'};
+  cursor: ${({ $disabled }) => ($disabled ? 'inherit' : 'grab')};
   display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
   flex-shrink: ${({ $fill }) => ($fill ? 0 : 'initial')};
   height: ${({ $fill }) => ($fill ? '100%' : 'auto')};
@@ -39,6 +41,12 @@ const StyledSortableRoot = styled.div<{
   position: relative;
   transition: background 0.1s ease;
   will-change: transform;
+
+  /* When the cell delegates dragging to an explicit handle, only the handle
+     is grabbable, so the rest of the cell keeps its ambient cursor. */
+  &:has([data-dnd-sortable-handle]) {
+    cursor: inherit;
+  }
 `;
 
 type DragDropItemSortableCellProps = {
@@ -106,6 +114,7 @@ export const DragDropItemSortableCell = ({
     <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
       <StyledSortableRoot
         ref={ref}
+        $disabled={disabled}
         $fill={fill}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
         onDragStart={preventNativeDragStart}
