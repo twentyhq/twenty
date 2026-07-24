@@ -3,18 +3,18 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledCanvasContainer = styled.div`
+const StyledSoloContainer = styled.div`
   display: grid;
   height: 100%;
 `;
 
-type PageLayoutCanvasViewerProps = {
+type PageLayoutSoloViewerProps = {
   widgets: PageLayoutWidget[];
 };
 
-export const PageLayoutCanvasViewer = ({
+export const PageLayoutSoloViewer = ({
   widgets,
-}: PageLayoutCanvasViewerProps) => {
+}: PageLayoutSoloViewerProps) => {
   const widget = widgets.at(0);
 
   if (!isDefined(widget)) {
@@ -22,8 +22,8 @@ export const PageLayoutCanvasViewer = ({
   }
 
   return (
-    <StyledCanvasContainer>
+    <StyledSoloContainer>
       <WidgetRenderer widget={widget} />
-    </StyledCanvasContainer>
+    </StyledSoloContainer>
   );
 };

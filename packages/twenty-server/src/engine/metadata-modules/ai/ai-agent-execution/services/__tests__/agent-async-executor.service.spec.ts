@@ -132,7 +132,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     service = module.get<AgentAsyncExecutorService>(AgentAsyncExecutorService);
   });
 
-  it('passes unionOf: [agentRoleId] when the agent has a role assigned', async () => {
+  it('passes intersectionOf: [agentRoleId] when the agent has a role assigned', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
 
     await service.executeAgent({
@@ -145,7 +145,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(toolRegistry.getToolsByCategories).toHaveBeenCalledWith(
       expect.objectContaining({
         roleId: agentRoleId,
-        rolePermissionConfig: { unionOf: [agentRoleId] },
+        rolePermissionConfig: { intersectionOf: [agentRoleId] },
         workspaceId,
       }),
       expect.objectContaining({ wrapWithErrorContext: false }),

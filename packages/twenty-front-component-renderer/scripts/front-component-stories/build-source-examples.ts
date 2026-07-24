@@ -16,7 +16,12 @@ const exampleSourcesBuiltPreactDir = path.resolve(
   '../../src/__stories__/example-sources-built-preact',
 );
 
-const SOURCE_SCAN_ROOTS = ['html-tag', 'host-api', 'showcase'];
+const SOURCE_SCAN_ROOTS = [
+  'html-tag',
+  'host-api',
+  'showcase',
+  'twenty-ui-gallery',
+];
 
 const rootNodeModules = path.resolve(dirname, '../../../../node_modules');
 

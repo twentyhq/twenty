@@ -122,8 +122,8 @@ import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
-import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
 import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784897347051-repair-key-value-pair-application-id';
+import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1784898627359-add-app-token-sso-exchange-index';
 
 export const INSTANCE_COMMANDS = [
@@ -249,7 +249,7 @@ export const INSTANCE_COMMANDS = [
   AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
-  AddAgentForeignKeyToRoleTargetFastInstanceCommand,
   RepairKeyValuePairApplicationIdFastInstanceCommand,
+  AddAgentForeignKeyToRoleTargetFastInstanceCommand,
   AddAppTokenSsoExchangeIndexFastInstanceCommand,
 ];

@@ -176,7 +176,7 @@ export class AgentAsyncExecutorService {
         // permission-tab role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           const agentRolePermissionConfig: RolePermissionConfig = {
-            unionOf: [agentRoleId],
+            intersectionOf: [agentRoleId],
           };
 
           const toolProviderContext: ToolProviderContext = {
