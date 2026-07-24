@@ -1,11 +1,9 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type TabPresentation } from '@/page-layout/types/TabPresentation';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {
-  layoutMode: PageLayoutTabLayoutMode;
+  presentation: TabPresentation;
   isInPinnedTab: boolean;
   pageLayoutType: PageLayoutType | null;
   isMobile: boolean;
@@ -13,14 +11,14 @@ type GetWidgetCardVariantParams = {
 };
 
 export const getWidgetCardVariant = ({
-  layoutMode,
+  presentation,
   isInPinnedTab,
   pageLayoutType,
   isMobile,
   isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
-    return 'canvas';
+  if (presentation === 'solo') {
+    return 'solo';
   }
 
   const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;

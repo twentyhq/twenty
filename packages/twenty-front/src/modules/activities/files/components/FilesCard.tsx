@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ChangeEvent, useRef, useState } from 'react';
+import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
@@ -8,6 +8,7 @@ import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -42,7 +43,8 @@ const StyledDropZoneContainer = styled.div`
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { attachments, loading } = useAttachments(targetRecord);
+  const { attachments, loading, totalCountAttachments } =
+    useAttachments(targetRecord);
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -86,6 +88,23 @@ export const FilesCard = () => {
   );
 
   const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
+
+  const addFileAction = useMemo(
+    () =>
+      canUploadFiles
+        ? {
+            Icon: IconPlus,
+            label: t`Add file`,
+            onClick: () => inputFileRef?.current?.click?.(),
+          }
+        : undefined,
+    [canUploadFiles, t],
+  );
+
+  usePublishWidgetHeaderInfo({
+    count: totalCountAttachments,
+    primaryAction: addFileAction,
+  });
 
   if (loading && isAttachmentsEmpty) {
     return <SkeletonLoader />;
@@ -142,19 +161,7 @@ export const FilesCard = () => {
       />
       <AttachmentList
         targetableObject={targetRecord}
-        title={t`All`}
         attachments={attachments ?? []}
-        button={
-          canUploadFiles && (
-            <Button
-              Icon={IconPlus}
-              size="small"
-              variant="secondary"
-              title={t`Add file`}
-              onClick={handleUploadFileClick}
-            ></Button>
-          )
-        }
       />
     </StyledAttachmentsContainer>
   );

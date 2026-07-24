@@ -1474,11 +1474,6 @@ msgstr "Nu se poate actualiza definiția standard a indicatorului de permisiune"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "Nu se pot actualiza proprietățile abilității standard (este permisă doar activarea/dezactivarea)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "Nu se poate actualiza manual statutul versiunii fluxului de lucru"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -8012,6 +8007,11 @@ msgstr "Această funcționalitate nu este activată."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "Acest câmp nu poate fi modificat."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

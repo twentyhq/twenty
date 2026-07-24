@@ -1357,11 +1357,6 @@ msgstr "Neu hinzufügen"
 msgid "Add node"
 msgstr "Knoten hinzufügen"
 
-#. js-lingui-id: NeOuRn
-#: src/modules/activities/notes/components/NotesCard.tsx
-msgid "Add note"
-msgstr "Notiz hinzufügen"
-
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -1437,11 +1432,6 @@ msgstr "Sortierung hinzufügen"
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO-Identitätsanbieter hinzufügen"
-
-#. js-lingui-id: hWkQMS
-#: src/modules/activities/tasks/components/AddTaskButton.tsx
-msgid "Add task"
-msgstr "Aufgabe hinzufügen"
 
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1888,8 +1878,6 @@ msgid "Alert"
 msgstr "Meldung"
 
 #. js-lingui-id: N40H+G
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AgentChatThreadLastActivityFilterLabels.ts
@@ -4160,6 +4148,11 @@ msgstr "Abgeschlossene Aufgaben werden für {completedDuration} aufbewahrt, fehl
 msgid "Component name"
 msgstr "Komponentenname"
 
+#. js-lingui-id: QOhkyl
+#: src/modules/activities/emails/components/EmailsCard.tsx
+msgid "Compose"
+msgstr ""
+
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 msgid "Computed at"
@@ -5897,8 +5890,8 @@ msgstr "löschen"
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9639,11 +9632,6 @@ msgstr "Inaktive Objektoptionen"
 msgid "Inactive Skill Options"
 msgstr "Inaktive Skill-Optionen"
 
-#. js-lingui-id: Gp4Yi6
-#: src/modules/activities/emails/components/EmailsCard.tsx
-msgid "Inbox"
-msgstr "Posteingang"
-
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Include emails where all participants share the same domain."
@@ -11057,7 +11045,7 @@ msgid "Make private"
 msgstr "Privat machen"
 
 #. js-lingui-id: wckWOP
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Verwalten"
@@ -11627,16 +11615,16 @@ msgstr "Nach unten verschieben"
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Nach links verschieben"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Nach rechts verschieben"
 
@@ -12008,6 +11996,7 @@ msgstr "Neues Modell"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCard.tsx
 msgid "New note"
 msgstr "Neue Notiz"
 
@@ -12056,6 +12045,7 @@ msgid "New Tab"
 msgstr "Neuer Tab"
 
 #. js-lingui-id: wl18ST
+#: src/modules/activities/tasks/components/TaskGroups.tsx
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "New task"
 msgstr "Neue Aufgabe"
@@ -12367,8 +12357,8 @@ msgid "No Date field"
 msgstr "Kein Datumsfeld"
 
 #. js-lingui-id: lAfu/q
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "Für diesen Tab ist keine Standardkonfiguration verfügbar."
 
@@ -13972,7 +13962,7 @@ msgid "Pie Chart"
 msgstr "Tortendiagramm"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Tab anheften"
 
@@ -13995,7 +13985,7 @@ msgid "Placeholder"
 msgstr "Platzhalter"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Platzierung"
@@ -15064,8 +15054,8 @@ msgstr "E-Mail erneut senden"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
@@ -15093,10 +15083,10 @@ msgstr "Datensatzseiten-Layout zurücksetzen"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Reset to default"
@@ -18103,8 +18093,8 @@ msgid "This week"
 msgstr "Diese Woche"
 
 #. js-lingui-id: DF2voz
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "Dadurch werden alle auf der Registerkarte und den zugehörigen Widgets vorgenommenen Änderungen verworfen. Der Bearbeitungsmodus wird beendet und die Seite wird aktualisiert. Diese Aktion kann nicht rückgängig gemacht werden."
 
@@ -19796,7 +19786,7 @@ msgid "Visibility"
 msgstr "Sichtbarkeit"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Sichtbarkeitseinschränkung"
 

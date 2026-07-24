@@ -52,10 +52,13 @@ export const PageLayoutLeftPanel = ({
         isInSidePanel={isInSidePanel}
       />
 
+      {/* The pinned left panel is always a column of cards, even with a single
+          widget: solo presentation is a main-tab-area concept. */}
       <PageLayoutContentProvider
         value={{
           tabId: pinnedLeftTabId,
           layoutMode,
+          presentation: 'stack',
         }}
       >
         <ScrollWrapper

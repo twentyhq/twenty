@@ -102,6 +102,40 @@ describe('finalizeDanglingToolParts', () => {
     expect(finalizeDanglingToolParts(parts)).toEqual(parts);
   });
 
+  it('drops a duplicate dynamic-tool part sharing a tool call id with a typed part', () => {
+    const typed = buildToolPart('output-error', {
+      type: 'tool-search_output',
+      toolCallId: 'call_dup',
+      errorText: 'boom',
+    });
+    const dynamicDuplicate = buildToolPart('output-error', {
+      type: 'dynamic-tool',
+      toolName: 'search_output',
+      toolCallId: 'call_dup',
+      errorText: 'boom',
+    });
+
+    expect(finalizeDanglingToolParts([typed, dynamicDuplicate])).toEqual([
+      typed,
+    ]);
+  });
+
+  it('keeps the first part when a tool call id is duplicated across states', () => {
+    const first = buildToolPart('output-error', {
+      type: 'tool-execute_tool',
+      toolCallId: 'call_dup',
+      errorText: 'boom',
+    });
+    const duplicate = buildToolPart('output-error', {
+      type: 'dynamic-tool',
+      toolName: 'execute_tool',
+      toolCallId: 'call_dup',
+      errorText: 'boom',
+    });
+
+    expect(finalizeDanglingToolParts([first, duplicate])).toEqual([first]);
+  });
+
   it('finalizes only the dangling parts in a mixed batch', () => {
     const completed = buildToolPart('output-available', {
       toolCallId: 'call_done',

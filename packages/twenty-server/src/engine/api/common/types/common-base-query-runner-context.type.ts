@@ -3,6 +3,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type CommonBaseQueryRunnerContext = {
   authContext: WorkspaceAuthContext;
@@ -11,4 +12,5 @@ export type CommonBaseQueryRunnerContext = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatIndexMaps?: FlatEntityMaps<FlatIndexMetadata>;
   objectIdByNameSingular: Record<string, string>;
+  rolePermissionConfig?: RolePermissionConfig;
 };
