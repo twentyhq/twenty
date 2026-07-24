@@ -7,7 +7,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
   name: 'slack-events-enqueue',
   description:
-    'Runs in the resolved workspace: answers the Slack url_verification handshake and enqueues a Slack Assistant Request record for the assistant worker.',
+    'Runs in the resolved workspace: enqueues a Slack Assistant Request record for the assistant worker.',
   timeoutSeconds: 15,
   handler: enqueueSlackAssistantRequest,
 });

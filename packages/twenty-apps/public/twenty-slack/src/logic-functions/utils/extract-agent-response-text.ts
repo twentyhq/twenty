@@ -1,18 +1,19 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type RunAgentResult } from 'twenty-sdk/logic-function';
 
+const hasResponseText = (result: object): result is { response: string } =>
+  'response' in result && isNonEmptyString(result.response);
+
 export const extractAgentResponseText = (
   agentResult: RunAgentResult,
 ): string | undefined => {
-  if (!agentResult.success) {
+  if (!agentResult.success || agentResult.result === null) {
     return undefined;
   }
 
-  const result = agentResult.result as { response?: unknown } | null;
-
-  if (result === null || !isNonEmptyString(result.response)) {
+  if (!hasResponseText(agentResult.result)) {
     return undefined;
   }
 
-  return result.response.trim();
+  return agentResult.result.response.trim();
 };

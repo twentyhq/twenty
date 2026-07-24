@@ -30,6 +30,7 @@ describe('parseSlackAssistantRequest', () => {
         slackUserId: 'U123',
         requestText: 'create an invoice for ACME',
       },
+      requiresActiveThreadSubscription: false,
     });
   });
 

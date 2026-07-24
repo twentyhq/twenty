@@ -31,7 +31,11 @@ export const claimSlackTeam = async ({
     throw new Error('Slack auth.test returned no team_id to claim');
   }
 
-  await kv.set(getSlackTeamKvKey(teamId), undefined, { scope: 'SERVER' });
+  // SERVER-scoped keys are a claim registry: the server always stores the
+  // calling workspace id and rejects a claim held by another workspace.
+  // TODO: release the claim on disconnect once connection providers expose an
+  // onDisconnect hook.
+  await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
   return { ok: true, teamId };
 };

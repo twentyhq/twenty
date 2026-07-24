@@ -1,24 +1,16 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import {
-  createSlackAssistantRequest,
-  findSlackAssistantRequestByEventId,
-} from 'src/logic-functions/data/slack-assistant-request-store';
+import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
+import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-event.type';
+import { isSlackThreadActive } from 'src/logic-functions/utils/is-slack-thread-active';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
-import { isSlackThreadActive } from 'src/logic-functions/utils/slack-thread-subscription';
 
-export type SlackEventsEnqueueResult =
-  | { challenge: string }
-  | { ok: boolean; skipped?: string };
+type SlackEventsEnqueueResult = { ok: boolean; skipped?: string };
 
 export const enqueueSlackAssistantRequest = async (
   body: SlackEventsRequestBody,
 ): Promise<SlackEventsEnqueueResult> => {
-  if (body.type === 'url_verification' && body.challenge !== undefined) {
-    return { challenge: body.challenge };
-  }
-
   const parsed = parseSlackAssistantRequest(body);
 
   if (parsed.request === null) {
@@ -41,13 +33,16 @@ export const enqueueSlackAssistantRequest = async (
 
   const client = new CoreApiClient();
 
-  const existingRequestId = await findSlackAssistantRequestByEventId(
+  const existingRequestId = await findSlackAssistantRequestBySlackMessage(
     client,
-    parsed.request.slackEventId,
+    {
+      slackChannelId: parsed.request.slackChannelId,
+      slackMessageTimestamp: parsed.request.slackMessageTimestamp,
+    },
   );
 
   if (existingRequestId !== undefined) {
-    return { ok: true, skipped: 'Duplicate event_id' };
+    return { ok: true, skipped: 'Slack message is already queued' };
   }
 
   await createSlackAssistantRequest(client, parsed.request);

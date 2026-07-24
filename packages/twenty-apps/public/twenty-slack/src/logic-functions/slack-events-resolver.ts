@@ -1,4 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
 
 import {
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
@@ -9,11 +11,13 @@ import { getSlackSigningSecret } from 'src/logic-functions/utils/get-slack-signi
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
 
-type SlackEventsResolverResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload: SlackEventsRequestBody;
-};
+type SlackEventsResolverResult =
+  | Response
+  | {
+      workspaceId: string;
+      targetLogicFunctionUniversalIdentifier: string;
+      payload: SlackEventsRequestBody;
+    };
 
 export const slackEventsResolverHandler = async (
   routePayload: RoutePayload<SlackEventsRequestBody>,
@@ -47,6 +51,12 @@ export const slackEventsResolverHandler = async (
     throw new Error('Empty request body');
   }
 
+  // Slack accepts the Request URL only when this handshake is echoed on the same
+  // response, so it cannot be answered by the queued target function.
+  if (body.type === 'url_verification' && isNonEmptyString(body.challenge)) {
+    return new Response({ challenge: body.challenge });
+  }
+
   return {
     workspaceId: await resolveTargetWorkspaceId(body),
     targetLogicFunctionUniversalIdentifier:
@@ -59,14 +69,10 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
   name: 'slack-events-resolver',
   description:
-    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, and resolves the target workspace + enqueue function for the assistant.',
+    'Receives Slack Events API callbacks, verifies the request signature in the owner workspace, answers the url_verification handshake, and resolves the target workspace + enqueue function for the assistant.',
   timeoutSeconds: 15,
   handler: slackEventsResolverHandler,
   serverRouteTriggerSettings: {
-    forwardedRequestHeaders: [
-      'x-slack-signature',
-      'x-slack-request-timestamp',
-      'x-slack-retry-num',
-    ],
+    forwardedRequestHeaders: ['x-slack-signature', 'x-slack-request-timestamp'],
   },
 });

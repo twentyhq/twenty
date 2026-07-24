@@ -11,83 +11,41 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
+import { SLACK_ASSISTANT_PLACEHOLDER_TEXT } from 'src/logic-functions/constants/slack-assistant-placeholder-text';
+import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
-import { updateSlackAssistantRequest } from 'src/logic-functions/data/slack-assistant-request-store';
+import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
+import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
+import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
+import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { subscribeSlackThread } from 'src/logic-functions/utils/slack-thread-subscription';
-
-const OBJECT_NAME = 'slackAssistantRequest';
-const PLACEHOLDER_TEXT = '_Looking into it…_';
-const FAILURE_TEXT =
-  'Sorry, I could not complete that request. An admin can check the Slack Assistant Request record in Twenty for details.';
-
-type SlackAssistantRequestRecord = {
-  id: string;
-  status?: string;
-  slackChannelId?: string;
-  slackChannelType?: string;
-  slackThreadTimestamp?: string;
-  slackMessageTimestamp?: string;
-  slackUserId?: string;
-  requestText?: string;
-};
+import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<SlackAssistantRequestRecord>
 >;
 
-const fetchRequesterName = async (
-  slackUserId: string | undefined,
-): Promise<string | undefined> => {
-  if (!isNonEmptyString(slackUserId)) {
-    return undefined;
-  }
-
-  const slackClientResult = await getSlackClient();
-
-  if (!slackClientResult.success) {
-    return undefined;
-  }
-
-  try {
-    const userInfo = await slackClientResult.client.users.info({
-      user: slackUserId,
-    });
-
-    return (
-      userInfo.user?.profile?.display_name ||
-      userInfo.user?.real_name ||
-      undefined
-    );
-  } catch {
-    return undefined;
-  }
-};
-
 export const slackAssistantWorkerHandler = async (
   event: SlackAssistantRequestCreatedEvent,
 ): Promise<object> => {
-  const [objectName, action] = event.name.split('.');
-
-  if (objectName !== OBJECT_NAME || action !== 'created') {
-    return { skipped: true, reason: 'Not a Slack assistant request creation' };
-  }
-
   const record = event.properties.after;
 
   if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
     return { skipped: true, reason: 'Request is not pending' };
   }
 
+  const { slackChannelId, slackMessageTimestamp, requestText } = record;
+
   if (
-    !isNonEmptyString(record.slackChannelId) ||
-    !isNonEmptyString(record.slackMessageTimestamp) ||
-    !isNonEmptyString(record.requestText)
+    !isNonEmptyString(slackChannelId) ||
+    !isNonEmptyString(slackMessageTimestamp) ||
+    !isNonEmptyString(requestText)
   ) {
     return { skipped: true, reason: 'Request record is missing fields' };
   }
@@ -101,15 +59,15 @@ export const slackAssistantWorkerHandler = async (
 
   const isDirectMessage = record.slackChannelType === 'im';
 
-  const parentMessageTimestamp = isNonEmptyString(record.slackThreadTimestamp)
-    ? record.slackThreadTimestamp
-    : isDirectMessage
-      ? undefined
-      : record.slackMessageTimestamp;
+  const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
+    slackThreadTimestamp: record.slackThreadTimestamp,
+    slackMessageTimestamp,
+    isDirectMessage,
+  });
 
   const placeholderResult = await slackPostMessageHandler({
-    slackChannelId: record.slackChannelId,
-    messageText: PLACEHOLDER_TEXT,
+    slackChannelId,
+    messageText: SLACK_ASSISTANT_PLACEHOLDER_TEXT,
     parentMessageTimestamp,
   });
 
@@ -130,9 +88,9 @@ export const slackAssistantWorkerHandler = async (
 
   const finishWithFailure = async (errorMessage: string): Promise<object> => {
     await slackUpdateMessageHandler({
-      slackChannelId: record.slackChannelId ?? '',
+      slackChannelId,
       messageTimestamp: placeholderTimestamp,
-      newMessageText: FAILURE_TEXT,
+      newMessageText: SLACK_ASSISTANT_FAILURE_TEXT,
     });
 
     await updateSlackAssistantRequest(client, {
@@ -150,18 +108,23 @@ export const slackAssistantWorkerHandler = async (
     const conversationContext = slackClientResult.success
       ? await fetchSlackConversationContext({
           client: slackClientResult.client,
-          channelId: record.slackChannelId,
+          channelId: slackChannelId,
           threadTimestamp: parentMessageTimestamp ?? '',
           isDirectMessage,
         })
       : undefined;
 
-    const requesterName = await fetchRequesterName(record.slackUserId);
+    const requesterName = slackClientResult.success
+      ? await fetchSlackRequesterName({
+          client: slackClientResult.client,
+          slackUserId: record.slackUserId,
+        })
+      : undefined;
 
     const agentResult = await runAgent({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       prompt: buildSlackAssistantPrompt({
-        requestText: record.requestText,
+        requestText,
         requesterName,
         conversationContext,
       }),
@@ -176,7 +139,7 @@ export const slackAssistantWorkerHandler = async (
     }
 
     const updateResult = await slackUpdateMessageHandler({
-      slackChannelId: record.slackChannelId,
+      slackChannelId,
       messageTimestamp: placeholderTimestamp,
       newMessageText: responseText,
       messageFormat: 'markdown',
@@ -196,7 +159,7 @@ export const slackAssistantWorkerHandler = async (
 
     if (isNonEmptyString(parentMessageTimestamp)) {
       await subscribeSlackThread({
-        channelId: record.slackChannelId,
+        channelId: slackChannelId,
         threadTimestamp: parentMessageTimestamp,
       });
     }
@@ -218,6 +181,6 @@ export default defineLogicFunction({
   timeoutSeconds: 60 * 4,
   handler: slackAssistantWorkerHandler,
   databaseEventTriggerSettings: {
-    eventName: `${OBJECT_NAME}.created`,
+    eventName: `${SLACK_ASSISTANT_REQUEST_OBJECT_NAME}.created`,
   },
 });

@@ -17,8 +17,9 @@ below):
 - **Quick-send** — command menu **Send Slack message** opens a side panel to
   pick a channel and post (same Slack connection as workflows).
 - **Conversational assistant** — mention the bot in a channel (or DM it) to ask
-  about your CRM or make changes, e.g. `@twenty how many open opportunities do
-  we have?` or `@twenty create a company called ACME`. The assistant is powered
+  about your CRM, e.g. `@twenty how many open opportunities do we have?`. It
+  ships read-only; widen the **Slack Assistant** role to let it create or
+  update records (`@twenty create a company called ACME`). The assistant is powered
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
   runtime, and answers in the thread. Once it has successfully replied in a
   thread it stays active there, so follow-up messages in that thread are
@@ -138,10 +139,15 @@ not add a second connection or bot identity. To enable it:
    requests. This is only needed for the assistant.
 3. **Point Slack Events at Twenty.** On your Slack app, enable **Event
    Subscriptions** and set the Request URL to
-   `<YOUR_TWENTY_SERVER_URL>/webhooks/slack/events`. Slack signs this handshake,
-   so `SLACK_WEBHOOK_SIGNATURE` (step 2) must be set first or verification returns
-   401 and Slack reports *"didn't respond with the value of the challenge
-   parameter."* Under **Subscribe to bot events**, add:
+
+   ```text
+   <YOUR_TWENTY_SERVER_URL>/webhooks/server/9ad6fa20-dff5-4d3f-ad5f-084f3c8b0b09
+   ```
+
+   The ID is the **slack-events-resolver** logic function. Slack signs this
+   handshake, so `SLACK_WEBHOOK_SIGNATURE` (step 2) must be set first or
+   verification fails and Slack reports *"didn't respond with the value of the
+   challenge parameter."* Under **Subscribe to bot events**, add:
    - `app_mention` — mentions of the bot in a channel.
    - `message.im` — direct messages to the bot.
    - `message.channels` — replies in public-channel threads (needed for
@@ -159,3 +165,10 @@ not add a second connection or bot identity. To enable it:
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual
 Twenty members). Keep the role scoped to what you're comfortable exposing.
+
+**One Slack workspace answers into one Twenty workspace.** Connecting Slack
+claims that Slack team for the connecting Twenty workspace, and inbound events
+are routed there. On the same Twenty server, a second Twenty workspace
+connecting the same Slack team is rejected. The claim is not released on
+disconnect yet, so moving a Slack workspace to a different Twenty workspace
+currently needs a server admin.
