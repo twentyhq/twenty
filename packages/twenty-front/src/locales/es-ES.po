@@ -12079,8 +12079,6 @@ msgstr "Nueva pestaña"
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
 msgid "New Tab"
 msgstr "Nueva pestaña"
 
