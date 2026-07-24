@@ -3,9 +3,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type DragDropItemDropLineOrientation = 'horizontal' | 'vertical';
 
-// Absolutely positioned in the gap before its (position: relative) parent so
-// activating the drop target does not reflow the list. Horizontal draws above
-// the item (vertical lists); vertical draws on its left (horizontal lists).
+// Absolutely positioned over the leading edge of its (position: relative)
+// parent so activating the drop target does not reflow the list. Horizontal
+// straddles the item's top boundary (vertical lists); vertical draws on its
+// left (horizontal lists).
 const StyledDropLineContainer = styled.div<{
   $orientation: DragDropItemDropLineOrientation;
 }>`
@@ -16,10 +17,7 @@ const StyledDropLineContainer = styled.div<{
       : '0'};
   position: absolute;
   right: ${({ $orientation }) => ($orientation === 'vertical' ? 'auto' : '0')};
-  top: ${({ $orientation }) =>
-    $orientation === 'vertical'
-      ? '0'
-      : `calc(-1 * ${themeCssVariables.spacing[2]})`};
+  top: ${({ $orientation }) => ($orientation === 'vertical' ? '0' : '-1px')};
 `;
 
 const StyledDropLine = styled.div<{
@@ -35,12 +33,14 @@ const StyledDropLine = styled.div<{
 
 type DragDropItemDropLineProps = {
   orientation?: DragDropItemDropLineOrientation;
+  className?: string;
 };
 
 export const DragDropItemDropLine = ({
   orientation = 'horizontal',
+  className,
 }: DragDropItemDropLineProps) => (
-  <StyledDropLineContainer $orientation={orientation}>
+  <StyledDropLineContainer $orientation={orientation} className={className}>
     <StyledDropLine $orientation={orientation} />
   </StyledDropLineContainer>
 );

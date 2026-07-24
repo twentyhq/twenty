@@ -145,7 +145,7 @@ export const RecordTableRowDragOverlayContent = ({
     return null;
   }
 
-  const recordId = String(source.id);
+  const recordId = sourceData.recordId;
 
   return (
     <StyledRowDragOverlayCSSBridge style={columnWidthStyles}>

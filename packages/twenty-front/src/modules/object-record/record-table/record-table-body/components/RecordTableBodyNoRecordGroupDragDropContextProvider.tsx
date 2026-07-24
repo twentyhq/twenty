@@ -10,6 +10,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
@@ -40,14 +41,15 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   const handleDragStart = useCallback(
     (event: DragDropProviderDragStartEvent<DragDropItemData>) => {
       const source = event.operation.source;
+      const sourceData = source?.data as RecordTableRowDragData | undefined;
 
-      if (!isDefined(source)) {
+      if (!isDefined(source) || !isDefined(sourceData)) {
         return;
       }
 
       const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
 
-      startRecordDrag(String(source.id), currentSelectedRecordIds);
+      startRecordDrag(sourceData.recordId, currentSelectedRecordIds);
     },
     [selectedRowIds, startRecordDrag, store],
   );
@@ -55,7 +57,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   const handleDragEnd = useCallback(
     (event: DragDropProviderDragEndEvent<DragDropItemData>) => {
       const source = event.operation.source;
-      const sourceData = source?.data as DragDropItemData | undefined;
+      const sourceData = source?.data as RecordTableRowDragData | undefined;
       const targetData = event.operation.target?.data as
         | DragDropItemData
         | undefined;
@@ -86,7 +88,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 
       try {
         processTableWithoutGroupRecordDrop({
-          draggableId: String(source.id),
+          draggableId: sourceData.recordId,
           source: {
             droppableId: sourceData.droppableId,
             index: sourceData.index,
