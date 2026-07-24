@@ -59,7 +59,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
-- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and returns the target workspace AND the target logic function to dispatch to; the platform acks with `202` and runs that **target** function on the worker queue. See [Server route trigger](#server-route-trigger).
+- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -178,13 +178,17 @@ The status code must be a valid HTTP status code (between 100 and 599). Response
 
 The trigger has two parts:
 
-1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, picking *both* the target workspace and the target function. The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
-2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value becomes the HTTP response.
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns either:
+   - `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — the platform enqueues that target in the resolved workspace and acks with `202 { queued: true }`, or
+   - a `Response` from `twenty-sdk/logic-function` — the platform echoes that HTTP response **synchronously** and does **not** enqueue a target (use this for challenge handshakes such as Slack `url_verification`).
+
+   The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value is **not** observed by the HTTP caller when the resolver chose the enqueue path.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +215,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +282,7 @@ The identifier is the resolver's `universalIdentifier` from your manifest. Regis
 **The application must be claimed and installed on its owner workspace.** Because the resolver runs in the **owner workspace** (the workspace that owns the application registration), a server route trigger only works once the application has been *claimed* — i.e. it has an owner workspace — **and** that application is **installed on the owner workspace**. Until both are true the resolver has nowhere to run, so the route cannot be dispatched. An application that exposes a `serverRouteTriggerSettings` logic function therefore cannot be listed in the marketplace until it is claimed and installed on its owner workspace.
 </Note>
 
-**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of it). The `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`.
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
 
 | Field | Type | Notes |
 |-------|------|-------|
@@ -290,7 +307,9 @@ For request signatures, most providers sign with HMAC-SHA256; the parts that dif
 The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
 
 <Note>
-The route responds `202 { queued: true }` right after the resolver returns and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion. For endpoints whose caller must read the response body (challenge handshakes, Slack commands), use an `httpRouteTriggerSettings` route instead. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+When the resolver returns a dispatch object, the route responds `202 { queued: true }` and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion.
+
+When the caller must read the response body on the same request (challenge handshakes, interactive acknowledgements), return a `Response` from the **resolver** instead. The platform echoes it synchronously and skips the queue; its headers go through the same allow-list as HTTP route responses. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
 </Note>
 
 #### Database event trigger payload
