@@ -14,10 +14,11 @@ Front components can render in three locations within Twenty:
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
 - **Custom settings tab** — When referenced via `settingsCustomTabFrontComponentUniversalIdentifier` in [`defineApplication()`](/developers/extend/apps/config/application), the front component renders inside the app's settings page as a **Custom** tab.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+A front component on its own isn't reachable from the UI — you need to *surface* it. The three ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+- **Wire it as a custom settings tab** — set `settingsCustomTabFrontComponentUniversalIdentifier` in [`defineApplication()`](/developers/extend/apps/config/application) to render it as a **Custom** tab on the app's settings page.
 
 ## Basic example
 
