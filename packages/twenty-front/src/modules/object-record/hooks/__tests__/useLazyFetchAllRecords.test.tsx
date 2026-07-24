@@ -21,13 +21,13 @@ describe('useLazyFetchAllRecords', () => {
       objectMetadataItem: {
         nameSingular: 'person',
         namePlural: 'people',
-      } as any,
-    });
+      },
+    } as ReturnType<typeof useObjectMetadataItem>);
     mockUseLazyFindManyRecords.mockReturnValue({
       findManyRecordsLazy: mockFindManyRecordsLazy,
       fetchMoreRecordsLazy: mockFetchMoreRecordsLazy,
       queryIdentifier: 'test-query',
-    });
+    } as ReturnType<typeof useLazyFindManyRecords>);
   });
 
   it('should handle one single page', async () => {
