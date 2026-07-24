@@ -2943,11 +2943,6 @@ msgstr ""
 msgid "Back to settings"
 msgstr ""
 
-#. js-lingui-id: RJnYR0
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill started. This app will be installed on all existing workspaces in the background."
-msgstr ""
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -2982,11 +2977,6 @@ msgstr ""
 #. js-lingui-id: 0wJVK+
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Basic"
-msgstr ""
-
-#. js-lingui-id: WChKbE
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Batch size"
 msgstr ""
 
 #. js-lingui-id: /xLNEx
@@ -8113,16 +8103,6 @@ msgstr ""
 msgid "Failed to set maintenance mode."
 msgstr ""
 
-#. js-lingui-id: 7PuzkN
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Failed to start backfill"
-msgstr ""
-
-#. js-lingui-id: SwXGP6
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Failed to start upgrade"
-msgstr ""
-
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -9782,7 +9762,6 @@ msgstr ""
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9806,12 +9785,6 @@ msgstr ""
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
-msgstr ""
-
-#. js-lingui-id: xif494
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install on all workspaces"
 msgstr ""
 
 #. js-lingui-id: K8iwJx
@@ -14142,11 +14115,6 @@ msgstr ""
 msgid "Pre-install"
 msgstr ""
 
-#. js-lingui-id: N1yTFc
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Pre-install must be enabled."
-msgstr ""
-
 #. js-lingui-id: iVFTRM
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Pre-install on new workspaces"
@@ -14601,6 +14569,7 @@ msgstr ""
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -18112,12 +18081,6 @@ msgstr ""
 msgid "This will grant {0} to {userLabel}."
 msgstr ""
 
-#. js-lingui-id: rr0iQF
-#. placeholder {0}: registration.name
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
-msgstr ""
-
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
@@ -18142,12 +18105,6 @@ msgstr ""
 #. placeholder {0}: pendingChange?.description ?? ''
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
-msgstr ""
-
-#. js-lingui-id: DXNxPk
-#. placeholder {0}: registration.name
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
 msgstr ""
 
 #. js-lingui-id: f8HOUp
@@ -19090,14 +19047,7 @@ msgstr ""
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
-msgstr ""
-
-#. js-lingui-id: 8guwMM
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade existing installations"
 msgstr ""
 
 #. js-lingui-id: IEtN5Y
@@ -19113,11 +19063,6 @@ msgstr ""
 #. js-lingui-id: +awaFr
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
-msgstr ""
-
-#. js-lingui-id: Ngj5VX
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
 msgstr ""
 
 #. js-lingui-id: 5UfQvA
@@ -19912,6 +19857,11 @@ msgstr ""
 #. js-lingui-id: 6ZDYQy
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Watch members demo"
+msgstr ""
+
+#. js-lingui-id: Rxoy7e
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr ""
 
 #. js-lingui-id: icGmU/

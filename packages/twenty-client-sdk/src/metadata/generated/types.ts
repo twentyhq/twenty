@@ -6108,6 +6108,15 @@ export default {
                     ]
                 }
             ],
+            "isApplicationStopped": [
+                3,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "enterprisePortalSession": [
                 1,
                 {

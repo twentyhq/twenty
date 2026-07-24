@@ -2948,11 +2948,6 @@ msgstr "Повернутися до вмісту"
 msgid "Back to settings"
 msgstr "Назад до налаштувань"
 
-#. js-lingui-id: RJnYR0
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill started. This app will be installed on all existing workspaces in the background."
-msgstr "Доустановлення розпочато. Цей застосунок буде встановлено у всі наявні робочі простори у фоновому режимі."
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -2988,11 +2983,6 @@ msgstr "Потрібно вказати базову URL-адресу"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Basic"
 msgstr "Базовий"
-
-#. js-lingui-id: WChKbE
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Batch size"
-msgstr ""
 
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -8118,16 +8108,6 @@ msgstr "Не вдалося надіслати електронний лист"
 msgid "Failed to set maintenance mode."
 msgstr "Не вдалося встановити режим технічного обслуговування."
 
-#. js-lingui-id: 7PuzkN
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Failed to start backfill"
-msgstr "Не вдалося розпочати заповнення даних"
-
-#. js-lingui-id: SwXGP6
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Failed to start upgrade"
-msgstr ""
-
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -9810,7 +9790,6 @@ msgstr "Вкажіть свої платіжні дані, щоб отримат
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9835,12 +9814,6 @@ msgstr "Встановіть і керуйте застосунками"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Посилання для встановлення"
-
-#. js-lingui-id: xif494
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install on all workspaces"
-msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -14170,11 +14143,6 @@ msgstr "Поштовий код"
 msgid "Pre-install"
 msgstr "Перед встановленням"
 
-#. js-lingui-id: N1yTFc
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Pre-install must be enabled."
-msgstr "Необхідно увімкнути попереднє встановлення."
-
 #. js-lingui-id: iVFTRM
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Pre-install on new workspaces"
@@ -14629,6 +14597,7 @@ msgstr "запис"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -18172,12 +18141,6 @@ msgstr "Це від'єднає всі моделі від цього прова�
 msgid "This will grant {0} to {userLabel}."
 msgstr "Це надасть {0} користувачу {userLabel}."
 
-#. js-lingui-id: rr0iQF
-#. placeholder {0}: registration.name
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
-msgstr ""
-
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
@@ -18203,12 +18166,6 @@ msgstr "Це назавжди видалить ваш метод двофакт�
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Це відкличе {0} для користувача {userLabel}."
-
-#. js-lingui-id: DXNxPk
-#. placeholder {0}: registration.name
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
-msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -19150,15 +19107,8 @@ msgstr "Оновлення..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Оновити"
-
-#. js-lingui-id: 8guwMM
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade existing installations"
-msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -19174,11 +19124,6 @@ msgstr "Стан оновлення в усіх робочих простора�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "Стан оновлення екземпляра та робочих просторів"
-
-#. js-lingui-id: Ngj5VX
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
-msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -19973,6 +19918,11 @@ msgstr "Переглянути демонстрацію"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Watch members demo"
 msgstr "Переглянути демонстрацію учасників"
+
+#. js-lingui-id: Rxoy7e
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
+msgstr ""
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts

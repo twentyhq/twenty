@@ -2948,11 +2948,6 @@ msgstr "Terug na inhoud"
 msgid "Back to settings"
 msgstr "Terug na Instellings"
 
-#. js-lingui-id: RJnYR0
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill started. This app will be installed on all existing workspaces in the background."
-msgstr "Terugvulling begin. Hierdie toep sal op al die bestaande werksruimtes in die agtergrond geïnstalleer word."
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -2988,11 +2983,6 @@ msgstr "Basis-URL word vereis"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Basic"
 msgstr "Basies"
-
-#. js-lingui-id: WChKbE
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Batch size"
-msgstr ""
 
 #. js-lingui-id: /xLNEx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -8118,16 +8108,6 @@ msgstr "Kon nie e-pos stuur nie"
 msgid "Failed to set maintenance mode."
 msgstr "Kon nie onderhoudsmodus instel nie."
 
-#. js-lingui-id: 7PuzkN
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Failed to start backfill"
-msgstr "Kon nie terugvulling begin nie"
-
-#. js-lingui-id: SwXGP6
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Failed to start upgrade"
-msgstr ""
-
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -9810,7 +9790,6 @@ msgstr "Voer jou faktureringsbesonderhede in om 'n gratis proeflopie en meer AI-
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9835,12 +9814,6 @@ msgstr "Installeer en bestuur toepassings"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Installasieskakel"
-
-#. js-lingui-id: xif494
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install on all workspaces"
-msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -14170,11 +14143,6 @@ msgstr "Poskode"
 msgid "Pre-install"
 msgstr "Voor-installering"
 
-#. js-lingui-id: N1yTFc
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Pre-install must be enabled."
-msgstr "Voorinstallasie moet geaktiveer wees."
-
 #. js-lingui-id: iVFTRM
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Pre-install on new workspaces"
@@ -14629,6 +14597,7 @@ msgstr "rekord"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -18170,12 +18139,6 @@ msgstr "Dit sal alle modelle van hierdie verskaffer ontkoppel. Modelle sal nie m
 msgid "This will grant {0} to {userLabel}."
 msgstr "Dit sal {0} aan {userLabel} verleen."
 
-#. js-lingui-id: rr0iQF
-#. placeholder {0}: registration.name
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
-msgstr ""
-
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
@@ -18201,12 +18164,6 @@ msgstr "Dit sal jou twee-faktor-verifikasiemetode permanent uitvee.<0/>Aangesien
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Dit sal {0} vir {userLabel} terugtrek."
-
-#. js-lingui-id: DXNxPk
-#. placeholder {0}: registration.name
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
-msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -19148,15 +19105,8 @@ msgstr "Word opgedateer..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Opgradering"
-
-#. js-lingui-id: 8guwMM
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade existing installations"
-msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -19172,11 +19122,6 @@ msgstr "Opgraderingsgesondheid oor alle werksruimtes"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "Opgraderingsgesondheid oor die instansie en werksruimtes"
-
-#. js-lingui-id: Ngj5VX
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
-msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
-msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -19971,6 +19916,11 @@ msgstr "Kyk demo"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Watch members demo"
 msgstr "Kyk lede-demo"
+
+#. js-lingui-id: Rxoy7e
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
+msgstr ""
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts

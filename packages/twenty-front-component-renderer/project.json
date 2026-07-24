@@ -105,6 +105,7 @@
         "{projectRoot}/src/__stories__/html-tag/**/*",
         "{projectRoot}/src/__stories__/host-api/**/*",
         "{projectRoot}/src/__stories__/showcase/**/*",
+        "{projectRoot}/src/__stories__/twenty-ui-gallery/**/*",
         "{projectRoot}/src/__stories__/shared/front-components/**/*",
         "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
       ],
