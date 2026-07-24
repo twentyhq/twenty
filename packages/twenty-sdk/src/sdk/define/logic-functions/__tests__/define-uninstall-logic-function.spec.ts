@@ -16,6 +16,7 @@ describe('defineUninstallLogicFunction', () => {
   it('should return the config when valid', () => {
     const result = defineUninstallLogicFunction(validConfig);
 
+    expect(result.success).toBe(true);
     expect(result.config).toEqual(validConfig);
   });
 
@@ -28,6 +29,7 @@ describe('defineUninstallLogicFunction', () => {
 
     const result = defineUninstallLogicFunction(config as any);
 
+    expect(result.success).toBe(true);
     expect(result.config.description).toBe(
       'Deletes remaining bots on uninstall',
     );

@@ -52,7 +52,6 @@ Each app may define **at most one** of each hook (pre-install, post-install, uni
 ```bash filename="Terminal"
 yarn twenty dev:function:exec --postInstall
 yarn twenty dev:function:exec --preInstall
-yarn twenty dev:function:exec --uninstall
 ```
 
 <AccordionGroup>
@@ -154,6 +153,11 @@ Notes:
 - It receives `UninstallPayload` (`{ version?: string }` — the version being removed).
 - It does **not** run when a failed fresh install is rolled back — the app never finished installing.
 - The hook cannot run after the app is gone, so external cleanup that depends on app data (e.g. bot IDs stored in records) belongs here, not in an external scheduled job.
+- Like the install hooks, it is **not executed in dev mode** — trigger it manually instead:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
 
 ```ts src/logic-functions/uninstall.ts
 import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
