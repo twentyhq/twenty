@@ -9,6 +9,7 @@ export const FIND_MANY_APPLICATIONS = gql`
       logo
       version
       universalIdentifier
+      isStopped
       applicationRegistrationId
       applicationRegistration {
         id

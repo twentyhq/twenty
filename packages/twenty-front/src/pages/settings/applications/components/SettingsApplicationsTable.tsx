@@ -106,6 +106,7 @@ export const SettingsApplicationsTable = ({
                   logoUrl: application.applicationRegistration?.logoUrl,
                 }}
                 hasUpdate={hasUpdate}
+                isStopped={application.isStopped}
                 sourceType={application.applicationRegistration?.sourceType}
                 action={
                   <IconChevronRight

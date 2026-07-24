@@ -22,7 +22,9 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
+  IconAlertTriangle,
   IconBox,
   IconCommand,
   IconGraph,
@@ -349,6 +351,13 @@ export const SettingsApplicationDetails = () => {
         ]}
       >
         <SettingsPageContainer>
+          {application?.isStopped === true && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
+            />
+          )}
           <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
