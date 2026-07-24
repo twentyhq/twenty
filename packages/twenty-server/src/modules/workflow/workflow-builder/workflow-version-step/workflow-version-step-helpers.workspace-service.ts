@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -11,8 +10,8 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 @Injectable()
 export class WorkflowVersionStepHelpersWorkspaceService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async getValidatedDraftWorkflowVersion({
@@ -44,30 +43,31 @@ export class WorkflowVersionStepHelpersWorkspaceService {
     steps?: WorkflowAction[] | null;
     trigger?: WorkflowTrigger | null;
   }): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const updateData: Pick<
+      Partial<WorkflowVersionWorkspaceEntity>,
+      'steps' | 'trigger'
+    > = {};
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
+    if (steps !== undefined) {
+      updateData.steps = steps;
+    }
+
+    if (trigger !== undefined) {
+      updateData.trigger = trigger;
+    }
+
+    await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+      workspaceId,
+      async (workflowVersionRepository, entityManager) => {
+        await workflowVersionRepository.update(
+          workflowVersionId,
+          updateData,
+          undefined,
+          entityManager,
         );
 
-      const updateData: Pick<
-        Partial<WorkflowVersionWorkspaceEntity>,
-        'steps' | 'trigger'
-      > = {};
-
-      if (steps !== undefined) {
-        updateData.steps = steps;
-      }
-
-      if (trigger !== undefined) {
-        updateData.trigger = trigger;
-      }
-
-      await workflowVersionRepository.update(workflowVersionId, updateData);
-    }, authContext);
+        return workflowVersionId;
+      },
+    );
   }
 }

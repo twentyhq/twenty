@@ -19,6 +19,7 @@ import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -84,6 +85,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -930,9 +932,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
 
-        await workflowVersionRepository.update(workflowVersion.id, {
-          steps: [...existingSteps, emptyNodeStep],
-        });
+        await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+          workspaceId,
+          async (scopedRepository, entityManager) => {
+            await scopedRepository.update(
+              workflowVersion.id,
+              { steps: [...existingSteps, emptyNodeStep] },
+              undefined,
+              entityManager,
+            );
+
+            return workflowVersion.id;
+          },
+        );
 
         return emptyNodeStep;
       },
@@ -1012,9 +1024,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
 
-        await workflowVersionRepository.update(workflowVersion.id, {
-          steps: [...existingSteps, ifEmptyNode, elseEmptyNode],
-        });
+        await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+          workspaceId,
+          async (scopedRepository, entityManager) => {
+            await scopedRepository.update(
+              workflowVersion.id,
+              { steps: [...existingSteps, ifEmptyNode, elseEmptyNode] },
+              undefined,
+              entityManager,
+            );
+
+            return workflowVersion.id;
+          },
+        );
 
         const ifFilterGroupId = v4();
 
