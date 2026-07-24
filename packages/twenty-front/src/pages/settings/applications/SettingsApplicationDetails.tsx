@@ -45,6 +45,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
+import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
@@ -107,6 +108,9 @@ export const SettingsApplicationDetails = () => {
   };
 
   const screenshots = getScreenshots();
+
+  const settingsCustomTabFrontComponentId =
+    application?.settingsCustomTabFrontComponentId;
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
@@ -311,7 +315,13 @@ export const SettingsApplicationDetails = () => {
           />
         );
       case 'settings':
-        return (
+        return isDefined(settingsCustomTabFrontComponentId) ? (
+          <SettingsApplicationCustomTab
+            settingsCustomTabFrontComponentId={
+              settingsCustomTabFrontComponentId
+            }
+          />
+        ) : (
           <SettingsApplicationDetailSettingsTab application={application} />
         );
       default:

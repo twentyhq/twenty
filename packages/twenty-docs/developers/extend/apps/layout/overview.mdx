@@ -51,6 +51,7 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
 | **Record list** | A saved configuration for an object — visible columns, order, filters, groups | `defineView` |
 | **Record detail page** | The tabs and widgets on a record page (your own object's, or a standard one) | `definePageLayout`, `definePageLayoutTab` |
 | **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations | `defineFrontComponent` |
+| **App settings tab** | The app's Settings tab content, replacing the default variable configuration UI | `defineSettingsTabFrontComponent` |
 | **Command menu (Cmd+K)** | A pinned quick action or hidden command | `defineCommandMenuItem` |
 
 Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.

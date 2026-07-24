@@ -227,6 +227,32 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
+
+    it('should not flag a front component referenced via settingsTabFrontComponent as a duplicate', () => {
+      const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
+
+      const frontComponent = {
+        universalIdentifier: frontComponentId,
+        name: 'app-settings',
+        componentName: 'AppSettings',
+        sourceComponentPath: 'src/front-components/app-settings.tsx',
+        builtComponentPath: 'dist/app-settings.mjs',
+        builtComponentChecksum: '00000000-0000-4000-8000-000000000000',
+        isHeadless: false,
+      } as unknown as Manifest['frontComponents'][number];
+
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          settingsTabFrontComponent: { universalIdentifier: frontComponentId },
+        },
+        frontComponents: [frontComponent],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe('relation field validation', () => {

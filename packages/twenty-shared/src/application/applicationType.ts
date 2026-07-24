@@ -1,5 +1,6 @@
 import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
+import { type SettingsTabFrontComponentApplicationManifest } from '@/application/settingsTabFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -32,10 +33,10 @@ export type ApplicationManifest = SyncableEntityOptions & {
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
+  settingsTabFrontComponent?: SettingsTabFrontComponentApplicationManifest;
   /**
-   * @deprecated Custom settings tabs are no longer supported. This property is
-   * kept for backward compatibility with older manifests but is now ignored.
-   * Use typed `applicationVariables` / `serverVariables` instead.
+   * @deprecated Use `defineSettingsTabFrontComponent()` (exposed on the manifest
+   * as `settingsTabFrontComponent`) instead.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;

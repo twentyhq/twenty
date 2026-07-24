@@ -249,7 +249,7 @@ export class ApplicationManifestMigrationService {
     );
 
     if (!dryRun) {
-      await this.syncDefaultRole({
+      await this.syncDefaultRoleAndSettingsCustomTab({
         manifest,
         workspaceId,
         ownerFlatApplication,
@@ -262,7 +262,7 @@ export class ApplicationManifestMigrationService {
     };
   }
 
-  private async syncDefaultRole({
+  private async syncDefaultRoleAndSettingsCustomTab({
     manifest,
     workspaceId,
     ownerFlatApplication,
@@ -271,10 +271,13 @@ export class ApplicationManifestMigrationService {
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
   }) {
-    const { flatRoleMaps: refreshedFlatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRoleMaps',
-      ]);
+    const {
+      flatRoleMaps: refreshedFlatRoleMaps,
+      flatFrontComponentMaps: refreshedFlatFrontComponentMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatRoleMaps',
+      'flatFrontComponentMaps',
+    ]);
 
     let defaultRoleId: string | null = null;
 
@@ -299,11 +302,32 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    if (isDefined(defaultRoleId)) {
-      await this.applicationService.update(ownerFlatApplication.id, {
-        workspaceId,
-        defaultRoleId,
+    let settingsCustomTabFrontComponentId: string | null = null;
+
+    const settingsTabFrontComponentUniversalIdentifier =
+      manifest.application.settingsTabFrontComponent?.universalIdentifier ??
+      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
+
+    if (isDefined(settingsTabFrontComponentUniversalIdentifier)) {
+      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: refreshedFlatFrontComponentMaps,
+        universalIdentifier: settingsTabFrontComponentUniversalIdentifier,
       });
+
+      if (!isDefined(flatFrontComponent)) {
+        throw new ApplicationException(
+          `Failed to resolve front component for settings tab front component universalIdentifier ${settingsTabFrontComponentUniversalIdentifier}`,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      settingsCustomTabFrontComponentId = flatFrontComponent.id;
     }
+
+    await this.applicationService.update(ownerFlatApplication.id, {
+      workspaceId,
+      settingsCustomTabFrontComponentId,
+      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+    });
   }
 }

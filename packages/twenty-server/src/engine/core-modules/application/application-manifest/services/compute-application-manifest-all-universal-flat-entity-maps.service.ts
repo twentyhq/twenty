@@ -215,12 +215,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    const settingsTabFrontComponentUniversalIdentifier =
+      manifest.application.settingsTabFrontComponent?.universalIdentifier ??
+      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
+
     for (const frontComponentManifest of manifest.frontComponents) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromFrontComponentManifestToUniversalFlatFrontComponent({
             frontComponentManifest,
             applicationUniversalIdentifier,
+            isSettingsTabFrontComponent:
+              frontComponentManifest.universalIdentifier ===
+              settingsTabFrontComponentUniversalIdentifier,
             now,
           }),
         universalFlatEntityMapsToMutate:
