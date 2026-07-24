@@ -109,6 +109,21 @@ const combineOrResults = (
   return results.some((result) => result === true);
 };
 
+const evaluateFieldMatchResult = (
+  evaluation: () => boolean,
+): RLSPredicateEvaluation => {
+  try {
+    return evaluation();
+  } catch {
+    return 'invalid';
+  }
+};
+
+const hasDefinedFilterKey = <T extends Record<string, unknown>>(
+  filter: T,
+  keys: readonly (keyof T)[],
+): boolean => keys.some((key) => filter[key] !== undefined);
+
 const evaluateRLSRowLevelPermissionPredicate = ({
   record,
   filter,
@@ -275,58 +290,77 @@ const evaluateRLSRowLevelPermissionPredicate = ({
 
       switch (objectMetadataField.type) {
         case FieldMetadataType.RATING:
-          return isMatchingRatingFilter({
-            ratingFilter: filterValue as RatingFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingRatingFilter({
+              ratingFilter: filterValue as RatingFilter,
+              value: recordFieldValue,
+            }),
+          );
         case FieldMetadataType.TEXT: {
-          return isMatchingStringFilter({
-            stringFilter: filterValue as StringFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingStringFilter({
+              stringFilter: filterValue as StringFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.RICH_TEXT: {
-          return isMatchingRichTextFilter({
-            richTextFilter: filterValue as RichTextFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingRichTextFilter({
+              richTextFilter: filterValue as RichTextFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.SELECT:
-          return isMatchingSelectFilter({
-            selectFilter: filterValue as SelectFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingSelectFilter({
+              selectFilter: filterValue as SelectFilter,
+              value: recordFieldValue,
+            }),
+          );
         case FieldMetadataType.MULTI_SELECT:
-          return isMatchingMultiSelectFilter({
-            multiSelectFilter: filterValue as MultiSelectFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingMultiSelectFilter({
+              multiSelectFilter: filterValue as MultiSelectFilter,
+              value: recordFieldValue,
+            }),
+          );
         case FieldMetadataType.ARRAY: {
-          return isMatchingArrayFilter({
-            arrayFilter: filterValue as ArrayFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingArrayFilter({
+              arrayFilter: filterValue as ArrayFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.RAW_JSON: {
-          return isMatchingRawJsonFilter({
-            rawJsonFilter: filterValue as RawJsonFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingRawJsonFilter({
+              rawJsonFilter: filterValue as RawJsonFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.FULL_NAME: {
           const fullNameFilter = filterValue as FullNameFilter;
 
-          return (
-            (fullNameFilter.firstName === undefined ||
-              isMatchingStringFilter({
-                stringFilter: fullNameFilter.firstName,
-                value: recordFieldValue.firstName,
-              })) &&
-            (fullNameFilter.lastName === undefined ||
-              isMatchingStringFilter({
-                stringFilter: fullNameFilter.lastName,
-                value: recordFieldValue.lastName,
-              }))
+          if (!hasDefinedFilterKey(fullNameFilter, ['firstName', 'lastName'])) {
+            return 'invalid';
+          }
+
+          return evaluateFieldMatchResult(
+            () =>
+              (fullNameFilter.firstName === undefined ||
+                isMatchingStringFilter({
+                  stringFilter: fullNameFilter.firstName,
+                  value: recordFieldValue.firstName,
+                })) &&
+              (fullNameFilter.lastName === undefined ||
+                isMatchingStringFilter({
+                  stringFilter: fullNameFilter.lastName,
+                  value: recordFieldValue.lastName,
+                })),
           );
         }
         case FieldMetadataType.ADDRESS: {
@@ -341,116 +375,152 @@ const evaluateRLSRowLevelPermissionPredicate = ({
             'addressPostcode',
           ] as const;
 
-          return keys.some((key) => {
-            const value = addressFilter[key];
+          if (!hasDefinedFilterKey(addressFilter, keys)) {
+            return 'invalid';
+          }
 
-            if (value === undefined) {
-              return false;
-            }
+          return evaluateFieldMatchResult(() =>
+            keys.some((key) => {
+              const value = addressFilter[key];
 
-            return isMatchingStringFilter({
-              stringFilter: value,
-              value: recordFieldValue[key],
-            });
-          });
+              if (value === undefined) {
+                return false;
+              }
+
+              return isMatchingStringFilter({
+                stringFilter: value,
+                value: recordFieldValue[key],
+              });
+            }),
+          );
         }
         case FieldMetadataType.LINKS: {
           const linksFilter = filterValue as LinksFilter;
 
           const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
 
-          return keys.some((key) => {
-            const value = linksFilter[key];
+          if (!hasDefinedFilterKey(linksFilter, keys)) {
+            return 'invalid';
+          }
 
-            if (value === undefined) {
-              return false;
-            }
+          return evaluateFieldMatchResult(() =>
+            keys.some((key) => {
+              const value = linksFilter[key];
 
-            return isMatchingStringFilter({
-              stringFilter: value,
-              value: recordFieldValue[key],
-            });
-          });
+              if (value === undefined) {
+                return false;
+              }
+
+              return isMatchingStringFilter({
+                stringFilter: value,
+                value: recordFieldValue[key],
+              });
+            }),
+          );
         }
         case FieldMetadataType.DATE:
         case FieldMetadataType.DATE_TIME: {
-          return isMatchingDateFilter({
-            dateFilter: filterValue as DateFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingDateFilter({
+              dateFilter: filterValue as DateFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.NUMBER:
         case FieldMetadataType.NUMERIC: {
-          return isMatchingFloatFilter({
-            floatFilter: filterValue as FloatFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingFloatFilter({
+              floatFilter: filterValue as FloatFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.UUID: {
-          return isMatchingUUIDFilter({
-            uuidFilter: filterValue as UUIDFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingUUIDFilter({
+              uuidFilter: filterValue as UUIDFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.BOOLEAN: {
-          return isMatchingBooleanFilter({
-            booleanFilter: filterValue as BooleanFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingBooleanFilter({
+              booleanFilter: filterValue as BooleanFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.CURRENCY: {
-          return isMatchingCurrencyFilter({
-            currencyFilter: filterValue as CurrencyFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingCurrencyFilter({
+              currencyFilter: filterValue as CurrencyFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         case FieldMetadataType.ACTOR: {
           const actorFilter = filterValue as ActorFilter;
 
-          if (isDefined(actorFilter.source)) {
-            return isMatchingSelectFilter({
-              selectFilter: actorFilter.source,
-              value: recordFieldValue.source,
-            });
+          if (!hasDefinedFilterKey(actorFilter, ['source', 'name'])) {
+            return 'invalid';
           }
 
-          return (
-            actorFilter.name === undefined ||
-            isMatchingStringFilter({
-              stringFilter: actorFilter.name,
-              value: recordFieldValue.name,
-            })
-          );
+          return evaluateFieldMatchResult(() => {
+            if (isDefined(actorFilter.source)) {
+              return isMatchingSelectFilter({
+                selectFilter: actorFilter.source,
+                value: recordFieldValue.source,
+              });
+            }
+
+            return (
+              actorFilter.name === undefined ||
+              isMatchingStringFilter({
+                stringFilter: actorFilter.name,
+                value: recordFieldValue.name,
+              })
+            );
+          });
         }
         case FieldMetadataType.EMAILS: {
           const emailsFilter = filterValue as EmailsFilter;
 
-          if (emailsFilter.primaryEmail === undefined) {
-            return false;
+          if (!hasDefinedFilterKey(emailsFilter, ['primaryEmail'])) {
+            return 'invalid';
           }
 
-          return isMatchingStringFilter({
-            stringFilter: emailsFilter.primaryEmail,
-            value: recordFieldValue.primaryEmail,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingStringFilter({
+              stringFilter: emailsFilter.primaryEmail as StringFilter,
+              value: recordFieldValue.primaryEmail,
+            }),
+          );
         }
         case FieldMetadataType.PHONES: {
           const phonesFilter = filterValue as PhonesFilter;
 
           const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
 
-          return keys.some((key) => {
-            const value = phonesFilter[key];
+          if (!hasDefinedFilterKey(phonesFilter, keys)) {
+            return 'invalid';
+          }
 
-            if (value === undefined) {
-              return false;
-            }
+          return evaluateFieldMatchResult(() =>
+            keys.some((key) => {
+              const value = phonesFilter[key];
 
-            return isMatchingStringFilter({
-              stringFilter: value,
-              value: recordFieldValue[key],
-            });
-          });
+              if (value === undefined) {
+                return false;
+              }
+
+              return isMatchingStringFilter({
+                stringFilter: value,
+                value: recordFieldValue[key],
+              });
+            }),
+          );
         }
         case FieldMetadataType.RELATION:
         case FieldMetadataType.MORPH_RELATION: {
@@ -459,23 +529,27 @@ const evaluateRLSRowLevelPermissionPredicate = ({
               name: objectMetadataField.name,
             }) === filterKey;
 
-          if (isJoinColumn) {
+          return evaluateFieldMatchResult(() => {
+            if (isJoinColumn) {
+              return isMatchingUUIDFilter({
+                uuidFilter: filterValue as UUIDFilter,
+                value: recordFieldValue,
+              });
+            }
+
             return isMatchingUUIDFilter({
               uuidFilter: filterValue as UUIDFilter,
-              value: recordFieldValue,
+              value: recordFieldValue?.id ?? null,
             });
-          }
-
-          return isMatchingUUIDFilter({
-            uuidFilter: filterValue as UUIDFilter,
-            value: recordFieldValue?.id ?? null,
           });
         }
         case FieldMetadataType.TS_VECTOR: {
-          return isMatchingTSVectorFilter({
-            tsVectorFilter: filterValue as TSVectorFilter,
-            value: recordFieldValue,
-          });
+          return evaluateFieldMatchResult(() =>
+            isMatchingTSVectorFilter({
+              tsVectorFilter: filterValue as TSVectorFilter,
+              value: recordFieldValue,
+            }),
+          );
         }
         default: {
           return 'invalid';

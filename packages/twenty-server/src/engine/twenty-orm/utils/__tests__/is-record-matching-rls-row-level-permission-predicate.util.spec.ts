@@ -434,4 +434,32 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       }),
     ).toBe(false);
   });
+
+  it('denies access for malformed leaf payloads instead of throwing or matching', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          jobTitle: {
+            bogus: true,
+          },
+        } as Record<string, unknown>,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          name: {
+            bogus: true,
+          },
+        } as Record<string, unknown>,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
 });
