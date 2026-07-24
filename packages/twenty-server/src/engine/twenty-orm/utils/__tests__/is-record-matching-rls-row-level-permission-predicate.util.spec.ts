@@ -1,554 +1,351 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import {
+  baseRecord,
+  matchRLSRowLevelPermissionPredicate,
+  recordWithPhones,
+} from 'src/engine/twenty-orm/utils/__tests__/is-record-matching-rls-row-level-permission-predicate.fixture';
 
 describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
-  const createMockFlatObjectMetadata = (
-    fieldIds: string[],
-  ): FlatObjectMetadata => ({
-    id: 'test-object-id',
-    nameSingular: 'test',
-    namePlural: 'tests',
-    labelSingular: 'Test',
-    labelPlural: 'Tests',
-    icon: 'IconTest',
-    color: null,
-    targetTableName: 'test',
-    isRemote: false,
-    isActive: true,
-    isSystem: false,
-    isAuditLogged: false,
-    isSearchable: false,
-    workspaceId: 'test-workspace-id',
-    universalIdentifier: 'test-object-id',
-    indexMetadataIds: [],
-    searchFieldMetadataIds: [],
-    objectPermissionIds: [],
-    fieldPermissionIds: [],
-    fieldIds,
-    viewIds: [],
-    applicationId: 'test-application-id',
-    isLabelSyncedWithName: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    shortcut: null,
-    description: null,
-    overrides: null,
-    isUIEditable: true,
-    isUICreatable: true,
-    labelIdentifierFieldMetadataId: null,
-    imageIdentifierFieldMetadataId: null,
-    duplicateCriteria: null,
-    applicationUniversalIdentifier: 'test-application-id',
-    fieldUniversalIdentifiers: fieldIds,
-    objectPermissionUniversalIdentifiers: [],
-    fieldPermissionUniversalIdentifiers: [],
-    viewUniversalIdentifiers: [],
-    indexMetadataUniversalIdentifiers: [],
-    searchFieldMetadataUniversalIdentifiers: [],
-    labelIdentifierFieldMetadataUniversalIdentifier: null,
-    imageIdentifierFieldMetadataUniversalIdentifier: null,
-  });
-
-  const createMockFlatFieldMetadata = (
-    id: string,
-    name: string,
-    type: FieldMetadataType,
-    settings?: Record<string, unknown>,
-  ): FlatFieldMetadata =>
-    ({
-      id,
-      name,
-      type,
-      label: name,
-      objectMetadataId: 'test-object-id',
-      isLabelSyncedWithName: true,
-      isNullable: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      universalIdentifier: id,
-      viewFieldIds: [],
-      viewFilterIds: [],
-      kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
-      mainGroupByFieldMetadataViewIds: [],
-      applicationId: null,
-      settings,
-    }) as unknown as FlatFieldMetadata;
-
-  const buildFlatFieldMetadataMaps = (
-    fields: FlatFieldMetadata[],
-  ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byUniversalIdentifier: fields.reduce(
-      (accumulator, field) => {
-        accumulator[field.universalIdentifier] = field;
-
-        return accumulator;
-      },
-      {} as Record<string, FlatFieldMetadata>,
-    ),
-    universalIdentifierById: fields.reduce(
-      (accumulator, field) => {
-        accumulator[field.id] = field.universalIdentifier;
-
-        return accumulator;
-      },
-      {} as Record<string, string>,
-    ),
-    universalIdentifiersByApplicationId: {},
-  });
-
-  const fieldMetadata = [
-    createMockFlatFieldMetadata(
-      'job-title-id',
-      'jobTitle',
-      FieldMetadataType.TEXT,
-    ),
-    createMockFlatFieldMetadata('name-id', 'name', FieldMetadataType.FULL_NAME),
-    createMockFlatFieldMetadata(
-      'address-id',
-      'address',
-      FieldMetadataType.ADDRESS,
-    ),
-    createMockFlatFieldMetadata(
-      'company-id',
-      'company',
-      FieldMetadataType.RELATION,
-      {
-        joinColumnName: 'companyId',
-      },
-    ),
-    createMockFlatFieldMetadata(
-      'phones-id',
-      'phones',
-      FieldMetadataType.PHONES,
-    ),
-  ];
-
-  const flatObjectMetadata = createMockFlatObjectMetadata(
-    fieldMetadata.map((field) => field.id),
-  );
-  const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fieldMetadata);
-
-  const baseRecord: ObjectRecord = {
-    jobTitle: 'Engineer',
-    name: {
-      firstName: 'Jane',
-      lastName: 'Doe',
-    },
-    address: {
-      addressStreet1: 'Main Street',
-      addressCity: 'Paris',
-    },
-    companyId: 'company-1',
-    deletedAt: null,
-    id: 'record-1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  } as ObjectRecord;
-
   it('returns true for an empty filter on non-deleted record', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {},
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(true);
+    expect(matchRLSRowLevelPermissionPredicate({ filter: {} })).toBe(true);
   });
 
   it('returns false for deleted records without deletedAt filter', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: { ...baseRecord, deletedAt: new Date().toISOString() },
-      filter: {
-        jobTitle: {
-          eq: 'Engineer',
+    expect(
+      matchRLSRowLevelPermissionPredicate({
+        record: { ...baseRecord, deletedAt: new Date().toISOString() },
+        filter: {
+          jobTitle: {
+            eq: 'Engineer',
+          },
         },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(false);
+      }),
+    ).toBe(false);
   });
 
   it('treats multiple filter keys as an implicit and', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        jobTitle: {
-          eq: 'Engineer',
-        },
-        name: {
-          firstName: {
-            eq: 'Jane',
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('treats "or" with object as an "and"', () => {
-    const matchingResult = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        or: {
+    expect(
+      matchRLSRowLevelPermissionPredicate({
+        filter: {
           jobTitle: {
             eq: 'Engineer',
           },
-          name: {
-            lastName: {
-              eq: 'Doe',
-            },
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    const nonMatchingResult = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: {
-        ...baseRecord,
-        name: {
-          ...baseRecord.name,
-          lastName: 'Smith',
-        },
-      },
-      filter: {
-        or: {
-          jobTitle: {
-            eq: 'Engineer',
-          },
-          name: {
-            lastName: {
-              eq: 'Doe',
-            },
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(matchingResult).toBe(true);
-    expect(nonMatchingResult).toBe(false);
-  });
-
-  it('supports "not" filter negation', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        not: {
-          jobTitle: {
-            eq: 'Engineer',
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('matches composite address filters using at least one sub-field', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        address: {
-          addressStreet1: {
-            eq: 'Main Street',
-          },
-          addressCity: {
-            eq: 'London',
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('supports relation join column filters', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        companyId: {
-          eq: 'company-1',
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('matches "is not empty" on a relation field by its related record id', () => {
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
-        filter: { company: { is: 'NOT_NULL' } },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(true);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: { ...baseRecord, company: null } as ObjectRecord,
-        filter: { company: { is: 'NOT_NULL' } },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-  });
-
-  it('matches "is empty" on a relation field by its related record id', () => {
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: { ...baseRecord, company: null } as ObjectRecord,
-        filter: { company: { is: 'NULL' } },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(true);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
-        filter: { company: { is: 'NULL' } },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-  });
-
-  it('returns false for malformed filters instead of throwing', () => {
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          jobTitle: undefined,
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          unknownField: {
-            eq: 'value',
-          },
-        },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          and: 'invalid',
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          or: 123,
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          not: undefined,
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-  });
-
-  it('denies access for malformed logical combinators instead of granting it', () => {
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          not: {
-            unknownField: {
-              eq: 'value',
-            },
-          },
-        },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          or: [
-            {
-              jobTitle: {
-                eq: 'Engineer',
-              },
-            },
-            null,
-          ],
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          and: [null],
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-  });
-
-  it('denies access for malformed leaf payloads instead of throwing or matching', () => {
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          jobTitle: {
-            bogus: true,
-          },
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
-          name: {
-            bogus: true,
-          },
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: baseRecord,
-        filter: {
           name: {
             firstName: {
               eq: 'Jane',
             },
-            bogus: true,
           },
-        } as Record<string, unknown>,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
+        },
+      }),
+    ).toBe(true);
+  });
+
+  describe('when using "or" with an object', () => {
+    const filter = {
+      or: {
+        jobTitle: {
+          eq: 'Engineer',
+        },
+        name: {
+          lastName: {
+            eq: 'Doe',
+          },
+        },
+      },
+    };
+
+    it('matches when all branches match', () => {
+      expect(matchRLSRowLevelPermissionPredicate({ filter })).toBe(true);
+    });
+
+    it('does not match when one branch fails', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: {
+            ...baseRecord,
+            name: {
+              ...baseRecord.name,
+              lastName: 'Smith',
+            },
+          },
+          filter,
+        }),
+      ).toBe(false);
+    });
+  });
+
+  it('supports "not" filter negation', () => {
+    expect(
+      matchRLSRowLevelPermissionPredicate({
+        filter: {
+          not: {
+            jobTitle: {
+              eq: 'Engineer',
+            },
+          },
+        },
       }),
     ).toBe(false);
   });
 
-  it('supports phones filters on additional phone sub-fields', () => {
-    const recordWithPhones = {
-      ...baseRecord,
-      phones: {
-        primaryPhoneNumber: '555123456',
-        primaryPhoneCallingCode: '+1',
-        additionalPhones: [],
-      },
-    } as ObjectRecord;
-
+  it('matches composite address filters using at least one sub-field', () => {
     expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: recordWithPhones,
+      matchRLSRowLevelPermissionPredicate({
         filter: {
-          phones: {
-            additionalPhones: {
-              is: 'NULL',
+          address: {
+            addressStreet1: {
+              eq: 'Main Street',
+            },
+            addressCity: {
+              eq: 'London',
             },
           },
         },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(false);
-
-    expect(
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: recordWithPhones,
-        filter: {
-          not: {
-            and: [
-              {
-                or: [
-                  {
-                    phones: {
-                      primaryPhoneNumber: { is: 'NULL' },
-                    },
-                  },
-                  {
-                    phones: {
-                      primaryPhoneNumber: { ilike: '' },
-                    },
-                  },
-                ],
-              },
-              {
-                or: [
-                  {
-                    phones: {
-                      additionalPhones: { is: 'NULL' },
-                    },
-                  },
-                  {
-                    phones: {
-                      additionalPhones: { like: '[]' },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
       }),
     ).toBe(true);
+  });
+
+  it('supports relation join column filters', () => {
+    expect(
+      matchRLSRowLevelPermissionPredicate({
+        filter: {
+          companyId: {
+            eq: 'company-1',
+          },
+        },
+      }),
+    ).toBe(true);
+  });
+
+  describe('when matching relation emptiness', () => {
+    it('matches "is not empty" when the related record exists', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
+          filter: { company: { is: 'NOT_NULL' } },
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match "is not empty" when the related record is null', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, company: null } as ObjectRecord,
+          filter: { company: { is: 'NOT_NULL' } },
+        }),
+      ).toBe(false);
+    });
+
+    it('matches "is empty" when the related record is null', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, company: null } as ObjectRecord,
+          filter: { company: { is: 'NULL' } },
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match "is empty" when the related record exists', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
+          filter: { company: { is: 'NULL' } },
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('when handling malformed filters', () => {
+    it('returns false for undefined leaf values', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            jobTitle: undefined,
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for unknown fields', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            unknownField: {
+              eq: 'value',
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for invalid "and" values', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            and: 'invalid',
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for invalid "or" values', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            or: 123,
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for undefined "not" values', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            not: undefined,
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access when "not" contains unknown fields', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            not: {
+              unknownField: {
+                eq: 'value',
+              },
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access when "or" contains null entries', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            or: [
+              {
+                jobTitle: {
+                  eq: 'Engineer',
+                },
+              },
+              null,
+            ],
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access when "and" contains null entries', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            and: [null],
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access for malformed text leaf payloads', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            jobTitle: {
+              bogus: true,
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access for malformed composite leaf payloads', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            name: {
+              bogus: true,
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('denies access when composite filters include unknown sub-fields', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          filter: {
+            name: {
+              firstName: {
+                eq: 'Jane',
+              },
+              bogus: true,
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('when matching phones filters', () => {
+    it('evaluates additional phone sub-fields', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: recordWithPhones,
+          filter: {
+            phones: {
+              additionalPhones: {
+                is: 'NULL',
+              },
+            },
+          },
+        }),
+      ).toBe(false);
+    });
+
+    it('supports nested logical combinators on phone sub-fields', () => {
+      expect(
+        matchRLSRowLevelPermissionPredicate({
+          record: recordWithPhones,
+          filter: {
+            not: {
+              and: [
+                {
+                  or: [
+                    {
+                      phones: {
+                        primaryPhoneNumber: { is: 'NULL' },
+                      },
+                    },
+                    {
+                      phones: {
+                        primaryPhoneNumber: { ilike: '' },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      phones: {
+                        additionalPhones: { is: 'NULL' },
+                      },
+                    },
+                    {
+                      phones: {
+                        additionalPhones: { like: '[]' },
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        }),
+      ).toBe(true);
+    });
   });
 });
