@@ -12,6 +12,7 @@ import { PAGE_LAYOUT_GRID_ITEM_Z_INDEX } from '@/page-layout/constants/PageLayou
 import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
 import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutGridCrossTabDrop } from '@/page-layout/hooks/usePageLayoutGridCrossTabDrop';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -155,6 +156,14 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     tabListInstanceId,
   });
 
+  const {
+    handleGridDrag,
+    handleGridDragStop,
+    consumeShouldIgnoreNextGridLayoutChange,
+  } = usePageLayoutGridCrossTabDrop({
+    tabId,
+  });
+
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -183,6 +192,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     currentLayout: Layout[],
     allLayouts: Layouts,
   ) => {
+    if (consumeShouldIgnoreNextGridLayoutChange()) {
+      return;
+    }
+
     handleLayoutChange(
       currentLayout,
       filterPendingPlaceholderFromLayouts(allLayouts),
@@ -247,7 +260,11 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
         onDragStart={(_layout, _oldItem, newItem) => {
           setPageLayoutDraggingWidgetId(newItem.i);
         }}
-        onDragStop={() => {
+        onDrag={(_layout, _oldItem, _newItem, _placeholder, event) => {
+          handleGridDrag(event);
+        }}
+        onDragStop={(_layout, _oldItem, newItem, _placeholder, event) => {
+          handleGridDragStop(newItem.i, event);
           setPageLayoutDraggingWidgetId(null);
         }}
         onResizeStart={(_layout, _oldItem, newItem) => {

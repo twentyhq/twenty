@@ -6695,10 +6695,10 @@ msgstr "역할 대상이 이미 존재합니다"
 msgid "Role target is missing identifier."
 msgstr "역할 대상에 식별자가 누락되었습니다."
 
-#. js-lingui-id: oCyyzG
+#. js-lingui-id: vYrPc5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
 msgstr ""
 
 #. js-lingui-id: oNYUjk
@@ -8959,11 +8959,6 @@ msgstr "upsert 후 View를 찾을 수 없음"
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found for widget"
 msgstr "위젯의 View를 찾을 수 없음"
-
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
-msgstr ""
 
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts

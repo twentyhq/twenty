@@ -1,12 +1,12 @@
 ---
 title: インストールフック
-description: インストールの前後にロジックを実行して、シードデータの投入、レコードのバックアップ、アップグレードの検証を行います。
+description: インストール、アップグレード、アンインストールのライフサイクル中にロジックを実行し、データのシード、レコードのバックアップ、アップグレードの検証、外部リソースのクリーンアップを行います。
 icon: wrench
 ---
 
-インストールフックは、インストールまたはアップグレードのライフサイクル中に実行される特別なロジック関数です。 これらは通常の[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)と同じハンドラーランタイムを共有し、`InstallPayload`（`{ previousVersion?: string; newVersion: string }` — 新規インストールでは `previousVersion` は `undefined`）を受け取りますが、独自の define 関数で宣言され、通常のトリガーモデル (HTTP、cron、データベースイベント) の外側で動作します。
+インストールフックは、インストール、アップグレード、またはアンインストールのライフサイクル中に実行される特別なロジック関数です。 これらは通常の[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)と同じハンドラーランタイムを共有しますが、独自の define 関数で宣言され、通常のトリガーモデル (HTTP、cron、データベースイベント) の外側で動作します。 インストールフックは `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — 新規インストールでは `previousVersion` は `undefined`) を受け取り、アンインストールフックは `UninstallPayload` (`{ version?: string }` — 削除されるバージョン) を受け取ります。
 
-各アプリは、**プレインストール関数は最大 1 つ**、**ポストインストール関数も最大 1 つ**まで定義できます。 どちらかが複数検出された場合、マニフェストのビルドはエラーになります。
+各アプリは、各フック (プレインストール、ポストインストール、アンインストール) を **最大 1 つまで** 定義できます。 いずれかが複数検出された場合、マニフェストのビルドはエラーになります。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## アンインストールフック
+
+`defineUninstallLogicFunction` は、ユーザーがアプリをアンインストールしたときに実行されるフックを宣言します。 これは、アプリのメタデータ、データ、コードが削除される **前に** 実行されます。削除マイグレーションが実行された後には、実行できるものは何も残らないため、ハンドラーはまだアプリのオブジェクトやレコードをクエリできます。 これを、外部リソースのクリーンアップに使用します。API リソースのプロビジョニング解除、残っているボットの削除、webhook の失効などです。
+
+注記：
+
+* このフックはベストエフォートで動作します。同期的に実行されますが、失敗してもログに記録されるだけであり、**アンインストールをブロックすることは決してありません**。クリーンアップ処理が原因でアプリを削除できなくなってはなりません。
+* これは `UninstallPayload` (`{ version?: string }` — 削除されるバージョン) を受け取ります。
+* 新規インストールの失敗によりロールバックされた場合には実行されません。アプリのインストールが最後まで完了していないためです。
+* このフックは、アプリが削除された後には実行できないため、アプリデータ (レコードに保存されたボット ID など) に依存する外部クリーンアップ処理は、外部のスケジュールジョブではなく、ここに実装する必要があります。
+* インストールフックと同様に、これは **dev モードでは実行されません**。代わりに手動でトリガーしてください:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

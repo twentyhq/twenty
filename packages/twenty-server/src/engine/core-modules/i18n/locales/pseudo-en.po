@@ -6690,10 +6690,10 @@ msgstr ""
 msgid "Role target is missing identifier."
 msgstr ""
 
-#. js-lingui-id: oCyyzG
+#. js-lingui-id: vYrPc5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
 msgstr ""
 
 #. js-lingui-id: oNYUjk
@@ -8953,11 +8953,6 @@ msgstr ""
 #. js-lingui-id: RAcTQ1
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found for widget"
-msgstr ""
-
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
 msgstr ""
 
 #. js-lingui-id: ipFNcM

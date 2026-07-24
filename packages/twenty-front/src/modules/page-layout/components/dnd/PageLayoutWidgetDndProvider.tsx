@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 
 import { usePageLayoutWidgetDragAndDrop } from '@/page-layout/hooks/usePageLayoutWidgetDragAndDrop';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 
 type PageLayoutWidgetDndProviderProps = {
@@ -21,6 +22,7 @@ export const PageLayoutWidgetDndProvider = ({
   return (
     <DragDropProvider<PageLayoutWidgetDndData>
       sensors={DND_KIT_SENSORS}
+      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
       onDragStart={handlers.onDragStart}
       onDragEnd={handlers.onDragEnd}
     >

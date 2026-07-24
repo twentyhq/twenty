@@ -1,6 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { type AgentManifest } from 'twenty-shared/application';
+import { validate as uuidValidate } from 'uuid';
+
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type AgentManifest } from 'twenty-shared/application';
 
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
@@ -25,6 +28,15 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   if (!config.responseFormat) {
     warnings.push(
       `Agent '${config.name}' has no responseFormat, it will default to { type: 'text' }. Set it explicitly to control the agent's output shape.`,
+    );
+  }
+
+  if (
+    isNonEmptyString(config.roleUniversalIdentifier) &&
+    !uuidValidate(config.roleUniversalIdentifier)
+  ) {
+    errors.push(
+      `Agent '${config.name}' roleUniversalIdentifier must be a valid UUID`,
     );
   }
 

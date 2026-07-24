@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
 const StyledSortableHandle = styled.div<{ $fill?: boolean }>`
+  cursor: grab;
   display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
   height: 100%;
   min-width: 0;
@@ -28,7 +29,11 @@ export const DragDropItemSortableHandle = ({
   const sortableHandleRef = useContext(DragDropItemSortableHandleRefContext);
 
   return (
-    <StyledSortableHandle ref={sortableHandleRef} $fill={fill}>
+    <StyledSortableHandle
+      ref={sortableHandleRef}
+      $fill={fill}
+      data-dnd-sortable-handle
+    >
       {children}
     </StyledSortableHandle>
   );

@@ -18,8 +18,8 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -103,7 +103,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        QUEUE_WORKER_OPTIONS[queueName],
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions,
       );
     }
   }
@@ -181,7 +181,7 @@ export class MessageQueueExplorer implements OnModuleInit {
   private handleProcessorGroupCollection(
     processorGroupCollection: ProcessorGroup[],
     queue: MessageQueueService,
-    options?: MessageQueueWorkerOptions,
+    options: MessageQueueWorkerOptions,
   ) {
     queue.work(async (job) => {
       for (const processorGroup of processorGroupCollection) {
