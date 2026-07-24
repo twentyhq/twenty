@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -49,7 +50,11 @@ export const SidePanelSendCampaignTestPage = () => {
   });
 
   const canSend =
-    isValidEmailRecipientAddress(toAddress) && isDefined(campaign);
+    isValidEmailRecipientAddress(toAddress) &&
+    isDefined(campaign) &&
+    isNonEmptyString(campaign.fromAddress?.primaryEmail) &&
+    isNonEmptyString(campaign.subject) &&
+    isNonEmptyString(campaign.bodyTemplate);
 
   const handleSend = async () => {
     if (!canSend) {

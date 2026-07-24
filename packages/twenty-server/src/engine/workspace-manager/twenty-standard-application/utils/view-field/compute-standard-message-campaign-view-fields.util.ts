@@ -142,34 +142,32 @@ export const computeStandardMessageCampaignViewFields = (
     }),
 
     // messageCampaignRecordPageFields view fields
-    messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'messageCampaign',
-        context: {
-          viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'status',
-          fieldName: 'status',
-          position: 0,
-          isVisible: true,
-          size: 120,
-        },
+    messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'messageCampaignRecordPageFields',
+        viewFieldName: 'status',
+        fieldName: 'status',
+        position: 0,
+        isVisible: true,
+        size: 120,
+        viewFieldGroupName: 'stats',
       },
-    ),
-    messageCampaignRecordPageFieldsSentAt: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'messageCampaign',
-        context: {
-          viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'sentAt',
-          fieldName: 'sentAt',
-          position: 1,
-          isVisible: true,
-          size: 150,
-        },
+    }),
+    messageCampaignRecordPageFieldsSentAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'messageCampaignRecordPageFields',
+        viewFieldName: 'sentAt',
+        fieldName: 'sentAt',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'stats',
       },
-    ),
+    }),
     messageCampaignRecordPageFieldsSentCount:
       createStandardViewFieldFlatMetadata({
         ...args,
@@ -181,6 +179,7 @@ export const computeStandardMessageCampaignViewFields = (
           position: 2,
           isVisible: true,
           size: 100,
+          viewFieldGroupName: 'stats',
         },
       }),
     messageCampaignRecordPageFieldsFailedCount:
@@ -194,6 +193,7 @@ export const computeStandardMessageCampaignViewFields = (
           position: 3,
           isVisible: true,
           size: 100,
+          viewFieldGroupName: 'stats',
         },
       }),
     messageCampaignRecordPageFieldsBouncedCount:
@@ -207,6 +207,7 @@ export const computeStandardMessageCampaignViewFields = (
           position: 4,
           isVisible: true,
           size: 100,
+          viewFieldGroupName: 'stats',
         },
       }),
     messageCampaignRecordPageFieldsComplainedCount:
@@ -220,6 +221,7 @@ export const computeStandardMessageCampaignViewFields = (
           position: 5,
           isVisible: true,
           size: 120,
+          viewFieldGroupName: 'stats',
         },
       }),
   };

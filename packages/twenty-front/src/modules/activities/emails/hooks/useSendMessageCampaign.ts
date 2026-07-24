@@ -44,16 +44,14 @@ export const useSendMessageCampaign = () => {
         enqueueErrorSnackBar({
           message: t`No recipients to send to (${skippedCount} skipped)`,
         });
-
-        return false;
+      } else {
+        enqueueSuccessSnackBar({
+          message:
+            skippedCount > 0
+              ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped`
+              : t`Campaign queued to ${queuedCount} recipient(s)`,
+        });
       }
-
-      enqueueSuccessSnackBar({
-        message:
-          skippedCount > 0
-            ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped`
-            : t`Campaign queued to ${queuedCount} recipient(s)`,
-      });
 
       return true;
     } catch (error) {

@@ -105,7 +105,7 @@ export const CampaignDetailsFields = ({
   );
 
   return (
-    <StyledFieldsContainer>
+    <StyledFieldsContainer onBlur={() => detailsState.flush()}>
       <Select
         dropdownId="campaign-composer-from-account"
         label={t`From`}

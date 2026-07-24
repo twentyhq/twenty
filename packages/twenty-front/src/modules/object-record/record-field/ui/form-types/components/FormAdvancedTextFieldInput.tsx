@@ -73,7 +73,7 @@ type FormAdvancedTextFieldInputProps = {
   error?: string;
   hint?: string;
   defaultValue: string | undefined | null;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
@@ -120,10 +120,10 @@ export const FormAdvancedTextFieldInput = ({
       contentType,
       onUpdate: (editor) => {
         if (contentType === 'markdown' || contentType === 'html') {
-          onChange(editor.getHTML());
+          onChange?.(editor.getHTML());
         } else {
           const jsonContent = editor.getJSON();
-          onChange(JSON.stringify(jsonContent));
+          onChange?.(JSON.stringify(jsonContent));
         }
       },
       onFocus: () => {

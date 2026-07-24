@@ -59,6 +59,7 @@ export const useCampaignDetailsState = ({
 
   return {
     ...draft,
+    flush: persistDebounced.flush,
     setListId: (listId: string | null) => updateDraft({ listId }),
     setUnsubscribeTopicId: (unsubscribeTopicId: string | null) =>
       updateDraft({ unsubscribeTopicId }),

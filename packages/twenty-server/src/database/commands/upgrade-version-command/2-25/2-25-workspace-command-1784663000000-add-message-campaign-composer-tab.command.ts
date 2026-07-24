@@ -14,6 +14,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,6 +30,12 @@ const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS =
     STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields
       .viewFields,
   ).map((viewField) => viewField.universalIdentifier);
+
+const MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
+  Object.values(
+    STANDARD_OBJECTS.messageCampaign.views.messageCampaignRecordPageFields
+      .viewFieldGroups,
+  ).map((viewFieldGroup) => viewFieldGroup.universalIdentifier);
 
 const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
@@ -62,9 +69,13 @@ const HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.recipients.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.24.0', 1784663000000)
+const HOME_OBSOLETE_MESSAGES_WIDGET_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
+    .widgets.messages.universalIdentifier;
+
+@RegisteredWorkspaceCommand('2.25.0', 1784663000000)
 @Command({
-  name: 'upgrade:2-24:add-message-campaign-composer-tab',
+  name: 'upgrade:2-25:add-message-campaign-composer-tab',
   description:
     'Aligns the message campaign record page with the Note layout: a home Fields tab (left column) plus an Email tab holding the composer editor',
 })
@@ -95,12 +106,14 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
       flatPageLayoutWidgetMaps,
       flatViewMaps,
       flatViewFieldMaps,
+      flatViewFieldGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatPageLayoutMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
     ]);
 
     const existingPageLayout =
@@ -163,6 +176,15 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
           MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
       });
 
+    const viewFieldGroupsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatViewFieldGroup>({
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatViewFieldGroupMaps,
+        existingFlatEntityMaps: flatViewFieldGroupMaps,
+        universalIdentifiers:
+          MESSAGE_CAMPAIGN_RECORD_PAGE_FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
+      });
+
     const existingComposerTab =
       flatPageLayoutTabMaps.byUniversalIdentifier[
         COMPOSER_TAB_UNIVERSAL_IDENTIFIER
@@ -215,13 +237,24 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
       })
       .filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
+    const obsoleteMessagesWidget =
+      flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        HOME_OBSOLETE_MESSAGES_WIDGET_UNIVERSAL_IDENTIFIER
+      ];
+
+    const pageLayoutWidgetsToDelete = isDefined(obsoleteMessagesWidget)
+      ? [obsoleteMessagesWidget]
+      : [];
+
     const totalOperationCount =
       pageLayoutTabsToCreate.length +
       pageLayoutWidgetsToCreate.length +
       pageLayoutTabsToUpdate.length +
       pageLayoutWidgetsToUpdate.length +
+      pageLayoutWidgetsToDelete.length +
       viewsToCreate.length +
-      viewFieldsToCreate.length;
+      viewFieldsToCreate.length +
+      viewFieldGroupsToCreate.length;
 
     if (totalOperationCount === 0) {
       this.logger.log(
@@ -254,7 +287,7 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
             },
             pageLayoutWidget: {
               flatEntityToCreate: pageLayoutWidgetsToCreate,
-              flatEntityToDelete: [],
+              flatEntityToDelete: pageLayoutWidgetsToDelete,
               flatEntityToUpdate: pageLayoutWidgetsToUpdate,
             },
             view: {
@@ -264,6 +297,11 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
             },
             viewField: {
               flatEntityToCreate: viewFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            viewFieldGroup: {
+              flatEntityToCreate: viewFieldGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

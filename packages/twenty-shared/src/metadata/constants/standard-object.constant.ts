@@ -967,6 +967,11 @@ export const STANDARD_OBJECTS = {
       },
       messageCampaignRecordPageFields: {
         universalIdentifier: '20202020-a009-4a09-8a09-fa9de11ca901',
+        viewFieldGroups: {
+          stats: {
+            universalIdentifier: '20202020-a009-4a09-8a09-fa9de11ca902',
+          },
+        },
         viewFields: {
           status: {
             universalIdentifier: '20202020-af09-4a09-8a09-fa9de11ca903',

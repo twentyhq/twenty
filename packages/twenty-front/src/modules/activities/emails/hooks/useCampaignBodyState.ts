@@ -32,5 +32,5 @@ export const useCampaignBodyState = ({
     persistDebounced(nextBody);
   };
 
-  return { body, setBody: updateBody };
+  return { body, setBody: updateBody, flush: persistDebounced.flush };
 };

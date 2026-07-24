@@ -17,10 +17,10 @@ type CampaignBodyFieldProps = {
 };
 
 export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
-  const { body, setBody } = useCampaignBodyState({ campaign });
+  const { body, setBody, flush } = useCampaignBodyState({ campaign });
 
   return (
-    <StyledContainer>
+    <StyledContainer onBlur={() => flush()}>
       <FormAdvancedTextFieldInput
         defaultValue={body}
         onChange={setBody}

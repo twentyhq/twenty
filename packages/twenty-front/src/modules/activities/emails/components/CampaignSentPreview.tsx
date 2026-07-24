@@ -20,7 +20,6 @@ export const CampaignSentPreview = ({ campaign }: CampaignSentPreviewProps) => {
     <StyledContainer>
       <FormAdvancedTextFieldInput
         defaultValue={campaign.bodyTemplate}
-        onChange={() => {}}
         readonly
         enableFullScreen={false}
         minHeight={400}
