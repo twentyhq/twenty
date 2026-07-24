@@ -16,6 +16,7 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
@@ -53,10 +54,19 @@ export class EmailingDomainSenderService {
       emailContent,
     );
 
-    const replyTo = await this.resolveReplyTo(workspaceId, emailContent);
+    const emailGroupChannel = await this.findEmailGroupChannel(
+      workspaceId,
+      emailContent.from,
+    );
+
+    const replyTo = this.resolveReplyTo(emailContent, emailGroupChannel);
 
     const emailToSend: EmailingDomainSendEmailRequest = {
       ...emailContent,
+      from: formatMessageFromHeader({
+        fromEmail: emailContent.from,
+        fromName: emailGroupChannel?.displayName,
+      }),
       workspaceId,
       domain: emailingDomain.domain,
       emailingDomain,
@@ -71,22 +81,27 @@ export class EmailingDomainSenderService {
       .sendEmail(emailToSend);
   }
 
-  private async resolveReplyTo(
+  private async findEmailGroupChannel(
     workspaceId: string,
-    emailContent: EmailingDomainEmailContent,
-  ): Promise<string[] | undefined> {
-    if (isDefined(emailContent.replyTo) && emailContent.replyTo.length > 0) {
-      return emailContent.replyTo;
-    }
-
-    const emailGroupChannel = await this.messageChannelRepository.findOne({
+    fromAddress: string,
+  ): Promise<MessageChannelEntity | null> {
+    return this.messageChannelRepository.findOne({
       where: {
         workspaceId,
         type: MessageChannelType.EMAIL_GROUP,
-        connectedAccount: { handle: emailContent.from },
+        connectedAccount: { handle: fromAddress },
       },
       relations: { connectedAccount: true },
     });
+  }
+
+  private resolveReplyTo(
+    emailContent: EmailingDomainEmailContent,
+    emailGroupChannel: MessageChannelEntity | null,
+  ): string[] | undefined {
+    if (isDefined(emailContent.replyTo) && emailContent.replyTo.length > 0) {
+      return emailContent.replyTo;
+    }
 
     const forwardingAddress = emailGroupChannel?.handle;
 

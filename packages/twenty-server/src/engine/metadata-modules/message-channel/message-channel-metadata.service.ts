@@ -213,10 +213,12 @@ export class MessageChannelMetadataService {
 
   async createEmailGroupChannel({
     handle,
+    displayName,
     userWorkspaceId,
     workspaceId,
   }: {
     handle: string;
+    displayName?: string;
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CreateEmailGroupChannelOutput> {
@@ -268,9 +270,14 @@ export class MessageChannelMetadataService {
       visibility: 'workspace',
     });
 
+    const trimmedDisplayName = displayName?.trim();
+
     const messageChannel = await this.create({
       workspaceId,
       handle: forwardingAddress,
+      displayName: isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null,
       connectedAccountId: connectedAccount.id,
       type: MessageChannelType.EMAIL_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,

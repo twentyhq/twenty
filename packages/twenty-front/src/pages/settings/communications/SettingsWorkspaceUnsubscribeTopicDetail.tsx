@@ -104,7 +104,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteUnsubscribeTopic(unsubscribeTopic.id);
-      navigateSettings(SettingsPath.WorkspaceCommunications);
+      navigateSettings(SettingsPath.Unsubscribe);
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to delete unsubscribe topic.`,
@@ -125,6 +125,10 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         {
           children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
+        },
+        {
+          children: t`Unsubscribe`,
+          href: getSettingsPath(SettingsPath.Unsubscribe),
         },
         { children: topicName },
       ]}

@@ -30,6 +30,7 @@ type CreateEmailGroupChannelResult = {
 type CreateEmailGroupChannelVariables = {
   input: {
     handle: string;
+    displayName?: string;
   };
 };
 
@@ -47,9 +48,9 @@ export const useCreateEmailGroupChannel = () => {
     ],
   });
 
-  const createEmailGroupChannel = (handle: string) =>
+  const createEmailGroupChannel = (handle: string, displayName?: string) =>
     mutate({
-      variables: { input: { handle } },
+      variables: { input: { handle, displayName } },
       onError: (mutationError) => {
         enqueueErrorSnackBar({ apolloError: mutationError });
       },
