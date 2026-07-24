@@ -1,16 +1,16 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   SystemPermissionFlag,
-  defineApplicationRole,
+  defineRole,
 } from 'twenty-sdk/define';
 
 import { SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-export default defineApplicationRole({
+export default defineRole({
   universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Slack Assistant',
   description:
-    'Read-only CRM access for the Slack conversational assistant. Lets the slack-assistant agent look up people, companies, opportunities, notes, and tasks. Assigned to the agent automatically when the app is installed; widen it to allow writes.',
+    'Read-only CRM access for the Slack conversational assistant. Lets the slack-assistant agent look up people, companies, opportunities, notes, and tasks. Bound to the agent via roleUniversalIdentifier on install; widen it to allow writes.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,

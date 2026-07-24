@@ -1,11 +1,11 @@
-import { defineRole, SystemPermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
 
 import {
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
   description:

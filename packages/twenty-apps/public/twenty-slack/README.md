@@ -27,8 +27,8 @@ below):
   re-mention the bot to continue. Direct-message threads never expire. Replies
   are answered with the thread's recent history as context, so the assistant
   follows up coherently across turns. It requires the extra setup below (signing
-  secret + event subscriptions); the agent's CRM role is assigned automatically
-  on install.
+  secret + event subscriptions); the agent's CRM role is bound automatically
+  via the app manifest on install.
 
 ## Tools
 
@@ -150,12 +150,11 @@ not add a second connection or bot identity. To enable it:
 
    Invite the bot to any channel where you want it to follow threads. After
    changing event subscriptions, Slack may require you to reinstall the app.
-4. **Agent role (assigned automatically).** When the app is installed (or
-   upgraded to a version that adds the assistant), the app's **Slack Assistant**
-   role (read-only CRM access) is granted to the **`slack-assistant`** agent by
-   a background job, so it works out of the box with no manual step. To let it
-   create or update records, widen that role to include write permissions; a
-   role you assign or edit is always kept and never overridden.
+4. **Agent role (bound automatically).** The **`slack-assistant`** agent
+   declares `roleUniversalIdentifier` pointing at the app's **Slack Assistant**
+   role (read-only CRM access). Manifest sync creates that roleTarget on
+   install/upgrade, so it works out of the box with no manual step. To let it
+   create or update records, widen that role to include write permissions.
 
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual
