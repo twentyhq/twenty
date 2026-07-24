@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -47,30 +48,16 @@ describe('duplicateWorkflow (e2e)', () => {
 
     sourceVersionId = getResponse.body.data.workflow.versions.edges[0].node.id;
 
-    await graphql(
-      `
-        mutation UpdateWorkflowVersion(
-          $id: UUID!
-          $data: WorkflowVersionUpdateInput!
-        ) {
-          updateWorkflowVersion(id: $id, data: $data) {
-            id
-          }
-        }
-      `,
-      {
-        id: sourceVersionId,
-        data: {
-          trigger: {
-            name: 'Manual Trigger',
-            type: 'MANUAL',
-            settings: { outputSchema: {} },
-            nextStepIds: [],
-            position: { x: 0, y: 0 },
-          },
-        },
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: sourceVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
       },
-    );
+    });
 
     const stepResponse = await graphql(
       `
