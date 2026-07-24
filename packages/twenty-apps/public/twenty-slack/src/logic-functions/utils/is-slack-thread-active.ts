@@ -1,10 +1,8 @@
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
-import {
-  type SlackThreadReference,
-  type SlackThreadSubscription,
-} from 'src/logic-functions/types/slack-thread-subscription.type';
+import { type SlackThreadReference } from 'src/logic-functions/types/slack-thread-reference.type';
+import { type SlackThreadSubscription } from 'src/logic-functions/types/slack-thread-subscription.type';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
 export const isSlackThreadActive = async ({

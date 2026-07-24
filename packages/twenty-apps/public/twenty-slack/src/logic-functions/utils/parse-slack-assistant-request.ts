@@ -1,9 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import {
-  type ParsedSlackAssistantRequest,
-  type SlackEventsRequestBody,
-} from 'src/logic-functions/types/slack-event.type';
+import { type ParsedSlackAssistantRequest } from 'src/logic-functions/types/parsed-slack-assistant-request.type';
+import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
 const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
 

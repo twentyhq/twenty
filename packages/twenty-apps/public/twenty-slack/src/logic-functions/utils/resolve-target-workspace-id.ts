@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { kv } from 'twenty-sdk/logic-function';
 
-import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-event.type';
+import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
 const getInstanceWorkspaceId = async (): Promise<string> => {

@@ -17,19 +17,19 @@ below):
 - **Quick-send** — command menu **Send Slack message** opens a side panel to
   pick a channel and post (same Slack connection as workflows).
 - **Conversational assistant** — mention the bot in a channel (or DM it) to ask
-  about your CRM, e.g. `@twenty how many open opportunities do we have?`. It
-  ships read-only; widen the **Slack Assistant** role to let it create or
-  update records (`@twenty create a company called ACME`). The assistant is powered
-  by the **`slack-assistant`** agent (this app) and the Twenty server's chat
-  runtime, and answers in the thread. Once it has successfully replied in a
-  thread it stays active there, so follow-up messages in that thread are
-  answered **without re-mentioning** the bot. Channel threads stay active for
-  **24 hours after the last reply** (each reply renews the window); after a
-  full day of silence, re-mention the bot to continue. Direct-message threads
-  never expire. Replies are answered with the thread's recent history as
-  context, so the assistant follows up coherently across turns. It requires
-  the extra setup below (signing secret + event subscriptions); the agent's
-  CRM role is bound automatically via the app manifest on install.
+  about your CRM, e.g. `@twenty how many open opportunities do we have?` or
+  `@twenty create a company called ACME`. By default the **Slack Assistant**
+  role can read, create, update, and soft-delete CRM records; tighten that role
+  if you need a narrower bot. The assistant is powered by the
+  **`slack-assistant`** agent (this app) and answers in the thread. Once it has
+  successfully replied in a thread it stays active there, so follow-up messages
+  in that thread are answered **without re-mentioning** the bot. Channel
+  threads stay active for **24 hours after the last reply** (each reply renews
+  the window); after a full day of silence, re-mention the bot to continue.
+  Direct-message threads never expire. Replies include the thread's recent
+  history as context, so the assistant follows up coherently across turns. It
+  requires the extra setup below (signing secret + event subscriptions); the
+  agent's CRM role is bound automatically via the app manifest on install.
 
 ## Tools
 
@@ -158,13 +158,14 @@ not add a second connection or bot identity. To enable it:
    changing event subscriptions, Slack may require you to reinstall the app.
 4. **Agent role (bound automatically).** The **`slack-assistant`** agent
    declares `roleUniversalIdentifier` pointing at the app's **Slack Assistant**
-   role (read-only CRM access). Manifest sync creates that roleTarget on
-   install/upgrade, so it works out of the box with no manual step. To let it
-   create or update records, widen that role to include write permissions.
+   role (read/create/update/soft-delete on core CRM objects). Manifest sync
+   creates that roleTarget on install/upgrade. Tighten the role in Settings if
+   you want a narrower bot.
 
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual
 Twenty members). Keep the role scoped to what you're comfortable exposing.
+User-mapping and per-channel rules are follow-ups.
 
 **One Slack workspace answers into one Twenty workspace.** Connecting Slack
 claims that Slack team for the connecting Twenty workspace, and inbound events

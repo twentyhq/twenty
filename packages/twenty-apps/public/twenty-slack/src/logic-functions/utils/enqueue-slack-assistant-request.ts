@@ -2,7 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
-import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-event.type';
+import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { isSlackThreadActive } from 'src/logic-functions/utils/is-slack-thread-active';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 

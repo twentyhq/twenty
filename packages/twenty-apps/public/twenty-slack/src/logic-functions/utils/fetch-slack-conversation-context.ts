@@ -5,14 +5,30 @@ import { isNonEmptyString } from '@sniptt/guards';
 const CONTEXT_MESSAGE_LIMIT = 15;
 
 type SlackContextMessage = {
+  ts?: string;
   user?: string;
   bot_id?: string;
   text?: string;
 };
 
-const formatContextMessages = (messages: SlackContextMessage[]): string =>
+const formatContextMessages = ({
+  messages,
+  excludeMessageTimestamps,
+}: {
+  messages: SlackContextMessage[];
+  excludeMessageTimestamps: Set<string>;
+}): string =>
   messages
-    .filter((message) => isNonEmptyString(message.text))
+    .filter((message) => {
+      if (
+        isNonEmptyString(message.ts) &&
+        excludeMessageTimestamps.has(message.ts)
+      ) {
+        return false;
+      }
+
+      return isNonEmptyString(message.text);
+    })
     .map((message) => {
       const author = isNonEmptyString(message.bot_id)
         ? 'assistant'
@@ -27,12 +43,18 @@ export const fetchSlackConversationContext = async ({
   channelId,
   threadTimestamp,
   isDirectMessage,
+  excludeMessageTimestamps = [],
 }: {
   client: WebClient;
   channelId: string;
   threadTimestamp: string;
   isDirectMessage: boolean;
+  excludeMessageTimestamps?: string[];
 }): Promise<string | undefined> => {
+  const excludedTimestamps = new Set(
+    excludeMessageTimestamps.filter(isNonEmptyString),
+  );
+
   try {
     if (isNonEmptyString(threadTimestamp)) {
       const replies = await client.conversations.replies({
@@ -41,9 +63,10 @@ export const fetchSlackConversationContext = async ({
         limit: CONTEXT_MESSAGE_LIMIT,
       });
 
-      return formatContextMessages(
-        (replies.messages ?? []) as SlackContextMessage[],
-      );
+      return formatContextMessages({
+        messages: (replies.messages ?? []) as SlackContextMessage[],
+        excludeMessageTimestamps: excludedTimestamps,
+      });
     }
 
     if (isDirectMessage) {
@@ -52,9 +75,10 @@ export const fetchSlackConversationContext = async ({
         limit: CONTEXT_MESSAGE_LIMIT,
       });
 
-      return formatContextMessages(
-        ((history.messages ?? []) as SlackContextMessage[]).reverse(),
-      );
+      return formatContextMessages({
+        messages: ((history.messages ?? []) as SlackContextMessage[]).reverse(),
+        excludeMessageTimestamps: excludedTimestamps,
+      });
     }
 
     return undefined;

@@ -65,6 +65,25 @@ export const slackAssistantWorkerHandler = async (
     isDirectMessage,
   });
 
+  const slackClientResult = await getSlackClient();
+
+  const conversationContext = slackClientResult.success
+    ? await fetchSlackConversationContext({
+        client: slackClientResult.client,
+        channelId: slackChannelId,
+        threadTimestamp: parentMessageTimestamp ?? '',
+        isDirectMessage,
+        excludeMessageTimestamps: [slackMessageTimestamp],
+      })
+    : undefined;
+
+  const requesterName = slackClientResult.success
+    ? await fetchSlackRequesterName({
+        client: slackClientResult.client,
+        slackUserId: record.slackUserId,
+      })
+    : undefined;
+
   const placeholderResult = await slackPostMessageHandler({
     slackChannelId,
     messageText: SLACK_ASSISTANT_PLACEHOLDER_TEXT,
@@ -103,24 +122,6 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const slackClientResult = await getSlackClient();
-
-    const conversationContext = slackClientResult.success
-      ? await fetchSlackConversationContext({
-          client: slackClientResult.client,
-          channelId: slackChannelId,
-          threadTimestamp: parentMessageTimestamp ?? '',
-          isDirectMessage,
-        })
-      : undefined;
-
-    const requesterName = slackClientResult.success
-      ? await fetchSlackRequesterName({
-          client: slackClientResult.client,
-          slackUserId: record.slackUserId,
-        })
-      : undefined;
-
     const agentResult = await runAgent({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       prompt: buildSlackAssistantPrompt({

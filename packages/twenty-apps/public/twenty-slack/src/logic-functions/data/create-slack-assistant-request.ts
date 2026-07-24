@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-event.type';
+import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 
 export const createSlackAssistantRequest = async (
