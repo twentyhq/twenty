@@ -6,8 +6,6 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 
-// workspaceId and targetLogicFunctionUniversalIdentifier are uuid columns: rejecting non-uuids here
-// keeps a malformed resolver result from reaching the database as an invalid query.
 const resolverDispatchResultSchema = z.object({
   workspaceId: z.uuid(),
   targetLogicFunctionUniversalIdentifier: z.uuid(),

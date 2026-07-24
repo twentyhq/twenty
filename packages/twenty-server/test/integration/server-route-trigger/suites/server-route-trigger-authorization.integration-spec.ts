@@ -36,7 +36,6 @@ const RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
 });
 `;
 
-// What `new Response(...)` from twenty-sdk/logic-function serializes to.
 const HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event) => ({
   ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
   status: 200,
