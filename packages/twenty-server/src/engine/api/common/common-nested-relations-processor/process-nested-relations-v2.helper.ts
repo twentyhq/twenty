@@ -7,6 +7,10 @@ import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import {
+  type ConcurrencyLimiter,
+  createConcurrencyLimiter,
+} from 'src/engine/api/common/common-nested-relations-processor/utils/create-concurrency-limiter.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -33,40 +37,57 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 
 const EMPTY_RELATION_SENTINEL_RECORD_ID =
   '00000000-0000-0000-0000-000000000000';
+const NESTED_RELATION_QUERY_MAX_CONCURRENCY = 4;
+
+type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  parentObjectMetadataItem: FlatObjectMetadata;
+  parentObjectRecords: T[];
+  // oxlint-disable-next-line typescript/no-explicit-any
+  parentObjectRecordsAggregatedValues?: Record<string, any>;
+  relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
+  aggregate?: Record<string, AggregationField>;
+  limit: number;
+  authContext: WorkspaceAuthContext;
+  workspaceDataSource: GlobalWorkspaceDataSource;
+  rolePermissionConfig?: RolePermissionConfig;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  selectedFields: Record<string, any>;
+};
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
   constructor() {}
 
-  public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    parentObjectMetadataItem,
-    parentObjectRecords,
-    parentObjectRecordsAggregatedValues = {},
-    relations,
-    aggregate = {},
-    limit,
-    authContext,
-    workspaceDataSource,
-    rolePermissionConfig,
-    selectedFields,
-  }: {
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    parentObjectMetadataItem: FlatObjectMetadata;
-    parentObjectRecords: T[];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    parentObjectRecordsAggregatedValues?: Record<string, any>;
-    relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
-    aggregate?: Record<string, AggregationField>;
-    limit: number;
-    authContext: WorkspaceAuthContext;
-    workspaceDataSource: GlobalWorkspaceDataSource;
-    rolePermissionConfig?: RolePermissionConfig;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    selectedFields: Record<string, any>;
-  }): Promise<void> {
+  public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
+    args: ProcessNestedRelationsArgs<T>,
+  ): Promise<void> {
+    await this.processNestedRelationsWithLimiter(
+      args,
+      createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
+    );
+  }
+
+  private async processNestedRelationsWithLimiter<
+    T extends ObjectRecord = ObjectRecord,
+  >(
+    {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem,
+      parentObjectRecords,
+      parentObjectRecordsAggregatedValues = {},
+      relations,
+      aggregate = {},
+      limit,
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
+      selectedFields,
+    }: ProcessNestedRelationsArgs<T>,
+    relationQueryLimiter: ConcurrencyLimiter,
+  ): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
         this.processRelation({
@@ -82,6 +103,7 @@ export class ProcessNestedRelationsV2Helper {
           authContext,
           workspaceDataSource,
           rolePermissionConfig,
+          relationQueryLimiter,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
               ? selectedFields[sourceFieldName]
@@ -105,6 +127,7 @@ export class ProcessNestedRelationsV2Helper {
     authContext,
     workspaceDataSource,
     rolePermissionConfig,
+    relationQueryLimiter,
     selectedFields,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -120,6 +143,7 @@ export class ProcessNestedRelationsV2Helper {
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
+    relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
@@ -230,21 +254,23 @@ export class ProcessNestedRelationsV2Helper {
       });
 
     const { relationResults, relationAggregatedFieldsResult } =
-      await this.findRelations({
-        referenceQueryBuilder: targetObjectQueryBuilder,
-        targetObjectRepository,
-        column:
-          relationType === RelationType.ONE_TO_MANY
-            ? `"${fieldMetadataTargetRelationColumnName}"`
-            : 'id',
-        ids: relationIds,
-        relationType,
-        perParentLimit: limit,
-        parentRecordsCount: parentObjectRecords.length,
-        aggregate,
-        sourceFieldName,
-        targetObjectNameSingular,
-      });
+      await relationQueryLimiter(() =>
+        this.findRelations({
+          referenceQueryBuilder: targetObjectQueryBuilder,
+          targetObjectRepository,
+          column:
+            relationType === RelationType.ONE_TO_MANY
+              ? `"${fieldMetadataTargetRelationColumnName}"`
+              : 'id',
+          ids: relationIds,
+          relationType,
+          perParentLimit: limit,
+          parentRecordsCount: parentObjectRecords.length,
+          aggregate,
+          sourceFieldName,
+          targetObjectNameSingular,
+        }),
+      );
 
     this.assignRelationResults({
       parentRecords: parentObjectRecords,
@@ -262,23 +288,26 @@ export class ProcessNestedRelationsV2Helper {
     });
 
     if (Object.keys(nestedRelations).length > 0) {
-      await this.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: targetObjectMetadata,
-        parentObjectRecords: relationResults as ObjectRecord[],
-        parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
-        relations: nestedRelations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        aggregate,
-        limit,
-        authContext,
-        workspaceDataSource,
-        rolePermissionConfig,
-        selectedFields,
-      });
+      await this.processNestedRelationsWithLimiter(
+        {
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          parentObjectMetadataItem: targetObjectMetadata,
+          parentObjectRecords: relationResults as ObjectRecord[],
+          parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
+          relations: nestedRelations as Record<
+            string,
+            FindOptionsRelations<ObjectLiteral>
+          >,
+          aggregate,
+          limit,
+          authContext,
+          workspaceDataSource,
+          rolePermissionConfig,
+          selectedFields,
+        },
+        relationQueryLimiter,
+      );
     }
   }
 
