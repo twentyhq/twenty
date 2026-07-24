@@ -36,9 +36,17 @@ export const createAnchorNavigationClickHandler =
     ) {
       event.preventDefault();
 
+      const clickRequestsNewTab =
+        event.button === MIDDLE_MOUSE_BUTTON ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey;
+
+      const anchorTarget = isNonEmptyString(target) ? target : undefined;
+
       requestExternalNavigation({
         url: new URL(href, window.location.href).href,
-        target: isNonEmptyString(target) ? target : undefined,
+        target: clickRequestsNewTab ? '_blank' : anchorTarget,
       });
     }
 

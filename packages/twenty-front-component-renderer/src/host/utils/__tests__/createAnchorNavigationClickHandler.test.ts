@@ -2,13 +2,23 @@ import { type MouseEvent } from 'react';
 
 import { createAnchorNavigationClickHandler } from '../createAnchorNavigationClickHandler';
 
-const createMouseEvent = (button: number) => {
+const createMouseEvent = (
+  button: number,
+  modifierKeys: {
+    metaKey?: boolean;
+    ctrlKey?: boolean;
+    shiftKey?: boolean;
+  } = {},
+) => {
   const preventDefault = jest.fn();
 
   return {
     event: {
       button,
       preventDefault,
+      metaKey: modifierKeys.metaKey ?? false,
+      ctrlKey: modifierKeys.ctrlKey ?? false,
+      shiftKey: modifierKeys.shiftKey ?? false,
     } as unknown as MouseEvent<HTMLAnchorElement>,
     preventDefault,
   };
@@ -84,7 +94,7 @@ describe('createAnchorNavigationClickHandler', () => {
     expect(remoteOnClick).toHaveBeenCalledWith(event);
   });
 
-  it('should intercept an external middle click without forwarding to the remote handler', () => {
+  it('should open an external middle click in a new tab without forwarding to the remote handler', () => {
     const requestExternalNavigation = jest.fn();
     const remoteOnClick = jest.fn();
     const { event, preventDefault } = createMouseEvent(1);
@@ -97,8 +107,28 @@ describe('createAnchorNavigationClickHandler', () => {
     })(event);
 
     expect(preventDefault).toHaveBeenCalledTimes(1);
-    expect(requestExternalNavigation).toHaveBeenCalledTimes(1);
+    expect(requestExternalNavigation).toHaveBeenCalledWith({
+      url: 'https://example.com/probe',
+      target: '_blank',
+    });
     expect(remoteOnClick).not.toHaveBeenCalled();
+  });
+
+  it('should open a cmd or ctrl primary click in a new tab', () => {
+    const requestExternalNavigation = jest.fn();
+    const { event } = createMouseEvent(0, { metaKey: true });
+
+    createAnchorNavigationClickHandler({
+      href: 'https://example.com/probe',
+      target: undefined,
+      remoteOnClick: undefined,
+      requestExternalNavigation,
+    })(event);
+
+    expect(requestExternalNavigation).toHaveBeenCalledWith({
+      url: 'https://example.com/probe',
+      target: '_blank',
+    });
   });
 
   it('should ignore a right click', () => {
