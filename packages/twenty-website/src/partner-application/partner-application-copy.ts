@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
+import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/twenty-experience-notes-min-length';
+
 export const PARTNER_APPLICATION_COPY = {
   title: msg`Apply to build\n*the future of CRM*`,
   subtitle: msg`Join our ecosystem and help businesses take control of their customer data with open-source primitives.`,
@@ -7,9 +9,9 @@ export const PARTNER_APPLICATION_COPY = {
   next: msg`Next →`,
   submit: msg`Submit application`,
   submitInFlight: msg`Submitting…`,
-  successTitle: msg`Thanks, you're in.\n*Now book your intro call.*`,
-  bookIntroSubtitle: msg`Grab 30 minutes so we can get to know your team.`,
-  bookLater: msg`I'll book later →`,
+  successTitle: msg`Thanks for applying.`,
+  successSubtitle: msg`Our team reviews every application and will reach out if there's a fit.`,
+  successDone: msg`Done`,
   stepProgressLabel: (current: number, total: number) =>
     msg`Step ${current} of ${total}`,
   validation: {
@@ -17,6 +19,7 @@ export const PARTNER_APPLICATION_COPY = {
     invalidEmail: msg`Enter a valid email address.`,
     invalidUrl: msg`Enter a valid URL (starting with http:// or https://).`,
     invalidAmount: msg`Enter a valid amount using numbers only.`,
+    notesTooShort: msg`Please write at least ${TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation.`,
     submitFailed: msg`We could not submit your application. Please try again in a moment.`,
   },
   removeSkill: (skill: string) => msg`Remove ${skill}`,
@@ -39,8 +42,13 @@ export const PARTNER_APPLICATION_COPY = {
     skills: msg`Technical skills`,
     skillsHint: msg`Tools, technologies and industries you specialize in. Press Enter or comma to add.`,
     skillsPlaceholder: msg`e.g. n8n, Shopify, Real estate…`,
-    applicationNotes: msg`Anything else we should know?`,
-    applicationNotesPlaceholder: msg`Workspace URL, customer references, relevant links…`,
+    twentyExperience: msg`What you've built in Twenty *`,
+    twentyExperienceHint: msg`Select every area you used in a real project — not what you offer, what you actually did.`,
+    twentyExperienceNotes: msg`Tell us about the implementation *`,
+    twentyExperienceNotesHint: msg`Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. ${TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters.`,
+    twentyExperienceNotesPlaceholder: msg`Who it was for, what you built, which of the four areas you used…`,
+    twentyExperienceProofLink: msg`Proof URL *`,
+    twentyExperienceProofLinkHint: msg`Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom.`,
     hourlyRate: msg`Hourly rate *`,
     hourlyRatePlaceholder: msg`150`,
     projectBudgetMin: msg`Minimum project budget *`,
@@ -50,7 +58,8 @@ export const PARTNER_APPLICATION_COPY = {
   stepHeaders: {
     identity: msg`Identity`,
     profile: msg`Profile`,
-    expertise: msg`Expertise & experience`,
+    expertise: msg`Expertise`,
+    experience: msg`Experience`,
     commercials: msg`Commercials`,
   },
 };
