@@ -16,16 +16,21 @@ permissions:
 
 jobs:
   # merge_group carries no PR labels, so resolve them from the queued PR (its
-  # number is in the merge-queue ref). A deliberate, reviewed version-mutation
-  # bypass skips the guard, matching the PR-level behavior. The timestamp /
-  # append-only check has no bypass: violating it rewinds the upgrade cursor.
-  check-bypass:
+  # number is in the merge-queue ref) and pass the version-mutation bypass to the
+  # guard as an input, which skips only the version-directory step. The job
+  # always runs and reports a real success/failure, so the required check never
+  # resolves to a skipped state and a label-lookup failure fails closed. The
+  # timestamp / append-only check has no bypass and always runs: violating it
+  # rewinds the upgrade cursor.
+  upgrade-mutation-guard:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    outputs:
-      skip: ${{ steps.labels.outputs.skip }}
     steps:
-      - name: Check queued PR for a bypass label
+      - name: Checkout merge candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
+      - name: Resolve version-mutation bypass label from the queued PR
         id: labels
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,18 +53,8 @@ jobs:
           fi
 
           echo "skip=$skip" >> "$GITHUB_OUTPUT"
-
-  upgrade-mutation-guard:
-    needs: check-bypass
-    if: needs.check-bypass.outputs.skip != 'true'
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout merge candidate
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          fetch-depth: 2
       - name: Validate upgrade command mutations against main
         uses: ./.github/actions/upgrade-mutation-guard
         with:
           base_sha: ${{ github.event.merge_group.base_sha }}
+          allow_previous_version_mutation: ${{ steps.labels.outputs.skip }}
