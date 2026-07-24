@@ -26,10 +26,20 @@ describe('splitCssDeclarations', () => {
     ]);
   });
 
-  it('should keep semicolons inside comments', () => {
-    expect(
-      splitCssDeclarations('color: red; /* a; b */ background: blue'),
-    ).toEqual(['color: red', ' /* a; b */ background: blue']);
+  it('should drop comments and not split on their inner semicolons', () => {
+    const declarations = splitCssDeclarations(
+      'color: red; /* a; b */ background: blue',
+    );
+
+    expect(declarations).toHaveLength(2);
+    expect(declarations[0]).toBe('color: red');
+    expect(declarations[1].trim()).toBe('background: blue');
+  });
+
+  it('should collapse a comment between tokens into a separator', () => {
+    expect(splitCssDeclarations('margin: 1px/**/2px')[0].trim()).toBe(
+      'margin: 1px 2px',
+    );
   });
 
   it('should keep semicolons inside url parentheses', () => {

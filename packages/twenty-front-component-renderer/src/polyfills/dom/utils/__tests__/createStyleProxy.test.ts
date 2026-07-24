@@ -166,6 +166,15 @@ describe('createStyleProxy', () => {
     expect(flush).toHaveBeenCalledWith('width:10px');
   });
 
+  it('should apply a declaration preceded by a comment to the real property', () => {
+    const style = createStyle();
+
+    style.cssText = 'color: red; /* note */ background: blue';
+
+    expect(style.getPropertyValue('color')).toBe('red');
+    expect(style.getPropertyValue('background')).toBe('blue');
+  });
+
   it('should keep semicolons inside url() values assigned through cssText', () => {
     const style = createStyle();
 
