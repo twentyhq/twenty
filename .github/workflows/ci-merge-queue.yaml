@@ -16,8 +16,9 @@ permissions:
 
 jobs:
   # merge_group carries no PR labels, so resolve them from the queued PR (its
-  # number is in the merge-queue ref). A deliberate, reviewed ci:allow-* bypass
-  # skips the guard, matching the PR-level behavior.
+  # number is in the merge-queue ref). A deliberate, reviewed version-mutation
+  # bypass skips the guard, matching the PR-level behavior. The timestamp /
+  # append-only check has no bypass: violating it rewinds the upgrade cursor.
   check-bypass:
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -39,8 +40,7 @@ jobs:
             echo "Queued PR #$PR_NUMBER labels:"
             echo "$LABELS"
 
-            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation' \
-              || echo "$LABELS" | grep -qxF 'ci:allow-upgrade-command-timestamp-exception'; then
+            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation'; then
               skip=true
             fi
           else

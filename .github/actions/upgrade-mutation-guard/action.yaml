@@ -13,10 +13,6 @@ inputs:
     description: Skip the version-directory check (PR label bypass).
     required: false
     default: 'false'
-  allow_timestamp_exception:
-    description: Skip the timestamp check (PR label bypass).
-    required: false
-    default: 'false'
 
 runs:
   using: composite
@@ -105,7 +101,6 @@ runs:
         fi
 
     - name: Check upgrade command timestamps are real and keep the sequence append-only
-      if: ${{ inputs.allow_timestamp_exception != 'true' }}
       shell: bash
       env:
         BASE_SHA: ${{ inputs.base_sha }}
@@ -178,9 +173,6 @@ runs:
           echo "that command to its real merge epoch (rename the file and the timestamp in the"
           echo "decorator/constant, and make its up() idempotent since it will re-run under"
           echo "the new name) instead of inflating the new command's timestamp."
-          echo ""
-          echo "To bypass this check for a deliberate exception, add the label"
-          echo "'ci:allow-upgrade-command-timestamp-exception' to the PR and re-run CI."
           echo -e "$FAILED"
           echo "::error::Upgrade command timestamps must be real (close to now) and append-only within their version directory."
           exit 1

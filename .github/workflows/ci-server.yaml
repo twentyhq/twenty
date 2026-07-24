@@ -102,7 +102,6 @@ jobs:
         with:
           base_sha: ${{ github.event.pull_request.base.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
-          allow_timestamp_exception: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-upgrade-command-timestamp-exception') }}
 
   server-validation:
     needs: server-build
