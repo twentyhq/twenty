@@ -42,7 +42,6 @@ All active objects appear in the navigation. You can deactivate objects you don'
 No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
 </Accordion>
 
-
 <Accordion title="Why do I need different singular and plural names?">
 Our GraphQL API uses both forms for different operations:
 - `createPerson` (singular) for single record actions
@@ -73,15 +72,15 @@ Currently, you cannot make custom fields required. All fields accept empty value
 </Accordion>
 
 <Accordion title="Can I create formula fields?">
-Formula fields are coming in **Q1 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
+Formula fields are coming in **H2 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
 </Accordion>
 
 <Accordion title="Can I have nested fields in my objects?">
-Nested fields are coming in **Q1 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+Nested fields are coming in **H2 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
 </Accordion>
 
 <Accordion title="Can I reorder fields in objects?">
-Field reordering will be available with custom layouts in **Q4 2025**. Currently, fields appear in alphabetical order.
+Yes, go to Settings → Data model → object of your choice → Layout and click **Customize record page**. If this button is disabled, you must create a record.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Yes! Self-referencing relations are supported and recommended for use cases like
 </Accordion>
 
 <Accordion title="Can I create many-to-many relationships?">
-Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+Many-to-many relationships are coming in **H2 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
 
 For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
 - A relation to People (many assignments → one person)
@@ -146,6 +145,10 @@ Yes, you can import CSV data into any object, including custom objects. The impo
 
 <Accordion title="Can I export my data model configuration?">
 Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+</Accordion>
+
+<Accordion title="How many fields can a single object have?">
+The maximum number of fields a single object can have is 1600 fields as per Postgres limits, including both existing and deleted fields. Be aware that Twenty won't fix your workspace if limit of 1600 fields is reached as it falls under our Fair Usage policy.
 </Accordion>
 </AccordionGroup>
 
