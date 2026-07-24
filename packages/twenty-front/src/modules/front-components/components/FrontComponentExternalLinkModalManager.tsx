@@ -10,8 +10,6 @@ import { frontComponentExternalLinkModalConfigState } from '@/front-components/s
 import { trustedFrontComponentExternalOriginsState } from '@/front-components/states/trustedFrontComponentExternalOriginsState';
 import { openExternalUrl } from '@/front-components/utils/openExternalUrl';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -51,10 +49,6 @@ export const FrontComponentExternalLinkModalManager = () => {
   const frontComponentExternalLinkModalConfig = useAtomStateValue(
     frontComponentExternalLinkModalConfigState,
   );
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID,
-  );
   const setFrontComponentExternalLinkModalConfig = useSetAtomState(
     frontComponentExternalLinkModalConfigState,
   );
@@ -63,7 +57,7 @@ export const FrontComponentExternalLinkModalManager = () => {
   );
   const [shouldTrustOrigin, setShouldTrustOrigin] = useState(true);
 
-  if (!isDefined(frontComponentExternalLinkModalConfig) || !isModalOpened) {
+  if (!isDefined(frontComponentExternalLinkModalConfig)) {
     return null;
   }
 

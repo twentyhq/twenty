@@ -6,17 +6,14 @@ import { frontComponentExternalLinkModalConfigState } from '@/front-components/s
 import { trustedFrontComponentExternalOriginsState } from '@/front-components/states/trustedFrontComponentExternalOriginsState';
 import { openExternalUrl } from '@/front-components/utils/openExternalUrl';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 export const useRequestFrontComponentExternalNavigation = ({
   applicationId,
 }: {
   applicationId: string;
 }): RequestExternalNavigation => {
-  const trustedFrontComponentExternalOrigins = useAtomStateValue(
-    trustedFrontComponentExternalOriginsState,
-  );
   const setFrontComponentExternalLinkModalConfig = useSetAtomState(
     frontComponentExternalLinkModalConfigState,
   );
@@ -25,6 +22,10 @@ export const useRequestFrontComponentExternalNavigation = ({
   return useCallback(
     ({ url, target }) => {
       const origin = new URL(url).origin;
+
+      const trustedFrontComponentExternalOrigins = jotaiStore.get(
+        trustedFrontComponentExternalOriginsState.atom,
+      );
 
       const applicationTrustsOrigin =
         trustedFrontComponentExternalOrigins[applicationId]?.includes(origin) ??
@@ -43,11 +44,6 @@ export const useRequestFrontComponentExternalNavigation = ({
       });
       openModal(FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID);
     },
-    [
-      applicationId,
-      trustedFrontComponentExternalOrigins,
-      setFrontComponentExternalLinkModalConfig,
-      openModal,
-    ],
+    [applicationId, setFrontComponentExternalLinkModalConfig, openModal],
   );
 };
