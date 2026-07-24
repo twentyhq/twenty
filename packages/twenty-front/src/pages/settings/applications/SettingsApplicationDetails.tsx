@@ -92,6 +92,8 @@ export const SettingsApplicationDetails = () => {
         applicationUniversalIdentifier: application?.universalIdentifier ?? '',
       },
       skip: !application?.universalIdentifier,
+      // The kill switch is toggled server-side, a cached value would hide it.
+      fetchPolicy: 'network-only',
     },
   );
 
