@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -10,6 +11,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
@@ -66,10 +68,16 @@ export class BackfillMessageListMembersJunctionTargetCommand extends Provisioned
     const currentSettings = membersFlatFieldMetadata.settings;
 
     if (
-      isDefined(currentSettings) &&
-      'junctionTargetFieldId' in currentSettings &&
-      isDefined(currentSettings.junctionTargetFieldId)
+      !isFieldMetadataSettingsOfType(currentSettings, FieldMetadataType.RELATION)
     ) {
+      this.logger.warn(
+        `messageList.members has no relation settings for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    if (isDefined(currentSettings.junctionTargetFieldId)) {
       this.logger.log(
         `messageList.members junction target already set for workspace ${workspaceId}, skipping`,
       );

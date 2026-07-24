@@ -8,7 +8,6 @@ export const MESSAGE_SUPPRESSIONS = gql`
         createdAt
         emailAddress
         reason
-        source
         unsubscribeTopicId
       }
       totalCount

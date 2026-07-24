@@ -1,11 +1,8 @@
-import { useApolloClient, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
-import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -14,7 +11,6 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandWhatsapp,
-  IconForbid,
   IconMail,
   IconMailX,
   IconPhone,
@@ -29,12 +25,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
-
-const StyledCardLink = styled.a`
-  display: block;
-  min-width: 0;
-  text-decoration: none;
-`;
 
 const StyledCardsColumn = styled.div`
   display: flex;
@@ -52,17 +42,6 @@ export const SettingsWorkspaceCommunications = () => {
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
-
-  const apolloClient = useApolloClient();
-
-  const { data: unsubscribePreviewData } = useQuery<{
-    unsubscribePagePreviewUrl: string;
-  }>(GET_UNSUBSCRIBE_PAGE_PREVIEW_URL, {
-    client: apolloClient,
-    skip: !isEmailGroupFeatureEnabled,
-  });
-
-  const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;
 
   if (!isEmailGroupFeatureEnabled) {
     return null;
@@ -109,37 +88,21 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section>
         <SettingsWorkspaceEmailGroupSection />
-        <SettingsWorkspaceUnsubscribeTopicSection />
         <Section>
           <H2Title
             title={t`Unsubscribe`}
-            description={t`The page your users will get redirected to to unsubscribe from your emails`}
+            description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
           />
           <StyledCardsColumn>
-            <StyledCardLink
-              href={unsubscribePageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SettingsCard
-                Icon={
-                  <IconMailX
-                    size={theme.icon.size.lg}
-                    stroke={theme.icon.stroke.md}
-                  />
-                }
-                title={t`See unsubscribe page`}
-              />
-            </StyledCardLink>
             <SettingsCard
               Icon={
-                <IconForbid
+                <IconMailX
                   size={theme.icon.size.lg}
                   stroke={theme.icon.stroke.md}
                 />
               }
-              title={t`Unsubscribers`}
-              onClick={() => navigateSettings(SettingsPath.Unsubscribers)}
+              title={t`Manage unsubscribe`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
             />
           </StyledCardsColumn>
         </Section>

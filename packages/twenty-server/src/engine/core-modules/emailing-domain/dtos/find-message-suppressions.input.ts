@@ -1,7 +1,15 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
-import { IsEnum, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 
 @InputType()
@@ -10,6 +18,16 @@ export class FindMessageSuppressionsInput {
   @IsOptional()
   @IsEnum(MessageSuppressionReason)
   reason?: MessageSuppressionReason;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  searchTerm?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID('4')
+  unsubscribeTopicId?: string;
 
   @Field(() => Int, { defaultValue: 30 })
   @Min(1)

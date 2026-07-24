@@ -1,15 +1,25 @@
 import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constants/MessageSuppressionsPageSize';
-import { MessageSuppressionsDocument } from '~/generated-metadata/graphql';
+import {
+  type MessageSuppressionReason,
+  MessageSuppressionsDocument,
+} from '~/generated-metadata/graphql';
 
 type UseMessageSuppressionsParams = {
-  page: number;
+  page?: number;
+  searchTerm?: string;
+  reason?: MessageSuppressionReason;
+  unsubscribeTopicId?: string;
   skip?: boolean;
 };
 
 export const useMessageSuppressions = ({
-  page,
+  page = 0,
+  searchTerm,
+  reason,
+  unsubscribeTopicId,
   skip,
 }: UseMessageSuppressionsParams) => {
   const { data, loading } = useQuery(MessageSuppressionsDocument, {
@@ -17,6 +27,9 @@ export const useMessageSuppressions = ({
       input: {
         limit: MESSAGE_SUPPRESSIONS_PAGE_SIZE,
         offset: page * MESSAGE_SUPPRESSIONS_PAGE_SIZE,
+        ...(isNonEmptyString(searchTerm) ? { searchTerm } : {}),
+        ...(isNonEmptyString(unsubscribeTopicId) ? { unsubscribeTopicId } : {}),
+        ...(reason ? { reason } : {}),
       },
     },
     skip,
