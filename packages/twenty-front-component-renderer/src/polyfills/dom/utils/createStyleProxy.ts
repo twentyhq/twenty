@@ -1,201 +1,124 @@
-import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
-import { camelToKebab, isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 
-import { CSS_IMPORTANT_PRIORITY_PATTERN } from '@/constants/CssImportantPriorityPattern';
-import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
-
-const UNITLESS_CSS_PROPERTIES = new Set([
-  'animationIterationCount',
-  'aspectRatio',
-  'borderImageOutset',
-  'borderImageSlice',
-  'borderImageWidth',
-  'boxFlex',
-  'boxFlexGroup',
-  'boxOrdinalGroup',
-  'columnCount',
-  'columns',
-  'flex',
-  'flexGrow',
-  'flexPositive',
-  'flexShrink',
-  'flexNegative',
-  'flexOrder',
-  'gridArea',
-  'gridRow',
-  'gridRowEnd',
-  'gridRowSpan',
-  'gridRowStart',
-  'gridColumn',
-  'gridColumnEnd',
-  'gridColumnSpan',
-  'gridColumnStart',
-  'fontWeight',
-  'lineClamp',
-  'lineHeight',
-  'opacity',
-  'order',
-  'orphans',
-  'scale',
-  'tabSize',
-  'widows',
-  'zIndex',
-  'zoom',
-  'fillOpacity',
-  'floodOpacity',
-  'stopOpacity',
-  'strokeDasharray',
-  'strokeDashoffset',
-  'strokeMiterlimit',
-  'strokeOpacity',
-  'strokeWidth',
-]);
+import { formatStyleValueForCssStore } from '@/polyfills/dom/utils/formatStyleValueForCssStore';
+import { isImportantPriorityKeyword } from '@/polyfills/dom/utils/isImportantPriorityKeyword';
+import { isObjectPrototypeMember } from '@/polyfills/dom/utils/isObjectPrototypeMember';
+import { parseCssTextIntoStyleDeclarations } from '@/polyfills/dom/utils/parseCssTextIntoStyleDeclarations';
+import { resolveStyleStoreKeyFromPropertyName } from '@/polyfills/dom/utils/resolveStyleStoreKeyFromPropertyName';
+import { serializeStyleDeclarationsToCssText } from '@/polyfills/dom/utils/serializeStyleDeclarationsToCssText';
+import { createMicrotaskCoalescedCallback } from '@/utils/createMicrotaskCoalescedCallback';
 
 type CreateStyleProxyOptions = {
-  flush?: (cssText: string) => void;
-  convertNumbersToPx?: boolean;
+  flushSerializedCssTextToHost?: (serializedCssText: string) => void;
+  shouldConvertNumbersToPixels?: boolean;
 };
 
 export const createStyleProxy = ({
-  flush,
-  convertNumbersToPx = false,
+  flushSerializedCssTextToHost,
+  shouldConvertNumbersToPixels = false,
 }: CreateStyleProxyOptions = {}): Record<string, unknown> => {
-  const styleStore: Record<string, string> = {};
-  const stylePriorities: Record<string, string> = {};
+  const cssValueByStoreKey: Record<string, string> = {};
+  const importantPriorityStoreKeys = new Set<string>();
 
-  let hasScheduledFlush = false;
+  const readSerializedCssText = (): string =>
+    serializeStyleDeclarationsToCssText(
+      cssValueByStoreKey,
+      importantPriorityStoreKeys,
+    );
 
-  const serializeCssText = (): string =>
-    Object.entries(styleStore)
-      .map(([key, value]) =>
-        isNonEmptyString(stylePriorities[key])
-          ? `${key}:${value} !important`
-          : `${key}:${value}`,
-      )
-      .join(';');
+  const scheduleHostFlush = createMicrotaskCoalescedCallback(() => {
+    flushSerializedCssTextToHost?.(readSerializedCssText());
+  });
 
-  // Coalesced per microtask so a burst of property writes serializes and
-  // reaches the host once instead of once per write.
-  const flushSerializedCssText = (): void => {
-    if (!isDefined(flush) || hasScheduledFlush) {
+  const replaceAllDeclarationsFromCssText = (cssText: string): void => {
+    for (const storeKey of Object.keys(cssValueByStoreKey)) {
+      delete cssValueByStoreKey[storeKey];
+    }
+    importantPriorityStoreKeys.clear();
+
+    const parsedDeclarations = parseCssTextIntoStyleDeclarations(cssText);
+
+    Object.assign(cssValueByStoreKey, parsedDeclarations.cssValueByStoreKey);
+
+    for (const storeKey of parsedDeclarations.importantPriorityStoreKeys) {
+      importantPriorityStoreKeys.add(storeKey);
+    }
+  };
+
+  const setPropertyValue = (
+    cssPropertyName: string,
+    value: string | null,
+    priority?: string,
+  ): void => {
+    if (value === null || value === '') {
+      delete cssValueByStoreKey[cssPropertyName];
+      importantPriorityStoreKeys.delete(cssPropertyName);
+      scheduleHostFlush();
+
       return;
     }
 
-    hasScheduledFlush = true;
-    queueMicrotask(() => {
-      hasScheduledFlush = false;
-      flush(serializeCssText());
-    });
-  };
+    const hasExplicitPriority = isNonEmptyString(priority);
 
-  const applyCssText = (cssText: string): void => {
-    for (const key of Object.keys(styleStore)) {
-      delete styleStore[key];
-      delete stylePriorities[key];
+    if (hasExplicitPriority && !isImportantPriorityKeyword(priority)) {
+      return;
     }
 
-    for (const declaration of splitCssDeclarations(cssText)) {
-      const colonIndex = declaration.indexOf(':');
+    cssValueByStoreKey[cssPropertyName] = String(value);
 
-      if (colonIndex <= 0) {
-        continue;
-      }
-
-      const declarationKey = declaration.slice(0, colonIndex).trim();
-      const declarationValue = declaration.slice(colonIndex + 1).trim();
-      const hasImportantPriority =
-        CSS_IMPORTANT_PRIORITY_PATTERN.test(declarationValue);
-      const declarationValueWithoutPriority = hasImportantPriority
-        ? declarationValue.replace(CSS_IMPORTANT_PRIORITY_PATTERN, '').trim()
-        : declarationValue;
-
-      if (declarationKey === '' || declarationValueWithoutPriority === '') {
-        continue;
-      }
-
-      const isExistingDeclarationImportant = isNonEmptyString(
-        stylePriorities[declarationKey],
-      );
-
-      if (isExistingDeclarationImportant && !hasImportantPriority) {
-        continue;
-      }
-
-      styleStore[declarationKey] = declarationValueWithoutPriority;
-
-      if (hasImportantPriority) {
-        stylePriorities[declarationKey] = 'important';
-      }
+    if (hasExplicitPriority) {
+      importantPriorityStoreKeys.add(cssPropertyName);
+    } else {
+      importantPriorityStoreKeys.delete(cssPropertyName);
     }
+
+    scheduleHostFlush();
   };
 
-  return new Proxy(styleStore, {
+  const removePropertyValue = (cssPropertyName: string): string => {
+    const previousValue = cssValueByStoreKey[cssPropertyName] ?? '';
+
+    delete cssValueByStoreKey[cssPropertyName];
+    importantPriorityStoreKeys.delete(cssPropertyName);
+    scheduleHostFlush();
+
+    return previousValue;
+  };
+
+  const readPropertyValue = (cssPropertyName: string): string =>
+    cssValueByStoreKey[cssPropertyName] ?? '';
+
+  const readPropertyPriority = (cssPropertyName: string): string =>
+    importantPriorityStoreKeys.has(cssPropertyName) ? 'important' : '';
+
+  return new Proxy(cssValueByStoreKey, {
     get: (target, property) => {
       if (property === 'cssText') {
-        return serializeCssText();
+        return readSerializedCssText();
       }
 
       if (property === 'setProperty') {
-        return (name: string, value: string | null, priority?: string) => {
-          if (value === null || value === '') {
-            delete target[name];
-            delete stylePriorities[name];
-            flushSerializedCssText();
-
-            return;
-          }
-
-          if (
-            isNonEmptyString(priority) &&
-            priority.toLowerCase() !== 'important'
-          ) {
-            return;
-          }
-
-          target[name] = String(value);
-
-          if (isNonEmptyString(priority)) {
-            stylePriorities[name] = 'important';
-          } else {
-            delete stylePriorities[name];
-          }
-
-          flushSerializedCssText();
-        };
+        return setPropertyValue;
       }
 
       if (property === 'removeProperty') {
-        return (name: string): string => {
-          const previousValue = target[name] ?? '';
-          delete target[name];
-          delete stylePriorities[name];
-          flushSerializedCssText();
-
-          return previousValue;
-        };
+        return removePropertyValue;
       }
 
       if (property === 'getPropertyValue') {
-        return (name: string): string => target[name] ?? '';
+        return readPropertyValue;
       }
 
       if (property === 'getPropertyPriority') {
-        return (name: string): string => stylePriorities[name] ?? '';
+        return readPropertyPriority;
       }
 
-      // No CSS property collides with an Object.prototype member after
-      // camelToKebab, and shadowing them with '' breaks style.hasOwnProperty()
-      // calls and string coercion of the proxy.
-      if (property in Object.prototype) {
+      if (isObjectPrototypeMember(property)) {
         return Reflect.get(Object.prototype, property);
       }
 
       if (isString(property)) {
-        const storeKey = property.startsWith('--')
-          ? property
-          : camelToKebab(property);
-
-        return target[storeKey] ?? '';
+        return target[resolveStyleStoreKeyFromPropertyName(property)] ?? '';
       }
 
       return undefined;
@@ -206,32 +129,28 @@ export const createStyleProxy = ({
       }
 
       if (property === 'cssText') {
-        applyCssText(String(value));
-        flushSerializedCssText();
+        replaceAllDeclarationsFromCssText(String(value));
+        scheduleHostFlush();
 
         return true;
       }
 
-      const storeKey = property.startsWith('--')
-        ? property
-        : camelToKebab(property);
-      delete stylePriorities[storeKey];
+      const storeKey = resolveStyleStoreKeyFromPropertyName(property);
+      importantPriorityStoreKeys.delete(storeKey);
 
       if (value === null || value === undefined || value === '') {
         delete target[storeKey];
-        flushSerializedCssText();
+        scheduleHostFlush();
 
         return true;
       }
 
-      const shouldConvertToPx =
-        convertNumbersToPx &&
-        isNumber(value) &&
-        value !== 0 &&
-        !UNITLESS_CSS_PROPERTIES.has(property);
-
-      target[storeKey] = shouldConvertToPx ? `${value}px` : String(value);
-      flushSerializedCssText();
+      target[storeKey] = formatStyleValueForCssStore(
+        value,
+        property,
+        shouldConvertNumbersToPixels,
+      );
+      scheduleHostFlush();
 
       return true;
     },
