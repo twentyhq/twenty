@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -29,6 +30,10 @@ export enum AppTokenType {
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
+@Index('IDX_APP_TOKEN_TYPE_VALUE_SSO_EXCHANGE_UNIQUE', ['type', 'value'], {
+  unique: true,
+  where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
+})
 export class AppTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
