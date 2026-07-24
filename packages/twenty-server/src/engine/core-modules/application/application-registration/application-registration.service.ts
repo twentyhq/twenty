@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-billing-exempt-applications.constant';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -639,6 +640,11 @@ export class ApplicationRegistrationService {
 
     const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
+    const hasFreeLogicFunctionExecutions =
+      MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS.includes(
+        params.universalIdentifier,
+      );
+
     if (isDefined(existing) && isDefined(params.manifest)) {
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
@@ -723,6 +729,7 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
       isVetted,
+      hasFreeLogicFunctionExecutions,
       manifest: params.manifest,
       ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       oAuthClientId: v4(),

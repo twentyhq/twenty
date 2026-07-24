@@ -3,7 +3,6 @@ import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import {
   IconArrowBarToDown,
-  IconCoins,
   IconPinned,
   IconReload,
   IconShield,
@@ -122,24 +121,6 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
                   input: {
                     id: registration.id,
                     update: { isVetted: checked },
-                  },
-                },
-              })
-            }
-          />
-        </Card>
-        <Card rounded fullWidth>
-          <SettingsOptionCardContentToggle
-            Icon={IconCoins}
-            title={t`Free logic function executions`}
-            description={t`Running this app's logic functions doesn't consume workspace credits. In-app credit charges and AI usage are still billed.`}
-            checked={registration.hasFreeLogicFunctionExecutions}
-            onChange={(checked) =>
-              updateRegistration({
-                variables: {
-                  input: {
-                    id: registration.id,
-                    update: { hasFreeLogicFunctionExecutions: checked },
                   },
                 },
               })
