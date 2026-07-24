@@ -119,10 +119,61 @@ const evaluateFieldMatchResult = (
   }
 };
 
-const hasDefinedFilterKey = <T extends Record<string, unknown>>(
+const hasOnlyAllowedDefinedFilterKeys = <T extends Record<string, unknown>>(
   filter: T,
   keys: readonly (keyof T)[],
-): boolean => keys.some((key) => filter[key] !== undefined);
+): boolean => {
+  const filterKeys = Object.keys(filter);
+
+  if (filterKeys.length === 0) {
+    return false;
+  }
+
+  return (
+    filterKeys.every((key) => keys.includes(key as keyof T)) &&
+    keys.some((key) => filter[key] !== undefined)
+  );
+};
+
+const evaluateCompositeSubFieldMatch = ({
+  subFieldFilter,
+  subFieldValue,
+}: {
+  subFieldFilter: StringFilter | RawJsonFilter | SelectFilter | UUIDFilter;
+  subFieldValue: unknown;
+}): boolean => {
+  if (
+    isDefined((subFieldFilter as RawJsonFilter).like) ||
+    isDefined((subFieldFilter as RawJsonFilter).is)
+  ) {
+    return isMatchingRawJsonFilter({
+      rawJsonFilter: subFieldFilter as RawJsonFilter,
+      value: subFieldValue,
+    });
+  }
+
+  if (isDefined((subFieldFilter as SelectFilter).eq)) {
+    return isMatchingSelectFilter({
+      selectFilter: subFieldFilter as SelectFilter,
+      value: subFieldValue as string,
+    });
+  }
+
+  if (
+    isDefined((subFieldFilter as UUIDFilter).eq) ||
+    isDefined((subFieldFilter as UUIDFilter).is)
+  ) {
+    return isMatchingUUIDFilter({
+      uuidFilter: subFieldFilter as UUIDFilter,
+      value: subFieldValue as string | null,
+    });
+  }
+
+  return isMatchingStringFilter({
+    stringFilter: subFieldFilter as StringFilter,
+    value: subFieldValue as string,
+  });
+};
 
 const evaluateRLSRowLevelPermissionPredicate = ({
   record,
@@ -345,7 +396,12 @@ const evaluateRLSRowLevelPermissionPredicate = ({
         case FieldMetadataType.FULL_NAME: {
           const fullNameFilter = filterValue as FullNameFilter;
 
-          if (!hasDefinedFilterKey(fullNameFilter, ['firstName', 'lastName'])) {
+          if (
+            !hasOnlyAllowedDefinedFilterKeys(fullNameFilter, [
+              'firstName',
+              'lastName',
+            ])
+          ) {
             return 'invalid';
           }
 
@@ -375,7 +431,7 @@ const evaluateRLSRowLevelPermissionPredicate = ({
             'addressPostcode',
           ] as const;
 
-          if (!hasDefinedFilterKey(addressFilter, keys)) {
+          if (!hasOnlyAllowedDefinedFilterKeys(addressFilter, keys)) {
             return 'invalid';
           }
 
@@ -397,9 +453,13 @@ const evaluateRLSRowLevelPermissionPredicate = ({
         case FieldMetadataType.LINKS: {
           const linksFilter = filterValue as LinksFilter;
 
-          const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
+          const keys = [
+            'primaryLinkLabel',
+            'primaryLinkUrl',
+            'secondaryLinks',
+          ] as const;
 
-          if (!hasDefinedFilterKey(linksFilter, keys)) {
+          if (!hasOnlyAllowedDefinedFilterKeys(linksFilter, keys)) {
             return 'invalid';
           }
 
@@ -411,9 +471,9 @@ const evaluateRLSRowLevelPermissionPredicate = ({
                 return false;
               }
 
-              return isMatchingStringFilter({
-                stringFilter: value,
-                value: recordFieldValue[key],
+              return evaluateCompositeSubFieldMatch({
+                subFieldFilter: value,
+                subFieldValue: recordFieldValue[key],
               });
             }),
           );
@@ -463,7 +523,9 @@ const evaluateRLSRowLevelPermissionPredicate = ({
         case FieldMetadataType.ACTOR: {
           const actorFilter = filterValue as ActorFilter;
 
-          if (!hasDefinedFilterKey(actorFilter, ['source', 'name'])) {
+          const keys = ['source', 'name', 'workspaceMemberId'] as const;
+
+          if (!hasOnlyAllowedDefinedFilterKeys(actorFilter, keys)) {
             return 'invalid';
           }
 
@@ -472,6 +534,13 @@ const evaluateRLSRowLevelPermissionPredicate = ({
               return isMatchingSelectFilter({
                 selectFilter: actorFilter.source,
                 value: recordFieldValue.source,
+              });
+            }
+
+            if (isDefined(actorFilter.workspaceMemberId)) {
+              return isMatchingUUIDFilter({
+                uuidFilter: actorFilter.workspaceMemberId,
+                value: recordFieldValue.workspaceMemberId,
               });
             }
 
@@ -487,23 +556,37 @@ const evaluateRLSRowLevelPermissionPredicate = ({
         case FieldMetadataType.EMAILS: {
           const emailsFilter = filterValue as EmailsFilter;
 
-          if (!hasDefinedFilterKey(emailsFilter, ['primaryEmail'])) {
+          const keys = ['primaryEmail', 'additionalEmails'] as const;
+
+          if (!hasOnlyAllowedDefinedFilterKeys(emailsFilter, keys)) {
             return 'invalid';
           }
 
           return evaluateFieldMatchResult(() =>
-            isMatchingStringFilter({
-              stringFilter: emailsFilter.primaryEmail as StringFilter,
-              value: recordFieldValue.primaryEmail,
+            keys.some((key) => {
+              const value = emailsFilter[key];
+
+              if (value === undefined) {
+                return false;
+              }
+
+              return evaluateCompositeSubFieldMatch({
+                subFieldFilter: value,
+                subFieldValue: recordFieldValue[key],
+              });
             }),
           );
         }
         case FieldMetadataType.PHONES: {
           const phonesFilter = filterValue as PhonesFilter;
 
-          const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
+          const keys = [
+            'primaryPhoneNumber',
+            'primaryPhoneCallingCode',
+            'additionalPhones',
+          ] as const;
 
-          if (!hasDefinedFilterKey(phonesFilter, keys)) {
+          if (!hasOnlyAllowedDefinedFilterKeys(phonesFilter, keys)) {
             return 'invalid';
           }
 
@@ -515,9 +598,9 @@ const evaluateRLSRowLevelPermissionPredicate = ({
                 return false;
               }
 
-              return isMatchingStringFilter({
-                stringFilter: value,
-                value: recordFieldValue[key],
+              return evaluateCompositeSubFieldMatch({
+                subFieldFilter: value,
+                subFieldValue: recordFieldValue[key],
               });
             }),
           );

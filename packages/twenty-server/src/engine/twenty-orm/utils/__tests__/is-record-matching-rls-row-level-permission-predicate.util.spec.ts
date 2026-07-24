@@ -121,6 +121,11 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata(
+      'phones-id',
+      'phones',
+      FieldMetadataType.PHONES,
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -461,5 +466,89 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         flatFieldMetadataMaps,
       }),
     ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          name: {
+            firstName: {
+              eq: 'Jane',
+            },
+            bogus: true,
+          },
+        } as Record<string, unknown>,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('supports phones filters on additional phone sub-fields', () => {
+    const recordWithPhones = {
+      ...baseRecord,
+      phones: {
+        primaryPhoneNumber: '555123456',
+        primaryPhoneCallingCode: '+1',
+        additionalPhones: [],
+      },
+    } as ObjectRecord;
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: recordWithPhones,
+        filter: {
+          phones: {
+            additionalPhones: {
+              is: 'NULL',
+            },
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: recordWithPhones,
+        filter: {
+          not: {
+            and: [
+              {
+                or: [
+                  {
+                    phones: {
+                      primaryPhoneNumber: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      primaryPhoneNumber: { ilike: '' },
+                    },
+                  },
+                ],
+              },
+              {
+                or: [
+                  {
+                    phones: {
+                      additionalPhones: { is: 'NULL' },
+                    },
+                  },
+                  {
+                    phones: {
+                      additionalPhones: { like: '[]' },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
   });
 });
