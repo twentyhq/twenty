@@ -126,6 +126,22 @@ describe('isSubdomainValid', () => {
     });
   });
 
+  describe('configurable minimum length', () => {
+    it('should accept subdomains shorter than 3 when a lower minimum is provided', () => {
+      expect(isSubdomainValid('ab', 2)).toBe(true);
+      expect(isSubdomainValid('xy', 1)).toBe(true);
+    });
+
+    it('should still reject subdomains shorter than the provided minimum', () => {
+      expect(isSubdomainValid('ab', 3)).toBe(false);
+      expect(isSubdomainValid('abcd', 5)).toBe(false);
+    });
+
+    it('should reject reserved subdomains even when a lower minimum is provided', () => {
+      expect(isSubdomainValid('us', 2)).toBe(false);
+    });
+  });
+
   describe('reserved subdomains', () => {
     it('should reject common reserved subdomains', () => {
       expect(isSubdomainValid('api')).toBe(false);

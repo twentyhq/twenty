@@ -9,10 +9,12 @@ describe('SubdomainManagerService', () => {
   let service: SubdomainManagerService;
   const takenSubdomains = new Set<string>();
   let areAllSubdomainsTaken = false;
+  let subdomainMinLength = 3;
 
   beforeEach(async () => {
     takenSubdomains.clear();
     areAllSubdomainsTaken = false;
+    subdomainMinLength = 3;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,7 +46,9 @@ describe('SubdomainManagerService', () => {
         {
           provide: TwentyConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue('app'),
+            get: jest.fn((key: string) =>
+              key === 'SUBDOMAIN_MIN_LENGTH' ? subdomainMinLength : 'app',
+            ),
           },
         },
       ],
@@ -111,6 +115,16 @@ describe('SubdomainManagerService', () => {
       const subdomains = await service.findAvailableSubdomains('acme', 3);
 
       expect(subdomains).toHaveLength(1);
+    });
+
+    it('respects the configured minimum length for the random fallback', async () => {
+      // Every generated random subdomain is at least 12 characters long
+      subdomainMinLength = 12;
+      areAllSubdomainsTaken = true;
+
+      const [fallback] = await service.findAvailableSubdomains('acme', 3);
+
+      expect(fallback.length).toBeGreaterThanOrEqual(subdomainMinLength);
     });
   });
 });

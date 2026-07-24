@@ -11,6 +11,8 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
+  Min,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -1009,6 +1011,19 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Minimum number of characters allowed for a workspace subdomain (between 1 and 30)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  @IsOptional()
+  SUBDOMAIN_MIN_LENGTH = 3;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
