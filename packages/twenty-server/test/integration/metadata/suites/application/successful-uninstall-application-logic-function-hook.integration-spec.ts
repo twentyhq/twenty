@@ -140,4 +140,44 @@ describe('Uninstall application logic function hook', () => {
 
     expect(executeSpy).not.toHaveBeenCalled();
   }, 60000);
+
+  it('uninstalls the application even when the uninstall hook returns an error (best-effort)', async () => {
+    executeSpy.mockResolvedValue({
+      data: null,
+      duration: 1,
+      logs: '',
+      status: LogicFunctionExecutionStatus.ERROR,
+      error: {
+        errorType: 'UnhandledError',
+        errorMessage: 'Uninstall hook failed on purpose',
+        stackTrace: '',
+      },
+    });
+
+    await syncApplication({
+      manifest: buildManifestWithLogicFunction({
+        appId,
+        roleId,
+        logicFunctionId,
+        withUninstallHook: true,
+      }),
+      expectToFail: false,
+    });
+
+    const { data, errors } = await uninstallApplication({
+      universalIdentifier: appId,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data?.uninstallApplication).toBe(true);
+    expect(executeSpy).toHaveBeenCalledTimes(1);
+
+    const applicationsAfterUninstall = await globalThis.testDataSource.query(
+      `SELECT id FROM core."application" WHERE "universalIdentifier" = $1`,
+      [appId],
+    );
+
+    expect(applicationsAfterUninstall).toHaveLength(0);
+  }, 60000);
 });
