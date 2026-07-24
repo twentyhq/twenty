@@ -1,0 +1,37 @@
+packages/twenty-front/src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
+  s_c3fbc446206706::t_2a7fb3e9cd7bbc 60
+  s_c3fbc446206706::t_5a70de9048ffa4 13-16,27,36
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
+  s_c3fbc446206706::t_b8c3449028ed68 53
+  s_c3fbc446206706::t_6dc3a36c57e60a 97
+  s_c3fbc446206706::t_9b21eb4437ee3e 86-87,89
+  s_c3fbc446206706::t_f7391f9ed0db07 88
+packages/twenty-front/src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+  s_c3fbc446206706::t_e22a69f730094b 135
+  s_c3fbc446206706::t_b695625777afe4 98-101,160-164,171-173
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
+  s_c3fbc446206706::t_261d71de3b3a3e 107
+  s_c3fbc446206706::t_aba6daca4e587f 129-132
+packages/twenty-front/src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
+  s_c3fbc446206706::t_b695625777afe4 71-101
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
+  s_c3fbc446206706::t_b695625777afe4 73-76
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_c3fbc446206706::t_07288d8ff350b5 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0eb030e78eaa3cf827338ccd1713950c5a1a98af",
+  "prompts": {},
+  "sessions": {
+    "s_c3fbc446206706": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05f73216-cf79-404a-a6e7-839fa5d9edc8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
