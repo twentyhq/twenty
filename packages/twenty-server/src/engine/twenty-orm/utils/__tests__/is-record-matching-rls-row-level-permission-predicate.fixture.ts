@@ -77,17 +77,18 @@ const fieldMetadata = [
   }),
 ];
 
-export const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock({
-  id: objectMetadataId,
-  universalIdentifier: objectMetadataId,
-  fieldIds: fieldMetadata.map((field) => field.id),
-  fieldUniversalIdentifiers: fieldMetadata.map(
-    (field) => field.universalIdentifier,
-  ),
-});
+export const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock(
+  {
+    id: objectMetadataId,
+    universalIdentifier: objectMetadataId,
+    fieldIds: fieldMetadata.map((field) => field.id),
+    fieldUniversalIdentifiers: fieldMetadata.map(
+      (field) => field.universalIdentifier,
+    ),
+  },
+);
 
-export const flatFieldMetadataMaps =
-  buildFlatFieldMetadataMaps(fieldMetadata);
+export const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fieldMetadata);
 
 export const baseRecord: ObjectRecord = {
   jobTitle: 'Engineer',

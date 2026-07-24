@@ -122,7 +122,10 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     it('matches "is not empty" when the related record exists', () => {
       expect(
         matchRLSRowLevelPermissionPredicate({
-          record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
+          record: {
+            ...baseRecord,
+            company: { id: 'company-1' },
+          } as ObjectRecord,
           filter: { company: { is: 'NOT_NULL' } },
         }),
       ).toBe(true);
@@ -149,7 +152,10 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     it('does not match "is empty" when the related record exists', () => {
       expect(
         matchRLSRowLevelPermissionPredicate({
-          record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
+          record: {
+            ...baseRecord,
+            company: { id: 'company-1' },
+          } as ObjectRecord,
           filter: { company: { is: 'NULL' } },
         }),
       ).toBe(false);
