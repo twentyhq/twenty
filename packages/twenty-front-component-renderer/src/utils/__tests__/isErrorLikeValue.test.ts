@@ -35,6 +35,10 @@ describe('isErrorLikeValue', () => {
     expect(isErrorLikeValue({ name: 'Error', message: 'boom' })).toBe(false);
   });
 
+  it('should not match user data that happens to expose name and message', () => {
+    expect(isErrorLikeValue({ name: 'Acme', message: 'In stock' })).toBe(false);
+  });
+
   it('should not match plain data objects', () => {
     expect(
       isErrorLikeValue({ url: 'https://example.com', method: 'GET' }),
