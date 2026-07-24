@@ -56,27 +56,5 @@ export const buildUniqueRelationLabels = ({
     }
   }
 
-  const sortedUnresolvedRecordIds = [...unresolvedRecordIds].sort();
-
-  if (sortedUnresolvedRecordIds.length === 1) {
-    labelByRecordId.set(sortedUnresolvedRecordIds[0], t`Unknown`);
-  } else if (sortedUnresolvedRecordIds.length > 1) {
-    const ordinalPadding = String(sortedUnresolvedRecordIds.length).length;
-    let ordinal = 1;
-
-    for (const recordId of sortedUnresolvedRecordIds) {
-      const { label, nextOrdinal } = claimUniqueSuffixedLabel({
-        baseLabel: t`Unknown`,
-        startOrdinal: ordinal,
-        takenLabels,
-        formatOrdinal: (ordinalToFormat) =>
-          String(ordinalToFormat).padStart(ordinalPadding, '0'),
-      });
-
-      labelByRecordId.set(recordId, label);
-      ordinal = nextOrdinal;
-    }
-  }
-
   return { labelByRecordId, unresolvedRecordIds };
 };

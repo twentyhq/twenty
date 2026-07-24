@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getRelationLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-column-names.util';
+import { getChartLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-chart-label-identifier-column-names.util';
 
 const labelFieldMetadataId = 'label-field-id';
 
@@ -33,10 +33,10 @@ const buildFlatObjectMetadata = (
     labelIdentifierFieldMetadataId,
   }) as unknown as FlatObjectMetadata;
 
-describe('getRelationLabelIdentifierColumnNames', () => {
+describe('getChartLabelIdentifierColumnNames', () => {
   it('should return id and the column name for a TEXT label identifier', () => {
     expect(
-      getRelationLabelIdentifierColumnNames({
+      getChartLabelIdentifierColumnNames({
         flatObjectMetadata: buildFlatObjectMetadata(labelFieldMetadataId),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
           name: 'name',
@@ -48,7 +48,7 @@ describe('getRelationLabelIdentifierColumnNames', () => {
 
   it('should return id and the column name for a UUID label identifier', () => {
     expect(
-      getRelationLabelIdentifierColumnNames({
+      getChartLabelIdentifierColumnNames({
         flatObjectMetadata: buildFlatObjectMetadata(labelFieldMetadataId),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
           name: 'externalId',
@@ -60,7 +60,7 @@ describe('getRelationLabelIdentifierColumnNames', () => {
 
   it('should return id and the composite column names for a FULL_NAME label identifier', () => {
     expect(
-      getRelationLabelIdentifierColumnNames({
+      getChartLabelIdentifierColumnNames({
         flatObjectMetadata: buildFlatObjectMetadata(labelFieldMetadataId),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
           name: 'name',
@@ -72,7 +72,7 @@ describe('getRelationLabelIdentifierColumnNames', () => {
 
   it('should return null when the object has no label identifier field', () => {
     expect(
-      getRelationLabelIdentifierColumnNames({
+      getChartLabelIdentifierColumnNames({
         flatObjectMetadata: buildFlatObjectMetadata(null),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
           name: 'name',
@@ -84,7 +84,7 @@ describe('getRelationLabelIdentifierColumnNames', () => {
 
   it('should return null when the label identifier is the id field itself', () => {
     expect(
-      getRelationLabelIdentifierColumnNames({
+      getChartLabelIdentifierColumnNames({
         flatObjectMetadata: buildFlatObjectMetadata(labelFieldMetadataId),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps({
           name: 'id',

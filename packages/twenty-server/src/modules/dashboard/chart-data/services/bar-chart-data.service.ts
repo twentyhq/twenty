@@ -38,6 +38,7 @@ import { applyCumulativeToTwoDimensionalBarData } from 'src/modules/dashboard/ch
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
+import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -195,9 +196,15 @@ export class BarChartDataService {
           flatFieldMetadataMaps,
         });
 
+      const resolvedResults = filterOutUnresolvedRelationBuckets({
+        rawResults: filteredResults,
+        primaryRelationLabelResolution: relationLabelResolutions.primary,
+        secondaryRelationLabelResolution: relationLabelResolutions.secondary,
+      });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return this.transformToTwoDimensionalBarChartData({
-          filteredRawResults: filteredResults,
+          filteredRawResults: resolvedResults,
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
@@ -210,7 +217,7 @@ export class BarChartDataService {
       }
 
       return this.transformToOneDimensionalBarChartData({
-        filteredRawResults: filteredResults,
+        filteredRawResults: resolvedResults,
         primaryAxisGroupByField,
         aggregateField,
         configuration,

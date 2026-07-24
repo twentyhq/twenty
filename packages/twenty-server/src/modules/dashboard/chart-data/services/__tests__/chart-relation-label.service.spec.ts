@@ -227,7 +227,7 @@ describe('ChartRelationLabelService', () => {
       flatFieldMetadataMaps,
     });
 
-    expect(primary?.labelByRecordId.get('agent-id-2')).toBe('Unknown');
+    expect(primary?.labelByRecordId.has('agent-id-2')).toBe(false);
     expect(primary?.unresolvedRecordIds).toEqual(new Set(['agent-id-2']));
   });
 
@@ -245,7 +245,7 @@ describe('ChartRelationLabelService', () => {
       flatFieldMetadataMaps,
     });
 
-    expect(primary?.labelByRecordId.get('agent-id-1')).toBe('Unknown');
+    expect(primary?.labelByRecordId.has('agent-id-1')).toBe(false);
     expect(primary?.unresolvedRecordIds).toEqual(new Set(['agent-id-1']));
   });
 
@@ -352,7 +352,7 @@ describe('ChartRelationLabelService', () => {
       flatFieldMetadataMaps,
     });
 
-    expect(primary?.labelByRecordId.get('agent-id-1')).toBe('Unknown');
+    expect(primary?.labelByRecordId.has('agent-id-1')).toBe(false);
     expect(primary?.unresolvedRecordIds).toEqual(new Set(['agent-id-1']));
   });
 });

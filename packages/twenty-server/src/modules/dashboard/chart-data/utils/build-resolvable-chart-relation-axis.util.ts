@@ -9,7 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type ChartRelationLabelAxisInput } from 'src/modules/dashboard/chart-data/types/chart-relation-label-axis-input.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type ResolvableChartRelationAxis } from 'src/modules/dashboard/chart-data/types/resolvable-chart-relation-axis.type';
-import { getRelationLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-relation-label-identifier-column-names.util';
+import { getChartLabelIdentifierColumnNames } from 'src/modules/dashboard/chart-data/utils/get-chart-label-identifier-column-names.util';
 
 export const buildResolvableChartRelationAxis = ({
   dimensionIndex,
@@ -47,7 +47,7 @@ export const buildResolvableChartRelationAxis = ({
     return undefined;
   }
 
-  const labelIdentifierColumnNames = getRelationLabelIdentifierColumnNames({
+  const labelIdentifierColumnNames = getChartLabelIdentifierColumnNames({
     flatObjectMetadata: targetFlatObjectMetadata,
     flatFieldMetadataMaps,
   });

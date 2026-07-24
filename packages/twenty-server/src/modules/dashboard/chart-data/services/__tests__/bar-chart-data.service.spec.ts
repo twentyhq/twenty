@@ -437,17 +437,14 @@ describe('BarChartDataService', () => {
       layout: BarChartLayout.VERTICAL,
     };
 
-    it('should use resolved labels on the axis and strip unresolved ids from the lookup', async () => {
+    it('should use resolved labels on the axis and drop unresolved buckets', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         { groupByDimensionValues: ['agent-id-1'], aggregateValue: 8 },
         { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
       ]);
       mockResolveRelationLabels.mockResolvedValue({
         primary: {
-          labelByRecordId: new Map([
-            ['agent-id-1', 'Alice'],
-            ['agent-id-2', 'Unknown'],
-          ]),
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
           unresolvedRecordIds: new Set(['agent-id-2']),
         },
       });
@@ -462,9 +459,45 @@ describe('BarChartDataService', () => {
       const axisValues = result.data.map((item) => item[result.indexBy]);
 
       expect(axisValues).toContain('Alice');
-      expect(axisValues).toContain('Unknown');
-      expect(axisValues).not.toContain('agent-id-1');
+      expect(axisValues).not.toContain('Unknown');
+      expect(axisValues).not.toContain('agent-id-2');
+      expect(result.data).toHaveLength(1);
       expect(result.formattedToRawLookup).toEqual({ Alice: 'agent-id-1' });
+    });
+
+    it('should compute hasTooManyGroups from the set reduced by dropped buckets', async () => {
+      const rawResults = Array.from(
+        { length: BAR_CHART_MAXIMUM_NUMBER_OF_BARS + 1 },
+        (_, index) => ({
+          groupByDimensionValues: [`agent-id-${index}`],
+          aggregateValue: index + 1,
+        }),
+      );
+      const unresolvedRecordIds = new Set([
+        `agent-id-${BAR_CHART_MAXIMUM_NUMBER_OF_BARS}`,
+        `agent-id-${BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1}`,
+      ]);
+      const labelByRecordId = new Map(
+        rawResults
+          .map((result) => String(result.groupByDimensionValues[0]))
+          .filter((recordId) => !unresolvedRecordIds.has(recordId))
+          .map((recordId) => [recordId, `Agent ${recordId}`]),
+      );
+
+      mockExecuteGroupByQuery.mockResolvedValue(rawResults);
+      mockResolveRelationLabels.mockResolvedValue({
+        primary: { labelByRecordId, unresolvedRecordIds },
+      });
+
+      const result = await service.getBarChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: relationConfiguration as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(result.hasTooManyGroups).toBe(false);
+      expect(result.data).toHaveLength(BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1);
     });
 
     it('should keep raw values when no resolution is returned', async () => {

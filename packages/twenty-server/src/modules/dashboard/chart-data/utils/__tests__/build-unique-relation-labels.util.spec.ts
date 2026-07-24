@@ -47,17 +47,17 @@ describe('buildUniqueRelationLabels', () => {
     );
   });
 
-  it('should classify missing labels as unresolved with a single "Unknown"', () => {
+  it('should classify missing labels as unresolved without assigning a label', () => {
     const { labelByRecordId, unresolvedRecordIds } = buildUniqueRelationLabels({
       rawLabelByRecordId: new Map([['id-1', 'Alice']]),
       allRecordIds: ['id-1', 'id-2'],
     });
 
-    expect(labelByRecordId.get('id-2')).toBe('Unknown');
+    expect(labelByRecordId.has('id-2')).toBe(false);
     expect(unresolvedRecordIds).toEqual(new Set(['id-2']));
   });
 
-  it('should number multiple unresolved records with zero-padded ordinals', () => {
+  it('should classify every record with no label as unresolved', () => {
     const allRecordIds = Array.from(
       { length: 11 },
       (_, index) => `id-${String(index).padStart(2, '0')}`,
@@ -69,8 +69,7 @@ describe('buildUniqueRelationLabels', () => {
     });
 
     expect(unresolvedRecordIds.size).toBe(11);
-    expect(labelByRecordId.get('id-00')).toBe('Unknown (01)');
-    expect(labelByRecordId.get('id-10')).toBe('Unknown (11)');
+    expect(labelByRecordId.size).toBe(0);
   });
 
   it('should classify whitespace-only labels as unresolved', () => {
@@ -79,7 +78,7 @@ describe('buildUniqueRelationLabels', () => {
       allRecordIds: ['id-1'],
     });
 
-    expect(labelByRecordId.get('id-1')).toBe('Unknown');
+    expect(labelByRecordId.has('id-1')).toBe(false);
     expect(unresolvedRecordIds).toEqual(new Set(['id-1']));
   });
 

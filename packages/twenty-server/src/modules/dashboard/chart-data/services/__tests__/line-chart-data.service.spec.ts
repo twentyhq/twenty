@@ -300,7 +300,7 @@ describe('LineChartDataService', () => {
       expect(result.hasTooManyGroups).toBe(false);
     });
 
-    it('should label secondary relation series with resolved record names and strip unresolved ids from the lookup', async () => {
+    it('should label secondary relation series with resolved record names and drop unresolved series', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         {
           groupByDimensionValues: ['2024-01-01', 'agent-id-1'],
@@ -313,10 +313,7 @@ describe('LineChartDataService', () => {
       ]);
       mockResolveRelationLabels.mockResolvedValue({
         secondary: {
-          labelByRecordId: new Map([
-            ['agent-id-1', 'Alice'],
-            ['agent-id-2', 'Unknown'],
-          ]),
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
           unresolvedRecordIds: new Set(['agent-id-2']),
         },
       });
@@ -334,8 +331,7 @@ describe('LineChartDataService', () => {
       const seriesLabels = result.series.map((serie) => serie.label);
 
       expect(seriesLabels).toContain('Alice');
-      expect(seriesLabels).toContain('Unknown');
-      expect(seriesLabels).not.toContain('agent-id-1');
+      expect(seriesLabels).not.toContain('Unknown');
       expect(result.formattedToRawLookup['Alice']).toBe('agent-id-1');
       expect(Object.values(result.formattedToRawLookup)).not.toContain(
         'agent-id-2',

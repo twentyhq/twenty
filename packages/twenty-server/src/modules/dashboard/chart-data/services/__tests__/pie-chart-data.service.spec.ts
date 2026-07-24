@@ -49,6 +49,13 @@ describe('PieChartDataService', () => {
     type: FieldMetadataType.UUID,
   };
 
+  const mockRelationField = {
+    id: 'relation-field-id',
+    name: 'assignedAgent',
+    label: 'Assigned Agent',
+    type: FieldMetadataType.RELATION,
+  };
+
   const mockObjectMetadata = {
     id: objectMetadataId,
     nameSingular: 'company',
@@ -85,11 +92,16 @@ describe('PieChartDataService', () => {
             ...mockAggregateField,
             universalIdentifier: 'aggregate-field-universal-id',
           },
+          'relation-field-universal-id': {
+            ...mockRelationField,
+            universalIdentifier: 'relation-field-universal-id',
+          },
         },
         universalIdentifierById: {
           [mockGroupByField.id]: 'group-by-field-universal-id',
           [mockSelectField.id]: 'select-field-universal-id',
           [mockAggregateField.id]: 'aggregate-field-universal-id',
+          [mockRelationField.id]: 'relation-field-universal-id',
         },
         universalIdentifiersByApplicationId: {},
       },
@@ -223,6 +235,38 @@ describe('PieChartDataService', () => {
           ],
         }),
       );
+    });
+
+    it('should drop unresolved relation buckets while keeping resolved and Not Set slices', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: [null], aggregateValue: 2 },
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 8 },
+        { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        primary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(['agent-id-2']),
+        },
+      });
+
+      const result = await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          groupByFieldMetadataId: mockRelationField.id,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const keys = result.data.map((item) => item.key);
+
+      expect(keys).toContain('Alice');
+      expect(keys).toContain('Not Set');
+      expect(keys).not.toContain('Unknown');
+      expect(keys).not.toContain('agent-id-2');
+      expect(result.data).toHaveLength(2);
     });
 
     it('should flag too many groups and limit slices', async () => {
