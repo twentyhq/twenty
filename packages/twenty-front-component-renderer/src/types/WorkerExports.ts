@@ -1,6 +1,7 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
 import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
 import { type FrontComponentExecutionContext } from './FrontComponentExecutionContext';
+import { type GeometryUpdateBatch } from './GeometryUpdateBatch';
 import { type HostToWorkerRenderContext } from './HostToWorkerRenderContext';
 
 export type WorkerExports = {
@@ -13,4 +14,5 @@ export type WorkerExports = {
   onConfirmationModalResult: (
     result: CommandConfirmationModalResult,
   ) => Promise<void>;
+  pushGeometryUpdates: (batch: GeometryUpdateBatch) => Promise<void>;
 };

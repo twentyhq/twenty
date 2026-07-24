@@ -1,6 +1,7 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
+import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/utils/installHostFetchProxy';
 import { loadFrontComponentModule } from '@/remote/worker/utils/loadFrontComponentModule';
@@ -31,6 +32,12 @@ export const renderFrontComponent = async ({
   const renderContainer = attachRemoteRenderRootToWorkerDocument(connection);
 
   setWorkerEnvironmentVariablesFromRenderContext(renderContext);
+
+  if (isDefined(renderContext.initialViewportGeometry)) {
+    workerGeometryStore.applyGeometryBatch({
+      viewport: renderContext.initialViewportGeometry,
+    });
+  }
 
   const componentModule = await loadFrontComponentModule({
     componentSource: renderContext.componentSource,
