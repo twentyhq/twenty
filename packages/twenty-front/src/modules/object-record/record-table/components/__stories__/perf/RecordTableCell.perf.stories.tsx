@@ -210,7 +210,6 @@ const meta: Meta = {
                     <RecordTableRowDraggableContextProvider
                       value={{
                         isDragging: false,
-                        dragHandleProps: null,
                       }}
                     >
                       <RecordTableCellContext.Provider

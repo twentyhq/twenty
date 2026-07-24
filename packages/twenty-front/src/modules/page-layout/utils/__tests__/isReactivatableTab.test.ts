@@ -1,30 +1,15 @@
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
-
-const makeTab = (overrides: Partial<PageLayoutTab> = {}): PageLayoutTab =>
-  ({
-    id: 'tab-1',
-    applicationId: 'app-1',
-    title: 'Tab',
-    isActive: true,
-    position: 0,
-    pageLayoutId: '',
-    widgets: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-    ...overrides,
-  }) as unknown as PageLayoutTab;
 
 describe('isReactivatableTab', () => {
   it('should return true when tab is inactive', () => {
-    const tab = makeTab({ isActive: false });
+    const tab = makeTab('tab-1', [], 0, undefined, { isActive: false });
 
     expect(isReactivatableTab(tab)).toBe(true);
   });
 
   it('should return false when tab is active', () => {
-    const tab = makeTab({ isActive: true });
+    const tab = makeTab('tab-1', [], 0, undefined, { isActive: true });
 
     expect(isReactivatableTab(tab)).toBe(false);
   });

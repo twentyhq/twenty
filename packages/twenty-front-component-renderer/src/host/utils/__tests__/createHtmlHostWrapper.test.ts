@@ -137,6 +137,46 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'fixed' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'fixed-typed';
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'text',
+          value: 'fixed',
+          className: 'rerendered',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('fixed');
+  });
+
+  it('should clear the host input when a controlled value becomes empty', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'abc' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('abc');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+  });
+
   it('should stop forwarding focusin after the handler prop is removed', () => {
     const handleFocusIn = jest.fn();
     const Wrapper = createHtmlHostWrapper('div');

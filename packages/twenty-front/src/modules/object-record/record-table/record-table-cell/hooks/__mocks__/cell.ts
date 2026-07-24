@@ -12,7 +12,6 @@ export const recordTableRowContextValue: RecordTableRowContextValue = {
 
 export const recordTableRowDraggableContextValue: RecordTableRowDraggableContextValue =
   {
-    dragHandleProps: {} as any,
     isDragging: false,
   };
 
