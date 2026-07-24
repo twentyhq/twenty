@@ -15,7 +15,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
-  FormFieldInput: () => null,
+  FormFieldInput: () => <div data-testid="form-field-input" />,
 }));
 
 jest.mock(
@@ -26,6 +26,15 @@ jest.mock(
     }: {
       options: { value: string }[];
     }) => <div data-testid="multiselect-options-count">{options.length}</div>,
+  }),
+);
+
+jest.mock(
+  '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput',
+  () => ({
+    FormWorkspaceMemberFilterValueInput: () => (
+      <div data-testid="workspace-member-filter-input" />
+    ),
   }),
 );
 
@@ -43,8 +52,25 @@ const selectField = opportunity.fields.find(
     field.type === FieldMetadataType.SELECT && (field.options?.length ?? 0) > 0,
 );
 
-if (!relationField || !selectField) {
-  throw new Error('Missing relation or select field in opportunity mock');
+const workspaceMemberRelationField = opportunity.fields.find(
+  (field) =>
+    field.type === FieldMetadataType.RELATION &&
+    field.relation?.targetObjectMetadata.nameSingular === 'workspaceMember',
+);
+
+const nonWorkspaceMemberRelationField = opportunity.fields.find(
+  (field) =>
+    field.type === FieldMetadataType.RELATION &&
+    field.relation?.targetObjectMetadata.nameSingular !== 'workspaceMember',
+);
+
+if (
+  !relationField ||
+  !selectField ||
+  !workspaceMemberRelationField ||
+  !nonWorkspaceMemberRelationField
+) {
+  throw new Error('Missing expected fields in opportunity mock');
 }
 
 const relationToSelectFilter: RecordFilter = {
@@ -58,61 +84,124 @@ const relationToSelectFilter: RecordFilter = {
   label: `${relationField.label} → ${selectField.label}`,
 };
 
-const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
-
-const Seed = ({ children }: { children: React.ReactNode }) => {
-  const setCurrentRecordFilters = useSetAtomComponentState(
-    currentRecordFiltersComponentState,
-  );
-  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
-    fieldMetadataItemIdUsedInDropdownComponentState,
-    getAdvancedFilterObjectFilterDropdownComponentInstanceId(FILTER_ID),
-  );
-
-  const [isSeeded, setIsSeeded] = useState(false);
-
-  useEffect(() => {
-    setCurrentRecordFilters([relationToSelectFilter]);
-    setFieldMetadataItemIdUsedInDropdown(relationField.id);
-    setIsSeeded(true);
-  }, [setCurrentRecordFilters, setFieldMetadataItemIdUsedInDropdown]);
-
-  return isSeeded ? <>{children}</> : null;
+const workspaceMemberRelationFilter: RecordFilter = {
+  id: FILTER_ID,
+  fieldMetadataId: workspaceMemberRelationField.id,
+  relationTargetFieldMetadataId: null,
+  type: FieldMetadataType.RELATION,
+  operand: ViewFilterOperand.IS,
+  value: '',
+  displayValue: '',
+  label: workspaceMemberRelationField.label,
 };
 
-const Wrapper = () => (
-  <BaseWrapper>
-    <AdvancedFilterContext.Provider
-      value={{ objectMetadataItem: opportunity, isWorkflowFindRecords: false }}
-    >
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
+const nonWorkspaceMemberRelationFilter: RecordFilter = {
+  id: FILTER_ID,
+  fieldMetadataId: nonWorkspaceMemberRelationField.id,
+  relationTargetFieldMetadataId: null,
+  type: FieldMetadataType.RELATION,
+  operand: ViewFilterOperand.IS,
+  value: '',
+  displayValue: '',
+  label: nonWorkspaceMemberRelationField.label,
+};
+
+const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
+
+const renderValueInput = ({
+  recordFilter,
+  dropdownFieldMetadataId,
+}: {
+  recordFilter: RecordFilter;
+  dropdownFieldMetadataId: string;
+}) => {
+  const Seed = ({ children }: { children: React.ReactNode }) => {
+    const setCurrentRecordFilters = useSetAtomComponentState(
+      currentRecordFiltersComponentState,
+    );
+    const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
+      fieldMetadataItemIdUsedInDropdownComponentState,
+      getAdvancedFilterObjectFilterDropdownComponentInstanceId(FILTER_ID),
+    );
+
+    const [isSeeded, setIsSeeded] = useState(false);
+
+    useEffect(() => {
+      setCurrentRecordFilters([recordFilter]);
+      setFieldMetadataItemIdUsedInDropdown(dropdownFieldMetadataId);
+      setIsSeeded(true);
+    }, [setCurrentRecordFilters, setFieldMetadataItemIdUsedInDropdown]);
+
+    return isSeeded ? <>{children}</> : null;
+  };
+
+  return render(
+    <BaseWrapper>
+      <AdvancedFilterContext.Provider
+        value={{
+          objectMetadataItem: opportunity,
+          isWorkflowFindRecords: false,
+        }}
       >
-        <ObjectFilterDropdownComponentInstanceContext.Provider
-          value={{
-            instanceId:
-              getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                FILTER_ID,
-              ),
-          }}
+        <RecordFiltersComponentInstanceContext.Provider
+          value={{ instanceId: INSTANCE_ID }}
         >
-          <Seed>
-            <AdvancedFilterSidePanelValueFormInput recordFilterId={FILTER_ID} />
-          </Seed>
-        </ObjectFilterDropdownComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
-    </AdvancedFilterContext.Provider>
-  </BaseWrapper>
-);
+          <ObjectFilterDropdownComponentInstanceContext.Provider
+            value={{
+              instanceId:
+                getAdvancedFilterObjectFilterDropdownComponentInstanceId(
+                  FILTER_ID,
+                ),
+            }}
+          >
+            <Seed>
+              <AdvancedFilterSidePanelValueFormInput
+                recordFilterId={FILTER_ID}
+              />
+            </Seed>
+          </ObjectFilterDropdownComponentInstanceContext.Provider>
+        </RecordFiltersComponentInstanceContext.Provider>
+      </AdvancedFilterContext.Provider>
+    </BaseWrapper>,
+  );
+};
 
 describe('AdvancedFilterSidePanelValueFormInput', () => {
   it('resolves select options from the relation target field for a relation-traversal filter', async () => {
-    const { getByTestId } = render(<Wrapper />);
+    const { getByTestId } = renderValueInput({
+      recordFilter: relationToSelectFilter,
+      dropdownFieldMetadataId: relationField.id,
+    });
 
     await waitFor(() => {
       expect(getByTestId('multiselect-options-count').textContent).toBe(
         String(selectField.options?.length),
       );
     });
+  });
+
+  it('renders the workspace member "Me" picker for a direct relation-to-workspaceMember filter', async () => {
+    const { getByTestId } = renderValueInput({
+      recordFilter: workspaceMemberRelationFilter,
+      dropdownFieldMetadataId: workspaceMemberRelationField.id,
+    });
+
+    await waitFor(() => {
+      expect(getByTestId('workspace-member-filter-input')).toBeInTheDocument();
+    });
+  });
+
+  it('falls through to the generic field input for a direct relation to a non-workspaceMember object', async () => {
+    const { getByTestId, queryByTestId } = renderValueInput({
+      recordFilter: nonWorkspaceMemberRelationFilter,
+      dropdownFieldMetadataId: nonWorkspaceMemberRelationField.id,
+    });
+
+    await waitFor(() => {
+      expect(getByTestId('form-field-input')).toBeInTheDocument();
+    });
+    expect(
+      queryByTestId('workspace-member-filter-input'),
+    ).not.toBeInTheDocument();
   });
 });

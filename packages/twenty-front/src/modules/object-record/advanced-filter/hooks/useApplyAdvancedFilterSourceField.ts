@@ -20,10 +20,10 @@ type ApplyAdvancedFilterSourceFieldParams = {
 };
 
 // Creates a leaf advanced filter from a source field selection. Composite
-// and many-to-one relation sources are handled by their own specialized
-// hooks (useApplyAdvancedFilterCompositeSubField,
-// useApplyAdvancedFilterRelationTargetField) — callers branch to those
-// before reaching this hook.
+// sources are handled by useApplyAdvancedFilterCompositeSubField and
+// many-to-one relation sources by useApplyAdvancedFilterRelationTargetField,
+// except a workspaceMember relation record which routes here to filter the
+// relation by record (with the "Me" option).
 export const useApplyAdvancedFilterSourceField = () => {
   const setSelectedOperandInDropdown = useSetAtomComponentState(
     selectedOperandInDropdownComponentState,
