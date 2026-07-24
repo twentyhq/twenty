@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Histogram } from '@opentelemetry/api';
+import { type Counter, type Histogram } from '@opentelemetry/api';
 import { type Pool } from 'pg';
 import { type DataSource } from 'typeorm';
 import { type PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
@@ -46,18 +46,28 @@ export class DatabasePoolMetricsService {
   private readonly pools = new Map<DatabasePoolName, Pool>();
   private readonly instrumentedDrivers = new WeakSet<PostgresDriver>();
   private readonly acquisitionDurationHistogram: Histogram;
+  private readonly acquisitionFailureCounter: Counter;
 
   constructor(private readonly metricsService: MetricsService) {
-    this.acquisitionDurationHistogram = this.metricsService
-      .getMeter()
-      .createHistogram('twenty_database_pool_acquisition_duration_seconds', {
+    const meter = this.metricsService.getMeter();
+
+    this.acquisitionDurationHistogram = meter.createHistogram(
+      'twenty_database_pool_acquisition_duration_seconds',
+      {
         description:
           'Time spent acquiring a connection from the PostgreSQL pool',
         unit: 's',
         advice: {
           explicitBucketBoundaries: ACQUISITION_DURATION_BUCKETS_SECONDS,
         },
-      });
+      },
+    );
+    this.acquisitionFailureCounter = meter.createCounter(
+      'twenty_database_pool_acquisition_failures',
+      {
+        description: 'Number of failed PostgreSQL pool connection acquisitions',
+      },
+    );
 
     for (const gauge of POOL_GAUGES) {
       this.metricsService.createMultiObservableGauge({
@@ -99,6 +109,12 @@ export class DatabasePoolMetricsService {
 
       try {
         return await obtainMasterConnection();
+      } catch (error) {
+        this.acquisitionFailureCounter.add(1, {
+          pool: poolName,
+        });
+
+        throw error;
       } finally {
         this.acquisitionDurationHistogram.record(
           (performance.now() - start) / 1000,

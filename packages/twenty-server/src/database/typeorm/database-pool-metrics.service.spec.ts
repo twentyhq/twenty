@@ -59,16 +59,23 @@ describe('DatabasePoolMetricsService', () => {
   let service: DatabasePoolMetricsService;
   let gaugeCallbacks: Map<string, GaugeCallback>;
   let histogramRecord: jest.Mock;
+  let counterAdd: jest.Mock;
+  let createCounter: jest.Mock;
 
   beforeEach(() => {
     gaugeCallbacks = new Map();
     histogramRecord = jest.fn();
+    counterAdd = jest.fn();
+    createCounter = jest.fn().mockReturnValue({
+      add: counterAdd,
+    });
 
     const metricsService = {
       getMeter: jest.fn().mockReturnValue({
         createHistogram: jest.fn().mockReturnValue({
           record: histogramRecord,
         }),
+        createCounter,
       }),
       createMultiObservableGauge: jest
         .fn()
@@ -191,6 +198,7 @@ describe('DatabasePoolMetricsService', () => {
     expect(histogramRecord).toHaveBeenCalledWith(0.25, {
       pool: DatabasePoolName.WorkspacePrimary,
     });
+    expect(counterAdd).not.toHaveBeenCalled();
   });
 
   it('records failed connection acquisitions', async () => {
@@ -204,12 +212,21 @@ describe('DatabasePoolMetricsService', () => {
       dataSource: dataSource.dataSource,
     });
 
-    await expect(dataSource.driver.obtainMasterConnection()).rejects.toThrow(
+    await expect(dataSource.driver.obtainMasterConnection()).rejects.toBe(
       error,
     );
     expect(histogramRecord).toHaveBeenCalledWith(0, {
       pool: DatabasePoolName.Core,
     });
+    expect(counterAdd).toHaveBeenCalledWith(1, {
+      pool: DatabasePoolName.Core,
+    });
+    expect(createCounter).toHaveBeenCalledWith(
+      'twenty_database_pool_acquisition_failures',
+      {
+        description: 'Number of failed PostgreSQL pool connection acquisitions',
+      },
+    );
   });
 
   it('does not instrument a data source more than once', async () => {
