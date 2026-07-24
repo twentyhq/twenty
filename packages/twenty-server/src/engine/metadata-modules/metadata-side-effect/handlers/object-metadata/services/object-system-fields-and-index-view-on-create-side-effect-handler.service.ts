@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
@@ -21,7 +21,7 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
     metadataName: 'objectMetadata',
     name: 'objectSystemFieldsAndIndexViewOnCreate',
     description:
-      'When an object is created, provision (1) its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position; searchVector is handled by objectSearchVectorOnCreate, and the name field is caller-provided) and (2) its default INDEX table view ("All {objectLabelPlural}") with one view field per displayable SYSTEM field only, all isSystemSideEffect so the engine owns their lifecycle. View fields for caller-provided fields are owned by fieldIndexViewFieldOnCreate (the field creation side effect), which positions them before the system view fields; both handlers derive positions from the same caller-input list so the layout is contiguous without any ordering dependency. The view identifier is name-free (object identifier + INDEX view key), so an object rename keeps the same view. When the caller already provides the INDEX view (override), only the system fields are emitted. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated INDEX view/fields.',
+      'When an object is created, provision (1) its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position; searchVector is handled by objectSearchVectorOnCreate, and the name field is caller-provided) and (2) its default INDEX table view ("All {objectLabelPlural}") with one view field per displayable SYSTEM field only, all isSystemSideEffect so the engine owns their lifecycle. View fields for caller-provided fields are owned by fieldIndexViewFieldOnCreate (the field creation side effect), which positions them before the system view fields; both handlers derive positions from the same caller-input list so the layout is contiguous without any ordering dependency. The view identifier is name-free (object identifier + INDEX view key), so an object rename keeps the same view. The engine is the sole owner of the INDEX view and always emits it: a caller providing one with the same derived identifier is a genuine conflict left to surface downstream (engine universal-identifier collision) rather than silently deferred. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own curated INDEX view/fields.',
   },
 ) {
   buildSideEffects({
@@ -58,22 +58,6 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
       objectMetadata: sourceFlatObjectMetadata,
       applicationUniversalIdentifier,
     });
-
-    // When the caller already provides the INDEX view (same derived identifier),
-    // it fully owns the view and its view fields; we still own the system fields.
-    const callerProvidedIndexView =
-      allFlatEntityOperationRecordByMetadataName.view?.flatEntityToCreate[
-        flatIndexViewToCreate.universalIdentifier
-      ];
-
-    if (isDefined(callerProvidedIndexView)) {
-      return {
-        status: 'success',
-        operations: {
-          fieldMetadata: { flatEntityToCreate: systemFieldMetadataToCreate },
-        },
-      };
-    }
 
     const displayableCallerFlatFieldMetadatas =
       computeCallerFlatFieldMetadatasForObject({

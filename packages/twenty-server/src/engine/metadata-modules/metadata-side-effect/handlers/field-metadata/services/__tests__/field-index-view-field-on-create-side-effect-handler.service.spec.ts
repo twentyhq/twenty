@@ -288,7 +288,10 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(result.status).toBe('success');
     });
 
-    it('should noop when the caller owns the pending INDEX view (override)', () => {
+    // The engine owns the INDEX view, so the handler no longer defers to a
+    // caller-provided one: it emits and lets the engine collision on the view
+    // surface the conflict.
+    it('should still emit when the caller provides the pending INDEX view (no override)', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: NAME_FIELD,
@@ -303,7 +306,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
         }),
       );
 
-      expect(result.status).toBe('noop');
+      expect(result.status).toBe('success');
     });
 
     it('should noop for a non-displayable field (relation) at object creation', () => {
@@ -522,7 +525,10 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
     ).toBe(1);
   });
 
-  it('should noop when a pending view field already covers the same (view, field) pair, whatever its identifier', () => {
+  // A second writer claiming the same (view, field) pair is not deduped here:
+  // it is a genuine conflict left to surface downstream (engine collision, then
+  // the flat view field validator on the pair).
+  it('should still emit when a pending view field already covers the same (view, field) pair', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         triggerFieldMetadata: PRIORITY_FIELD,
@@ -541,7 +547,16 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       }),
     );
 
-    expect(result.status).toBe('noop');
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.values(result.operations.viewField?.flatEntityToCreate ?? {})[0]
+        .fieldMetadataUniversalIdentifier,
+    ).toBe(PRIORITY_FIELD_UNIVERSAL_IDENTIFIER);
   });
 
   it('should fail when the parent object cannot be resolved', () => {
