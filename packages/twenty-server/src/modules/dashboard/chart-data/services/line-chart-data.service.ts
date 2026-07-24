@@ -525,9 +525,10 @@ export class LineChartDataService {
     const hasTooManyGroups =
       hasTooManySeries || hasTooManyDataPoints || dateRangeWasTruncated;
 
-    const secondaryLookupWithPrefixedSeriesIds = new Map(
-      secondaryFormattedToRawLookup,
-    );
+    const secondaryLookupWithPrefixedSeriesIds = new Map<
+      string,
+      RawDimensionValue
+    >();
 
     for (const seriesId of limitedSeriesIds) {
       const rawValue = secondaryFormattedToRawLookup.get(seriesId);

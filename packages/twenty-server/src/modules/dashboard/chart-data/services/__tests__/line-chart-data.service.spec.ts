@@ -332,10 +332,45 @@ describe('LineChartDataService', () => {
 
       expect(seriesLabels).toContain('Alice');
       expect(seriesLabels).not.toContain('Unknown');
-      expect(result.formattedToRawLookup['Alice']).toBe('agent-id-1');
+      expect(Object.values(result.formattedToRawLookup)).toContain(
+        'agent-id-1',
+      );
       expect(Object.values(result.formattedToRawLookup)).not.toContain(
         'agent-id-2',
       );
+    });
+
+    it('should key the secondary lookup by prefixed series id only', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        {
+          groupByDimensionValues: ['2024-01-01', 'agent-id-1'],
+          aggregateValue: 8,
+        },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        secondary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(),
+        },
+      });
+
+      const result = await service.getLineChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...twoDimConfiguration,
+          secondaryAxisGroupByFieldMetadataId: mockRelationFieldY.id,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const aliceSeries = result.series.find(
+        (serie) => serie.label === 'Alice',
+      );
+
+      expect(aliceSeries).toBeDefined();
+      expect(result.formattedToRawLookup[aliceSeries!.key]).toBe('agent-id-1');
+      expect(result.formattedToRawLookup['Alice']).toBeUndefined();
     });
 
     it('should normalize sparse data (fill missing x values with 0)', async () => {
