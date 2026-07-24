@@ -356,7 +356,7 @@ const barChartConfigSchemaCore = z.object({
     .string()
     .optional()
     .describe(
-      'REQUIRED for relation fields (e.g. "name", "address.addressCity") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+      'Optional for relation fields: omit it to group by the related record itself, labelled with its display name; provide it (e.g. "name", "address.addressCity") to group by that attribute instead. REQUIRED for composite fields (e.g. "addressCity").',
     ),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
   secondaryAxisGroupByFieldName: z
@@ -369,7 +369,7 @@ const barChartConfigSchemaCore = z.object({
     .string()
     .optional()
     .describe(
-      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+      'Optional for relation fields: omit it to group by the related record itself, labelled with its display name; provide it (e.g. "name", "stage") to group by that attribute instead. REQUIRED for composite fields (e.g. "addressCity").',
     ),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
@@ -447,7 +447,7 @@ const lineChartConfigSchemaCore = z.object({
     .string()
     .optional()
     .describe(
-      'REQUIRED for relation fields (e.g. "name", "address.addressCity") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+      'Optional for relation fields: omit it to group by the related record itself, labelled with its display name; provide it (e.g. "name", "address.addressCity") to group by that attribute instead. REQUIRED for composite fields (e.g. "addressCity").',
     ),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
   secondaryAxisGroupByFieldName: z
@@ -460,7 +460,7 @@ const lineChartConfigSchemaCore = z.object({
     .string()
     .optional()
     .describe(
-      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+      'Optional for relation fields: omit it to group by the related record itself, labelled with its display name; provide it (e.g. "name", "stage") to group by that attribute instead. REQUIRED for composite fields (e.g. "addressCity").',
     ),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
@@ -530,7 +530,7 @@ const pieChartConfigSchemaCore = z.object({
     .string()
     .optional()
     .describe(
-      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+      'Optional for relation fields: omit it to group by the related record itself, labelled with its display name; provide it (e.g. "name", "stage") to group by that attribute instead. REQUIRED for composite fields (e.g. "addressCity").',
     ),
   orderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   manualSortOrder: z.array(z.string()).optional(),
