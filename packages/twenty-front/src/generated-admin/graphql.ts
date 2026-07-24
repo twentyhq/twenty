@@ -191,10 +191,10 @@ export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
   createdAt: Scalars['DateTime']['output'];
   galleryImagesUrls: Array<Scalars['String']['output']>;
+  hasFreeLogicFunctionExecutions: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   isConfigured: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
-  hasFreeLogicFunctionExecutions: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
   isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
