@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -13,6 +16,7 @@ export class WorkflowVersionStepHelpersWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async getValidatedDraftWorkflowVersion({
@@ -67,7 +71,48 @@ export class WorkflowVersionStepHelpersWorkspaceService {
         updateData.trigger = trigger;
       }
 
-      await workflowVersionRepository.update(workflowVersionId, updateData);
+      const dataSource =
+        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      const queryRunner = dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        await workflowVersionRepository.update(
+          workflowVersionId,
+          updateData,
+          undefined,
+          queryRunner.manager,
+        );
+
+        const updatedWorkflowVersion = await workflowVersionRepository.findOne(
+          { where: { id: workflowVersionId } },
+          queryRunner.manager,
+        );
+
+        if (isDefined(updatedWorkflowVersion)) {
+          await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
+            workspaceId,
+            entityManager: queryRunner.manager,
+            workflowVersion: updatedWorkflowVersion,
+          });
+        }
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        if (queryRunner.isTransactionActive) {
+          await queryRunner.rollbackTransaction();
+        }
+
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
     }, authContext);
+
+    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+      workspaceId,
+    );
   }
 }

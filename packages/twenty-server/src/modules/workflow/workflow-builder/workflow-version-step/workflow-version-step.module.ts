@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -30,6 +31,7 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([ObjectMetadataEntity, RoleTargetEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     WorkflowVersionStepWorkspaceService,
