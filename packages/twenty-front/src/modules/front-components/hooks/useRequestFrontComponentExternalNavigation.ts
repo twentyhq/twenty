@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type RequestExternalNavigation } from 'twenty-front-component-renderer';
 
@@ -7,13 +8,13 @@ import { trustedFrontComponentExternalOriginsState } from '@/front-components/st
 import { openExternalUrl } from '@/front-components/utils/openExternalUrl';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 export const useRequestFrontComponentExternalNavigation = ({
   applicationId,
 }: {
   applicationId: string;
 }): RequestExternalNavigation => {
+  const jotaiStore = useStore();
   const setFrontComponentExternalLinkModalConfig = useSetAtomState(
     frontComponentExternalLinkModalConfigState,
   );
@@ -44,6 +45,11 @@ export const useRequestFrontComponentExternalNavigation = ({
       });
       openModal(FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID);
     },
-    [applicationId, setFrontComponentExternalLinkModalConfig, openModal],
+    [
+      applicationId,
+      jotaiStore,
+      setFrontComponentExternalLinkModalConfig,
+      openModal,
+    ],
   );
 };
