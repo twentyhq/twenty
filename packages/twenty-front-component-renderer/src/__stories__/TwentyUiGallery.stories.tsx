@@ -1,10 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, waitFor, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 
+import {
+  errorHandler,
+  FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+  resetFrontComponentStoryMocks,
+} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-
-const errorHandler = fn();
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -12,20 +15,8 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   parameters: {
     layout: 'centered',
   },
-  args: {
-    onError: errorHandler,
-    applicationAccessToken: 'fake-token',
-    executionContext: {
-      frontComponentId: 'storybook-test',
-      userId: null,
-      recordId: null,
-      selectedRecordIds: [],
-      colorScheme: 'light',
-    },
-  },
-  beforeEach: () => {
-    errorHandler.mockClear();
-  },
+  args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+  beforeEach: resetFrontComponentStoryMocks,
 };
 
 export default meta;
