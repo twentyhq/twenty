@@ -137,14 +137,14 @@ describe('duplicateWorkflow (e2e)', () => {
 
     const duplicated = response.body.data.duplicateWorkflow;
 
+    duplicatedWorkflowId = duplicated?.workflowId;
+
     expect(duplicated.id).not.toBe(sourceVersionId);
     expect(duplicated.workflowId).not.toBe(sourceWorkflowId);
     expect(duplicated.status).toBe('DRAFT');
     expect(duplicated.trigger?.type).toBe('MANUAL');
     expect(Array.isArray(duplicated.steps)).toBe(true);
     expect(duplicated.steps.length).toBeGreaterThan(0);
-
-    duplicatedWorkflowId = duplicated.workflowId;
 
     const coreRows = await global.testDataSource.query(
       `SELECT "id", "steps", "triggers", "status" FROM core."workflowVersion"
