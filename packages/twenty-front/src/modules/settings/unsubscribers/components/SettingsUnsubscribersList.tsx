@@ -95,7 +95,10 @@ export const SettingsUnsubscribersList = () => {
   };
 
   const topicNameById = new Map(
-    unsubscribeTopics.map((topic) => [topic.id, topic.name ?? t`Untitled topic`]),
+    unsubscribeTopics.map((topic) => [
+      topic.id,
+      topic.name ?? t`Untitled topic`,
+    ]),
   );
 
   const getScopeLabel = (topicId: string | null) => {
@@ -129,6 +132,7 @@ export const SettingsUnsubscribersList = () => {
               />
             </StyledSearch>
             <SettingsUnsubscribersFilterDropdown
+              topics={unsubscribeTopics}
               reasonValue={reasonFilter}
               topicValue={topicFilter}
               onChangeReason={handleReasonChange}
@@ -153,14 +157,20 @@ export const SettingsUnsubscribersList = () => {
               const badge = getMessageSuppressionReasonBadge(item.reason);
 
               return (
-                <Status color={badge.color} text={badge.label} weight="medium" />
+                <Status
+                  color={badge.color}
+                  text={badge.label}
+                  weight="medium"
+                />
               );
             },
           },
           {
             label: t`Date`,
             align: 'right',
-            Cell: ({ item }) => <>{formatToHumanReadableDate(item.createdAt)}</>,
+            Cell: ({ item }) => (
+              <>{formatToHumanReadableDate(item.createdAt)}</>
+            ),
           },
         ]}
         gridAutoColumns="1fr 160px 140px 160px"

@@ -70,7 +70,10 @@ export const SettingsWorkspaceUnsubscribe = () => {
       ]}
     >
       <SettingsPageContainer>
-        <TabList tabs={tabs} componentInstanceId={UNSUBSCRIBE_TABS_INSTANCE_ID} />
+        <TabList
+          tabs={tabs}
+          componentInstanceId={UNSUBSCRIBE_TABS_INSTANCE_ID}
+        />
         {activeTabId === UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS && (
           <SettingsUnsubscribersList />
         )}

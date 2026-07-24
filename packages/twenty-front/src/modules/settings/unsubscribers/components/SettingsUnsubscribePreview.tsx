@@ -68,34 +68,38 @@ export const SettingsUnsubscribePreview = () => {
       />
       <StyledViewport>
         <StyledCard rounded>
-        <StyledHeader>
-          <H2Title
-            title={t`Do you want to unsubscribe?`}
-            description={t`Confirm your preferences:`}
+          <StyledHeader>
+            <H2Title
+              title={t`Do you want to unsubscribe?`}
+              description={t`Confirm your preferences:`}
+            />
+          </StyledHeader>
+          <StyledTopics>
+            {publicTopics.map((topic) => (
+              <StyledTopicRow key={topic.id}>
+                <Checkbox
+                  checked
+                  onChange={() => {}}
+                  aria-label={topic.name ?? t`Untitled topic`}
+                />
+                {topic.name ?? t`Untitled topic`}
+              </StyledTopicRow>
+            ))}
+          </StyledTopics>
+          <Button
+            title={t`Update`}
+            variant="primary"
+            accent="blue"
+            fullWidth
+            justify="center"
           />
-        </StyledHeader>
-        <StyledTopics>
-          {publicTopics.map((topic) => (
-            <StyledTopicRow key={topic.id}>
-              <Checkbox checked onChange={() => {}} />
-              {topic.name ?? t`Untitled topic`}
-            </StyledTopicRow>
-          ))}
-        </StyledTopics>
-        <Button
-          title={t`Update`}
-          variant="primary"
-          accent="blue"
-          fullWidth
-          justify="center"
-        />
-        <HorizontalSeparator text={t`Or`} noMargin />
-        <Button
-          title={t`Unsubscribe all`}
-          variant="secondary"
-          fullWidth
-          justify="center"
-        />
+          <HorizontalSeparator text={t`Or`} noMargin />
+          <Button
+            title={t`Unsubscribe all`}
+            variant="secondary"
+            fullWidth
+            justify="center"
+          />
         </StyledCard>
       </StyledViewport>
     </Section>
