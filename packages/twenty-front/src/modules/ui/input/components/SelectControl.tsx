@@ -11,7 +11,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
-export const StyledControlContainer = styled.div<{
+export const StyledControlContainer = styled.button<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -19,6 +19,7 @@ export const StyledControlContainer = styled.div<{
   hasRightElement?: boolean;
 }>`
   align-items: center;
+  appearance: none;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-left-radius: ${themeCssVariables.border.radius.md};
@@ -40,7 +41,7 @@ export const StyledControlContainer = styled.div<{
         : themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: grid;
-
+  font: inherit;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: ${({ hasIcon }) =>
     hasIcon ? 'auto 1fr auto' : '1fr auto'};
@@ -48,13 +49,13 @@ export const StyledControlContainer = styled.div<{
     selectSizeVariant === 'small'
       ? themeCssVariables.spacing[6]
       : themeCssVariables.spacing[8]};
-
+  margin: 0;
   max-width: 100%;
   padding: 0 ${themeCssVariables.spacing[2]};
   text-align: left;
 `;
 
-const StyledIconChevronDownWrapper = styled.div<{
+const StyledIconChevronDownWrapper = styled.span<{
   disabled?: boolean;
 }>`
   color: ${({ disabled }) =>
@@ -82,6 +83,7 @@ export const SelectControl = ({
   const { theme } = useContext(ThemeContext);
   return (
     <StyledControlContainer
+      type="button"
       disabled={isDisabled}
       hasIcon={isDefined(selectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}

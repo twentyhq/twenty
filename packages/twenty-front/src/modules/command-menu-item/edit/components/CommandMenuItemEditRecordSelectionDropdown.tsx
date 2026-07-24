@@ -18,18 +18,23 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
-const StyledClickableArea = styled.div<{ disabled?: boolean }>`
+const StyledClickableArea = styled.button<{ disabled?: boolean }>`
   align-items: center;
+  appearance: none;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  color: inherit;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  font: inherit;
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
+  margin: 0;
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
+  text-align: inherit;
 `;
 
 const StyledLabel = styled.span`
@@ -87,6 +92,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
       disableClickForClickableComponent={isRecordPage}
       clickableComponent={
         <StyledClickableArea
+          type="button"
           disabled={isRecordPage}
           data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
         >

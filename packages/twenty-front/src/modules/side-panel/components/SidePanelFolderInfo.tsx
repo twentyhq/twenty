@@ -18,8 +18,16 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledClickableIconWrapper = styled.div`
+const StyledClickableIconWrapper = styled.button`
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
   cursor: pointer;
+  font: inherit;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
 `;
 
 export const SidePanelFolderInfo = () => {
@@ -74,7 +82,7 @@ export const SidePanelFolderInfo = () => {
             void updateItem(selectedItem.id, { icon: iconKey })
           }
           clickableComponent={
-            <StyledClickableIconWrapper>
+            <StyledClickableIconWrapper type="button">
               <TintedIconTile
                 Icon={FolderIconComponent}
                 color={selectedItem.color}

@@ -23,10 +23,17 @@ import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 
-const StyledClickableIconWrapper = styled.div`
+const StyledClickableIconWrapper = styled.button`
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
   cursor: pointer;
   display: flex;
+  font: inherit;
   line-height: 0;
+  margin: 0;
+  padding: 0;
 `;
 
 const iconPickerContainerStyles = css`
@@ -151,7 +158,7 @@ export const SidePanelPageLayoutInfoContent = ({
         onChange={handleIconChange}
         className={iconPickerContainerStyles}
         clickableComponent={
-          <StyledClickableIconWrapper>
+          <StyledClickableIconWrapper type="button">
             {renderedIcon}
           </StyledClickableIconWrapper>
         }

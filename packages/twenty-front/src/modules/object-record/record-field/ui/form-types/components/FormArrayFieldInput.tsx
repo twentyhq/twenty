@@ -52,8 +52,9 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.button`
   align-items: center;
+  appearance: none;
   background: transparent;
   border: none;
   box-sizing: border-box;
@@ -61,7 +62,9 @@ const StyledDisplayModeContainer = styled.div`
   display: flex;
   font-family: inherit;
   height: 30px;
+  margin: 0;
   padding-inline: ${themeCssVariables.spacing[2]};
+  text-align: inherit;
   width: 100%;
 
   &:hover,
@@ -335,7 +338,10 @@ export const FormArrayFieldInput = ({
                   y: parseSpacingValueAsNumber(theme.spacing[1]),
                 }}
                 clickableComponent={
-                  <StyledDisplayModeContainer data-open={isDropdownOpen}>
+                  <StyledDisplayModeContainer
+                    type="button"
+                    data-open={isDropdownOpen}
+                  >
                     <ArrayDisplay value={draftValue.value} />
                   </StyledDisplayModeContainer>
                 }

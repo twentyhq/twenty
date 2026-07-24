@@ -11,7 +11,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledIconChevronDownWrapper = styled.div<{
+const StyledIconChevronDownWrapper = styled.span<{
   disabled?: boolean;
 }>`
   color: ${({ disabled }) =>
@@ -46,6 +46,7 @@ export const MultiSelectControl = ({
   const firstSelectedOption = selectedOptions?.[0];
   return (
     <StyledControlContainer
+      type="button"
       disabled={isDisabled}
       hasIcon={isDefined(fixedIcon) || isDefined(firstSelectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}

@@ -2,25 +2,30 @@ import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledContainer = styled.div<{
+export const StyledContainer = styled.button<{
   isNavigationDrawerExpanded: boolean;
   disabled?: boolean;
 }>`
   align-items: center;
+  appearance: none;
+  background: none;
   border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: flex;
+  font: inherit;
   gap: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
   height: ${themeCssVariables.spacing[7]};
+  margin: 0;
   max-width: 100%;
   min-width: 0;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  text-align: inherit;
   width: fit-content;
 
   &:hover {

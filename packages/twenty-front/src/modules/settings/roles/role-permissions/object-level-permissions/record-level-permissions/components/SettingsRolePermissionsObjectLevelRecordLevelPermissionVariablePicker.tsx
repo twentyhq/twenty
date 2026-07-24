@@ -9,11 +9,12 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
-const StyledRecordLevelPermissionPickerContainer = styled.div<{
+const StyledRecordLevelPermissionPickerContainer = styled.button<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
   align-items: center;
+  appearance: none;
   background-color: ${({ multiline }) =>
     multiline
       ? 'transparent'
@@ -33,7 +34,9 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
       : themeCssVariables.font.color.tertiary};
   cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
   display: flex;
+  font: inherit;
   justify-content: center;
+  margin: 0;
   padding: ${({ multiline }) =>
     multiline
       ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]}`
@@ -41,6 +44,7 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   position: ${({ multiline }) => (multiline ? 'absolute' : 'relative')};
   right: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[0] : 'auto'};
+  text-align: inherit;
   top: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[0] : 'auto'};
 
@@ -71,6 +75,7 @@ export const createRecordLevelPermissionVariablePicker = (
         dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
         clickableComponent={
           <StyledRecordLevelPermissionPickerContainer
+            type="button"
             multiline={multiline}
             readonly={disabled}
           >

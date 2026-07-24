@@ -15,17 +15,21 @@ import { IconVariablePlus } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledDropdownVariableButtonContainer = styled.div<{
+const StyledDropdownVariableButtonContainer = styled.button<{
   disabled?: boolean;
 }>`
   align-items: center;
+  appearance: none;
   background-color: transparent;
+  border: none;
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  font: inherit;
   justify-content: center;
+  margin: 0;
   padding: ${themeCssVariables.spacing[2]};
   user-select: none;
 `;
@@ -115,7 +119,7 @@ export const WorkflowVariablesDropdown = ({
       isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer>
+          <StyledDropdownVariableButtonContainer type="button">
             <IconVariablePlus size={theme.icon.size.md} />
           </StyledDropdownVariableButtonContainer>
         )

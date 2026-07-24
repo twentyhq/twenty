@@ -11,7 +11,12 @@ export const ViewBarFilterButton = () => {
   );
 
   return (
-    <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+    <StyledHeaderDropdownButton
+      isUnfolded={isDropdownOpen}
+      aria-haspopup={true}
+      aria-expanded={isDropdownOpen}
+      aria-controls={`${ViewBarFilterDropdownIds.MAIN}-options`}
+    >
       <Trans>Filter</Trans>
     </StyledHeaderDropdownButton>
   );

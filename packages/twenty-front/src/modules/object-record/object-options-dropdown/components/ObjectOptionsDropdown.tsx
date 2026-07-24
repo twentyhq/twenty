@@ -46,7 +46,12 @@ export const ObjectOptionsDropdown = ({
         dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
         dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
         clickableComponent={
-          <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+          <StyledHeaderDropdownButton
+            isUnfolded={isDropdownOpen}
+            aria-haspopup={true}
+            aria-expanded={isDropdownOpen}
+            aria-controls={`${OBJECT_OPTIONS_DROPDOWN_ID}-options`}
+          >
             <Trans>Options</Trans>
           </StyledHeaderDropdownButton>
         }

@@ -33,7 +33,13 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
 
   return (
     <StyledHeaderContainer>
-      <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
+      <StyledHeaderDropdownButton
+        id={dropdownId}
+        isUnfolded={isDropdownOpen}
+        aria-haspopup={true}
+        aria-expanded={isDropdownOpen}
+        aria-controls={`${dropdownId}-options`}
+      >
         <>
           <StyledTagContainer>
             <Tag

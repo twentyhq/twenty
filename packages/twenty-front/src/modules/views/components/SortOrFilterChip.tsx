@@ -1,8 +1,13 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useContext, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
+import { SortOrFilterChipDropdownTriggerLabel } from '@/views/components/SortOrFilterChipDropdownTriggerLabel';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -38,7 +43,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -51,7 +55,26 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   white-space: nowrap;
 `;
 
-const StyledIcon = styled.div`
+const StyledChipLabelText = styled.span`
+  align-items: center;
+  column-gap: ${themeCssVariables.spacing[1]};
+  display: flex;
+`;
+
+const StyledChipLabelButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: inherit;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledIcon = styled.span`
   align-items: center;
   display: flex;
 `;
@@ -86,7 +109,7 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   }
 `;
 
-const StyledLabelKey = styled.div`
+const StyledLabelKey = styled.span`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
@@ -108,7 +131,7 @@ const StyledSubFieldValue = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
-const StyledKeyLabelContainer = styled.div`
+const StyledKeyLabelContainer = styled.span`
   display: flex;
 `;
 
@@ -140,14 +163,19 @@ export const SortOrFilterChip = ({
   type,
 }: SortOrFilterChipProps) => {
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
+
+  const dropdownId = useAvailableComponentInstanceId(
+    DropdownComponentInstanceContext,
+  );
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onRemove();
   };
 
-  return (
-    <StyledChip onClick={onClick} variant={variant}>
+  const labelContent = (
+    <>
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.sm} />
@@ -167,9 +195,29 @@ export const SortOrFilterChip = ({
           </>
         )}
       </StyledKeyLabelContainer>
+    </>
+  );
+
+  const label = isDefined(dropdownId) ? (
+    <SortOrFilterChipDropdownTriggerLabel onClick={onClick}>
+      {labelContent}
+    </SortOrFilterChipDropdownTriggerLabel>
+  ) : isDefined(onClick) ? (
+    <StyledChipLabelButton type="button" onClick={onClick}>
+      {labelContent}
+    </StyledChipLabelButton>
+  ) : (
+    <StyledChipLabelText>{labelContent}</StyledChipLabelText>
+  );
+
+  return (
+    <StyledChip variant={variant}>
+      {label}
       <StyledDelete
+        type="button"
         variant={variant}
         onClick={handleDeleteClick}
+        aria-label={type === 'sort' ? t`Remove sort` : t`Remove filter`}
         data-testid={'remove-icon-' + testId}
       >
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

@@ -10,22 +10,28 @@ import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
+const StyledDropdownMenuInnerSelectDropdownButton = styled.button`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
 
   display: flex;
+  font-family: inherit;
   font-size: ${themeCssVariables.font.size.sm};
 
   font-weight: ${themeCssVariables.font.weight.medium};
 
   height: ${themeCssVariables.spacing[7]};
   justify-content: space-between;
+  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
 
   padding-right: ${themeCssVariables.spacing[2]};
+  text-align: inherit;
   width: 100%;
 `;
 
@@ -50,7 +56,7 @@ export const DropdownMenuInnerSelect = ({
   return (
     <Dropdown
       clickableComponent={
-        <StyledDropdownMenuInnerSelectDropdownButton>
+        <StyledDropdownMenuInnerSelectDropdownButton type="button">
           <span>{selectedOption.label}</span>
           <IconChevronDown size={theme.icon.size.sm} />
         </StyledDropdownMenuInnerSelectDropdownButton>

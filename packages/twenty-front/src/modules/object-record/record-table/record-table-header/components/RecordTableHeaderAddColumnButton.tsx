@@ -46,11 +46,19 @@ const StyledPlusIconHeaderCell = styled.div<{
   }
 `;
 
-const StyledPlusIconContainer = styled.div`
+const StyledPlusIconContainer = styled.button`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   display: flex;
+  font: inherit;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
+  margin: 0;
+  padding: 0;
   width: 100%;
 `;
 
@@ -111,7 +119,7 @@ export const RecordTableHeaderAddColumnButton = () => {
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
-            <StyledPlusIconContainer>
+            <StyledPlusIconContainer type="button">
               <IconPlus size={theme.icon.size.md} />
             </StyledPlusIconContainer>
           }

@@ -19,9 +19,11 @@ type StyledDropdownButtonProps = {
   isUnfolded: boolean;
 };
 
-const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
+const StyledDropdownButtonContainer = styled.button<StyledDropdownButtonProps>`
   align-items: center;
+  appearance: none;
   background: none;
+  border: none;
   border-radius: ${themeCssVariables.border.radius.xs} 0 0
     ${themeCssVariables.border.radius.xs};
   border-right: 1px solid ${themeCssVariables.border.color.medium};
@@ -29,11 +31,13 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   cursor: pointer;
 
   display: flex;
-
+  font: inherit;
   height: 32px;
+  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
 
+  text-align: inherit;
   user-select: none;
 
   &:hover {
@@ -102,7 +106,10 @@ export const PhoneCountryPickerDropdownButton = ({
     <Dropdown
       dropdownId={PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID}
       clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+        <StyledDropdownButtonContainer
+          type="button"
+          isUnfolded={isDropdownOpen}
+        >
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
             <StyledCheveronIconContainer>

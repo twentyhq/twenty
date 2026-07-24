@@ -29,6 +29,7 @@ export const MultiWorkspaceDropdownClickableComponent = ({
   );
   return (
     <StyledContainer
+      type="button"
       data-testid="workspace-dropdown"
       isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       disabled={disabled}

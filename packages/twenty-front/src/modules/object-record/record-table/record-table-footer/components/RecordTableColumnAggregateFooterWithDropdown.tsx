@@ -6,6 +6,7 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { RecordTableColumnAggregateFooterValueCell } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValueCell';
 import { type RecordTableFooterAggregateContentId } from '@/object-record/record-table/record-table-footer/types/RecordTableFooterAggregateContentId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownTriggerButton } from '@/ui/layout/dropdown/components/DropdownTriggerButton';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useCallback, useContext } from 'react';
 
@@ -55,10 +56,12 @@ export const RecordTableColumnFooterWithDropdown = ({
       onClose={handleDropdownClose}
       dropdownId={dropdownId}
       clickableComponent={
-        <RecordTableColumnAggregateFooterValueCell
-          dropdownId={dropdownId}
-          isFirstCell={isFirstCell}
-        />
+        <DropdownTriggerButton>
+          <RecordTableColumnAggregateFooterValueCell
+            dropdownId={dropdownId}
+            isFirstCell={isFirstCell}
+          />
+        </DropdownTriggerButton>
       }
       dropdownComponents={
         <RecordTableColumnAggregateFooterDropdownContext.Provider

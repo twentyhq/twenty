@@ -85,7 +85,10 @@ export const ViewPickerDropdown = () => {
       dropdownPlacement="bottom-start"
       onClickOutside={handleClickOutside}
       clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+        <StyledDropdownButtonContainer
+          type="button"
+          isUnfolded={isDropdownOpen}
+        >
           <StyledIconContainer>
             {isDefined(currentView) && isDefined(CurrentViewIcon) ? (
               <CurrentViewIcon size={theme.icon.size.md} />

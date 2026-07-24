@@ -10,15 +10,21 @@ import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledDropdownButtonContainer = styled.div`
+const StyledDropdownButtonContainer = styled.button`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
+  font: inherit;
   height: 32px;
+  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
+  text-align: inherit;
   user-select: none;
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -68,7 +74,7 @@ export const CurrencyPickerDropdownButton = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <StyledDropdownButtonContainer>
+        <StyledDropdownButtonContainer type="button">
           <StyledIconContainer>
             {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />

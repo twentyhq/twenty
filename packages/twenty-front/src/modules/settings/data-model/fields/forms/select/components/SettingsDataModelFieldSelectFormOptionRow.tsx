@@ -75,14 +75,20 @@ const StyledRow = styled.div`
   padding: ${themeCssVariables.spacing['1.5']} 0;
 `;
 
-const StyledColorSampleContainer = styled.span`
+const StyledColorSampleContainer = styled.button`
   align-items: center;
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
   cursor: pointer;
   display: flex;
+  font: inherit;
   margin-bottom: ${themeCssVariables.spacing[1]};
   margin-left: 14px;
   margin-right: 14px;
   margin-top: ${themeCssVariables.spacing[1]};
+  padding: 0;
 `;
 
 const StyledOptionInputContainer = styled.div`
@@ -164,7 +170,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
         clickableComponent={
-          <StyledColorSampleContainer>
+          <StyledColorSampleContainer type="button">
             <ColorSample colorName={option.color} />
           </StyledColorSampleContainer>
         }

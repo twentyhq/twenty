@@ -10,6 +10,7 @@ import {
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownTriggerButton } from '@/ui/layout/dropdown/components/DropdownTriggerButton';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { type SelectOption } from 'twenty-ui/input';
@@ -55,11 +56,13 @@ export const SubMatchingSelectRowRightDropdown = ({
         dropdownId={dropdownId}
         dropdownPlacement="bottom-start"
         clickableComponent={
-          <SubMatchingSelectDropdownButton
-            column={column}
-            option={option}
-            placeholder={placeholder}
-          />
+          <DropdownTriggerButton>
+            <SubMatchingSelectDropdownButton
+              column={column}
+              option={option}
+              placeholder={placeholder}
+            />
+          </DropdownTriggerButton>
         }
         dropdownComponents={
           <SubMatchingSelectInput

@@ -171,7 +171,12 @@ export const ObjectSortDropdownButton = () => {
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
       clickableComponent={
-        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+        <StyledHeaderDropdownButton
+          isUnfolded={isDropdownOpen}
+          aria-haspopup={true}
+          aria-expanded={isDropdownOpen}
+          aria-controls={`${OBJECT_SORT_DROPDOWN_ID}-options`}
+        >
           <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
