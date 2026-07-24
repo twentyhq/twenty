@@ -75,4 +75,51 @@ describe('usePublishWidgetHeaderInfo', () => {
       renderHook(() => usePublishWidgetHeaderInfo({ count: 7 })),
     ).not.toThrow();
   });
+
+  it('keeps the published state referentially stable across re-renders with inline actions', () => {
+    const store = createStore();
+
+    const { rerender } = renderHook(
+      // a fresh object and a fresh closure on every render, like a
+      // non-memoizing caller would pass
+      () =>
+        usePublishWidgetHeaderInfo({
+          count: 5,
+          primaryAction: {
+            Icon: IconPlus,
+            label: 'New task',
+            onClick: () => undefined,
+          },
+        }),
+      { wrapper: getWrapper(store) },
+    );
+
+    const firstPublished = getPublishedHeaderInfo(store);
+    rerender();
+    rerender();
+    const secondPublished = getPublishedHeaderInfo(store);
+
+    expect(secondPublished).toBe(firstPublished);
+  });
+
+  it('calls the latest onClick through the stable wrapper', () => {
+    const store = createStore();
+    const firstOnClick = jest.fn();
+    const secondOnClick = jest.fn();
+
+    const { rerender } = renderHook(
+      ({ onClick }: { onClick: () => void }) =>
+        usePublishWidgetHeaderInfo({
+          primaryAction: { Icon: IconPlus, label: 'Compose', onClick },
+        }),
+      { wrapper: getWrapper(store), initialProps: { onClick: firstOnClick } },
+    );
+
+    rerender({ onClick: secondOnClick });
+
+    getPublishedHeaderInfo(store)?.primaryAction?.onClick();
+
+    expect(firstOnClick).not.toHaveBeenCalled();
+    expect(secondOnClick).toHaveBeenCalledTimes(1);
+  });
 });
