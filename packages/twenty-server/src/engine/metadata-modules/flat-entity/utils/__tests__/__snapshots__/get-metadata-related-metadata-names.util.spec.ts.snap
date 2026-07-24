@@ -120,6 +120,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 exports[`getMetadataRelatedMetadataNames should return related metadata names for roleTarget 1`] = `
 [
   "role",
+  "agent",
 ]
 `;
 

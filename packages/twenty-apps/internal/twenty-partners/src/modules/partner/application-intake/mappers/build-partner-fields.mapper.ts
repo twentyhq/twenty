@@ -31,6 +31,9 @@ export type PartnerFieldsForUpsert = {
   projectBudgetMin?: { amountMicros: number; currencyCode: 'USD' };
   calendarLink?: { primaryLinkUrl: string };
   applicationNotes?: string | null;
+  twentyExperience?: CoreSchema.PartnerTwentyExperienceEnum[];
+  twentyExperienceNotes?: string;
+  twentyExperienceProofLink?: { primaryLinkUrl: string };
 };
 
 export function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFieldsForUpsert {
@@ -56,6 +59,18 @@ export function buildPartnerFields(input: SubmitPartnerApplicationInput): Partne
   if (isNonEmptyString(input.calendarLink)) fields.calendarLink = { primaryLinkUrl: input.calendarLink.trim() };
   const notes = buildApplicationNotes(input);
   if (notes !== null) fields.applicationNotes = notes;
+  if (input.twentyExperience !== undefined && input.twentyExperience.length > 0) {
+    fields.twentyExperience =
+      input.twentyExperience as CoreSchema.PartnerTwentyExperienceEnum[];
+  }
+  if (isNonEmptyString(input.twentyExperienceNotes)) {
+    fields.twentyExperienceNotes = input.twentyExperienceNotes.trim();
+  }
+  if (isNonEmptyString(input.twentyExperienceProofLink)) {
+    fields.twentyExperienceProofLink = {
+      primaryLinkUrl: input.twentyExperienceProofLink.trim(),
+    };
+  }
   return fields;
 }
 
