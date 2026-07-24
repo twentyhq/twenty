@@ -6,4 +6,6 @@ import { MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS } from 'src/engine/cor
 export const isBillingExemptApplication = (
   universalIdentifier: string,
 ): boolean =>
-  MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS.includes(universalIdentifier);
+  MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS.includes(
+    universalIdentifier,
+  );
