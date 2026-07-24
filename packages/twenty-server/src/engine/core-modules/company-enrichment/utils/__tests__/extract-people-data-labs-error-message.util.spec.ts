@@ -1,4 +1,4 @@
-import { extractPeopleDataLabsErrorMessage } from '@/people-data-labs/utils/extract-people-data-labs-error-message.util';
+import { extractPeopleDataLabsErrorMessage } from 'src/engine/core-modules/company-enrichment/utils/extract-people-data-labs-error-message.util';
 
 describe('extractPeopleDataLabsErrorMessage', () => {
   it('reads the nested People Data Labs error message', () => {

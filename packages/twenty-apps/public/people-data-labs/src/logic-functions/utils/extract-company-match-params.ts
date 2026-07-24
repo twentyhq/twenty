@@ -4,7 +4,7 @@ import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-like
 import { toText } from 'src/logic-functions/utils/to-text';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type CompanyNode } from 'src/types/company-node';
-import { type PeopleDataLabsCompanyEnrichParams } from 'twenty-shared/people-data-labs';
+import { type PdlCompanyEnrichParams } from 'src/types/pdl-company-enrich-params';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
@@ -14,7 +14,7 @@ export const extractCompanyMatchParams = ({
 }: {
   node: CompanyNode;
   input: BulkEnrichInput;
-}): PeopleDataLabsCompanyEnrichParams | undefined => {
+}): PdlCompanyEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
     return {

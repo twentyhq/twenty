@@ -5,7 +5,8 @@ import { chargeCredits } from 'twenty-sdk/billing';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
-import { type PeopleDataLabsEnrichResult } from 'twenty-shared/people-data-labs';
+import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+
 vi.mock('twenty-sdk/billing', () => ({
   chargeCredits: vi.fn(async () => undefined),
 }));
@@ -28,7 +29,7 @@ type RecordConfig = {
   id: string;
   exists?: boolean;
   hasIdentifier?: boolean;
-  outcome?: PeopleDataLabsEnrichResult<FakeData>;
+  outcome?: PdlEnrichResult<FakeData>;
   updateFails?: boolean;
   buildFails?: boolean;
 };
@@ -58,7 +59,7 @@ const buildHarness = (configs: RecordConfig[]) => {
   );
 
   const enrichBatch = vi.fn(
-    async (params: FakeParams[]): Promise<PeopleDataLabsEnrichResult<FakeData>[]> =>
+    async (params: FakeParams[]): Promise<PdlEnrichResult<FakeData>[]> =>
       params.map(
         (param) =>
           byId.get(param.id)?.outcome ?? {

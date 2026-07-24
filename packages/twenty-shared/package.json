@@ -102,11 +102,6 @@
       "import": "./dist/metadata.mjs",
       "require": "./dist/metadata.cjs"
     },
-    "./people-data-labs": {
-      "types": "./dist/people-data-labs/index.d.ts",
-      "import": "./dist/people-data-labs.mjs",
-      "require": "./dist/people-data-labs.cjs"
-    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -157,7 +152,6 @@
     "i18n",
     "logic-function",
     "metadata",
-    "people-data-labs",
     "testing",
     "timeline",
     "translations",
@@ -189,9 +183,6 @@
       ],
       "metadata": [
         "dist/metadata/index.d.ts"
-      ],
-      "people-data-labs": [
-        "dist/people-data-labs/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"

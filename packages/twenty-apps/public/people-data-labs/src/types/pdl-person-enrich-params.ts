@@ -1,7 +1,8 @@
-export type PeopleDataLabsCompanyEnrichParams = {
+export type PdlPersonEnrichParams = {
   pdlId?: string;
-  website?: string;
   profile?: string;
+  email?: string;
   name?: string;
+  company?: string;
   minLikelihood?: number;
 };

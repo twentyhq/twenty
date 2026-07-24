@@ -1,8 +1,8 @@
 import { isNumber, isObject } from '@sniptt/guards';
 
-import { type PeopleDataLabsEnrichResult } from '@/people-data-labs/types/people-data-labs-enrich-result.type';
-import { extractPeopleDataLabsErrorMessage } from '@/people-data-labs/utils/extract-people-data-labs-error-message.util';
-import { isDefined } from '@/utils/validation/isDefined';
+import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-error-message';
+import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+import { isDefined } from 'src/utils/is-defined';
 
 const ASSUMED_SUCCESS_STATUS_WHEN_MISSING = 200;
 
@@ -22,13 +22,13 @@ const extractMatchedData = (
   );
 };
 
-export const parsePeopleDataLabsResponseItem = <TData>({
+export const parsePdlItem = <TData>({
   item,
   requestedMinLikelihood,
 }: {
   item: unknown;
   requestedMinLikelihood?: number;
-}): PeopleDataLabsEnrichResult<TData> => {
+}): PdlEnrichResult<TData> => {
   if (!isObject(item)) {
     return {
       outcome: 'error',
@@ -50,10 +50,7 @@ export const parsePeopleDataLabsResponseItem = <TData>({
     return {
       outcome: 'error',
       httpStatus,
-      message: extractPeopleDataLabsErrorMessage({
-        json: responseItem,
-        httpStatus,
-      }),
+      message: extractPdlErrorMessage({ json: responseItem, httpStatus }),
     };
   }
 

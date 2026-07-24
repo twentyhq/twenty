@@ -7,7 +7,7 @@ import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-m
 import { findCompanyId } from 'src/logic-functions/utils/find-company-id';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type CompanyMatchKeys } from 'src/types/company-match-keys';
-import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { isDefined } from 'src/utils/is-defined';
 import { isUniqueViolationError } from 'src/utils/is-unique-violation-error';
 
@@ -19,7 +19,7 @@ const findOrCreateUncachedCompany = async ({
   companyMatchKeys,
 }: {
   client: CoreApiClient;
-  personData: PeopleDataLabsPersonData;
+  personData: PdlPersonData;
   companyMatchKeys: CompanyMatchKeys;
 }): Promise<string | undefined> => {
   const existingCompanyId = await findCompanyId({
@@ -76,7 +76,7 @@ export const findOrCreateCurrentCompany = async ({
   companyIdByMatchKeyCache,
 }: {
   client: CoreApiClient;
-  personData: PeopleDataLabsPersonData;
+  personData: PdlPersonData;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
 }): Promise<string | undefined> => {
   const companyMatchKeys = buildCompanyMatchKeys(personData);

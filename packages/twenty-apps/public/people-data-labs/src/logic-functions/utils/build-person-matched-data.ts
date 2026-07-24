@@ -9,7 +9,7 @@ import { isEmptyText } from 'src/logic-functions/utils/is-empty-text';
 import { mapPerson } from 'src/logic-functions/utils/map-person';
 import { pickWritableStandard } from 'src/logic-functions/utils/pick-writable-standard';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
-import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { type PersonNode } from 'src/types/person-node';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
@@ -33,7 +33,7 @@ export const buildPersonMatchedData = async ({
 }: {
   client: CoreApiClient;
   node: PersonNode;
-  outcome: { likelihood?: number; data: PeopleDataLabsPersonData };
+  outcome: { likelihood?: number; data: PdlPersonData };
   enrichedAt: string;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
   overrideExistingValues: boolean;

@@ -7,14 +7,14 @@ import { normalizeLinkedinUrl } from 'src/logic-functions/utils/normalize-linked
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { sizeTransform } from 'src/logic-functions/utils/size-transform';
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
 const SIZE_VALUES = buildAllowedValues(SIZE_OPTIONS);
 
 export const buildCompanyCreateData = (
-  personData: PeopleDataLabsPersonData,
+  personData: PdlPersonData,
 ): Record<string, unknown> =>
   pruneUndefined<unknown>({
     name: toText(personData.job_company_name),

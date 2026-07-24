@@ -59,12 +59,6 @@ runs:
       working-directory: ${{ inputs.app-path }}
       run: yarn install --immutable
 
-    - name: Ensure twenty-shared dist
-      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
-      uses: ./.github/actions/ensure-twenty-shared-dist
-      with:
-        app-path: ${{ inputs.app-path }}
-
     - name: Integration tests
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
       shell: bash

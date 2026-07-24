@@ -2,17 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString, isNumber, isObject } from '@sniptt/guards';
 import { type AxiosInstance } from 'axios';
-import {
-  PEOPLE_DATA_LABS_BASE_URL,
-  parsePeopleDataLabsResponseItem,
-  type PeopleDataLabsCompanyData,
-} from 'twenty-shared/people-data-labs';
 import { isDefined } from 'twenty-shared/utils';
 
+import { PEOPLE_DATA_LABS_BASE_URL } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-base-url.constant';
 import { PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-company-min-likelihood.constant';
 import { PEOPLE_DATA_LABS_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-request-timeout-ms.constant';
+import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
 import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-enrich-result.type';
 import { isTransientPeopleDataLabsStatus } from 'src/engine/core-modules/company-enrichment/utils/is-transient-people-data-labs-status.util';
+import { parsePeopleDataLabsResponseItem } from 'src/engine/core-modules/company-enrichment/utils/parse-people-data-labs-response-item.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 

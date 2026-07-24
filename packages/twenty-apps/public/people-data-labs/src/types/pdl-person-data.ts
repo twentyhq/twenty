@@ -1,4 +1,4 @@
-export type PeopleDataLabsPersonData = {
+export type PdlPersonData = {
   id?: string | null;
   full_name?: string | null;
   first_name?: string | null;

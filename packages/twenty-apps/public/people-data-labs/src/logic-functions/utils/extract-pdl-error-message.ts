@@ -1,8 +1,10 @@
 import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from 'src/utils/is-defined';
 
-const extractMessageFromValue = (messageValue: unknown): string | undefined => {
+const extractMessageFromValue = (
+  messageValue: unknown,
+): string | undefined => {
   if (isNonEmptyString(messageValue)) {
     return messageValue;
   }
@@ -16,7 +18,7 @@ const extractMessageFromValue = (messageValue: unknown): string | undefined => {
   return undefined;
 };
 
-export const extractPeopleDataLabsErrorMessage = ({
+export const extractPdlErrorMessage = ({
   json,
   httpStatus,
 }: {
@@ -29,7 +31,6 @@ export const extractPeopleDataLabsErrorMessage = ({
     const messageFromErrorObject = extractMessageFromValue(
       (errorField as Record<string, unknown>).message,
     );
-
     if (isDefined(messageFromErrorObject)) {
       return messageFromErrorObject;
     }
@@ -38,7 +39,6 @@ export const extractPeopleDataLabsErrorMessage = ({
   const messageFromTopLevelField =
     extractMessageFromValue(errorField) ??
     extractMessageFromValue(json.message);
-
   if (isDefined(messageFromTopLevelField)) {
     return messageFromTopLevelField;
   }

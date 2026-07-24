@@ -1,23 +1,22 @@
 import { isNumber, isObject } from '@sniptt/guards';
 
-import {
-  PEOPLE_DATA_LABS_BASE_URL,
-  type PeopleDataLabsEnrichResult,
-  parsePeopleDataLabsResponseItem,
-} from 'twenty-shared/people-data-labs';
+import { PDL_BASE_URL } from 'src/constants/pdl-base-url';
 import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
+import { parsePdlItem } from 'src/logic-functions/utils/parse-pdl-item';
+import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+
 export const postPdlSingleEnrich = async <TData>({
   path,
   params,
 }: {
   path: string;
   params: Record<string, unknown>;
-}): Promise<PeopleDataLabsEnrichResult<TData>> => {
+}): Promise<PdlEnrichResult<TData>> => {
   const apiKey = getPdlApiKey();
 
   let response: Response;
   try {
-    response = await fetch(`${PEOPLE_DATA_LABS_BASE_URL}${path}`, {
+    response = await fetch(`${PDL_BASE_URL}${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +50,7 @@ export const postPdlSingleEnrich = async <TData>({
     ? responseItem
     : { ...responseItem, status: response.status };
 
-  return parsePeopleDataLabsResponseItem<TData>({
+  return parsePdlItem<TData>({
     item: responseItemWithStatus,
     requestedMinLikelihood: isNumber(params.min_likelihood)
       ? params.min_likelihood

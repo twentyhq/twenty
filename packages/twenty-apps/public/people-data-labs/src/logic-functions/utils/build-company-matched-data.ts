@@ -4,7 +4,7 @@ import { isEmptyText } from 'src/logic-functions/utils/is-empty-text';
 import { mapCompany } from 'src/logic-functions/utils/map-company';
 import { pickWritableStandard } from 'src/logic-functions/utils/pick-writable-standard';
 import { type CompanyNode } from 'src/types/company-node';
-import { type PeopleDataLabsCompanyData } from 'twenty-shared/people-data-labs';
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const COMPANY_EMPTY_CHECKS = {
@@ -22,7 +22,7 @@ export const buildCompanyMatchedData = async ({
   shouldPersist,
 }: {
   node: CompanyNode;
-  outcome: { data: PeopleDataLabsCompanyData };
+  outcome: { data: PdlCompanyData };
   enrichedAt: string;
   overrideExistingValues: boolean;
   shouldPersist: boolean;

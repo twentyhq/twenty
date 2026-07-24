@@ -1,4 +1,4 @@
-import { type PeopleDataLabsCompanyData } from 'twenty-shared/people-data-labs';
+import { type PeopleDataLabsCompanyData } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-company-data.type';
 
 export type PeopleDataLabsCompanyEnrichResult =
   | { outcome: 'skipped' }

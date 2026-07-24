@@ -1,5 +1,6 @@
-import { type PeopleDataLabsPersonData } from 'twenty-shared/people-data-labs';
-export const PDL_PERSON_DATA_MOCK: PeopleDataLabsPersonData = {
+import { type PdlPersonData } from 'src/types/pdl-person-data';
+
+export const PDL_PERSON_DATA_MOCK: PdlPersonData = {
   id: 'pdl-person-1',
   first_name: 'Jane',
   last_name: 'Doe',

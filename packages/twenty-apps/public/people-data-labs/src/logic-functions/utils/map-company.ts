@@ -21,7 +21,7 @@ import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { sizeTransform } from 'src/logic-functions/utils/size-transform';
 import { type MappedRecord } from 'src/types/mapped-record';
-import { type PeopleDataLabsCompanyData } from 'twenty-shared/people-data-labs';
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
@@ -32,7 +32,7 @@ const LOCATION_CONTINENT_VALUES = buildAllowedValues(LOCATION_CONTINENT_OPTIONS)
 const MIC_EXCHANGE_VALUES = buildAllowedValues(MIC_EXCHANGE_OPTIONS);
 const FUNDING_STAGE_VALUES = buildAllowedValues(FUNDING_STAGE_OPTIONS);
 
-export const mapCompany = (companyData: PeopleDataLabsCompanyData): MappedRecord => {
+export const mapCompany = (companyData: PdlCompanyData): MappedRecord => {
   const location = companyData.location ?? {};
 
   const standard = pruneUndefined({

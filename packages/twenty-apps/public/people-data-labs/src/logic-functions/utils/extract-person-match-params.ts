@@ -2,7 +2,7 @@ import { buildPersonNameParam } from 'src/logic-functions/utils/build-person-nam
 import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-likelihood';
 import { toText } from 'src/logic-functions/utils/to-text';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
-import { type PeopleDataLabsPersonEnrichParams } from 'twenty-shared/people-data-labs';
+import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params';
 import { type PersonNode } from 'src/types/person-node';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
@@ -13,7 +13,7 @@ export const extractPersonMatchParams = ({
 }: {
   node: PersonNode;
   input: BulkEnrichInput;
-}): PeopleDataLabsPersonEnrichParams | undefined => {
+}): PdlPersonEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
     return {
