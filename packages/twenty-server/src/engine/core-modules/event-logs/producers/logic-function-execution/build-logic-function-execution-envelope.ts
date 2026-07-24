@@ -10,6 +10,10 @@ export const buildLogicFunctionExecutionEnvelope = (
     timestamp: formatDateTimeForClickHouse(entry.timestamp),
     workspaceId: entry.workspaceId,
     applicationId: entry.applicationId,
+    applicationUniversalIdentifier: entry.applicationUniversalIdentifier,
+    applicationRegistrationId: entry.applicationRegistrationId,
+    applicationRegistrationUniversalIdentifier:
+      entry.applicationRegistrationUniversalIdentifier,
     logicFunctionId: entry.logicFunctionId,
     logicFunctionName: entry.logicFunctionName,
     executionId: entry.executionId,

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
@@ -33,6 +34,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
+      ApplicationRegistrationEntity,
       WorkspaceEntity,
     ]),
   ],

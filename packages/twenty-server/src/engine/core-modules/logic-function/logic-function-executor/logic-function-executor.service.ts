@@ -22,6 +22,7 @@ import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs
 import { buildLogicFunctionExecutionEnvelope } from 'src/engine/core-modules/event-logs/producers/logic-function-execution/build-logic-function-execution-envelope';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
@@ -112,6 +113,8 @@ export class LogicFunctionExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   async execute({
@@ -534,12 +537,21 @@ export class LogicFunctionExecutorService {
     this.recordExecutionMetrics({ result, executionContext });
 
     if (this.eventLogEmitterService.isEnabled()) {
+      const applicationRegistrationUniversalIdentifier =
+        await this.resolveApplicationRegistrationUniversalIdentifier(
+          flatApplication.applicationRegistrationId,
+        );
+
       void this.eventLogEmitterService
         .dispatch([
           buildLogicFunctionExecutionEnvelope({
             timestamp: new Date(),
             workspaceId,
             applicationId: flatApplication.id,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
+            applicationRegistrationId:
+              flatApplication.applicationRegistrationId ?? '',
+            applicationRegistrationUniversalIdentifier,
             logicFunctionId: flatLogicFunction.id,
             logicFunctionName: flatLogicFunction.name,
             executionId,
@@ -630,6 +642,32 @@ export class LogicFunctionExecutorService {
       ],
       workspaceId,
     );
+  }
+
+  private async resolveApplicationRegistrationUniversalIdentifier(
+    applicationRegistrationId: string | null,
+  ): Promise<string> {
+    if (!isDefined(applicationRegistrationId)) {
+      return '';
+    }
+
+    try {
+      const registration = await this.applicationRegistrationRepository.findOne(
+        {
+          where: { id: applicationRegistrationId },
+          select: { universalIdentifier: true },
+        },
+      );
+
+      return registration?.universalIdentifier ?? '';
+    } catch (error) {
+      this.logger.error(
+        'Failed to resolve application registration universal identifier',
+        error,
+      );
+
+      return '';
+    }
   }
 
   private recordExecutionMetrics({

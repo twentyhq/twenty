@@ -55,6 +55,9 @@ export type LogicFunctionExecutionRow = {
   timestamp: string;
   workspaceId: string;
   applicationId: string;
+  applicationUniversalIdentifier: string;
+  applicationRegistrationId: string;
+  applicationRegistrationUniversalIdentifier: string;
   logicFunctionId: string;
   logicFunctionName: string;
   executionId: string;

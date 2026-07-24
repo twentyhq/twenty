@@ -123,6 +123,10 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
           executionId: record.executionId,
           logicFunctionId: record.logicFunctionId,
           applicationId: record.applicationId,
+          applicationUniversalIdentifier: record.applicationUniversalIdentifier,
+          applicationRegistrationId: record.applicationRegistrationId,
+          applicationRegistrationUniversalIdentifier:
+            record.applicationRegistrationUniversalIdentifier,
           workflowId: record.workflowId,
           workflowVersionId: record.workflowVersionId,
           workflowRunId: record.workflowRunId,
