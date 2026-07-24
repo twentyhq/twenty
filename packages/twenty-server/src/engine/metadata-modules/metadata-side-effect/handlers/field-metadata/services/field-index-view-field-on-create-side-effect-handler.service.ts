@@ -97,8 +97,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     };
   }
 
-  // Default view assembly: displayable fields only, visible, positioned label
-  // identifier first then before the system-field view fields.
   private buildViewFieldForObjectCreatedInSameBatch({
     sourceFlatFieldMetadata,
     parentFlatObjectMetadata,
@@ -124,11 +122,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       return undefined;
     }
 
-    // No deferral to a caller-provided INDEX view: the engine owns the INDEX
-    // view (objectSystemFieldsAndIndexViewOnCreate always emits it), so a caller
-    // providing one with the same derived identifier is a conflict the engine
-    // collision surfaces on the view itself, not something to silently curate
-    // around here.
     const displayableCallerFlatFieldMetadatas =
       computeCallerFlatFieldMetadatasForObject({
         objectMetadataUniversalIdentifier:
@@ -192,13 +185,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       return undefined;
     }
 
-    // Walk the view's own view fields through its foreign key aggregator rather
-    // than scanning every view field of the workspace. The aggregator comes from
-    // the workspace cache, exactly like the map it indexes into, so it carries
-    // the same freshness: both ignore what this batch is about to create, which
-    // is what indexAmongCallerFlatFieldMetadatas below accounts for.
-    // View field groups are a record-page concept and never exist on an INDEX
-    // view, so the appended view field is always ungrouped.
     const appendBasePosition =
       existingIndexFlatView.viewFieldUniversalIdentifiers
         .map(
@@ -215,8 +201,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
           -1,
         ) + 1;
 
-    // Contiguous positions when several fields are created on the same object
-    // in one batch.
     const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
       objectMetadataUniversalIdentifier:
         sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
@@ -236,9 +220,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     );
 
     const createdAt = new Date().toISOString();
-    // The view field belongs to the created field's application (a custom
-    // field on a standard object yields a custom-app view field), while the
-    // view keeps its own.
     const { applicationUniversalIdentifier } = sourceFlatFieldMetadata;
 
     return {
