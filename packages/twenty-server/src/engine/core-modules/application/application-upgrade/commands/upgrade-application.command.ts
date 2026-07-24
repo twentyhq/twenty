@@ -19,6 +19,8 @@ type UpgradeApplicationCommandOptions = {
   yes?: boolean;
 };
 
+const MAX_WORKSPACE_COUNT_LIMIT = 50;
+
 const parsePositiveInteger = (value: string, optionName: string): number => {
   const parsedValue = Number(value);
 
@@ -86,11 +88,19 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
   @Option({
     flags: '--workspace-count-limit <count>',
-    description: 'Limit the number of workspaces to upgrade',
+    description: `Limit the number of workspaces to upgrade (max ${MAX_WORKSPACE_COUNT_LIMIT})`,
     required: false,
   })
   parseWorkspaceCountLimit(value: string): number {
-    return parsePositiveInteger(value, 'workspace count limit');
+    const parsedValue = parsePositiveInteger(value, 'workspace count limit');
+
+    if (parsedValue > MAX_WORKSPACE_COUNT_LIMIT) {
+      throw new Error(
+        `Invalid workspace count limit "${value}". Maximum is ${MAX_WORKSPACE_COUNT_LIMIT}`,
+      );
+    }
+
+    return parsedValue;
   }
 
   @Option({

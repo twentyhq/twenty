@@ -9,7 +9,6 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   availablePackages: {},
   canBeUninstalled: false,
   autoUpgrade: false,
-  isStopped: false,
   description: 'workpace custom application',
   name: 'custom',
   objects: [],

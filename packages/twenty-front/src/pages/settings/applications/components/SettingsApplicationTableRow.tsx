@@ -1,19 +1,13 @@
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/data-display';
-import { IconAlertTriangle } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -25,16 +19,9 @@ export type SettingsApplicationTableRowProps = {
     description?: string | null;
   };
   hasUpdate?: boolean;
-  isStopped?: boolean;
   link?: string;
   sourceType?: ApplicationRegistrationSourceType;
 };
-
-const StyledWarningIconContainer = styled.span`
-  align-items: center;
-  display: inline-flex;
-  flex-shrink: 0;
-`;
 
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px 80px minmax(0, 1fr) 36px';
@@ -50,16 +37,12 @@ export const SettingsApplicationTableRow = ({
   action,
   application,
   hasUpdate,
-  isStopped,
   link,
   sourceType,
 }: SettingsApplicationTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
     getApplicationDescriptionSummary(resolvedDescription);
-
-  const stoppedWarningIconId = `stopped-application-warning-${application.id}`;
 
   return (
     <TableRow
@@ -69,24 +52,6 @@ export const SettingsApplicationTableRow = ({
     >
       <StyledNameTableCell minWidth="0" overflow="hidden">
         <ApplicationDisplay application={application} />
-        {isStopped === true && (
-          <>
-            <StyledWarningIconContainer id={stoppedWarningIconId}>
-              <IconAlertTriangle
-                size={theme.icon.size.md}
-                color={theme.color.yellow}
-              />
-            </StyledWarningIconContainer>
-            <AppTooltip
-              anchorSelect={`#${stoppedWarningIconId}`}
-              content={t`We are currently encountering issues with this app, its behavior may be degraded.`}
-              noArrow
-              place="bottom"
-              positionStrategy="fixed"
-              delay={TooltipDelay.shortDelay}
-            />
-          </>
-        )}
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
         {sourceType ? SOURCE_TYPE_LABELS[sourceType] : t`Seeded`}

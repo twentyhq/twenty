@@ -38,6 +38,7 @@ import {
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  IsApplicationStoppedDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
@@ -83,6 +84,19 @@ export const SettingsApplicationDetails = () => {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
     skip: !application?.universalIdentifier,
   });
+
+  const { data: isApplicationStoppedData } = useQuery(
+    IsApplicationStoppedDocument,
+    {
+      variables: {
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+      },
+      skip: !application?.universalIdentifier,
+    },
+  );
+
+  const isApplicationStopped =
+    isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -351,7 +365,7 @@ export const SettingsApplicationDetails = () => {
         ]}
       >
         <SettingsPageContainer>
-          {application?.isStopped === true && (
+          {isApplicationStopped && (
             <InlineBanner
               color="danger"
               LeftIcon={IconAlertTriangle}

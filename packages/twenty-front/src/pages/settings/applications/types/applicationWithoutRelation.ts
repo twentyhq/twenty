@@ -7,7 +7,6 @@ export type ApplicationWithoutRelation = Pick<
   | 'description'
   | 'version'
   | 'universalIdentifier'
-  | 'isStopped'
   | 'applicationRegistrationId'
   | 'applicationRegistration'
 >;

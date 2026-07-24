@@ -49,14 +49,16 @@ export class ApplicationResolver {
   }
 
   // Surfaces the kill switch so clients can warn users that the app is
-  // temporarily stopped and behaving in a degraded way.
-  @ResolveField(() => Boolean)
-  async isStopped(
-    @Parent() application: Pick<ApplicationDTO, 'universalIdentifier'>,
+  // temporarily stopped and behaving in a degraded way. Kept as a dedicated
+  // query so listing applications does not trigger one Redis read per app.
+  @Query(() => Boolean)
+  async isApplicationStopped(
+    @Args('applicationUniversalIdentifier')
+    applicationUniversalIdentifier: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     return this.applicationStopService.isApplicationStopped(
-      application.universalIdentifier,
+      applicationUniversalIdentifier,
       workspace.id,
     );
   }

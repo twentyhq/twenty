@@ -1199,9 +1199,6 @@ export default {
             "applicationRegistration": [
                 8
             ],
-            "isStopped": [
-                3
-            ],
             "logoUrl": [
                 1
             ],
@@ -6105,6 +6102,15 @@ export default {
                     "applicationId": [
                         4,
                         "UUID!"
+                    ]
+                }
+            ],
+            "isApplicationStopped": [
+                3,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

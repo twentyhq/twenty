@@ -601,7 +601,6 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
-  isStopped: Boolean!
   logoUrl: String
 }
 
@@ -3070,6 +3069,7 @@ type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
