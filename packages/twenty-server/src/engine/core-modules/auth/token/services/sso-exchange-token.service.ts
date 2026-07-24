@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { msg } from '@lingui/core/macro';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -23,13 +23,6 @@ import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/w
 
 const hashSSOExchangeToken = (ssoExchangeToken: string) =>
   crypto.createHash('sha256').update(ssoExchangeToken).digest('hex');
-
-// DELETE ... RETURNING yields driver rows, not hydrated entities
-type ClaimedSSOExchangeTokenRow = {
-  userId: string | null;
-  expiresAt: Date | string;
-  context: { authProvider?: AuthProviderEnum } | null;
-};
 
 // A single opaque error for missing, expired and already-consumed tokens:
 // distinguishing them would turn this endpoint into a redemption oracle.
@@ -81,39 +74,39 @@ export class SSOExchangeTokenService {
   async validateAndConsumeSSOExchangeTokenOrThrow(
     ssoExchangeToken: string,
   ): Promise<{ userId: string; authProvider: AuthProviderEnum }> {
-    // Claiming the row with a single DELETE ... RETURNING makes redemption
-    // atomic: concurrent requests cannot both read it and each mint a token.
-    const { raw } = await this.appTokenRepository
-      .createQueryBuilder()
-      .delete()
-      .from(AppTokenEntity)
-      .where('value = :value', {
-        value: hashSSOExchangeToken(ssoExchangeToken),
-      })
-      .andWhere('type = :type', { type: AppTokenType.SSOExchangeToken })
-      .andWhere('"revokedAt" IS NULL')
-      .andWhere('"deletedAt" IS NULL')
-      .returning('*')
-      .execute();
+    const appToken = await this.appTokenRepository.findOneBy({
+      value: hashSSOExchangeToken(ssoExchangeToken),
+      type: AppTokenType.SSOExchangeToken,
+      revokedAt: IsNull(),
+      deletedAt: IsNull(),
+    });
 
-    const claimedRows: ClaimedSSOExchangeTokenRow[] = raw;
-
-    // value carries no unique constraint, so assert the claim matched exactly
-    // one row rather than silently redeeming the first of several
-    if (claimedRows.length !== 1) {
+    if (!isDefined(appToken)) {
       throw buildInvalidSSOExchangeTokenException();
     }
 
-    const { userId, expiresAt, context } = claimedRows[0];
+    // Deleting the row is the single-use claim: under concurrent redemption
+    // only the request whose delete affects the row proceeds to mint a token.
+    const { affected } = await this.appTokenRepository.delete(appToken.id);
 
-    if (new Date() > new Date(expiresAt)) {
+    if (affected !== 1) {
       throw buildInvalidSSOExchangeTokenException();
     }
 
-    if (!isDefined(userId) || !isDefined(context?.authProvider)) {
+    if (new Date() > appToken.expiresAt) {
       throw buildInvalidSSOExchangeTokenException();
     }
 
-    return { userId, authProvider: context.authProvider };
+    if (
+      !isDefined(appToken.userId) ||
+      !isDefined(appToken.context?.authProvider)
+    ) {
+      throw buildInvalidSSOExchangeTokenException();
+    }
+
+    return {
+      userId: appToken.userId,
+      authProvider: appToken.context.authProvider,
+    };
   }
 }

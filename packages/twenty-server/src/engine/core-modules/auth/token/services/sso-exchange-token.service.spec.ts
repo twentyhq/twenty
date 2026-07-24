@@ -52,9 +52,6 @@ describe('SSOExchangeTokenService', () => {
     jest
       .spyOn(appTokenRepository, 'save')
       .mockImplementation(async (entity) => entity as AppTokenEntity);
-    jest
-      .spyOn(appTokenRepository, 'remove')
-      .mockImplementation(async (entity) => entity as AppTokenEntity);
   });
 
   describe('generateSSOExchangeToken', () => {
@@ -112,23 +109,21 @@ describe('SSOExchangeTokenService', () => {
         context: { authProvider: AuthProviderEnum.Google },
       }) as AppTokenEntity;
 
-    const mockClaimedRows = (rows: AppTokenEntity[]) => {
-      const queryBuilder = {
-        delete: jest.fn().mockReturnThis(),
-        from: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        returning: jest.fn().mockReturnThis(),
-        execute: jest.fn().mockResolvedValue({ raw: rows }),
-      };
-
+    const mockLookup = (appToken: AppTokenEntity | null) => {
       jest
-        .spyOn(appTokenRepository, 'createQueryBuilder')
-        .mockReturnValue(queryBuilder as never);
+        .spyOn(appTokenRepository, 'findOneBy')
+        .mockResolvedValue(appToken as never);
+    };
+
+    const mockClaim = (affected: number) => {
+      jest
+        .spyOn(appTokenRepository, 'delete')
+        .mockResolvedValue({ affected, raw: [] } as never);
     };
 
     it('should return the user and auth provider of the claimed token', async () => {
-      mockClaimedRows([buildAppToken()]);
+      mockLookup(buildAppToken());
+      mockClaim(1);
 
       const result =
         await service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token');
@@ -139,8 +134,17 @@ describe('SSOExchangeTokenService', () => {
       });
     });
 
-    it('should throw when the token has already been consumed', async () => {
-      mockClaimedRows([]);
+    it('should throw when the token cannot be found', async () => {
+      mockLookup(null);
+
+      await expect(
+        service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
+      ).rejects.toThrow(AuthException);
+    });
+
+    it('should throw when the delete does not claim the row', async () => {
+      mockLookup(buildAppToken());
+      mockClaim(0);
 
       await expect(
         service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
@@ -152,7 +156,8 @@ describe('SSOExchangeTokenService', () => {
 
       expiredToken.expiresAt = new Date(Date.now() - 1);
 
-      mockClaimedRows([expiredToken]);
+      mockLookup(expiredToken);
+      mockClaim(1);
 
       await expect(
         service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
@@ -164,7 +169,8 @@ describe('SSOExchangeTokenService', () => {
 
       tokenWithoutProvider.context = null;
 
-      mockClaimedRows([tokenWithoutProvider]);
+      mockLookup(tokenWithoutProvider);
+      mockClaim(1);
 
       await expect(
         service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
