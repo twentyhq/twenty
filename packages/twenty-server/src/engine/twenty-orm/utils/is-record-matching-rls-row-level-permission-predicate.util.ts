@@ -28,6 +28,7 @@ import {
   type StringFilter,
   type TSVectorFilter,
   type UUIDFilter,
+  type UUIDFilterValue,
 } from 'twenty-shared/types';
 import {
   isDefined,
@@ -148,7 +149,7 @@ const evaluateCompositeSubFieldMatch = ({
   ) {
     return isMatchingRawJsonFilter({
       rawJsonFilter: subFieldFilter as RawJsonFilter,
-      value: subFieldValue,
+      value: subFieldValue as string,
     });
   }
 
@@ -165,7 +166,7 @@ const evaluateCompositeSubFieldMatch = ({
   ) {
     return isMatchingUUIDFilter({
       uuidFilter: subFieldFilter as UUIDFilter,
-      value: subFieldValue as string | null,
+      value: subFieldValue as UUIDFilterValue,
     });
   }
 
