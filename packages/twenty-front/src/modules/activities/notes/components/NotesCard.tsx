@@ -6,9 +6,11 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
@@ -54,6 +56,24 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
+  const newNoteAction = useMemo(
+    () =>
+      hasObjectUpdatePermissions
+        ? {
+            Icon: IconPlus,
+            label: t`New note`,
+            onClick: () =>
+              openCreateActivity({ targetableObjects: [targetRecord] }),
+          }
+        : undefined,
+    [hasObjectUpdatePermissions, openCreateActivity, targetRecord],
+  );
+
+  usePublishWidgetHeaderInfo({
+    count: totalCountNotes,
+    primaryAction: newNoteAction,
+  });
+
   if (loading && isNotesEmpty) {
     return <SkeletonLoader />;
   }
@@ -88,26 +108,7 @@ export const NotesCard = () => {
 
   return (
     <StyledNotesContainer>
-      <NoteList
-        title={t`All`}
-        notes={notes}
-        totalCount={totalCountNotes}
-        button={
-          hasObjectUpdatePermissions && (
-            <Button
-              Icon={IconPlus}
-              size="small"
-              variant="secondary"
-              title={t`Add note`}
-              onClick={() =>
-                openCreateActivity({
-                  targetableObjects: [targetRecord],
-                })
-              }
-            />
-          )
-        }
-      />
+      <NoteList notes={notes} />
       <CustomResolverFetchMoreLoader
         loading={loading}
         onLastRowVisible={handleLastRowVisible}
