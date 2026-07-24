@@ -328,7 +328,7 @@ describe('createHtmlHostWrapper anchor navigation', () => {
       url: 'https://example.com/probe',
       target: undefined,
     });
-    expect(remoteOnClick).toHaveBeenCalledTimes(1);
+    expect(remoteOnClick).not.toHaveBeenCalled();
   });
 
   it('should not request navigation for a same-origin anchor click', () => {

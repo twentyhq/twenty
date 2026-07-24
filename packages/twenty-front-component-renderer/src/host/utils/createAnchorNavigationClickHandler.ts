@@ -36,7 +36,7 @@ export const createAnchorNavigationClickHandler =
     ) {
       event.preventDefault();
 
-      const clickRequestsNewTab =
+      const clickRequestsSeparateBrowsingContext =
         event.button === MIDDLE_MOUSE_BUTTON ||
         event.metaKey ||
         event.ctrlKey ||
@@ -46,8 +46,10 @@ export const createAnchorNavigationClickHandler =
 
       requestExternalNavigation({
         url: new URL(href, window.location.href).href,
-        target: clickRequestsNewTab ? '_blank' : anchorTarget,
+        target: clickRequestsSeparateBrowsingContext ? '_blank' : anchorTarget,
       });
+
+      return;
     }
 
     const clickIsPrimaryActivation = event.button === PRIMARY_MOUSE_BUTTON;

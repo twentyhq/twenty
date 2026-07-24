@@ -25,7 +25,7 @@ const createMouseEvent = (
 };
 
 describe('createAnchorNavigationClickHandler', () => {
-  it('should prevent default and request navigation for an external primary click', () => {
+  it('should intercept an external primary click without forwarding to the remote handler', () => {
     const requestExternalNavigation = jest.fn();
     const remoteOnClick = jest.fn();
     const { event, preventDefault } = createMouseEvent(0);
@@ -42,7 +42,7 @@ describe('createAnchorNavigationClickHandler', () => {
       url: 'https://example.com/probe',
       target: undefined,
     });
-    expect(remoteOnClick).toHaveBeenCalledWith(event);
+    expect(remoteOnClick).not.toHaveBeenCalled();
   });
 
   it('should forward the anchor target when requesting navigation', () => {
@@ -114,22 +114,33 @@ describe('createAnchorNavigationClickHandler', () => {
     expect(remoteOnClick).not.toHaveBeenCalled();
   });
 
-  it('should open a cmd or ctrl primary click in a new tab', () => {
-    const requestExternalNavigation = jest.fn();
-    const { event } = createMouseEvent(0, { metaKey: true });
+  it.each([
+    ['a cmd (meta) modifier', { metaKey: true }],
+    ['a ctrl modifier', { ctrlKey: true }],
+    ['a shift modifier', { shiftKey: true }],
+  ] as Array<
+    [string, { metaKey?: boolean; ctrlKey?: boolean; shiftKey?: boolean }]
+  >)(
+    'should open a primary click with %s in a separate browsing context without forwarding to the remote handler',
+    (_label, modifierKeys) => {
+      const requestExternalNavigation = jest.fn();
+      const remoteOnClick = jest.fn();
+      const { event } = createMouseEvent(0, modifierKeys);
 
-    createAnchorNavigationClickHandler({
-      href: 'https://example.com/probe',
-      target: undefined,
-      remoteOnClick: undefined,
-      requestExternalNavigation,
-    })(event);
+      createAnchorNavigationClickHandler({
+        href: 'https://example.com/probe',
+        target: undefined,
+        remoteOnClick,
+        requestExternalNavigation,
+      })(event);
 
-    expect(requestExternalNavigation).toHaveBeenCalledWith({
-      url: 'https://example.com/probe',
-      target: '_blank',
-    });
-  });
+      expect(requestExternalNavigation).toHaveBeenCalledWith({
+        url: 'https://example.com/probe',
+        target: '_blank',
+      });
+      expect(remoteOnClick).not.toHaveBeenCalled();
+    },
+  );
 
   it('should ignore a right click', () => {
     const requestExternalNavigation = jest.fn();
