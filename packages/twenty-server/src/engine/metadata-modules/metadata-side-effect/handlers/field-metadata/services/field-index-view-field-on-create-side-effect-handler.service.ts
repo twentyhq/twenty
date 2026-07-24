@@ -28,7 +28,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     metadataName: 'fieldMetadata',
     name: 'fieldIndexViewFieldOnCreate',
     description:
-      'When a field is created, provision its view field on the parent object INDEX view. This handler owns the view fields of every caller-provided field. When the parent object is created in the same batch, the default view assembly applies: only displayable fields (no relations) get a visible view field, positioned before the system-field view fields emitted by objectSystemFieldsAndIndexViewOnCreate; both handlers derive positions from the same caller-input list so no ordering dependency exists. When the parent object pre-exists, every created field (relations included) gets a HIDDEN view field appended to the INDEX view, preserving the historical createOneField behavior previously implemented caller-side. Emitted view fields are always isSystemSideEffect, whatever the provenance of the view they land on: the engine authored them, so manifest sync deletion inference must never drop them. Both branches resolve the INDEX view through its name-free deterministic identifier (object identifier + INDEX key), so the lookup is a single map access and never a scan; workspaces synced before the 2-24 reconcile command hold underived INDEX view identifiers and are simply skipped until it runs. Engine-owned fields (the reserved system fields, the searchVector) never reach this handler: they are emitted as side effects and the engine only triggers handlers on the original input, so their view fields belong to the handler that emits them. Noop when the INDEX view is caller-provided in the batch (override), when any view field already covers the same (view, field) pair (e.g. a FIELDS widget targeting the INDEX view), or when no INDEX view exists.',
+      'When a field is created, provision its view field on the parent object INDEX view. This handler owns the view fields of every caller-provided field. When the parent object is created in the same batch, the default view assembly applies: only displayable fields (no relations) get a visible view field, positioned before the system-field view fields emitted by objectSystemFieldsAndIndexViewOnCreate; both handlers derive positions from the same caller-input list so no ordering dependency exists. When the parent object pre-exists, every created field (relations included) gets a HIDDEN view field appended to the INDEX view, preserving the historical createOneField behavior previously implemented caller-side. Emitted view fields are always isSystemSideEffect, whatever the provenance of the view they land on: the engine authored them, so manifest sync deletion inference must never drop them. Both branches resolve the INDEX view through its name-free deterministic identifier (object identifier + INDEX key), so the lookup is a single map access and never a scan; workspaces synced before the 2-24 reconcile command hold underived INDEX view identifiers and are simply skipped until it runs. Engine-owned fields (the reserved system fields, the searchVector) never reach this handler: they are emitted as side effects and the engine only triggers handlers on the original input, so their view fields belong to the handler that emits them. Noop when the created field is not displayable in the default view (object created in the same batch) or when the object has no active INDEX view (pre-existing object). The engine owns the INDEX view, so this handler never defers to a caller-provided one: a caller providing the INDEX view, or a second writer claiming the same INDEX view field, is a genuine conflict left to surface downstream (engine universal-identifier collision, then the flat view field validator on the (view, field) pair).',
   },
 ) {
   buildSideEffects({
@@ -85,31 +85,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       return { status: 'noop' };
     }
 
-    // A view field covering the same (view, field) pair may already be pending
-    // (caller-provided, or a FIELDS widget targeting the INDEX view) or synced:
-    // the earlier writer owns it, whatever its universal identifier.
-    const viewFieldAlreadyCoveringPair = [
-      ...Object.values(
-        allFlatEntityOperationRecordByMetadataName.viewField
-          ?.flatEntityToCreate ?? {},
-      ),
-      ...Object.values(
-        relatedFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-      ),
-    ]
-      .filter(isDefined)
-      .some(
-        (pendingOrExistingViewField) =>
-          pendingOrExistingViewField.viewUniversalIdentifier ===
-            flatViewFieldToCreate.viewUniversalIdentifier &&
-          pendingOrExistingViewField.fieldMetadataUniversalIdentifier ===
-            flatViewFieldToCreate.fieldMetadataUniversalIdentifier,
-      );
-
-    if (viewFieldAlreadyCoveringPair) {
-      return { status: 'noop' };
-    }
-
     return {
       status: 'success',
       operations: {
@@ -149,18 +124,11 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       return undefined;
     }
 
-    // When the caller provides the INDEX view (override), it curates the view
-    // fields, deliberate omissions included. A pending view flagged
-    // isSystemSideEffect is our own object handler's emission, not an override.
-    const pendingIndexView =
-      allFlatEntityOperationRecordByMetadataName.view?.flatEntityToCreate[
-        indexViewUniversalIdentifier
-      ];
-
-    if (isDefined(pendingIndexView) && !pendingIndexView.isSystemSideEffect) {
-      return undefined;
-    }
-
+    // No deferral to a caller-provided INDEX view: the engine owns the INDEX
+    // view (objectSystemFieldsAndIndexViewOnCreate always emits it), so a caller
+    // providing one with the same derived identifier is a conflict the engine
+    // collision surfaces on the view itself, not something to silently curate
+    // around here.
     const displayableCallerFlatFieldMetadatas =
       computeCallerFlatFieldMetadatasForObject({
         objectMetadataUniversalIdentifier:

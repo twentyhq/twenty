@@ -223,7 +223,10 @@ describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () =>
     ).toEqual([0, 1, 2, 3]);
   });
 
-  it('should still emit the system fields but skip the view when the caller already provides the INDEX view (override)', () => {
+  // The engine is the sole owner of the INDEX view and always emits it; a
+  // caller providing one with the same identifier is a conflict left to the
+  // engine collision downstream, not silently deferred here.
+  it('should still emit its own INDEX view even when the caller provides one with the same identifier', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         pendingFieldMetadatas: [NAME_FIELD],
@@ -242,8 +245,12 @@ describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () =>
     expect(
       Object.keys(result.operations.fieldMetadata?.flatEntityToCreate ?? {}),
     ).toHaveLength(7);
-    expect(result.operations.view).toBeUndefined();
-    expect(result.operations.viewField).toBeUndefined();
+    expect(
+      Object.keys(result.operations.view?.flatEntityToCreate ?? {}),
+    ).toEqual([DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER]);
+    expect(
+      Object.values(result.operations.viewField?.flatEntityToCreate ?? {}),
+    ).toHaveLength(4);
   });
 
   it('should ignore caller fields belonging to other objects when computing the position offset', () => {
