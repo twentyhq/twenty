@@ -32,6 +32,38 @@ describe('createStyleProxy', () => {
     expect(style.getPropertyPriority('color')).toBe('important');
   });
 
+  it('should ignore setProperty with an invalid priority', () => {
+    const flush = jest.fn();
+    const style = createStyle({ flush });
+
+    style.setProperty('color', 'red', 'loud');
+
+    expect(style.getPropertyValue('color')).toBe('');
+    expect(style.cssText).toBe('');
+  });
+
+  it('should not flush a setProperty call with an invalid priority', async () => {
+    const flush = jest.fn();
+    const style = createStyle({ flush });
+
+    style.setProperty('color', 'red', 'loud');
+
+    await Promise.resolve();
+
+    expect(flush).not.toHaveBeenCalled();
+  });
+
+  it('should remove the property when the value is empty even with an invalid priority', () => {
+    const style = createStyle();
+
+    style.setProperty('color', 'red', 'important');
+    style.setProperty('color', '', 'loud');
+
+    expect(style.getPropertyValue('color')).toBe('');
+    expect(style.getPropertyPriority('color')).toBe('');
+    expect(style.cssText).toBe('');
+  });
+
   it('should clear the priority when the property is set without one', () => {
     const style = createStyle();
 
@@ -142,6 +174,24 @@ describe('createStyleProxy', () => {
     expect(style.getPropertyValue('background-image')).toBe(
       'url(data:image/png;base64,abc)',
     );
+  });
+
+  it('should append px to numeric length values when converting', () => {
+    const style = createStyle({ convertNumbersToPx: true });
+
+    style.width = 10;
+
+    expect(style.getPropertyValue('width')).toBe('10px');
+  });
+
+  it('should keep unitless numeric values unitless when converting', () => {
+    const style = createStyle({ convertNumbersToPx: true });
+
+    style.aspectRatio = 2;
+    style.scale = 3;
+
+    expect(style.getPropertyValue('aspect-ratio')).toBe('2');
+    expect(style.getPropertyValue('scale')).toBe('3');
   });
 
   it('should keep Object.prototype methods callable', () => {

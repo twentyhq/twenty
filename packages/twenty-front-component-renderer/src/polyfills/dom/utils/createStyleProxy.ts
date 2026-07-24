@@ -6,6 +6,7 @@ import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 const UNITLESS_CSS_PROPERTIES = new Set([
   'animationIterationCount',
+  'aspectRatio',
   'borderImageOutset',
   'borderImageSlice',
   'borderImageWidth',
@@ -35,6 +36,7 @@ const UNITLESS_CSS_PROPERTIES = new Set([
   'opacity',
   'order',
   'orphans',
+  'scale',
   'tabSize',
   'widows',
   'zIndex',
@@ -138,17 +140,24 @@ export const createStyleProxy = ({
           if (value === null || value === '') {
             delete target[name];
             delete stylePriorities[name];
-          } else {
-            target[name] = String(value);
+            flushSerializedCssText();
 
-            if (
-              isNonEmptyString(priority) &&
-              priority.toLowerCase() === 'important'
-            ) {
-              stylePriorities[name] = 'important';
-            } else {
-              delete stylePriorities[name];
-            }
+            return;
+          }
+
+          if (
+            isNonEmptyString(priority) &&
+            priority.toLowerCase() !== 'important'
+          ) {
+            return;
+          }
+
+          target[name] = String(value);
+
+          if (isNonEmptyString(priority)) {
+            stylePriorities[name] = 'important';
+          } else {
+            delete stylePriorities[name];
           }
 
           flushSerializedCssText();
