@@ -303,6 +303,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'roleUniversalIdentifier',
     },
+    agent: {
+      metadataName: 'agent',
+      foreignKey: 'agentId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'agentUniversalIdentifier',
+    },
     apiKey: null,
     workspace: null,
     application: null,

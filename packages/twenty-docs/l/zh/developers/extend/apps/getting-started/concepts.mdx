@@ -69,7 +69,7 @@ your-app/
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
-│   generate SDK → [post-install]                         │
+│   generate SDK → [post-install] → … → [uninstall]       │
 ├─────────────────────────────────────────────────────────┤
 │ Publish                                                 │
 │   npm publish → appears in Twenty marketplace           │
@@ -78,13 +78,13 @@ your-app/
 
 * **`yarn twenty dev`** — 监视你的源文件，并将更改实时同步到已连接的 Twenty 服务器。 当模式发生变化时，会自动重新生成类型化的 API 客户端。
 * **`yarn twenty dev:build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
-* **预/后安装钩子** — 在安装过程中运行的可选函数。 详见 [安装钩子](/l/zh/developers/extend/apps/config/install-hooks)。
+* **预/后安装和卸载钩子** — 在安装过程中或在卸载前立即运行的可选函数。 详见 [安装钩子](/l/zh/developers/extend/apps/config/install-hooks)。
 
 ## 后续步骤
 
 <CardGroup cols={2}>
   <Card title="配置" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
-    应用标识、默认角色和安装钩子。
+    应用标识、默认角色，以及安装和卸载钩子。
   </Card>
   <Card title="数据" icon="database" href="/l/zh/developers/extend/apps/data/overview">
     对象、字段和双向关系。

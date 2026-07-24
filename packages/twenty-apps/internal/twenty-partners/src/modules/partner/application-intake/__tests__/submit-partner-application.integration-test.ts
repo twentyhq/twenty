@@ -280,6 +280,88 @@ describe('submit-partner-application handler — upsert', () => {
     expect(result.reason).toBe('invalid_input');
   });
 
+  it('persists twenty experience fields on create', async () => {
+    const twentyExperienceNotes =
+      'Implemented Twenty for a logistics client: custom apps for shipment intake, ' +
+      'data models for carriers and lanes, workflows for exception routing, and a front ' +
+      'component for the ops board with daily exception triage.';
+    const result = await handler(
+      authedEvent(
+        baseInput({
+          email: 'experience.create@example.com',
+          companyName: 'Experience Create Co',
+          twentyExperience: ['CUSTOM_APPS', 'DATA_MODELS', 'WORKFLOWS'],
+          twentyExperienceNotes,
+          twentyExperienceProofLink: 'https://www.loom.com/share/experience-create',
+        }),
+      ),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    await trackCreated(result);
+
+    const fetched = await client.query({
+      partner: {
+        __args: { filter: { id: { eq: result.partnerId } } },
+        twentyExperience: true,
+        twentyExperienceNotes: true,
+        twentyExperienceProofLink: { primaryLinkUrl: true },
+      },
+    });
+    const node = fetched.partner;
+    expect(node?.twentyExperience).toEqual(
+      expect.arrayContaining(['CUSTOM_APPS', 'DATA_MODELS', 'WORKFLOWS']),
+    );
+    expect(node?.twentyExperienceNotes).toBe(twentyExperienceNotes);
+    expect(node?.twentyExperienceProofLink?.primaryLinkUrl).toBe(
+      'https://www.loom.com/share/experience-create',
+    );
+  });
+
+  it('persists twenty experience fields on update for the same email', async () => {
+    const first = await handler(
+      authedEvent(baseInput({ email: 'experience.update@example.com' })),
+    );
+    await trackCreated(first);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+
+    const twentyExperienceNotes =
+      'Updated narrative after resubmit: rebuilt the client data model, added workflows ' +
+      'for renewals, and linked a Loom walkthrough of the front components we shipped for ' +
+      'broker and ops roles across two workspaces.';
+    const second = await handler(
+      authedEvent(
+        baseInput({
+          email: 'experience.update@example.com',
+          twentyExperience: ['FRONT_COMPONENTS', 'WORKFLOWS'],
+          twentyExperienceNotes,
+          twentyExperienceProofLink: 'https://github.com/example/twenty-case-study',
+        }),
+      ),
+    );
+    expect(second.ok).toBe(true);
+    if (!second.ok) return;
+    expect(second.created).toBe(false);
+
+    const fetched = await client.query({
+      partner: {
+        __args: { filter: { id: { eq: second.partnerId } } },
+        twentyExperience: true,
+        twentyExperienceNotes: true,
+        twentyExperienceProofLink: { primaryLinkUrl: true },
+      },
+    });
+    const node = fetched.partner;
+    expect(node?.twentyExperience).toEqual(
+      expect.arrayContaining(['FRONT_COMPONENTS', 'WORKFLOWS']),
+    );
+    expect(node?.twentyExperienceNotes).toBe(twentyExperienceNotes);
+    expect(node?.twentyExperienceProofLink?.primaryLinkUrl).toBe(
+      'https://github.com/example/twenty-case-study',
+    );
+  });
+
   it('returns ok: false on malformed input (empty email)', async () => {
     const result = await handler(
       authedEvent({

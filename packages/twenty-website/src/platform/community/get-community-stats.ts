@@ -1,51 +1,83 @@
+import 'server-only';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { communityStatsStore } from './community-stats-store';
+import { readFiniteNumber } from './read-finite-number';
+
 export type CommunityStats = {
-  discordMembers: number;
-  githubStars: number;
+  discordMembers: number | null;
+  githubStars: number | null;
 };
 
-// Live numbers when reachable, recent-real fallbacks when not — so the menu
-// never renders empty chips and never blocks on a third party.
-// Snapshot of 2026-06-10; refresh when the live numbers drift visibly.
-const FALLBACK_STATS: CommunityStats = {
-  discordMembers: 6600,
-  githubStars: 49600,
-};
+const REVALIDATE_SECONDS = 900;
 
-const REVALIDATE_SECONDS = 3600;
+const GITHUB_REPO_URL = 'https://api.github.com/repos/twentyhq/twenty';
+const DISCORD_INVITE_URL =
+  'https://discord.com/api/v9/invites/cx5n4Jzs57?with_counts=true';
 
-const fetchJson = async (url: string): Promise<unknown> => {
-  const response = await fetch(url, {
-    next: { revalidate: REVALIDATE_SECONDS },
-  });
-  if (!response.ok) throw new Error(`${url} -> ${response.status}`);
-  return response.json();
-};
+async function fetchGithubStars(): Promise<number | null> {
+  const token = process.env.GITHUB_STATS_TOKEN;
+  try {
+    const response = await fetch(GITHUB_REPO_URL, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'twenty-website',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    if (!response.ok) {
+      console.error(
+        `community stats: ${GITHUB_REPO_URL} -> ${response.status}`,
+      );
+      return null;
+    }
+    const body = (await response.json()) as { stargazers_count?: unknown };
+    return readFiniteNumber(body.stargazers_count);
+  } catch {
+    return null;
+  }
+}
 
-const readNumber = (value: unknown): number | null =>
-  typeof value === 'number' && Number.isFinite(value) ? value : null;
+async function fetchDiscordMembers(): Promise<number | null> {
+  try {
+    const response = await fetch(DISCORD_INVITE_URL, {
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    if (!response.ok) {
+      console.error(
+        `community stats: ${DISCORD_INVITE_URL} -> ${response.status}`,
+      );
+      return null;
+    }
+    const body = (await response.json()) as {
+      approximate_member_count?: unknown;
+    };
+    return readFiniteNumber(body.approximate_member_count);
+  } catch {
+    return null;
+  }
+}
 
 export async function getCommunityStats(): Promise<CommunityStats> {
-  const [github, discord] = await Promise.allSettled([
-    fetchJson('https://api.github.com/repos/twentyhq/twenty'),
-    fetchJson('https://discord.com/api/v9/invites/cx5n4Jzs57?with_counts=true'),
+  const [githubStars, discordMembers] = await Promise.all([
+    fetchGithubStars(),
+    fetchDiscordMembers(),
   ]);
 
-  const githubStars =
-    github.status === 'fulfilled'
-      ? readNumber(
-          (github.value as { stargazers_count?: unknown }).stargazers_count,
-        )
-      : null;
-  const discordMembers =
-    discord.status === 'fulfilled'
-      ? readNumber(
-          (discord.value as { approximate_member_count?: unknown })
-            .approximate_member_count,
-        )
-      : null;
+  const hasMissingLiveValue =
+    !isDefined(githubStars) || !isDefined(discordMembers);
+  const cached = hasMissingLiveValue ? await communityStatsStore.read() : null;
 
-  return {
-    discordMembers: discordMembers ?? FALLBACK_STATS.discordMembers,
-    githubStars: githubStars ?? FALLBACK_STATS.githubStars,
+  const resolved: CommunityStats = {
+    githubStars: githubStars ?? cached?.githubStars ?? null,
+    discordMembers: discordMembers ?? cached?.discordMembers ?? null,
   };
+
+  if (isDefined(githubStars) || isDefined(discordMembers)) {
+    await communityStatsStore.write(resolved);
+  }
+
+  return resolved;
 }

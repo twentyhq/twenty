@@ -5,6 +5,7 @@ import {
   PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -78,9 +79,17 @@ export default defineView({
       size: 200,
     },
     {
+      universalIdentifier: 'e9908bdb-bfaa-4c2f-a193-9b25a8a7b1d0',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 220,
+    },
+    {
       universalIdentifier: 'ff01c4e3-b5c6-4832-90eb-ad05d8276e60',
       fieldMetadataUniversalIdentifier: PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 3,
+      position: 4,
       isVisible: true,
     },
   ],
