@@ -220,8 +220,8 @@ export default defineFrontComponent({
 ```
 
 Montaţi cu un [aspect de pagină](/l/ro/developers/extend/apps/layout/page-layouts). Un layout
-`RECORD_PAGE` adaugă file la vizualizarea unui obiect de înregistrare; un widget `FRONT_COMPONENT`
-într-o filă `CANVAS` găzduieşte componenta:
+`RECORD_PAGE` adaugă file în vizualizarea înregistrării unui obiect; o filă cu un singur widget
+`FRONT_COMPONENT` găzduiește componenta pe întreaga lățime:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -236,7 +236,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

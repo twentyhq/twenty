@@ -202,7 +202,8 @@ export default defineFrontComponent({
 ```
 
 Bunu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) ile bağlayın. Bir
-`RECORD_PAGE` düzeni, bir nesnenin kayıt görünümüne sekmeler ekler; `CANVAS` sekmesindeki bir `FRONT_COMPONENT` widget'ı bileşeni barındırır:
+`RECORD_PAGE` düzeni, bir nesnenin kayıt görünümüne sekmeler ekler; tek bir
+`FRONT_COMPONENT` widget'ına sahip bir sekme, bileşeni kenardan kenara barındırır:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -217,7 +218,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

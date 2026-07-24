@@ -200,7 +200,7 @@ export default defineFrontComponent({
 });
 ```
 
-[페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)으로 이를 마운트합니다. `RECORD_PAGE` 레이아웃은 객체의 레코드 뷰에 탭을 추가합니다. `CANVAS` 탭의 `FRONT_COMPONENT` 위젯이 해당 컴포넌트를 호스팅합니다:
+[페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)으로 이를 마운트합니다. `RECORD_PAGE` 레이아웃은 객체의 레코드 뷰에 탭을 추가합니다. 단일 `FRONT_COMPONENT` 위젯이 있는 탭은 컴포넌트를 전체 폭으로 호스팅합니다:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -215,7 +215,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

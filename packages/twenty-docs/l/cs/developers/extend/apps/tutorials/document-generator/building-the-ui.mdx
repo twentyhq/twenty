@@ -219,9 +219,9 @@ export default defineFrontComponent({
 });
 ```
 
-Připojit ji s [page layout](/l/cs/developers/extend/apps/layout/page-layouts). Rozložení
-`RECORD_PAGE` přidává záložky do zobrazení záznamu objektu; widget `FRONT_COMPONENT`
-v záložce `CANVAS` hostí komponentu:
+Připojit ji s [page layout](/l/cs/developers/extend/apps/layout/page-layouts). Rozvržení
+`RECORD_PAGE` přidá k zobrazení záznamu objektu karty; karta s jediným
+widgetem `FRONT_COMPONENT` hostí komponentu přes celou šířku:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -236,7 +236,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
