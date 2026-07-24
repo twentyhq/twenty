@@ -154,40 +154,22 @@ export class ApplicationInstallService {
       );
     }
 
-    const resolvedPackage =
-      await this.applicationPackageFetcherService.resolvePackage(
-        appRegistration,
-        { targetVersion: params.version },
-      );
-
-    if (!resolvedPackage) {
-      return true;
-    }
-
-    try {
-      const existingApplication =
-        await this.applicationService.findByUniversalIdentifier({
-          universalIdentifier: appRegistration.universalIdentifier,
-          workspaceId: params.workspaceId,
-        });
-
-      return await this.runInstallWithMetrics({
-        appRegistration,
-        params,
-        resolvedPackage,
-        existingApplication,
+    const existingApplication =
+      await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: appRegistration.universalIdentifier,
+        workspaceId: params.workspaceId,
       });
-    } finally {
-      await this.applicationPackageFetcherService.cleanupExtractedDir(
-        resolvedPackage.cleanupDir,
-      );
-    }
+
+    return await this.runInstallWithMetrics({
+      appRegistration,
+      params,
+      existingApplication,
+    });
   }
 
   private async runInstallWithMetrics({
     appRegistration,
     params,
-    resolvedPackage,
     existingApplication,
   }: {
     appRegistration: ApplicationRegistrationEntity;
@@ -196,19 +178,28 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
     };
-    resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
     const isVersionUpgrade = isDefined(existingApplication);
 
-    const attributes = {
-      universal_identifier: appRegistration.universalIdentifier,
-      app_name: resolvedPackage.manifest.application.displayName,
-      source_type: appRegistration.sourceType,
-      version: resolvedPackage.packageJson.version ?? 'unknown',
-    };
+    // Package resolution is inside the metrics scope: npm/tarball resolution can
+    // throw (fetch, extraction, manifest parsing) and those failures are real
+    // install failures that must be counted, not silently dropped.
+    let resolvedPackage: ResolvedPackage | null = null;
 
     try {
+      resolvedPackage =
+        await this.applicationPackageFetcherService.resolvePackage(
+          appRegistration,
+          { targetVersion: params.version },
+        );
+
+      // LOCAL and OAUTH_ONLY sources have no code artifacts to install, so
+      // there is nothing to meter.
+      if (!isDefined(resolvedPackage)) {
+        return true;
+      }
+
       const result = await this.runInstall({
         appRegistration,
         params,
@@ -221,7 +212,12 @@ export class ApplicationInstallService {
           ? MetricsKeys.AppUpgradeSucceeded
           : MetricsKeys.AppInstallSucceeded,
         amount: 1,
-        attributes,
+        attributes: {
+          universal_identifier: appRegistration.universalIdentifier,
+          app_name: resolvedPackage.manifest.application.displayName,
+          source_type: appRegistration.sourceType,
+          version: resolvedPackage.packageJson.version ?? 'unknown',
+        },
       });
 
       return result;
@@ -232,13 +228,24 @@ export class ApplicationInstallService {
           : MetricsKeys.AppInstallFailed,
         amount: 1,
         attributes: {
-          ...attributes,
+          universal_identifier: appRegistration.universalIdentifier,
+          app_name:
+            resolvedPackage?.manifest.application.displayName ?? 'unknown',
+          source_type: appRegistration.sourceType,
+          version:
+            resolvedPackage?.packageJson.version ?? params.version ?? 'unknown',
           error_code:
             error instanceof ApplicationException ? error.code : 'UNKNOWN',
         },
       });
 
       throw error;
+    } finally {
+      if (isDefined(resolvedPackage)) {
+        await this.applicationPackageFetcherService.cleanupExtractedDir(
+          resolvedPackage.cleanupDir,
+        );
+      }
     }
   }
 
