@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
@@ -27,12 +28,14 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatRoleTargetMaps> {
-    const [roleTargets, applications, roles] = await Promise.all([
+    const [roleTargets, applications, roles, agents] = await Promise.all([
       this.roleTargetRepository.find(workspaceId, {
         withDeleted: true,
       }),
@@ -45,12 +48,18 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
+      this.agentRepository.find(workspaceId, {
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
     ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const agentIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(agents);
 
     const flatRoleTargetMaps = createEmptyFlatEntityMaps();
 
@@ -59,6 +68,7 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
         entity: roleTargetEntity,
         applicationIdToUniversalIdentifierMap,
         roleIdToUniversalIdentifierMap,
+        agentIdToUniversalIdentifierMap,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

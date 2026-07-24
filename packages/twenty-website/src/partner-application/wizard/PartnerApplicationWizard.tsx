@@ -25,6 +25,7 @@ import {
 import { validatePartnerApplicationStep } from '../validate-partner-application-step';
 import { PartnerApplicationSuccess } from './PartnerApplicationSuccess';
 import { CommercialsStep } from './steps/CommercialsStep';
+import { ExperienceStep } from './steps/ExperienceStep';
 import { ExpertiseStep } from './steps/ExpertiseStep';
 import { IdentityStep } from './steps/IdentityStep';
 import { ProfileStep } from './steps/ProfileStep';
@@ -122,24 +123,47 @@ function StepRenderer({
 }: {
   controller: PartnerApplicationController;
 }) {
-  switch (getCurrentStepId(controller.state)) {
+  const stepId = getCurrentStepId(controller.state);
+  switch (stepId) {
     case 'identity':
       return <IdentityStep controller={controller} />;
     case 'profile':
       return <ProfileStep controller={controller} />;
     case 'expertise':
       return <ExpertiseStep controller={controller} />;
+    case 'experience':
+      return <ExperienceStep controller={controller} />;
     case 'commercials':
       return <CommercialsStep controller={controller} />;
+    default: {
+      const _exhaustive: never = stepId;
+      return _exhaustive;
+    }
   }
 }
 
+function resolveFieldErrorMessage(
+  errorValues: string[],
+): (typeof COPY.validation)[keyof typeof COPY.validation] {
+  if (errorValues.includes('invalid_email')) {
+    return COPY.validation.invalidEmail;
+  }
+  if (errorValues.includes('invalid_url')) {
+    return COPY.validation.invalidUrl;
+  }
+  if (errorValues.includes('invalid_amount')) {
+    return COPY.validation.invalidAmount;
+  }
+  if (errorValues.includes('too_short')) {
+    return COPY.validation.notesTooShort;
+  }
+  return COPY.validation.incompleteForm;
+}
+
 export function PartnerApplicationWizard({
-  onSubmitted,
   onSuccess,
   resetSignal,
 }: {
-  onSubmitted?: () => void;
   onSuccess: () => void;
   resetSignal: number;
 }) {
@@ -162,15 +186,11 @@ export function PartnerApplicationWizard({
   const stepId = getCurrentStepId(state);
   const stepIndex = state.stepIndex;
   const isLastStep = stepIndex === STEPS.length - 1;
-  const errorValues = Object.values(state.fieldErrors);
+  const errorValues = Object.values(state.fieldErrors).filter(
+    (value): value is string => value !== undefined,
+  );
   const hasFieldErrors = errorValues.length > 0;
-  const fieldErrorMessage = errorValues.includes('invalid_email')
-    ? COPY.validation.invalidEmail
-    : errorValues.includes('invalid_url')
-      ? COPY.validation.invalidUrl
-      : errorValues.includes('invalid_amount')
-        ? COPY.validation.invalidAmount
-        : COPY.validation.incompleteForm;
+  const fieldErrorMessage = resolveFieldErrorMessage(errorValues);
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -201,7 +221,6 @@ export function PartnerApplicationWizard({
           return;
         }
         setSubmitted();
-        onSubmitted?.();
       } catch {
         setSubmitError(i18n._(COPY.validation.submitFailed));
       } finally {
@@ -212,7 +231,6 @@ export function PartnerApplicationWizard({
       goNext,
       i18n,
       isLastStep,
-      onSubmitted,
       setSubmitError,
       setSubmitted,
       setSubmitting,
@@ -221,14 +239,7 @@ export function PartnerApplicationWizard({
   );
 
   if (state.isSubmitted) {
-    return (
-      <PartnerApplicationSuccess
-        company={state.company}
-        email={state.email}
-        name={state.name}
-        onDismiss={onSuccess}
-      />
-    );
+    return <PartnerApplicationSuccess onDismiss={onSuccess} />;
   }
 
   const stepLabel = `${i18n._(
