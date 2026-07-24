@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 
@@ -15,7 +15,8 @@ export const filterOutEmptyChartBuckets = ({
 
   return rawResults.filter(
     (result) =>
-      isDefined(result.groupByDimensionValues?.[0]) &&
+      isNonEmptyArray(result.groupByDimensionValues) &&
+      result.groupByDimensionValues.every(isDefined) &&
       Number.isFinite(result.aggregateValue) &&
       result.aggregateValue !== 0,
   );
