@@ -2,8 +2,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { type AppLocale } from 'twenty-shared/translations';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -28,9 +28,16 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
+const mockApolloQuery = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
+
+jest.mock('@apollo/client/react', () => ({
+  useApolloClient: () => ({
+    query: mockApolloQuery,
+  }),
+}));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -591,6 +598,68 @@ describe('useFrontComponentExecutionContext', () => {
         resetNavigationStack: undefined,
         recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
       });
+      expect(mockApolloQuery).not.toHaveBeenCalled();
+    });
+
+    it('should resolve a universal identifier to the front component id', async () => {
+      mockApolloQuery.mockResolvedValue({
+        data: {
+          frontComponents: [
+            { id: 'fc-db-id-1', universalIdentifier: 'fc-universal-id-1' },
+            { id: 'fc-db-id-2', universalIdentifier: 'fc-universal-id-2' },
+          ],
+        },
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentUniversalIdentifier: 'fc-universal-id-2',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-db-id-2',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: undefined,
+      });
+    });
+
+    it('should show an error and not open the panel when the universal identifier does not resolve', async () => {
+      mockApolloQuery.mockResolvedValue({
+        data: {
+          frontComponents: [
+            { id: 'fc-db-id-1', universalIdentifier: 'fc-universal-id-1' },
+          ],
+        },
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentUniversalIdentifier: 'unknown-universal-id',
+            pageTitle: 'My Component',
+          },
+        );
+      });
+
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
+      expect(mockOpenFrontComponentInSidePanel).not.toHaveBeenCalled();
     });
   });
 
