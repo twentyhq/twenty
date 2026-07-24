@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { reportMissingOptimisticFilterMetadata } from '@/object-record/record-filter/utils/reportMissingOptimisticFilterMetadata';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -217,6 +218,12 @@ export const isRecordMatchingFilter = ({
       );
 
     if (!isDefined(objectMetadataField)) {
+      void reportMissingOptimisticFilterMetadata({
+        objectMetadataNameSingular: objectMetadataItem.nameSingular,
+        filterKey,
+        metadataFields: objectMetadataItem.fields,
+      });
+
       throw new Error(
         'Field metadata item "' +
           filterKey +
