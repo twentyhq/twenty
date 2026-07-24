@@ -1,0 +1,1 @@
+export const MAX_REMOTE_ELEMENT_ID_LENGTH = 64;

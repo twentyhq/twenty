@@ -4,6 +4,7 @@ import {
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
 
+import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 
 export const attachRemoteRenderRootToWorkerDocument = (
@@ -16,6 +17,7 @@ export const attachRemoteRenderRootToWorkerDocument = (
   remoteRoot.connect(batchedConnection);
   remoteRoot.append(renderContainer);
   document.body.append(remoteRoot);
+  workerGeometryStore.setRootElement(remoteRoot);
   installStyleBridge(remoteRoot);
 
   return renderContainer;

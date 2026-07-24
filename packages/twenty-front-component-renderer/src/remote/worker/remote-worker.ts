@@ -9,6 +9,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
+import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
+import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
+import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
+import { createOffscreenCanvasTextMeasurer } from '@/polyfills/geometry/utils/createOffscreenCanvasTextMeasurer';
+import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
+import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -24,6 +32,28 @@ import { type WorkerExports } from '@/types/WorkerExports';
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
+
+installDocumentGetElementById(document);
+installGetElementsByClassName(Element.prototype);
+installGetElementsByClassName(document);
+installLocalStyleOnBaseElements(Element.prototype);
+
+installGetComputedStyle({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+});
+
+installElementGeometryPolyfill({
+  elementPrototype: Element.prototype,
+  documentTarget: document,
+  geometryStore: workerGeometryStore,
+  measureElementTextGeometry:
+    createOffscreenCanvasTextMeasurer(workerGeometryStore),
+});
+
+installWindowGeometryPolyfill({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  geometryStore: workerGeometryStore,
+});
 
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
@@ -57,6 +87,9 @@ const workerExports: WorkerExports = {
   onConfirmationModalResult: async (result) => {
     await handleCommandConfirmationModalResult(result);
   },
+  pushGeometryUpdates: async (batch) => {
+    workerGeometryStore.applyGeometryBatch(batch);
+  },
 };
 
 self.addEventListener('message', (event) => {
@@ -66,11 +99,19 @@ self.addEventListener('message', (event) => {
     return;
   }
 
-  hostThread = new ThreadMessagePort<
+  const nextHostThread = new ThreadMessagePort<
     FrontComponentHostThreadExports,
     WorkerExports
   >(transferredPort, {
     exports: workerExports,
+  });
+  hostThread = nextHostThread;
+
+  workerGeometryStore.connectTransport({
+    observeElementGeometry: (remoteElementIds) =>
+      nextHostThread.imports.observeElementGeometry(remoteElementIds),
+    unobserveElementGeometry: (remoteElementIds) =>
+      nextHostThread.imports.unobserveElementGeometry(remoteElementIds),
   });
 
   transferredPort.start();
