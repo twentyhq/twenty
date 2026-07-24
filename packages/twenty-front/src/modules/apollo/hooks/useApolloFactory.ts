@@ -72,6 +72,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,
+      metadataHashes,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },

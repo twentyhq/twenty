@@ -36,7 +36,6 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
@@ -60,8 +59,6 @@ export abstract class RestApiBaseHandler {
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly actorFromAuthContextService: ActorFromAuthContextService;
-  @Inject()
-  protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
   protected readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
   @Inject()

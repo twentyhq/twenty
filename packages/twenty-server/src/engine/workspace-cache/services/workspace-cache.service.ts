@@ -41,6 +41,7 @@ const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
+const PEEK_LOCAL_HASHES_MAX_AGE_MS = 10_000;
 const MIN_EVICT_KEYS = 100;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
@@ -212,7 +213,11 @@ export class WorkspaceCacheService implements OnModuleInit {
         this.buildCacheKey(workspaceId, cacheKeyName),
       );
 
-      if (isDefined(entry) && entry.latestHash !== '') {
+      if (
+        isDefined(entry) &&
+        entry.latestHash !== '' &&
+        Date.now() - entry.lastHashCheckedAt < PEEK_LOCAL_HASHES_MAX_AGE_MS
+      ) {
         hashes[cacheKeyName] = entry.latestHash;
       }
     }

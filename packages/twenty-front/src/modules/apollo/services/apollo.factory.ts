@@ -79,6 +79,7 @@ export interface Options {
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
   appVersion?: string;
+  metadataHashes?: string;
 }
 
 export class ApolloFactory implements ApolloManager {
@@ -106,11 +107,13 @@ export class ApolloFactory implements ApolloManager {
       extraLinks,
       isDebugMode,
       appVersion,
+      metadataHashes,
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
     this.currentWorkspace = currentWorkspace;
     this.appVersion = appVersion;
+    this.metadataHashes = metadataHashes;
 
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = new UploadHttpLink({
