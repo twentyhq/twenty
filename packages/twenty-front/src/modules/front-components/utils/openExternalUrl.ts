@@ -1,8 +1,9 @@
-export const openExternalUrl = (url: string, target?: string) => {
-  if (target === '_blank') {
-    window.open(url, '_blank', 'noopener,noreferrer');
-    return;
-  }
+import { isNonEmptyString } from '@sniptt/guards';
 
-  window.open(url, '_self');
+export const openExternalUrl = (url: string, target?: string) => {
+  window.open(
+    url,
+    isNonEmptyString(target) ? target : '_self',
+    'noopener,noreferrer',
+  );
 };

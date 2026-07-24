@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { type RequestExternalNavigation } from 'twenty-front-component-renderer';
 
-import { FRONT_COMPONENT_EXTERNAL_LINK_MODAL_INSTANCE_ID } from '@/front-components/constants/FrontComponentExternalLinkModalId';
+import { FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID } from '@/front-components/constants/FrontComponentExternalLinkModalId';
 import { frontComponentExternalLinkModalConfigState } from '@/front-components/states/frontComponentExternalLinkModalConfigState';
 import { trustedFrontComponentExternalOriginsState } from '@/front-components/states/trustedFrontComponentExternalOriginsState';
 import { openExternalUrl } from '@/front-components/utils/openExternalUrl';
@@ -41,7 +41,7 @@ export const useRequestFrontComponentExternalNavigation = ({
         origin,
         target,
       });
-      openModal(FRONT_COMPONENT_EXTERNAL_LINK_MODAL_INSTANCE_ID);
+      openModal(FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID);
     },
     [
       applicationId,

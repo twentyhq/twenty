@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { FRONT_COMPONENT_EXTERNAL_LINK_MODAL_INSTANCE_ID } from '@/front-components/constants/FrontComponentExternalLinkModalId';
+import { FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID } from '@/front-components/constants/FrontComponentExternalLinkModalId';
 import { frontComponentExternalLinkModalConfigState } from '@/front-components/states/frontComponentExternalLinkModalConfigState';
 import { trustedFrontComponentExternalOriginsState } from '@/front-components/states/trustedFrontComponentExternalOriginsState';
 import { openExternalUrl } from '@/front-components/utils/openExternalUrl';
@@ -44,13 +44,16 @@ const StyledTrustLabel = styled.span`
   cursor: pointer;
 `;
 
+const TRUST_ORIGIN_LABEL_ID =
+  'front-component-external-link-trust-origin-label';
+
 export const FrontComponentExternalLinkModalManager = () => {
   const frontComponentExternalLinkModalConfig = useAtomStateValue(
     frontComponentExternalLinkModalConfigState,
   );
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    FRONT_COMPONENT_EXTERNAL_LINK_MODAL_INSTANCE_ID,
+    FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID,
   );
   const setFrontComponentExternalLinkModalConfig = useSetAtomState(
     frontComponentExternalLinkModalConfigState,
@@ -90,7 +93,7 @@ export const FrontComponentExternalLinkModalManager = () => {
 
   return (
     <ConfirmationModal
-      modalInstanceId={FRONT_COMPONENT_EXTERNAL_LINK_MODAL_INSTANCE_ID}
+      modalInstanceId={FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID}
       title={t`You're leaving Twenty`}
       subtitle={
         <StyledSubtitle>
@@ -100,8 +103,10 @@ export const FrontComponentExternalLinkModalManager = () => {
             <Checkbox
               checked={shouldTrustOrigin}
               onCheckedChange={setShouldTrustOrigin}
+              aria-labelledby={TRUST_ORIGIN_LABEL_ID}
             />
             <StyledTrustLabel
+              id={TRUST_ORIGIN_LABEL_ID}
               onClick={() => setShouldTrustOrigin((previous) => !previous)}
             >
               {t`Don't ask again for ${origin}`}
