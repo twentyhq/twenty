@@ -29,11 +29,24 @@ describe('isElementGeometryEqualWithinEpsilon', () => {
     ).toBe(false);
   });
 
-  it('should compare every field', () => {
+  it('should detect a change in any numeric field', () => {
     expect(
       isElementGeometryEqualWithinEpsilon(
         createElementGeometrySnapshotFixture(),
         createElementGeometrySnapshotFixture({ scrollLeft: 5 }),
+      ),
+    ).toBe(false);
+  });
+
+  it('should treat a change in offsetParentRemoteElementId as different', () => {
+    expect(
+      isElementGeometryEqualWithinEpsilon(
+        createElementGeometrySnapshotFixture({
+          offsetParentRemoteElementId: null,
+        }),
+        createElementGeometrySnapshotFixture({
+          offsetParentRemoteElementId: 'remote-element-id',
+        }),
       ),
     ).toBe(false);
   });

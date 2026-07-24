@@ -83,6 +83,7 @@ export const createOffscreenCanvasTextMeasurer = (
     }
 
     try {
+      context.font = defaultFontShorthand;
       context.font = fontShorthand;
 
       const metrics = context.measureText(textContent);

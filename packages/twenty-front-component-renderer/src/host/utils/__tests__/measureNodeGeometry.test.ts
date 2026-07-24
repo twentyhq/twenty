@@ -35,6 +35,9 @@ describe('measureNodeGeometry', () => {
   it('should compute offsets relative to the root container origin', () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
+    Object.defineProperty(node, 'offsetParent', {
+      value: document.createElement('div'),
+    });
 
     const snapshot = measureNodeGeometry(
       node,
@@ -61,6 +64,24 @@ describe('measureNodeGeometry', () => {
     expect(snapshot.offsetParentRemoteElementId).toBe('9');
     expect(snapshot.offsetTop).toBe(11);
     expect(snapshot.offsetLeft).toBe(12);
+  });
+
+  it('should report the element own offsets when it has no offset parent', () => {
+    const node = document.createElement('div');
+    stubBoundingClientRect(node);
+    Object.defineProperty(node, 'offsetParent', { value: null });
+    Object.defineProperty(node, 'offsetTop', { value: 15 });
+    Object.defineProperty(node, 'offsetLeft', { value: 16 });
+
+    const snapshot = measureNodeGeometry(
+      node,
+      { x: 2, y: 4 },
+      NO_MIRRORED_PARENT,
+    );
+
+    expect(snapshot.offsetParentRemoteElementId).toBeNull();
+    expect(snapshot.offsetTop).toBe(15);
+    expect(snapshot.offsetLeft).toBe(16);
   });
 
   it('should fall back to root relative offsets for an unmirrored offset parent', () => {

@@ -62,9 +62,14 @@ export const MirrorsElementGeometryIntoTheWorker: Story = createGeometryStory(
       { timeout: GEOMETRY_TIMEOUT },
     );
 
-    expect(
-      await canvas.findByTestId('geometry-measure-height'),
-    ).toHaveTextContent('height: 80');
+    await waitFor(
+      async () => {
+        expect(
+          await canvas.findByTestId('geometry-measure-height'),
+        ).toHaveTextContent('height: 80');
+      },
+      { timeout: GEOMETRY_TIMEOUT },
+    );
 
     await waitFor(
       async () => {
@@ -75,9 +80,14 @@ export const MirrorsElementGeometryIntoTheWorker: Story = createGeometryStory(
       { timeout: GEOMETRY_TIMEOUT },
     );
 
-    expect(
-      await canvas.findByTestId('geometry-measure-inner-width'),
-    ).not.toHaveTextContent('innerWidth: 0');
+    await waitFor(
+      async () => {
+        expect(
+          await canvas.findByTestId('geometry-measure-inner-width'),
+        ).not.toHaveTextContent('innerWidth: 0');
+      },
+      { timeout: GEOMETRY_TIMEOUT },
+    );
 
     expect(errorHandler).not.toHaveBeenCalled();
   },

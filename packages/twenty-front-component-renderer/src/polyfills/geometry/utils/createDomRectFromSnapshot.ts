@@ -17,15 +17,20 @@ export const createDomRectFromSnapshot = (
     return new DOMRect(x, y, width, height);
   }
 
+  const top = y;
+  const left = x;
+  const right = x + width;
+  const bottom = y + height;
+
   return {
     x,
     y,
     width,
     height,
-    top: y,
-    left: x,
-    right: x + width,
-    bottom: y + height,
-    toJSON: () => ({ x, y, width, height }),
+    top,
+    left,
+    right,
+    bottom,
+    toJSON: () => ({ x, y, width, height, top, left, right, bottom }),
   } as unknown as DOMRect;
 };

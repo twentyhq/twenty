@@ -2,6 +2,7 @@ import { installGetElementsByClassName } from '../installGetElementsByClassName'
 
 class FakeElement {
   childNodes: FakeElement[] = [];
+  className?: string;
   private attributes = new Map<string, string>();
 
   constructor(classAttribute?: string) {
@@ -21,10 +22,15 @@ class FakeElement {
 
 installGetElementsByClassName(FakeElement.prototype);
 
+type LiveClassNameCollection = {
+  readonly length: number;
+  item: (index: number) => FakeElement | null;
+  [index: number]: FakeElement | undefined;
+  [Symbol.iterator]: () => IterableIterator<FakeElement>;
+};
+
 type ElementWithGetElementsByClassName = FakeElement & {
-  getElementsByClassName: (
-    classNames: string,
-  ) => FakeElement[] & { item: (index: number) => FakeElement | null };
+  getElementsByClassName: (classNames: string) => LiveClassNameCollection;
 };
 
 const asInstalled = (element: FakeElement) =>
@@ -41,6 +47,21 @@ describe('installGetElementsByClassName', () => {
 
     const matches = asInstalled(rootElement).getElementsByClassName(
       'recharts-cartesian-axis-tick-value',
+    );
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0]).toBe(target);
+  });
+
+  it('should match an element whose classes are reflected via the className property', () => {
+    const rootElement = new FakeElement();
+    const target = new FakeElement();
+    target.className = 'recharts-layer recharts-line';
+
+    rootElement.append(target);
+
+    const matches = asInstalled(rootElement).getElementsByClassName(
+      'recharts-layer recharts-line',
     );
 
     expect(matches).toHaveLength(1);

@@ -10,7 +10,7 @@ const GeometryNoMeasureComponent = () => (
 );
 
 export default defineFrontComponent({
-  universalIdentifier: 'fc-geometry-nomeasure-000-0000-000000000002',
+  universalIdentifier: 'fc-geometry-nomeasure-0000-0000-0000-000000000002',
   name: 'geometry-no-measure-component',
   description: 'Front component that never reads layout metrics',
   component: GeometryNoMeasureComponent,

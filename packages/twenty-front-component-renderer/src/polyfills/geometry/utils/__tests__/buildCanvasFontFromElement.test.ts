@@ -43,6 +43,24 @@ describe('buildCanvasFontFromElement', () => {
     ).toBe('700 13px sans-serif');
   });
 
+  it('should treat a CSS-wide keyword font shorthand as absent', () => {
+    expect(
+      buildCanvasFontFromElement(
+        createElementWithStyle({ font: 'inherit' }),
+        DEFAULT_FONT,
+      ),
+    ).toBe(DEFAULT_FONT);
+  });
+
+  it('should ignore CSS-wide keyword casing and whitespace', () => {
+    expect(
+      buildCanvasFontFromElement(
+        createElementWithStyle({ font: '  Inherit  ' }),
+        DEFAULT_FONT,
+      ),
+    ).toBe(DEFAULT_FONT);
+  });
+
   it('should return the default when no font property is declared', () => {
     expect(
       buildCanvasFontFromElement(createElementWithStyle({}), DEFAULT_FONT),

@@ -21,8 +21,9 @@ export const measureNodeGeometry = (
     ? resolveObservedRemoteElementIdForNode(hostOffsetParent)
     : null;
 
-  const hasMirroredOffsetParent =
-    isDefined(offsetParentRemoteElementId) && isDefined(htmlNode);
+  const shouldReportHostOffsets =
+    isDefined(htmlNode) &&
+    (isDefined(offsetParentRemoteElementId) || !isDefined(hostOffsetParent));
 
   return {
     x,
@@ -31,10 +32,10 @@ export const measureNodeGeometry = (
     height,
     offsetWidth: htmlNode?.offsetWidth ?? 0,
     offsetHeight: htmlNode?.offsetHeight ?? 0,
-    offsetTop: hasMirroredOffsetParent
+    offsetTop: shouldReportHostOffsets
       ? htmlNode.offsetTop
       : y - rootContainerOrigin.y,
-    offsetLeft: hasMirroredOffsetParent
+    offsetLeft: shouldReportHostOffsets
       ? htmlNode.offsetLeft
       : x - rootContainerOrigin.x,
     clientWidth: node.clientWidth,

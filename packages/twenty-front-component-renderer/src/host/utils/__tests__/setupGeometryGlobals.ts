@@ -84,15 +84,21 @@ export const setupGeometryGlobals = () => {
 
       let currentGeometry = geometry;
 
-      node.getBoundingClientRect = () =>
-        ({
+      node.getBoundingClientRect = () => {
+        const top = currentGeometry.y;
+        const left = currentGeometry.x;
+        const right = currentGeometry.x + currentGeometry.width;
+        const bottom = currentGeometry.y + currentGeometry.height;
+
+        return {
           ...currentGeometry,
-          top: currentGeometry.y,
-          left: currentGeometry.x,
-          right: currentGeometry.x + currentGeometry.width,
-          bottom: currentGeometry.y + currentGeometry.height,
-          toJSON: () => currentGeometry,
-        }) as DOMRect;
+          top,
+          left,
+          right,
+          bottom,
+          toJSON: () => ({ ...currentGeometry, top, left, right, bottom }),
+        } as DOMRect;
+      };
 
       return {
         node,

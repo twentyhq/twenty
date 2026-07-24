@@ -31,4 +31,34 @@ describe('createDomRectFromSnapshot', () => {
       createDomRectFromSnapshot(snapshot),
     );
   });
+
+  it('should expose the native toJSON shape when DOMRect is unavailable', () => {
+    const globalWithDomRect = globalThis as unknown as {
+      DOMRect: typeof DOMRect | undefined;
+    };
+    const originalDomRect = globalWithDomRect.DOMRect;
+    globalWithDomRect.DOMRect = undefined;
+
+    try {
+      const rect = createDomRectFromSnapshot({
+        x: 10,
+        y: 20,
+        width: 30,
+        height: 40,
+      });
+
+      expect(rect.toJSON()).toEqual({
+        x: 10,
+        y: 20,
+        width: 30,
+        height: 40,
+        top: 20,
+        left: 10,
+        right: 40,
+        bottom: 60,
+      });
+    } finally {
+      globalWithDomRect.DOMRect = originalDomRect;
+    }
+  });
 });

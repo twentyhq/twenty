@@ -9,6 +9,17 @@ type StyleDeclarationLike = {
   getPropertyValue?: (propertyName: string) => unknown;
 };
 
+const CSS_WIDE_KEYWORDS = new Set([
+  'inherit',
+  'initial',
+  'unset',
+  'revert',
+  'revert-layer',
+]);
+
+const isCssWideKeyword = (value: string): boolean =>
+  CSS_WIDE_KEYWORDS.has(value.trim().toLowerCase());
+
 const readStyleProperty = (
   element: object,
   propertyName: string,
@@ -32,7 +43,7 @@ export const buildCanvasFontFromElement = (
 ): string => {
   const fontShorthand = readStyleProperty(element, 'font');
 
-  if (isNonEmptyString(fontShorthand)) {
+  if (isNonEmptyString(fontShorthand) && !isCssWideKeyword(fontShorthand)) {
     return fontShorthand;
   }
 

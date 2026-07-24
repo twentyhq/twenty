@@ -1,4 +1,4 @@
-import { isFunction, isObject } from '@sniptt/guards';
+import { isFunction, isNonEmptyString, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementWithStyle } from '@/polyfills/dom/types/ElementWithStyle';
@@ -12,7 +12,13 @@ type InstallGetComputedStyleInput = {
 export const installGetComputedStyle = ({
   globalScope,
 }: InstallGetComputedStyleInput): void => {
-  const getComputedStyle = (element: unknown) => {
+  const getComputedStyle = (element: unknown, pseudoElement?: unknown) => {
+    // Pseudo-element styles cannot be computed inside the worker, so an empty
+    // declaration is returned instead of the host element's own styles.
+    if (isNonEmptyString(pseudoElement)) {
+      return createStyleProxy();
+    }
+
     const declaredStyle = isObject(element)
       ? (element as ElementWithStyle).style
       : undefined;

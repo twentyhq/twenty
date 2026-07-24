@@ -5,7 +5,10 @@ type StyleDeclarationLike = {
   fontSize?: unknown;
 };
 
-type GetComputedStyleLike = (element: unknown) => StyleDeclarationLike;
+type GetComputedStyleLike = (
+  element: unknown,
+  pseudoElement?: unknown,
+) => StyleDeclarationLike;
 
 describe('installGetComputedStyle', () => {
   it('should define getComputedStyle on both the global scope and a distinct window', () => {
@@ -36,6 +39,21 @@ describe('installGetComputedStyle', () => {
 
     const declaration = (globalScope.getComputedStyle as GetComputedStyleLike)(
       {},
+    );
+
+    expect(declaration.getPropertyValue('font-size')).toBe('');
+    expect(declaration.fontSize).toBe('');
+  });
+
+  it('should return an empty declaration for a pseudo-element argument', () => {
+    const globalScope: Record<string, unknown> = {};
+    installGetComputedStyle({ globalScope });
+
+    const style = { getPropertyValue: () => '14px', fontSize: '14px' };
+
+    const declaration = (globalScope.getComputedStyle as GetComputedStyleLike)(
+      { style },
+      '::before',
     );
 
     expect(declaration.getPropertyValue('font-size')).toBe('');

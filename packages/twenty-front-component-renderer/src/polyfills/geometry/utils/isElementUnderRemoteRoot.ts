@@ -16,12 +16,13 @@ export const isElementUnderRemoteRoot = (
   let currentNode: object | null = element;
   let walkedDepth = 0;
 
-  while (
-    isDefined(currentNode) &&
-    walkedDepth < MAX_REMOTE_ROOT_ANCESTOR_WALK_DEPTH
-  ) {
+  while (isDefined(currentNode)) {
     if (currentNode === rootElement) {
       return true;
+    }
+
+    if (walkedDepth >= MAX_REMOTE_ROOT_ANCESTOR_WALK_DEPTH) {
+      break;
     }
 
     const parentNode: unknown = (currentNode as NodeLike).parentNode;

@@ -3,21 +3,32 @@ import { isFunction, isNonEmptyString, isString } from '@sniptt/guards';
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 
+const resolveClassNameValue = (element: ElementLike): string | null => {
+  if (isFunction(element.getAttribute)) {
+    const classAttribute = element.getAttribute('class');
+
+    if (isNonEmptyString(classAttribute)) {
+      return classAttribute;
+    }
+  }
+
+  const reflectedClassName = (element as ElementLike & { className?: unknown })
+    .className;
+
+  return isNonEmptyString(reflectedClassName) ? reflectedClassName : null;
+};
+
 const hasEveryClassNameToken = (
   element: ElementLike,
   classNameTokens: string[],
 ): boolean => {
-  if (!isFunction(element.getAttribute)) {
+  const classNameValue = resolveClassNameValue(element);
+
+  if (!isNonEmptyString(classNameValue)) {
     return false;
   }
 
-  const classAttribute = element.getAttribute('class');
-
-  if (!isNonEmptyString(classAttribute)) {
-    return false;
-  }
-
-  const elementTokens = classAttribute.split(/\s+/);
+  const elementTokens = classNameValue.split(/\s+/);
 
   return classNameTokens.every((classNameToken) =>
     elementTokens.includes(classNameToken),
