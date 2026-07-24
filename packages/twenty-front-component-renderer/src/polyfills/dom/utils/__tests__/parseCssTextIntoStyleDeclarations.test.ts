@@ -25,6 +25,14 @@ describe('parseCssTextIntoStyleDeclarations', () => {
     expect(importantPriorityStoreKeys.has('color')).toBe(true);
   });
 
+  it('should lowercase standard property names while preserving custom ones', () => {
+    const { cssValueByStoreKey } = parseCssTextIntoStyleDeclarations(
+      'COLOR: red; --My-Var: 1px',
+    );
+
+    expect(cssValueByStoreKey).toEqual({ color: 'red', '--My-Var': '1px' });
+  });
+
   it('should skip declarations without a property name or value', () => {
     const { cssValueByStoreKey } = parseCssTextIntoStyleDeclarations(
       ': red; color: ; width: 10px',

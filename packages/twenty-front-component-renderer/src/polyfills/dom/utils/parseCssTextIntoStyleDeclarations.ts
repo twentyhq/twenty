@@ -1,4 +1,5 @@
 import { extractImportantPriorityFromCssValue } from '@/utils/extractImportantPriorityFromCssValue';
+import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 export const parseCssTextIntoStyleDeclarations = (
@@ -17,7 +18,10 @@ export const parseCssTextIntoStyleDeclarations = (
       continue;
     }
 
-    const storeKey = declaration.slice(0, propertyNameEndIndex).trim();
+    const cssPropertyName = declaration.slice(0, propertyNameEndIndex).trim();
+    const storeKey = isCssCustomPropertyName(cssPropertyName)
+      ? cssPropertyName
+      : cssPropertyName.toLowerCase();
 
     const { cssValueWithoutImportantPriority, hasImportantPriority } =
       extractImportantPriorityFromCssValue(

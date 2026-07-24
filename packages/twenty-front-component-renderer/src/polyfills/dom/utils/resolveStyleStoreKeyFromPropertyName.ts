@@ -1,11 +1,23 @@
 import { camelToKebab } from 'twenty-shared/utils';
 
-const isCssCustomPropertyName = (propertyName: string): boolean =>
-  propertyName.startsWith('--');
+import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
+
+const CSS_PROPERTY_NAME_BY_CSSOM_ALIAS: Record<string, string> = {
+  cssFloat: 'float',
+};
 
 export const resolveStyleStoreKeyFromPropertyName = (
   propertyName: string,
-): string =>
-  isCssCustomPropertyName(propertyName)
-    ? propertyName
-    : camelToKebab(propertyName);
+): string => {
+  if (isCssCustomPropertyName(propertyName)) {
+    return propertyName;
+  }
+
+  const aliasedCssPropertyName = CSS_PROPERTY_NAME_BY_CSSOM_ALIAS[propertyName];
+
+  if (aliasedCssPropertyName !== undefined) {
+    return aliasedCssPropertyName;
+  }
+
+  return camelToKebab(propertyName);
+};

@@ -220,6 +220,39 @@ describe('createStyleProxy', () => {
     expect(style['--myVar']).toBe('2px');
   });
 
+  it('should ignore setProperty with a whitespace-padded important priority', () => {
+    const style = createStyle();
+
+    style.setProperty('color', 'red', ' important ');
+
+    expect(style.getPropertyValue('color')).toBe('');
+  });
+
+  it('should not convert a numeric custom property to pixels', () => {
+    const style = createStyle({ shouldConvertNumbersToPixels: true });
+
+    style['--gap'] = 4;
+
+    expect(style.getPropertyValue('--gap')).toBe('4');
+  });
+
+  it('should map the cssFloat alias to the float property', () => {
+    const style = createStyle();
+
+    style.cssFloat = 'left';
+
+    expect(style.cssText).toBe('float:left');
+  });
+
+  it('should lowercase standard property names parsed from cssText', () => {
+    const style = createStyle();
+
+    style.cssText = 'COLOR: red';
+
+    expect(style.color).toBe('red');
+    expect(style.getPropertyValue('color')).toBe('red');
+  });
+
   it('should keep Object.prototype methods callable', () => {
     const style = createStyle();
 

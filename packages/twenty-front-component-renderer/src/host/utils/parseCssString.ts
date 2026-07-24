@@ -3,10 +3,8 @@ import { type CSSProperties } from 'react';
 import { kebabToCamelCase } from 'twenty-shared/utils';
 
 import { extractImportantPriorityFromCssValue } from '@/utils/extractImportantPriorityFromCssValue';
+import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
 import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
-
-const isCssCustomPropertyName = (propertyName: string): boolean =>
-  propertyName.startsWith('--');
 
 export const parseCssString = (
   styleString: string | undefined,
@@ -20,7 +18,7 @@ export const parseCssString = (
   for (const declaration of splitCssDeclarations(styleString)) {
     const propertyNameEndIndex = declaration.indexOf(':');
 
-    if (propertyNameEndIndex === -1) {
+    if (propertyNameEndIndex <= 0) {
       continue;
     }
 

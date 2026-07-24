@@ -9,6 +9,14 @@ describe('formatStyleValueForCssStore', () => {
     expect(formatStyleValueForCssStore(2, 'aspectRatio', true)).toBe('2');
   });
 
+  it('should keep a vendor-prefixed unitless property unitless when converting', () => {
+    expect(formatStyleValueForCssStore(3, 'WebkitLineClamp', true)).toBe('3');
+  });
+
+  it('should never append px to a custom property when converting', () => {
+    expect(formatStyleValueForCssStore(4, '--gap', true)).toBe('4');
+  });
+
   it('should keep zero unitless when converting', () => {
     expect(formatStyleValueForCssStore(0, 'width', true)).toBe('0');
   });
