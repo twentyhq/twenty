@@ -1,6 +1,6 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
@@ -42,11 +42,13 @@ export const DraggableList = ({
   // land on outer providers' targets (or the other way around).
   const [group] = useState(() => v4());
 
-  const itemIndexByDraggableIdRef = useRef(new Map<string, number>());
+  // A mutable registry rather than render state: items write their index on
+  // mount so the end drop zone can resolve the append index at drop time.
+  const [itemIndexByDraggableId] = useState(() => new Map<string, number>());
 
   const groupContextValue = useMemo(
-    () => ({ group, itemIndexByDraggableIdRef }),
-    [group],
+    () => ({ group, itemIndexByDraggableId }),
+    [group, itemIndexByDraggableId],
   );
 
   const handleDragEnd = (
@@ -69,7 +71,7 @@ export const DraggableList = ({
 
     const dropTargetIndex =
       targetData.index === DRAGGABLE_LIST_END_DROP_INDEX
-        ? itemIndexByDraggableIdRef.current.size
+        ? itemIndexByDraggableId.size
         : targetData.index;
 
     // The drop line renders before the hovered item, so a drop inserts the

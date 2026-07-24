@@ -1,8 +1,8 @@
-import { createContext, type RefObject } from 'react';
+import { createContext } from 'react';
 
 export type DraggableListGroupContextValue = {
   group: string;
-  itemIndexByDraggableIdRef: RefObject<Map<string, number>>;
+  itemIndexByDraggableId: Map<string, number>;
 };
 
 export const DraggableListGroupContext =

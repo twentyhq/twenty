@@ -46,7 +46,7 @@ export const DraggableItem = ({
     }
 
     const itemIndexByDraggableId =
-      draggableListGroupContext.itemIndexByDraggableIdRef.current;
+      draggableListGroupContext.itemIndexByDraggableId;
 
     itemIndexByDraggableId.set(draggableId, index);
 

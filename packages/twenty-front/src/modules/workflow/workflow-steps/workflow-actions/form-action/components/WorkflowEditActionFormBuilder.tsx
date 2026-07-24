@@ -51,13 +51,13 @@ type FormData = WorkflowFormActionField[];
 
 const StyledFormFieldContainer = styled.div`
   align-items: flex-end;
-  margin-bottom: ${themeCssVariables.spacing[4]};
   column-gap: ${themeCssVariables.spacing[1]};
   display: grid;
   grid-template-areas:
     'grip input delete'
     '. settings .';
   grid-template-columns: 24px 1fr 24px;
+  margin-bottom: ${themeCssVariables.spacing[4]};
   position: relative;
 `;
 
