@@ -4,6 +4,8 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
+const PAGEVIEW_ASYNC_INSERT_BUSY_TIMEOUT_MAX_MS = 100;
+
 @Injectable()
 export class ClickHouseEventSink implements EventSink {
   constructor(private readonly clickHouseService: ClickHouseService) {}
@@ -24,7 +26,13 @@ export class ClickHouseEventSink implements EventSink {
 
     await Promise.all(
       [...rowsByTable.entries()].map(async ([table, rows]) => {
-        const result = await this.clickHouseService.insert(table, rows);
+        const result =
+          table === 'pageview'
+            ? await this.clickHouseService.insert(table, rows, {
+                asyncInsertBusyTimeoutMaxMs:
+                  PAGEVIEW_ASYNC_INSERT_BUSY_TIMEOUT_MAX_MS,
+              })
+            : await this.clickHouseService.insert(table, rows);
 
         if (!result.success) {
           throw new Error(

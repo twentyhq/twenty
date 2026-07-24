@@ -43,7 +43,9 @@ describe('ClickHouseEventSink', () => {
     await sink.write([first, second, applicationLog]);
 
     expect(insert).toHaveBeenCalledTimes(2);
-    expect(insert).toHaveBeenCalledWith('pageview', [first.row, second.row]);
+    expect(insert).toHaveBeenCalledWith('pageview', [first.row, second.row], {
+      asyncInsertBusyTimeoutMaxMs: 100,
+    });
     expect(insert).toHaveBeenCalledWith('applicationLog', [applicationLog.row]);
   });
 
