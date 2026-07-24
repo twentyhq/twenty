@@ -8,9 +8,7 @@ export const defineSettingsTabFrontComponent: DefineEntity<
   const errors = [];
 
   if (!config.universalIdentifier) {
-    errors.push(
-      'Settings tab front component must have a universalIdentifier',
-    );
+    errors.push('Settings tab front component must have a universalIdentifier');
   }
 
   if (!config.component) {
