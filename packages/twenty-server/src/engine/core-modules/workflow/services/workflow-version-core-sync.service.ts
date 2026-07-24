@@ -14,6 +14,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -198,6 +199,62 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return coreIdByWorkspaceRecordId;
+  }
+
+  async writeWorkflowVersionAndMirror(
+    workspaceId: string,
+    write: (
+      workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+      entityManager: WorkspaceEntityManager,
+    ) => Promise<string>,
+  ): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const dataSource =
+        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      const queryRunner = dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const workflowVersionId = await write(
+          workflowVersionRepository,
+          queryRunner.manager,
+        );
+
+        const workflowVersion = await workflowVersionRepository.findOne(
+          { where: { id: workflowVersionId } },
+          queryRunner.manager,
+        );
+
+        if (isDefined(workflowVersion)) {
+          await this.mirrorWorkflowVersionWrite({
+            workspaceId,
+            entityManager: queryRunner.manager,
+            workflowVersion,
+          });
+        }
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        if (queryRunner.isTransactionActive) {
+          await queryRunner.rollbackTransaction();
+        }
+
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
+    }, buildSystemAuthContext(workspaceId));
+
+    await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
   private async writeBackCoreVersionIds(
