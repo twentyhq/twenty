@@ -282,6 +282,104 @@ describe('formatDimensionValue', () => {
     });
   });
 
+  describe('RELATION field with label resolution', () => {
+    const relationFieldMetadata = createMockFieldMetadata({
+      type: FieldMetadataType.RELATION,
+    });
+    const relationLabelByRecordId = new Map([['record-id-1', 'Alice Smith']]);
+
+    it('should return the resolved label when the record id is in the map', () => {
+      const result = formatDimensionValue({
+        value: 'record-id-1',
+        fieldMetadata: relationFieldMetadata,
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId,
+      });
+
+      expect(result).toBe('Alice Smith');
+    });
+
+    it('should return the resolved label even when a date granularity is set', () => {
+      const result = formatDimensionValue({
+        value: 'record-id-1',
+        fieldMetadata: relationFieldMetadata,
+        dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId,
+      });
+
+      expect(result).toBe('Alice Smith');
+    });
+
+    it('should return "Unknown" when the record id is not in the map', () => {
+      const result = formatDimensionValue({
+        value: 'record-id-2',
+        fieldMetadata: relationFieldMetadata,
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId,
+      });
+
+      expect(result).toBe('Unknown');
+    });
+
+    it('should keep returning the raw value when a subFieldName is set', () => {
+      const result = formatDimensionValue({
+        value: 'Acme',
+        fieldMetadata: relationFieldMetadata,
+        subFieldName: 'name',
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId,
+      });
+
+      expect(result).toBe('Acme');
+    });
+
+    it('should return "Not Set" for null value even with a map', () => {
+      const result = formatDimensionValue({
+        value: null,
+        fieldMetadata: relationFieldMetadata,
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId,
+      });
+
+      expect(result).toBe('Not Set');
+    });
+  });
+
+  describe('MORPH_RELATION field', () => {
+    const morphRelationFieldMetadata = createMockFieldMetadata({
+      type: FieldMetadataType.MORPH_RELATION,
+    });
+
+    it('should return the resolved label when the record id is in the map', () => {
+      const result = formatDimensionValue({
+        value: 'record-id-1',
+        fieldMetadata: morphRelationFieldMetadata,
+        userTimezone,
+        firstDayOfTheWeek,
+        relationLabelByRecordId: new Map([['record-id-1', 'Acme Inc']]),
+      });
+
+      expect(result).toBe('Acme Inc');
+    });
+
+    it('should return the raw value without a map', () => {
+      const result = formatDimensionValue({
+        value: 'record-id-1',
+        fieldMetadata: morphRelationFieldMetadata,
+        userTimezone,
+        firstDayOfTheWeek,
+      });
+
+      expect(result).toBe('record-id-1');
+    });
+  });
+
   describe('NUMBER field', () => {
     const numberFieldMetadata = createMockFieldMetadata({
       type: FieldMetadataType.NUMBER,

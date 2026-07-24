@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 
 export type ProcessedOneDimensionalDataPoint = {
@@ -27,6 +28,7 @@ type ProcessOneDimensionalResultsParams = {
   subFieldName?: string | null;
   userTimezone: string;
   firstDayOfTheWeek: FirstDayOfTheWeek;
+  relationLabelResolution: RelationLabelResolution | undefined;
 };
 
 export const processOneDimensionalResults = ({
@@ -36,6 +38,7 @@ export const processOneDimensionalResults = ({
   subFieldName,
   userTimezone,
   firstDayOfTheWeek,
+  relationLabelResolution,
 }: ProcessOneDimensionalResultsParams): ProcessOneDimensionalResultsOutput => {
   const formattedToRawLookup = new Map<string, RawDimensionValue>();
   const processedDataPoints: ProcessedOneDimensionalDataPoint[] = [];
@@ -56,6 +59,7 @@ export const processOneDimensionalResults = ({
       subFieldName: subFieldName ?? undefined,
       userTimezone,
       firstDayOfTheWeek,
+      relationLabelByRecordId: relationLabelResolution?.labelByRecordId,
     });
 
     if (isDefined(rawValue)) {

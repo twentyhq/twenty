@@ -5263,6 +5263,7 @@ msgid "Not authorized to access this OAuth provider."
 msgstr "Nincs jogosultsága hozzáférni ehhez az OAuth-szolgáltatóhoz."
 
 #. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
@@ -8455,6 +8456,12 @@ msgstr "Egyedi index nem hozható létre az {fieldType} típusú {fieldName} mez
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "Universal identifier is reserved for system-managed metadata"
 msgstr "Az univerzális azonosító a rendszer által kezelt metaadatok számára van fenntartva"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

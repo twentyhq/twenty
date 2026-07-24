@@ -12051,8 +12051,6 @@ msgstr ""
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
 msgid "New Tab"
 msgstr ""
 
@@ -14603,6 +14601,7 @@ msgstr ""
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
