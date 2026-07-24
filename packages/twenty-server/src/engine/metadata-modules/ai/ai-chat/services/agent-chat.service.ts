@@ -208,7 +208,6 @@ export class AgentChatService {
     workspaceId,
     isHidden,
     processedAt,
-    createdAt,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -219,7 +218,6 @@ export class AgentChatService {
     workspaceId: string;
     isHidden?: boolean;
     processedAt?: Date;
-    createdAt?: Date;
   }) {
     let actualTurnId = turnId;
 
@@ -240,7 +238,6 @@ export class AgentChatService {
       agentId: agentId ?? null,
       processedAt: processedAt ?? new Date(),
       ...(isDefined(isHidden) ? { isHidden } : {}),
-      ...(isDefined(createdAt) ? { createdAt } : {}),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -329,6 +326,7 @@ export class AgentChatService {
         threadId,
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
+        isHidden: false,
       },
       order: { createdAt: 'DESC', id: 'DESC' },
       select: ['id', 'turnId'],
@@ -405,7 +403,8 @@ export class AgentChatService {
       return;
     }
 
-    // Sort before any real message and stay out of thread-ranking / latest-message queries.
+    // Sort before the real first message via an epoch processedAt (a plain column honored on insert);
+    // hidden messages are excluded from the user-facing "latest sent message" query below.
     const epochDate = new Date(0);
 
     await this.addMessage({
@@ -422,7 +421,6 @@ export class AgentChatService {
       },
       isHidden,
       processedAt: epochDate,
-      createdAt: epochDate,
     });
   }
 
