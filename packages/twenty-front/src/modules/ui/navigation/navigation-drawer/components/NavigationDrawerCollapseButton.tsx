@@ -53,6 +53,9 @@ export const NavigationDrawerCollapseButton = ({
         }
         accent="secondary"
         size="small"
+        aria-label={
+          direction === 'left' ? 'Collapse navigation panel' : 'Expand navigation panel'
+        }
       />
     </StyledCollapseButton>
   );
