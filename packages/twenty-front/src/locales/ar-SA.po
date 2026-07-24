@@ -12079,8 +12079,6 @@ msgstr "علامة تبويب جديدة"
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
 #: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
-#: src/modules/page-layout/components/PageLayoutTabList.tsx
 msgid "New Tab"
 msgstr "علامة تبويب جديدة"
 
