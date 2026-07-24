@@ -18769,6 +18769,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr "بيانات غير معروضة: الحد الأقصى {maxItems} شريحة لكل مخطط."
 
 #. js-lingui-id: fo0VXg
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
