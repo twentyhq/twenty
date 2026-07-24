@@ -455,8 +455,7 @@ export class ApplicationRegistrationService {
     if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
 
     const isUpdatingBillingExemption =
-      allowBillingExemption &&
-      isDefined(update.hasFreeLogicFunctionExecutions);
+      allowBillingExemption && isDefined(update.hasFreeLogicFunctionExecutions);
 
     if (isUpdatingBillingExemption)
       updateData.hasFreeLogicFunctionExecutions =
