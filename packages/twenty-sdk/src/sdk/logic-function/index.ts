@@ -22,6 +22,11 @@ export type {
   InstallPayload,
 } from '@/sdk/define/logic-functions/install-payload-type';
 
+export type {
+  UninstallHandler,
+  UninstallPayload,
+} from '@/sdk/define/logic-functions/uninstall-payload-type';
+
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 
 export type {

@@ -400,9 +400,12 @@ export class ApplicationInstallService {
       );
 
       if (!isVersionUpgrade) {
+        // Rollback of a failed fresh install: the app never finished
+        // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
+          shouldRunUninstallHook: false,
         });
       }
 
