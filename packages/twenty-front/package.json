@@ -50,6 +50,7 @@
     "@linaria/react": "^7.0.1",
     "@lingui/core": "^5.9.5",
     "@lingui/detect-locale": "^5.9.5",
+    "@lingui/message-utils": "^5.9.5",
     "@lingui/react": "^5.9.5",
     "@mantine/core": "^8.3.11",
     "@mantine/hooks": "^8.3.11",

@@ -11021,7 +11021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/message-utils@npm:5.9.5":
+"@lingui/message-utils@npm:5.9.5, @lingui/message-utils@npm:^5.9.5":
   version: 5.9.5
   resolution: "@lingui/message-utils@npm:5.9.5"
   dependencies:
@@ -52879,6 +52879,7 @@ __metadata:
     "@lingui/cli": "npm:^5.9.5"
     "@lingui/core": "npm:^5.9.5"
     "@lingui/detect-locale": "npm:^5.9.5"
+    "@lingui/message-utils": "npm:^5.9.5"
     "@lingui/react": "npm:^5.9.5"
     "@lingui/swc-plugin": "npm:^5.11.0"
     "@lingui/vite-plugin": "npm:^5.9.5"

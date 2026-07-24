@@ -1,3 +1,4 @@
+import { translateCommandMenuItemTemplate } from '@/command-menu-item/display/utils/translateCommandMenuItemTemplate';
 import { type CommandMenuContextApi, type Nullable } from 'twenty-shared/types';
 import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -19,12 +20,12 @@ export const interpolateCommandMenuItemFields = (
 
   const label =
     interpolateCommandMenuItemTemplate({
-      label: item.label,
+      label: translateCommandMenuItemTemplate(item.label),
       context: commandMenuContextApi,
     }) ?? item.label;
 
   const shortLabel = interpolateCommandMenuItemTemplate({
-    label: item.shortLabel,
+    label: translateCommandMenuItemTemplate(item.shortLabel),
     context: commandMenuContextApi,
   });
 
