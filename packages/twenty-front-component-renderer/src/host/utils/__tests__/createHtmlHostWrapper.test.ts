@@ -4,6 +4,8 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
+
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
 (
@@ -257,5 +259,89 @@ describe('createHtmlHostWrapper client events', () => {
     expect(handleDrop).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'drop' }),
     );
+  });
+});
+
+describe('createHtmlHostWrapper anchor navigation', () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  const renderAnchor = (
+    props: Record<string, unknown>,
+    requestExternalNavigation: ((request: unknown) => void) | null,
+  ) => {
+    const Wrapper = createHtmlHostWrapper('a');
+
+    act(() => {
+      root.render(
+        createElement(
+          FrontComponentExternalNavigationContext.Provider,
+          { value: requestExternalNavigation },
+          createElement(Wrapper, props, 'link'),
+        ),
+      );
+    });
+
+    return container.querySelector('a') as HTMLAnchorElement;
+  };
+
+  const clickAnchor = (anchor: HTMLAnchorElement): MouseEvent => {
+    const clickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+
+    act(() => {
+      anchor.dispatchEvent(clickEvent);
+    });
+
+    return clickEvent;
+  };
+
+  it('should prevent default and request navigation for an external anchor click', () => {
+    const requestExternalNavigation = jest.fn();
+    const remoteOnClick = jest.fn();
+
+    const anchor = renderAnchor(
+      { href: 'https://example.com/probe', onClick: remoteOnClick },
+      requestExternalNavigation,
+    );
+
+    const clickEvent = clickAnchor(anchor);
+
+    expect(clickEvent.defaultPrevented).toBe(true);
+    expect(requestExternalNavigation).toHaveBeenCalledWith({
+      url: 'https://example.com/probe',
+      target: undefined,
+    });
+    expect(remoteOnClick).not.toHaveBeenCalled();
+  });
+
+  it('should not request navigation for a same-origin anchor click', () => {
+    const requestExternalNavigation = jest.fn();
+
+    const anchor = renderAnchor(
+      { href: 'http://localhost/objects/people' },
+      requestExternalNavigation,
+    );
+
+    const clickEvent = clickAnchor(anchor);
+
+    expect(clickEvent.defaultPrevented).toBe(false);
+    expect(requestExternalNavigation).not.toHaveBeenCalled();
   });
 });
