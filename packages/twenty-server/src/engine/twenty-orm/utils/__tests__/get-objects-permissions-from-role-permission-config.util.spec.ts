@@ -34,7 +34,7 @@ const rolesPermissions: ObjectsPermissionsByRoleId = {
 };
 
 describe('getObjectsPermissionsFromRolePermissionConfig', () => {
-  it('should resolve a single union role (agent rolePermissionConfig)', () => {
+  it('should resolve a single union role', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
@@ -50,6 +50,17 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolePermissionConfig: { intersectionOf: ['default-role-id'] },
       }),
     ).toEqual(defaultRolePermissions);
+  });
+
+  it('should use the first role when multiple are provided', () => {
+    expect(
+      getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig: {
+          intersectionOf: ['agent-role-id', 'default-role-id'],
+        },
+      }),
+    ).toEqual(agentRolePermissions);
   });
 
   it('should return empty permissions when bypassing checks', () => {
