@@ -25,6 +25,7 @@ const WORKSPACE_MEMBER_OBJECT_METADATA_ID =
   '22222222-2222-4222-8222-222222222222';
 const WORKFLOW_OBJECT_METADATA_ID = '33333333-3333-4333-8333-333333333333';
 const PERSON_OBJECT_METADATA_ID = '44444444-4444-4444-8444-444444444444';
+const MESSAGE_OBJECT_METADATA_ID = '55555555-5555-4555-8555-555555555555';
 
 const createBaseRole = (
   overrides: Partial<RoleEntity> &
@@ -84,6 +85,12 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       id: PERSON_OBJECT_METADATA_ID,
       isSystem: false,
       universalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
+      labelIdentifierFieldMetadataId: null,
+    } as ObjectMetadataEntity,
+    {
+      id: MESSAGE_OBJECT_METADATA_ID,
+      isSystem: true,
+      universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
       labelIdentifierFieldMetadataId: null,
     } as ObjectMetadataEntity,
   ];
@@ -314,6 +321,53 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       expect(personPermissions.canUpdateObjectRecords).toBe(true);
       expect(personPermissions.canSoftDeleteObjectRecords).toBe(true);
       expect(personPermissions.canDestroyObjectRecords).toBe(true);
+    });
+  });
+
+  describe('system object (message)', () => {
+    it('should default to full access when no object permission override exists', async () => {
+      roleRepository.find.mockResolvedValue([
+        createBaseRole({
+          rolePermissionFlags: [],
+          objectPermissions: [],
+        }),
+      ]);
+
+      const result = await service.computeForCache(WORKSPACE_ID);
+      const messagePermissions = result[ROLE_ID][MESSAGE_OBJECT_METADATA_ID];
+
+      expect(messagePermissions.canReadObjectRecords).toBe(true);
+      expect(messagePermissions.canUpdateObjectRecords).toBe(true);
+      expect(messagePermissions.canSoftDeleteObjectRecords).toBe(true);
+      expect(messagePermissions.canDestroyObjectRecords).toBe(true);
+    });
+
+    it('should honor an explicit deny override instead of forcing system default', async () => {
+      objectPermissionRepository.find.mockResolvedValue([
+        {
+          roleId: ROLE_ID,
+          objectMetadataId: MESSAGE_OBJECT_METADATA_ID,
+          canReadObjectRecords: false,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+        } as ObjectPermissionEntity,
+      ]);
+
+      roleRepository.find.mockResolvedValue([
+        createBaseRole({
+          rolePermissionFlags: [],
+          objectPermissions: [],
+        }),
+      ]);
+
+      const result = await service.computeForCache(WORKSPACE_ID);
+      const messagePermissions = result[ROLE_ID][MESSAGE_OBJECT_METADATA_ID];
+
+      expect(messagePermissions.canReadObjectRecords).toBe(false);
+      expect(messagePermissions.canUpdateObjectRecords).toBe(false);
+      expect(messagePermissions.canSoftDeleteObjectRecords).toBe(false);
+      expect(messagePermissions.canDestroyObjectRecords).toBe(false);
     });
   });
 });
