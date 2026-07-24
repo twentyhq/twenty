@@ -1,6 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
+import { type FailedGalleryEntry } from '@/__stories__/shared/front-components/component-gallery';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -62,13 +64,29 @@ const createGalleryStory = (name: string, runtime?: 'preact'): Story => ({
   play: galleryTest,
 });
 
+type ExpectedGalleryFailure = {
+  name: string;
+  messageIncludes: string;
+};
+
+// Stable substrings of the documented sandbox errors: short enough to survive
+// minified receiver names and engine wording differences, specific enough that
+// the same component failing for a NEW reason no longer passes as the known
+// issue.
+const MUTATION_OBSERVER_STUB_ERROR = 'observe is not a function';
+const GET_COMPUTED_STYLE_MISSING_ERROR = 'getComputedStyle';
+// react-router Link destructures `basename` from the absent NavigationContext.
+const MISSING_ROUTER_CONTEXT_ERROR = 'basename';
+
 // Golden known-failure test (TDD): PASSES while the documented sandbox gap
-// exists — some components fail, and every failing component belongs to the
-// expected set. It FAILS both on regression (an unexpected component starts
-// failing) and on fix (nothing fails anymore): when your fix lands, flip the
-// story back to the strict zero-failure `createGalleryStory` play.
+// exists — some components fail, every failing component belongs to the
+// expected set, and each failure message matches the documented cause. It
+// FAILS on regression (an unexpected component starts failing, or an expected
+// one starts failing for a different reason) and on fix (nothing fails
+// anymore): when your fix lands, flip the story back to the strict
+// zero-failure `createGalleryStory` play.
 const createKnownFailureGalleryTest =
-  (expectedFailedComponents: string[]): Story['play'] =>
+  (expectedFailures: ExpectedGalleryFailure[]): Story['play'] =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -84,12 +102,22 @@ const createKnownFailureGalleryTest =
       );
     });
 
-    const failedComponents = (status.getAttribute('data-failed-names') ?? '')
-      .split(', ')
-      .filter((failedComponent) => failedComponent.length > 0);
+    const failedEntries = JSON.parse(
+      status.getAttribute('data-failed-entries') ?? '[]',
+    ) as FailedGalleryEntry[];
 
-    for (const failedComponent of failedComponents) {
-      expect(expectedFailedComponents).toContain(failedComponent);
+    for (const failedEntry of failedEntries) {
+      const expectedFailure = expectedFailures.find(
+        (failure) => failure.name === failedEntry.name,
+      );
+
+      if (!isDefined(expectedFailure)) {
+        throw new Error(
+          `Unexpected failing component ${failedEntry.name}: ${failedEntry.message}`,
+        );
+      }
+
+      expect(failedEntry.message).toContain(expectedFailure.messageIncludes);
     }
 
     expect(errorHandler).not.toHaveBeenCalled();
@@ -97,21 +125,24 @@ const createKnownFailureGalleryTest =
 
 const createKnownFailureGalleryStory = (
   name: string,
-  expectedFailedComponents: string[],
+  expectedFailures: ExpectedGalleryFailure[],
   runtime?: 'preact',
 ): Story => ({
   ...createGalleryStory(name, runtime),
-  play: createKnownFailureGalleryTest(expectedFailedComponents),
+  play: createKnownFailureGalleryTest(expectedFailures),
 });
 
 // KNOWN ISSUE (TDD): LinkChip crashes without a router context in the sandbox.
+const DATA_DISPLAY_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  { name: 'LinkChip', messageIncludes: MISSING_ROUTER_CONTEXT_ERROR },
+];
 export const DataDisplayReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-data-display-gallery',
-  ['LinkChip'],
+  DATA_DISPLAY_EXPECTED_FAILURES,
 );
 export const DataDisplayPreact: Story = createKnownFailureGalleryStory(
   'twenty-ui-data-display-gallery',
-  ['LinkChip'],
+  DATA_DISPLAY_EXPECTED_FAILURES,
   'preact',
 );
 
@@ -131,7 +162,11 @@ export const IconPreact: Story = createGalleryStory(
 
 // KNOWN ISSUE (TDD): base-ui radio internals call MutationObserver.observe,
 // shipped as an empty stub class by @remote-dom/polyfill.
-const INPUT_EXPECTED_FAILURES = ['Radio', 'RadioGroup', 'CardPicker'];
+const INPUT_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  { name: 'Radio', messageIncludes: MUTATION_OBSERVER_STUB_ERROR },
+  { name: 'RadioGroup', messageIncludes: MUTATION_OBSERVER_STUB_ERROR },
+  { name: 'CardPicker', messageIncludes: MUTATION_OBSERVER_STUB_ERROR },
+];
 export const InputReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-input-gallery',
   INPUT_EXPECTED_FAILURES,
@@ -144,11 +179,11 @@ export const InputPreact: Story = createKnownFailureGalleryStory(
 
 // KNOWN ISSUE (TDD): base-ui Collapsible calls getComputedStyle, missing from
 // the remote-dom Window polyfill.
-const JSON_VISUALIZER_EXPECTED_FAILURES = [
-  'JsonTree',
-  'JsonArrayNode',
-  'JsonObjectNode',
-  'JsonNestedNode',
+const JSON_VISUALIZER_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  { name: 'JsonTree', messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR },
+  { name: 'JsonArrayNode', messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR },
+  { name: 'JsonObjectNode', messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR },
+  { name: 'JsonNestedNode', messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR },
 ];
 export const JsonVisualizerReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-json-visualizer-gallery',
@@ -161,9 +196,15 @@ export const JsonVisualizerPreact: Story = createKnownFailureGalleryStory(
 );
 
 // KNOWN ISSUE (TDD): same getComputedStyle gap through base-ui Collapsible.
-const LAYOUT_EXPECTED_FAILURES = [
-  'AnimatedEaseInOut',
-  'AnimatedExpandableContainer',
+const LAYOUT_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  {
+    name: 'AnimatedEaseInOut',
+    messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR,
+  },
+  {
+    name: 'AnimatedExpandableContainer',
+    messageIncludes: GET_COMPUTED_STYLE_MISSING_ERROR,
+  },
 ];
 export const LayoutReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-layout-gallery',
@@ -176,7 +217,10 @@ export const LayoutPreact: Story = createKnownFailureGalleryStory(
 );
 
 // KNOWN ISSUE (TDD): react-router Links crash without a router context.
-const NAVIGATION_EXPECTED_FAILURES = ['RawLink', 'UndecoratedLink'];
+const NAVIGATION_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  { name: 'RawLink', messageIncludes: MISSING_ROUTER_CONTEXT_ERROR },
+  { name: 'UndecoratedLink', messageIncludes: MISSING_ROUTER_CONTEXT_ERROR },
+];
 export const NavigationReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-navigation-gallery',
   NAVIGATION_EXPECTED_FAILURES,
@@ -189,13 +233,16 @@ export const NavigationPreact: Story = createKnownFailureGalleryStory(
 
 // KNOWN ISSUE (TDD): AppTooltip observes document.body with the stubbed-out
 // MutationObserver.
+const SURFACES_EXPECTED_FAILURES: ExpectedGalleryFailure[] = [
+  { name: 'AppTooltip', messageIncludes: MUTATION_OBSERVER_STUB_ERROR },
+];
 export const SurfacesReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
+  SURFACES_EXPECTED_FAILURES,
 );
 export const SurfacesPreact: Story = createKnownFailureGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
+  SURFACES_EXPECTED_FAILURES,
   'preact',
 );
 

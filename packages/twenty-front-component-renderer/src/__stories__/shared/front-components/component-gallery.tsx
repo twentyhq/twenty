@@ -6,6 +6,11 @@ export type GalleryEntry = {
   node: ReactNode;
 };
 
+export type FailedGalleryEntry = {
+  name: string;
+  message: string;
+};
+
 const GALLERY_STYLE = {
   padding: 20,
   backgroundColor: '#ffffff',
@@ -59,9 +64,7 @@ type ComponentGalleryProps = {
 };
 
 export const ComponentGallery = ({ title, entries }: ComponentGalleryProps) => {
-  const [failedEntries, setFailedEntries] = useState<
-    { name: string; message: string }[]
-  >([]);
+  const [failedEntries, setFailedEntries] = useState<FailedGalleryEntry[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -91,6 +94,7 @@ export const ComponentGallery = ({ title, entries }: ComponentGalleryProps) => {
           data-total-count={entries.length}
           data-failed-count={failedEntryNames.length}
           data-failed-names={failedEntryNames.join(', ')}
+          data-failed-entries={JSON.stringify(failedEntries)}
           data-failed-messages={failedEntries
             .map((failedEntry) => `${failedEntry.name}: ${failedEntry.message}`)
             .join(' | ')}
