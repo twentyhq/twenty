@@ -8,11 +8,13 @@ export const frontComponentCacheStorageService = {
   }: {
     source: string;
   }): Promise<string | undefined> => {
-    if (typeof crypto === 'undefined' || !isDefined(crypto.subtle)) {
-      return undefined;
-    }
-
+    // Guards stay inside the try block: in Firefox, accessing `caches` or
+    // `crypto` in an opaque-origin context throws instead of being undefined.
     try {
+      if (typeof crypto === 'undefined' || !isDefined(crypto.subtle)) {
+        return undefined;
+      }
+
       const digest = await crypto.subtle.digest(
         'SHA-256',
         new TextEncoder().encode(source),
@@ -27,11 +29,11 @@ export const frontComponentCacheStorageService = {
   },
 
   open: async (): Promise<Cache | undefined> => {
-    if (typeof caches === 'undefined') {
-      return undefined;
-    }
-
     try {
+      if (typeof caches === 'undefined') {
+        return undefined;
+      }
+
       return await caches.open(FRONT_COMPONENT_SOURCE_CACHE_NAME);
     } catch {
       return undefined;

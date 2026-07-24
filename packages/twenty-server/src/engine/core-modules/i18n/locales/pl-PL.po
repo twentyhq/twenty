@@ -8960,11 +8960,6 @@ msgstr "Nie znaleziono widoku po operacji upsert"
 msgid "View not found for widget"
 msgstr "Nie znaleziono widoku dla widżetu"
 
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
-msgstr ""
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts

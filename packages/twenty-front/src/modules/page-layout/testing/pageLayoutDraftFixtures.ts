@@ -1,4 +1,5 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   PageLayoutTabLayoutMode,
@@ -34,6 +35,7 @@ export const makeTab = (
   widgets: PageLayoutWidget[],
   position = 0,
   layoutMode: PageLayoutTabLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
+  overrides?: Partial<PageLayoutTab>,
 ) => ({
   id,
   applicationId: '',
@@ -46,6 +48,7 @@ export const makeTab = (
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
+  ...overrides,
 });
 
 export const makeDraft = (
