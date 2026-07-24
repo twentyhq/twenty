@@ -252,19 +252,17 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
 
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: flatLogicFunction.id,
-            workspaceId,
-            payload: {
-              connectionProviderId: provider.id,
-              connectionProviderName: provider.name,
-              connectedAccountId,
-            },
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload: {
+            connectionProviderId: provider.id,
+            connectionProviderName: provider.name,
+            connectedAccountId,
           },
-        ],
+        },
         { retryLimit: 3 },
       );
     } catch (error) {

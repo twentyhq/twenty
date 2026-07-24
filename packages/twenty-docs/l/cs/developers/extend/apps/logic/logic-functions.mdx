@@ -59,7 +59,7 @@ Chcete-li vyvolat logickou funkci spuštěnou trasou z (bezhlavé) front-endové
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
 * **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
 > např. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Zpřístupňuje jednu registrací omezenou trasu HTTP. Funkce **resolver** (deklarovaná pomocí `serverRouteTriggerSettings`) běží ve vlastnickém workspace a vrací cílový workspace i cílovou logickou funkci, na kterou se má směrovat; platforma potvrdí přijetí s `202` a spustí tuto **cílovou** funkci ve frontě workeru. Viz [spouštěč serverové trasy](#server-route-trigger).
+* **serverRoute**: Zpřístupňuje jednu registrací omezenou trasu HTTP. Funkce **resolver** (deklarovaná pomocí `serverRouteTriggerSettings`) běží ve vlastnickém workspace a buď vrátí synchronní `Response`, nebo cílový workspace a logickou funkci, která se má zařadit do fronty; v případě zařazení platforma potvrdí přijetí kódem `202` a spustí tuto **cílovou** funkci ve frontě workeru. Viz [spouštěč serverové trasy](#server-route-trigger).
 
 <Note>
 Funkci můžete také spustit ručně pomocí CLI:
@@ -178,13 +178,18 @@ Stavový kód musí být platný stavový kód HTTP (mezi 100 a 599). Názvy hla
 
 Spouštěč má dvě části:
 
-1. Logická funkce **resolveru** — deklarovaná pomocí `serverRouteTriggerSettings` — běží ve vašem **vlastnickém workspace** (workspace, který je vlastníkem registrace aplikace). Prohlédne si příchozí request a vrátí `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, čímž zvolí *obě* — cílový workspace i cílovou funkci. Resolver je jediným místem autorizace — URL nese pouze identifikátor resolveru. **Toto je preferované místo pro ověřování podpisů requestů**: resolver běží před jakýmikoli vedlejšími efekty, má přístup k původnímu `rawBody` a předaným hlavičkám a může request odmítnout, aniž by se vůbec dotkl cíle.
-2. Cílová (**target**) logická funkce — běžná per-workspace logická funkce — pak běží v určeném workspace s payloadem vráceným resolverem (nebo s původním payloadem requestu, pokud jej resolver neupravil). Její návratová hodnota se stává HTTP odpovědí.
+1. Logická funkce **resolveru** — deklarovaná pomocí `serverRouteTriggerSettings` — běží ve vašem **vlastnickém workspace** (workspace, který je vlastníkem registrace aplikace). Prozkoumá příchozí požadavek a vrátí buď:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — platforma zařadí tento cíl do fronty v určeném workspace a potvrdí přijetí s `202 { queued: true }`, nebo
+   * `Response` z `twenty-sdk/logic-function` — platforma tento HTTP response vrátí **synchronně** a cíl do fronty **ne**zařadí (použijte pro ověřovací handshake, například Slack `url_verification`).
+
+   Resolver je jediným místem autorizace — URL nese pouze identifikátor resolveru. **Toto je preferované místo pro ověřování podpisů requestů**: resolver běží před jakýmikoli vedlejšími efekty, má přístup k původnímu `rawBody` a předaným hlavičkám a může request odmítnout, aniž by se vůbec dotkl cíle.
+2. Cílová (**target**) logická funkce — běžná per-workspace logická funkce — pak běží v určeném workspace s payloadem vráceným resolverem (nebo s původním payloadem requestu, pokud jej resolver neupravil). Návratovou hodnotu volající HTTP **nevidí**, když resolver zvolí cestu zařazení do fronty.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +216,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +283,7 @@ Identifikátor je `universalIdentifier` resolveru z vašeho manifestu. Zaregistr
 **Aplikace musí být převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.** Protože resolver běží v **pracovním prostoru vlastníka** (pracovní prostor, který vlastní registraci aplikace), spouštěč serverové trasy funguje pouze tehdy, když byla aplikace *převzata do vlastnictví* — tj. má pracovní prostor vlastníka — **a** tato aplikace je **nainstalována v pracovním prostoru vlastníka**. Dokud nejsou obě podmínky splněny, resolver nemá kde běžet, takže trasu nelze zpracovat. Aplikace, která zpřístupňuje logickou funkci `serverRouteTriggerSettings`, proto nemůže být uvedena na Marketplace, dokud není převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.
 </Note>
 
-**Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` této hodnoty). `workspaceId` musí být workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`.
+**Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel buď `Response`, nebo `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` jedné z těchto možností). Na dispatch cestě musí být `workspaceId` workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`. Výsledek, který neodpovídá ani jedné z těchto struktur — včetně takového, jehož identifikátory nejsou UUID — je odmítnut s chybou `502`.
 
 | Pole                                     | Typ                  | Poznámky                                                                       |
 | ---------------------------------------- | -------------------- | ------------------------------------------------------------------------------ |
@@ -290,7 +308,9 @@ U podpisů requestů většina poskytovatelů podepisuje pomocí HMAC-SHA256; č
 Příklad resolveru výše už ukazuje GitHub HMAC-SHA256 flow — přizpůsobte název hlavičky, kódování digestu a podepsaný řetězec payloadu podle poskytovatele, se kterým se integrujete.
 
 <Note>
-Route odpoví `202 { queued: true }` hned poté, co resolver vrátí výsledek, a cíl běží ve frontě workeru — volající nikdy nevidí latenci, výsledek ani chyby cíle (ty jsou zaznamenané v logách běhu). Tím se zabrání tomu, aby opakované doručování na straně odesílatele znásobovalo zpomalení zpracování, což je přesně to, co chcete pro příjem webhooků. Pro endpointy, u kterých volající musí přečíst tělo odpovědi (challenge handshaky, příkazy Slacku), místo toho použijte route s `httpRouteTriggerSettings`. Udržujte resolver rychlý — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože je resolver dostupný jako veřejný endpoint, chraňte ho omezením rychlosti (rate limiting) na své edge vrstvě.
+Když resolver vrátí dispatch objekt, route odpoví `202 { queued: true }` a cíl běží ve frontě workeru — volající nikdy nevidí latenci cíle, výsledek ani chyby (ty jsou zaznamenané v logách běhu). Tím se zabrání tomu, aby opakované doručování na straně odesílatele znásobovalo zpomalení zpracování, což je přesně to, co chcete pro příjem webhooků.
+
+Když volající musí v rámci stejného requestu přečíst tělo odpovědi (challenge handshaky, interaktivní potvrzení), vraťte místo toho z **resolveru** `Response`. Platforma jej synchronně zopakuje a přeskočí frontu; jeho hlavičky procházejí stejným seznamem povolených položek jako odpovědi HTTP rout. Udržujte resolver rychlý — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože je resolver dostupný jako veřejný endpoint, chraňte ho omezením rychlosti (rate limiting) na své edge vrstvě.
 </Note>
 
 #### Payload spouštěče databázové události
@@ -593,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Instalační hooky** — předinstalační a poinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction` a `definePostInstallLogicFunction`.
+**Instalační hooky** — předinstalační, poinstalační a odinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction`.
 </Note>
 
 ## Typovaní klienti API (twenty-client-sdk)

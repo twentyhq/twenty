@@ -117,10 +117,13 @@ import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2
 import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626405-add-kanban-and-calendar-widget-view-types';
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
+import { AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand } from './2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
+import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
+import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784897347051-repair-key-value-pair-application-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -242,6 +245,9 @@ export const INSTANCE_COMMANDS = [
   AddAutoUpgradeToApplicationFastInstanceCommand,
   AddApplicationIdToKeyValuePairFastInstanceCommand,
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
+  AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
+  AddAgentForeignKeyToRoleTargetFastInstanceCommand,
+  RepairKeyValuePairApplicationIdFastInstanceCommand,
 ];

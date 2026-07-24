@@ -1,6 +1,11 @@
 import { buildLogicFunctionPayload } from './build-logic-function-payload';
 import { type PartnerApplicationRequest } from './partner-application-request-schema';
 
+const validExperienceNotes =
+  'Built a custom Twenty app for a property-management client, modeled leases and ' +
+  'tenants as data models, automated renewal workflows, and shipped a front component ' +
+  'for the broker dashboard with role-based views.';
+
 const minimalValid: PartnerApplicationRequest = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
@@ -9,6 +14,9 @@ const minimalValid: PartnerApplicationRequest = {
   city: 'London',
   hourlyRate: 150,
   projectBudgetMin: 5000,
+  twentyExperience: ['WORKFLOWS'],
+  twentyExperienceNotes: validExperienceNotes,
+  twentyExperienceProofLink: 'https://www.loom.com/share/example',
 };
 
 const fullValid: PartnerApplicationRequest = {
@@ -19,7 +27,6 @@ const fullValid: PartnerApplicationRequest = {
   typeOfTeam: 'SOLO',
   partnerScope: ['ADVISORY', 'SOLUTIONING'],
   skills: ['React', 'TypeScript'],
-  applicationNotes: 'refs: Acme, Globex',
   calendarLink: 'https://cal.com/ada',
 };
 
@@ -39,10 +46,14 @@ describe('buildLogicFunctionPayload', () => {
     );
   });
 
-  it('forwards applicationNotes through to the payload', () => {
-    expect(buildLogicFunctionPayload(fullValid).applicationNotes).toContain(
-      'Acme',
+  it('forwards twenty experience fields to the webhook payload', () => {
+    const payload = buildLogicFunctionPayload(fullValid);
+    expect(payload.twentyExperience).toEqual(['WORKFLOWS']);
+    expect(payload.twentyExperienceNotes).toBe(validExperienceNotes);
+    expect(payload.twentyExperienceProofLink).toBe(
+      'https://www.loom.com/share/example',
     );
+    expect(payload).not.toHaveProperty('applicationNotes');
   });
 
   it('omits keys for undefined optional fields', () => {
@@ -53,7 +64,7 @@ describe('buildLogicFunctionPayload', () => {
     expect(payload).not.toHaveProperty('partnerScope');
   });
 
-  it('omits empty arrays', () => {
+  it('omits empty arrays for optional multi-selects', () => {
     const payload = buildLogicFunctionPayload({
       ...minimalValid,
       languages: [],

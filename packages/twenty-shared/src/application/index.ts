@@ -73,6 +73,7 @@ export {
 export { getPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-page-layout-widget-universal-identifier.util';
 export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
+export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
@@ -132,11 +133,13 @@ export type {
 } from './roleManifestType';
 export type { RunAgentInput, RunAgentResult } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
+export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
+export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,

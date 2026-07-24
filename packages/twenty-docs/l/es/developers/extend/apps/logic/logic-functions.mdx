@@ -59,7 +59,7 @@ Para invocar una función de lógica activada por una ruta desde un componente d
 * **cron**: Ejecuta tu función en un horario usando una expresión CRON.
 * **databaseEvent**: Se ejecuta en eventos del ciclo de vida de objetos del espacio de trabajo. Cuando la operación del evento es `updated`, se pueden especificar campos específicos que se deben escuchar en la matriz `updatedFields`. Si se deja sin definir o vacío, cualquier actualización activará la función.
 > p. ej. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve el espacio de trabajo de destino Y la función de lógica de destino a la que se debe enviar; la plataforma confirma con `202` y ejecuta esa función de **destino** en la cola de workers. Consulta [Disparador de ruta de servidor](#server-route-trigger).
+* **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve una `Response` síncrona o el espacio de trabajo de destino Y la función de lógica de destino para poner en cola; en la ruta de encolado, la plataforma confirma con `202` y ejecuta ese **destino** en la cola de workers. Consulta [Disparador de ruta de servidor](#server-route-trigger).
 
 <Note>
 También puedes ejecutar manualmente una función usando la CLI:
@@ -178,13 +178,18 @@ El código de estado debe ser un código de estado HTTP válido (entre 100 y 599
 
 El disparador tiene dos partes:
 
-1. Una función de lógica de **resolver** — declarada con `serverRouteTriggerSettings` — se ejecuta en tu **espacio de trabajo propietario** (el espacio de trabajo que es propietario del registro de la aplicación). Inspecciona la solicitud entrante y devuelve `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, eligiendo *tanto* el espacio de trabajo de destino como la función de destino. El resolver es el único punto de autorización: la URL solo lleva el identificador del resolver. **Este es el lugar preferido para verificar las firmas de las solicitudes**: el resolver se ejecuta antes de cualquier efecto secundario, tiene acceso al `rawBody` original y a los encabezados reenviados, y puede rechazar sin tocar nunca el destino.
-2. Luego, una función de lógica de **destino** — una función de lógica normal por espacio de trabajo — se ejecuta en el espacio de trabajo resuelto con el payload devuelto por el resolver (o el payload original de la solicitud si el resolver no lo transformó). Su valor de retorno se convierte en la respuesta HTTP.
+1. Una función de lógica de **resolver** — declarada con `serverRouteTriggerSettings` — se ejecuta en tu **espacio de trabajo propietario** (el espacio de trabajo que es propietario del registro de la aplicación). Inspecciona la solicitud entrante y devuelve una de las siguientes opciones:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — la plataforma pone en cola ese destino en el espacio de trabajo resuelto y confirma con `202 { queued: true }`, o
+   * un `Response` de `twenty-sdk/logic-function` — la plataforma replica esa respuesta HTTP de forma **sincrónica** y **no** pone en cola un destino (usa esto para desafíos de verificación como `url_verification` de Slack).
+
+   El resolver es el único punto de autorización: la URL solo lleva el identificador del resolver. **Este es el lugar preferido para verificar las firmas de las solicitudes**: el resolver se ejecuta antes de cualquier efecto secundario, tiene acceso al `rawBody` original y a los encabezados reenviados, y puede rechazar sin tocar nunca el destino.
+2. Luego, una función de lógica de **destino** — una función de lógica normal por espacio de trabajo — se ejecuta en el espacio de trabajo resuelto con el payload devuelto por el resolver (o el payload original de la solicitud si el resolver no lo transformó). Su valor de retorno **no** es observado por el solicitante HTTP cuando el resolver eligió la ruta de encolado.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +216,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +283,7 @@ El identificador es el `universalIdentifier` del resolver de tu manifiesto. Regi
 **La aplicación debe reclamarse e instalarse en el espacio de trabajo propietario.** Dado que el resolver se ejecuta en el **espacio de trabajo propietario** (el espacio de trabajo que es propietario del registro de la aplicación), un desencadenador de ruta de servidor solo funciona una vez que la aplicación ha sido *reclamada*, es decir, tiene un espacio de trabajo propietario, **y** esa aplicación está **instalada en el espacio de trabajo propietario**. Hasta que ambas condiciones se cumplan, el resolver no tiene dónde ejecutarse, por lo que la ruta no puede despacharse. Por lo tanto, una aplicación que expone una función lógica `serverRouteTriggerSettings` no puede figurar en el marketplace hasta que haya sido reclamada e instalada en su espacio de trabajo propietario.
 </Note>
 
-**Contrato del resolver.** El tipo `LogicFunctionConfig` del SDK aplica esto en tiempo de compilación: tan pronto como configuras `serverRouteTriggerSettings`, tu handler se ve obligado a devolver `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o un `Promise` de esto). El `workspaceId` debe ser un espacio de trabajo donde la función de destino esté instalada; de lo contrario, la solicitud se rechaza con `404`.
+**Contrato del resolver.** El tipo `LogicFunctionConfig` del SDK aplica esto en tiempo de compilación: tan pronto como configuras `serverRouteTriggerSettings`, tu handler se ve obligado a devolver un `Response`, o `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o un `Promise` de cualquiera de los dos). En la ruta de envío, el `workspaceId` debe ser un espacio de trabajo donde la función de destino esté instalada; de lo contrario, la solicitud se rechaza con `404`. Un resultado que no coincide con ninguna de las dos formas —incluido uno cuyos identificadores no sean UUID— se rechaza con `502`.
 
 | Campo                                    | Tipo                | Notas                                                                                        |
 | ---------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------- |
@@ -290,7 +308,9 @@ Para las firmas de solicitudes, la mayoría de los proveedores firman con HMAC-S
 El ejemplo de resolver anterior ya muestra el flujo HMAC-SHA256 de GitHub; adapta el nombre del encabezado, la codificación del digest y la cadena firmada del payload según el proveedor con el que te estés integrando.
 
 <Note>
-La ruta responde `202 { queued: true }` justo después de que el resolver devuelve y el destino se ejecuta en la cola de workers — el solicitante nunca observa la latencia, el resultado ni los fallos del destino (estos se registran en los registros de ejecución). Esto evita que los reintentos del remitente amplifiquen las ralentizaciones del procesamiento, que es lo que se desea para la ingesta de webhooks. Para los endpoints cuyo solicitante debe leer el cuerpo de la respuesta (handshakes de verificación, comandos de Slack), usa en su lugar una ruta con `httpRouteTriggerSettings`. Mantén el resolver rápido: algunos proveedores (p. ej. Slack) agotan el tiempo de espera en pocos segundos. Como el resolver es accesible como un endpoint público, protégelo con limitación de tasa en el edge.
+Cuando el resolver devuelve un objeto de envío, la ruta responde `202 { queued: true }` y el destino se ejecuta en la cola de workers: el solicitante nunca observa la latencia, el resultado ni los fallos del destino (estos se registran en los registros de ejecución). Esto evita que los reintentos del remitente amplifiquen las ralentizaciones del procesamiento, que es lo que se desea para la ingesta de webhooks.
+
+Cuando el solicitante deba leer el cuerpo de la respuesta en la misma solicitud (desafíos de verificación, acuses de recibo interactivos), en su lugar devuelve un `Response` desde el **resolver**. La plataforma lo replica de forma síncrona y omite la cola; sus cabeceras pasan por la misma lista de permitidos que las respuestas de rutas HTTP. Mantén el resolver rápido: algunos proveedores (p. ej. Slack) agotan el tiempo de espera en pocos segundos. Como el resolver es accesible como un endpoint público, protégelo con limitación de tasa en el edge.
 </Note>
 
 #### Payload del disparador de evento de base de datos
@@ -593,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Hooks de instalación** — los controladores de preinstalación y postinstalación — comparten este entorno de ejecución, pero se declaran con sus propias funciones 'define' y no aceptan configuraciones de disparador. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction` y `definePostInstallLogicFunction`.
+**Hooks de instalación** — los controladores de preinstalación, postinstalación y desinstalación — comparten este entorno de ejecución, pero se declaran con sus propias funciones `define` y no aceptan configuraciones de disparador. Consulta [Hooks de instalación](/l/es/developers/extend/apps/config/install-hooks) para `definePreInstallLogicFunction`, `definePostInstallLogicFunction` y `defineUninstallLogicFunction`.
 </Note>
 
 ## Clientes de API tipados (twenty-client-sdk)

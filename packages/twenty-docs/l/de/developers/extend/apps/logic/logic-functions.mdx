@@ -59,7 +59,7 @@ Um eine routenausgelöste Logikfunktion von einer (headless) Front-Komponente au
 * **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
 * **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
 > z. B. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Stellt eine einzelne, registrierungsbezogene HTTP-Route bereit. Eine **Resolver**-Funktion (deklariert mit `serverRouteTriggerSettings`) läuft im Owner-Workspace und gibt den Ziel-Workspace UND die Ziel-Logikfunktion zurück, an die weitergeleitet werden soll; die Plattform bestätigt mit `202` und führt diese **Ziel**-Funktion in der Worker-Queue aus. Siehe [Server-Route-Trigger](#server-route-trigger).
+* **serverRoute**: Stellt eine einzelne, registrierungsbezogene HTTP-Route bereit. Eine **Resolver**-Funktion (deklariert mit `serverRouteTriggerSettings`) läuft im Owner-Workspace und gibt entweder eine synchrone `Response` zurück oder den Ziel-Workspace UND die Ziel-Logikfunktion, die in die Queue eingereiht werden soll; auf dem Enqueue-Pfad bestätigt die Plattform mit `202` und führt dieses **Ziel** in der Worker-Queue aus. Siehe [Server-Route-Trigger](#server-route-trigger).
 
 <Note>
 Sie können eine Funktion auch manuell über die CLI ausführen:
@@ -177,13 +177,18 @@ Der Statuscode muss ein gültiger HTTP-Statuscode sein (zwischen 100 und 599). A
 
 Der Trigger besteht aus zwei Teilen:
 
-1. Eine **Resolver**-Logikfunktion – deklariert mit `serverRouteTriggerSettings` – läuft in deinem **Owner-Workspace** (dem Workspace, dem die Anwendungsregistrierung gehört). Sie untersucht die eingehende Anfrage und gibt `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` zurück und wählt dabei *sowohl* den Ziel-Workspace als auch die Zielfunktion aus. Der Resolver ist die einzige Autorisierungsstelle – die URL enthält nur den Bezeichner des Resolvers. **Dies ist der bevorzugte Ort, um Anfragesignaturen zu verifizieren**: Der Resolver läuft vor jeglicher Nebenwirkung, hat Zugriff auf den ursprünglichen `rawBody` und weitergeleitete Header und kann ablehnen, ohne jemals das Ziel zu berühren.
-2. Eine **Target**-Logikfunktion – eine reguläre, Workspace-spezifische Logikfunktion – läuft dann im aufgelösten Workspace mit dem Payload, der vom Resolver zurückgegeben wurde (oder dem ursprünglichen Anfrage-Payload, falls der Resolver ihn nicht transformiert hat). Ihr Rückgabewert wird zur HTTP-Antwort.
+1. Eine **Resolver**-Logikfunktion – deklariert mit `serverRouteTriggerSettings` – läuft in deinem **Owner-Workspace** (dem Workspace, dem die Anwendungsregistrierung gehört). Sie inspiziert die eingehende Anfrage und gibt entweder Folgendes zurück:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — die Plattform reiht dieses Ziel im aufgelösten Workspace in die Queue ein und bestätigt mit `202 { queued: true }`, oder
+   * eine `Response` von `twenty-sdk/logic-function` — die Plattform gibt diese HTTP-Response **synchron** zurück und reiht **kein** Ziel in die Queue ein (verwende dies für Challenge-Handshakes wie Slack `url_verification`).
+
+   Der Resolver ist die einzige Autorisierungsstelle – die URL enthält nur den Bezeichner des Resolvers. **Dies ist der bevorzugte Ort, um Anfragesignaturen zu verifizieren**: Der Resolver läuft vor jeglicher Nebenwirkung, hat Zugriff auf den ursprünglichen `rawBody` und weitergeleitete Header und kann ablehnen, ohne jemals das Ziel zu berühren.
+2. Eine **Target**-Logikfunktion – eine reguläre, Workspace-spezifische Logikfunktion – läuft dann im aufgelösten Workspace mit dem Payload, der vom Resolver zurückgegeben wurde (oder dem ursprünglichen Anfrage-Payload, falls der Resolver ihn nicht transformiert hat). Sein Rückgabewert wird vom HTTP-Aufrufer **nicht** beobachtet, wenn der Resolver den Enqueue-Pfad gewählt hat.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -210,12 +215,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -264,7 +282,7 @@ Der Bezeichner ist der `universalIdentifier` des Resolvers aus deinem Manifest. 
 **Die Anwendung muss beansprucht und im Arbeitsbereich ihres Besitzers installiert werden.** Da der Resolver im **Owner-Arbeitsbereich** ausgeführt wird (dem Arbeitsbereich, der die Anwendungsregistrierung besitzt), funktioniert ein Server-Route-Trigger nur, wenn die Anwendung *beansprucht* wurde – d. h. sie einen Owner-Arbeitsbereich hat – **und** diese Anwendung **im Owner-Arbeitsbereich installiert ist**. Solange beides nicht zutrifft, hat der Resolver keinen Ausführungsort, sodass die Route nicht ausgeführt werden kann. Eine Anwendung, die eine `serverRouteTriggerSettings`-Logikfunktion bereitstellt, kann daher nicht im Marketplace aufgeführt werden, bevor sie beansprucht und im Owner-Arbeitsbereich installiert wurde.
 </Note>
 
-**Resolver-Vertrag.** Der `LogicFunctionConfig`-Typ des SDK erzwingt dies zur Compile-Zeit: Sobald du `serverRouteTriggerSettings` setzt, ist dein Handler darauf beschränkt, `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (oder ein `Promise` davon) zurückzugeben. Die `workspaceId` muss auf einen Workspace verweisen, in dem die Zielfunktion installiert ist, andernfalls wird die Anfrage mit `404` abgelehnt.
+**Resolver-Vertrag.** Der `LogicFunctionConfig`-Typ des SDK erzwingt dies zur Compile-Zeit: Sobald du `serverRouteTriggerSettings` setzt, ist dein Handler darauf beschränkt, entweder eine `Response` oder `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` zurückzugeben (oder ein `Promise` von einem der beiden). Auf dem Dispatch-Pfad muss die `workspaceId` auf einen Workspace verweisen, in dem die Zielfunktion installiert ist, andernfalls wird die Anfrage mit `404` abgelehnt. Ein Ergebnis, das keiner der beiden Formen entspricht – einschließlich eines Ergebnisses, dessen Bezeichner keine UUIDs sind – wird mit `502` abgelehnt.
 
 | Feld                                     | Typ                 | Notizen                                                                                  |
 | ---------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
@@ -289,7 +307,9 @@ Für Anfragesignaturen signieren die meisten Provider mit HMAC-SHA256; die Teile
 Das obige Resolver-Beispiel zeigt bereits den GitHub-HMAC-SHA256-Flow – passe den Header-Namen, die Digest-Codierung und den signierten Payload-String entsprechend dem Provider an, den du integrierst.
 
 <Note>
-Die Route antwortet mit `202 { queued: true }`, sobald der Resolver zurückkehrt und das Ziel in der Worker-Queue ausgeführt wird – der Aufrufer bekommt weder die Latenz, noch das Ergebnis oder Fehler des Ziels mit (diese werden in den Ausführungsprotokollen aufgezeichnet). Dadurch wird verhindert, dass erneute Zustellungen des Senders Verarbeitungsverzögerungen verstärken – genau das ist bei der Erfassung von Webhooks erwünscht. Für Endpunkte, bei denen der Aufrufer den Response-Body lesen muss (Challenge-Handshakes, Slack-Befehle), verwenden Sie stattdessen eine `httpRouteTriggerSettings`-Route. Halten Sie den Resolver schnell – einige Provider (z. B. Slack) laufen nach wenigen Sekunden in ein Timeout. Da der Resolver als öffentlicher Endpoint erreichbar ist, schütze ihn mit Rate-Limiting an deinem Edge.
+Wenn der Resolver ein Dispatch-Objekt zurückgibt, antwortet die Route mit `202 { queued: true }` und das Ziel wird in der Worker-Queue ausgeführt – der Aufrufer bekommt weder die Latenz, noch das Ergebnis oder Fehler des Ziels mit (diese werden in den Ausführungsprotokollen aufgezeichnet). Dadurch wird verhindert, dass erneute Zustellungen des Senders Verarbeitungsverzögerungen verstärken – genau das ist bei der Erfassung von Webhooks erwünscht.
+
+Wenn der Aufrufer den Response-Body in derselben Anfrage lesen muss (Challenge-Handshakes, interaktive Bestätigungen), gib stattdessen eine `Response` aus dem **Resolver** zurück. Die Plattform gibt sie synchron zurück und überspringt die Queue; ihre Header durchlaufen dieselbe Allow-Liste wie HTTP-Routen-Antworten. Halten Sie den Resolver schnell – einige Provider (z. B. Slack) laufen nach wenigen Sekunden in ein Timeout. Da der Resolver als öffentlicher Endpoint erreichbar ist, schütze ihn mit Rate-Limiting an deinem Edge.
 </Note>
 
 #### Datenbank-Event-Trigger-Payload
@@ -592,7 +612,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Installations-Hooks** – Vorinstallations- und Nachinstallations-Handler – teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen deklariert und verwenden keine Trigger-Einstellungen. Siehe [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für `definePreInstallLogicFunction` und `definePostInstallLogicFunction`.
+**Installations-Hooks** – Vorinstallations-, Nachinstallations- und Deinstallations-Handler – teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen deklariert und verwenden keine Trigger-Einstellungen. Siehe [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für `definePreInstallLogicFunction`, `definePostInstallLogicFunction` und `defineUninstallLogicFunction`.
 </Note>
 
 ## Typisierte API-Clients (twenty-client-sdk)

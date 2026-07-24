@@ -6695,10 +6695,10 @@ msgstr "Ο στόχος ρόλου υπάρχει ήδη"
 msgid "Role target is missing identifier."
 msgstr "Στον στόχο ρόλου λείπει αναγνωριστικό."
 
-#. js-lingui-id: oCyyzG
+#. js-lingui-id: vYrPc5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
 msgstr ""
 
 #. js-lingui-id: oNYUjk
@@ -8959,11 +8959,6 @@ msgstr "Δεν βρέθηκε η προβολή μετά το upsert"
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found for widget"
 msgstr "Δεν βρέθηκε η προβολή για το widget"
-
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
-msgstr ""
 
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
