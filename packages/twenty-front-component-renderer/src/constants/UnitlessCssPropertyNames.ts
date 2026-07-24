@@ -1,4 +1,4 @@
-export const UNITLESS_CSS_PROPERTY_NAMES = new Set([
+const UNITLESS_CSS_PROPERTY_BASE_NAMES = [
   'animationIterationCount',
   'aspectRatio',
   'borderImageOutset',
@@ -18,11 +18,9 @@ export const UNITLESS_CSS_PROPERTY_NAMES = new Set([
   'gridArea',
   'gridRow',
   'gridRowEnd',
-  'gridRowSpan',
   'gridRowStart',
   'gridColumn',
   'gridColumnEnd',
-  'gridColumnSpan',
   'gridColumnStart',
   'fontWeight',
   'lineClamp',
@@ -43,4 +41,18 @@ export const UNITLESS_CSS_PROPERTY_NAMES = new Set([
   'strokeMiterlimit',
   'strokeOpacity',
   'strokeWidth',
-]);
+];
+
+const UNITLESS_CSS_PROPERTY_VENDOR_PREFIXES = ['Webkit', 'Moz', 'ms', 'O'];
+
+const withVendorPrefixedAliases = (propertyName: string): string[] => [
+  propertyName,
+  ...UNITLESS_CSS_PROPERTY_VENDOR_PREFIXES.map(
+    (vendorPrefix) =>
+      `${vendorPrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`,
+  ),
+];
+
+export const UNITLESS_CSS_PROPERTY_NAMES = new Set(
+  UNITLESS_CSS_PROPERTY_BASE_NAMES.flatMap(withVendorPrefixedAliases),
+);

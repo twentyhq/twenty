@@ -1,4 +1,5 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { formatStyleValueForCssStore } from '@/polyfills/dom/utils/formatStyleValueForCssStore';
 import { isImportantPriorityKeyword } from '@/polyfills/dom/utils/isImportantPriorityKeyword';
@@ -26,9 +27,11 @@ export const createStyleProxy = ({
       importantPriorityStoreKeys,
     );
 
-  const scheduleHostFlush = createMicrotaskCoalescedCallback(() => {
-    flushSerializedCssTextToHost?.(readSerializedCssText());
-  });
+  const scheduleHostFlush = isDefined(flushSerializedCssTextToHost)
+    ? createMicrotaskCoalescedCallback(() => {
+        flushSerializedCssTextToHost(readSerializedCssText());
+      })
+    : () => {};
 
   const replaceAllDeclarationsFromCssText = (cssText: string): void => {
     for (const storeKey of Object.keys(cssValueByStoreKey)) {
