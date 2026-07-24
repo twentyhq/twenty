@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
 * **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
 > مثال: `person.updated`، `*.created`، `company.*`
-* **serverRoute**: يوفّر مسار HTTP واحدًا بنطاق التسجيل. تعمل دالة **resolver** (المُعلَنة باستخدام `serverRouteTriggerSettings`) في مساحة عمل المالك وتُرجِع مساحة العمل المستهدفة ودالة المنطق المستهدفة التي يجب التوجيه إليها؛ يؤكّد النظام الأساسي تلقّي الطلب برمز `202` ويُشغِّل تلك الدالة **المستهدفة** في طابور العامل (worker queue). راجع [مشغّل مسار الخادم](#server-route-trigger).
+* **serverRoute**: يوفّر مسار HTTP واحدًا بنطاق التسجيل. تعمل دالة **resolver** (المُعلَنة باستخدام `serverRouteTriggerSettings`) في مساحة عمل المالك وتُرجِع إمّا كائن `Response` متزامنًا أو كلاً من مساحة العمل المستهدفة ودالة المنطق المطلوب إدراجها في قائمة الانتظار؛ في مسار الإدراج في قائمة الانتظار يؤكّد النظام الأساسي تلقّي الطلب برمز `202` ويُشغِّل ذلك **الهدف** في طابور العامل (worker queue). راجع [مشغّل مسار الخادم](#server-route-trigger).
 
 <Note>
 يمكنك أيضًا تنفيذ دالة يدويًا باستخدام CLI:
@@ -177,13 +177,18 @@ const handler = async (event: RoutePayload) => {
 
 يتكوّن المشغّل من جزأين:
 
-1. دالة منطق **resolver** — يتم التصريح عنها باستخدام `serverRouteTriggerSettings` — تعمل في **مساحة العمل المالكة** (مساحة العمل التي تمتلك تسجيل التطبيق). تتفحّص الطلب الوارد وتُرجِع `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`، لتحديد *كلٍ من* مساحة العمل المستهدفة والدالة المستهدفة. يُعَدّ الـ resolver نقطة التفويض الوحيدة — فعنوان URL يحمل فقط معرّف الـ resolver. **هذا هو المكان المفضّل للتحقق من تواقيع الطلبات**: يعمل الـ resolver قبل أي تأثير جانبي، ولديه إمكانية الوصول إلى `rawBody` الأصلي والرؤوس المُمرَّرة، ويمكنه رفض الطلب دون لمس الهدف مطلقًا.
-2. دالة منطق **target** — دالة منطق عادية لكل مساحة عمل — تعمل بعد ذلك في مساحة العمل التي تم حلّها باستخدام الحمولة التي أعادها الـ resolver (أو حمولة الطلب الأصلية إذا لم يقم الـ resolver بتحويلها). تصبح القيمة التي تعيدها هي استجابة HTTP.
+1. دالة منطق **resolver** — يتم التصريح عنها باستخدام `serverRouteTriggerSettings` — تعمل في **مساحة العمل المالكة** (مساحة العمل التي تمتلك تسجيل التطبيق). تفحص الطلب الوارد وتُرجِع إمّا:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — يضع النظام الأساسي ذلك الهدف في قائمة الانتظار في مساحة العمل المُحدَّدة ويؤكّد تلقّي الطلب برمز `202 { queued: true }`، أو
+   * `Response` من `twenty-sdk/logic-function` — تُعيد المنصّة إرسال تلك الاستجابة عبر HTTP بشكل متزامن ولا تُدرِج هدفًا في قائمة الانتظار (استخدم هذا لمصافحات التحدّي مثل Slack `url_verification`).
+
+   يُعَدّ الـ resolver نقطة التفويض الوحيدة — فعنوان URL يحمل فقط معرّف الـ resolver. **هذا هو المكان المفضّل للتحقق من تواقيع الطلبات**: يعمل الـ resolver قبل أي تأثير جانبي، ولديه إمكانية الوصول إلى `rawBody` الأصلي والرؤوس المُمرَّرة، ويمكنه رفض الطلب دون لمس الهدف مطلقًا.
+2. دالة منطق **target** — دالة منطق عادية لكل مساحة عمل — تعمل بعد ذلك في مساحة العمل التي تم حلّها باستخدام الحمولة التي أعادها الـ resolver (أو حمولة الطلب الأصلية إذا لم يقم الـ resolver بتحويلها). قيمة الإرجاع الخاصة به **لا** يطّلع عليها مستدعي HTTP عندما يختار الـ resolver مسار الإضافة إلى الطابور (enqueue path).
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -210,12 +215,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -264,7 +282,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 **يجب أن يتم المطالبة بالتطبيق وتثبيته في مساحة عمل المالك الخاصة به.** نظرًا لأن محلِّل الاستدعاء يعمل في **مساحة عمل المالك** (مساحة العمل التي تمتلك تسجيل التطبيق)، فإن مشغّل مسار الخادم يعمل فقط بمجرد أن يكون قد تم *المطالبة* بالتطبيق — أي أصبح لديه مساحة عمل مالكة — **و** تم **تثبيت هذا التطبيق في مساحة عمل المالك**. إلى أن يتحقق الشرطان معًا، فلن يكون لدى محلِّل الاستدعاء مكان يعمل فيه، وبالتالي لا يمكن إرسال المسار. لذلك لا يمكن إدراج أي تطبيق يعرِّض دالة منطقية `serverRouteTriggerSettings` في السوق حتى تتم المطالبة به وتثبيته في مساحة عمل المالك الخاصة به.
 </Note>
 
-**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` من هذا الكائن). يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`.
+**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع إما `Response`، أو `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` لأيٍّ منهما). على مسار الإرسال (dispatch path)، يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`. أي نتيجة لا تطابق أياً من البنيتين — بما في ذلك تلك التي لا تكون معرّفاتها UUIDs — تُرفَض مع رمز الحالة `502`.
 
 | الحقل                                    | النوع              | الملاحظات                                                              |
 | ---------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
@@ -289,7 +307,9 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 يُظهِر مثال الـ resolver أعلاه بالفعل تدفّق GitHub HMAC-SHA256 — عدِّل اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة بحسب المزوّد الذي تدمجه.
 
 <Note>
-يستجيب المسار بـ `202 { queued: true }` مباشرة بعد أن تُرجِع دالة resolver نتيجتها وتعمل الدالة المستهدفة على طابور العامل (worker queue) — المتصل لا يطّلع أبدًا على زمن استجابة الدالة المستهدفة أو نتيجتها أو حالات الفشل الخاصة بها (تُسجَّل هذه في سجلات التنفيذ). هذا يمنع عمليات إعادة الإرسال من جهة المرسِل من تضخيم تباطؤ المعالجة، وهو ما تريده عند استيعاب خطافات الويب. بالنسبة لنقاط النهاية التي يجب على المتصل قراءة محتوى الاستجابة لها (مثل challenge handshakes وSlack commands)، استخدِم مسارًا من نوع `httpRouteTriggerSettings` بدلاً من ذلك. احرص على أن تكون دالة resolver سريعة — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الـ resolver يمكن الوصول إليه كنقطة نهاية عامة، قم بحمايته من خلال تحديد المعدّل (rate limiting) على الحافة لديك.
+عندما يُرجِع الـ resolver كائن إرسال (dispatch object)، يستجيب المسار بـ `202 { queued: true }` وتعمل الدالة المستهدفة على طابور العامل (worker queue) — المتصل لا يطّلع أبدًا على زمن استجابة الدالة المستهدفة أو نتيجتها أو حالات الفشل الخاصة بها (تُسجَّل هذه في سجلات التنفيذ). هذا يمنع عمليات إعادة الإرسال من جهة المرسِل من تضخيم تباطؤ المعالجة، وهو ما تريده عند استيعاب خطافات الويب.
+
+عندما يجب على المتصل قراءة جسم الاستجابة في نفس الطلب (مثل challenge handshakes أو interactive acknowledgements)، أرجِع `Response` من **الـ resolver** بدلًا من ذلك. تعيد المنصّة إرجاعها بشكل متزامن وتتجاوز الطابور؛ تمر ترويساتها (headers) عبر نفس قائمة السماح (allow-list) الخاصة باستجابات مسارات HTTP. احرص على أن تكون دالة resolver سريعة — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الـ resolver يمكن الوصول إليه كنقطة نهاية عامة، قم بحمايته من خلال تحديد المعدّل (rate limiting) على الحافة لديك.
 </Note>
 
 #### حمولة مُحفِّز حدث قاعدة البيانات

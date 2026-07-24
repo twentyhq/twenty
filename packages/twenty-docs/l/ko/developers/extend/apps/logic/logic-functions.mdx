@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**: CRON 식을 사용하여 예약된 일정으로 함수를 실행합니다.
 * **databaseEvent**: 워크스페이스 객체 라이프사이클 이벤트에서 실행됩니다. 이벤트 작업이 `updated`인 경우, 수신할 특정 필드를 `updatedFields` 배열에 지정할 수 있습니다. 정의하지 않거나 비워두면, 어떤 업데이트든 함수가 트리거됩니다.
 > 예: `person.updated`, `*.created`, `company.*`
-* **serverRoute**: 단일 등록 범위 HTTP 라우트를 노출합니다. `serverRouteTriggerSettings`로 선언된 **resolver** 함수는 소유자 워크스페이스에서 실행되며, 디스패치할 대상 워크스페이스와 대상 로직 함수를 반환합니다. 플랫폼은 `202`로 응답을 확인(ack)하고, 워커 큐에서 해당 **target** 함수를 실행합니다. [서버 라우트 트리거](#server-route-trigger)를 참고하세요.
+* **serverRoute**: 단일 등록 범위 HTTP 라우트를 노출합니다. `serverRouteTriggerSettings`로 선언된 **resolver** 함수는 소유자 워크스페이스에서 실행되며, 동기식 `Response`를 반환하거나, 대상 워크스페이스와 큐에 넣을 대상 로직 함수를 반환합니다. 큐에 넣는 경로의 경우 플랫폼은 `202`로 응답을 확인(ack)하고 워커 큐에서 해당 **target**을 실행합니다. [서버 라우트 트리거](#server-route-trigger)를 참고하세요.
 
 <Note>
 CLI를 사용해 함수를 수동으로 실행할 수도 있습니다:
@@ -177,13 +177,18 @@ const handler = async (event: RoutePayload) => {
 
 트리거는 두 부분으로 구성됩니다:
 
-1. **resolver** 로직 함수 — `serverRouteTriggerSettings`로 선언되는 — 는 **소유자 워크스페이스**(애플리케이션 등록을 소유한 워크스페이스)에서 실행됩니다. 이 함수는 들어오는 요청을 검사하고 `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`를 반환하여, 대상 워크스페이스와 대상 함수를 *둘 다* 선택합니다. resolver는 단일 인가 지점입니다 — URL에는 resolver의 식별자만 포함됩니다. **요청 서명을 검증하기에 가장 적합한 위치입니다**. resolver는 어떤 부수 효과가 발생하기 전에 실행되며, 원본 `rawBody`와 전달된 헤더에 접근할 수 있고, 대상에 전혀 접근하지 않고도 요청을 거부할 수 있습니다.
-2. 그 다음 **target** 로직 함수 — 일반적인 워크스페이스별 로직 함수 — 가 resolver가 반환한 payload(또는 resolver가 변환하지 않았다면 원본 요청 payload)를 가지고 결정된 워크스페이스에서 실행됩니다. 해당 함수의 반환 값이 HTTP 응답이 됩니다.
+1. **resolver** 로직 함수 — `serverRouteTriggerSettings`로 선언되는 — 는 **소유자 워크스페이스**(애플리케이션 등록을 소유한 워크스페이스)에서 실행됩니다. 이 함수는 들어오는 요청을 검사한 뒤 다음 중 하나를 반환합니다:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — 플랫폼은 지정된 워크스페이스에서 해당 대상 함수를 큐에 넣고 `202 { queued: true }`로 응답을 확인(ack)합니다, 또는
+   * `twenty-sdk/logic-function`의 `Response` — 플랫폼은 해당 HTTP 응답을 **동기적**으로 그대로 반환하고, target을 큐에 넣지는 **않습니다**(Slack `url_verification`과 같은 챌린지 핸드셰이크에 사용하십시오).
+
+   resolver는 단일 인가 지점입니다 — URL에는 resolver의 식별자만 포함됩니다. **요청 서명을 검증하기에 가장 적합한 위치입니다**. resolver는 어떤 부수 효과가 발생하기 전에 실행되며, 원본 `rawBody`와 전달된 헤더에 접근할 수 있고, 대상에 전혀 접근하지 않고도 요청을 거부할 수 있습니다.
+2. 그 다음 **target** 로직 함수 — 일반적인 워크스페이스별 로직 함수 — 가 resolver가 반환한 payload(또는 resolver가 변환하지 않았다면 원본 요청 payload)를 가지고 결정된 워크스페이스에서 실행됩니다. resolver가 enqueue 경로를 선택한 경우, 해당 반환 값은 HTTP 호출자가 **전혀** 관찰하지 못합니다.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -210,12 +215,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -264,7 +282,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 **애플리케이션은 소유자 워크스페이스가 지정되어 해당 워크스페이스에 설치되어 있어야 합니다.** 리졸버는 **소유자 워크스페이스**(애플리케이션 등록을 소유한 워크스페이스)에서 실행되므로, 서버 라우트 트리거는 애플리케이션에 소유자 워크스페이스가 *지정되고* — 즉, 소유자 워크스페이스가 있고 — **그리고** 그 애플리케이션이 **소유자 워크스페이스에 설치된** 때에만 동작합니다. 이 두 조건이 모두 충족되기 전에는 리졸버가 실행될 위치가 없으므로, 라우트를 디스패치할 수 없습니다. 따라서 `serverRouteTriggerSettings` 로직 함수를 노출하는 애플리케이션은 소유자 워크스페이스가 지정되어 그 워크스페이스에 설치되기 전까지는 마켓플레이스에 등록될 수 없습니다.
 </Note>
 
-**Resolver 계약.** SDK의 `LogicFunctionConfig` 타입은 컴파일 타임에 이를 강제합니다. `serverRouteTriggerSettings`를 설정하는 즉시, 핸들러는 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`(또는 이 값을 반환하는 `Promise`)를 반환하도록 제한됩니다. `workspaceId`는 대상 함수가 설치된 워크스페이스여야 하며, 그렇지 않으면 요청은 `404`로 거부됩니다.
+**Resolver 계약.** SDK의 `LogicFunctionConfig` 타입은 컴파일 타임에 이를 강제합니다. `serverRouteTriggerSettings`를 설정하는 즉시, 핸들러는 `Response` 또는 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`(또는 이 둘 중 하나를 반환하는 `Promise`)을 반환하도록 제한됩니다. dispatch 경로에서 `workspaceId`는 대상 함수가 설치된 워크스페이스여야 하며, 그렇지 않으면 요청은 `404`로 거부됩니다. 두 가지 형태 중 어느 것에도 일치하지 않는 결과 — 식별자가 UUID가 아닌 경우를 포함해 —는 `502`로 거부됩니다.
 
 | 필드                                       | 유형               | 노트                                               |
 | ---------------------------------------- | ---------------- | ------------------------------------------------ |
@@ -289,7 +307,9 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 위의 resolver 예제는 이미 GitHub HMAC-SHA256 플로우를 보여 줍니다. 통합하려는 공급자에 따라 헤더 이름, 다이제스트 인코딩, 그리고 서명 대상 페이로드 문자열을 조정하세요.
 
 <Note>
-resolver가 반환된 직후 라우트는 `202 { queued: true }`로 응답하고, 대상 함수는 워커 큐에서 실행됩니다. 호출자는 대상 함수의 지연 시간, 결과, 실패를 전혀 관찰하지 못하며(이러한 정보는 실행 로그에 기록됩니다). 이렇게 하면 발신자 재전송으로 인해 처리 지연이 더 커지는 것을 막을 수 있으며, 이는 웹훅 수신에서 바람직한 동작입니다. 호출자가 반드시 응답 본문을 읽어야 하는 엔드포인트(Challenge 핸드셰이크, Slack 명령 등)에는 대신 `httpRouteTriggerSettings` 라우트를 사용하세요. resolver는 빠르게 유지하세요. 일부 공급자(예: Slack)는 몇 초 안에 타임아웃됩니다. resolver는 public endpoint로 접근 가능하므로, 엣지에서 rate limiting으로 보호하세요.
+resolver가 dispatch 객체를 반환하면, 라우트는 `202 { queued: true }`로 응답하고 대상 함수는 워커 큐에서 실행됩니다. 호출자는 대상 함수의 지연 시간, 결과, 실패를 전혀 관찰하지 못하며(이러한 정보는 실행 로그에 기록됩니다). 이렇게 하면 발신자 재전송으로 인해 처리 지연이 더 커지는 것을 막을 수 있으며, 이는 웹훅 수신에서 바람직한 동작입니다.
+
+호출자가 동일한 요청에서 응답 본문을 반드시 읽어야 하는 경우(챌린지 핸드셰이크, 대화형 확인 등)에는, 대신 **resolver**에서 `Response`를 반환하십시오. 플랫폼은 이를 동기적으로 그대로 반환하고 큐는 건너뜁니다. 이때 헤더는 HTTP 라우트 응답과 동일한 allow-list를 통과합니다. resolver는 빠르게 유지하세요. 일부 공급자(예: Slack)는 몇 초 안에 타임아웃됩니다. resolver는 public endpoint로 접근 가능하므로, 엣지에서 rate limiting으로 보호하세요.
 </Note>
 
 #### 데이터베이스 이벤트 트리거 페이로드

@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
-* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）会返回目标工作区以及要分发到的目标逻辑函数；平台会发送 `202` 确认并在工作队列上运行该**目标**函数。 参见 [服务端路由触发器](#server-route-trigger)。
+* **serverRoute**：公开一个注册作用域的单一 HTTP 路由。 一个在所有者工作区中运行的 **resolver** 函数（使用 `serverRouteTriggerSettings` 声明）要么返回一个同步的 `Response`，要么返回目标工作区以及要入队的逻辑函数；在入队路径下，平台会发送 `202` 确认并在工作队列上运行该**目标**。 参见 [服务端路由触发器](#server-route-trigger)。
 
 <Note>
 你也可以使用 CLI 手动执行函数：
@@ -178,13 +178,18 @@ const handler = async (event: RoutePayload) => {
 
 触发器由两部分组成：
 
-1. 一个在 **所有者工作区**（拥有应用注册的工作区）中运行的 **resolver** 逻辑函数——使用 `serverRouteTriggerSettings` 声明。 它检查传入请求并返回 `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`，同时选择目标工作区和目标函数。 resolver 是唯一的授权点——URL 只携带 resolver 的标识符。 **这里是验证请求签名的首选位置**：resolver 在任何副作用之前运行，可以访问原始的 `rawBody` 和转发的请求头，并且可以在不触及目标的情况下直接拒绝请求。
-2. 一个 **target** 逻辑函数——一个常规的、按工作区划分的逻辑函数——随后在解析得到的工作区中运行，并使用 resolver 返回的负载（如果 resolver 未对其进行转换，则使用原始请求负载）。 它的返回值将成为 HTTP 响应。
+1. 一个在 **所有者工作区**（拥有应用注册的工作区）中运行的 **resolver** 逻辑函数——使用 `serverRouteTriggerSettings` 声明。 它会检查传入请求并返回以下两者之一：
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — 平台会在解析得到的工作区中将该目标入队，并返回 `202 { queued: true }` 确认，或者
+   * 来自 `twenty-sdk/logic-function` 的 `Response` — 平台会**同步**回显该 HTTP 响应，并且**不会**入队目标（将其用于诸如 Slack `url_verification` 之类的挑战握手）。
+
+   resolver 是唯一的授权点——URL 只携带 resolver 的标识符。 **这里是验证请求签名的首选位置**：resolver 在任何副作用之前运行，可以访问原始的 `rawBody` 和转发的请求头，并且可以在不触及目标的情况下直接拒绝请求。
+2. 一个 **target** 逻辑函数——一个常规的、按工作区划分的逻辑函数——随后在解析得到的工作区中运行，并使用 resolver 返回的负载（如果 resolver 未对其进行转换，则使用原始请求负载）。 当 resolver 选择入队（enqueue）路径时，其返回值 **不会** 被 HTTP 调用方观察到。
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +216,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +283,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 **应用程序必须在其所属工作区中被认领并安装。** 由于 resolver 在**所属工作区**中运行（即拥有应用程序注册的工作区），服务器路由触发器只有在应用程序已被*认领*——也就是说它已有一个所属工作区——**并且**该应用程序**已安装在所属工作区**之后才会生效。 在这两个条件都满足之前，resolver 无处可运行，因此无法分发该路由。 因此，暴露 `serverRouteTriggerSettings` 逻辑函数的应用程序在被认领并安装到其所属工作区之前，不能在 marketplace 中列出。
 </Note>
 
-**Resolver 合约。** SDK 的 `LogicFunctionConfig` 类型在编译时强制执行这一点：一旦你设置了 `serverRouteTriggerSettings`，你的处理程序就被限制为返回 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（或其 `Promise`）。 `workspaceId` 必须是已安装目标函数的工作区，否则请求会以 `404` 被拒绝。
+**Resolver 合约。** SDK 的 `LogicFunctionConfig` 类型在编译时强制执行这一点：一旦你设置了 `serverRouteTriggerSettings`，你的处理程序就被限制为返回 `Response`，或 `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（或它们之一的 `Promise`）。 在分发（dispatch）路径上，`workspaceId` 必须是已安装目标函数的工作区，否则请求会以 `404` 被拒绝。 如果结果不符合这两种结构中的任何一种——包括标识符不是 UUID 的情况——将会以 `502` 被拒绝。
 
 | 字段                                       | 类型           | 备注                                     |
 | ---------------------------------------- | ------------ | -------------------------------------- |
@@ -290,7 +308,9 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 上面的 resolver 示例已经展示了 GitHub 的 HMAC-SHA256 流程——请根据你要集成的服务商，调整请求头名称、摘要编码方式以及被签名的负载字符串。
 
 <Note>
-在 resolver 返回之后，该路由会立即响应 `202 { queued: true }`，并在工作队列上运行目标函数——调用方不会感知目标函数的延迟、结果或失败（这些都会记录在执行日志中）。 这可以防止发送方的重新投递放大处理变慢的问题，而这正是你在处理 webhook 摄取时所需要的。 对于调用方必须读取响应正文的端点（挑战握手、Slack 命令），请改用 `httpRouteTriggerSettings` 路由。 保持 resolver 足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
+当 resolver 返回一个分发对象时，该路由会响应 `202 { queued: true }`，并在工作队列上运行目标函数——调用方不会感知目标函数的延迟、结果或失败（这些都会记录在执行日志中）。 这可以防止发送方的重新投递放大处理变慢的问题，而这正是你在处理 webhook 摄取时所需要的。
+
+当调用方必须在同一个请求中读取响应体（挑战握手、交互式确认）时，请改为从 **resolver** 返回一个 `Response`。 平台会同步回显该响应并跳过队列；其响应头会通过与 HTTP 路由响应相同的允许列表进行过滤。 保持 resolver 足够快速——某些服务商（例如 Slack）会在几秒内超时。 由于 resolver 可以作为公共端点访问，请在边缘（edge）对其进行速率限制保护。
 </Note>
 
 #### 数据库事件触发器有效负载

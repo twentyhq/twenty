@@ -59,7 +59,7 @@ Per richiamare, da un componente front-end (headless), una funzione logica attiv
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
 * **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
 > ad es. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce sia il workspace di destinazione SIA la funzione logica di destinazione a cui indirizzare la richiesta; la piattaforma conferma con `202` ed esegue tale funzione di **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
+* **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce una `Response` sincrona, oppure il workspace di destinazione e la funzione logica di destinazione da mettere in coda; nel percorso di messa in coda la piattaforma conferma con `202` ed esegue tale **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
 
 <Note>
 Puoi anche eseguire manualmente una funzione utilizzando la CLI:
@@ -177,13 +177,18 @@ Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 
 
 Il trigger ha due parti:
 
-1. Una funzione logica di **resolver** — dichiarata con `serverRouteTriggerSettings` — viene eseguita nel tuo **workspace proprietario** (il workspace che possiede la registrazione dell'applicazione). Ispeziona la richiesta in ingresso e restituisce `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, scegliendo *sia* il workspace di destinazione che la funzione di destinazione. Il resolver è l'unico punto di autorizzazione: l'URL contiene solo l'identificatore del resolver. **Questo è il punto preferenziale per verificare le firme delle richieste**: il resolver viene eseguito prima di qualsiasi effetto collaterale, ha accesso al `rawBody` originale e agli header inoltrati, e può rifiutare senza toccare la destinazione.
-2. Una funzione logica di **destinazione** — una normale funzione logica per-workspace — viene quindi eseguita nel workspace risolto con il payload restituito dal resolver (o il payload originale della richiesta se il resolver non lo ha trasformato). Il suo valore di ritorno diventa la risposta HTTP.
+1. Una funzione logica di **resolver** — dichiarata con `serverRouteTriggerSettings` — viene eseguita nel tuo **workspace proprietario** (il workspace che possiede la registrazione dell'applicazione). Analizza la richiesta in ingresso e restituisce:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — la piattaforma mette in coda tale destinazione nel workspace risolto e conferma con `202 { queued: true }`, oppure
+   * una `Response` da `twenty-sdk/logic-function` — la piattaforma restituisce tale risposta HTTP **sincronicamente** e **non** mette in coda alcuna destinazione (usa questo per challenge handshake come Slack `url_verification`).
+
+   Il resolver è l'unico punto di autorizzazione: l'URL contiene solo l'identificatore del resolver. **Questo è il punto preferenziale per verificare le firme delle richieste**: il resolver viene eseguito prima di qualsiasi effetto collaterale, ha accesso al `rawBody` originale e agli header inoltrati, e può rifiutare senza toccare la destinazione.
+2. Una funzione logica di **destinazione** — una normale funzione logica per-workspace — viene quindi eseguita nel workspace risolto con il payload restituito dal resolver (o il payload originale della richiesta se il resolver non lo ha trasformato). Il suo valore di ritorno **non** viene osservato dal chiamante HTTP quando il resolver ha scelto il percorso di messa in coda.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -210,12 +215,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -264,7 +282,7 @@ L'identificatore è il `universalIdentifier` del resolver dal tuo manifest. Regi
 **L'applicazione deve essere rivendicata e installata nel workspace del proprietario.** Poiché il resolver viene eseguito nel **workspace del proprietario** (il workspace che possiede la registrazione dell'applicazione), un server route trigger funziona solo quando l'applicazione è stata *rivendicata*, cioè ha un workspace del proprietario, **e** quell'applicazione è **installata nel workspace del proprietario**. Finché entrambe non sono vere, il resolver non ha dove essere eseguito, quindi la route non può essere gestita. Un'applicazione che espone una funzione logica `serverRouteTriggerSettings` quindi non può essere elencata nel marketplace finché non è stata rivendicata e installata nel workspace del proprietario.
 </Note>
 
-**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di questo valore). Il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`.
+**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
 
 | Campo                                    | Tipo                 | Note                                                                         |
 | ---------------------------------------- | -------------------- | ---------------------------------------------------------------------------- |
@@ -289,7 +307,9 @@ Per le firme delle richieste, la maggior parte dei provider firma con HMAC-SHA25
 L'esempio di resolver sopra mostra già il flusso HMAC-SHA256 di GitHub — adatta il nome dell'header, la codifica del digest e la stringa del payload firmato in base al provider con cui ti stai integrando.
 
 <Note>
-La route risponde con `202 { queued: true }` subito dopo che il resolver restituisce il risultato e la funzione di destinazione viene eseguita nella coda dei worker — il chiamante non osserva mai la latenza, il risultato o gli errori della funzione di destinazione (che vengono registrati nei log di esecuzione). Questo impedisce che le nuove consegne da parte del mittente amplifichino i rallentamenti nell'elaborazione, che è esattamente ciò che si desidera per l'acquisizione dei webhook. Per gli endpoint per i quali il chiamante deve leggere il corpo della risposta (challenge handshake, comandi Slack), utilizza invece una route con `httpRouteTriggerSettings`. Mantieni il resolver veloce — alcuni provider (ad es. Slack) vanno in timeout in pochi secondi. Poiché il resolver è raggiungibile come endpoint pubblico, proteggilo con rate limiting al tuo edge.
+Quando il resolver restituisce un oggetto di dispatch, la route risponde con `202 { queued: true }` e la funzione di destinazione viene eseguita nella coda dei worker — il chiamante non osserva mai la latenza, il risultato o gli errori della funzione di destinazione (che vengono registrati nei log di esecuzione). Questo impedisce che le nuove consegne da parte del mittente amplifichino i rallentamenti nell'elaborazione, che è esattamente ciò che si desidera per l'acquisizione dei webhook.
+
+Quando il chiamante deve leggere il corpo della risposta sulla stessa richiesta (challenge handshake, acknowledgement interattivi), restituisci invece una `Response` dal **resolver**. La piattaforma lo riecheggia in modo sincrono e salta la coda; i suoi header passano attraverso la stessa allow-list delle risposte delle route HTTP. Mantieni il resolver veloce — alcuni provider (ad es. Slack) vanno in timeout in pochi secondi. Poiché il resolver è raggiungibile come endpoint pubblico, proteggilo con rate limiting al tuo edge.
 </Note>
 
 #### Payload del trigger di evento del database
