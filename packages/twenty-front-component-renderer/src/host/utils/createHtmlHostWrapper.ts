@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 
+import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
 import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
 import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
+import { createAnchorNavigationClickHandler } from '@/host/utils/createAnchorNavigationClickHandler';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
 import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
@@ -32,9 +34,13 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
   const isIframe = htmlTag === 'iframe';
   const isForm = htmlTag === 'form';
+  const isAnchor = htmlTag === 'a';
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
+    const requestExternalNavigation = useContext(
+      FrontComponentExternalNavigationContext,
+    );
 
     const { reactUnsupportedEventHandlers, reactBindableProps } =
       extractReactUnsupportedEventHandlers(
@@ -43,6 +49,15 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
     const reactUnsupportedEventListenerRef =
       useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
+
+    const anchorNavigationClickHandler =
+      isAnchor &&
+      createAnchorNavigationClickHandler({
+        href: reactBindableProps.href,
+        target: reactBindableProps.target,
+        remoteOnClick: reactBindableProps.onClick,
+        requestExternalNavigation,
+      });
 
     const hostEnforcedProps: Record<string, unknown> = {
       ...createDropTargetGuardProps(reactBindableProps),
@@ -54,6 +69,10 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
         onSubmit: preventDefaultThenForwardToRemote(
           reactBindableProps.onSubmit,
         ),
+      }),
+      ...(anchorNavigationClickHandler && {
+        onClick: anchorNavigationClickHandler,
+        onAuxClick: anchorNavigationClickHandler,
       }),
     };
 
