@@ -3,7 +3,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { getPartnerCascadeFields } from 'src/modules/partner/onboarding/graphql/queries/get-partner-cascade-fields';
 import { updateApplicationPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-application-partner-user';
 import { updateCompanyPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-company-partner-user';
+import { updatePartnerContentPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-partner-content-partner-user';
+import { updatePartnerLinkPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-partner-link-partner-user';
 import { updatePartnerPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-partner-partner-user';
+import { updatePartnerServicePartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-partner-service-partner-user';
 import { updatePersonPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-person-partner-user';
 
 export type LinkPartnerUserResult =
@@ -29,11 +32,17 @@ export async function linkPartnerUser(
 
   const personIds = collectIds(detail.partner?.persons?.edges);
   const applicationIds = collectIds(detail.applications?.edges);
+  const partnerLinkIds = collectIds(detail.partnerLinks?.edges);
+  const partnerServiceIds = collectIds(detail.partnerServices?.edges);
+  const partnerContentIds = collectIds(detail.partnerContents?.edges);
   const companyId = detail.partner?.companyId;
 
   const results = await Promise.allSettled([
     ...personIds.map((id) => updatePersonPartnerUser(client, id, memberId)),
     ...applicationIds.map((id) => updateApplicationPartnerUser(client, id, memberId)),
+    ...partnerLinkIds.map((id) => updatePartnerLinkPartnerUser(client, id, memberId)),
+    ...partnerServiceIds.map((id) => updatePartnerServicePartnerUser(client, id, memberId)),
+    ...partnerContentIds.map((id) => updatePartnerContentPartnerUser(client, id, memberId)),
     ...(companyId ? [updateCompanyPartnerUser(client, companyId, memberId)] : []),
   ]);
 
@@ -42,8 +51,9 @@ export async function linkPartnerUser(
     throw new Error(`link-partner-user: ${failed} cascade write(s) failed for ${partnerId} — retrying`);
   }
 
-  // Stamp the partner LAST: it is the commit marker resolvePartnerByEmail keys on, so a
-  // throw above leaves the partner unstamped and the whole cascade re-runs on retry.
+  // Stamp the partner LAST — the partner's own partnerUserId is the already-linked guard
+  // (read above via getPartnerCascadeFields), so if any cascade write throws, the partner
+  // stays unstamped and a re-invocation redoes the whole cascade.
   await updatePartnerPartnerUser(client, partnerId, memberId, new Date().toISOString());
   return { linked: true, partnerId };
 }

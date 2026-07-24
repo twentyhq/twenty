@@ -18,5 +18,26 @@ export function getPartnerCascadeFields(client: CoreApiClient, partnerId: string
       },
       edges: { node: { id: true } },
     },
+    partnerLinks: {
+      __args: {
+        filter: { partnerId: { eq: partnerId }, partnerUserId: { is: 'NULL' } },
+        first: 200,
+      },
+      edges: { node: { id: true } },
+    },
+    partnerServices: {
+      __args: {
+        filter: { partnerId: { eq: partnerId }, partnerUserId: { is: 'NULL' } },
+        first: 200,
+      },
+      edges: { node: { id: true } },
+    },
+    partnerContents: {
+      __args: {
+        filter: { partnerId: { eq: partnerId }, partnerUserId: { is: 'NULL' } },
+        first: 200,
+      },
+      edges: { node: { id: true } },
+    },
   });
 }
