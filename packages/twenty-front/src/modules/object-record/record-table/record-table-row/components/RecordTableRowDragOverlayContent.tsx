@@ -1,3 +1,9 @@
+import { type Draggable } from '@dnd-kit/dom';
+import { styled } from '@linaria/react';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+
 import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/HorizontalScrollBoxShadowCSS';
 import { getRecordTableColumnWidthInlineStyles } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
@@ -19,22 +25,10 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
+import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import {
-  type DraggableProvided,
-  type DraggableRubric,
-  type DraggableStateSnapshot,
-} from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
-import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MAX_COLUMNS = 100;
 
@@ -64,7 +58,9 @@ const cloneColumnFieldWidthRules = Array.from(
   },
 ).join('\n');
 
-const StyledRowDraggableCloneCSSBridge = styled.div`
+// The overlay renders in a portal outside the table, so the column width CSS
+// variables and sticky cell rules of the table ancestors are redeclared here.
+const StyledRowDragOverlayCSSBridge = styled.div`
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     left: 0px;
     position: sticky;
@@ -123,27 +119,14 @@ const StyledRowDraggableCloneCSSBridge = styled.div`
   }
 `;
 
-export const RecordTableBodyVirtualizedDraggableClone = ({
-  draggableProvided,
-  draggableSnapshot,
-  rubric,
+export const RecordTableRowDragOverlayContent = ({
+  source,
 }: {
-  draggableProvided: DraggableProvided;
-  draggableSnapshot: DraggableStateSnapshot;
-  rubric: DraggableRubric;
+  source: Draggable | null;
 }) => {
-  const realIndex = rubric.source.index;
-
-  const recordId = useAtomComponentFamilySelectorValue(
-    recordIdByRealIndexComponentFamilySelector,
-    realIndex,
-  );
-
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
-
-  const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   const columnWidthStyles = useMemo(() => {
     const styles: Record<string, string> =
@@ -156,39 +139,29 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
     return styles;
   }, [visibleRecordFields, lastColumnWidth]);
 
-  if (!isDefined(recordId)) {
+  const sourceData = source?.data as RecordTableRowDragData | undefined;
+
+  if (!isDefined(source) || !isDefined(sourceData)) {
     return null;
   }
 
+  const recordId = String(source.id);
+
   return (
-    <StyledRowDraggableCloneCSSBridge style={columnWidthStyles}>
+    <StyledRowDragOverlayCSSBridge style={columnWidthStyles}>
       <RecordTableTr
         recordId={recordId}
-        focusIndex={realIndex}
-        ref={draggableProvided.innerRef}
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...draggableProvided.draggableProps}
+        focusIndex={sourceData.focusIndex}
         style={{
-          ...draggableProvided.draggableProps.style,
-          background: draggableSnapshot.isDragging
-            ? themeCssVariables.background.transparent.light
-            : undefined,
-          borderColor: draggableSnapshot.isDragging
-            ? themeCssVariables.border.color.medium
-            : 'transparent',
-          opacity: isSecondaryDragged ? 0.3 : undefined,
+          background: themeCssVariables.background.transparent.light,
+          borderColor: themeCssVariables.border.color.medium,
         }}
-        isDragging={draggableSnapshot.isDragging}
+        isDragging
         data-testid={`row-id-${recordId}`}
         data-selectable-id={recordId}
         onClick={() => {}}
       >
-        <RecordTableRowDraggableContextProvider
-          value={{
-            isDragging: draggableSnapshot.isDragging,
-            dragHandleProps: draggableProvided.dragHandleProps,
-          }}
-        >
+        <RecordTableRowDraggableContextProvider value={{ isDragging: true }}>
           <RecordTableCellDragAndDrop />
           <RecordTableCellCheckbox />
           <RecordTableFieldsCells />
@@ -197,6 +170,6 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
           <RecordTableRowMultiDragPreview />
         </RecordTableRowDraggableContextProvider>
       </RecordTableTr>
-    </StyledRowDraggableCloneCSSBridge>
+    </StyledRowDragOverlayCSSBridge>
   );
 };

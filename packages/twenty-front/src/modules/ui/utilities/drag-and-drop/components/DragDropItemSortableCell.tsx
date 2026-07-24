@@ -2,19 +2,17 @@ import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
 } from '@dnd-kit/abstract/modifiers';
-import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DragDropItemDropLine } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropLine';
+import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
 
 const SORTABLE_COLLISION_PRIORITY = 3;
-
-const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
 const SORTABLE_TRANSITION = {
   duration: 180,
@@ -91,7 +89,7 @@ export const DragDropItemSortableCell = ({
       },
       disabled,
       transition: hasTransition ? SORTABLE_TRANSITION : null,
-      plugins: PLUGINS_WITHOUT_OPTIMISTIC,
+      plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
       modifiers: [
         ...(restrictMovementTo === 'x' ? [RestrictToHorizontalAxis] : []),
         ...(restrictMovementTo === 'y' ? [RestrictToVerticalAxis] : []),
