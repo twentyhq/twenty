@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import {
   destroyWorkflowRun,
   runWorkflowVersion,
@@ -52,30 +53,16 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
     createdWorkflowVersionId =
       getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-            updateWorkflowVersion(id: $id, data: $data) {
-              id
-            }
-          }
-        `,
-        variables: {
-          id: createdWorkflowVersionId,
-          data: {
-            trigger: {
-              name: 'Manual Trigger',
-              type: 'MANUAL',
-              settings: { outputSchema: {} },
-              nextStepIds: [],
-              position: { x: 0, y: 0 },
-            },
-          },
-        },
-      });
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: createdWorkflowVersionId!,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
 
     await client
       .post('/graphql')

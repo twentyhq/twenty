@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { IsNull, Not } from 'typeorm';
 
 import {
@@ -84,31 +85,35 @@ export class WorkflowVersionValidationWorkspaceService {
     workspaceId: string;
     payload: UpdateOneResolverArgs<WorkflowVersionWorkspaceEntity>;
   }) {
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId: payload.id,
-      });
+    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+      workspaceId,
+      workflowVersionId: payload.id,
+    });
 
-    if (!(Object.keys(payload.data).length === 1 && payload.data.name)) {
-      assertWorkflowVersionIsDraft(workflowVersion);
-    }
+    const protectedFieldNames = [
+      'steps',
+      'trigger',
+      'status',
+      'position',
+      'workflowId',
+      'coreWorkflowVersionId',
+    ];
+    const setsProtectedField = protectedFieldNames.some(
+      (fieldName) => fieldName in payload.data,
+    );
+    const clearsName =
+      'name' in payload.data && !isNonEmptyString(payload.data.name);
 
-    if (payload.data.status && payload.data.status !== workflowVersion.status) {
+    if (setsProtectedField || clearsName) {
       throw new WorkflowQueryValidationException(
-        'Cannot update workflow version status manually',
+        'Updating a workflowVersion through the generic mutation is restricted. ' +
+          'steps, trigger, status, position, workflowId and coreWorkflowVersionId cannot be changed, and the name cannot be cleared. ' +
+          'Use the dedicated workflowVersion mutations (createWorkflowVersionStep, updateWorkflowVersionStep, ' +
+          'deleteWorkflowVersionStep, updateWorkflowVersionTrigger, activateWorkflowVersion, ...) instead.',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Cannot update workflow version status manually`,
+          userFriendlyMessage: msg`This field cannot be updated directly on a workflow version`,
         },
-      );
-    }
-
-    if (payload.data.steps) {
-      throw new WorkflowQueryValidationException(
-        'Updating workflowVersion steps directly is forbidden. ' +
-          'Use createWorkflowVersionStep, updateWorkflowVersionStep or deleteWorkflowVersionStep endpoint instead.',
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
       );
     }
   }

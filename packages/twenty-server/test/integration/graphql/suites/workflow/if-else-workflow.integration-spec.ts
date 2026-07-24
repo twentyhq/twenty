@@ -9,6 +9,7 @@ import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 import { type WorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -85,25 +86,10 @@ describe('If/Else Workflow (e2e)', () => {
       position: { x: 0, y: 0 },
     };
 
-    const updateWorkflowVersionResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-            updateWorkflowVersion(id: $id, data: $data) {
-              id
-              trigger
-            }
-          }
-        `,
-        variables: {
-          id: createdWorkflowVersionId,
-          data: {
-            trigger: manualTrigger,
-          },
-        },
-      });
+    const updateWorkflowVersionResponse = await updateWorkflowVersionTrigger({
+      workflowVersionId: createdWorkflowVersionId!,
+      trigger: manualTrigger,
+    });
 
     expect(updateWorkflowVersionResponse.body.errors).toBeUndefined();
 
