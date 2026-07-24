@@ -25,10 +25,11 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
+import { RecordTableRowMultiDragCounterChip } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 
 const MAX_COLUMNS = 100;
 
@@ -61,6 +62,8 @@ const cloneColumnFieldWidthRules = Array.from(
 // The overlay renders in a portal outside the table, so the column width CSS
 // variables and sticky cell rules of the table ancestors are redeclared here.
 const StyledRowDragOverlayCSSBridge = styled.div`
+  position: relative;
+
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     left: 0px;
     position: sticky;
@@ -119,6 +122,14 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 `;
 
+// The full-width row preview would overhang overlays such as the record side
+// panel when the visible table is narrower than the row, so it is clipped to
+// the scroll wrapper's width. The multi-drag counter chip renders outside
+// this container because it pokes past the row's top-left corner.
+const StyledRowClipContainer = styled.div`
+  overflow: hidden;
+`;
+
 export const RecordTableRowDragOverlayContent = ({
   source,
 }: {
@@ -126,7 +137,13 @@ export const RecordTableRowDragOverlayContent = ({
 }) => {
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
+
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
+    `record-table-scroll-${recordTableId}`,
+  );
+
+  const visibleTableWidth = scrollWrapperHTMLElement?.clientWidth;
 
   const columnWidthStyles = useMemo(() => {
     const styles: Record<string, string> =
@@ -149,27 +166,35 @@ export const RecordTableRowDragOverlayContent = ({
 
   return (
     <StyledRowDragOverlayCSSBridge style={columnWidthStyles}>
-      <RecordTableTr
-        recordId={recordId}
-        focusIndex={sourceData.focusIndex}
-        style={{
-          background: themeCssVariables.background.transparent.light,
-          borderColor: themeCssVariables.border.color.medium,
-        }}
-        isDragging
-        data-testid={`row-id-${recordId}`}
-        data-selectable-id={recordId}
-        onClick={() => {}}
+      <StyledRowClipContainer
+        style={
+          isDefined(visibleTableWidth)
+            ? { maxWidth: `${visibleTableWidth}px` }
+            : undefined
+        }
       >
-        <RecordTableRowDraggableContextProvider value={{ isDragging: true }}>
-          <RecordTableCellDragAndDrop />
-          <RecordTableCellCheckbox />
-          <RecordTableFieldsCells />
-          <RecordTablePlusButtonCellPlaceholder />
-          <RecordTableLastEmptyCell />
-          <RecordTableRowMultiDragPreview />
-        </RecordTableRowDraggableContextProvider>
-      </RecordTableTr>
+        <RecordTableTr
+          recordId={recordId}
+          focusIndex={sourceData.focusIndex}
+          style={{
+            background: themeCssVariables.background.transparent.light,
+            borderColor: themeCssVariables.border.color.medium,
+          }}
+          isDragging
+          data-testid={`row-id-${recordId}`}
+          data-selectable-id={recordId}
+          onClick={() => {}}
+        >
+          <RecordTableRowDraggableContextProvider value={{ isDragging: true }}>
+            <RecordTableCellDragAndDrop />
+            <RecordTableCellCheckbox />
+            <RecordTableFieldsCells />
+            <RecordTablePlusButtonCellPlaceholder />
+            <RecordTableLastEmptyCell />
+          </RecordTableRowDraggableContextProvider>
+        </RecordTableTr>
+      </StyledRowClipContainer>
+      <RecordTableRowMultiDragCounterChip />
     </StyledRowDragOverlayCSSBridge>
   );
 };

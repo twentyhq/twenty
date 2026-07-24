@@ -23,6 +23,7 @@ import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widge
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -166,6 +167,7 @@ export const FieldsConfigurationEditor = ({
   return (
     <DragDropProvider<FieldsConfigurationDndData>
       sensors={DND_KIT_SENSORS}
+      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
       onDragStart={handlers.onDragStart}
       onDragEnd={handlers.onDragEnd}
     >

@@ -9,6 +9,7 @@ import { DRAGGABLE_LIST_END_DROP_INDEX } from '@/ui/layout/draggable-list/consta
 import { DraggableListGroupContext } from '@/ui/layout/draggable-list/contexts/DraggableListGroupContext';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
@@ -97,6 +98,7 @@ export const DraggableList = ({
   return (
     <DragDropProvider<DraggableListItemDndData>
       sensors={DND_KIT_SENSORS}
+      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
       onDragEnd={handleDragEnd}
     >
       <DraggableListGroupContext.Provider value={groupContextValue}>
