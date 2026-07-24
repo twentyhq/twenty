@@ -1,6 +1,6 @@
 import { useDragDropMonitor } from '@dnd-kit/react';
 import { isFunction } from '@sniptt/guards';
-import { type JSX, useContext, useState } from 'react';
+import { type JSX, useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DraggableListGroupContext } from '@/ui/layout/draggable-list/contexts/DraggableListGroupContext';
@@ -23,7 +23,7 @@ export const DraggableItem = ({
   itemComponent,
   disableDraggingBackground = false,
 }: DraggableItemProps) => {
-  const group = useContext(DraggableListGroupContext);
+  const draggableListGroupContext = useContext(DraggableListGroupContext);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -38,9 +38,28 @@ export const DraggableItem = ({
     },
   });
 
-  if (!isDefined(group)) {
+  // The list's end drop zone resolves its drop index from this registry,
+  // since only the rendered items know how many of them there are.
+  useEffect(() => {
+    if (!isDefined(draggableListGroupContext)) {
+      return;
+    }
+
+    const itemIndexByDraggableId =
+      draggableListGroupContext.itemIndexByDraggableIdRef.current;
+
+    itemIndexByDraggableId.set(draggableId, index);
+
+    return () => {
+      itemIndexByDraggableId.delete(draggableId);
+    };
+  }, [draggableListGroupContext, draggableId, index]);
+
+  if (!isDefined(draggableListGroupContext)) {
     throw new Error('DraggableItem must be rendered inside a DraggableList');
   }
+
+  const { group } = draggableListGroupContext;
 
   return (
     <DragDropItemSortableCell
@@ -53,7 +72,9 @@ export const DraggableItem = ({
       highlightWhileDragging={!disableDraggingBackground}
       dropLine="horizontal"
     >
-      {isFunction(itemComponent) ? itemComponent({ isDragging }) : itemComponent}
+      {isFunction(itemComponent)
+        ? itemComponent({ isDragging })
+        : itemComponent}
     </DragDropItemSortableCell>
   );
 };
