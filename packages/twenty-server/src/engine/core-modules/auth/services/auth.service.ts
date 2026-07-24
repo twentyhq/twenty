@@ -46,7 +46,7 @@ import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/m
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
@@ -80,7 +80,7 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
+    private readonly ssoExchangeTokenService: SSOExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -982,27 +982,22 @@ export class AuthService {
           },
         ));
 
+      const ssoExchangeToken =
+        await this.ssoExchangeTokenService.generateSSOExchangeToken({
+          userId: user.id,
+          authProvider,
+        });
+
+      // The token rides in the fragment so it never reaches access logs,
+      // proxies or Referer headers: browsers keep it out of the request line.
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {
-          tokenPair: JSON.stringify({
-            accessOrWorkspaceAgnosticToken:
-              await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-                {
-                  userId: user.id,
-                  authProvider,
-                },
-              ),
-            refreshToken: await this.refreshTokenService.generateRefreshToken({
-              userId: user.id,
-              authProvider,
-              targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-            }),
-          }),
           ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
             ? { returnToPath }
             : {}),
         },
+        hash: `ssoExchangeToken=${ssoExchangeToken.token}`,
       });
 
       return url.toString();

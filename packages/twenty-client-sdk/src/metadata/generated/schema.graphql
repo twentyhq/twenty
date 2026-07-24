@@ -3491,6 +3491,7 @@ type Mutation {
   uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
+  getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!

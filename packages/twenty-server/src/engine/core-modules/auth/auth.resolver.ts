@@ -48,6 +48,7 @@ import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/toke
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -97,6 +98,7 @@ import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthToken } from './dto/auth-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
+import { GetAuthTokensFromSSOExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
 import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
@@ -133,6 +135,7 @@ export class AuthResolver {
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
+    private ssoExchangeTokenService: SSOExchangeTokenService,
     private refreshTokenService: RefreshTokenService,
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
@@ -670,6 +673,35 @@ export class AuthResolver {
         tokenPayload.authProvider,
       );
     }
+  }
+
+  @Mutation(() => AuthTokens)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async getAuthTokensFromSSOExchangeToken(
+    @Args()
+    { ssoExchangeToken }: GetAuthTokensFromSSOExchangeTokenInput,
+  ): Promise<AuthTokens> {
+    const { userId, authProvider } =
+      await this.ssoExchangeTokenService.validateAndConsumeSSOExchangeTokenOrThrow(
+        ssoExchangeToken,
+      );
+
+    return {
+      tokens: {
+        accessOrWorkspaceAgnosticToken:
+          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+            {
+              userId,
+              authProvider,
+            },
+          ),
+        refreshToken: await this.refreshTokenService.generateRefreshToken({
+          userId,
+          authProvider,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+        }),
+      },
+    };
   }
 
   private async validateAndDecodeLoginToken(
