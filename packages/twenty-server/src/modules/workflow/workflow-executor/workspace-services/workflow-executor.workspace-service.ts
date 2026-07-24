@@ -141,6 +141,8 @@ export class WorkflowExecutorWorkspaceService {
         stepInfos,
         workflowRunId,
         workspaceId,
+        workflowId: workflowRun.workflowId,
+        workflowVersionId: workflowRun.workflowVersionId,
       });
 
       if (isDefined(actionOutput.error)) {
@@ -185,7 +187,11 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
+      await this.sendWorkflowNodeRunEvent(
+        workspaceId,
+        workflowRun.workflowId,
+        workflowRun.workflowVersionId,
+      );
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -326,6 +332,7 @@ export class WorkflowExecutorWorkspaceService {
   private async sendWorkflowNodeRunEvent(
     workspaceId: string,
     workflowId: string,
+    workflowVersionId: string,
   ) {
     let periodStart: Date | undefined;
     if (this.billingService.isBillingEnabled()) {
@@ -355,6 +362,9 @@ export class WorkflowExecutorWorkspaceService {
           unit: UsageUnit.INVOCATION,
           resourceId: workflowId,
           periodStart,
+          metadata: {
+            workflowVersionId,
+          },
         },
       ],
       workspaceId,
@@ -435,12 +445,16 @@ export class WorkflowExecutorWorkspaceService {
     stepInfos,
     workflowRunId,
     workspaceId,
+    workflowId,
+    workflowVersionId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
     workspaceId: string;
+    workflowId: string;
+    workflowVersionId: string;
   }) {
     // Credit-cap enforcement lives at the AI entry points (chat resolver,
     // executeAgent, generate-text controller, title generation). Cheap
@@ -468,6 +482,8 @@ export class WorkflowExecutorWorkspaceService {
         runInfo: {
           workflowRunId,
           workspaceId,
+          workflowId,
+          workflowVersionId,
         },
       });
     } catch (error) {

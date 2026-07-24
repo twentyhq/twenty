@@ -10,6 +10,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,6 +30,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FeatureFlagModule,
     WorkspaceDomainsModule,
     ApplicationModule,
+    MetricsModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
       WorkspaceEntity,

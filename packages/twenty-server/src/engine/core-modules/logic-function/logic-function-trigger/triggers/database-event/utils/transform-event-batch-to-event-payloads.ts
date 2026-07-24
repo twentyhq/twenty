@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -37,6 +38,7 @@ export const transformEventBatchToEventPayloads = ({
         logicFunctionId: logicFunction.id,
         workspaceId: logicFunction.workspaceId,
         payload,
+        source: LogicFunctionExecutionSource.DATABASE_EVENT,
       });
     }
   }

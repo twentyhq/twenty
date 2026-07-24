@@ -3,6 +3,8 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 export type WorkflowRunInfo = {
   workflowRunId: string;
   workspaceId: string;
+  workflowId?: string;
+  workflowVersionId?: string;
 };
 
 export type WorkflowActionInput = {

@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { buildLogicFunctionExecutionEnvelope } from 'src/engine/core-modules/event-logs/producers/logic-function-execution/build-logic-function-execution-envelope';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop.service';
@@ -35,6 +36,12 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
+import {
+  type LogicFunctionExecutionContext,
+  LogicFunctionExecutionSource,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -73,6 +80,12 @@ export enum LogicFunctionExecutionExceptionCode {
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 
+const CODE_EXECUTION_CREDITS_MICRO = 100;
+
+const DEFAULT_EXECUTION_CONTEXT: LogicFunctionExecutionContext = {
+  source: LogicFunctionExecutionSource.MANUAL,
+};
+
 @Injectable()
 export class LogicFunctionExecutorService {
   private readonly logger = new Logger(LogicFunctionExecutorService.name);
@@ -94,6 +107,7 @@ export class LogicFunctionExecutorService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
+    private readonly metricsService: MetricsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -107,6 +121,7 @@ export class LogicFunctionExecutorService {
     userId,
     userWorkspaceId,
     executionMode,
+    executionContext = DEFAULT_EXECUTION_CONTEXT,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -114,6 +129,7 @@ export class LogicFunctionExecutorService {
     userId?: string;
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
+    executionContext?: LogicFunctionExecutionContext;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariables } =
       await this.getFlatEntitiesOrThrow({
@@ -180,6 +196,8 @@ export class LogicFunctionExecutorService {
       flatApplication,
       flatLogicFunction,
       workspaceId,
+      executionContext,
+      effectiveExecutionMode,
     });
 
     return resultLogicFunction;
@@ -476,11 +494,15 @@ export class LogicFunctionExecutorService {
     flatApplication,
     flatLogicFunction,
     workspaceId,
+    executionContext,
+    effectiveExecutionMode,
   }: {
     result: LogicFunctionExecuteResult;
     workspaceId: string;
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
+    executionContext: LogicFunctionExecutionContext;
+    effectiveExecutionMode: LogicFunctionExecutionMode;
   }) {
     const executionId = v4();
 
@@ -509,6 +531,37 @@ export class LogicFunctionExecutorService {
       workspaceId,
     });
 
+    this.recordExecutionMetrics({ result, executionContext });
+
+    if (this.eventLogEmitterService.isEnabled()) {
+      void this.eventLogEmitterService
+        .dispatch([
+          buildLogicFunctionExecutionEnvelope({
+            timestamp: new Date(),
+            workspaceId,
+            applicationId: flatApplication.id,
+            logicFunctionId: flatLogicFunction.id,
+            logicFunctionName: flatLogicFunction.name,
+            executionId,
+            status: result.status,
+            errorType: result.error?.errorType ?? '',
+            durationMs: result.duration,
+            creditsUsedMicro: CODE_EXECUTION_CREDITS_MICRO,
+            source: executionContext.source,
+            workflowId: executionContext.workflowId ?? '',
+            workflowVersionId: executionContext.workflowVersionId ?? '',
+            workflowRunId: executionContext.workflowRunId ?? '',
+            executionMode: effectiveExecutionMode,
+          }),
+        ])
+        .catch((error) => {
+          this.logger.error(
+            'Failed to record logic function execution',
+            error,
+          );
+        });
+    }
+
     void this.eventLogEmitterService
       .createContext({
         workspaceId,
@@ -521,6 +574,17 @@ export class LogicFunctionExecutorService {
         }),
         functionId: flatLogicFunction.id,
         functionName: flatLogicFunction.name,
+        applicationId: flatApplication.id,
+        source: executionContext.source,
+        ...(isDefined(executionContext.workflowId) && {
+          workflowId: executionContext.workflowId,
+        }),
+        ...(isDefined(executionContext.workflowVersionId) && {
+          workflowVersionId: executionContext.workflowVersionId,
+        }),
+        ...(isDefined(executionContext.workflowRunId) && {
+          workflowRunId: executionContext.workflowRunId,
+        }),
       });
 
     let periodStart: Date | undefined;
@@ -536,7 +600,7 @@ export class LogicFunctionExecutorService {
 
         await this.billingUsageService.decrementAvailableCreditsInCache({
           workspaceId,
-          usedCredits: 100,
+          usedCredits: CODE_EXECUTION_CREDITS_MICRO,
         });
       }
     }
@@ -547,14 +611,58 @@ export class LogicFunctionExecutorService {
         {
           resourceType: UsageResourceType.LOGIC_FUNCTION,
           operationType: UsageOperationType.CODE_EXECUTION,
-          creditsUsedMicro: 100,
+          creditsUsedMicro: CODE_EXECUTION_CREDITS_MICRO,
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: flatLogicFunction.id,
           periodStart,
+          metadata: {
+            applicationId: flatApplication.id,
+            source: executionContext.source,
+            ...(isDefined(executionContext.workflowId) && {
+              workflowId: executionContext.workflowId,
+            }),
+            ...(isDefined(executionContext.workflowVersionId) && {
+              workflowVersionId: executionContext.workflowVersionId,
+            }),
+            ...(isDefined(executionContext.workflowRunId) && {
+              workflowRunId: executionContext.workflowRunId,
+            }),
+          },
         },
       ],
       workspaceId,
     );
+  }
+
+  private recordExecutionMetrics({
+    result,
+    executionContext,
+  }: {
+    result: LogicFunctionExecuteResult;
+    executionContext: LogicFunctionExecutionContext;
+  }) {
+    const attributes = { source: executionContext.source };
+
+    void this.metricsService.incrementCounterForEvent({
+      key: isDefined(result.error)
+        ? MetricsKeys.LogicFunctionExecutionFailed
+        : MetricsKeys.LogicFunctionExecutionSucceeded,
+      attributes,
+      shouldStoreInCache: false,
+    });
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.LogicFunctionExecutionDurationMs,
+      value: result.duration,
+      unit: 'ms',
+      attributes,
+    });
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.LogicFunctionExecutionCreditsUsedMicro,
+      amount: CODE_EXECUTION_CREDITS_MICRO,
+      attributes,
+    });
   }
 }

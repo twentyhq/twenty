@@ -14,4 +14,5 @@ export type UsageEvent = {
   resourceId?: string | null;
   resourceContext?: string | null;
   userWorkspaceId?: string | null;
+  metadata?: Record<string, unknown> | null;
 };

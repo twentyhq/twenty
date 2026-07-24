@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
   RouteTriggerResponse,
@@ -50,6 +51,7 @@ export class LogicFunctionTriggerService {
       logicFunctionId: logicFunction.id,
       workspaceId: logicFunction.workspaceId,
       payload: event,
+      executionContext: { source: LogicFunctionExecutionSource.HTTP_ROUTE },
       ...(isDefined(userId) ? { userId } : {}),
       ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
     });

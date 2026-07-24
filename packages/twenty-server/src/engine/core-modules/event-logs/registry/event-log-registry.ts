@@ -6,6 +6,7 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { type EventLogRecord } from 'src/engine/core-modules/event-logs/dtos/event-log-result.dto';
 import {
   type ApplicationLogRow,
+  type LogicFunctionExecutionRow,
   type ObjectEventRow,
   type PageviewRow,
   type UsageEventRow,
@@ -99,6 +100,32 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
           executionId: record.executionId,
           logicFunctionId: record.logicFunctionId,
           applicationId: record.applicationId,
+        },
+      };
+    },
+  },
+  [EventLogTable.LOGIC_FUNCTION_EXECUTION]: {
+    clickHouseTable: 'logicFunctionExecution',
+    requiresEntitlement: null,
+    eventFieldName: 'logicFunctionName',
+    normalize: (row) => {
+      const record = row as StoredRow<LogicFunctionExecutionRow>;
+
+      return {
+        event: record.logicFunctionName ?? '',
+        properties: {
+          status: record.status,
+          errorType: record.errorType,
+          durationMs: record.durationMs,
+          creditsUsedMicro: record.creditsUsedMicro,
+          source: record.source,
+          executionMode: record.executionMode,
+          executionId: record.executionId,
+          logicFunctionId: record.logicFunctionId,
+          applicationId: record.applicationId,
+          workflowId: record.workflowId,
+          workflowVersionId: record.workflowVersionId,
+          workflowRunId: record.workflowRunId,
         },
       };
     },

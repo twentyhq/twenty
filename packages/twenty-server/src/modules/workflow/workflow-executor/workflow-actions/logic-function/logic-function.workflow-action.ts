@@ -5,6 +5,7 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
@@ -80,6 +81,12 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
+      executionContext: {
+        source: LogicFunctionExecutionSource.WORKFLOW,
+        workflowId: runInfo.workflowId,
+        workflowVersionId: runInfo.workflowVersionId,
+        workflowRunId: runInfo.workflowRunId,
+      },
     });
 
     if (result.error) {
