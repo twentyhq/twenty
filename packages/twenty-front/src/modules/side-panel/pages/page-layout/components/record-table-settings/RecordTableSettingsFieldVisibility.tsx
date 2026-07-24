@@ -3,7 +3,7 @@ import { useReorderRecordTableWidgetFields } from '@/page-layout/widgets/record-
 import { useToggleRecordTableWidgetFieldVisibility } from '@/page-layout/widgets/record-table/hooks/useToggleRecordTableWidgetFieldVisibility';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { type DropResult } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
@@ -65,7 +65,7 @@ export const RecordTableSettingsFieldVisibility = ({
     [recordTableWidgetViewFieldItems],
   );
 
-  const handleDragEnd = (result: DropResult) => {
+  const handleDragEnd = (result: DraggableListDropResult) => {
     const { source, destination } = result;
 
     if (!destination) {
