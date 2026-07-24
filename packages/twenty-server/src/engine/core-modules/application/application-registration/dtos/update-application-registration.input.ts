@@ -51,6 +51,11 @@ export class UpdateApplicationRegistrationPayload {
   @IsBoolean()
   @IsOptional()
   isVetted?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  hasFreeLogicFunctionExecutions?: boolean;
 }
 
 @InputType()

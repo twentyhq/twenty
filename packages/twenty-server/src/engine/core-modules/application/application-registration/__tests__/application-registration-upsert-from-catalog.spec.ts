@@ -170,4 +170,27 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       expect.objectContaining({ isListed: true }),
     );
   });
+
+  it('should not mark a regular new registration as billing-exempt', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await service.upsertFromCatalog(catalogParams);
+
+    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ hasFreeLogicFunctionExecutions: false }),
+    );
+  });
+
+  it('should mark a billing-exempt app as free on creation', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await service.upsertFromCatalog({
+      ...catalogParams,
+      universalIdentifier: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
+    });
+
+    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ hasFreeLogicFunctionExecutions: true }),
+    );
+  });
 });

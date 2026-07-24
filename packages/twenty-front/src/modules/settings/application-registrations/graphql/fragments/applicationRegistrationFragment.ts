@@ -16,6 +16,7 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     isListed
     isVetted
     isPreInstalled
+    hasFreeLogicFunctionExecutions
     isConfigured
     ownerWorkspaceId
     createdAt

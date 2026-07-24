@@ -27,6 +27,7 @@ import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-a
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -82,6 +83,7 @@ export class LogicFunctionExecutorService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
@@ -523,6 +525,17 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
+    // Apps flagged as billing-exempt (e.g. first-party maintenance apps whose
+    // per-record triggers fire during mailbox/calendar import) do not consume
+    // the workspace's credits for the invocation itself. Explicit chargeCredits
+    // calls and AI token usage from within the function are billed separately
+    // and stay untouched.
+    const creditsUsedMicro = (await this.hasFreeLogicFunctionExecutions(
+      flatApplication,
+    ))
+      ? 0
+      : 100;
+
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
@@ -534,10 +547,12 @@ export class LogicFunctionExecutorService {
       if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
         periodStart = currentBillingSubscription.currentPeriodStart;
 
-        await this.billingUsageService.decrementAvailableCreditsInCache({
-          workspaceId,
-          usedCredits: 100,
-        });
+        if (creditsUsedMicro > 0) {
+          await this.billingUsageService.decrementAvailableCreditsInCache({
+            workspaceId,
+            usedCredits: creditsUsedMicro,
+          });
+        }
       }
     }
 
@@ -547,7 +562,7 @@ export class LogicFunctionExecutorService {
         {
           resourceType: UsageResourceType.LOGIC_FUNCTION,
           operationType: UsageOperationType.CODE_EXECUTION,
-          creditsUsedMicro: 100,
+          creditsUsedMicro,
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: flatLogicFunction.id,
@@ -556,5 +571,20 @@ export class LogicFunctionExecutorService {
       ],
       workspaceId,
     );
+  }
+
+  private async hasFreeLogicFunctionExecutions(
+    flatApplication: FlatApplication,
+  ): Promise<boolean> {
+    if (!isDefined(flatApplication.applicationRegistrationId)) {
+      return false;
+    }
+
+    const isExempt = await this.coreEntityCacheService.get(
+      'applicationRegistrationHasFreeLogicFunctionExecutions',
+      flatApplication.applicationRegistrationId,
+    );
+
+    return isExempt === true;
   }
 }
