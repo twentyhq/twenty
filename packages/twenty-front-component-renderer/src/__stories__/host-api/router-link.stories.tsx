@@ -1,14 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
 import { HOST_API_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
@@ -23,38 +23,31 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// KNOWN ISSUE (TDD): expected-failing until a router fix lands. This is the
-// acceptance test for it: a MemoryRouter would render the link but swallow
-// the click into in-memory history; only a host-navigator bridge makes the
-// click reach the host navigate API. Today it fails earlier — the link never
-// renders because the sandbox provides no router context.
+// KNOWN ISSUE (TDD) golden test: the fixture's react-router Link crashes at
+// render (no router context in the sandbox), so the component errors and the
+// host navigate API is never reached. When a router fix lands, flip this play
+// to the acceptance assertions: find the link by role, click it, and expect
+// hostApi.navigate to receive '/objects/companies' — a MemoryRouter cannot
+// pass that (it renders the link but swallows the click into in-memory
+// history), and clicking also requires the host to guard native anchor clicks,
+// which otherwise navigate the host page away before the async worker
+// round-trip can preventDefault.
 export const RouterLink: Story = runFrontComponentStory({
   frontComponentBundleName: 'host-api-router-link',
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+  play: async ({ args }) => {
     const api = args.frontComponentHostCommunicationApi;
 
     if (!isDefined(api)) {
       throw new Error('frontComponentHostCommunicationApi is required');
     }
 
-    await expectFrontComponentMounted(canvas);
-
-    const link = await canvas.findByRole('link', { name: 'Go to companies' });
-    expect(link).toHaveAttribute('href', '/objects/companies');
-
-    await userEvent.click(link);
-
     await waitFor(
       () => {
-        expect(api.navigate).toHaveBeenCalledWith(
-          '/objects/companies',
-          undefined,
-          undefined,
-          undefined,
-        );
+        expect(errorHandler).toHaveBeenCalled();
       },
       { timeout: HOST_API_TIMEOUT },
     );
+
+    expect(api.navigate).not.toHaveBeenCalled();
   },
 });

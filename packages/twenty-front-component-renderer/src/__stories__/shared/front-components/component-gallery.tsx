@@ -68,11 +68,15 @@ export const ComponentGallery = ({ title, entries }: ComponentGalleryProps) => {
     setIsMounted(true);
   }, []);
 
-  const reportFailedEntry = (entryName: string, error: Error) => {
+  const reportFailedEntry = (entryName: string, thrownValue: unknown) => {
+    // Error boundaries receive whatever was thrown, not necessarily an Error.
+    const message =
+      thrownValue instanceof Error ? thrownValue.message : String(thrownValue);
+
     setFailedEntries((previous) =>
       previous.some((failedEntry) => failedEntry.name === entryName)
         ? previous
-        : [...previous, { name: entryName, message: error.message }],
+        : [...previous, { name: entryName, message }],
     );
   };
 
