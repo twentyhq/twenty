@@ -5,6 +5,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import {
+  type LogicFunctionExecutionContext,
+  LogicFunctionExecutionSource,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
+import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
@@ -15,6 +19,7 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
+  source?: LogicFunctionExecutionSource;
 };
 
 @Processor({
@@ -35,12 +40,18 @@ export class LogicFunctionTriggerJob {
 
     for (const logicFunctionPayload of logicFunctionPayloads) {
       try {
+        const executionContext: LogicFunctionExecutionContext = {
+          source:
+            logicFunctionPayload.source ?? LogicFunctionExecutionSource.MANUAL,
+        };
+
         await this.logicFunctionExecutorService.execute({
           logicFunctionId: logicFunctionPayload.logicFunctionId,
           workspaceId: logicFunctionPayload.workspaceId,
           payload: logicFunctionPayload.payload ?? {},
           userId: logicFunctionPayload.userId,
           userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+          executionContext,
         });
       } catch (error) {
         // A stopped application must not fail the job: failing would make

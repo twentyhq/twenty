@@ -110,10 +110,45 @@ const APPLICATION_LOG_COLUMNS: ColumnConfig[] = [
   },
 ];
 
+const LOGIC_FUNCTION_EXECUTION_COLUMNS: ColumnConfig[] = [
+  { ...EVENT_COLUMN, label: msg`Function`, defaultWidth: 160 },
+  { ...TIMESTAMP_COLUMN, defaultWidth: 140 },
+  {
+    id: 'status',
+    label: msg`Status`,
+    minWidth: 80,
+    defaultWidth: 100,
+    renderCell: (record) => record.properties?.status ?? '-',
+  },
+  {
+    id: 'durationMs',
+    label: msg`Duration (ms)`,
+    minWidth: 80,
+    defaultWidth: 120,
+    renderCell: (record) => record.properties?.durationMs ?? '-',
+  },
+  {
+    id: 'creditsUsedMicro',
+    label: msg`Credits`,
+    minWidth: 80,
+    defaultWidth: 100,
+    renderCell: (record) => record.properties?.creditsUsedMicro ?? '-',
+  },
+  {
+    id: 'source',
+    label: msg`Source`,
+    minWidth: 100,
+    defaultWidth: 130,
+    renderCell: (record) => record.properties?.source ?? '-',
+  },
+  { ...PROPERTIES_COLUMN, minWidth: 150, defaultWidth: 300 },
+];
+
 const COLUMNS_BY_TABLE: Record<EventLogTable, ColumnConfig[]> = {
   [EventLogTable.OBJECT_EVENT]: OBJECT_EVENT_COLUMNS,
   [EventLogTable.USAGE_EVENT]: USAGE_EVENT_COLUMNS,
   [EventLogTable.APPLICATION_LOG]: APPLICATION_LOG_COLUMNS,
+  [EventLogTable.LOGIC_FUNCTION_EXECUTION]: LOGIC_FUNCTION_EXECUTION_COLUMNS,
   [EventLogTable.WORKSPACE_EVENT]: DEFAULT_COLUMNS,
   [EventLogTable.PAGEVIEW]: DEFAULT_COLUMNS,
 };

@@ -11,6 +11,11 @@ export const logicFunctionExecutedSchema = z.strictObject({
     errorType: z.string().optional(),
     functionId: z.string(),
     functionName: z.string(),
+    applicationId: z.string().optional(),
+    source: z.string().optional(),
+    workflowId: z.string().optional(),
+    workflowVersionId: z.string().optional(),
+    workflowRunId: z.string().optional(),
   }),
 });
 

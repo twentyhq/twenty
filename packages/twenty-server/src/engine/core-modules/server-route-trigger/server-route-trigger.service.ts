@@ -11,6 +11,7 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -227,6 +228,7 @@ export class ServerRouteTriggerService {
         logicFunctionId: logicFunction.id,
         workspaceId,
         payload,
+        executionContext: { source: LogicFunctionExecutionSource.SERVER_ROUTE },
       });
     } catch (error) {
       this.logger.error(

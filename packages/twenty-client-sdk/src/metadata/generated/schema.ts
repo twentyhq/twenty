@@ -2836,7 +2836,7 @@ export interface Query {
     __typename: 'Query'
 }
 
-export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
+export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG' | 'LOGIC_FUNCTION_EXECUTION'
 
 export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND'
 
@@ -9470,7 +9470,8 @@ export const enumEventLogTable = {
    PAGEVIEW: 'PAGEVIEW' as const,
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
    USAGE_EVENT: 'USAGE_EVENT' as const,
-   APPLICATION_LOG: 'APPLICATION_LOG' as const
+   APPLICATION_LOG: 'APPLICATION_LOG' as const,
+   LOGIC_FUNCTION_EXECUTION: 'LOGIC_FUNCTION_EXECUTION' as const
 }
 
 export const enumUsageOperationType = {

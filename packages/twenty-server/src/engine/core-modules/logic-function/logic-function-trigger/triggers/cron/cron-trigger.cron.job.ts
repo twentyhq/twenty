@@ -18,6 +18,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
@@ -91,6 +92,7 @@ export class CronTriggerCronJob {
               logicFunctionId: logicFunction.id,
               workspaceId: activeWorkspace.id,
               payload: {},
+              source: LogicFunctionExecutionSource.CRON,
             },
             { retryLimit: 10 },
           );

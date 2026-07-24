@@ -198,6 +198,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
     mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockReturnValue({
       state: { flow: { steps: mockSteps }, stepInfos: mockStepInfos },
       workflowId: 'workflow-id',
+      workflowVersionId: 'workflow-version-id',
     });
 
     it('should execute a step and continue to the next step on success', async () => {
@@ -224,6 +225,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
         runInfo: {
           workflowRunId: mockWorkflowRunId,
           workspaceId: mockWorkspaceId,
+          workflowId: 'workflow-id',
+          workflowVersionId: 'workflow-version-id',
         },
       });
 
@@ -238,6 +241,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
             periodStart: new Date('2026-04-01T00:00:00.000Z'),
+            metadata: {
+              workflowVersionId: 'workflow-version-id',
+            },
           },
         ],
         'workspace-id',
@@ -709,7 +715,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   describe('sendWorkflowNodeRunEvent', () => {
     it('should emit a billing event', async () => {
-      await service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
+      await service['sendWorkflowNodeRunEvent'](
+        'workspace-id',
+        'workflow-id',
+        'workflow-version-id',
+      );
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         USAGE_RECORDED,
@@ -722,6 +732,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
             periodStart: new Date('2026-04-01T00:00:00.000Z'),
+            metadata: {
+              workflowVersionId: 'workflow-version-id',
+            },
           },
         ],
         'workspace-id',

@@ -26,7 +26,7 @@ export const buildUsageEventEnvelopes = (
       creditsUsedMicro: usageEvent.creditsUsedMicro,
       resourceId: usageEvent.resourceId ?? '',
       resourceContext: usageEvent.resourceContext ?? '',
-      metadata: {},
+      metadata: usageEvent.metadata ?? {},
     },
   }));
 };

@@ -6,6 +6,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -56,6 +57,12 @@ export class CodeWorkflowAction implements WorkflowAction {
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
+      executionContext: {
+        source: LogicFunctionExecutionSource.WORKFLOW,
+        workflowId: runInfo.workflowId,
+        workflowVersionId: runInfo.workflowVersionId,
+        workflowRunId: runInfo.workflowRunId,
+      },
     });
 
     await this.persistStepLog({

@@ -1,5 +1,6 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { LogicFunctionExecutionSource } from 'src/engine/core-modules/logic-function/logic-function-executor/types/logic-function-execution-context.type';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -56,6 +57,7 @@ describe('transformEventBatchToEventPayloads', () => {
       expect(result[0]).toEqual({
         logicFunctionId: 'function-1',
         workspaceId: 'workspace-1',
+        source: LogicFunctionExecutionSource.DATABASE_EVENT,
         payload: expect.objectContaining({
           name: 'company.updated',
           workspaceId: 'workspace-1',
