@@ -40,6 +40,11 @@ class FakeOffscreenCanvasRenderingContext2D {
 class FakeOffscreenCanvas {
   private readonly context = new FakeOffscreenCanvasRenderingContext2D();
 
+  constructor(
+    public readonly width: number,
+    public readonly height: number,
+  ) {}
+
   getContext(contextId: string): FakeOffscreenCanvasRenderingContext2D | null {
     return contextId === '2d' ? this.context : null;
   }

@@ -66,7 +66,7 @@ describe('measureNodeGeometry', () => {
     expect(snapshot.offsetLeft).toBe(12);
   });
 
-  it('should report the element own offsets when it has no offset parent', () => {
+  it("should report the element's own offsets when it has no offset parent", () => {
     const node = document.createElement('div');
     stubBoundingClientRect(node);
     Object.defineProperty(node, 'offsetParent', { value: null });

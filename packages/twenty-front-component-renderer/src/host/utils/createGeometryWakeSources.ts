@@ -204,9 +204,9 @@ export const createGeometryWakeSources = (
     });
   };
 
-  const attachViewportSources = (): void => {
+  const attachViewportSources = (): boolean => {
     if (areViewportSourcesAttached) {
-      return;
+      return false;
     }
 
     areViewportSourcesAttached = true;
@@ -218,6 +218,8 @@ export const createGeometryWakeSources = (
     if (isDefined(rootContainer)) {
       resolveResizeObserver()?.observe(rootContainer);
     }
+
+    return true;
   };
 
   const attachElementSources = (): boolean => {
