@@ -1,6 +1,6 @@
 ---
 title: Instalační hooky
-description: Spouštějte logiku během životního cyklu instalace, upgradu nebo odinstalace – naplňte data, zálohujte záznamy, ověřte upgrade, vyčistěte externí zdroje.
+description: Spouštějte logiku během životního cyklu instalace, upgradu nebo odinstalace – vložte výchozí data, zálohujte záznamy, ověřte upgrade, vyčistěte externí prostředky.
 icon: wrench
 ---
 
@@ -145,11 +145,11 @@ export default definePreInstallLogicFunction({
 
 ## Odinstalační hook
 
-`defineUninstallLogicFunction` deklaruje hook, který se spustí, když uživatel odinstaluje vaši aplikaci. Spustí se **předtím**, než jsou odstraněna metadata, data a kód aplikace — jakmile se spustí migrační skript pro smazání, nezbude nic, co by se dalo vykonat — takže váš handler může stále dotazovat objekty a záznamy aplikace. Použijte ho k úklidu externích prostředků: zrušení přidělených API prostředků, smazání zbývajících botů, odvolání webhooks.
+`defineUninstallLogicFunction` deklaruje hook, který se spustí, když uživatel odinstaluje vaši aplikaci. Spustí se **předtím**, než jsou odstraněna metadata, data a kód aplikace — jakmile se spustí migrační skript pro smazání, nezbude nic, co by se dalo vykonat — takže váš handler může stále dotazovat objekty a záznamy aplikace. Použijte ho k úklidu externích prostředků: zrušení přidělených API prostředků, smazání zbývajících botů, zrušení webhooků.
 
 Poznámky:
 
-* Hook pracuje v režimu best effort: běží synchronně, ale chyba se pouze zaloguje a **nikdy neblokuje odinstalaci** — úklid nesmí znemožnit odebrání aplikace.
+* Hook pracuje v režimu best effort: běží synchronně, ale chyba se pouze zapíše do logu a nikdy neblokuje odinstalaci — úklid nesmí znemožnit odebrání aplikace.
 * Přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).
 * Nespouští se, pokud je neúspěšná čistá instalace vrácena zpět — aplikace nikdy nedokončila instalaci.
 * Hook nemůže běžet poté, co je aplikace pryč, takže externí úklid, který závisí na datech aplikace (např. ID botů uložená v záznamech), patří sem, ne do externí naplánované úlohy.
