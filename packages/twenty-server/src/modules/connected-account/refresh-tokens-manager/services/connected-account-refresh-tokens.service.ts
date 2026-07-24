@@ -152,6 +152,14 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
       case ConnectedAccountProvider.APP: {
+        // TODO: drive this from the connection provider definition
+        if (
+          connectedAccount.provider === ConnectedAccountProvider.APP &&
+          !isDefined(connectedAccount.refreshToken)
+        ) {
+          return true;
+        }
+
         if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
         }
