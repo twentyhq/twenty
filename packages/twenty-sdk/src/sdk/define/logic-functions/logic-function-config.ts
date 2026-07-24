@@ -7,8 +7,8 @@ import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
 // A resolver function attached to `serverRouteTriggerSettings` runs in the
-// owner workspace and must return BOTH the target workspace and the target
-// logic function to dispatch to. The server contract is
+// owner workspace and returns either a sync `Response`, or BOTH the target
+// workspace and the target logic function to enqueue. The dispatch contract is
 // `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
 // payload?: object }`. The resolver is the single point of authorization —
 // the URL only carries the resolver's universalIdentifier.

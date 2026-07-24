@@ -34,7 +34,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-type ResolverResult = {
+type ResolverDispatchResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
@@ -111,14 +111,11 @@ export class ServerRouteTriggerService {
       );
     }
 
-    // Providers that require a synchronous handshake on the webhook URL (Slack
-    // Events API url_verification) need the resolver to answer the caller itself
-    // instead of dispatching to a queued target function.
     if (isLogicFunctionHttpResponse(resolverResult.data)) {
       return buildRouteTriggerResponse(resolverResult.data);
     }
 
-    const resolved = this.parseResolverResult(resolverResult.data);
+    const resolved = this.parseResolverDispatchResult(resolverResult.data);
 
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
@@ -153,30 +150,33 @@ export class ServerRouteTriggerService {
     );
   }
 
-  private parseResolverResult(resolverData: object | null): ResolverResult {
-    const data = resolverData as {
+  private parseResolverDispatchResult(
+    data: object | null,
+  ): ResolverDispatchResult {
+    const dispatchData = data as {
       workspaceId?: unknown;
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;
     };
 
     if (
-      !isString(data?.workspaceId) ||
-      !isString(data?.targetLogicFunctionUniversalIdentifier)
+      !isString(dispatchData?.workspaceId) ||
+      !isString(dispatchData?.targetLogicFunctionUniversalIdentifier)
     ) {
       throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
+        'Resolver logic function must return either a Response, or { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
 
     return {
-      workspaceId: data.workspaceId,
+      workspaceId: dispatchData.workspaceId,
       targetLogicFunctionUniversalIdentifier:
-        data.targetLogicFunctionUniversalIdentifier,
+        dispatchData.targetLogicFunctionUniversalIdentifier,
       payload:
-        typeof data.payload === 'object' && data.payload !== null
-          ? (data.payload as object)
+        typeof dispatchData.payload === 'object' &&
+        dispatchData.payload !== null
+          ? (dispatchData.payload as object)
           : undefined,
     };
   }
