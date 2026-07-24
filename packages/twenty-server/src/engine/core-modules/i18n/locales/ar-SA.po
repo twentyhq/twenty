@@ -1474,11 +1474,6 @@ msgstr "لا يمكن تحديث تعريف علم الإذن القياسي"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "لا يمكن تحديث خصائص المهارة القياسية (يسمح فقط بالتنشيط/التعطيل)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "لا يمكن تحديث حالة إصدار سير العمل يدويًا"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -5263,6 +5258,7 @@ msgid "Not authorized to access this OAuth provider."
 msgstr "غير مخوّل بالوصول إلى موفّر OAuth هذا."
 
 #. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
@@ -8012,6 +8008,11 @@ msgstr "هذه الميزة غير مُمكَّنة."
 msgid "This field cannot be modified."
 msgstr "لا يمكن تعديل هذا الحقل."
 
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
+
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field name is not available."
@@ -8455,6 +8456,12 @@ msgstr "لا يمكن إنشاء الفهرس الفريد للحقل {fieldName
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "Universal identifier is reserved for system-managed metadata"
 msgstr "المعرّف الشامل محجوز لبيانات التعريف المُدارة من النظام"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

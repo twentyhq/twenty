@@ -10,13 +10,16 @@ import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCu
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   WidgetType,
@@ -46,7 +49,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
-  const { layoutMode } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
   const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
@@ -55,14 +58,25 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
+  const widgetHeaderInfo = useAtomComponentFamilyStateValue(
+    widgetHeaderInfoComponentFamilyState,
+    widget.id,
+  );
+
+  const hasWidgetHeaderInfo =
+    isDefined(widgetHeaderInfo?.count) ||
+    isDefined(widgetHeaderInfo?.primaryAction);
+
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
     widget.type === WidgetType.EMAIL_THREAD;
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
+  // A solo widget owns its tab, and the tab label already names it: the
+  // header only appears when the widget published something to say in it.
   const showHeader =
-    layoutMode !== PageLayoutTabLayoutMode.CANVAS && !hideHeaderInViewMode;
+    presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({
@@ -90,7 +104,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   };
 
   const variant = getWidgetCardVariant({
-    layoutMode,
+    presentation,
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
     isMobile,

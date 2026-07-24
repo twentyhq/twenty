@@ -7,10 +7,12 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
+import { useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -21,7 +23,6 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/feedback';
-import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
 const StyledContainer = styled.div`
@@ -36,7 +37,7 @@ type TaskGroupsProps = {
 };
 
 export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
-  const { tasks, tasksLoading } = useTasks({
+  const { tasks, tasksLoading, totalCountTasks } = useTasks({
     targetableObjects: [targetableObject],
   });
 
@@ -52,6 +53,24 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
+  });
+
+  const newTaskAction = useMemo(
+    () =>
+      hasObjectUpdatePermissions
+        ? {
+            Icon: IconPlus,
+            label: t`New task`,
+            onClick: () =>
+              openCreateActivity({ targetableObjects: [targetableObject] }),
+          }
+        : undefined,
+    [hasObjectUpdatePermissions, openCreateActivity, targetableObject],
+  );
+
+  usePublishWidgetHeaderInfo({
+    count: totalCountTasks,
+    primaryAction: newTaskAction,
   });
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
@@ -100,23 +119,10 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     groupBy(tasks, ({ status }) => status),
   ).sort(([statusA], [statusB]) => statusB.localeCompare(statusA));
 
-  const hasTodoStatus = sortedTasksByStatus.some(
-    ([status]) => status === 'TODO',
-  );
-
   return (
     <StyledContainer>
       {sortedTasksByStatus.map(([status, tasksByStatus]: [string, Task[]]) => (
-        <TaskList
-          key={status}
-          title={status}
-          tasks={tasksByStatus}
-          button={
-            (status === 'TODO' || !hasTodoStatus) && (
-              <AddTaskButton activityTargetableObject={targetableObject} />
-            )
-          }
-        />
+        <TaskList key={status} title={status} tasks={tasksByStatus} />
       ))}
     </StyledContainer>
   );

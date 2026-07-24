@@ -90,18 +90,19 @@ describe('Database event trigger filter (e2e)', () => {
 
     const updateTriggerResponse = await graphql(
       `
-        mutation UpdateWorkflowVersion(
-          $id: UUID!
-          $data: WorkflowVersionUpdateInput!
+        mutation UpdateWorkflowVersionTrigger(
+          $input: UpdateWorkflowVersionTriggerInput!
         ) {
-          updateWorkflowVersion(id: $id, data: $data) {
-            id
+          updateWorkflowVersionTrigger(input: $input) {
+            trigger
           }
         }
       `,
       {
-        id: createdWorkflowVersionId,
-        data: { trigger: databaseEventTrigger },
+        input: {
+          workflowVersionId: createdWorkflowVersionId,
+          trigger: databaseEventTrigger,
+        },
       },
     );
 

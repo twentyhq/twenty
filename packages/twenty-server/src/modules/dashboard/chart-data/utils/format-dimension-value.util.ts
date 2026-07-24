@@ -22,6 +22,7 @@ type FormatDimensionValueParams = {
   subFieldName?: string;
   userTimezone: string;
   firstDayOfTheWeek: FirstDayOfTheWeek;
+  relationLabelByRecordId?: ReadonlyMap<string, string>;
 };
 
 const normalizeMultiSelectValue = (value: unknown): unknown[] => {
@@ -53,6 +54,7 @@ export const formatDimensionValue = ({
   subFieldName,
   userTimezone,
   firstDayOfTheWeek,
+  relationLabelByRecordId,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
     return t`Not Set`;
@@ -111,7 +113,16 @@ export const formatDimensionValue = ({
       );
     }
 
-    case FieldMetadataType.RELATION: {
+    case FieldMetadataType.RELATION:
+    case FieldMetadataType.MORPH_RELATION: {
+      if (!isDefined(subFieldName)) {
+        if (!isDefined(relationLabelByRecordId)) {
+          return String(value);
+        }
+
+        return relationLabelByRecordId.get(String(value)) ?? t`Unknown`;
+      }
+
       if (isDefined(dateGranularity)) {
         const parsedDayString = String(value);
 

@@ -299,6 +299,14 @@ export const validateQueryIsPermittedOrThrow = ({
       });
 
     expressionMapSelectsOnMainEntity = selectsWithoutJoinedAliases;
+
+    validateJoinedOrderByColumnsArePermittedOrThrow({
+      expressionMap,
+      objectsPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    });
   }
 
   const allFieldsSelected = expressionMapSelectsOnMainEntity.some(
@@ -409,6 +417,63 @@ const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
   );
 
   return { selectsWithoutJoinedAliases };
+};
+
+const validateJoinedOrderByColumnsArePermittedOrThrow = ({
+  expressionMap,
+  objectsPermissions,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  objectIdByNameSingular,
+}: {
+  expressionMap: QueryExpressionMap;
+  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
+}) => {
+  const columnsByJoinedAlias = new Map<string, Set<string>>();
+  const columnReferenceRegex = /"(\w+)"\."(\w+)"/g;
+
+  for (const orderByExpression of Object.keys(expressionMap.orderBys)) {
+    for (const [, alias, column] of orderByExpression.matchAll(
+      columnReferenceRegex,
+    )) {
+      const columnsForAlias = columnsByJoinedAlias.get(alias) ?? new Set();
+
+      columnsForAlias.add(column);
+      columnsByJoinedAlias.set(alias, columnsForAlias);
+    }
+  }
+
+  for (const joinAttribute of expressionMap.joinAttributes) {
+    const joinedAlias = joinAttribute.alias.name;
+    const referencedColumns = columnsByJoinedAlias.get(joinedAlias);
+
+    if (!isDefined(referencedColumns)) {
+      continue;
+    }
+
+    const entity = expressionMap.aliases.find(
+      (alias) => alias.type === 'join' && alias.name === joinedAlias,
+    )?.metadata;
+
+    if (!isDefined(entity)) {
+      continue;
+    }
+
+    validateOperationIsPermittedOrThrow({
+      entityName: entity.name,
+      operationType: 'select',
+      objectsPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+      selectedColumns: [...referencedColumns],
+      allFieldsSelected: false,
+      updatedColumns: [],
+    });
+  }
 };
 
 const buildFieldPermissionDeniedMessage = ({

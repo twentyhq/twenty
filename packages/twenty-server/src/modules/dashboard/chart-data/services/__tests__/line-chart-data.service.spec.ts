@@ -7,11 +7,13 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-data-points.constant';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 
 describe('LineChartDataService', () => {
   let service: LineChartDataService;
   let mockExecuteGroupByQuery: jest.Mock;
+  let mockResolveRelationLabels: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
   const mockAuthContext = {
@@ -41,6 +43,14 @@ describe('LineChartDataService', () => {
     type: FieldMetadataType.TEXT,
   };
 
+  const mockRelationFieldY = {
+    id: 'secondary-relation-field-id',
+    name: 'agent',
+    label: 'Agent',
+    type: FieldMetadataType.RELATION,
+    relationTargetObjectMetadataId: 'agent-object-id',
+  };
+
   const mockAggregateField = {
     id: 'aggregate-field-id',
     name: 'amount',
@@ -56,6 +66,7 @@ describe('LineChartDataService', () => {
 
   beforeEach(async () => {
     mockExecuteGroupByQuery = jest.fn();
+    mockResolveRelationLabels = jest.fn().mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -90,6 +101,11 @@ describe('LineChartDataService', () => {
                     ...mockGroupByFieldY,
                     universalIdentifier: 'group-by-field-y-universal-id',
                   },
+                  'secondary-relation-field-universal-id': {
+                    ...mockRelationFieldY,
+                    universalIdentifier:
+                      'secondary-relation-field-universal-id',
+                  },
                   'aggregate-field-universal-id': {
                     ...mockAggregateField,
                     universalIdentifier: 'aggregate-field-universal-id',
@@ -100,6 +116,8 @@ describe('LineChartDataService', () => {
                   [mockGroupByFieldXText.id]:
                     'group-by-field-x-text-universal-id',
                   [mockGroupByFieldY.id]: 'group-by-field-y-universal-id',
+                  [mockRelationFieldY.id]:
+                    'secondary-relation-field-universal-id',
                   [mockAggregateField.id]: 'aggregate-field-universal-id',
                 },
                 universalIdentifiersByApplicationId: {},
@@ -111,6 +129,12 @@ describe('LineChartDataService', () => {
           provide: ChartDataQueryService,
           useValue: {
             executeGroupByQuery: mockExecuteGroupByQuery,
+          },
+        },
+        {
+          provide: ChartRelationLabelService,
+          useValue: {
+            resolveRelationLabels: mockResolveRelationLabels,
           },
         },
       ],
@@ -274,6 +298,79 @@ describe('LineChartDataService', () => {
       expect(result.series).toHaveLength(2);
       expect(result.series.every((s) => s.data.length === 2)).toBe(true);
       expect(result.hasTooManyGroups).toBe(false);
+    });
+
+    it('should label secondary relation series with resolved record names and drop unresolved series', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        {
+          groupByDimensionValues: ['2024-01-01', 'agent-id-1'],
+          aggregateValue: 8,
+        },
+        {
+          groupByDimensionValues: ['2024-01-01', 'agent-id-2'],
+          aggregateValue: 5,
+        },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        secondary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(['agent-id-2']),
+        },
+      });
+
+      const result = await service.getLineChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...twoDimConfiguration,
+          secondaryAxisGroupByFieldMetadataId: mockRelationFieldY.id,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const seriesLabels = result.series.map((serie) => serie.label);
+
+      expect(seriesLabels).toContain('Alice');
+      expect(seriesLabels).not.toContain('Unknown');
+      expect(Object.values(result.formattedToRawLookup)).toContain(
+        'agent-id-1',
+      );
+      expect(Object.values(result.formattedToRawLookup)).not.toContain(
+        'agent-id-2',
+      );
+    });
+
+    it('should key the secondary lookup by prefixed series id only', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        {
+          groupByDimensionValues: ['2024-01-01', 'agent-id-1'],
+          aggregateValue: 8,
+        },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        secondary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(),
+        },
+      });
+
+      const result = await service.getLineChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...twoDimConfiguration,
+          secondaryAxisGroupByFieldMetadataId: mockRelationFieldY.id,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const aliceSeries = result.series.find(
+        (serie) => serie.label === 'Alice',
+      );
+
+      expect(aliceSeries).toBeDefined();
+      expect(result.formattedToRawLookup[aliceSeries!.key]).toBe('agent-id-1');
+      expect(result.formattedToRawLookup['Alice']).toBeUndefined();
     });
 
     it('should normalize sparse data (fill missing x values with 0)', async () => {

@@ -1,5 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
@@ -70,7 +71,11 @@ export const usePageLayoutHeaderInfo = ({
           ? tab.title
           : '';
 
-      const isCanvasTab = tab.layoutMode === PageLayoutTabLayoutMode.CANVAS;
+      const isSoloTab =
+        getTabPresentation({
+          widgets: tab.widgets.filter((widget) => widget.isActive),
+          layoutMode: tab.layoutMode ?? PageLayoutTabLayoutMode.VERTICAL_LIST,
+        }) === 'solo';
 
       const resolvedTabIcon = isDefined(tab.icon)
         ? getIcon(tab.icon)
@@ -79,7 +84,7 @@ export const usePageLayoutHeaderInfo = ({
       return {
         headerIcon: resolvedTabIcon ?? IconAppWindow,
         headerIconColor: iconColor,
-        headerType: isCanvasTab ? t`Full tab widget` : t`Tab`,
+        headerType: isSoloTab ? t`Full tab widget` : t`Tab`,
         title,
         isReadonly: false,
         tab,

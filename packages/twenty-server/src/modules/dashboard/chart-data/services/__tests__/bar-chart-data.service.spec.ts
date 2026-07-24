@@ -10,10 +10,12 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
 import { BarChartDataService } from 'src/modules/dashboard/chart-data/services/bar-chart-data.service';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 
 describe('BarChartDataService', () => {
   let service: BarChartDataService;
   let mockExecuteGroupByQuery: jest.Mock;
+  let mockResolveRelationLabels: jest.Mock;
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
@@ -48,6 +50,14 @@ describe('BarChartDataService', () => {
     ],
   };
 
+  const mockRelationField = {
+    id: 'relation-field-id',
+    name: 'agent',
+    label: 'Agent',
+    type: FieldMetadataType.RELATION,
+    relationTargetObjectMetadataId: 'agent-object-id',
+  };
+
   const mockObjectMetadata = {
     id: objectMetadataId,
     nameSingular: 'company',
@@ -56,6 +66,7 @@ describe('BarChartDataService', () => {
 
   beforeEach(async () => {
     mockExecuteGroupByQuery = jest.fn();
+    mockResolveRelationLabels = jest.fn().mockResolvedValue({});
     mockGetOrRecomputeManyOrAllFlatEntityMaps = jest.fn().mockResolvedValue({
       flatObjectMetadataMaps: {
         byUniversalIdentifier: {
@@ -83,11 +94,16 @@ describe('BarChartDataService', () => {
             ...mockSelectField,
             universalIdentifier: 'select-field-universal-id',
           },
+          'relation-field-universal-id': {
+            ...mockRelationField,
+            universalIdentifier: 'relation-field-universal-id',
+          },
         },
         universalIdentifierById: {
           [mockGroupByField.id]: 'group-by-field-universal-id',
           [mockAggregateField.id]: 'aggregate-field-universal-id',
           [mockSelectField.id]: 'select-field-universal-id',
+          [mockRelationField.id]: 'relation-field-universal-id',
         },
         universalIdentifiersByApplicationId: {},
       },
@@ -107,6 +123,12 @@ describe('BarChartDataService', () => {
           provide: ChartDataQueryService,
           useValue: {
             executeGroupByQuery: mockExecuteGroupByQuery,
+          },
+        },
+        {
+          provide: ChartRelationLabelService,
+          useValue: {
+            resolveRelationLabels: mockResolveRelationLabels,
           },
         },
       ],
@@ -403,6 +425,96 @@ describe('BarChartDataService', () => {
           authContext: mockAuthContext,
         }),
       ).rejects.toThrow();
+    });
+  });
+
+  describe('getBarChartData - Relation group by', () => {
+    const relationConfiguration = {
+      configurationType: WidgetConfigurationType.BAR_CHART,
+      primaryAxisGroupByFieldMetadataId: mockRelationField.id,
+      aggregateFieldMetadataId: mockAggregateField.id,
+      aggregateOperation: AggregateOperations.COUNT,
+      layout: BarChartLayout.VERTICAL,
+    };
+
+    it('should use resolved labels on the axis and drop unresolved buckets', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 8 },
+        { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        primary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(['agent-id-2']),
+        },
+      });
+
+      const result = await service.getBarChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: relationConfiguration as any,
+        authContext: mockAuthContext,
+      });
+
+      const axisValues = result.data.map((item) => item[result.indexBy]);
+
+      expect(axisValues).toContain('Alice');
+      expect(axisValues).not.toContain('Unknown');
+      expect(axisValues).not.toContain('agent-id-2');
+      expect(result.data).toHaveLength(1);
+      expect(result.formattedToRawLookup).toEqual({ Alice: 'agent-id-1' });
+    });
+
+    it('should compute hasTooManyGroups from the set reduced by dropped buckets', async () => {
+      const rawResults = Array.from(
+        { length: BAR_CHART_MAXIMUM_NUMBER_OF_BARS + 1 },
+        (_, index) => ({
+          groupByDimensionValues: [`agent-id-${index}`],
+          aggregateValue: index + 1,
+        }),
+      );
+      const unresolvedRecordIds = new Set([
+        `agent-id-${BAR_CHART_MAXIMUM_NUMBER_OF_BARS}`,
+        `agent-id-${BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1}`,
+      ]);
+      const labelByRecordId = new Map(
+        rawResults
+          .map((result) => String(result.groupByDimensionValues[0]))
+          .filter((recordId) => !unresolvedRecordIds.has(recordId))
+          .map((recordId) => [recordId, `Agent ${recordId}`]),
+      );
+
+      mockExecuteGroupByQuery.mockResolvedValue(rawResults);
+      mockResolveRelationLabels.mockResolvedValue({
+        primary: { labelByRecordId, unresolvedRecordIds },
+      });
+
+      const result = await service.getBarChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: relationConfiguration as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(result.hasTooManyGroups).toBe(false);
+      expect(result.data).toHaveLength(BAR_CHART_MAXIMUM_NUMBER_OF_BARS - 1);
+    });
+
+    it('should keep raw values when no resolution is returned', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 8 },
+      ]);
+
+      const result = await service.getBarChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: relationConfiguration as any,
+        authContext: mockAuthContext,
+      });
+
+      const axisValues = result.data.map((item) => item[result.indexBy]);
+
+      expect(axisValues).toContain('agent-id-1');
     });
   });
 });

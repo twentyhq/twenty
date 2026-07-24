@@ -13,7 +13,9 @@ describe('getPageLayoutTabBaseFile', () => {
     expect(result).toContain("title: 'My Custom Tab'");
     expect(result).toContain('pageLayoutUniversalIdentifier:');
     expect(result).toContain('widgets: []');
-    expect(result).toContain('layoutMode: PageLayoutTabLayoutMode.CANVAS');
+    expect(result).toContain(
+      'layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST',
+    );
   });
 
   it('should generate a valid UUID for the tab', () => {

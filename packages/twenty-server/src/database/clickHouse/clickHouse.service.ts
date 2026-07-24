@@ -13,6 +13,11 @@ import {
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+export type ClickHouseInsertOptions = {
+  clientId?: string;
+  asyncInsertBusyTimeoutMaxMs?: number;
+};
+
 @Injectable()
 export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private mainClient: ClickHouseClient | undefined;
@@ -135,11 +140,11 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   public async insert<T extends Record<string, any>>(
     table: string,
     values: T[],
-    clientId?: string,
+    options: ClickHouseInsertOptions = {},
   ): Promise<{ success: boolean }> {
     try {
-      const client = clientId
-        ? await this.connectToClient(clientId)
+      const client = options.clientId
+        ? await this.connectToClient(options.clientId)
         : this.mainClient;
 
       if (!client) {
@@ -149,6 +154,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       await this.insertInChunks(client, table, values, {
         chunkSize: 1000,
         maxMemoryMB: 4,
+        asyncInsertBusyTimeoutMaxMs: options.asyncInsertBusyTimeoutMaxMs,
       });
 
       return { success: true };
@@ -260,7 +266,11 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     client: ClickHouseClient,
     table: string,
     values: T[],
-    options: { chunkSize?: number; maxMemoryMB?: number } = {},
+    options: {
+      chunkSize?: number;
+      maxMemoryMB?: number;
+      asyncInsertBusyTimeoutMaxMs?: number;
+    } = {},
   ): Promise<void> {
     const chunkSize = options.chunkSize ?? 1000;
     const maxMemoryMB = options.maxMemoryMB;
@@ -276,6 +286,12 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         format: 'JSONEachRow',
         clickhouse_settings: {
           async_insert: 1,
+          ...(options.asyncInsertBusyTimeoutMaxMs !== undefined
+            ? {
+                async_insert_busy_timeout_max_ms:
+                  options.asyncInsertBusyTimeoutMaxMs,
+              }
+            : {}),
           wait_for_async_insert: 1,
         },
       });
