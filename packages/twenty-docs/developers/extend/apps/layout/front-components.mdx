@@ -8,10 +8,11 @@ Front components are React components that render directly inside Twenty's UI. T
 
 ## Where front components can be used
 
-Front components can render in two locations within Twenty:
+Front components can render in three locations within Twenty:
 
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+- **Custom settings tab** — When referenced via `settingsCustomTabFrontComponentUniversalIdentifier` in [`defineApplication()`](/developers/extend/apps/config/application), the front component renders inside the app's settings page as a **Custom** tab.
 
 A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
 
