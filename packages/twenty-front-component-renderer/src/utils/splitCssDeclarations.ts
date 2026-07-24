@@ -11,10 +11,7 @@ export const splitCssDeclarations = (cssText: string): string[] => {
     const character = cssText[index];
 
     if (isInComment) {
-      currentDeclaration += character;
-
       if (character === '*' && cssText[index + 1] === '/') {
-        currentDeclaration += '/';
         index += 1;
         isInComment = false;
       }
@@ -35,7 +32,7 @@ export const splitCssDeclarations = (cssText: string): string[] => {
     }
 
     if (character === '/' && cssText[index + 1] === '*') {
-      currentDeclaration += '/*';
+      currentDeclaration += ' ';
       index += 1;
       isInComment = true;
       continue;
