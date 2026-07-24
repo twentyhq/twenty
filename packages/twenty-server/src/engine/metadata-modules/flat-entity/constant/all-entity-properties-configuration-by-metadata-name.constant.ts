@@ -885,7 +885,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     agentId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'agentUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,

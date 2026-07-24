@@ -170,6 +170,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     role: {
       foreignKey: 'roleId',
     },
+    agent: {
+      foreignKey: 'agentId',
+    },
     apiKey: null,
     workspace: null,
     application: null,
