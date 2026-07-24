@@ -1,5 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
+import { kebabToCamelCase } from 'twenty-shared/utils';
+
+import { extractImportantPriorityFromCssValue } from '@/utils/extractImportantPriorityFromCssValue';
+import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
+import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 
 export const parseCssString = (
   styleString: string | undefined,
@@ -8,28 +13,29 @@ export const parseCssString = (
     return styleString as CSSProperties | undefined;
   }
 
-  const style: Record<string, string> = {};
-  const declarations = styleString.split(';').filter(Boolean);
+  const reactStyleProperties: Record<string, string> = {};
 
-  for (const declaration of declarations) {
-    const colonIndex = declaration.indexOf(':');
-    if (colonIndex === -1) {
+  for (const declaration of splitCssDeclarations(styleString)) {
+    const propertyNameEndIndex = declaration.indexOf(':');
+
+    if (propertyNameEndIndex <= 0) {
       continue;
     }
 
-    const property = declaration.slice(0, colonIndex).trim();
-    const value = declaration.slice(colonIndex + 1).trim();
+    const cssPropertyName = declaration.slice(0, propertyNameEndIndex).trim();
 
-    const isCssCustomProperty = property.startsWith('--');
+    const { cssValueWithoutImportantPriority } =
+      extractImportantPriorityFromCssValue(
+        declaration.slice(propertyNameEndIndex + 1).trim(),
+      );
 
-    const key = isCssCustomProperty
-      ? property
-      : property.replace(/-([a-z])/g, (_, letter: string) =>
-          letter.toUpperCase(),
-        );
+    const reactStylePropertyName = isCssCustomPropertyName(cssPropertyName)
+      ? cssPropertyName
+      : kebabToCamelCase(cssPropertyName);
 
-    style[key] = value;
+    reactStyleProperties[reactStylePropertyName] =
+      cssValueWithoutImportantPriority;
   }
 
-  return style;
+  return reactStyleProperties;
 };

@@ -27,9 +27,38 @@ describe('parseCssString', () => {
     expect(parseCssString('color: red; invalid')).toEqual({ color: 'red' });
   });
 
+  it('should skip a declaration starting with a colon', () => {
+    expect(parseCssString(': red; color: blue')).toEqual({ color: 'blue' });
+  });
+
   it('should only split on the first colon so values may contain colons', () => {
     expect(parseCssString('background: url(http://example.com)')).toEqual({
       background: 'url(http://example.com)',
+    });
+  });
+
+  it('should keep semicolons inside url() values', () => {
+    expect(
+      parseCssString(
+        'background-image: url(data:image/png;base64,abc); color: red',
+      ),
+    ).toEqual({
+      backgroundImage: 'url(data:image/png;base64,abc)',
+      color: 'red',
+    });
+  });
+
+  it('should keep semicolons inside quoted values', () => {
+    expect(parseCssString('content: "a;b"; color: red')).toEqual({
+      content: '"a;b"',
+      color: 'red',
+    });
+  });
+
+  it('should strip an important priority from values', () => {
+    expect(parseCssString('color: red !important; width: 10px')).toEqual({
+      color: 'red',
+      width: '10px',
     });
   });
 });
