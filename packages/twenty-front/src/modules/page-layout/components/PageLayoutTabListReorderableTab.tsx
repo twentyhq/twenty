@@ -57,6 +57,7 @@ export const PageLayoutTabListReorderableTab = ({
       type={PAGE_LAYOUT_TAB_DND_TYPE}
       accept={PAGE_LAYOUT_TAB_DND_TYPE}
       disabled={disabled}
+      fill
       hasTransition={false}
       dropLine={dropLineOrientation}
     >
