@@ -6,6 +6,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -22,6 +23,8 @@ const AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER =
   '3c3f983f-5c1a-4c60-a3c8-7d0e2a4a33c3';
 const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
   '4d4f983f-5c1a-4c60-a3c8-7d0e2a4a44d4';
+const HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '5e5f983f-5c1a-4c60-a3c8-7d0e2a4a55e5';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -30,6 +33,14 @@ const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 const RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
   workspaceId: '${OWNER_WORKSPACE_ID}',
   targetLogicFunctionUniversalIdentifier: '${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
+});
+`;
+
+// What `new Response(...)` from twenty-sdk/logic-function serializes to.
+const HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event) => ({
+  ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
+  status: 200,
+  body: { challenge: event.body.challenge },
 });
 `;
 
@@ -108,6 +119,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/handshake-resolver.mjs',
+      builtHandlerCode: HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -135,6 +151,12 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               name: 'auth-required-resolver',
               serverRouteExposed: true,
               authRequired: true,
+            }),
+            buildLogicFunctionManifest({
+              universalIdentifier: HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'handshake-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
             }),
             buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -175,6 +197,15 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
       expect(response.status).toBe(202);
       expect(response.body).toEqual({ queued: true });
+    }, 60000);
+
+    it('answers the caller with the response returned by the resolver', async () => {
+      const response = await request(baseUrl)
+        .post(`/webhooks/server/${HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`)
+        .send({ type: 'url_verification', challenge: 'abc123' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ challenge: 'abc123' });
     }, 60000);
 
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {

@@ -1,25 +1,16 @@
 import {
   type LogicFunctionManifest,
+  type ServerRouteDispatchResult,
   type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
 import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
 export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
-// A resolver function attached to `serverRouteTriggerSettings` runs in the
-// owner workspace and returns either a sync `Response`, or BOTH the target
-// workspace and the target logic function to enqueue. The dispatch contract is
-// `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
-// payload?: object }`. The resolver is the single point of authorization —
-// the URL only carries the resolver's universalIdentifier.
-export type ServerRouteDispatchResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload?: object;
-};
-
-// Returning a `Response` instead answers the caller synchronously and skips the
-// dispatch, for providers whose webhook URL requires a handshake reply.
+// A resolver attached to `serverRouteTriggerSettings` runs in the owner workspace and is the single
+// point of authorization: the URL only carries the resolver's universalIdentifier. Returning a
+// dispatch result enqueues the target, returning a `Response` answers the caller synchronously
+// instead, for providers whose webhook URL requires a handshake reply.
 export type ServerRouteResolverResult =
   | ServerRouteDispatchResult
   | LogicFunctionHttpResponse;

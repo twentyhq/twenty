@@ -92,7 +92,9 @@ export type {
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
+  ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
+export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,

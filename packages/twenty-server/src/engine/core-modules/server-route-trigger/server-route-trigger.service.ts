@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,17 +27,12 @@ import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-
-type ResolverDispatchResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload?: object;
-};
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -115,13 +109,15 @@ export class ServerRouteTriggerService {
       return buildRouteTriggerResponse(resolverResult.data);
     }
 
-    const resolved = this.parseResolverDispatchResult(resolverResult.data);
+    const dispatchResult = parseResolverDispatchResultOrThrow(
+      resolverResult.data,
+    );
 
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
-        resolved.targetLogicFunctionUniversalIdentifier,
-      workspaceId: resolved.workspaceId,
-      payload: resolved.payload ?? event,
+        dispatchResult.targetLogicFunctionUniversalIdentifier,
+      workspaceId: dispatchResult.workspaceId,
+      payload: dispatchResult.payload ?? event,
       applicationRegistrationId,
     });
   }
@@ -148,37 +144,6 @@ export class ServerRouteTriggerService {
         )
         .getOne()) ?? null
     );
-  }
-
-  private parseResolverDispatchResult(
-    data: object | null,
-  ): ResolverDispatchResult {
-    const dispatchData = data as {
-      workspaceId?: unknown;
-      targetLogicFunctionUniversalIdentifier?: unknown;
-      payload?: unknown;
-    };
-
-    if (
-      !isString(dispatchData?.workspaceId) ||
-      !isString(dispatchData?.targetLogicFunctionUniversalIdentifier)
-    ) {
-      throw new ServerRouteTriggerException(
-        'Resolver logic function must return either a Response, or { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
-        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-      );
-    }
-
-    return {
-      workspaceId: dispatchData.workspaceId,
-      targetLogicFunctionUniversalIdentifier:
-        dispatchData.targetLogicFunctionUniversalIdentifier,
-      payload:
-        typeof dispatchData.payload === 'object' &&
-        dispatchData.payload !== null
-          ? (dispatchData.payload as object)
-          : undefined,
-    };
   }
 
   private async enqueueTargetFunction({
