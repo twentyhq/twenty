@@ -181,9 +181,9 @@ describe('ToolOutputSpillService', () => {
     expect(content.startsWith(serialized.slice(0, 100))).toBe(true);
     expect(content.endsWith(serialized.slice(-100))).toBe(true);
     expect(content).toContain(`${Buffer.byteLength(serialized)} bytes`);
-    expect(
-      Buffer.byteLength(JSON.stringify(result)),
-    ).toBeLessThan(Buffer.byteLength(serialized));
+    expect(Buffer.byteLength(JSON.stringify(result))).toBeLessThan(
+      Buffer.byteLength(serialized),
+    );
     expect(result.warnings).toEqual([
       'Large output spill failed; the output was truncated inline.',
     ]);

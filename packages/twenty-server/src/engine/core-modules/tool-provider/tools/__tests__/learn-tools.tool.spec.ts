@@ -151,7 +151,9 @@ describe('createLearnToolsTool', () => {
         success: true,
         message: 'Learned 1 tool: find_many_people.',
         result: {
-          tools: [{ name: 'find_many_people', inputSchema: { type: 'object' } }],
+          tools: [
+            { name: 'find_many_people', inputSchema: { type: 'object' } },
+          ],
         },
       },
       context,
