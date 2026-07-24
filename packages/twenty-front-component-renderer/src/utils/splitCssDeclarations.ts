@@ -3,15 +3,41 @@ export const splitCssDeclarations = (cssText: string): string[] => {
 
   let currentDeclaration = '';
   let quoteCharacter: string | null = null;
+  let isEscaped = false;
+  let isInComment = false;
   let parenthesisDepth = 0;
 
-  for (const character of cssText) {
+  for (let index = 0; index < cssText.length; index += 1) {
+    const character = cssText[index];
+
+    if (isInComment) {
+      currentDeclaration += character;
+
+      if (character === '*' && cssText[index + 1] === '/') {
+        currentDeclaration += '/';
+        index += 1;
+        isInComment = false;
+      }
+      continue;
+    }
+
     if (quoteCharacter !== null) {
       currentDeclaration += character;
 
-      if (character === quoteCharacter) {
+      if (isEscaped) {
+        isEscaped = false;
+      } else if (character === '\\') {
+        isEscaped = true;
+      } else if (character === quoteCharacter) {
         quoteCharacter = null;
       }
+      continue;
+    }
+
+    if (character === '/' && cssText[index + 1] === '*') {
+      currentDeclaration += '/*';
+      index += 1;
+      isInComment = true;
       continue;
     }
 

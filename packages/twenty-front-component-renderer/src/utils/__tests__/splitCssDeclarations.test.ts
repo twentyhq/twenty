@@ -19,6 +19,19 @@ describe('splitCssDeclarations', () => {
     expect(splitCssDeclarations("content: 'a;b'")).toEqual(["content: 'a;b'"]);
   });
 
+  it('should keep semicolons after an escaped quote inside a string', () => {
+    expect(splitCssDeclarations('content: "a\\";b"; color: red')).toEqual([
+      'content: "a\\";b"',
+      ' color: red',
+    ]);
+  });
+
+  it('should keep semicolons inside comments', () => {
+    expect(
+      splitCssDeclarations('color: red; /* a; b */ background: blue'),
+    ).toEqual(['color: red', ' /* a; b */ background: blue']);
+  });
+
   it('should keep semicolons inside url parentheses', () => {
     expect(
       splitCssDeclarations(
