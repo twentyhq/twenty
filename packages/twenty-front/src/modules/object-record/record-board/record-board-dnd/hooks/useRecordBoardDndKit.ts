@@ -20,11 +20,9 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import {
-  type DragDropProviderDragEndEvent,
-  type DragDropProviderDragMoveEvent,
-  type DragDropProviderDragStartEvent,
-} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;

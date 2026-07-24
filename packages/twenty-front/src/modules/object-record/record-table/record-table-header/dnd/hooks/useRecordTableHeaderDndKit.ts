@@ -15,11 +15,9 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import {
-  type DragDropProviderDragEndEvent,
-  type DragDropProviderDragMoveEvent,
-  type DragDropProviderDragStartEvent,
-} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;

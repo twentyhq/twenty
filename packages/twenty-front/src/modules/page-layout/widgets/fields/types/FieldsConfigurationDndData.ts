@@ -1,25 +1,7 @@
-export type FieldsConfigurationGroupDragData = {
-  type: 'group';
-  groupId: string;
-  index: number;
-};
-
-// Catches drops below the last group to append the dragged group at the end.
-export type FieldsConfigurationGroupListEndDropData = {
-  type: 'group-list-end';
-};
-
-export type FieldsConfigurationFieldDragData = {
-  type: 'field';
-  groupId: string;
-  index: number;
-};
-
-// Catches drops below the last field of a list and drops into an empty group.
-export type FieldsConfigurationFieldListEndDropData = {
-  type: 'field-list-end';
-  groupId: string;
-};
+import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
+import { type FieldsConfigurationFieldListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldListEndDropData';
+import { type FieldsConfigurationGroupDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupDragData';
+import { type FieldsConfigurationGroupListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupListEndDropData';
 
 export type FieldsConfigurationDndData =
   | FieldsConfigurationGroupDragData

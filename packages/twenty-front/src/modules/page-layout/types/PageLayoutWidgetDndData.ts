@@ -1,34 +1,9 @@
-export type PageLayoutWidgetDragData = {
-  type: 'widget';
-  widgetId: string;
-  tabId: string;
-  index: number;
-};
-
-export type PageLayoutTabWidgetDropData = {
-  type: 'tab-widget-drop';
-  tabId: string;
-};
-
-export type PageLayoutWidgetListDropData = {
-  type: 'widget-list';
-  tabId: string;
-};
-
-export type PageLayoutTabDragData = {
-  type: 'tab';
-  tabId: string;
-};
-
-// beforeTabId null means append after the last tab.
-export type PageLayoutTabListEndDropData = {
-  type: 'tab-list-end';
-  beforeTabId: string | null;
-};
-
-export type PageLayoutTabMoreButtonDropData = {
-  type: 'tab-more-button';
-};
+import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
+import { type PageLayoutTabListEndDropData } from '@/page-layout/types/PageLayoutTabListEndDropData';
+import { type PageLayoutTabMoreButtonDropData } from '@/page-layout/types/PageLayoutTabMoreButtonDropData';
+import { type PageLayoutTabWidgetDropData } from '@/page-layout/types/PageLayoutTabWidgetDropData';
+import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
+import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 
 export type PageLayoutWidgetDndData =
   | PageLayoutWidgetDragData

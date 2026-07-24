@@ -2,7 +2,7 @@ import { isSortable } from '@dnd-kit/react/sortable';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
-import { type DragDropProviderDropTarget } from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type DragDropProviderDropTarget } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDropTarget';
 import { resolveDropTarget } from '@/ui/utilities/drag-and-drop/utils/resolveDropTarget';
 
 type DropTarget = DragDropProviderDropTarget<DragDropItemData>;

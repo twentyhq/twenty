@@ -13,11 +13,9 @@ import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDr
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
-import {
-  type DragDropProviderDragEndEvent,
-  type DragDropProviderDragMoveEvent,
-  type DragDropProviderDragStartEvent,
-} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;

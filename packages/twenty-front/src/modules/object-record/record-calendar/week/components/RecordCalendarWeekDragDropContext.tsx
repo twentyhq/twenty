@@ -9,10 +9,8 @@ import { type ReactNode, type RefObject, useState } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { logError } from '~/utils/logError';
-import {
-  type DragDropProviderDragEndEvent,
-  type DragDropProviderDragStartEvent,
-} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
 type DragStartPayload =
   DragDropProviderDragStartEvent<RecordCalendarWeekDndData>;

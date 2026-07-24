@@ -5,15 +5,11 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { FIELDS_CONFIGURATION_GROUPS_DROPPABLE_ID } from '@/page-layout/widgets/fields/constants/FieldsConfigurationGroupsDroppableId';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
-import {
-  type FieldsConfigurationDndData,
-  type FieldsConfigurationFieldDragData,
-  type FieldsConfigurationGroupDragData,
-} from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
-import {
-  type DragDropProviderDragEndEvent,
-  type DragDropProviderDragStartEvent,
-} from '@/ui/utilities/drag-and-drop/types/DragDropProviderEvents';
+import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
+import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
+import { type FieldsConfigurationGroupDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupDragData';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 

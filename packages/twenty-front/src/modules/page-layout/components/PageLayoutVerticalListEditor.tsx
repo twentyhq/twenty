@@ -2,10 +2,8 @@ import { getPageLayoutVerticalListViewerVariant } from '@/page-layout/components
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/PageLayoutVerticalListViewerVariant';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import {
-  type PageLayoutWidgetDragData,
-  type PageLayoutWidgetListDropData,
-} from '@/page-layout/types/PageLayoutWidgetDndData';
+import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
+import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutWidgetDndType';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';

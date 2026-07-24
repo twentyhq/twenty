@@ -1,7 +1,7 @@
 import { PageLayoutTabWidgetDropTarget } from '@/page-layout/components/dnd/PageLayoutTabWidgetDropTarget';
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
-import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutWidgetDndData';
+import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';

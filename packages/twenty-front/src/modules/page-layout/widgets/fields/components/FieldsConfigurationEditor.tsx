@@ -16,11 +16,9 @@ import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
 import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
-import {
-  type FieldsConfigurationDndData,
-  type FieldsConfigurationGroupDragData,
-  type FieldsConfigurationGroupListEndDropData,
-} from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
+import { type FieldsConfigurationDndData } from '@/page-layout/widgets/fields/types/FieldsConfigurationDndData';
+import { type FieldsConfigurationGroupDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupDragData';
+import { type FieldsConfigurationGroupListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationGroupListEndDropData';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
