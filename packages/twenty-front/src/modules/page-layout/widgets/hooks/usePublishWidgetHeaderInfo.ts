@@ -4,7 +4,7 @@ import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/stat
 import { type WidgetHeaderInfo } from '@/page-layout/widgets/types/WidgetHeaderInfo';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const OUTSIDE_WIDGET_INSTANCE_ID = 'widget-header-info-outside-widget';
@@ -39,7 +39,14 @@ export const usePublishWidgetHeaderInfo = ({
 
   // oxlint-disable-next-line twenty/no-state-useref
   const onClickRef = useRef(primaryAction?.onClick);
-  onClickRef.current = primaryAction?.onClick;
+
+  const primaryActionOnClick = primaryAction?.onClick;
+
+  // Assigned after commit so the stable wrapper never exposes a callback from
+  // a render React abandoned.
+  useLayoutEffect(() => {
+    onClickRef.current = primaryActionOnClick;
+  }, [primaryActionOnClick]);
 
   const handlePrimaryActionClick = useCallback(() => {
     onClickRef.current?.();
