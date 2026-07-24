@@ -81,7 +81,7 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 ## Custom settings tab
 
-To replace an app's default **Settings** tab (the auto-generated variable configuration UI) with your own component, define it with `defineSettingsTabFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) and additionally marks the component as the app's settings tab.
+To replace an app's default **Settings** tab (the auto-generated variable configuration UI) with your own component, define it with `defineSettingsTabFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings tab always renders visible UI) and additionally marks the component as the app's settings tab.
 
 ```tsx src/front-components/app-settings.tsx
 import { defineSettingsTabFrontComponent } from 'twenty-sdk/define';
