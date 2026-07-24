@@ -1,5 +1,4 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
   type DatabaseEventPayload,
   defineLogicFunction,
@@ -7,7 +6,6 @@ import {
 } from 'twenty-sdk/define';
 
 import { ON_WORKSPACE_MEMBER_CREATED_FN_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { ensurePartnerRole } from 'src/modules/partner/onboarding/services/ensure-partner-role.service';
 import { linkPartnerUser } from 'src/modules/partner/onboarding/services/link-partner-user.service';
 import { resolvePartnerByEmail } from 'src/modules/partner/onboarding/services/resolve-partner-by-email.service';
 import { normalizeInviteEmail } from 'src/modules/partner/onboarding/utils/normalize-invite-email';
@@ -33,8 +31,7 @@ export const handler = async (
     return { skipped: true, reason: 'partner_already_linked' };
   }
 
-  const role = await ensurePartnerRole(new MetadataApiClient(), memberId);
-  return { ...link, role };
+  return link;
 };
 
 export default defineLogicFunction({
