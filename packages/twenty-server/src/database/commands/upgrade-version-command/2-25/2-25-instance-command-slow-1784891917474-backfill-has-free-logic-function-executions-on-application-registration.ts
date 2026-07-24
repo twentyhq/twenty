@@ -11,7 +11,7 @@ const BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS = [
   '66a504cc-0a75-410e-a43f-cdeae1db1522',
 ];
 
-@RegisteredInstanceCommand('2.25.0', 1785200001000, { type: 'slow' })
+@RegisteredInstanceCommand('2.25.0', 1784891917474, { type: 'slow' })
 export class BackfillHasFreeLogicFunctionExecutionsOnApplicationRegistrationSlowInstanceCommand
   implements SlowInstanceCommand
 {

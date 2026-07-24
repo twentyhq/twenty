@@ -147,7 +147,7 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.25.0_AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand_1785200000000',
+      '2.25.0_AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand_1784891916474',
   })
   hasFreeLogicFunctionExecutions: boolean;
 

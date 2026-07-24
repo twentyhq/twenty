@@ -123,8 +123,8 @@ import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from '.
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
 import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-24/2-24-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
-import { AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785200000000-add-has-free-logic-function-executions-to-application-registration';
-import { BackfillHasFreeLogicFunctionExecutionsOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1785200001000-backfill-has-free-logic-function-executions-on-application-registration';
+import { AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1784891916474-add-has-free-logic-function-executions-to-application-registration';
+import { BackfillHasFreeLogicFunctionExecutionsOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1784891917474-backfill-has-free-logic-function-executions-on-application-registration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

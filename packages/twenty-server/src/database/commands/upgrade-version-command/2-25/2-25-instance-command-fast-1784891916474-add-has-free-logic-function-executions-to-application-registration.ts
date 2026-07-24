@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.25.0', 1785200000000)
+@RegisteredInstanceCommand('2.25.0', 1784891916474)
 export class AddHasFreeLogicFunctionExecutionsToApplicationRegistrationFastInstanceCommand
   implements FastInstanceCommand
 {
