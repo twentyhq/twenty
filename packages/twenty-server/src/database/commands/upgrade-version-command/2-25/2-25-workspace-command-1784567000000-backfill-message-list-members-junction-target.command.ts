@@ -24,7 +24,7 @@ const MEMBERS_FIELD_UNIVERSAL_IDENTIFIER =
 const PERSON_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.messageListMember.fields.person.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.24.0', 1784567000000)
+@RegisteredWorkspaceCommand('2.25.0', 1784567000000)
 @Command({
   name: 'upgrade:2-24:backfill-message-list-members-junction-target',
   description:
