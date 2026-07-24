@@ -23,9 +23,11 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// Behavior-level proof for the SDK-injected router provider: a MemoryRouter
-// would render the link but swallow the click into in-memory history; only the
-// host-navigator bridge makes the click reach the host navigate API.
+// KNOWN ISSUE (TDD): expected-failing until a router fix lands. This is the
+// acceptance test for it: a MemoryRouter would render the link but swallow
+// the click into in-memory history; only a host-navigator bridge makes the
+// click reach the host navigate API. Today it fails earlier — the link never
+// renders because the sandbox provides no router context.
 export const RouterLink: Story = runFrontComponentStory({
   frontComponentBundleName: 'host-api-router-link',
   play: async ({ canvasElement, args }) => {

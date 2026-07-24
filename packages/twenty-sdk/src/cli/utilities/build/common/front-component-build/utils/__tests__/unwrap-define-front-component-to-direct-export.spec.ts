@@ -46,9 +46,6 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
     expect(output).toContain(
       '__frontComponentJsx(__frontComponentDefinition.component, {})',
     );
-    expect(output).toContain(
-      "import { FrontComponentRouterProvider as __FrontComponentRouterProvider } from '__front_component_router_provider__';",
-    );
     expect(output).not.toContain('defineFrontComponent');
   });
 
@@ -60,9 +57,6 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
     expect(output).toContain('component: SummarizeRecordEffect,');
     expect(output).toContain(
       '__frontComponentJsx(__frontComponentDefinition.component, {})',
-    );
-    expect(output).toContain(
-      "import { FrontComponentRouterProvider as __FrontComponentRouterProvider } from '__front_component_router_provider__';",
     );
     expect(output).not.toContain('defineFrontComponent');
   });
@@ -76,7 +70,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
     );
 
     const renderer =
-      '\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(__FrontComponentRouterProvider, { children: __frontComponentJsx(__frontComponentDefinition.component, {}) })); }\n';
+      '\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(__frontComponentDefinition.component, {})); }\n';
 
     expect(inlineOutput).toContain(renderer);
     expect(identifierOutput).toContain(renderer);

@@ -4,8 +4,11 @@ import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
 
-// Exercises the SDK-injected router provider: a react-router Link click must
-// route through the host navigate API instead of mutating local history.
+// KNOWN ISSUE (TDD): a react-router Link click must route through the host
+// navigate API. Today the link cannot even render (no router context in the
+// sandbox); once it renders, the click must reach hostApi.navigate — and the
+// host must guard native anchor clicks, which otherwise navigate the host
+// page before the async worker round-trip can preventDefault.
 const HostApiRouterLinkFrontComponent = () => (
   <ThemeProvider colorScheme="light">
     <FrontComponentCard title="host-api:router-link">

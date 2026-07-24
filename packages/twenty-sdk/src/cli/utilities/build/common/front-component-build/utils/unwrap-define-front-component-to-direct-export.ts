@@ -1,5 +1,3 @@
-import { FRONT_COMPONENT_ROUTER_PROVIDER_SPECIFIER } from '../front-component-router-provider-plugin';
-
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
   /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
@@ -44,8 +42,7 @@ export const unwrapDefineFrontComponentToDirectExport = (
   return (
     `import { createRoot as __createRoot } from 'react-dom/client';\n` +
     `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';\n` +
-    `import { FrontComponentRouterProvider as __FrontComponentRouterProvider } from '${FRONT_COMPONENT_ROUTER_PROVIDER_SPECIFIER}';\n` +
     transformedSource +
-    `\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(__FrontComponentRouterProvider, { children: __frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, {}) })); }\n`
+    `\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, {})); }\n`
   );
 };

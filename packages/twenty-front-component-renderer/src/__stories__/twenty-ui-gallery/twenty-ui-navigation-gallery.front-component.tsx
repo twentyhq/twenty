@@ -214,8 +214,9 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
       />
     ),
   },
-  // RawLink and UndecoratedLink rely on the router provider injected by the
-  // SDK build (react-router Links navigate through the host navigate API).
+  // KNOWN ISSUE (TDD): RawLink and UndecoratedLink render a react-router Link
+  // and crash because the sandbox provides no router context. Expected fix:
+  // SDK-injected Router whose navigator bridges to the host navigate API.
   {
     name: 'RawLink',
     node: <RawLink href="/path">Raw link</RawLink>,
