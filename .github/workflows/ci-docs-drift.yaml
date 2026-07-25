@@ -1,0 +1,215 @@
+name: CI Docs Drift
+
+# When a PR changes code that the documentation describes, an agent checks
+# whether the English documentation under packages/twenty-docs is impacted and,
+# only when it is, posts a single sticky comment with its findings.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/create-twenty-app/**
+        packages/twenty-client-sdk/**
+        packages/twenty-docker/**
+        packages/twenty-emails/**
+        packages/twenty-front/**
+        packages/twenty-sdk/**
+        packages/twenty-server/**
+        packages/twenty-shared/**
+        packages/twenty-ui/**
+        packages/twenty-zapier/**
+        !**/__mocks__/**
+        !**/__tests__/**
+        !**/*.integration-spec.ts
+        !**/*.spec.ts
+        !**/*.spec.tsx
+        !**/*.stories.tsx
+        !**/*.test.ts
+        !**/*.test.tsx
+        !packages/twenty-front/src/generated-admin/**
+        !packages/twenty-front/src/generated-metadata/**
+        !packages/twenty-front/src/generated/**
+        !packages/twenty-front/src/locales/**
+        !packages/twenty-server/src/engine/core-modules/i18n/locales/**
+
+  docs-drift-check:
+    needs: changed-files-check
+    # Secrets are unavailable on fork PRs; skip there and on bot PRs.
+    if: >-
+      needs.changed-files-check.outputs.any_changed == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.type != 'Bot'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Run docs drift agent
+        id: drift-agent
+        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 80 --json-schema '{"type":"object","properties":{"hasDrift":{"type":"boolean"},"summary":{"type":"string"}},"required":["hasDrift","summary"]}' --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *),Bash(gh pr view *)"
+          prompt: |
+            You are the documentation drift checker for the twenty repository.
+
+            A pull request changed code that the documentation may describe. Your job
+            is to decide whether the English documentation under
+            `packages/twenty-docs/` is impacted, and report your findings as ONE pull
+            request comment.
+
+            Ignore translated pages entirely (`packages/twenty-docs/l/`) — they are
+            synced separately. Only English `.mdx` pages matter.
+
+            ## Step 1 — Understand the change
+
+            The PR branch is checked out with full history; the base branch is
+            `origin/${{ github.base_ref }}`. Inspect what the PR changes however you
+            see fit.
+
+            A change is documentation-relevant only if it alters something a reader of
+            the docs would observe: user-visible product behaviour, a public API
+            surface, a configuration knob, a CLI contract, or a documented workflow.
+            Internal refactors, tests, dependency bumps, styling-only changes, and
+            implementation details that no page describes are NOT relevant — if the PR
+            contains only those, say so and stop.
+
+            ## Step 2 — Narrow to the impacted documentation areas
+
+            Use this table to decide which areas the PR could possibly touch, then only
+            investigate those.
+
+            | Docs area | Path under `packages/twenty-docs/` | Backed by |
+            |---|---|---|
+            | App development | `developers/extend/apps/**` | `twenty-sdk`, `twenty-client-sdk`, `create-twenty-app`, `twenty-shared/src/application`, `twenty-shared/src/types` |
+            | Public API & auth | `developers/extend/api.mdx`, `developers/extend/capabilities/apis.mdx`, `developers/extend/oauth.mdx`, `developers/extend/webhooks.mdx`, `developers/extend/capabilities/webhooks.mdx` | `twenty-server/src/engine/api/**`, `twenty-server/src/engine/metadata-modules/webhook/**`, `twenty-server/src/engine/core-modules/{open-api,graphql,api-key,auth,sso,app-token,jwt,two-factor-authentication}/**` |
+            | Self-hosting | `developers/self-host/**` | `packages/twenty-docker/**`, `twenty-server/src/engine/core-modules/twenty-config/config-variables.ts`, `twenty-server/src/engine/core-modules/{upgrade,health,secret-encryption}/**`, `twenty-server/src/database/**`, `twenty-server/src/command/**` |
+            | Contributing | `developers/contribute/**` | repo tooling and conventions: root `package.json` scripts, `nx.json`, folder architecture, `twenty-server/src/engine/core-modules/{feature-flag,message-queue}/**`, storybook config, front hotkeys |
+            | UI component library | `twenty-ui/**` | `packages/twenty-ui/src/**` |
+            | End-user guide | `user-guide/**` | `twenty-front/src/modules/**`, `twenty-server/src/modules/**`, `twenty-server/src/engine/core-modules/{billing,workflow,messaging,calendar,dashboard,search,sso,user,workspace,onboarding,tool,usage}/**` |
+            | Product overview | `getting-started/**` | headline product capabilities only — these pages change rarely, when a whole feature area appears, disappears, or is renamed |
+
+            Within the app-development area, this finer mapping tells you which pages
+            to open (paths relative to `developers/extend/apps/`):
+
+            | Source area | Docs pages |
+            |---|---|
+            | CLI commands (`twenty-sdk/src/cli/commands`) | `operations/cli.mdx`, `getting-started/quick-start.mdx`, `operations/sync-and-recovery.mdx`, `getting-started/local-server.mdx`, `getting-started/scaffolding.mdx` |
+            | `defineObject`/`defineField`/relations/indexes | `data/*.mdx` |
+            | `defineApplication`/roles/install hooks/variables | `config/*.mdx` |
+            | Logic functions, triggers, connections, agents/skills | `logic/*.mdx` |
+            | Views, navigation, page layouts, front components, command menu | `layout/*.mdx` |
+            | Publish/install/deploy, versioning, engines | `operations/publishing.mdx`, `operations/sync-and-recovery.mdx` |
+            | Testing APIs (`twenty-sdk/cli` operations) | `operations/testing.mdx` |
+            | Scaffold template (`create-twenty-app/src/constants/template/**`) | `getting-started/project-structure.mdx`, `getting-started/quick-start.mdx`, `operations/testing.mdx`, `operations/publishing.mdx` |
+            | client SDK (`core`/`metadata`/`rest`/`generate`) | `logic/logic-functions.mdx`, `layout/front-components.mdx`, `operations/cli.mdx` |
+            | Enum value sets (FieldType, ViewType, availabilityType, NavigationMenuItemType, ...) | the page documenting that value set (search for the enum name) |
+
+            For the other areas, find the pages by searching the docs for the feature,
+            setting, endpoint, or component name the PR touches — do not guess a path.
+
+            ## Step 3 — Confirm the drift
+
+            Read the actual pages before claiming anything. A page is drifted only if it
+            now states something the code contradicts, or omits something it clearly
+            promises to enumerate (a table of every field type, every CLI flag, every
+            config variable).
+
+            Precision matters more than recall. Do not report a page as drifted because
+            it *could* mention a new feature — only because what it says is now wrong or
+            incomplete against its own stated scope. When you are unsure whether a
+            change is user-facing, leave it out rather than reporting it.
+
+            Also check whether the PR already updates the impacted docs pages — if it
+            does, verify the update matches the code change.
+
+            ## Step 4 — Report
+
+            First check whether you already commented on this PR in an earlier run:
+            `gh pr view ${{ github.event.pull_request.number }} --json comments`
+            and look for the marker `<!-- docs-drift-check -->`.
+
+            - No documentation impact and no previous comment of yours: do NOT post or
+              create any comment. Skip to Step 5.
+            - No documentation impact but a previous comment of yours exists: replace
+              its body with the marker followed by `### Docs drift check` and one line
+              stating the drift is resolved, so a stale table is not left behind.
+            - Documentation IS impacted: post the findings.
+
+            Post or update with:
+            `gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body ...`
+            (this updates the previous drift-check comment in place on subsequent runs).
+            Start the comment body with the marker `<!-- docs-drift-check -->`.
+
+            Comment format:
+            - Title line: `### Docs drift check`
+            - A table with columns **Change** (what changed in the code),
+              **Docs page** (repo-relative path), **Status** (`✅ already updated in this PR`
+              / `⚠️ needs update`), and **Suggested fix** (one concrete sentence, e.g. the
+              exact value to add to a table).
+            - Sort rows so `⚠️ needs update` comes first.
+            - Be terse. No preamble, no sign-off.
+
+            ## Step 5 — Return the verdict
+
+            After reporting, return your final answer as the structured output the CI
+            gate consumes:
+            - `hasDrift`: `true` if at least one impacted docs page still needs updating
+              (drift is NOT fully resolved by this PR); `false` if there is no
+              documentation impact, or every impacted page is already correctly updated
+              in this PR.
+            - `summary`: one terse sentence describing the verdict.
+
+            Environment: GH_TOKEN is available for `gh`. The PR branch is checked out.
+          settings: |
+            {
+              "env": {
+                "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+              }
+            }
+
+      - name: Gate on drift verdict
+        if: always()
+        env:
+          AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
+          STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
+        run: |
+          if [ "$AGENT_OUTCOME" != "success" ]; then
+            echo "::error::Docs drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
+            exit 1
+          fi
+          if [ -z "$STRUCTURED_OUTPUT" ]; then
+            echo "::error::Docs drift checker did not return a structured verdict."
+            exit 1
+          fi
+          has_drift=$(printf '%s' "$STRUCTURED_OUTPUT" | jq -r '.hasDrift')
+          if [ "$has_drift" = "true" ]; then
+            echo "::error::Docs drift detected. See the docs-drift-check comment on this PR."
+            exit 1
+          fi
+          if [ "$has_drift" = "false" ]; then
+            echo "No docs drift."
+            exit 0
+          fi
+          echo "::error::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift"
+          exit 1
