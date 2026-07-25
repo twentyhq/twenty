@@ -2,6 +2,7 @@
 # Keep a developer-owned Twenty database aligned with the checked-out commit.
 #
 # Usage:
+#   bash deploy/local-schema.sh guard
 #   bash deploy/local-schema.sh check
 #   bash deploy/local-schema.sh sync
 #
@@ -100,6 +101,10 @@ run_upgrade_status() {
 
 action="${1:-}"
 case "$action" in
+  guard)
+    verify_local_target
+    info "local twenty-dev target verified"
+    ;;
   check)
     verify_local_target
     info "dry-running pending workspace upgrades"
@@ -125,7 +130,7 @@ case "$action" in
     info "local schema is synchronized with the checked-out commit"
     ;;
   *)
-    echo "Usage: bash deploy/local-schema.sh {check|sync}" >&2
+    echo "Usage: bash deploy/local-schema.sh {guard|check|sync}" >&2
     exit 2
     ;;
 esac

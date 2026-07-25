@@ -21,6 +21,7 @@ bash packages/twenty-utils/setup-dev-env.sh --docker
 cp deploy/git-hooks/post-merge .git/hooks/post-merge
 chmod +x .git/hooks/post-merge
 bash deploy/local-schema.sh check
+bash deploy/local-data.sh seed
 yarn start
 ```
 
@@ -87,6 +88,30 @@ Before opening a pull request that changes schema, test both paths:
 
 The existing server CI also initializes a clean database and fails when entity
 changes would generate an uncommitted instance migration.
+
+## Deterministic local test data
+
+The repository's light development fixture creates one workspace and at most
+five records per standard CRM object. It includes people, companies,
+opportunities, tasks, notes, workspace members, and their standard
+relationships, while skipping the large demo dataset, attachment files, and
+demo-only custom objects.
+
+```bash
+bash deploy/local-data.sh seed
+bash deploy/local-data.sh verify
+```
+
+`seed` is safe to rerun: it verifies the existing deterministic workspace
+instead of duplicating it. To replace all local data with a fresh fixture:
+
+```bash
+bash deploy/local-data.sh reset --yes
+```
+
+Reset is intentionally explicit and operates only after `local-schema.sh`
+confirms that the standard `twenty-dev` Docker database and Redis are the
+targets. Production-shaped data remains a staging concern.
 
 ## Resetting local data
 

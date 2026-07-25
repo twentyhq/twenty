@@ -15,6 +15,8 @@ Developer schema synchronization:
 ```bash
 bash deploy/local-schema.sh check
 bash deploy/local-schema.sh sync
+bash deploy/local-data.sh seed
+bash deploy/local-data.sh verify
 ```
 
 ## Environment summary
