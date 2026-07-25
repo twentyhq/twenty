@@ -149,7 +149,9 @@ export const SettingsUnsubscribersList = () => {
           },
           {
             label: t`Scope`,
-            Cell: ({ item }) => <>{getScopeLabel(item.unsubscribeTopicId)}</>,
+            Cell: ({ item }) => (
+              <>{getScopeLabel(item.unsubscribeTopicId ?? null)}</>
+            ),
           },
           {
             label: t`Reason`,
