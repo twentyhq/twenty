@@ -43,20 +43,20 @@ export const enrichApplicationManifestSyncError = ({
       : entityKind;
 
     return new ApplicationException(
-      `Installing application '${applicationDisplayName}' failed [${developerDetail}]: ${originalMessage}`,
+      `Synchronizing application '${applicationDisplayName}' failed [${developerDetail}]: ${originalMessage}`,
       ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
       {
-        userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}". Its ${humanEntity} could not be applied to your workspace.`,
+        userFriendlyMessage: msg`We couldn't sync metadata for "${applicationDisplayName}". Its ${humanEntity} conflicts with your workspace schema. Run 'yarn twenty plan' to inspect schema differences.`,
         context,
       },
     );
   }
 
   return new ApplicationException(
-    `Installing application '${applicationDisplayName}' failed: ${originalMessage}`,
+    `Synchronizing application '${applicationDisplayName}' failed: ${originalMessage}`,
     ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
     {
-      userFriendlyMessage: msg`We couldn't install "${applicationDisplayName}" because some of its metadata could not be applied to your workspace.`,
+      userFriendlyMessage: msg`We couldn't sync metadata for "${applicationDisplayName}" because some of its metadata conflicts with your workspace schema. Run 'yarn twenty plan' to inspect schema differences.`,
       context,
     },
   );
