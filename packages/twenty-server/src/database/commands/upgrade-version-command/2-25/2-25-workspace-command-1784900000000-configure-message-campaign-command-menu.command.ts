@@ -1,4 +1,6 @@
 import { Command } from 'nest-commander';
+
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -16,6 +18,10 @@ const SEND_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
   STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier,
   STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest.universalIdentifier,
 ];
+
+const MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
+    .universalIdentifier;
 
 const REALIGNED_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
   STANDARD_COMMAND_MENU_ITEMS.navigateToNextRecord.universalIdentifier,
@@ -51,10 +57,26 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
         { workspaceId },
       );
 
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatPageLayoutMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatPageLayoutMaps',
+    ]);
+
+    const existingPageLayout =
+      flatPageLayoutMaps.byUniversalIdentifier[
+        MESSAGE_CAMPAIGN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER
+      ];
+
+    if (!isDefined(existingPageLayout)) {
+      this.logger.log(
+        `Message campaign page layout does not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
