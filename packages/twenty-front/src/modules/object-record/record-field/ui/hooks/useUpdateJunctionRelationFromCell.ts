@@ -8,6 +8,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldRelationFromManyValue,
@@ -22,6 +24,7 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 type UseUpdateJunctionRelationFromCellArgs = {
   fieldMetadataItem: FieldMetadataItem;
@@ -50,6 +53,13 @@ export const useUpdateJunctionRelationFromCell = ({
 
   const junctionObjectMetadata = junctionConfig?.junctionObjectMetadata;
   const sourceFieldOnJunction = junctionConfig?.sourceField;
+  const sourceJoinColumnName =
+    isDefined(sourceObjectMetadata) && isDefined(sourceFieldOnJunction)
+      ? getSourceJoinColumnName({
+          sourceField: sourceFieldOnJunction,
+          sourceObjectMetadata,
+        })
+      : undefined;
 
   // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
   const junctionObjectNameSingular =
@@ -66,6 +76,32 @@ export const useUpdateJunctionRelationFromCell = ({
   const { deleteOneRecord: deleteJunctionRecord } = useDeleteOneRecord({
     objectNameSingular: junctionObjectNameSingular,
   });
+
+  const { restoreManyRecords: restoreJunctionRecords } = useRestoreManyRecords({
+    objectNameSingular: junctionObjectNameSingular,
+  });
+
+  const junctionRecordsFilter: RecordGqlOperationFilter | undefined =
+    isDefined(sourceJoinColumnName)
+      ? {
+          and: [
+            { [sourceJoinColumnName]: { eq: recordId } },
+            {
+              or: [
+                { deletedAt: { is: 'NULL' } },
+                { deletedAt: { is: 'NOT_NULL' } },
+              ],
+            },
+          ],
+        }
+      : undefined;
+
+  const { findManyRecordsLazy, fetchMoreRecordsLazy } = useLazyFindManyRecords(
+    {
+      objectNameSingular: junctionObjectNameSingular,
+      filter: junctionRecordsFilter,
+    },
+  );
 
   const store = useStore();
   const updateJunctionRelationFromCell = useCallback(
@@ -84,11 +120,6 @@ export const useUpdateJunctionRelationFromCell = ({
       if (!isDefined(sourceObjectMetadata)) {
         return;
       }
-
-      const sourceJoinColumnName = getSourceJoinColumnName({
-        sourceField: sourceFieldOnJunction,
-        sourceObjectMetadata,
-      });
 
       const fieldName = fieldDefinition.metadata.fieldName;
       const junctionObjectName = junctionObjectMetadata.nameSingular;
@@ -175,6 +206,81 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         const targetRecord = searchRecord.record;
+        const junctionRecordsResult = await findManyRecordsLazy();
+
+        if (isDefined(junctionRecordsResult.error)) {
+          throw junctionRecordsResult.error;
+        }
+
+        let junctionRecords = junctionRecordsResult.records ?? [];
+        const totalJunctionRecords = junctionRecordsResult.totalCount ?? 0;
+
+        while (junctionRecords.length < totalJunctionRecords) {
+          const nextJunctionRecordsResult = await fetchMoreRecordsLazy();
+
+          if (isDefined(nextJunctionRecordsResult?.error)) {
+            throw nextJunctionRecordsResult.error;
+          }
+
+          const nextJunctionRecords = nextJunctionRecordsResult?.records;
+
+          if (
+            !isDefined(nextJunctionRecords) ||
+            nextJunctionRecords.length <= junctionRecords.length
+          ) {
+            break;
+          }
+
+          junctionRecords = nextJunctionRecords;
+        }
+
+        const existingJunctionRecord = junctionRecords.find(
+          (junctionRecord) =>
+            junctionRecord[targetJoinColumnName] === morphItem.recordId,
+        );
+
+        if (isDefined(existingJunctionRecord)) {
+          if (
+            isDefined(existingJunctionRecord.deletedAt) &&
+            existingJunctionRecord.deletedAt !== null
+          ) {
+            await restoreJunctionRecords({
+              idsToRestore: [existingJunctionRecord.id],
+            });
+          }
+
+          const restoredJunctionRecord = {
+            ...existingJunctionRecord,
+            deletedAt: null,
+            [targetFieldName]: targetRecord,
+          };
+
+          store.set(
+            recordStoreFamilyState.atomFamily(recordId),
+            (currentRecord: Record<string, unknown> | null | undefined) => {
+              if (!isDefined(currentRecord)) {
+                return currentRecord;
+              }
+
+              const currentFieldValue = currentRecord[fieldName];
+              const updatedJunctionRecords = Array.isArray(currentFieldValue)
+                ? currentFieldValue.some(
+                    (record) => record.id === restoredJunctionRecord.id,
+                  )
+                  ? currentFieldValue
+                  : [...currentFieldValue, restoredJunctionRecord]
+                : [restoredJunctionRecord];
+
+              return {
+                ...currentRecord,
+                [fieldName]: updatedJunctionRecords,
+              } as ObjectRecord;
+            },
+          );
+
+          return;
+        }
+
         const newJunctionId = v4();
         const now = new Date().toISOString();
 
@@ -220,12 +326,16 @@ export const useUpdateJunctionRelationFromCell = ({
       store,
       createJunctionRecord,
       deleteJunctionRecord,
+      fetchMoreRecordsLazy,
       fieldDefinition.metadata.fieldName,
+      findManyRecordsLazy,
       junctionConfig,
       junctionObjectMetadata,
       objectMetadataItems,
       recordId,
+      restoreJunctionRecords,
       sourceFieldOnJunction,
+      sourceJoinColumnName,
       sourceObjectMetadata,
     ],
   );
