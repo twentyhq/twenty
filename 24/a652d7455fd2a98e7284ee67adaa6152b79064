@@ -1,0 +1,21 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784900000000-configure-message-campaign-command-menu.command.ts
+  s_54aa6e3c579e2f::t_327958800f4e6f 2-3
+  s_54aa6e3c579e2f::t_cda56425b754c1 22-25
+  s_54aa6e3c579e2f::t_427e50fb053954 60-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "24a652d7455fd2a98e7284ee67adaa6152b79064",
+  "prompts": {},
+  "sessions": {
+    "s_54aa6e3c579e2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05F73216-CF79-404A-A6E7-839FA5D9EDC8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
