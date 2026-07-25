@@ -1,6 +1,6 @@
+import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableRowMultiDragCounterChip } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragCounterChip';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 export const RecordTableRowMultiDragPreview = () => {
@@ -15,5 +15,5 @@ export const RecordTableRowMultiDragPreview = () => {
     return null;
   }
 
-  return <RecordTableRowMultiDragCounterChip />;
+  return <RecordDragMultiDragCounterChip side="left" />;
 };

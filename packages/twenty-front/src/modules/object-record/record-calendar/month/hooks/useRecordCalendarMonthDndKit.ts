@@ -13,6 +13,10 @@ import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDr
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { recordCalendarMonthSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarMonthSelectedRecordIdsComponentSelector';
+import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -47,6 +51,14 @@ export const useRecordCalendarMonthDndKit = (): {
       calendarDayRecordIdsComponentFamilySelector,
     );
 
+  const recordCalendarSelectedRecordIds = useAtomComponentSelectorCallbackState(
+    recordCalendarMonthSelectedRecordIdsComponentSelector,
+  );
+
+  const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
+    originalDragSelectionComponentState,
+  );
+
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
   >(null);
@@ -80,7 +92,8 @@ export const useRecordCalendarMonthDndKit = (): {
       String(draggedId),
     );
 
-    startRecordDrag(draggedRecordId, []);
+    const currentSelectedRecordIds = store.get(recordCalendarSelectedRecordIds);
+    startRecordDrag(draggedRecordId, currentSelectedRecordIds);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
@@ -142,11 +155,14 @@ export const useRecordCalendarMonthDndKit = (): {
       return;
     }
 
+    const originalDragSelection = store.get(originalDragSelectionCallbackState);
+
     processCalendarCardDrop({
       recordId: sourceRecordId,
       sourceDate: sourceDroppableId,
       destinationDate: destinationDroppableId,
       destinationIndex,
+      selectedRecordIds: originalDragSelection,
     });
 
     clearDragState();
