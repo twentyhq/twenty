@@ -10,6 +10,13 @@ This directory defines the operating model for the
 - [STAGING.md](STAGING.md) — isolated staging on the production Mac
 - [PRODUCTION.md](PRODUCTION.md) — current live-instance operations
 
+Developer schema synchronization:
+
+```bash
+bash deploy/local-schema.sh check
+bash deploy/local-schema.sh sync
+```
+
 ## Environment summary
 
 ```text

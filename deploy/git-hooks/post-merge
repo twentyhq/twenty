@@ -15,9 +15,15 @@ changed="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD 2>/dev/nul
 # SIGPIPE'd printf made the whole pipeline "fail" -> schema merges were
 # silently classified as no-schema and the DB sync skipped (bit us 2026-07-06).
 if grep -qE 'packages/twenty-server/src/database/commands/upgrade-version-command/|\.entity\.ts$|packages/twenty-server/src/database/typeorm/' <<<"$changed"; then
-  echo "[post-merge] backend schema files changed — syncing DB + metadata cache (deploy/update-after-merge.sh)"
-  bash "$REPO_ROOT/deploy/update-after-merge.sh" \
-    || echo "[post-merge] sync reported an error; run it manually: bash deploy/update-after-merge.sh"
+  if [ "$REPO_ROOT" = "/Users/ben/Deploy/twenty" ]; then
+    echo "[post-merge] backend schema files changed — syncing production schema"
+    bash "$REPO_ROOT/deploy/update-after-merge.sh" \
+      || echo "[post-merge] sync reported an error; run it manually: bash deploy/update-after-merge.sh"
+  else
+    echo "[post-merge] backend schema files changed — syncing local development schema"
+    bash "$REPO_ROOT/deploy/local-schema.sh" sync \
+      || echo "[post-merge] sync reported an error; run it manually: bash deploy/local-schema.sh sync"
+  fi
 else
   echo "[post-merge] no backend schema changes in this merge — skipping DB sync"
 fi

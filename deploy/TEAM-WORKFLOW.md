@@ -73,6 +73,17 @@ Promotion is forward-only:
 feature branch -> pull request/CI -> staging -> production
 ```
 
+Schema changes travel with the application code that requires them. Developers
+must run:
+
+```bash
+bash deploy/local-schema.sh sync
+```
+
+against an existing local database and test a clean local initialization before
+requesting review. Never copy a schema from staging or production back to a
+developer database, and never repair drift with manual production SQL.
+
 1. Identify the exact Git commit SHA to promote.
 2. Refresh staging from the current production snapshot.
 3. Stage the GHCR image tagged with that full SHA.

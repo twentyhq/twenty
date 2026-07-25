@@ -20,6 +20,7 @@ corepack enable
 bash packages/twenty-utils/setup-dev-env.sh --docker
 cp deploy/git-hooks/post-merge .git/hooks/post-merge
 chmod +x .git/hooks/post-merge
+bash deploy/local-schema.sh check
 yarn start
 ```
 
@@ -58,10 +59,34 @@ yarn start
 After pulling schema changes, run:
 
 ```bash
-bash deploy/update-after-merge.sh
+bash deploy/local-schema.sh sync
 ```
 
-The installed post-merge hook normally does this automatically.
+This applies shared instance migrations, upgrades every local workspace, clears
+stale metadata caches, and displays the resulting upgrade status. It refuses to
+run unless the server environment points at the standard localhost development
+Postgres and Redis URLs, and it refuses the production checkout explicitly.
+
+The installed post-merge hook normally runs it automatically when a merge
+changes entities, instance migrations, or workspace upgrade commands. Run a
+read-only status report at any time with:
+
+```bash
+bash deploy/local-schema.sh check
+```
+
+Before opening a pull request that changes schema, test both paths:
+
+1. Run `bash deploy/local-schema.sh sync` against an existing local database.
+2. Reset the disposable local environment and initialize it from scratch:
+
+   ```bash
+   bash packages/twenty-utils/setup-dev-env.sh --docker --reset
+   bash deploy/local-schema.sh check
+   ```
+
+The existing server CI also initializes a clean database and fails when entity
+changes would generate an uncommitted instance migration.
 
 ## Resetting local data
 
