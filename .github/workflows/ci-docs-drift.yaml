@@ -23,13 +23,10 @@ jobs:
         packages/create-twenty-app/**
         packages/twenty-client-sdk/**
         packages/twenty-docker/**
-        packages/twenty-emails/**
         packages/twenty-front/**
         packages/twenty-sdk/**
         packages/twenty-server/**
         packages/twenty-shared/**
-        packages/twenty-ui/**
-        packages/twenty-zapier/**
         !**/__mocks__/**
         !**/__tests__/**
         !**/*.integration-spec.ts
@@ -105,7 +102,6 @@ jobs:
             | Public API & auth | `developers/extend/api.mdx`, `developers/extend/capabilities/apis.mdx`, `developers/extend/oauth.mdx`, `developers/extend/webhooks.mdx`, `developers/extend/capabilities/webhooks.mdx` | `twenty-server/src/engine/api/**`, `twenty-server/src/engine/metadata-modules/webhook/**`, `twenty-server/src/engine/core-modules/{open-api,graphql,api-key,auth,sso,app-token,jwt,two-factor-authentication}/**` |
             | Self-hosting | `developers/self-host/**` | `packages/twenty-docker/**`, `twenty-server/src/engine/core-modules/twenty-config/config-variables.ts`, `twenty-server/src/engine/core-modules/{upgrade,health,secret-encryption}/**`, `twenty-server/src/database/**`, `twenty-server/src/command/**` |
             | Contributing | `developers/contribute/**` | repo tooling and conventions: root `package.json` scripts, `nx.json`, folder architecture, `twenty-server/src/engine/core-modules/{feature-flag,message-queue}/**`, storybook config, front hotkeys |
-            | UI component library | `twenty-ui/**` | `packages/twenty-ui/src/**` |
             | End-user guide | `user-guide/**` | `twenty-front/src/modules/**`, `twenty-server/src/modules/**`, `twenty-server/src/engine/core-modules/{billing,workflow,messaging,calendar,dashboard,search,sso,user,workspace,onboarding,tool,usage}/**` |
             | Product overview | `getting-started/**` | headline product capabilities only — these pages change rarely, when a whole feature area appears, disappears, or is renamed |
 
