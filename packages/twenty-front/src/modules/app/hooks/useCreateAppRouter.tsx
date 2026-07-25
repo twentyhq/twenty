@@ -2,6 +2,7 @@ import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
+import { LazyRouteComponentResolutionError } from '@/error-handler/errors/LazyRouteComponentResolutionError';
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
@@ -28,11 +29,19 @@ const RecordShowPage = lazy(() =>
   })),
 );
 
-const SignInUp = lazy(() =>
-  import('~/pages/auth/SignInUp').then((module) => ({
-    default: module.SignInUp,
-  })),
-);
+const SignInUp = lazy(async () => {
+  const module = await import('~/pages/auth/SignInUp');
+
+  if (typeof module.SignInUp !== 'function') {
+    throw new LazyRouteComponentResolutionError({
+      routeKey: 'sign-in-up',
+      modulePath: '~/pages/auth/SignInUp',
+      moduleExports: Object.keys(module),
+    });
+  }
+
+  return { default: module.SignInUp };
+});
 
 const PasswordReset = lazy(() =>
   import('~/pages/auth/PasswordReset').then((module) => ({
