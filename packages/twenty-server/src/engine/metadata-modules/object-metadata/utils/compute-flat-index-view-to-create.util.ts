@@ -10,10 +10,6 @@ import { v4 } from 'uuid';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
-// The INDEX view universal identifier is keyed on the object universal
-// identifier + the singleton INDEX view key, so an object rename (with a pinned
-// object universal identifier) keeps the same INDEX view identifier, and a user
-// renaming the view never mutates its identity.
 export const computeFlatIndexViewToCreate = ({
   objectMetadata,
   applicationUniversalIdentifier,
