@@ -186,6 +186,8 @@ enum EngineComponentKey {
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
   COMPOSE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN_TEST
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -3266,6 +3268,8 @@ input PreviewMessageCampaignAudienceInput {
 
 input FindMessageSuppressionsInput {
   reason: MessageSuppressionReason
+  searchTerm: String
+  unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
 }
