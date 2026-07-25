@@ -1,0 +1,105 @@
+name: twenty-staging
+
+# Isolated staging environment for the production Mac.
+#
+# Safety properties:
+# - unique Compose project and volume names
+# - database and Redis are not published to the host
+# - web access binds only to STAGING_BIND_ADDRESS (localhost by default)
+# - an immutable image tag is required; `latest` is rejected by staging.sh
+#
+# Always operate this file through `bash deploy/staging.sh ...`.
+
+services:
+  server:
+    image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
+    platform: ${STAGING_PLATFORM:-linux/amd64}
+    ports:
+      - "${STAGING_BIND_ADDRESS:-127.0.0.1}:${STAGING_PORT:-3020}:3000"
+    volumes:
+      - staging-server-data:/app/packages/twenty-server/.local-storage
+    environment:
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgres://postgres:${STAGING_DATABASE_PASSWORD}@db:5432/staging
+      REDIS_URL: redis://redis:6379
+      SERVER_URL: ${STAGING_SERVER_URL:-http://localhost:3020}
+      FRONTEND_URL: ${STAGING_SERVER_URL:-http://localhost:3020}
+      ENCRYPTION_KEY: ${STAGING_ENCRYPTION_KEY}
+      AUTH_GOOGLE_ENABLED: ${STAGING_AUTH_GOOGLE_ENABLED:-false}
+      AUTH_GOOGLE_CLIENT_ID: ${STAGING_AUTH_GOOGLE_CLIENT_ID:-}
+      AUTH_GOOGLE_CLIENT_SECRET: ${STAGING_AUTH_GOOGLE_CLIENT_SECRET:-}
+      AUTH_GOOGLE_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_CALLBACK_URL:-}
+      AUTH_GOOGLE_APIS_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_APIS_CALLBACK_URL:-}
+      CALENDAR_PROVIDER_GOOGLE_ENABLED: ${STAGING_CALENDAR_PROVIDER_GOOGLE_ENABLED:-false}
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      STORAGE_TYPE: local
+      EMAIL_DRIVER: logger
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/healthz"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  worker:
+    image: ${STAGING_IMAGE:?Set STAGING_IMAGE to a commit-SHA image tag}
+    platform: ${STAGING_PLATFORM:-linux/amd64}
+    command: ["yarn", "worker:prod"]
+    volumes:
+      - staging-server-data:/app/packages/twenty-server/.local-storage
+    environment:
+      PG_DATABASE_URL: postgres://postgres:${STAGING_DATABASE_PASSWORD}@db:5432/staging
+      REDIS_URL: redis://redis:6379
+      SERVER_URL: ${STAGING_SERVER_URL:-http://localhost:3020}
+      FRONTEND_URL: ${STAGING_SERVER_URL:-http://localhost:3020}
+      ENCRYPTION_KEY: ${STAGING_ENCRYPTION_KEY}
+      AUTH_GOOGLE_ENABLED: ${STAGING_AUTH_GOOGLE_ENABLED:-false}
+      AUTH_GOOGLE_CLIENT_ID: ${STAGING_AUTH_GOOGLE_CLIENT_ID:-}
+      AUTH_GOOGLE_CLIENT_SECRET: ${STAGING_AUTH_GOOGLE_CLIENT_SECRET:-}
+      AUTH_GOOGLE_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_CALLBACK_URL:-}
+      AUTH_GOOGLE_APIS_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_APIS_CALLBACK_URL:-}
+      CALENDAR_PROVIDER_GOOGLE_ENABLED: ${STAGING_CALENDAR_PROVIDER_GOOGLE_ENABLED:-false}
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      STORAGE_TYPE: local
+      EMAIL_DRIVER: logger
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    volumes:
+      - staging-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${STAGING_DATABASE_PASSWORD}
+      POSTGRES_DB: staging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d staging"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  staging-db-data:
+  staging-server-data:

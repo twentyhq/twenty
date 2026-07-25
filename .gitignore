@@ -1,4 +1,5 @@
 **/**/.env
+deploy/.env.staging
 .DS_Store
 /.idea
 .claude/*
