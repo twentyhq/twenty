@@ -1,0 +1,29 @@
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_54aa6e3c579e2f::t_6792d6aeed4297 6122
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_54aa6e3c579e2f::t_6792d6aeed4297 3263-3264
+packages/twenty-front/src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+  s_54aa6e3c579e2f::t_28f6177c7275dd 152-154
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_54aa6e3c579e2f::t_46327d90435bb8 121
+packages/twenty-server/src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1784766000000-add-message-channel-display-name.ts
+  s_54aa6e3c579e2f::t_83dfe075b1cbe1 6
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_54aa6e3c579e2f::t_6792d6aeed4297 7061-7066
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "afa7f4e2b52d62c9b233ec65529cb432473566b4",
+  "prompts": {},
+  "sessions": {
+    "s_54aa6e3c579e2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "05F73216-CF79-404A-A6E7-839FA5D9EDC8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
