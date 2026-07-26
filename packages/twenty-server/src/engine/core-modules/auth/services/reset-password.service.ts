@@ -31,6 +31,7 @@ import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -172,6 +173,11 @@ export class ResetPasswordService {
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
     const html = await render(emailTemplate, { pretty: true });
+    monitorEmailRendering({
+      templateType: 'password-reset-link',
+      locale,
+      html,
+    });
     const text = await render(emailTemplate, { plainText: true });
 
     const i18n = this.i18nService.getI18nInstance(locale);

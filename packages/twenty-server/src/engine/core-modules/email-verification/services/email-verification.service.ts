@@ -25,6 +25,7 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -95,6 +96,11 @@ export class EmailVerificationService {
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
     const html = await render(emailTemplate);
+    monitorEmailRendering({
+      templateType: 'email-verification',
+      locale,
+      html,
+    });
     const text = await render(emailTemplate, {
       plainText: true,
     });

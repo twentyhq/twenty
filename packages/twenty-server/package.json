@@ -77,7 +77,7 @@
     "@ptc-org/nestjs-query-core": "4.4.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
-    "@react-email/render": "^1.2.3",
+    "@react-email/render": "^2.0.6",
     "@sentry/nestjs": "^10.51.0",
     "@sentry/node": "^10.51.0",
     "@sentry/profiling-node": "^10.51.0",

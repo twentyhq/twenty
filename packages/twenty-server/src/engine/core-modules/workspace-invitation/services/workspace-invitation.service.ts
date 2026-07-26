@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -339,6 +340,11 @@ export class WorkspaceInvitationService {
 
         const emailTemplate = SendInviteLinkEmail(emailData);
         const html = await render(emailTemplate);
+        monitorEmailRendering({
+          templateType: 'workspace-invitation',
+          locale: sender.locale,
+          html,
+        });
         const text = await render(emailTemplate, {
           plainText: true,
         });

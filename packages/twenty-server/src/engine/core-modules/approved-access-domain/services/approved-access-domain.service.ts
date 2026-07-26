@@ -20,6 +20,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
@@ -111,6 +112,11 @@ export class ApprovedAccessDomainService {
       locale: sender.locale,
     });
     const html = await render(emailTemplate);
+    monitorEmailRendering({
+      templateType: 'approved-access-domain-validation',
+      locale: sender.locale,
+      html,
+    });
     const text = await render(emailTemplate, {
       plainText: true,
     });

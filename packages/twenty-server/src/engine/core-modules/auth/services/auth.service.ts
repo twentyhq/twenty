@@ -60,6 +60,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -719,6 +720,11 @@ export class AuthService {
     });
 
     const html = await render(emailTemplate, { pretty: true });
+    monitorEmailRendering({
+      templateType: 'password-update-notification',
+      locale: firstUserWorkspace.locale,
+      html,
+    });
     const text = await render(emailTemplate, { plainText: true });
 
     const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;

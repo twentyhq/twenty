@@ -16,6 +16,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { monitorEmailRendering } from 'src/engine/core-modules/email/utils/monitor-email-rendering.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -124,6 +125,11 @@ export class CleanerWorkspaceService {
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });
+    monitorEmailRendering({
+      templateType: 'warn-suspended-workspace',
+      locale: workspaceMember.locale,
+      html,
+    });
     const text = await render(emailTemplate, { plainText: true });
 
     const workspaceDeletionMsg = msg`Action needed to prevent workspace deletion`;
@@ -206,6 +212,11 @@ export class CleanerWorkspaceService {
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });
+    monitorEmailRendering({
+      templateType: 'clean-suspended-workspace',
+      locale: workspaceMember.locale,
+      html,
+    });
     const text = await render(emailTemplate, { plainText: true });
 
     if (!isDefined(workspaceMember.userEmail)) {
