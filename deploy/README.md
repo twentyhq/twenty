@@ -7,17 +7,23 @@ This directory defines the operating model for the
 
 - [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) — branching, review, and promotion rules
 - [DEVELOPMENT.md](DEVELOPMENT.md) — isolated development on another machine
+- [LLM-LOCAL-DEV.md](LLM-LOCAL-DEV.md) — the same pipeline, written for coding
+  agents working on a developer machine
 - [STAGING.md](STAGING.md) — isolated staging on the production Mac
 - [PRODUCTION.md](PRODUCTION.md) — current live-instance operations
 
-Developer schema synchronization:
+Developer schema and data:
 
 ```bash
 bash deploy/local-schema.sh check
 bash deploy/local-schema.sh sync
-bash deploy/local-data.sh seed
+bash deploy/local-data.sh seed     # small synthetic fixture
+bash deploy/local-data.sh mirror   # scrubbed copy of the real CRM
 bash deploy/local-data.sh verify
 ```
+
+Use the fixture for UI work and CI, and the mirror for anything that changes
+the schema. Only the mirror contains the fork's custom objects and fields.
 
 ## Environment summary
 
@@ -43,6 +49,9 @@ file, or mutable source checkout.
 - `compose.staging.yml`, `.env.staging.example`, and `staging.sh` operate local
   staging.
 - `test-environment-isolation.sh` checks staging's static isolation properties.
+- `devdata-publish.sh`, `devdata-scrub.sql`, and `devdata-verify.sql` build the
+  scrubbed development mirror from staging. They run on the staging host;
+  developers reach them through `local-data.sh mirror`.
 - `serve-public.sh`, `serve-frontend.mjs`, and `publish-frontend.sh` operate the
   current native production instance.
 - `update-after-merge.sh` synchronizes dependencies, instance migrations,

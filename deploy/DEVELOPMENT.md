@@ -111,7 +111,94 @@ bash deploy/local-data.sh reset --yes
 
 Reset is intentionally explicit and operates only after `local-schema.sh`
 confirms that the standard `twenty-dev` Docker database and Redis are the
-targets. Production-shaped data remains a staging concern.
+targets.
+
+The fixture is the right dataset for CI and for a first run. It is the wrong
+dataset for schema work, because it contains only Twenty's standard objects.
+Our workspace has seven more (`candidate`, `fellow`, `mentor`, `reviewer`,
+`enrollment`, `connection`, `employmentHistory`) and roughly 150 extra fields,
+none of which the fixture exercises.
+
+## The development mirror
+
+The mirror is a scrubbed copy of the real CRM. Use it whenever a change touches
+entities, instance commands, workspace upgrades, views, or search.
+
+```bash
+bash deploy/local-data.sh mirror
+```
+
+Stop `yarn start` first; the local database is dropped and rebuilt. The command
+replaces it, verifies the scrub, clears the local cache, and runs
+`local-schema.sh sync` so the data lands on the commit that is checked out. It
+takes a few minutes, most of it transfer.
+
+Sign in at `http://localhost:3001` with any account the command prints and the
+password `devmirror`. Every account in a mirror shares that password, so
+teammates who have no production account can still sign in.
+
+### What a mirror contains
+
+Kept, because reproducing their shape synthetically is exactly what makes local
+schema work unrealistic:
+
+- people, companies, fellows, mentors, candidates, enrollments, connections,
+  employment history, opportunities, tasks, notes
+- every object and field definition, view, filter, and page layout
+- production row counts and relationships throughout
+
+Removed:
+
+- message bodies, subjects, and calendar event titles, descriptions and
+  locations, replaced with placeholders of similar length
+- email addresses of participants who are not linked to a CRM record or
+  workspace member, replaced with stable `@example.invalid` pseudonyms
+- timeline activity field diffs, assistant conversations, attachment names
+- all credentials: signing keys, sessions, API keys, 2FA methods, OAuth tokens,
+  SSO configuration, and application secrets
+
+Message and calendar rows are kept, only emptied. Row counts, foreign keys, and
+column types match production, which is the point: a missing workspace field on
+a table with 31,000 rows is the failure this dataset is meant to catch.
+
+### A mirror is still confidential
+
+The mirror contains real people, real companies, and real notes the team wrote
+about them. It is not public data and it is not anonymized. Treat it like the
+CRM itself:
+
+- keep full-disk encryption on
+- never commit a dump, attach one to an issue, or upload one anywhere
+- run `bash deploy/local-data.sh reset --yes` when you stop working on the
+  project, and before returning or reimaging a machine
+
+Dumps in `deploy/.devdata/` are gitignored and expire on their own; the
+publisher keeps only the three newest.
+
+### Refreshing and troubleshooting
+
+Each `mirror` run builds a fresh copy from staging, and staging refreshes from
+production nightly at 4:15 AM, so a mirror is at most a day behind.
+
+Check what you currently have:
+
+```bash
+bash deploy/local-data.sh verify
+```
+
+This reports the fixture's record counts, or the mirror's build time and source
+commit, depending on which dataset is installed.
+
+If the machine cannot reach the staging host, have someone publish a dump and
+hand it over out of band:
+
+```bash
+bash deploy/devdata-publish.sh              # on the staging host
+bash deploy/local-data.sh mirror --from-file ~/Downloads/twenty-devdata.dump
+```
+
+A dump that fails verification is refused and the local database is wiped, so a
+raw production dump cannot be installed by mistake.
 
 ## Resetting local data
 

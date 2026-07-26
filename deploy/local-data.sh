@@ -1,18 +1,28 @@
 #!/bin/bash
-# Manage the small deterministic dataset used by developer-owned environments.
+# Manage the datasets used by developer-owned environments.
+#
+# Two datasets exist. The fixture is small, deterministic and synthetic. The
+# mirror is a scrubbed copy of real CRM records, which is what makes schema
+# work realistic.
 #
 # Usage:
 #   bash deploy/local-data.sh seed
 #   bash deploy/local-data.sh verify
 #   bash deploy/local-data.sh reset --yes
+#   bash deploy/local-data.sh mirror
+#   bash deploy/local-data.sh mirror --from-file PATH
 #
-# reset is destructive, but local-schema.sh first verifies that the target is
-# the isolated twenty-dev Docker project.
+# The destructive actions run only after local-schema.sh verifies that the
+# target is the isolated twenty-dev Docker project.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$REPO_ROOT/packages/twenty-docker/docker-compose.dev.yml"
 SEED_WORKSPACE_ID="20202020-1c25-4d02-bf25-6aeccf7ea419"
+VERIFY_SQL="$REPO_ROOT/deploy/devdata-verify.sql"
+MIRROR_HOST="${TWENTY_DEVDATA_HOST:-spectech-llm}"
+MIRROR_REMOTE_REPO="${TWENTY_DEVDATA_REMOTE_REPO:-~/Projects/twenty}"
+MIRROR_PASSWORD="devmirror"
 
 fail() {
   echo "[local-data] ERROR: $*" >&2
@@ -35,6 +45,11 @@ COMPOSE+=(-f "$COMPOSE_FILE")
 psql_dev() {
   "${COMPOSE[@]}" exec -T db \
     psql -v ON_ERROR_STOP=1 -U postgres -d default "$@"
+}
+
+is_mirror() {
+  [ "$(psql_dev -Atc \
+    "SELECT to_regclass('public.devdata_manifest') IS NOT NULL")" = "t" ]
 }
 
 verify_fixture() {
@@ -117,6 +132,90 @@ seed_fixture() {
   verify_fixture
 }
 
+verify_mirror() {
+  psql_dev --quiet <"$VERIFY_SQL"
+
+  local manifest
+
+  manifest="$(
+    psql_dev -AtF ' ' -c \
+      'SELECT "scrubbed_at", "source_host", "git_sha"
+       FROM public.devdata_manifest'
+  )"
+  info "mirror built at $manifest"
+  info "mirror verification passed"
+}
+
+wipe_local_database() {
+  "${COMPOSE[@]}" exec -T db dropdb -U postgres --force --if-exists default
+  "${COMPOSE[@]}" exec -T db createdb -U postgres default
+}
+
+fetch_mirror() {
+  local destination="$1"
+  local source_file="$2"
+
+  if [ -n "$source_file" ]; then
+    [ -f "$source_file" ] || fail "No mirror dump at $source_file."
+    info "using the mirror dump at $source_file"
+    cp "$source_file" "$destination"
+  else
+    command -v ssh >/dev/null 2>&1 ||
+      fail "ssh is required to pull a mirror. Use mirror --from-file instead."
+    info "building a fresh mirror on $MIRROR_HOST; this takes a few minutes"
+    ssh "$MIRROR_HOST" \
+      "bash $MIRROR_REMOTE_REPO/deploy/devdata-publish.sh --stdout" \
+      >"$destination"
+  fi
+
+  [ -s "$destination" ] || fail "The mirror dump is empty."
+}
+
+install_mirror() {
+  local source_file="$1"
+  local temp_dir
+  local dump_file
+  local db_container
+
+  temp_dir="$(mktemp -d)"
+  dump_file="$temp_dir/devdata.dump"
+  trap 'rm -rf "$temp_dir"' EXIT
+
+  info "stop 'yarn start' before continuing; the database is dropped and rebuilt"
+  fetch_mirror "$dump_file" "$source_file"
+
+  db_container="$("${COMPOSE[@]}" ps --quiet db)"
+
+  info "replacing the local twenty-dev database with the mirror"
+  wipe_local_database
+  docker cp "$dump_file" "$db_container:/tmp/devdata.dump"
+  "${COMPOSE[@]}" exec -T db pg_restore \
+    --username=postgres \
+    --dbname=default \
+    --no-owner \
+    --no-privileges \
+    --exit-on-error \
+    /tmp/devdata.dump
+  "${COMPOSE[@]}" exec -T db rm -f /tmp/devdata.dump
+
+  # Fail closed: an unscrubbed dump must not survive on the machine, whatever
+  # produced it.
+  if ! verify_mirror; then
+    wipe_local_database
+    fail "This dump is not a verified mirror. The local database was wiped."
+  fi
+
+  info "clearing the local metadata cache"
+  "${COMPOSE[@]}" exec -T redis redis-cli FLUSHALL >/dev/null
+
+  info "aligning the mirror with the checked-out commit"
+  bash "$REPO_ROOT/deploy/local-schema.sh" sync
+
+  info "mirror ready at http://localhost:3001"
+  info "sign in with any of these accounts and the password $MIRROR_PASSWORD:"
+  psql_dev -Atc 'SELECT email FROM core."user" ORDER BY "createdAt" LIMIT 5'
+}
+
 action="${1:-}"
 case "$action" in
   seed)
@@ -127,7 +226,11 @@ case "$action" in
   verify)
     bash "$REPO_ROOT/deploy/local-schema.sh" guard
     bash "$REPO_ROOT/deploy/local-schema.sh" check
-    verify_fixture
+    if is_mirror; then
+      verify_mirror
+    else
+      verify_fixture
+    fi
     ;;
   reset)
     [ "${2:-}" = "--yes" ] ||
@@ -137,8 +240,27 @@ case "$action" in
     npx nx run twenty-server:database:reset --configuration=no-seed
     seed_fixture
     ;;
+  mirror)
+    shift
+    mirror_source=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --from-file)
+          [ -n "${2:-}" ] || fail "--from-file requires a path."
+          mirror_source="$2"
+          shift 2
+          ;;
+        *)
+          fail "Unknown option: $1"
+          ;;
+      esac
+    done
+    bash "$REPO_ROOT/deploy/local-schema.sh" guard
+    install_mirror "$mirror_source"
+    ;;
   *)
-    echo "Usage: bash deploy/local-data.sh {seed|verify|reset --yes}" >&2
+    echo "Usage: bash deploy/local-data.sh" \
+      "{seed|verify|reset --yes|mirror [--from-file PATH]}" >&2
     exit 2
     ;;
 esac

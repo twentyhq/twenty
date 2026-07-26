@@ -186,6 +186,32 @@ password: tim@apple.dev
 
 The fixture reset is destructive only to the guarded `twenty-dev` environment.
 
+## Development mirror
+
+The light fixture only covers Twenty's standard objects. This workspace has
+seven more (`candidate`, `fellow`, `mentor`, `reviewer`, `enrollment`,
+`connection`, `employmentHistory`) and about 150 extra fields, so schema work
+against the fixture is not representative. The mirror closes that gap.
+
+```text
+deploy/devdata-publish.sh    builds a scrubbed dump on the staging host
+deploy/devdata-scrub.sql     what is removed, applied to a throwaway build DB
+deploy/devdata-verify.sql    assertions, run at build time and at restore time
+deploy/local-data.sh mirror  installs a mirror on a developer machine
+deploy/LLM-LOCAL-DEV.md      pipeline instructions for coding agents
+```
+
+Staging is never modified: the snapshot is restored into `devdata_build`,
+scrubbed there, verified, dumped, and dropped. The mirror keeps CRM records,
+metadata, and production row counts; it removes mailbox and calendar content,
+unlinked participant addresses, timeline field diffs, and all credentials.
+Every account's password becomes `devmirror`.
+
+`local-data.sh mirror` fails closed: a dump that does not pass
+`devdata-verify.sql` causes the local database to be wiped rather than kept.
+
+Dumps live in the gitignored `deploy/.devdata/`, newest three retained.
+
 ## Validation already performed
 
 - Staging Compose configuration passes.
@@ -200,6 +226,25 @@ The fixture reset is destructive only to the guarded `twenty-dev` environment.
 - Fixture limiter unit tests pass: 2 tests.
 - Changed TypeScript files pass focused formatting and lint checks.
 - Shell scripts pass `bash -n`.
+- `devdata-publish.sh` ran end to end against live staging in about 15 seconds
+  and produced a 27 MB dump.
+- The dump was restored into a separate check database and inspected directly:
+  31,394 messages and 17,487 calendar events retained with zero unscrubbed
+  bodies, subjects or titles; 7,944 unlinked participant addresses
+  pseudonymized while 75,013 CRM-linked ones were preserved; 152,894 timeline
+  rows retained with no field diffs; 6,100 people, 4,996 companies, 55 fellows,
+  112 mentors, 896 enrollments, 641 notes, 14 objects and 574 fields intact;
+  zero signing keys, sessions, API keys, 2FA methods, OAuth tokens, enabled
+  sync channels or active workflows.
+- `devdata-verify.sql` correctly refuses an unscrubbed database, and
+  `devdata-scrub.sql` refuses to run outside `devdata_build`.
+- The `devmirror` password validates against the seeded bcrypt hash.
+- `--stdout` mode produces a valid custom-format archive.
+- Scratch databases were dropped and staging was confirmed unchanged.
+
+The developer-machine half of `local-data.sh mirror` (Docker restore into
+`twenty-dev`) is still untested, because this host deliberately has no
+`twenty-dev` project. Its guards and argument handling were exercised.
 
 ## Resource note
 
@@ -221,8 +266,14 @@ bash packages/twenty-utils/setup-dev-env.sh --docker
 bash deploy/local-schema.sh check
 bash deploy/local-data.sh seed
 bash deploy/local-data.sh verify
+bash deploy/local-data.sh mirror
+bash deploy/local-data.sh verify
 yarn start
 ```
+
+The mirror pull needs SSH to the staging host. Override the defaults with
+`TWENTY_DEVDATA_HOST` and `TWENTY_DEVDATA_REMOTE_REPO` if the tailnet name or
+checkout path differs, or hand over a dump and use `mirror --from-file`.
 
 Then sign in locally and exercise the fixture relationships. The branch should
 go through review before merging. Production has deliberately not been updated
