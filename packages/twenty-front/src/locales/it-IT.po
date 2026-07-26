@@ -6747,6 +6747,11 @@ msgstr "Modifica collegamento"
 msgid "Edit own profile information"
 msgstr ""
 
+#. js-lingui-id: QNi+Eq
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+msgid "Edit page"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
