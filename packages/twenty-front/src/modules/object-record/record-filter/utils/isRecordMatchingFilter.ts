@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { reportMalformedSelectFilter } from '@/object-record/record-filter/utils/reportMalformedSelectFilter';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -243,11 +244,20 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.SELECT:
+      case FieldMetadataType.SELECT: {
+        const selectFilter = filterValue as SelectFilter;
+
+        void reportMalformedSelectFilter({
+          objectMetadataNameSingular: objectMetadataItem.nameSingular,
+          filterKey,
+          selectFilter,
+        });
+
         return isMatchingSelectFilter({
-          selectFilter: filterValue as SelectFilter,
+          selectFilter,
           value: record[filterKey],
         });
+      }
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
           multiSelectFilter: filterValue as MultiSelectFilter,
@@ -371,6 +381,12 @@ export const isRecordMatchingFilter = ({
         }
 
         if (isDefined(actorFilter.source)) {
+          void reportMalformedSelectFilter({
+            objectMetadataNameSingular: objectMetadataItem.nameSingular,
+            filterKey: `${filterKey}.source`,
+            selectFilter: actorFilter.source,
+          });
+
           return isMatchingSelectFilter({
             selectFilter: actorFilter.source,
             value: record[filterKey].source,
