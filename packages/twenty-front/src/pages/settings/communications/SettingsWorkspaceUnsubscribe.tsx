@@ -6,6 +6,7 @@ import { useSettingsActiveTabId } from '@/settings/components/layout/useSettings
 import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsUnsubscribePreview } from '@/settings/unsubscribers/components/SettingsUnsubscribePreview';
 import { SettingsUnsubscribersList } from '@/settings/unsubscribers/components/SettingsUnsubscribersList';
+import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
@@ -13,12 +14,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconEye, IconForbid, IconMailCog } from 'twenty-ui/icon';
 
 const UNSUBSCRIBE_TABS_INSTANCE_ID = 'settings-unsubscribe-tabs';
-
-const UNSUBSCRIBE_TAB_IDS = {
-  UNSUBSCRIBERS: 'unsubscribers',
-  TOPICS: 'topics',
-  PREVIEW: 'preview',
-} as const;
 
 export const SettingsWorkspaceUnsubscribe = () => {
   const { t } = useLingui();
@@ -29,17 +24,17 @@ export const SettingsWorkspaceUnsubscribe = () => {
 
   const tabs = [
     {
-      id: UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS,
+      id: SETTINGS_UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS,
       title: t`Unsubscribers`,
       Icon: IconForbid,
     },
     {
-      id: UNSUBSCRIBE_TAB_IDS.TOPICS,
+      id: SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
       title: t`Topics`,
       Icon: IconMailCog,
     },
     {
-      id: UNSUBSCRIBE_TAB_IDS.PREVIEW,
+      id: SETTINGS_UNSUBSCRIBE_TAB_IDS.PREVIEW,
       title: t`Unsubscribe page`,
       Icon: IconEye,
     },
@@ -74,13 +69,13 @@ export const SettingsWorkspaceUnsubscribe = () => {
           tabs={tabs}
           componentInstanceId={UNSUBSCRIBE_TABS_INSTANCE_ID}
         />
-        {activeTabId === UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS && (
+        {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS && (
           <SettingsUnsubscribersList />
         )}
-        {activeTabId === UNSUBSCRIBE_TAB_IDS.TOPICS && (
+        {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS && (
           <SettingsWorkspaceUnsubscribeTopicSection />
         )}
-        {activeTabId === UNSUBSCRIBE_TAB_IDS.PREVIEW && (
+        {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.PREVIEW && (
           <SettingsUnsubscribePreview />
         )}
       </SettingsPageContainer>
