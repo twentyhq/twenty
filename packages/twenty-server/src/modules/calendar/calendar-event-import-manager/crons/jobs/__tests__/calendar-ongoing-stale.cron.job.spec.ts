@@ -62,6 +62,14 @@ describe('CalendarOngoingStaleCronJob', () => {
     expect(calendarChannelRepository.createQueryBuilder).toHaveBeenCalledWith(
       'calendarChannel',
     );
+    expect(queryBuilder.innerJoin).toHaveBeenCalledWith(
+      'calendarChannel.workspace',
+      'workspace',
+    );
+    expect(queryBuilder.select).toHaveBeenCalledWith(
+      'calendarChannel.workspaceId',
+      'workspaceId',
+    );
     expect(queryBuilder.distinct).toHaveBeenCalledWith(true);
     expect(queryBuilder.where).toHaveBeenCalledWith(
       'workspace.activationStatus = :activationStatus',
