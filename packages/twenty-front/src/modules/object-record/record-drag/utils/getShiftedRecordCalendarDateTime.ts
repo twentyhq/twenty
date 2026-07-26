@@ -1,5 +1,5 @@
 import { getShiftedRecordCalendarEndDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarEndDateTime';
-import { Temporal } from 'temporal-polyfill';
+import { type Temporal } from 'temporal-polyfill';
 
 type GetShiftedRecordCalendarDateTimeArgs = {
   currentStartInstant: Temporal.Instant;

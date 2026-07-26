@@ -1,9 +1,9 @@
 import { getShiftedRecordCalendarEndDate } from '@/object-record/record-drag/utils/getShiftedRecordCalendarEndDate';
-import { Temporal } from 'temporal-polyfill';
+import { type Temporal } from 'temporal-polyfill';
 
 type GetShiftedRecordCalendarDateArgs = {
-  currentStartDate: Temporal.PlainDate,
-  dayOffset: number,
+  currentStartDate: Temporal.PlainDate;
+  dayOffset: number;
   endDate?: unknown;
   startDate?: unknown;
 };
