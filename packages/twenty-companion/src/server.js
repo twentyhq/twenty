@@ -1,13 +1,23 @@
 const express = require('express');
 const axios = require('axios');
 const { z } = require('zod');
-const app = express();
+const app = express(); // nosemgrep: javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
 
 require('dotenv').config();
 
 // API configuration for Recall.ai
 const RECALLAI_API_URL = process.env.RECALLAI_API_URL || 'https://api.recall.ai';
 const RECALLAI_API_KEY = process.env.RECALLAI_API_KEY;
+const COMPANION_API_KEY = process.env.COMPANION_API_KEY;
+
+// CSRF protection: reject cross-origin requests by checking the Origin header
+app.use((req, res, next) => {
+    const origin = req.headers['origin'];
+    if (origin && !origin.startsWith('http://localhost') && !origin.startsWith('http://127.0.0.1')) {
+        return res.status(403).json({ status: 'error', message: 'Forbidden' });
+    }
+    next();
+});
 
 app.get('/start-recording', async (req, res) => {
     console.log('Creating upload token with configured Recall.ai API key');
@@ -57,6 +67,11 @@ app.get('/start-recording', async (req, res) => {
 });
 
 app.get('/recording/:recordingId', async (req, res) => {
+    const apiKey = req.headers['x-api-key'];
+    if (!COMPANION_API_KEY || apiKey !== COMPANION_API_KEY) {
+        return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+
     const parseResult = z.string().uuid().safeParse(req.params.recordingId);
 
     if (!RECALLAI_API_KEY) {
