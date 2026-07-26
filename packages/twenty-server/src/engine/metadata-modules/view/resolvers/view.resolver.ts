@@ -102,6 +102,54 @@ export class ViewResolver {
       }
     }
 
+    // For custom (app-defined) views, fall back to the app's translation
+    // catalog. Without this, view names like "All projects" stay in English
+    // even when the workspace has a Turkish tr-TR translation, because
+    // `processViewNameWithTemplate` only consults the built-in Lingui
+    // catalog and short-circuits to the source string for custom views.
+    // See #23192.
+    if (view.isCustom) {
+      const objectMetadata = await context.loaders.objectMetadataLoader.load({
+        objectMetadataId: view.objectMetadataId,
+        workspaceId: workspace.id,
+      });
+
+      if (isDefined(objectMetadata)) {
+        const i18n = this.i18nService.getI18nInstance(context.req.locale);
+        const standardApplicationId =
+          await context.loaders.standardApplicationIdLoader.load({
+            workspaceId: workspace.id,
+          });
+        const isStandardApp =
+          objectMetadata.applicationId === standardApplicationId;
+        const applicationCatalog =
+          await context.loaders.applicationTranslationCatalogLoader.load({
+            applicationId: objectMetadata.applicationId,
+            workspaceId: workspace.id,
+            locale: context.req.locale,
+          });
+        const translatedViewName = resolveEffectiveEntityProperty({
+          metadataName: 'view',
+          baseValue: view.name,
+          overrides: view.overrides ?? undefined,
+          property: 'name',
+          i18nContext: {
+            locale: context.req.locale,
+            i18nInstance: i18n,
+            isStandardApp,
+            applicationCatalog,
+          },
+        });
+
+        return this.viewService.processViewNameWithTemplate(
+          translatedViewName,
+          view.isCustom,
+          undefined,
+          context.req.locale,
+        );
+      }
+    }
+
     return this.viewService.processViewNameWithTemplate(
       view.name,
       view.isCustom,

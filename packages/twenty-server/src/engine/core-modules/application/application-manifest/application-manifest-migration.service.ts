@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom } from 'src/engine/core-modules/application/application-manifest/utils/get-application-scoped-all-flat-entity-maps-for-owner-and-workspace-custom.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import {
   ApplicationException,
@@ -192,17 +193,35 @@ export class ApplicationManifestMigrationService {
     const { featureFlagsMap: _featureFlagsMap, ...existingAllFlatEntityMaps } =
       cacheResult;
 
-    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
-      applicationIds: [ownerFlatApplication.id],
-      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-    });
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
+    // The from-slice normally only contains entities owned by the syncing app.
+    // For metadata types listed in WORKSPACE_CUSTOM_ADOPTABLE_METADATA_NAMES
+    // (viewField, viewFieldGroup, viewFilter, viewSort) we also include any
+    // workspace-custom-owned entity whose universalIdentifier ALSO appears in
+    // the manifest's `to` map. Constraining adoption to declared entities
+    // prevents the dispatcher from later inferring deletes for workspace-custom
+    // rows the manifest doesn't mention — e.g. a label-identifier viewField
+    // that cannot be deleted. Such rows simply stay under workspace-custom and
+    // are not part of the from slice, so the dispatcher ignores them — see
+    // #23192.
     const toAllUniversalFlatEntityMaps =
       this.computeManifestFlatEntityMapsService.compute({
         manifest,
         ownerFlatApplication,
         now,
         workspaceId,
+      });
+
+    const fromAllFlatEntityMaps =
+      getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom({
+        ownerApplicationId: ownerFlatApplication.id,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+        toAllUniversalFlatEntityMaps,
       });
 
     const allFlatEntityOperationRecordByMetadataName =

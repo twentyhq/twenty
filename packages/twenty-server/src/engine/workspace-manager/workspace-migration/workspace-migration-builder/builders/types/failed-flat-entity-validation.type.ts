@@ -11,6 +11,15 @@ export type FlatEntityValidationError<TCode extends string = string> = {
   value?: unknown;
 };
 
+// Cross-reference data attached when a 'create' action collides with an existing
+// metadata entity. Populated by validateUniversalIdentifierNotAlreadyInCurrentMetadataMaps
+// and the per-type validators so the CLI can render "X is owned by app Y" instead
+// of "universalIdentifier already exists".
+export type ExistingEntityConflictContext = {
+  existingEntityId: string;
+  existingApplicationUniversalIdentifier: string;
+};
+
 export type FailedFlatEntityValidation<
   TMetadataName extends AllMetadataName,
   TActionType extends WorkspaceMigrationActionType,
@@ -19,4 +28,5 @@ export type FailedFlatEntityValidation<
   metadataName: TMetadataName;
   errors: FlatEntityValidationError[];
   flatEntityMinimalInformation: Partial<MetadataFlatEntity<TMetadataName>>;
+  existingEntityConflictContext?: ExistingEntityConflictContext | null;
 };

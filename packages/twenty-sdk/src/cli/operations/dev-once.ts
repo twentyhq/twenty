@@ -17,6 +17,7 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import {
   countDestructiveActions,
   formatSyncActionsPlan,
@@ -202,12 +203,18 @@ const innerAppDevOnce = async (
     };
   }
 
+  const translations = await compileApplicationTranslations(appPath);
+
   const manifest: Manifest = manifestUpdateChecksums({
     manifest: manifestResult.manifest,
     builtFileInfos: buildResult.builtFileInfos,
   });
 
-  await writeManifestToOutput(appPath, manifest);
+  const manifestWithTranslations: Manifest = translations
+    ? { ...manifest, translations }
+    : manifest;
+
+  await writeManifestToOutput(appPath, manifestWithTranslations);
 
   const makeData = (): AppDevOnceResult => ({
     outputDir: path.join(appPath, OUTPUT_DIR),
@@ -340,7 +347,7 @@ const innerAppDevOnce = async (
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifestWithTranslations);
 
   if (!syncResult.success) {
     return { success: false, error: buildSyncError(syncResult, verbose) };

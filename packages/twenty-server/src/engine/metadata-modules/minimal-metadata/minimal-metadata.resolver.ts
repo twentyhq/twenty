@@ -3,6 +3,7 @@ import { Context, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -23,12 +24,13 @@ export class MinimalMetadataResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @Context() context: I18nContext,
+    @Context() context: I18nContext & { loaders: IDataloaders },
   ): Promise<MinimalMetadataDTO> {
-    return this.minimalMetadataService.getMinimalMetadata(
-      workspace.id,
+    return this.minimalMetadataService.getMinimalMetadata({
+      workspaceId: workspace.id,
       userWorkspaceId,
-      context.req.locale,
-    );
+      locale: context.req.locale,
+      loaders: context.loaders,
+    });
   }
 }

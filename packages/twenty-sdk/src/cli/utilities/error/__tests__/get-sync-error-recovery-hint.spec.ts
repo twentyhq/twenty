@@ -33,4 +33,35 @@ describe('getSyncErrorRecoveryHint', () => {
     expect(getSyncErrorRecoveryHint('Network request failed')).toBeUndefined();
     expect(getSyncErrorRecoveryHint(undefined)).toBeUndefined();
   });
+
+  it('mentions auto-adoption for viewField conflicts (#23192)', () => {
+    const hint = getSyncErrorRecoveryHint(
+      "Migration action 'create' for 'viewField' (universalIdentifier: 2020) failed",
+    );
+
+    expect(hint).toContain('viewField');
+    expect(hint).toContain('auto-adopted');
+  });
+
+  it('mentions auto-adoption for viewFilter / viewSort / viewFieldGroup conflicts', () => {
+    for (const message of [
+      "Migration action 'create' for 'viewFilter' (universalIdentifier: a) failed",
+      "Migration action 'create' for 'viewSort' (universalIdentifier: b) failed",
+      "Migration action 'create' for 'viewFieldGroup' (universalIdentifier: c) failed",
+      'View field metadata with this universal identifier already exists',
+    ]) {
+      const hint = getSyncErrorRecoveryHint(message);
+
+      expect(hint).toContain('auto-adopted');
+    }
+  });
+
+  it('still suggests uninstall for non-view-structure conflicts', () => {
+    const hint = getSyncErrorRecoveryHint(
+      "Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020) failed",
+    );
+
+    expect(hint).toContain('yarn twenty app:uninstall -y');
+    expect(hint).not.toContain('auto-adopted');
+  });
 });

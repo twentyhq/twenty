@@ -191,6 +191,11 @@ export class FlatViewFieldValidatorService {
         message: t`View field metadata with this universal identifier already exists`,
         userFriendlyMessage: msg`View field metadata already exists`,
       });
+      validationResult.existingEntityConflictContext = {
+        existingEntityId: existingFlatViewField.id,
+        existingApplicationUniversalIdentifier:
+          existingFlatViewField.applicationUniversalIdentifier,
+      };
     }
 
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
