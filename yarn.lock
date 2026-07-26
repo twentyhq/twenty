@@ -15377,7 +15377,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-email/render@npm:1.2.3, @react-email/render@npm:^1.2.3":
+"@react-email/render@npm:1.2.3":
   version: 1.2.3
   resolution: "@react-email/render@npm:1.2.3"
   dependencies:
@@ -15401,6 +15401,21 @@ __metadata:
     react: ^18.0 || ^19.0 || ^19.0.0-rc
     react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
   checksum: 10c0/183793beaab413523e1ffbf3e07b352e33c0b7b0912e6bee0da2aceb495f327694f98b55957255419cbcaf771c538f2b084580d4d3a78c92ccf7a5cad527f73c
+  languageName: node
+  linkType: hard
+
+"@react-email/render@npm:^2.0.6":
+  version: 2.1.0
+  resolution: "@react-email/render@npm:2.1.0"
+  dependencies:
+    entities: "npm:^4.5.0"
+    html-to-text: "npm:^9.0.5"
+    html5parser: "npm:^3.0.0"
+    prettier: "npm:^3.5.3"
+  peerDependencies:
+    react: ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
+  checksum: 10c0/d117fb48711fb491f8f958806278c23f5d816e5baf999faef9d93922581d5c9128c7b320418317c486f9a68760deb32a1aa97efde946f4027a7aadda18aab7fc
   languageName: node
   linkType: hard
 
@@ -33328,6 +33343,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html5parser@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "html5parser@npm:3.0.0"
+  checksum: 10c0/1f64db31ce882504ec73c36bc87e5225ad02e472f4953215cbda7a602ad5f5f85ea12d1b490bcf5713ae9ecbdc1b2b0dc8643075fd4cc3816624746762b5c0b3
+  languageName: node
+  linkType: hard
+
 "htmlparser2@npm:^8.0.2":
   version: 8.0.2
   resolution: "htmlparser2@npm:8.0.2"
@@ -49520,7 +49542,7 @@ __metadata:
     "@ptc-org/nestjs-query-core": "npm:^9.4.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-graphql-npm-9.4.0-8e6f7894e1.patch"
     "@ptc-org/nestjs-query-typeorm": "patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch"
-    "@react-email/render": "npm:^1.2.3"
+    "@react-email/render": "npm:^2.0.6"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@sentry/nestjs": "npm:^10.59.0"
     "@sentry/node": "npm:^10.59.0"
