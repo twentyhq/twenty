@@ -1,4 +1,6 @@
 **/**/.env
+deploy/.env.staging
+deploy/.devdata/
 .DS_Store
 /.idea
 .claude/*

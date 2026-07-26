@@ -200,6 +200,18 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 - Descriptive test names: "should [behavior] when [condition]"
 - Clear mocks between tests with `jest.clearAllMocks()`
 
+## Working on a developer machine
+
+Read `deploy/LLM-LOCAL-DEV.md` before changing anything in this fork. It covers
+environment boundaries (production runs from a different checkout on the owner's
+Mac), which dataset to install, how schema changes are verified and promoted,
+and how to handle the mirrored CRM data that local databases contain.
+
+Choosing a dataset: `bash deploy/local-data.sh seed` for UI work,
+`bash deploy/local-data.sh mirror` for anything touching entities, migrations,
+workspace upgrades, views, or search. The fixture lacks this fork's seven custom
+objects, so migrations that pass against it can still fail in production.
+
 ## Dev Environment Setup
 
 All dev environments (Claude Code web, Cursor, local) use one script:
