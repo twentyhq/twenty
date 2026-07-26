@@ -25,7 +25,11 @@ export async function POST(request: Request) {
     };
     const { enterpriseKey, returnUrl } = body;
 
-    if (!enterpriseKey || typeof enterpriseKey !== 'string') {
+    if (
+      !enterpriseKey ||
+      typeof enterpriseKey !== 'string' ||
+      enterpriseKey.length > 2048
+    ) {
       return NextResponse.json(
         { error: 'Missing enterpriseKey' },
         { status: 400 },
