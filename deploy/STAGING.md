@@ -193,3 +193,40 @@ Its installed copy belongs at:
 
 Logs are written to `/tmp/twenty-staging-refresh.log`. A refresh intentionally
 replaces changes made only in staging, so durable changes must live in Git.
+
+## Deploying a branch without SSH
+
+Anyone with repository access can put a commit on staging from GitHub, without
+a shell on this machine.
+
+1. Label the pull request `needs-staging`. CI builds an image tagged with the
+   branch head SHA.
+2. Run the **Deploy to staging** workflow and give it the branch, tag, or SHA.
+   It checks the commit exists and that an image was published for it, then
+   moves the `staging-target` ref and records a GitHub Deployment.
+3. `staging-converge.sh` on this host notices within two minutes, pulls the
+   image, restarts staging and runs the smoke tests.
+
+Nothing in that path reaches into this machine. The workflow only moves a ref;
+the host polls it and pulls. That is deliberate, because this machine also runs
+production, and it is why there is no self-hosted runner here.
+
+If the deploy fails, the converger restores the image that was serving before
+rather than leaving staging down.
+
+Install the converger with:
+
+```bash
+cp deploy/launchd/com.twenty.staging-converge.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.twenty.staging-converge.plist
+```
+
+It logs to `/tmp/twenty-staging-converge.log`, and takes the same lock as the
+data refresh so the two cannot overlap.
+
+This host must be logged in to GHCR (`docker login ghcr.io`) or every
+convergence fails at the image check.
+
+To have staging report back to the GitHub Deployment, put a token with
+`deployments: write` at `~/.config/twenty-staging/github-token`. Without it the
+converger still works; the deployment just stays in progress in the UI.
