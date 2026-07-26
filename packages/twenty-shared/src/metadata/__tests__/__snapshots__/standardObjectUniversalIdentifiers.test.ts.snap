@@ -1085,6 +1085,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "messages": {
         "universalIdentifier": "e5a177a7-512b-4778-928e-69777a528f7c",
       },
+      "name": {
+        "universalIdentifier": "dc8bca0e-37c4-4b78-814d-2e91124274e3",
+      },
       "position": {
         "universalIdentifier": "e43f6c94-602c-54af-a398-559510beb43b",
       },
@@ -1152,6 +1155,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "list": {
             "universalIdentifier": "c0bf6a48-8695-4520-81e6-7462d35033b5",
+          },
+          "name": {
+            "universalIdentifier": "4d40646c-853d-48e6-8ddb-81e6dedabc99",
           },
           "recipients": {
             "universalIdentifier": "2f99f444-4af3-44fd-b08d-46955c4ac2a2",

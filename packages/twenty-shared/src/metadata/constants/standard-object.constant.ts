@@ -875,6 +875,7 @@ export const STANDARD_OBJECTS = {
       ...buildStandardObjectSystemFields(
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
       ),
+      name: { universalIdentifier: 'dc8bca0e-37c4-4b78-814d-2e91124274e3' },
       subject: { universalIdentifier: '7251544c-b07a-4f0d-9d0a-48514367f230' },
       bodyTemplate: {
         universalIdentifier: 'b3a69d08-31ca-4a8d-8359-5ca462899342',
@@ -930,6 +931,9 @@ export const STANDARD_OBJECTS = {
       allMessageCampaigns: {
         universalIdentifier: 'ffedb368-33f0-43a7-b84e-e622b4e97be9',
         viewFields: {
+          name: {
+            universalIdentifier: '4d40646c-853d-48e6-8ddb-81e6dedabc99',
+          },
           subject: {
             universalIdentifier: 'b017c851-e38d-4a81-ab38-0fb10e9f239e',
           },
