@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.twenty.staging-converge</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/ben/Projects/twenty/deploy/staging-converge.sh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/ben/Projects/twenty</string>
+
+  <!-- Homebrew is not on a launchd job's default PATH, so docker and gh would
+       be invisible without this. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <key>StartInterval</key>
+  <integer>120</integer>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/twenty-staging-converge.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/twenty-staging-converge.log</string>
+</dict>
+</plist>
