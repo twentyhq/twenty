@@ -725,11 +725,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   composeCampaignPinned: {
     universalIdentifier: '7ad6f0c7-ac02-4062-b5cf-1f36e1664bc8',
-    label: 'Compose Campaign',
-    icon: 'IconSend',
+    label: 'Create new Campaign',
+    icon: 'IconPlus',
     isPinned: true,
     position: 67,
-    shortLabel: 'Campaign',
+    shortLabel: 'New Campaign',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
       'pageType == "INDEX_PAGE" and featureFlags.IS_EMAIL_GROUP_ENABLED',
