@@ -1,11 +1,5 @@
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useDebouncedCallback } from 'use-debounce';
-
+import { usePersistedCampaignDraft } from '@/activities/emails/hooks/usePersistedCampaignDraft';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CampaignDetailsDraft = {
   listId: string | null;
@@ -19,47 +13,29 @@ export const useCampaignDetailsState = ({
 }: {
   campaign: MessageCampaign;
 }) => {
-  const [draft, setDraft] = useState<CampaignDetailsDraft>(() => ({
-    listId: campaign.listId,
-    unsubscribeTopicId: campaign.unsubscribeTopicId,
-    fromAddress: campaign.fromAddress?.primaryEmail ?? '',
-    subject: campaign.subject ?? '',
-  }));
-
-  const { updateOneRecord } = useUpdateOneRecord();
-  const { enqueueErrorSnackBar } = useSnackBar();
-
-  const persistDebounced = useDebouncedCallback(
-    (next: CampaignDetailsDraft) => {
-      updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
-        idToUpdate: campaign.id,
-        updateOneRecordInput: {
-          listId: next.listId,
-          unsubscribeTopicId: next.unsubscribeTopicId,
-          fromAddress: {
-            primaryEmail: next.fromAddress.trim(),
-            additionalEmails: null,
-          },
-          subject: next.subject,
+  const { draft, updateDraft, flush } =
+    usePersistedCampaignDraft<CampaignDetailsDraft>({
+      campaignId: campaign.id,
+      initialDraft: () => ({
+        listId: campaign.listId,
+        unsubscribeTopicId: campaign.unsubscribeTopicId,
+        fromAddress: campaign.fromAddress?.primaryEmail ?? '',
+        subject: campaign.subject ?? '',
+      }),
+      toUpdateOneRecordInput: (nextDraft) => ({
+        listId: nextDraft.listId,
+        unsubscribeTopicId: nextDraft.unsubscribeTopicId,
+        fromAddress: {
+          primaryEmail: nextDraft.fromAddress.trim(),
+          additionalEmails: null,
         },
-      }).catch(() =>
-        enqueueErrorSnackBar({ message: t`Failed to save the campaign` }),
-      );
-    },
-    500,
-  );
-
-  const updateDraft = (partialDraft: Partial<CampaignDetailsDraft>) => {
-    const nextDraft = { ...draft, ...partialDraft };
-
-    setDraft(nextDraft);
-    persistDebounced(nextDraft);
-  };
+        subject: nextDraft.subject,
+      }),
+    });
 
   return {
     ...draft,
-    flush: persistDebounced.flush,
+    flush,
     setListId: (listId: string | null) => updateDraft({ listId }),
     setUnsubscribeTopicId: (unsubscribeTopicId: string | null) =>
       updateDraft({ unsubscribeTopicId }),
