@@ -37,6 +37,21 @@ fnm use 24.5.0 >/dev/null 2>&1 || true
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# This script migrates whatever PG_DATABASE_URL points at, and on this Mac every
+# checkout's .env points at the same localhost:5432/default — the live CRM. The
+# post-merge hook routes on changed file paths, not on which checkout it fired
+# in, so without this guard a plain `git pull` in an ops or scratch clone runs
+# production migrations. That has already happened once; it was harmless only
+# because nothing was pending.
+PRODUCTION_ROOT="${TWENTY_PRODUCTION_ROOT:-/Users/ben/Deploy/twenty}"
+if [ "$REPO_ROOT" != "$PRODUCTION_ROOT" ]; then
+  echo "[update-after-merge] refusing to run: this is not the production checkout"
+  echo "[update-after-merge]   here:       $REPO_ROOT"
+  echo "[update-after-merge]   production: $PRODUCTION_ROOT"
+  echo "[update-after-merge] developer machines use: bash deploy/local-schema.sh sync"
+  exit 0
+fi
+
 # Datastores must be up; if not, bail with a clear message instead of hanging.
 if ! pg_isready -h localhost -p 5432 -q 2>/dev/null; then
   echo "[update-after-merge] Postgres not up on :5432 — start it (brew services start postgresql@16), then re-run: bash deploy/update-after-merge.sh"
