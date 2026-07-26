@@ -17,5 +17,5 @@ export const RecordBoardCardMultiDragPreview = () => {
     return null;
   }
 
-  return <RecordDragMultiDragCounterChip side="right" />;
+  return <RecordDragMultiDragCounterChip />;
 };

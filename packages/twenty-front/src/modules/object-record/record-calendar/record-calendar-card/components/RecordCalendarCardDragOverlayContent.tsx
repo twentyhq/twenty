@@ -53,7 +53,7 @@ export const RecordCalendarCardDragOverlayContent = ({
       <RecordCalendarCardComponentInstanceContext.Provider
         value={{ instanceId: recordId }}
       >
-        <RecordCalendarCard recordId={recordId} />
+        <RecordCalendarCard recordId={recordId} isDragOverlay />
         <RecordCalendarCardMultiDragPreview recordId={recordId} />
       </RecordCalendarCardComponentInstanceContext.Provider>
     </RecordCalendarMonthContextProvider>

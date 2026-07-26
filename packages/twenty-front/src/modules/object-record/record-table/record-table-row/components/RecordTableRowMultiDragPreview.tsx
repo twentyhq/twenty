@@ -15,5 +15,5 @@ export const RecordTableRowMultiDragPreview = () => {
     return null;
   }
 
-  return <RecordDragMultiDragCounterChip side="left" />;
+  return <RecordDragMultiDragCounterChip />;
 };

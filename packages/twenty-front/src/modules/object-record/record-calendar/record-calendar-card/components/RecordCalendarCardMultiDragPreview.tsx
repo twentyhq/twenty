@@ -16,5 +16,5 @@ export const RecordCalendarCardMultiDragPreview = ({
     return null;
   }
 
-  return <RecordDragMultiDragCounterChip side="right" />;
+  return <RecordDragMultiDragCounterChip />;
 };

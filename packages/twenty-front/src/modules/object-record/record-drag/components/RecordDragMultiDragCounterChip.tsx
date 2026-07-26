@@ -3,18 +3,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/data-display';
 
-const StyledNotificationCounterContainer = styled.div<{ side: 'left' | 'right' }>`
+const StyledNotificationCounterContainer = styled.div`
   position: absolute;
+  left: -7px;
   top: -7px;
   z-index: 1000;
-  ${({ side }) => `${side}: -7px;`}
 `;
 
-export const RecordDragMultiDragCounterChip = ({
-  side = 'right',
-}: {
-  side?: 'left' | 'right';
-}) => {
+export const RecordDragMultiDragCounterChip = () => {
   const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
   );
@@ -28,7 +24,7 @@ export const RecordDragMultiDragCounterChip = ({
   }
 
   return (
-    <StyledNotificationCounterContainer side={side}>
+    <StyledNotificationCounterContainer>
       <NotificationCounter count={selectedCount} />
     </StyledNotificationCounterContainer>
   );
