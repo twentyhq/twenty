@@ -64,7 +64,12 @@ current_image="$(
 )"
 [ -n "$current_image" ] || fail "STAGING_IMAGE is not set in $STAGING_ENV"
 current_sha="${current_image##*:}"
-image_repo="${current_image%:*}"
+
+# The registry is explicit rather than derived from the current value. A host
+# that has never pulled from GHCR starts out on a locally built image name, and
+# deriving the repo from that sends every lookup to the wrong registry while
+# reporting it as a missing image.
+image_repo="${STAGING_IMAGE_REPO:-ghcr.io/speculativetechnologies/twenty}"
 
 if [ "$current_sha" = "$target_sha" ]; then
   exit 0
@@ -75,8 +80,22 @@ log "converging ${current_sha} -> ${target_sha}"
 
 # The workflow checked this too, but this side is the one that can actually
 # pull, so a missing image has to stop here rather than half-apply.
-docker manifest inspect "$target_image" >/dev/null 2>&1 ||
-  fail "No image published for ${target_sha}. Is this host logged in to GHCR?"
+target_manifest="$(docker manifest inspect "$target_image" 2>/dev/null)" ||
+  fail "Cannot resolve ${target_image}. Check that CI published that commit and \
+that this host is logged in to GHCR."
+
+# A manifest list can exist without covering this host. Catching that here beats
+# discovering it halfway through a restart and rolling back for no reason.
+case "$(uname -m)" in
+  arm64 | aarch64) required_architecture="arm64" ;;
+  x86_64 | amd64) required_architecture="amd64" ;;
+  *) fail "Unsupported host architecture $(uname -m)" ;;
+esac
+
+printf '%s\n' "$target_manifest" |
+  grep -q "\"architecture\": \"${required_architecture}\"" ||
+  fail "${target_image} publishes no ${required_architecture} image; this host \
+cannot run it."
 
 write_image() {
   local image="$1" tmp
@@ -104,7 +123,13 @@ report() {
 
 write_image "$target_image"
 
-if bash "$REPO_ROOT/deploy/staging.sh" up &&
+# Order matters. A server image newer than the database cannot pass its
+# healthcheck, so containers start without the health gate, the schema is
+# brought forward, and only then is health required.
+if bash "$REPO_ROOT/deploy/staging.sh" up --no-wait &&
+  bash "$REPO_ROOT/deploy/staging.sh" migrate &&
+  bash "$REPO_ROOT/deploy/staging.sh" wait &&
+  bash "$REPO_ROOT/deploy/staging.sh" up &&
   bash "$REPO_ROOT/deploy/staging.sh" test; then
   echo "$target_sha" >"$STATE_FILE"
   log "staging is now running ${target_sha}"

@@ -58,12 +58,32 @@ image check, so verify rather than assume:
 
 ```bash
 docker login ghcr.io
-docker manifest inspect \
-  ghcr.io/speculativetechnologies/twenty:f87ae25626ef19f0ad8058f7141659da9366b5c1 \
-  >/dev/null && echo "GHCR OK"
 ```
 
-If that fails, stop and report. Everything downstream depends on it.
+If you have `gh` logged in with the `read:packages` scope, this works without
+pasting a token:
+
+```bash
+gh auth refresh -h github.com -s read:packages
+gh auth token | docker login ghcr.io -u "$(gh api user --jq .login)" --password-stdin
+```
+
+Then check that the current target both exists and covers this host's
+architecture. An amd64-only image on an Apple Silicon host resolves fine and
+still cannot be pulled:
+
+```bash
+git fetch origin '+refs/heads/staging-target:refs/remotes/origin/staging-target'
+target="$(git rev-parse refs/remotes/origin/staging-target)"
+docker manifest inspect "ghcr.io/speculativetechnologies/twenty:${target}" |
+  grep '"architecture"' | sort -u
+uname -m
+```
+
+`arm64` must appear for an Apple Silicon host, `amd64` for a VM. If it does not,
+stop: CI has not published a matching image and no amount of login fixes it.
+
+Everything downstream depends on this check.
 
 Then install the launch agent:
 
@@ -73,6 +93,13 @@ launchctl load ~/Library/LaunchAgents/com.twenty.staging-converge.plist
 ```
 
 `RunAtLoad` is false, so nothing runs until the first two-minute tick.
+
+`STAGING_IMAGE` in `deploy/.env.staging` needs no preparation. A host that has
+only ever run locally built images still converges, because the converger takes
+its registry from `STAGING_IMAGE_REPO` (default
+`ghcr.io/speculativetechnologies/twenty`) rather than deriving it from whatever
+is currently set. Rollback still targets the previous local image, which is
+exactly what you want during the first transition.
 
 ## Phase B: watch the first convergence
 
@@ -97,7 +124,8 @@ Expected failure modes and what they mean:
 | Log line | Cause | Action |
 |---|---|---|
 | `another staging operation holds the lock` | the 4:15 data refresh is running | normal, wait for the next tick |
-| `No image published for <sha>` | not logged in to GHCR, or no image built | redo the GHCR login; report if it persists |
+| `Cannot resolve <image>` | not logged in to GHCR, or CI never built that commit | redo the GHCR login; check `build-custom-image.yml` ran for the sha; report if it persists |
+| `publishes no <arch> image` | the image does not cover this host's architecture | stop; CI must publish a manifest list covering it |
 | `no staging-target ref published yet` | ref missing | report; the ref existed when this was written |
 | `convergence to <sha> failed; restoring <sha>` | the new image would not come up | expected safety behaviour; report the output above it |
 | `ROLLBACK FAILED` | staging is down | stop, report immediately |
