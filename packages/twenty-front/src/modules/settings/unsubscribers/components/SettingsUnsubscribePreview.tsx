@@ -54,53 +54,77 @@ const StyledTopicRow = styled.div`
 
 export const SettingsUnsubscribePreview = () => {
   const { t } = useLingui();
-  const { unsubscribeTopics } = useUnsubscribeTopics();
+  const { unsubscribeTopics, loading } = useUnsubscribeTopics();
 
   const publicTopics = unsubscribeTopics.filter(
     (topic) => topic.visibility === UnsubscribeTopicVisibility.PUBLIC,
   );
 
+  const hasPublicTopics = publicTopics.length > 0;
+
   return (
     <Section>
       <H2Title
         title={t`Unsubscribe page`}
-        description={t`Preview of the page recipients see when they unsubscribe`}
+        description={
+          hasPublicTopics
+            ? t`Preview of the page recipients see when they unsubscribe`
+            : t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
+        }
       />
       <StyledViewport>
-        <StyledCard rounded>
-          <StyledHeader>
-            <H2Title
-              title={t`Do you want to unsubscribe?`}
-              description={t`Confirm your preferences:`}
-            />
-          </StyledHeader>
-          <StyledTopics>
-            {publicTopics.map((topic) => (
-              <StyledTopicRow key={topic.id}>
-                <Checkbox
-                  checked
-                  onChange={() => {}}
-                  aria-label={topic.name ?? t`Untitled topic`}
+        {!loading && (
+          <StyledCard rounded>
+            <StyledHeader>
+              <H2Title
+                title={t`Do you want to unsubscribe?`}
+                description={
+                  hasPublicTopics
+                    ? t`Confirm your preferences:`
+                    : t`You will stop receiving these emails.`
+                }
+              />
+            </StyledHeader>
+            {hasPublicTopics ? (
+              <>
+                <StyledTopics>
+                  {publicTopics.map((topic) => (
+                    <StyledTopicRow key={topic.id}>
+                      <Checkbox
+                        checked
+                        onChange={() => {}}
+                        aria-label={topic.name ?? t`Untitled topic`}
+                      />
+                      {topic.name ?? t`Untitled topic`}
+                    </StyledTopicRow>
+                  ))}
+                </StyledTopics>
+                <Button
+                  title={t`Update`}
+                  variant="primary"
+                  accent="blue"
+                  fullWidth
+                  justify="center"
                 />
-                {topic.name ?? t`Untitled topic`}
-              </StyledTopicRow>
-            ))}
-          </StyledTopics>
-          <Button
-            title={t`Update`}
-            variant="primary"
-            accent="blue"
-            fullWidth
-            justify="center"
-          />
-          <HorizontalSeparator text={t`Or`} noMargin />
-          <Button
-            title={t`Unsubscribe all`}
-            variant="secondary"
-            fullWidth
-            justify="center"
-          />
-        </StyledCard>
+                <HorizontalSeparator text={t`Or`} noMargin />
+                <Button
+                  title={t`Unsubscribe all`}
+                  variant="secondary"
+                  fullWidth
+                  justify="center"
+                />
+              </>
+            ) : (
+              <Button
+                title={t`Unsubscribe`}
+                variant="primary"
+                accent="blue"
+                fullWidth
+                justify="center"
+              />
+            )}
+          </StyledCard>
+        )}
       </StyledViewport>
     </Section>
   );
