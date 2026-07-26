@@ -41,7 +41,6 @@ export const RecordCalendarWeekDragDropContext = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const store = useStore();
-
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
 
@@ -121,14 +120,12 @@ export const RecordCalendarWeekDragDropContext = ({
       destinationMinutes: resolvedDrop.destinationMinutes,
       recordId: sourceData.recordId,
       selectedRecordIds: originalDragSelection,
-    })
-      .catch((error) => {
-        logError(error);
-        enqueueErrorSnackBar({ message: t`Failed to move record` });
-      })
-      .finally(() => {
-        endRecordDrag();
-      });
+    }).catch((error) => {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to move record` });
+    });
+
+    endRecordDrag();
   };
 
   return (

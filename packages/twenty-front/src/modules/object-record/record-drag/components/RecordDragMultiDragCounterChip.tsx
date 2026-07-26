@@ -5,7 +5,7 @@ import { NotificationCounter } from 'twenty-ui/data-display';
 
 const StyledNotificationCounterContainer = styled.div`
   position: absolute;
-  left: -7px;
+  right: -7px;
   top: -7px;
   z-index: 1000;
 `;

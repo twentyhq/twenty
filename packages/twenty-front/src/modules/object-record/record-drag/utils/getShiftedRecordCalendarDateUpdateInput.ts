@@ -21,7 +21,7 @@ export const getShiftedRecordCalendarDateUpdateInput = ({
   const startDate = record[calendarFieldName] as string | undefined;
 
   if (!isDefined(startDate)) {
-    return null;
+    return { [calendarFieldName]: fallbackStartDate };
   }
 
   const currentStartDate = Temporal.PlainDate.from(startDate);

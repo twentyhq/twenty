@@ -3,7 +3,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRecordCalendarCardStackCard = styled.div<{ offset: number }>`
+const MAX_STACK_CARDS = 5;
+
+const StyledRecordDragMultiDragStackCard = styled.div<{ offset: number }>`
   background-color: ${themeCssVariables.accent.tertiary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -15,7 +17,7 @@ const StyledRecordCalendarCardStackCard = styled.div<{ offset: number }>`
   z-index: ${({ offset }) => -offset};
 `;
 
-export const RecordCalendarCardMultiDragStack = () => {
+export const RecordDragMultiDragStack = () => {
   const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
   );
@@ -27,8 +29,8 @@ export const RecordCalendarCardMultiDragStack = () => {
   }
 
   return Array.from({
-    length: Math.min(5, originalDragSelection.length - 1),
+    length: Math.min(MAX_STACK_CARDS, originalDragSelection.length - 1),
   }).map((_, index) => (
-    <StyledRecordCalendarCardStackCard key={index} offset={index + 1} />
+    <StyledRecordDragMultiDragStackCard key={index} offset={index + 1} />
   ));
 };

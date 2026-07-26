@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 
@@ -133,50 +132,6 @@ export const useProcessCalendarCardDrop = () => {
 
       const dayOffset = sourcePlainDate.until(destinationPlainDate).days;
 
-      let buildUpdateInput:
-        | ((record: ObjectRecord) => Partial<ObjectRecord> | null)
-        | null = null;
-
-      if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
-        const calendarEndFieldName =
-          calendarEndFieldMetadata?.type === FieldMetadataType.DATE
-            ? calendarEndFieldMetadata.name
-            : undefined;
-
-        buildUpdateInput = (record) =>
-          getShiftedRecordCalendarDateUpdateInput({
-            record,
-            calendarFieldName: calendarFieldMetadata.name,
-            calendarEndFieldName,
-            dayOffset,
-            fallbackStartDate: destinationPlainDate.toString(),
-          });
-      } else if (calendarFieldMetadata.type === FieldMetadataType.DATE_TIME) {
-        const calendarEndFieldName =
-          calendarEndFieldMetadata?.type === FieldMetadataType.DATE_TIME
-            ? calendarEndFieldMetadata.name
-            : undefined;
-
-        const fallbackStartDateTime = destinationPlainDate
-          .toZonedDateTime({ timeZone: userTimezone })
-          .toInstant()
-          .toString();
-
-        buildUpdateInput = (record) =>
-          getShiftedRecordCalendarDateTimeUpdateInput({
-            record,
-            calendarFieldName: calendarFieldMetadata.name,
-            calendarEndFieldName,
-            dayOffset,
-            timeZone: userTimezone,
-            fallbackStartDateTime,
-          });
-      }
-
-      if (!isDefined(buildUpdateInput)) {
-        return;
-      }
-
       const recordIdsToShift =
         dragOperationType === 'single' ? [recordId] : selectedRecordIds;
 
@@ -188,21 +143,63 @@ export const useProcessCalendarCardDrop = () => {
         if (!isDefined(recordToShift)) {
           continue;
         }
+        if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
+          const calendarEndFieldName =
+            calendarEndFieldMetadata?.type === FieldMetadataType.DATE
+              ? calendarEndFieldMetadata.name
+              : undefined;
 
-        const updateOneRecordInput = buildUpdateInput(recordToShift);
+          const updateOneRecordInput = getShiftedRecordCalendarDateUpdateInput({
+            record: recordToShift,
+            calendarFieldName: calendarFieldMetadata.name,
+            calendarEndFieldName,
+            dayOffset,
+            fallbackStartDate: destinationPlainDate.toString(),
+          });
+          if (!isDefined(updateOneRecordInput)) {
+            continue;
+          }
 
-        if (!isDefined(updateOneRecordInput)) {
-          continue;
+          updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            idToUpdate,
+            updateOneRecordInput: {
+              ...updateOneRecordInput,
+              ...(idToUpdate === recordId && { position: newPosition }),
+            },
+          });
+        } else {
+          const calendarEndFieldName =
+            calendarEndFieldMetadata?.type === FieldMetadataType.DATE_TIME
+              ? calendarEndFieldMetadata.name
+              : undefined;
+
+          const fallbackStartDateTime = destinationPlainDate
+            .toZonedDateTime({ timeZone: userTimezone })
+            .toInstant()
+            .toString();
+
+          const updateOneRecordInput = getShiftedRecordCalendarDateTimeUpdateInput({
+            record: recordToShift,
+            calendarFieldName: calendarFieldMetadata.name,
+            calendarEndFieldName,
+            dayOffset,
+            timeZone: userTimezone,
+            fallbackStartDateTime,
+          });
+          if (!isDefined(updateOneRecordInput)) {
+            continue;
+          }
+
+          updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            idToUpdate,
+            updateOneRecordInput: {
+              ...updateOneRecordInput,
+              ...(idToUpdate === recordId && { position: newPosition }),
+            },
+          });
         }
-
-        updateOneRecord({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          idToUpdate,
-          updateOneRecordInput: {
-            ...updateOneRecordInput,
-            ...(idToUpdate === recordId && { position: newPosition }),
-          },
-        });
       }
     },
     [

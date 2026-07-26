@@ -5,7 +5,7 @@ import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-cal
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
 import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardHeader';
-import { RecordCalendarCardMultiDragStack } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardMultiDragStack';
+import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
@@ -146,7 +146,7 @@ export const RecordCalendarCard = ({
               }
             >
               {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-                <RecordCalendarCardMultiDragStack />
+                <RecordDragMultiDragStack />
               )}
               <RecordCard
                 data-selected={isRecordCalendarCardSelected}
