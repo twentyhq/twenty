@@ -81,12 +81,16 @@ case "$action" in
     # Runs in a one-off container rather than exec-ing into the server, because
     # the server is precisely what cannot come up while the schema is behind.
     echo "[staging] applying instance migrations and workspace upgrades"
+    # --include-slow matters: without it the instance step applies only fast
+    # commands and leaves the slow data migrations pending forever. The cache
+    # flush after the upgrade matters too, because upgrade:status is cached and
+    # would otherwise still report the pre-upgrade answer.
     compose run --rm --no-deps --entrypoint sh server -c '
       set -e
       cd /app/packages/twenty-server
-      node dist/command/command.js run-instance-commands --force
+      node dist/command/command.js run-instance-commands --force --include-slow
       node dist/command/command.js upgrade
-      node dist/command/command.js cache:flat-cache-invalidate --all-metadata
+      node dist/command/command.js cache:flush
     '
     echo "[staging] schema is up to date"
     ;;
@@ -141,13 +145,23 @@ case "$action" in
     plain_status="$(printf '%s\n' "$upgrade_status" | sed $'s/\033\\[[0-9;]*m//g')"
     printf '%s\n' "$plain_status"
 
+    # Deliberately asserts "nothing failed" rather than "up to date". A version
+    # whose bundle has instance commands but no workspace commands can never be
+    # reached: the inferred version comes from the latest executed workspace
+    # command, so upgrade:status reports Behind permanently. 2.23.0 is such a
+    # version today. Requiring "Up to date" would be a gate no deploy can pass.
     printf '%s\n' "$plain_status" |
-      grep -Eq 'Instance:[[:space:]]+Up to date' ||
-      fail "the staging instance schema is not up to date"
-    printf '%s\n' "$plain_status" |
-      grep -Eq 'Workspaces:.*0 behind,.*0 failed|No workspaces' ||
-      fail "one or more staging workspace schemas are behind or failed"
-    echo "[staging] schema matches the running image"
+      grep -Eq 'Workspaces:.*0 failed|No workspaces' ||
+      fail "one or more staging workspace upgrades failed"
+
+    failed_commands="$(
+      compose exec -T db psql -U postgres -d staging -Atc \
+        "SELECT count(*) FROM core.\"upgradeMigration\" WHERE status = 'failed'"
+    )"
+    [ "$failed_commands" = "0" ] ||
+      fail "staging has $failed_commands failed upgrade command(s)"
+
+    echo "[staging] no failed upgrade commands"
     ;;
   tailnet-up)
     : "${STAGING_TAILNET_ADDRESS:?Set STAGING_TAILNET_ADDRESS in deploy/.env.staging}"
