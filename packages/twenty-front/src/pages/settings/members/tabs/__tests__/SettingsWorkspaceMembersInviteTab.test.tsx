@@ -1,3 +1,4 @@
+import React from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -73,9 +74,9 @@ describe('SettingsWorkspaceMembersInviteTab', () => {
 
   it('should render SettingsRolesQueryEffect to load roles on invite tab', () => {
     render(
-      <MemoryRouter>
-        <SettingsWorkspaceMembersInviteTab />
-      </MemoryRouter>,
+      React.createElement(MemoryRouter, null,
+        React.createElement(SettingsWorkspaceMembersInviteTab)
+      )
     );
 
     const { SettingsRolesQueryEffect } = require('@/settings/roles/components/SettingsRolesQueryEffect');
