@@ -203,6 +203,24 @@ launchctl load ~/Library/LaunchAgents/com.twenty.production-converge.plist
 tail -20 /tmp/twenty-production-converge.log
 ```
 
+The converger polls every 60 seconds, so an approved deploy lands within about a
+minute. To deploy without waiting for the next tick:
+
+```bash
+launchctl kickstart -k gui/$(id -u)/com.twenty.production-converge
+```
+
+That is safe to run at any time. It takes the same lock, and no-ops when
+`production-target` has not moved.
+
+After changing the plist, reload it or launchd keeps the old interval:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.twenty.production-converge.plist
+cp deploy/launchd/com.twenty.production-converge.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.twenty.production-converge.plist
+```
+
 Its first tick should log that no `production-target` ref exists yet, which is
 correct and harmless.
 
