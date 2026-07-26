@@ -71,9 +71,8 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'logoFileId' })
   logoFile: Relation<FileEntity> | null;
 
-  // TODO should not be nullable
-  @Column({ nullable: true, type: 'text' })
-  version: string | null;
+  @Column({ nullable: false, type: 'text', default: '0.0.0' })
+  version: string;
 
   @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
   sourceType: ApplicationRegistrationSourceType;
