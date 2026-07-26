@@ -19,6 +19,7 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 
 const ACTIVE_STREAM_COUNT_REFRESH_MS = 5 * 60 * 1_000;
+const ACTIVE_STREAM_EXPIRATIONS_KEY = 'activeStreamExpirations';
 
 @Injectable()
 export class EventStreamService implements OnModuleInit {
@@ -50,8 +51,10 @@ export class EventStreamService implements OnModuleInit {
 
     if (isStale) {
       this.activeStreamCount =
-        await this.cacheStorageService.scanAndCountSetMembers(
-          'workspace:*:activeStreams',
+        await this.cacheStorageService.sortedSetRemoveByScoreAndCount(
+          ACTIVE_STREAM_EXPIRATIONS_KEY,
+          0,
+          now,
         );
       this.activeStreamCountRefreshedAt = now;
     }
@@ -88,11 +91,17 @@ export class EventStreamService implements OnModuleInit {
 
     await this.cacheStorageService.set(key, streamData, EVENT_STREAM_TTL_MS);
 
-    await this.cacheStorageService.setAdd(
-      this.getActiveStreamsKey(workspaceId),
-      [eventStreamChannelId],
-      EVENT_STREAM_TTL_MS,
-    );
+    await Promise.all([
+      this.cacheStorageService.setAdd(
+        this.getActiveStreamsKey(workspaceId),
+        [eventStreamChannelId],
+        EVENT_STREAM_TTL_MS,
+      ),
+      this.trackActiveStream({
+        workspaceId,
+        eventStreamChannelId,
+      }),
+    ]);
   }
 
   async destroyEventStream({
@@ -106,10 +115,13 @@ export class EventStreamService implements OnModuleInit {
 
     await this.cacheStorageService.del(key);
 
-    await this.cacheStorageService.setRemove(
-      this.getActiveStreamsKey(workspaceId),
-      [eventStreamChannelId],
-    );
+    await Promise.all([
+      this.cacheStorageService.setRemove(
+        this.getActiveStreamsKey(workspaceId),
+        [eventStreamChannelId],
+      ),
+      this.untrackActiveStreams(workspaceId, [eventStreamChannelId]),
+    ]);
   }
 
   async getActiveStreamIds(workspaceId: string): Promise<string[]> {
@@ -126,10 +138,13 @@ export class EventStreamService implements OnModuleInit {
       return;
     }
 
-    await this.cacheStorageService.setRemove(
-      this.getActiveStreamsKey(workspaceId),
-      streamIdsToRemove,
-    );
+    await Promise.all([
+      this.cacheStorageService.setRemove(
+        this.getActiveStreamsKey(workspaceId),
+        streamIdsToRemove,
+      ),
+      this.untrackActiveStreams(workspaceId, streamIdsToRemove),
+    ]);
   }
 
   async getStreamsData(
@@ -230,12 +245,72 @@ export class EventStreamService implements OnModuleInit {
     );
     const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
+    await this.trackActiveStream({
+      workspaceId,
+      eventStreamChannelId,
+    });
+
     const [eventStreamRefreshed, activeStreamsRefreshed] = await Promise.all([
       this.cacheStorageService.expire(eventStreamKey, EVENT_STREAM_TTL_MS),
       this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
     ]);
 
+    if (!eventStreamRefreshed || !activeStreamsRefreshed) {
+      await this.untrackActiveStreams(workspaceId, [eventStreamChannelId]);
+    }
+
     return eventStreamRefreshed && activeStreamsRefreshed;
+  }
+
+  private async trackActiveStream({
+    workspaceId,
+    eventStreamChannelId,
+  }: {
+    workspaceId: string;
+    eventStreamChannelId: string;
+  }): Promise<void> {
+    try {
+      await this.cacheStorageService.sortedSetAdd(
+        ACTIVE_STREAM_EXPIRATIONS_KEY,
+        [
+          {
+            score: Date.now() + EVENT_STREAM_TTL_MS,
+            value: this.getActiveStreamExpirationMember(
+              workspaceId,
+              eventStreamChannelId,
+            ),
+          },
+        ],
+      );
+    } catch (error) {
+      this.logger.warn(`Failed to track active event stream: ${error}`);
+    }
+  }
+
+  private async untrackActiveStreams(
+    workspaceId: string,
+    eventStreamChannelIds: string[],
+  ): Promise<void> {
+    try {
+      await this.cacheStorageService.sortedSetRemove(
+        ACTIVE_STREAM_EXPIRATIONS_KEY,
+        eventStreamChannelIds.map((eventStreamChannelId) =>
+          this.getActiveStreamExpirationMember(
+            workspaceId,
+            eventStreamChannelId,
+          ),
+        ),
+      );
+    } catch (error) {
+      this.logger.warn(`Failed to untrack active event streams: ${error}`);
+    }
+  }
+
+  private getActiveStreamExpirationMember(
+    workspaceId: string,
+    eventStreamChannelId: string,
+  ): string {
+    return `${workspaceId}:${eventStreamChannelId}`;
   }
 
   private getEventStreamKey(
