@@ -9,7 +9,7 @@ Every app must have exactly one `defineApplication` call. It declares:
 - **Identity** — universal identifier, display name, description.
 - **Permissions** — which role its logic functions and front components run under.
 - **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-- **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
+- **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -33,7 +33,7 @@ Notes:
 - `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
-- Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+- Pre-install, post-install, and uninstall functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
 

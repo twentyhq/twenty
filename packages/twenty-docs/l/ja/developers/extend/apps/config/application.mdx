@@ -9,7 +9,7 @@ icon: rocket
 * **Identity** — ユニバーサル識別子、表示名、説明。
 * **Permissions** — ロジック関数およびフロントコンポーネントがどのロールで実行されるか。
 * **Variables** *(optional)* — コードから環境変数として利用できるキーと値のペア。
-* **Pre-install / post-install hooks** *(optional)* — [Logic Functions](/l/ja/developers/extend/apps/logic/logic-functions) を参照してください。
+* **プレインストール / ポストインストール / アンインストール フック** *(任意)* — [Logic Functions](/l/ja/developers/extend/apps/logic/logic-functions) を参照してください。
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ export default defineApplication({
 * `universalIdentifier` フィールドは、あなたが所有する安定した ID です。 一度生成し、その後の同期でも安定して維持してください。
 * `applicationVariables` は関数やフロントコンポーネントの環境変数になります。 ロジック関数（サーバーサイド）では、`process.env.VARIABLE_NAME` として利用できます。 フロントコンポーネントでは、`twenty-sdk/front-component` の `getApplicationVariable('VARIABLE_NAME')` を使用します。 `isSecret: true` が指定された変数は、ロジック関数にのみインジェクトされます。 フロントコンポーネントには、秘密ではない変数のみが渡されます。
 * デフォルトのロールは、[`defineApplicationRole()`](/l/ja/developers/extend/apps/config/roles) でマークされたロールファイルから自動的に検出されます。`defineApplication()` から参照する必要はありません。
-* プレインストール関数とポストインストール関数は、マニフェストのビルド中に自動検出されます—`defineApplication()` で参照する必要はありません。
+* プレインストール関数、ポストインストール関数、およびアンインストール関数は、マニフェストのビルド中に自動的に検出されるため、`defineApplication()` で参照する必要はありません。
 * 後方互換性のために `defaultRoleUniversalIdentifier` を明示的に渡すことも依然としてサポートされていますが、`defineApplicationRole()` が推奨されるため、非推奨となっています。
 * `serverVariables` はインスタンス単位の構成およびシークレット（例: API キー）です。 `applicationVariables` と異なり、マニフェスト内で値は宣言されません。ワークスペースのオペレーターがアプリの設定からそれらを入力し、設定された時点でのみロジック関数に注入されます。
 

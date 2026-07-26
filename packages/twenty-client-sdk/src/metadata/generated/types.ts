@@ -6157,6 +6157,15 @@ export default {
                     ]
                 }
             ],
+            "isApplicationStopped": [
+                3,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "enterprisePortalSession": [
                 1,
                 {
@@ -7068,6 +7077,12 @@ export default {
         "FindMessageSuppressionsInput": {
             "reason": [
                 288
+            ],
+            "searchTerm": [
+                1
+            ],
+            "unsubscribeTopicId": [
+                4
             ],
             "searchTerm": [
                 1

@@ -24,6 +24,11 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## Dans cette section
@@ -36,7 +41,7 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
     `defineRole` — déclarez ce que les fonctions logiques de votre application peuvent lire et écrire.
   </Card>
   <Card title="Hooks d'installation" icon="wrench" href="/l/fr/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` et `definePostInstallLogicFunction` — sauvegarder les données, préremplir les valeurs par défaut, valider les mises à niveau.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` et `defineUninstallLogicFunction` — sauvegarder les données, préremplir les valeurs par défaut, valider les mises à niveau, nettoyer lors de la suppression.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
 
 * L'**application** est le point d'entrée. Chaque application comporte exactement un appel à `defineApplication()` qui pointe vers un **Rôle** par défaut.
 * Le **Rôle** contrôle ce que les fonctions logiques et les composants frontaux de l'application peuvent lire et écrire. Suivez le principe du moindre privilège : accordez uniquement les autorisations dont votre code a réellement besoin.
-* Les **hooks d'installation** s'exécutent lors de l'installation ou de la mise à niveau — la pré-installation avant la migration des métadonnées (ce qui permet de refuser une mise à niveau risquée), la post-installation après la migration (ce qui permet de préremplir les données par défaut selon le nouveau schéma).
+* Les **hooks d'installation** s'exécutent lors de l'installation ou de la mise à niveau — la pré-installation avant la migration des métadonnées (ce qui permet de refuser une mise à niveau risquée), la post-installation après la migration (ce qui permet de préremplir les données par défaut selon le nouveau schéma). Le hook de désinstallation s’exécute juste avant que l’application ne soit supprimée, ce qui lui permet de nettoyer les ressources externes tant que les données de l’application sont encore lisibles.
 
 <Note>
 Les hooks d'installation partagent l'environnement d'exécution des [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) — même signature de handler, mêmes variables d'environnement, même client d'API typé — mais ils sont déclarés avec leurs propres fonctions `define` et vivent en dehors du modèle de déclencheurs habituel (HTTP, cron, événements de base de données).

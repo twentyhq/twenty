@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isString } from '@sniptt/guards';
 import { Request } from 'express';
+import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -19,22 +19,20 @@ import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import {
+  buildRouteTriggerResponse,
+  type RouteTriggerResponse,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-
-type ResolverResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload?: object;
-};
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -99,13 +97,27 @@ export class ServerRouteTriggerService {
       workspaceId: resolver.workspaceId,
       payload: event,
     });
-    const resolved = this.parseResolverResult(resolverResult);
+
+    if (isDefined(resolverResult.error)) {
+      throw new ServerRouteTriggerException(
+        resolverResult.error.errorMessage,
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+      );
+    }
+
+    if (isLogicFunctionHttpResponse(resolverResult.data)) {
+      return buildRouteTriggerResponse(resolverResult.data);
+    }
+
+    const dispatchResult = parseResolverDispatchResultOrThrow(
+      resolverResult.data,
+    );
 
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
-        resolved.targetLogicFunctionUniversalIdentifier,
-      workspaceId: resolved.workspaceId,
-      payload: resolved.payload ?? event,
+        dispatchResult.targetLogicFunctionUniversalIdentifier,
+      workspaceId: dispatchResult.workspaceId,
+      payload: dispatchResult.payload ?? event,
       applicationRegistrationId,
     });
   }
@@ -132,44 +144,6 @@ export class ServerRouteTriggerService {
         )
         .getOne()) ?? null
     );
-  }
-
-  private parseResolverResult(result: {
-    data: object | null;
-    error?: { errorMessage: string };
-  }): ResolverResult {
-    if (isDefined(result.error)) {
-      throw new ServerRouteTriggerException(
-        result.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-      );
-    }
-
-    const data = result.data as {
-      workspaceId?: unknown;
-      targetLogicFunctionUniversalIdentifier?: unknown;
-      payload?: unknown;
-    };
-
-    if (
-      !isString(data?.workspaceId) ||
-      !isString(data?.targetLogicFunctionUniversalIdentifier)
-    ) {
-      throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
-        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-      );
-    }
-
-    return {
-      workspaceId: data.workspaceId,
-      targetLogicFunctionUniversalIdentifier:
-        data.targetLogicFunctionUniversalIdentifier,
-      payload:
-        typeof data.payload === 'object' && data.payload !== null
-          ? (data.payload as object)
-          : undefined,
-    };
   }
 
   private async enqueueTargetFunction({

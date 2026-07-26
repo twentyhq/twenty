@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -53,7 +53,7 @@ export default definePageLayout({
 
 * `type` è in genere `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
-* Ogni `tab` definisce una sezione della pagina con un `title`, `position` e `layoutMode` (`CANVAS` per il layout libero).
+* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode` (`VERTICAL_LIST` per le pagine dei record, `GRID` per le dashboard). Una scheda che contiene un singolo widget lo visualizza automaticamente a tutta larghezza; con più widget, vengono impilati come card.
 * Ogni `widget` all'interno di una scheda può renderizzare un [front component](/l/it/developers/extend/apps/layout/front-components), un elenco di relazioni o altri tipi di widget integrati.
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
 
@@ -77,7 +77,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

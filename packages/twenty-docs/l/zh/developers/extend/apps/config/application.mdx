@@ -9,7 +9,7 @@ icon: rocket
 * **应用的身份** — 通用标识符、显示名称、描述。
 * **权限** — 其逻辑函数和前端组件在何种角色下运行。
 * **变量**（可选）— 以环境变量形式暴露给代码的键值对。
-* **安装前/安装后函数**（可选）— 参见 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。
+* **安装前/安装后/卸载函数**（可选）— 参见 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ export default defineApplication({
 * `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
 * `applicationVariables` 会变成你的函数和前端组件可用的环境变量。 在逻辑函数（服务端）中，可以通过 `process.env.VARIABLE_NAME` 使用它们。 在前端组件中，使用 `twenty-sdk/front-component` 中的 `getApplicationVariable('VARIABLE_NAME')`。 标记为 `isSecret: true` 的变量只会注入到逻辑函数中。 前端组件只会接收非机密变量。
 * 默认角色会根据使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 标记的角色文件自动检测——你不需要在 `defineApplication()` 中引用它。
-* 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
+* 在构建清单时会自动检测安装前、安装后和卸载函数——无需在 `defineApplication()` 中引用它们。
 * 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。
 * `serverVariables` 是实例级的配置和机密信息（例如 API 密钥）。 与 `applicationVariables` 不同，它们不会在 manifest 中声明具体值——工作区运维人员会在应用设置中填写这些值，并且它们只有在被设置后才会被注入到逻辑函数中。
 

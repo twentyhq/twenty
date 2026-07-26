@@ -9,7 +9,7 @@ Každá aplikace musí mít právě jedno volání `defineApplication`. Deklaruj
 * **Identita** — univerzální identifikátor, zobrazovaný název, popis.
 * **Oprávnění** — pod jakou rolí běží její logické funkce a frontendové komponenty.
 * **Proměnné** *(volitelné)* — páry klíč–hodnota zpřístupněné vašemu kódu jako proměnné prostředí.
-* **Předinstalační / postinstalační hooky** *(volitelné)* — viz [Logické funkce](/l/cs/developers/extend/apps/logic/logic-functions).
+* **Předinstalační / postinstalační / odinstalační hooky** *(volitelné)* — viz [Logické funkce](/l/cs/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministické identifikátory, které vlastníte. Vygenerujte je jednou a zachovejte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce a frontendové komponenty. V logických funkcích (na straně serveru) jsou dostupné jako `process.env.VARIABLE_NAME`. Ve frontendových komponentách použijte `getApplicationVariable('VARIABLE_NAME')` z `twenty-sdk/front-component`. Proměnné označené jako `isSecret: true` jsou předávány pouze do logických funkcí. Frontendové komponenty přijímají pouze proměnné, které nejsou tajné.
 * Výchozí role je automaticky detekována ze souboru role označeného pomocí [`defineApplicationRole()`](/l/cs/developers/extend/apps/config/roles) — není potřeba na ni odkazovat z `defineApplication()`.
-* Předinstalační a postinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
+* Předinstalační, postinstalační a odinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
 * Předávání `defaultRoleUniversalIdentifier` explicitně je stále podporováno kvůli zpětné kompatibilitě, ale je zastaralé ve prospěch `defineApplicationRole()`.
 * `serverVariables` představují konfiguraci a tajné údaje vázané na instanci (např. klíče API). Na rozdíl od `applicationVariables` neuvádějí v manifestu žádnou hodnotu — operátor pracovního prostoru je vyplní v nastavení aplikace a do logických funkcí jsou injektovány až poté, co jsou nastaveny.
 
