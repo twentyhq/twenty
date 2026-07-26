@@ -1,0 +1,120 @@
+name: Deploy to production
+
+# Promotes a commit to production without anyone needing SSH to the host.
+#
+# Unlike staging, this is deliberately not frictionless. It declares the
+# `production` environment, so if that environment has required reviewers
+# configured, this run parks until a human approves it. Remote, not automatic.
+#
+# WARNING: the gate lives in the environment's protection rules, not in this
+# file. Without required reviewers configured on the `production` environment,
+# this workflow will deploy with no approval step at all. See PRODUCTION.md.
+#
+# Three checks below encode rules that were previously only written down:
+#   - the commit must already be merged into main
+#   - staging must have run something this commit contains
+#   - an image is not required, because production runs from a git checkout
+#     rather than a container
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit SHA to promote (must be merged into main)
+        required: true
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: write
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve and validate the commit
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.ref }}
+          REPO: ${{ github.repository }}
+        run: |
+          sha="$(gh api "repos/${REPO}/commits/${REF}" --jq .sha)"
+
+          # Production only ever runs reviewed code that is already on main.
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::${sha} is not merged into main."
+            exit 1
+          fi
+
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "Resolved ${REF} to ${sha}"
+
+      - name: Require that staging ran this code
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          staged="$(
+            gh api "repos/${REPO}/git/ref/heads/staging-target" --jq .object.sha 2>/dev/null || true
+          )"
+          if [ -z "$staged" ]; then
+            echo "::error::Nothing has been deployed to staging yet."
+            exit 1
+          fi
+
+          # What staging exercised has to be contained in what is being
+          # promoted. Requiring equality would fail as soon as the branch was
+          # merged, since the merge commit differs from the branch head.
+          if ! git merge-base --is-ancestor "$staged" "$SHA"; then
+            echo "::error::Staging last ran ${staged}, which ${SHA} does not contain."
+            echo "Deploy this commit to staging and exercise it before promoting."
+            exit 1
+          fi
+          echo "Staging ran ${staged}, contained in ${SHA}"
+
+      - name: Move the production-target ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          if gh api "repos/${REPO}/git/ref/heads/production-target" >/dev/null 2>&1; then
+            gh api --method PATCH "repos/${REPO}/git/refs/heads/production-target" \
+              -f sha="$SHA" -F force=true >/dev/null
+          else
+            gh api --method POST "repos/${REPO}/git/refs" \
+              -f ref=refs/heads/production-target -f sha="$SHA" >/dev/null
+          fi
+          echo "production-target now points at ${SHA}"
+
+      - name: Record the deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<JSON
+          {
+            "ref": "${SHA}",
+            "environment": "production",
+            "description": "approved by ${ACTOR}",
+            "auto_merge": false,
+            "required_contexts": []
+          }
+          JSON
+          )"
+          gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
+            -f state=in_progress \
+            -f description="waiting for the production host to converge" >/dev/null
+          echo "Deployment ${id} recorded for ${SHA}"
