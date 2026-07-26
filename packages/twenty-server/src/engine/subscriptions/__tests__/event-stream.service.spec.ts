@@ -120,6 +120,30 @@ describe('EventStreamService', () => {
     );
   });
 
+  it('keeps a valid stream tracked when the workspace stream set is missing', async () => {
+    cacheStorageService.expire
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(false);
+
+    await expect(
+      service.refreshEventStreamTTL({
+        workspaceId: WORKSPACE_ID,
+        eventStreamChannelId: EVENT_STREAM_CHANNEL_ID,
+      }),
+    ).resolves.toBe(false);
+
+    expect(cacheStorageService.sortedSetAdd).toHaveBeenCalledWith(
+      ACTIVE_STREAM_EXPIRATIONS_KEY,
+      [
+        {
+          score: Date.now() + EVENT_STREAM_TTL_MS,
+          value: ACTIVE_STREAM_EXPIRATION_MEMBER,
+        },
+      ],
+    );
+    expect(cacheStorageService.sortedSetRemove).not.toHaveBeenCalled();
+  });
+
   it('untracks destroyed and stale streams', async () => {
     await service.destroyEventStream({
       workspaceId: WORKSPACE_ID,

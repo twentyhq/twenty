@@ -255,7 +255,7 @@ export class EventStreamService implements OnModuleInit {
       this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
     ]);
 
-    if (!eventStreamRefreshed || !activeStreamsRefreshed) {
+    if (!eventStreamRefreshed) {
       await this.untrackActiveStreams(workspaceId, [eventStreamChannelId]);
     }
 
