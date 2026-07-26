@@ -1,4 +1,12 @@
+import { z } from 'zod';
+
 const MAX_REDIRECT_URL_LENGTH = 2048;
+
+const redirectUrlCandidateSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(MAX_REDIRECT_URL_LENGTH);
 
 // Resolves a caller-supplied redirect target against the website origin and
 // rejects anything that escapes it. String concatenation is unsafe here:
@@ -8,17 +16,15 @@ export const resolveSameOriginUrl = (
   candidate: unknown,
   baseUrl: string,
 ): string | null => {
-  if (typeof candidate !== 'string' || candidate.length === 0) {
-    return null;
-  }
+  const parsedCandidate = redirectUrlCandidateSchema.safeParse(candidate);
 
-  if (candidate.length > MAX_REDIRECT_URL_LENGTH) {
+  if (!parsedCandidate.success) {
     return null;
   }
 
   try {
     const base = new URL(baseUrl);
-    const resolved = new URL(candidate, base);
+    const resolved = new URL(parsedCandidate.data, base);
 
     if (resolved.origin !== base.origin) {
       return null;

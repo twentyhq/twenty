@@ -63,12 +63,10 @@ export async function POST(request: Request) {
     }
 
     const resolvedReturnUrl = resolveSameOriginUrl(returnUrl, frontendUrl);
+    const hasRequestedReturnUrl =
+      typeof returnUrl === 'string' && returnUrl.length > 0;
 
-    if (
-      typeof returnUrl === 'string' &&
-      returnUrl.length > 0 &&
-      resolvedReturnUrl === null
-    ) {
+    if (hasRequestedReturnUrl && resolvedReturnUrl === null) {
       return NextResponse.json({ error: 'Invalid returnUrl' }, { status: 400 });
     }
 

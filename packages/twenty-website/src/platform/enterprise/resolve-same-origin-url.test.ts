@@ -68,6 +68,16 @@ describe('resolveSameOriginUrl', () => {
     expect(resolveSameOriginUrl('', BASE_URL)).toBeNull();
   });
 
+  it('should reject a whitespace-only candidate', () => {
+    expect(resolveSameOriginUrl('   ', BASE_URL)).toBeNull();
+  });
+
+  it('should trim surrounding whitespace before resolving', () => {
+    expect(resolveSameOriginUrl('  /settings/billing  ', BASE_URL)).toBe(
+      'https://twenty.com/settings/billing',
+    );
+  });
+
   it.each([undefined, null, 42, {}, ['/settings']])(
     'should reject the non-string candidate %p',
     (candidate) => {

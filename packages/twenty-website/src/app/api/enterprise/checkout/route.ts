@@ -38,11 +38,10 @@ export async function POST(request: Request) {
       ? resolveSameOriginUrl(body.successUrl, websiteUrl)
       : null;
 
-    if (
-      typeof body.successUrl === 'string' &&
-      body.successUrl.length > 0 &&
-      requestedSuccessUrl === null
-    ) {
+    const hasRequestedSuccessUrl =
+      typeof body.successUrl === 'string' && body.successUrl.length > 0;
+
+    if (hasRequestedSuccessUrl && requestedSuccessUrl === null) {
       return NextResponse.json(
         { error: 'Invalid successUrl' },
         { status: 400 },
