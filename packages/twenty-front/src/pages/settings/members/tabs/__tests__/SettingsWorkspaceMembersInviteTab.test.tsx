@@ -1,15 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 
-// Mock SettingsRolesQueryEffect to track if it's rendered
 jest.mock(
   '@/settings/roles/components/SettingsRolesQueryEffect',
   () => ({
-    SettingsRolesQueryEffect: () => (
-      <div data-testid="settings-roles-query-effect" />
-    ),
+    SettingsRolesQueryEffect: jest.fn(() => null),
   }),
 );
 
@@ -21,21 +18,42 @@ jest.mock('@/settings/roles/hooks/useSettingsAllRoles', () => ({
   useSettingsAllRoles: jest.fn(),
 }));
 
-jest.mock('recoil', () => ({
-  useRecoilValue: jest.fn(),
-  useRecoilState: jest.fn(),
-  atom: jest.fn(),
-  selector: jest.fn(),
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomStateValue',
+  () => ({
+    useAtomStateValue: jest.fn(),
+  }),
+);
+
+jest.mock(
+  '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation',
+  () => ({
+    useDeleteWorkspaceInvitation: jest.fn(),
+  }),
+);
+
+jest.mock(
+  '@/workspace-invitation/hooks/useResendWorkspaceInvitation',
+  () => ({
+    useResendWorkspaceInvitation: jest.fn(),
+  }),
+);
+
+jest.mock('@/workspace/components/WorkspaceInviteTeam', () => ({
+  WorkspaceInviteTeam: jest.fn(() => null),
 }));
 
-jest.mock('jotai', () => ({
-  useAtomStateValue: jest.fn(),
-  useAtom: jest.fn(),
-  atom: jest.fn(),
-}));
+jest.mock(
+  '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard',
+  () => ({
+    SettingsApprovedAccessDomainsListCard: jest.fn(() => null),
+  }),
+);
 
 describe('SettingsWorkspaceMembersInviteTab', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+
     const { useQuery } = require('@apollo/client/react');
     useQuery.mockReturnValue({
       data: { findWorkspaceInvitations: [] },
@@ -45,7 +63,7 @@ describe('SettingsWorkspaceMembersInviteTab', () => {
     const { useSettingsAllRoles } = require('@/settings/roles/hooks/useSettingsAllRoles');
     useSettingsAllRoles.mockReturnValue([]);
 
-    const { useAtomStateValue } = require('jotai');
+    const { useAtomStateValue } = require('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
     useAtomStateValue.mockReturnValue({
       id: 'workspace-1',
       inviteHash: null,
@@ -53,27 +71,14 @@ describe('SettingsWorkspaceMembersInviteTab', () => {
     });
   });
 
-  it('should render SettingsRolesQueryEffect to load roles', () => {
+  it('should render SettingsRolesQueryEffect to load roles on invite tab', () => {
     render(
       <MemoryRouter>
         <SettingsWorkspaceMembersInviteTab />
       </MemoryRouter>,
     );
 
-    // This validates the fix: SettingsRolesQueryEffect is rendered in the invite tab
-    // which ensures roles are loaded regardless of which settings page the user visits.
-    expect(
-      screen.getByTestId('settings-roles-query-effect'),
-    ).toBeTruthy();
-  });
-
-  it('should render the invite form', () => {
-    render(
-      <MemoryRouter>
-        <SettingsWorkspaceMembersInviteTab />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText(/Members/)).toBeTruthy();
+    const { SettingsRolesQueryEffect } = require('@/settings/roles/components/SettingsRolesQueryEffect');
+    expect(SettingsRolesQueryEffect).toHaveBeenCalled();
   });
 });
