@@ -454,7 +454,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
           ],
       });
 
-    const centralizedErrors = perTypeExistenceResult.errors;
+    // Both centralized checks (UUID well-formedness and per-type existence)
+    // must be considered together — otherwise a malformed UUID would silently
+    // pass creation when no entity-collision exists. See review feedback on
+    // PR #23327.
+    const centralizedErrors = [
+      ...uuidValidationResult,
+      ...perTypeExistenceResult.errors,
+    ];
 
     const result = await this.validateFlatEntityCreation(args);
 
@@ -475,7 +482,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         flatEntityMinimalInformation: {
           universalIdentifier: args.flatEntityToValidate.universalIdentifier,
         } as Partial<MetadataFlatEntity<T>>,
-        errors: [...uuidValidationResult, ...centralizedErrors],
+        errors: [...uuidValidationResult, ...perTypeExistenceResult.errors],
         metadataName: this.metadataName,
         type: 'create',
         existingEntityConflictContext:

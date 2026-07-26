@@ -445,6 +445,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   viewFieldGroup: {
+    applicationUniversalIdentifier: {
+      universalProperty: 'applicationUniversalIdentifier',
+      toCompare: true,
+      toStringify: false,
+    },
     name: {
       toStringify: false,
       universalProperty: undefined,
@@ -497,6 +502,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   viewField: {
     isSystemSideEffect: {
+      applicationUniversalIdentifier: {
+        universalProperty: 'applicationUniversalIdentifier',
+        toCompare: true,
+        toStringify: false,
+      },
+
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
@@ -742,6 +753,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   viewFilter: {
+    applicationUniversalIdentifier: {
+      universalProperty: 'applicationUniversalIdentifier',
+      toCompare: true,
+      toStringify: false,
+    },
     viewId: {
       toCompare: true,
       toStringify: false,
@@ -1590,6 +1606,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   viewSort: {
+    applicationUniversalIdentifier: {
+      universalProperty: 'applicationUniversalIdentifier',
+      toCompare: true,
+      toStringify: false,
+    },
     direction: {
       toCompare: true,
       toStringify: false,
