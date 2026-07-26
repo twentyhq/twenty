@@ -109,6 +109,13 @@ jobs:
         with:
           context: .
           file: packages/twenty-docker/twenty/Dockerfile
+          # Without an explicit target, Buildx builds the last stage, which is
+          # twenty-app-dev: an all-in-one image with Postgres and Redis inside
+          # it. Its entrypoint initialises its own embedded database and exits
+          # non-zero when that database has no workspace, so the server never
+          # starts against an external one. `twenty` is the backend + frontend
+          # image these deployments actually run.
+          target: twenty
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ needs.prepare.outputs.image }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ steps.platform.outputs.pair }}
