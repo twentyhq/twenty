@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  escapeForIlike,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { ILike, In, IsNull, QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
@@ -75,7 +79,7 @@ export class MessageSuppressionService {
             ? { unsubscribeTopicId }
             : {}),
           ...(isNonEmptyString(searchTerm)
-            ? { emailAddress: ILike(`%${searchTerm}%`) }
+            ? { emailAddress: ILike(`%${escapeForIlike(searchTerm)}%`) }
             : {}),
         },
         order: { createdAt: 'DESC' },

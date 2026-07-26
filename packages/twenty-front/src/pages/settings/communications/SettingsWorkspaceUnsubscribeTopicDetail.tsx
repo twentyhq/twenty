@@ -10,6 +10,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useDeleteUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useDeleteUnsubscribeTopic';
 import { useUpdateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useUpdateUnsubscribeTopic';
+import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -104,7 +105,13 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteUnsubscribeTopic(unsubscribeTopic.id);
-      navigateSettings(SettingsPath.Unsubscribe);
+      navigateSettings(
+        SettingsPath.Unsubscribe,
+        undefined,
+        undefined,
+        undefined,
+        SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
+      );
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to delete unsubscribe topic.`,
@@ -128,7 +135,12 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         },
         {
           children: t`Unsubscribe`,
-          href: getSettingsPath(SettingsPath.Unsubscribe),
+          href: getSettingsPath(
+            SettingsPath.Unsubscribe,
+            undefined,
+            undefined,
+            SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
+          ),
         },
         { children: topicName },
       ]}

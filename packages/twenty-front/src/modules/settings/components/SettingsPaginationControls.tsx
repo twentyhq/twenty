@@ -42,9 +42,7 @@ export const SettingsPaginationControls = ({
         disabled={page === 0 || isLoading}
         onClick={() => onPageChange(page - 1)}
       />
-      <div>
-        {t`Page`} {page + 1} {t`of`} {pageCount}
-      </div>
+      <div>{t`Page ${page + 1} of ${pageCount}`}</div>
       <Button
         title={t`Next`}
         variant="secondary"
