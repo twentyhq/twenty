@@ -16,9 +16,7 @@ export const defineSettingsFrontComponent: DefineEntity<
   }
 
   if (typeof config.component !== 'function') {
-    errors.push(
-      'Settings front component component must be a React component',
-    );
+    errors.push('Settings front component component must be a React component');
   }
 
   return createValidationResult({
