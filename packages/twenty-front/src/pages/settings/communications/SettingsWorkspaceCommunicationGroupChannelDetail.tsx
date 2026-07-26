@@ -74,7 +74,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
-  const { updateEmailGroupChannel } = useUpdateEmailGroupChannel();
+  const { updateEmailGroupChannel, loading: updatingDisplayName } =
+    useUpdateEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
 
   const [displayNameDraft, setDisplayNameDraft] = useState<string | null>(null);
@@ -168,6 +169,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           instanceId="email-group-display-name"
           value={displayNameDraft ?? displayName}
           placeholder={t`Sender name`}
+          disabled={updatingDisplayName}
           onChange={setDisplayNameDraft}
           onEnter={handleDisplayNameSave}
           onTab={handleDisplayNameSave}

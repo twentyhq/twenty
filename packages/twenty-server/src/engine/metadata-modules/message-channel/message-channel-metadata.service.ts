@@ -371,6 +371,11 @@ export class MessageChannelMetadataService {
       );
     }
 
+    // An omitted displayName leaves the current one untouched; an explicit null clears it
+    if (displayName === undefined) {
+      return messageChannel;
+    }
+
     const trimmedDisplayName = displayName?.trim();
 
     return this.update({
