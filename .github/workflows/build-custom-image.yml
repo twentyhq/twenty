@@ -1,9 +1,14 @@
 name: Build and push custom image
 
 # Builds the Twenty image (frontend + backend) from this fork and publishes
-# it to GitHub Container Registry (GHCR). The VM then just pulls this image.
-# Builds run on GitHub's large runners, avoiding the ~8GB frontend build OOM
-# you'd hit on a small VM, and produce a native linux/amd64 image.
+# it to GitHub Container Registry (GHCR). Hosts then just pull this image.
+# Builds run on GitHub's runners, avoiding the ~8GB frontend build OOM you'd
+# hit on a small VM.
+#
+# Both linux/amd64 and linux/arm64 are published. amd64 is what a cloud VM
+# runs; arm64 is what the Apple Silicon staging host runs. Each platform builds
+# natively on its own runner and the two are merged into one manifest list, so
+# neither pays for QEMU emulation. arm64 runners are free for public repos.
 #
 # Pull requests build only when they carry the `needs-staging` label, so
 # opening a PR costs nothing until someone actually wants it on staging.
@@ -16,14 +21,15 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  build:
+  prepare:
     if: >-
       github.event_name != 'pull_request' ||
       contains(github.event.pull_request.labels.*.name, 'needs-staging')
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      image: ${{ steps.target.outputs.image }}
+      sha: ${{ steps.target.outputs.sha }}
+      tags: ${{ steps.tags.outputs.list }}
     steps:
       - name: Resolve target commit and image name
         id: target
@@ -39,21 +45,6 @@ jobs:
           # On pull_request, github.sha is the ephemeral merge commit. Nobody
           # can deploy that commit, so tag the branch head instead.
           echo "sha=${PR_HEAD_SHA:-$PUSH_SHA}" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.target.outputs.sha }}
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Compute tags
         id: tags
@@ -73,12 +64,128 @@ jobs:
             echo "TAGS"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Name this platform
+        id: platform
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: echo "pair=${PLATFORM//\//-}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Each platform pushes an untagged image and reports its digest. Tags go
+      # on the manifest list in the merge job, so a half-finished matrix never
+      # leaves a tag pointing at a single architecture.
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
           file: packages/twenty-docker/twenty/Dockerfile
-          push: true
-          tags: ${{ steps.tags.outputs.list }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,name=${{ needs.prepare.outputs.image }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ steps.platform.outputs.pair }}
+          cache-to: type=gha,mode=max,scope=${{ steps.platform.outputs.pair }}
+
+      - name: Export digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p /tmp/digests
+          touch "/tmp/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ steps.platform.outputs.pair }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create the manifest list
+        working-directory: /tmp/digests
+        env:
+          IMAGE: ${{ needs.prepare.outputs.image }}
+          TAGS: ${{ needs.prepare.outputs.tags }}
+        run: |
+          tag_args=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            tag_args+=(--tag "$tag")
+          done <<<"$TAGS"
+
+          source_args=()
+          for digest in *; do
+            source_args+=("${IMAGE}@sha256:${digest}")
+          done
+
+          docker buildx imagetools create "${tag_args[@]}" "${source_args[@]}"
+
+      # A tag that resolves on only one architecture is the failure this whole
+      # job structure exists to prevent, so it is checked rather than assumed.
+      - name: Verify both platforms are published
+        env:
+          IMAGE: ${{ needs.prepare.outputs.image }}
+          SHA: ${{ needs.prepare.outputs.sha }}
+        run: |
+          platforms="$(
+            docker buildx imagetools inspect --raw "${IMAGE}:${SHA}" |
+              jq -r '.manifests[].platform | "\(.os)/\(.architecture)"' |
+              grep -v unknown | sort -u
+          )"
+          echo "$platforms"
+          for required in linux/amd64 linux/arm64; do
+            printf '%s\n' "$platforms" | grep -qx "$required" ||
+              { echo "::error::${IMAGE}:${SHA} is missing $required"; exit 1; }
+          done
