@@ -18,6 +18,13 @@ export type MessagingOngoingStaleJobData = {
   workspaceId: string;
 };
 
+export const MESSAGING_ONGOING_STALE_SYNC_STAGES: MessageChannelSyncStage[] = [
+  MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+  MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+  MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+  MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+];
+
 @Processor({
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
@@ -41,12 +48,7 @@ export class MessagingOngoingStaleJob {
       async () => {
         const messageChannels = await this.messageChannelRepository.find({
           where: {
-            syncStage: In([
-              MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-              MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-              MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-              MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-            ]),
+            syncStage: In(MESSAGING_ONGOING_STALE_SYNC_STAGES),
             workspaceId,
           },
         });

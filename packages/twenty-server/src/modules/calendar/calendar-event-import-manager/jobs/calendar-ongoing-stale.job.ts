@@ -17,6 +17,13 @@ export type CalendarOngoingStaleJobData = {
   workspaceId: string;
 };
 
+export const CALENDAR_ONGOING_STALE_SYNC_STAGES: CalendarChannelSyncStage[] = [
+  CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
+  CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
+  CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+  CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+];
+
 @Processor({
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
@@ -40,12 +47,7 @@ export class CalendarOngoingStaleJob {
       async () => {
         const calendarChannels = await this.calendarChannelRepository.find({
           where: {
-            syncStage: In([
-              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
-              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-            ]),
+            syncStage: In(CALENDAR_ONGOING_STALE_SYNC_STAGES),
             workspaceId,
           },
         });
