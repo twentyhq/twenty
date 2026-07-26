@@ -3,7 +3,18 @@ const axios = require('axios');
 const { z } = require('zod');
 const app = express();
 
+const authorizedRecordingIds = new Set();
+
 require('dotenv').config();
+
+// CSRF protection: only allow requests from localhost origins
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && !origin.startsWith('http://localhost')) {
+        return res.status(403).json({ status: 'error', message: 'Forbidden' });
+    }
+    next();
+});
 
 // API configuration for Recall.ai
 const RECALLAI_API_URL = process.env.RECALLAI_API_URL || 'https://api.recall.ai';
@@ -44,6 +55,10 @@ app.get('/start-recording', async (req, res) => {
             timeout: 9000,
         });
 
+        if (response.data.recording_id) {
+            authorizedRecordingIds.add(response.data.recording_id);
+        }
+
         res.json({
             status: 'success',
             upload_token: response.data.upload_token,
@@ -68,6 +83,10 @@ app.get('/recording/:recordingId', async (req, res) => {
     }
 
     const validatedRecordingId = parseResult.data;
+
+    if (!authorizedRecordingIds.has(validatedRecordingId)) {
+        return res.status(403).json({ status: 'error', message: 'Access denied' });
+    }
 
     try {
         const response = await axios.get(
