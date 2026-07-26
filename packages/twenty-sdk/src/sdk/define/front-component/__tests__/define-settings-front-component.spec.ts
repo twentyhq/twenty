@@ -40,9 +40,9 @@ describe('defineSettingsFrontComponent', () => {
     const result = defineSettingsFrontComponent(config as any);
 
     expect(result.success).toBe(false);
-    expect(result.errors).toContain(
+    expect(result.errors).toEqual([
       'Settings front component must have a component',
-    );
+    ]);
   });
 
   it('should return error when component is not a function', () => {

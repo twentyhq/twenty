@@ -13,9 +13,7 @@ export const defineSettingsFrontComponent: DefineEntity<
 
   if (!config.component) {
     errors.push('Settings front component must have a component');
-  }
-
-  if (typeof config.component !== 'function') {
+  } else if (typeof config.component !== 'function') {
     errors.push('Settings front component component must be a React component');
   }
 
