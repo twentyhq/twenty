@@ -11,7 +11,7 @@
   "dependencies": {
     "@lingui/core": "^5.9.5",
     "@lingui/react": "^5.9.5",
-    "@react-email/components": "^0.5.3",
+    "@react-email/components": "^1.0.12",
     "twenty-shared": "workspace:*"
   },
   "peerDependencies": {

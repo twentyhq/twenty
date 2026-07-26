@@ -4,12 +4,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addDays, differenceInCalendarDays } from 'date-fns';
 import {
   BillingSubscriptionRenewingEmail,
   BillingTrialConvertingEmail,
   BillingTrialEndingEmail,
+  render,
 } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';

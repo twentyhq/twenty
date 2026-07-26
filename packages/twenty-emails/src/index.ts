@@ -1,3 +1,4 @@
+export { render, toPlainText } from '@react-email/components';
 export type { JSONContent } from '@tiptap/core';
 export * from './emails/billing-subscription-renewing.email';
 export * from './emails/billing-trial-converting.email';

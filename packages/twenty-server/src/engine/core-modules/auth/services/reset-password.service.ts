@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { PasswordResetLinkEmail } from 'twenty-emails';
+import { PasswordResetLinkEmail, render } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import {

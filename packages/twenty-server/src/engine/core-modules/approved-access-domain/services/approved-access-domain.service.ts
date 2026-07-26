@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
-import { SendApprovedAccessDomainValidation } from 'twenty-emails';
+import { render, SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { FileFolder, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';

@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
+  render,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';

@@ -22,7 +22,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 import { ResetPasswordService } from './reset-password.service';
 
-jest.mock('@react-email/render', () => ({
+// render pulls in a dynamic import that jest's CJS runtime rejects, so stub it
+// while keeping the real email templates.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
   render: jest.fn().mockImplementation(async (_, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';

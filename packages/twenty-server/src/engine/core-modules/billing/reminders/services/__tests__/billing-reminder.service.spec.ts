@@ -13,13 +13,11 @@ import {
 } from 'src/engine/core-modules/billing/reminders/constants/billing-reminder-sent-keys.constant';
 import { BillingReminderService } from 'src/engine/core-modules/billing/reminders/services/billing-reminder.service';
 
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockResolvedValue('<html></html>'),
-}));
 jest.mock('twenty-emails', () => ({
   BillingTrialEndingEmail: jest.fn(),
   BillingTrialConvertingEmail: jest.fn(),
   BillingSubscriptionRenewingEmail: jest.fn(),
+  render: jest.fn().mockResolvedValue('<html></html>'),
 }));
 
 const CONFIG: Record<string, unknown> = {

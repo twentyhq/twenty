@@ -2,9 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ServerAdminAccessChangedEmail } from 'twenty-emails';
+import { render, ServerAdminAccessChangedEmail } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
