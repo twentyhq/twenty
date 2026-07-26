@@ -753,7 +753,7 @@ export interface PageLayoutWidget {
     __typename: 'PageLayoutWidget'
 }
 
-export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELD' | 'FIELDS' | 'GRAPH' | 'STANDALONE_RICH_TEXT' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'MESSAGE_CAMPAIGN'
+export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELD' | 'FIELDS' | 'GRAPH' | 'STANDALONE_RICH_TEXT' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS'
 
 export type PageLayoutWidgetPosition = (PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition) & { __isUnion?: true }
 
@@ -779,7 +779,7 @@ export interface PageLayoutWidgetCanvasPosition {
     __typename: 'PageLayoutWidgetCanvasPosition'
 }
 
-export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
+export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export interface AggregateChartConfiguration {
     configurationType: WidgetConfigurationType
@@ -798,7 +798,7 @@ export interface AggregateChartConfiguration {
     __typename: 'AggregateChartConfiguration'
 }
 
-export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'MESSAGE_CAMPAIGN'
+export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS'
 
 
 /** Format used to display the chart value */
@@ -942,9 +942,14 @@ export interface EmailThreadConfiguration {
     __typename: 'EmailThreadConfiguration'
 }
 
-export interface MessageCampaignConfiguration {
+export interface MessageCampaignBodyConfiguration {
     configurationType: WidgetConfigurationType
-    __typename: 'MessageCampaignConfiguration'
+    __typename: 'MessageCampaignBodyConfiguration'
+}
+
+export interface MessageCampaignDetailsConfiguration {
+    configurationType: WidgetConfigurationType
+    __typename: 'MessageCampaignDetailsConfiguration'
 }
 
 export interface FieldConfiguration {
@@ -3916,7 +3921,8 @@ export interface WidgetConfigurationGenqlSelection{
     on_FrontComponentConfiguration?:FrontComponentConfigurationGenqlSelection,
     on_EmailsConfiguration?:EmailsConfigurationGenqlSelection,
     on_EmailThreadConfiguration?:EmailThreadConfigurationGenqlSelection,
-    on_MessageCampaignConfiguration?:MessageCampaignConfigurationGenqlSelection,
+    on_MessageCampaignBodyConfiguration?:MessageCampaignBodyConfigurationGenqlSelection,
+    on_MessageCampaignDetailsConfiguration?:MessageCampaignDetailsConfigurationGenqlSelection,
     on_FieldConfiguration?:FieldConfigurationGenqlSelection,
     on_FieldRichTextConfiguration?:FieldRichTextConfigurationGenqlSelection,
     on_FieldsConfiguration?:FieldsConfigurationGenqlSelection,
@@ -4077,7 +4083,13 @@ export interface EmailThreadConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MessageCampaignConfigurationGenqlSelection{
+export interface MessageCampaignBodyConfigurationGenqlSelection{
+    configurationType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageCampaignDetailsConfigurationGenqlSelection{
     configurationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7173,7 +7185,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','MessageCampaignConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
+    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
     export const isWidgetConfiguration = (obj?: { __typename?: any } | null): obj is WidgetConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
@@ -7261,10 +7273,18 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const MessageCampaignConfiguration_possibleTypes: string[] = ['MessageCampaignConfiguration']
-    export const isMessageCampaignConfiguration = (obj?: { __typename?: any } | null): obj is MessageCampaignConfiguration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignConfiguration"')
-      return MessageCampaignConfiguration_possibleTypes.includes(obj.__typename)
+    const MessageCampaignBodyConfiguration_possibleTypes: string[] = ['MessageCampaignBodyConfiguration']
+    export const isMessageCampaignBodyConfiguration = (obj?: { __typename?: any } | null): obj is MessageCampaignBodyConfiguration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignBodyConfiguration"')
+      return MessageCampaignBodyConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageCampaignDetailsConfiguration_possibleTypes: string[] = ['MessageCampaignDetailsConfiguration']
+    export const isMessageCampaignDetailsConfiguration = (obj?: { __typename?: any } | null): obj is MessageCampaignDetailsConfiguration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignDetailsConfiguration"')
+      return MessageCampaignDetailsConfiguration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9203,7 +9223,8 @@ export const enumWidgetType = {
    FRONT_COMPONENT: 'FRONT_COMPONENT' as const,
    RECORD_TABLE: 'RECORD_TABLE' as const,
    EMAIL_THREAD: 'EMAIL_THREAD' as const,
-   MESSAGE_CAMPAIGN: 'MESSAGE_CAMPAIGN' as const
+   MESSAGE_CAMPAIGN_BODY: 'MESSAGE_CAMPAIGN_BODY' as const,
+   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const
 }
 
 export const enumPageLayoutTabLayoutMode = {
@@ -9235,7 +9256,8 @@ export const enumWidgetConfigurationType = {
    FRONT_COMPONENT: 'FRONT_COMPONENT' as const,
    RECORD_TABLE: 'RECORD_TABLE' as const,
    EMAIL_THREAD: 'EMAIL_THREAD' as const,
-   MESSAGE_CAMPAIGN: 'MESSAGE_CAMPAIGN' as const
+   MESSAGE_CAMPAIGN_BODY: 'MESSAGE_CAMPAIGN_BODY' as const,
+   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const
 }
 
 export const enumChartNumberFormat = {

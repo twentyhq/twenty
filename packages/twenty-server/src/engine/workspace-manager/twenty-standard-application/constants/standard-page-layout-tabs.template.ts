@@ -222,13 +222,13 @@ export const WIDGET_PROPS = {
   },
   messageCampaign: {
     title: 'Email',
-    type: WidgetType.MESSAGE_CAMPAIGN,
+    type: WidgetType.MESSAGE_CAMPAIGN_BODY,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   messageCampaignDetails: {
     title: 'Details',
-    type: WidgetType.MESSAGE_CAMPAIGN,
+    type: WidgetType.MESSAGE_CAMPAIGN_DETAILS,
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },

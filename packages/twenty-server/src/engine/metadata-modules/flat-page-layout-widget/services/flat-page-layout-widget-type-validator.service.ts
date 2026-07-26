@@ -95,8 +95,11 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       EMAIL_THREAD: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.EMAIL_THREAD,
       ),
-      MESSAGE_CAMPAIGN: validateSimpleRecordPageWidgetForCreation(
-        WidgetConfigurationType.MESSAGE_CAMPAIGN,
+      MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+      ),
+      MESSAGE_CAMPAIGN_DETAILS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
       ),
     };
 
@@ -152,8 +155,11 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       EMAIL_THREAD: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.EMAIL_THREAD,
       ),
-      MESSAGE_CAMPAIGN: validateSimpleRecordPageWidgetForUpdate(
-        WidgetConfigurationType.MESSAGE_CAMPAIGN,
+      MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+      ),
+      MESSAGE_CAMPAIGN_DETAILS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
       ),
     };
 
