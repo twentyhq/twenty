@@ -123,7 +123,13 @@ report() {
 
 write_image "$target_image"
 
-if bash "$REPO_ROOT/deploy/staging.sh" up &&
+# Order matters. A server image newer than the database cannot pass its
+# healthcheck, so containers start without the health gate, the schema is
+# brought forward, and only then is health required.
+if bash "$REPO_ROOT/deploy/staging.sh" up --no-wait &&
+  bash "$REPO_ROOT/deploy/staging.sh" migrate &&
+  bash "$REPO_ROOT/deploy/staging.sh" wait &&
+  bash "$REPO_ROOT/deploy/staging.sh" up &&
   bash "$REPO_ROOT/deploy/staging.sh" test; then
   echo "$target_sha" >"$STATE_FILE"
   log "staging is now running ${target_sha}"
