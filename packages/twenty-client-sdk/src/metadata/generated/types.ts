@@ -7084,12 +7084,6 @@ export default {
             "unsubscribeTopicId": [
                 4
             ],
-            "searchTerm": [
-                1
-            ],
-            "unsubscribeTopicId": [
-                4
-            ],
             "limit": [
                 30
             ],
