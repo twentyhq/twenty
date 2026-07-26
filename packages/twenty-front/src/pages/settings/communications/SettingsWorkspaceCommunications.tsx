@@ -1,11 +1,8 @@
-import { useApolloClient, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
-import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -24,14 +21,15 @@ import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
 
-const StyledCardLink = styled.a`
-  display: block;
-  min-width: 0;
-  text-decoration: none;
+const StyledCardsColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsWorkspaceCommunications = () => {
@@ -39,20 +37,11 @@ export const SettingsWorkspaceCommunications = () => {
 
   const { t } = useLingui();
 
+  const navigateSettings = useNavigateSettings();
+
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
-
-  const apolloClient = useApolloClient();
-
-  const { data: unsubscribePreviewData } = useQuery<{
-    unsubscribePagePreviewUrl: string;
-  }>(GET_UNSUBSCRIBE_PAGE_PREVIEW_URL, {
-    client: apolloClient,
-    skip: !isEmailGroupFeatureEnabled,
-  });
-
-  const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;
 
   if (!isEmailGroupFeatureEnabled) {
     return null;
@@ -99,17 +88,12 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section>
         <SettingsWorkspaceEmailGroupSection />
-        <SettingsWorkspaceUnsubscribeTopicSection />
         <Section>
           <H2Title
             title={t`Unsubscribe`}
-            description={t`The page your users will get redirected to to unsubscribe from your emails`}
+            description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
           />
-          <StyledCardLink
-            href={unsubscribePageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <StyledCardsColumn>
             <SettingsCard
               Icon={
                 <IconMailX
@@ -117,9 +101,10 @@ export const SettingsWorkspaceCommunications = () => {
                   stroke={theme.icon.stroke.md}
                 />
               }
-              title={t`See unsubscribe page`}
+              title={t`Manage unsubscribe`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
             />
-          </StyledCardLink>
+          </StyledCardsColumn>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

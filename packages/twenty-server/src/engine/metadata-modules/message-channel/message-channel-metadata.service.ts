@@ -213,10 +213,12 @@ export class MessageChannelMetadataService {
 
   async createEmailGroupChannel({
     handle,
+    displayName,
     userWorkspaceId,
     workspaceId,
   }: {
     handle: string;
+    displayName?: string;
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CreateEmailGroupChannelOutput> {
@@ -268,9 +270,14 @@ export class MessageChannelMetadataService {
       visibility: 'workspace',
     });
 
+    const trimmedDisplayName = displayName?.trim();
+
     const messageChannel = await this.create({
       workspaceId,
       handle: forwardingAddress,
+      displayName: isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null,
       connectedAccountId: connectedAccount.id,
       type: MessageChannelType.EMAIL_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -338,6 +345,48 @@ export class MessageChannelMetadataService {
     );
 
     return messageChannel;
+  }
+
+  async updateEmailGroupChannel({
+    id,
+    displayName,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    displayName?: string | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyOwnership({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    // An omitted displayName leaves the current one untouched; an explicit null clears it
+    if (displayName === undefined) {
+      return messageChannel;
+    }
+
+    const trimmedDisplayName = displayName?.trim();
+
+    return this.update({
+      id,
+      workspaceId,
+      data: {
+        displayName: isNonEmptyString(trimmedDisplayName)
+          ? trimmedDisplayName
+          : null,
+      },
+    });
   }
 
   async deleteEmailGroupChannel({
