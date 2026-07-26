@@ -1,6 +1,5 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { useStore } from 'jotai';
-import { type ComponentProps, useCallback } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -9,18 +8,16 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { moveWidgetToTabInDraft } from '@/page-layout/utils/moveWidgetToTabInDraft';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
+import { reorderTabInDraft } from '@/page-layout/utils/reorderTabInDraft';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-type Provider = typeof DragDropProvider<PageLayoutWidgetDndData>;
-type DragStartEvent = Parameters<
-  NonNullable<ComponentProps<Provider>['onDragStart']>
->[0];
-type DragEndEvent = Parameters<
-  NonNullable<ComponentProps<Provider>['onDragEnd']>
->[0];
+type DragStartEvent = DragDropProviderDragStartEvent<PageLayoutWidgetDndData>;
+type DragEndEvent = DragDropProviderDragEndEvent<PageLayoutWidgetDndData>;
 
 export const usePageLayoutWidgetDragAndDrop = (
   pageLayoutIdFromProps?: string,
@@ -126,6 +123,31 @@ export const usePageLayoutWidgetDragAndDrop = (
                   destinationTabId,
                   destinationIndex,
                 }),
+          );
+        }
+      }
+
+      if (
+        !event.canceled &&
+        sourceData?.type === 'tab' &&
+        isDefined(targetData)
+      ) {
+        const draggedTabId = sourceData.tabId;
+
+        // The drop line renders before the hovered tab, so tab targets insert
+        // the dragged tab before them; end zones and the more button append.
+        const beforeTabId =
+          targetData.type === 'tab'
+            ? targetData.tabId
+            : targetData.type === 'tab-list-end'
+              ? targetData.beforeTabId
+              : targetData.type === 'tab-more-button'
+                ? null
+                : undefined;
+
+        if (beforeTabId !== undefined) {
+          store.set(pageLayoutDraftState, (prev) =>
+            reorderTabInDraft(prev, { tabId: draggedTabId, beforeTabId }),
           );
         }
       }

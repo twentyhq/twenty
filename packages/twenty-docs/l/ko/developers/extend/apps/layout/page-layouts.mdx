@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -53,7 +53,7 @@ export default definePageLayout({
 
 * `type`은 일반적으로 특정 객체의 상세 보기를 사용자 지정하기 위해 'RECORD_PAGE'입니다.
 * `objectUniversalIdentifier`는 이 레이아웃이 적용되는 객체를 지정합니다.
-* 각 `tab`은 `title`, `position`, `layoutMode`(`CANVAS`는 자유 형식 레이아웃)를 통해 페이지의 섹션을 정의합니다.
+* 각 `tab`은 `title`, `position`, `layoutMode`(`VERTICAL_LIST`는 레코드 페이지용, `GRID`는 대시보드용)를 통해 페이지의 섹션을 정의합니다. 단일 위젯이 있는 탭은 자동으로 전체 너비로 렌더링되며, 여러 위젯이 있으면 카드 형태로 위에서 아래로 쌓입니다.
 * 탭 내부의 각 `widget`은 [front component](/l/ko/developers/extend/apps/layout/front-components), 관계 목록 또는 기타 기본 제공 위젯 타입을 렌더링할 수 있습니다.
 * 탭의 `position`은 탭의 순서를 제어합니다. 값을 더 높게 설정하면(예: 50) 기본 탭 뒤에 사용자 지정 탭을 배치할 수 있습니다.
 
@@ -77,7 +77,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

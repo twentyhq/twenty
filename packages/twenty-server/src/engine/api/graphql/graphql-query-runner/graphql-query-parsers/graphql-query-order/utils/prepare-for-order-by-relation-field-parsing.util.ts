@@ -9,6 +9,7 @@ import {
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -106,7 +107,7 @@ export const prepareForOrderByRelationFieldParsing = ({
     }
   }
 
-  const associatedGroupByField = groupByFields.find((groupByField) => {
+  const exactGroupByFieldMatch = groupByFields.find((groupByField) => {
     if (!isGroupByRelationField(groupByField)) {
       return false;
     }
@@ -126,6 +127,23 @@ export const prepareForOrderByRelationFieldParsing = ({
     return true;
   }) as GroupByRelationField | undefined;
 
+  const canOrderByFunctionallyDependentNestedField =
+    !isMorphOrRelationFlatFieldMetadata(nestedFieldMetadata);
+
+  const groupByFieldOnTargetPrimaryKey =
+    !isDefined(exactGroupByFieldMatch) &&
+    canOrderByFunctionallyDependentNestedField
+      ? (groupByFields.find(
+          (groupByField) =>
+            isGroupByRelationField(groupByField) &&
+            groupByField.fieldMetadata.id === fieldMetadata.id &&
+            groupByField.nestedFieldMetadata.name === 'id',
+        ) as GroupByRelationField | undefined)
+      : undefined;
+
+  const associatedGroupByField =
+    exactGroupByFieldMatch ?? groupByFieldOnTargetPrimaryKey;
+
   if (!isDefined(associatedGroupByField)) {
     throw new UserInputError(
       `Cannot order by a relation field that is not in groupBy criteria: ${relationFieldName}.${nestedFieldName}`,
@@ -136,5 +154,6 @@ export const prepareForOrderByRelationFieldParsing = ({
     associatedGroupByField,
     nestedFieldMetadata,
     nestedFieldOrderByValue,
+    isMatchedOnTargetPrimaryKeyGroupBy: !isDefined(exactGroupByFieldMatch),
   };
 };

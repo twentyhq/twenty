@@ -19,6 +19,15 @@ describe('getLogicFunctionTriggerLabel', () => {
     ).toBe('Pre-install');
   });
 
+  it('returns Uninstall when the function matches the uninstall identifier', () => {
+    expect(
+      getLogicFunctionTriggerLabel(
+        { universalIdentifier: 'uid-uninstall' },
+        { uninstallUniversalIdentifier: 'uid-uninstall' },
+      ),
+    ).toBe('Uninstall');
+  });
+
   it('does not match when both identifiers are undefined', () => {
     expect(getLogicFunctionTriggerLabel({}, {})).toBe('');
   });

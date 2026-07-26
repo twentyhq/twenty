@@ -9,7 +9,7 @@ Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta d
 * **Identitate** — identificator universal, nume de afișare, descriere.
 * **Permisiuni** — sub ce rol rulează funcțiile logice și componentele front-end ale acesteia.
 * **Variabile** *(opțional)* — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
-* **Hook-uri de pre-instalare / post-instalare** *(opțional)* — vedeți [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions).
+* **Hook-uri de pre-instalare / post-instalare / dezinstalare** *(opțional)* — vedeți [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -34,7 +34,7 @@ Notițe:
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete.
 * Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
-* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
+* Funcțiile de pre-instalare, post-instalare și dezinstalare sunt detectate automat în timpul construirii manifestului — nu este nevoie să faceți referire la ele în `defineApplication()`.
 * Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 * `serverVariables` sunt configurări și secrete la nivel de instanță (de ex. chei API). Spre deosebire de `applicationVariables`, ele nu declară nicio valoare în manifest — operatorul spațiului de lucru le completează din setările aplicației și sunt injectate în funcțiile de logică doar după ce au fost setate.
 

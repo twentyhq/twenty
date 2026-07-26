@@ -43,6 +43,10 @@ const Pill = styled.button`
     color: ${semanticColor.surface};
   }
 
+  &[data-invalid] {
+    border-color: ${color('error')};
+  }
+
   &:focus-visible {
     outline: 2px solid ${color('blue')};
     outline-offset: 2px;
@@ -51,22 +55,29 @@ const Pill = styled.button`
 
 export function ChipMultiSelect<TValue extends string>({
   ariaLabel,
+  invalid = false,
   onToggle,
   options,
   values,
 }: {
   ariaLabel: string;
+  invalid?: boolean;
   onToggle: (value: TValue) => void;
   options: readonly ChipOption<TValue>[];
   values: readonly TValue[];
 }) {
   return (
-    <PillGroup aria-label={ariaLabel} role="group">
+    <PillGroup
+      aria-invalid={invalid ? true : undefined}
+      aria-label={ariaLabel}
+      role="group"
+    >
       {options.map((option) => {
         const selected = values.includes(option.value);
         return (
           <Pill
             aria-pressed={selected}
+            data-invalid={invalid && !selected ? '' : undefined}
             data-selected={selected ? '' : undefined}
             key={option.value}
             onClick={() => onToggle(option.value)}
