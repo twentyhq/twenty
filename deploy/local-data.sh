@@ -23,6 +23,7 @@ VERIFY_SQL="$REPO_ROOT/deploy/devdata-verify.sql"
 MIRROR_HOST="${TWENTY_DEVDATA_HOST:-spectech-llm}"
 MIRROR_REMOTE_REPO="${TWENTY_DEVDATA_REMOTE_REPO:-~/Projects/twenty}"
 MIRROR_PASSWORD="devmirror"
+MIRROR_TEMP_DIR=""
 
 fail() {
   echo "[local-data] ERROR: $*" >&2
@@ -163,8 +164,12 @@ fetch_mirror() {
     command -v ssh >/dev/null 2>&1 ||
       fail "ssh is required to pull a mirror. Use mirror --from-file instead."
     info "building a fresh mirror on $MIRROR_HOST; this takes a few minutes"
+    # A non-interactive ssh shell gets a minimal PATH that misses Homebrew, so
+    # docker is invisible on the remote. Prepend it rather than using a login
+    # shell, whose profile output would corrupt the dump streaming on stdout.
     ssh "$MIRROR_HOST" \
-      "bash $MIRROR_REMOTE_REPO/deploy/devdata-publish.sh --stdout" \
+      "PATH=/opt/homebrew/bin:/usr/local/bin:\$PATH \
+       bash $MIRROR_REMOTE_REPO/deploy/devdata-publish.sh --stdout" \
       >"$destination"
   fi
 
@@ -173,13 +178,15 @@ fetch_mirror() {
 
 install_mirror() {
   local source_file="$1"
-  local temp_dir
   local dump_file
   local db_container
 
-  temp_dir="$(mktemp -d)"
-  dump_file="$temp_dir/devdata.dump"
-  trap 'rm -rf "$temp_dir"' EXIT
+  # The trap fires after this function returns, so the directory it removes has
+  # to outlive the local scope or cleanup dies on an unbound variable and the
+  # mirror dump survives on disk.
+  MIRROR_TEMP_DIR="$(mktemp -d)"
+  dump_file="$MIRROR_TEMP_DIR/devdata.dump"
+  trap 'rm -rf "${MIRROR_TEMP_DIR:-}"' EXIT
 
   info "stop 'yarn start' before continuing; the database is dropped and rebuilt"
   fetch_mirror "$dump_file" "$source_file"
