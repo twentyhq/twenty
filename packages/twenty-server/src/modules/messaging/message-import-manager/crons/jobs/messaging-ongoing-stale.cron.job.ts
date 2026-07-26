@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, IsNull, LessThan, Or, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -60,24 +60,20 @@ export class MessagingOngoingStaleCronJob {
     const staleBefore = new Date(
       Date.now() - MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT,
     );
-    const staleWorkspaces = await this.messageChannelRepository
-      .createQueryBuilder('messageChannel')
-      .innerJoin('messageChannel.workspace', 'workspace')
-      .select('messageChannel.workspaceId', 'workspaceId')
-      .distinct(true)
-      .where('workspace.activationStatus = :activationStatus', {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      })
-      .andWhere('workspace.deletedAt IS NULL')
-      .andWhere('messageChannel.syncStage IN (:...syncStages)', {
-        syncStages: MESSAGING_ONGOING_STALE_SYNC_STAGES,
-      })
-      .andWhere(
-        '(messageChannel.syncStageStartedAt IS NULL OR messageChannel.syncStageStartedAt < :staleBefore)',
-        { staleBefore },
-      )
-      .getRawMany<{ workspaceId: string }>();
+    const staleChannels = await this.messageChannelRepository.find({
+      select: {
+        workspaceId: true,
+      },
+      where: {
+        syncStage: In(MESSAGING_ONGOING_STALE_SYNC_STAGES),
+        syncStageStartedAt: Or(IsNull(), LessThan(staleBefore)),
+        workspace: {
+          deletedAt: IsNull(),
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        },
+      },
+    });
 
-    return staleWorkspaces.map(({ workspaceId }) => workspaceId);
+    return [...new Set(staleChannels.map(({ workspaceId }) => workspaceId))];
   }
 }

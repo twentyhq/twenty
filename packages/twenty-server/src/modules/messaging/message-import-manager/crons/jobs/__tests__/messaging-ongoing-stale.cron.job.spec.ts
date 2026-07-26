@@ -1,4 +1,4 @@
-import { type Repository } from 'typeorm';
+import { In, IsNull, LessThan, Or, type Repository } from 'typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -15,15 +15,7 @@ import {
 describe('MessagingOngoingStaleCronJob', () => {
   const now = new Date('2026-07-26T12:00:00.000Z');
 
-  let queryBuilder: {
-    innerJoin: jest.Mock;
-    select: jest.Mock;
-    distinct: jest.Mock;
-    where: jest.Mock;
-    andWhere: jest.Mock;
-    getRawMany: jest.Mock;
-  };
-  let messageChannelRepository: { createQueryBuilder: jest.Mock };
+  let messageChannelRepository: { find: jest.Mock };
   let messageQueueService: { add: jest.Mock };
   let job: MessagingOngoingStaleCronJob;
 
@@ -31,16 +23,13 @@ describe('MessagingOngoingStaleCronJob', () => {
     jest.useFakeTimers();
     jest.setSystemTime(now);
 
-    queryBuilder = {
-      innerJoin: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      distinct: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue([{ workspaceId: 'workspace-1' }]),
-    };
     messageChannelRepository = {
-      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
+      find: jest
+        .fn()
+        .mockResolvedValue([
+          { workspaceId: 'workspace-1' },
+          { workspaceId: 'workspace-1' },
+        ]),
     };
     messageQueueService = { add: jest.fn() };
     job = new MessagingOngoingStaleCronJob(
@@ -56,47 +45,28 @@ describe('MessagingOngoingStaleCronJob', () => {
     jest.useRealTimers();
   });
 
-  it('enqueues recovery only for active workspaces with a stale channel', async () => {
+  it('enqueues recovery once per workspace with a stale channel', async () => {
     await job.handle();
 
-    expect(messageChannelRepository.createQueryBuilder).toHaveBeenCalledWith(
-      'messageChannel',
-    );
-    expect(queryBuilder.innerJoin).toHaveBeenCalledWith(
-      'messageChannel.workspace',
-      'workspace',
-    );
-    expect(queryBuilder.select).toHaveBeenCalledWith(
-      'messageChannel.workspaceId',
-      'workspaceId',
-    );
-    expect(queryBuilder.distinct).toHaveBeenCalledWith(true);
-    expect(queryBuilder.where).toHaveBeenCalledWith(
-      'workspace.activationStatus = :activationStatus',
-      {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+    expect(messageChannelRepository.find).toHaveBeenCalledWith({
+      select: {
+        workspaceId: true,
       },
-    );
-    expect(queryBuilder.andWhere).toHaveBeenNthCalledWith(
-      1,
-      'workspace.deletedAt IS NULL',
-    );
-    expect(queryBuilder.andWhere).toHaveBeenNthCalledWith(
-      2,
-      'messageChannel.syncStage IN (:...syncStages)',
-      {
-        syncStages: MESSAGING_ONGOING_STALE_SYNC_STAGES,
-      },
-    );
-    expect(queryBuilder.andWhere).toHaveBeenNthCalledWith(
-      3,
-      '(messageChannel.syncStageStartedAt IS NULL OR messageChannel.syncStageStartedAt < :staleBefore)',
-      {
-        staleBefore: new Date(
-          now.getTime() - MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT,
+      where: {
+        syncStage: In(MESSAGING_ONGOING_STALE_SYNC_STAGES),
+        syncStageStartedAt: Or(
+          IsNull(),
+          LessThan(
+            new Date(now.getTime() - MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT),
+          ),
         ),
+        workspace: {
+          deletedAt: IsNull(),
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        },
       },
-    );
+    });
+    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
     expect(messageQueueService.add).toHaveBeenCalledWith(
       MessagingOngoingStaleJob.name,
       {
