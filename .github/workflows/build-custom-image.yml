@@ -4,21 +4,46 @@ name: Build and push custom image
 # it to GitHub Container Registry (GHCR). The VM then just pulls this image.
 # Builds run on GitHub's large runners, avoiding the ~8GB frontend build OOM
 # you'd hit on a small VM, and produce a native linux/amd64 image.
+#
+# Pull requests build only when they carry the `needs-staging` label, so
+# opening a PR costs nothing until someone actually wants it on staging.
 
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [labeled, synchronize, reopened]
   workflow_dispatch: {}
 
 jobs:
   build:
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'needs-staging')
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
+      - name: Resolve target commit and image name
+        id: target
+        env:
+          OWNER: ${{ github.repository_owner }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_SHA: ${{ github.sha }}
+        run: |
+          # GHCR rejects uppercase repository names and the organisation name
+          # is mixed case, so it has to be folded here.
+          owner_lower="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          echo "image=ghcr.io/${owner_lower}/twenty" >> "$GITHUB_OUTPUT"
+          # On pull_request, github.sha is the ephemeral merge commit. Nobody
+          # can deploy that commit, so tag the branch head instead.
+          echo "sha=${PR_HEAD_SHA:-$PUSH_SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target.outputs.sha }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -30,15 +55,30 @@ jobs:
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Compute tags
+        id: tags
+        env:
+          IMAGE: ${{ steps.target.outputs.image }}
+          SHA: ${{ steps.target.outputs.sha }}
+          IS_MAIN: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          # :latest may only ever move on main. A branch build moving it would
+          # silently change what an unpinned pull resolves to.
+          {
+            echo "list<<TAGS"
+            echo "${IMAGE}:${SHA}"
+            if [ "$IS_MAIN" = "true" ]; then
+              echo "${IMAGE}:latest"
+            fi
+            echo "TAGS"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: packages/twenty-docker/twenty/Dockerfile
           push: true
-          # Tag with both :latest and the commit SHA so you can roll back.
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/twenty:latest
-            ghcr.io/${{ github.repository_owner }}/twenty:${{ github.sha }}
+          tags: ${{ steps.tags.outputs.list }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
