@@ -9,6 +9,7 @@ type SlowDragOptions = {
   stepDelay?: number;
   holdBeforeDrop?: number;
   onHover?: () => Promise<void>;
+  restPosition?: Point;
 };
 
 // dnd-kit only activates a drag past an 8px pointer travel, and a demo needs the
@@ -23,6 +24,7 @@ export const slowDrag = async (
     stepDelay = 25,
     holdBeforeDrop = 1200,
     onHover,
+    restPosition,
   }: SlowDragOptions,
 ) => {
   await page.mouse.move(from.x, from.y);
@@ -40,6 +42,13 @@ export const slowDrag = async (
   await page.waitForTimeout(holdBeforeDrop);
   await onHover?.();
   await page.mouse.up();
+
+  // Park the pointer away from the drop site so the cursor does not sit on top
+  // of the result and nothing stays in a hover state for the next frame.
+  if (restPosition !== undefined) {
+    await page.waitForTimeout(400);
+    await page.mouse.move(restPosition.x, restPosition.y);
+  }
 };
 
 export const centerOf = async (locator: Locator): Promise<Point> => {

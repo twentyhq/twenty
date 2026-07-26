@@ -5,7 +5,12 @@ local seeded instance:
 
 ```
 npx playwright test --config demos/twenty-v2.24.0/playwright.config.ts --project=demo
+npx tsx demos/twenty-v2.24.0/trim-clips.ts
 ```
+
+Playwright records the whole test, including login and navigation. Each spec marks
+the publishable section with `createDemoClip`, and `trim-clips.ts` cuts the raw
+recording down to it, so `videos/` holds only the demo itself.
 
 The demo directory carries its own Playwright config so the shared
 `playwright.config.ts` and the real test suite stay untouched.

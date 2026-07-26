@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import path from 'path';
+import { DEMO_CLIP_HOLD_SECONDS, createDemoClip } from './lib/demoClip';
 import { centerOf, grabPointOf, slowDrag } from './lib/slowDrag';
 
 // Demo for PR #23023: while editing a record page layout, a widget can be
@@ -13,7 +14,9 @@ const GOOGLE_COMPANY_RECORD =
 
 test('Drag the Fields widget from the pinned column into the Files tab', async ({
   page,
-}) => {
+}, testInfo) => {
+  const clip = createDemoClip(testInfo);
+
   await page.goto(GOOGLE_COMPANY_RECORD);
   await expect(page.getByText('Google', { exact: true }).first()).toBeVisible();
 
@@ -33,6 +36,7 @@ test('Drag the Fields widget from the pinned column into the Files tab', async (
   await page.waitForTimeout(1500);
 
   await page.screenshot({ path: path.join(SHOTS, '01-before-drag.png') });
+  clip.begin();
 
   const from = await grabPointOf(fieldsWidgetTitle);
   const to = await centerOf(filesWidgetTitle);
@@ -58,6 +62,12 @@ test('Drag the Fields widget from the pinned column into the Files tab', async (
   await page.waitForTimeout(2000);
   await page.screenshot({ path: path.join(SHOTS, '05-back-on-files-tab.png') });
 
+  clip.end();
+
+  // Nothing must happen on screen during the hold: it exists so the recorder
+  // can catch up on a still page before the clip is cut.
+  await page.waitForTimeout(DEMO_CLIP_HOLD_SECONDS * 1000);
+  clip.save();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await page.waitForTimeout(1000);
 });
