@@ -7,7 +7,7 @@ export type ApplicationConfig = Omit<
   | 'requiredServerVersionRange'
   | 'postInstallLogicFunction'
   | 'preInstallLogicFunction'
-  | 'settingsTabFrontComponent'
+  | 'settingsFrontComponent'
   | 'defaultRoleUniversalIdentifier'
   | 'aboutDescription'
 > & {

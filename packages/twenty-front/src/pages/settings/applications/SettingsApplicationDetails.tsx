@@ -45,7 +45,6 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
@@ -108,9 +107,6 @@ export const SettingsApplicationDetails = () => {
   };
 
   const screenshots = getScreenshots();
-
-  const settingsCustomTabFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
@@ -238,10 +234,14 @@ export const SettingsApplicationDetails = () => {
       const hasHttpTriggeredFunctions =
         applicationHasHttpTriggeredFunctions(application);
       const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasSettingsFrontComponent = isDefined(
+        application?.settingsCustomTabFrontComponentId,
+      );
       const hasNothingToConfigure =
         !hasVariables &&
         !hasConnectionProviders &&
         !canShowFunctionDomain &&
+        !hasSettingsFrontComponent &&
         !isUpgradableApplicationSourceType(sourceType);
 
       return {
@@ -315,13 +315,7 @@ export const SettingsApplicationDetails = () => {
           />
         );
       case 'settings':
-        return isDefined(settingsCustomTabFrontComponentId) ? (
-          <SettingsApplicationCustomTab
-            settingsCustomTabFrontComponentId={
-              settingsCustomTabFrontComponentId
-            }
-          />
-        ) : (
+        return (
           <SettingsApplicationDetailSettingsTab application={application} />
         );
       default:

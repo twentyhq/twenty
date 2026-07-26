@@ -122,7 +122,7 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
-  const settingsTabFrontComponentUniversalIdentifiers: string[] = [];
+  const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -379,9 +379,9 @@ export const buildManifest = async (
         frontComponentsFilePaths.push(relativePath);
 
         if (
-          targetFunctionName === TargetFunction.DefineSettingsTabFrontComponent
+          targetFunctionName === TargetFunction.DefineSettingsFrontComponent
         ) {
-          settingsTabFrontComponentUniversalIdentifiers.push(
+          settingsFrontComponentUniversalIdentifiers.push(
             extract.config.universalIdentifier,
           );
         }
@@ -568,9 +568,9 @@ export const buildManifest = async (
     );
   }
 
-  if (settingsTabFrontComponentUniversalIdentifiers.length > 1) {
+  if (settingsFrontComponentUniversalIdentifiers.length > 1) {
     errors.push(
-      'Only one settings tab front component is allowed per application',
+      'Only one settings front component is allowed per application',
     );
   }
 
@@ -626,11 +626,11 @@ export const buildManifest = async (
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
-            ...(settingsTabFrontComponentUniversalIdentifiers.length >= 1
+            ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {
-                  settingsTabFrontComponent: {
+                  settingsFrontComponent: {
                     universalIdentifier:
-                      settingsTabFrontComponentUniversalIdentifiers[0],
+                      settingsFrontComponentUniversalIdentifiers[0],
                   },
                 }
               : {}),

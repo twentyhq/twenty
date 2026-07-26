@@ -1,8 +1,8 @@
-import { defineSettingsTabFrontComponent } from '@/sdk/define';
+import { defineSettingsFrontComponent } from '@/sdk/define';
 
 const MockComponent = () => null;
 
-describe('defineSettingsTabFrontComponent', () => {
+describe('defineSettingsFrontComponent', () => {
   const validConfig = {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     name: 'App Settings',
@@ -10,7 +10,7 @@ describe('defineSettingsTabFrontComponent', () => {
   };
 
   it('should return successful validation result when valid', () => {
-    const result = defineSettingsTabFrontComponent(validConfig);
+    const result = defineSettingsFrontComponent(validConfig);
 
     expect(result.success).toBe(true);
     expect(result.config).toEqual(validConfig);
@@ -23,11 +23,11 @@ describe('defineSettingsTabFrontComponent', () => {
       component: MockComponent,
     };
 
-    const result = defineSettingsTabFrontComponent(config as any);
+    const result = defineSettingsFrontComponent(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Settings tab front component must have a universalIdentifier',
+      'Settings front component must have a universalIdentifier',
     );
   });
 
@@ -37,11 +37,11 @@ describe('defineSettingsTabFrontComponent', () => {
       name: 'App Settings',
     };
 
-    const result = defineSettingsTabFrontComponent(config as any);
+    const result = defineSettingsFrontComponent(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Settings tab front component must have a component',
+      'Settings front component must have a component',
     );
   });
 
@@ -52,11 +52,11 @@ describe('defineSettingsTabFrontComponent', () => {
       component: 'not-a-function',
     };
 
-    const result = defineSettingsTabFrontComponent(config as any);
+    const result = defineSettingsFrontComponent(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Settings tab front component component must be a React component',
+      'Settings front component component must be a React component',
     );
   });
 });

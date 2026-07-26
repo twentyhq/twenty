@@ -1,6 +1,6 @@
 import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
-import { type SettingsTabFrontComponentApplicationManifest } from '@/application/settingsTabFrontComponentApplicationType';
+import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -33,10 +33,10 @@ export type ApplicationManifest = SyncableEntityOptions & {
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
-  settingsTabFrontComponent?: SettingsTabFrontComponentApplicationManifest;
+  settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
   /**
-   * @deprecated Use `defineSettingsTabFrontComponent()` (exposed on the manifest
-   * as `settingsTabFrontComponent`) instead.
+   * @deprecated Use `defineSettingsFrontComponent()` (exposed on the manifest
+   * as `settingsFrontComponent`) instead. This property is ignored.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;

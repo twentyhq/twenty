@@ -228,7 +228,7 @@ describe('manifestValidate', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should not flag a front component referenced via settingsTabFrontComponent as a duplicate', () => {
+    it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
       const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
 
       const frontComponent = {
@@ -245,7 +245,7 @@ describe('manifestValidate', () => {
         ...validManifest,
         application: {
           ...validApplication,
-          settingsTabFrontComponent: { universalIdentifier: frontComponentId },
+          settingsFrontComponent: { universalIdentifier: frontComponentId },
         },
         frontComponents: [frontComponent],
       });

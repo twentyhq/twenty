@@ -249,7 +249,7 @@ export class ApplicationManifestMigrationService {
     );
 
     if (!dryRun) {
-      await this.syncDefaultRoleAndSettingsCustomTab({
+      await this.syncDefaultRoleAndSettingsFrontComponent({
         manifest,
         workspaceId,
         ownerFlatApplication,
@@ -262,7 +262,7 @@ export class ApplicationManifestMigrationService {
     };
   }
 
-  private async syncDefaultRoleAndSettingsCustomTab({
+  private async syncDefaultRoleAndSettingsFrontComponent({
     manifest,
     workspaceId,
     ownerFlatApplication,
@@ -304,19 +304,18 @@ export class ApplicationManifestMigrationService {
 
     let settingsCustomTabFrontComponentId: string | null = null;
 
-    const settingsTabFrontComponentUniversalIdentifier =
-      manifest.application.settingsTabFrontComponent?.universalIdentifier ??
-      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
+    const settingsFrontComponentUniversalIdentifier =
+      manifest.application.settingsFrontComponent?.universalIdentifier;
 
-    if (isDefined(settingsTabFrontComponentUniversalIdentifier)) {
+    if (isDefined(settingsFrontComponentUniversalIdentifier)) {
       const flatFrontComponent = findFlatEntityByUniversalIdentifier({
         flatEntityMaps: refreshedFlatFrontComponentMaps,
-        universalIdentifier: settingsTabFrontComponentUniversalIdentifier,
+        universalIdentifier: settingsFrontComponentUniversalIdentifier,
       });
 
       if (!isDefined(flatFrontComponent)) {
         throw new ApplicationException(
-          `Failed to resolve front component for settings tab front component universalIdentifier ${settingsTabFrontComponentUniversalIdentifier}`,
+          `Failed to resolve front component for settings front component universalIdentifier ${settingsFrontComponentUniversalIdentifier}`,
           ApplicationExceptionCode.ENTITY_NOT_FOUND,
         );
       }
