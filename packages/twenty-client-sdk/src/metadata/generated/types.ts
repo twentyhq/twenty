@@ -85,7 +85,7 @@ export default {
         360,
         367,
         368,
-        497
+        498
     ],
     "types": {
         "BillingProductDTO": {
@@ -6698,9 +6698,6 @@ export default {
             "unsubscribeTopics": [
                 290
             ],
-            "unsubscribePagePreviewUrl": [
-                1
-            ],
             "myMessageChannels": [
                 273,
                 {
@@ -8577,6 +8574,15 @@ export default {
                     ]
                 }
             ],
+            "updateEmailGroupChannel": [
+                273,
+                {
+                    "input": [
+                        475,
+                        "UpdateEmailGroupChannelInput!"
+                    ]
+                }
+            ],
             "deleteEmailGroupChannel": [
                 273,
                 {
@@ -8590,7 +8596,7 @@ export default {
                 271,
                 {
                     "input": [
-                        475,
+                        476,
                         "CreateEmailingDomainInput!"
                     ]
                 }
@@ -8626,7 +8632,7 @@ export default {
                 302,
                 {
                     "input": [
-                        476,
+                        477,
                         "RunAgentInput!"
                     ]
                 }
@@ -8635,7 +8641,7 @@ export default {
                 299,
                 {
                     "input": [
-                        477,
+                        478,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -8644,7 +8650,7 @@ export default {
                 299,
                 {
                     "input": [
-                        478,
+                        479,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -8662,7 +8668,7 @@ export default {
                 337,
                 {
                     "input": [
-                        480,
+                        481,
                         "UpdateMessageFolderInput!"
                     ]
                 }
@@ -8671,7 +8677,7 @@ export default {
                 337,
                 {
                     "input": [
-                        482,
+                        483,
                         "UpdateMessageFoldersInput!"
                     ]
                 }
@@ -8680,7 +8686,7 @@ export default {
                 332,
                 {
                     "input": [
-                        483,
+                        484,
                         "UpdateCalendarChannelInput!"
                     ]
                 }
@@ -8689,7 +8695,7 @@ export default {
                 330,
                 {
                     "input": [
-                        485,
+                        486,
                         "SetAppKeyValueInput!"
                     ]
                 }
@@ -8731,7 +8737,7 @@ export default {
                         1
                     ],
                     "fileAttachments": [
-                        486,
+                        487,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -8760,7 +8766,7 @@ export default {
                         "UUID!"
                     ],
                     "answers": [
-                        487,
+                        488,
                         "[AgentChatQuestionAnswerInput!]!"
                     ],
                     "modelId": [
@@ -8830,7 +8836,7 @@ export default {
                 318,
                 {
                     "input": [
-                        488,
+                        489,
                         "CreateSkillInput!"
                     ]
                 }
@@ -8839,7 +8845,7 @@ export default {
                 318,
                 {
                     "input": [
-                        489,
+                        490,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -8897,7 +8903,7 @@ export default {
                 248,
                 {
                     "input": [
-                        490,
+                        491,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -9063,7 +9069,7 @@ export default {
                 251,
                 {
                     "input": [
-                        491
+                        492
                     ]
                 }
             ],
@@ -9218,7 +9224,7 @@ export default {
                 3,
                 {
                     "input": [
-                        492,
+                        493,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -9252,7 +9258,7 @@ export default {
                 208,
                 {
                     "input": [
-                        493,
+                        494,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -9261,7 +9267,7 @@ export default {
                 208,
                 {
                     "input": [
-                        494,
+                        495,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -9270,7 +9276,7 @@ export default {
                 204,
                 {
                     "input": [
-                        495,
+                        496,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -9279,7 +9285,7 @@ export default {
                 205,
                 {
                     "input": [
-                        496,
+                        497,
                         "EditSsoInput!"
                     ]
                 }
@@ -9308,7 +9314,7 @@ export default {
                 314,
                 {
                     "type": [
-                        497,
+                        498,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -9348,7 +9354,7 @@ export default {
                 304,
                 {
                     "input": [
-                        498,
+                        499,
                         "CreateCalendarEventInput!"
                     ]
                 }
@@ -9357,7 +9363,7 @@ export default {
                 313,
                 {
                     "input": [
-                        499,
+                        500,
                         "SendEmailInput!"
                     ]
                 }
@@ -9379,7 +9385,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        501,
+                        502,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -9391,7 +9397,7 @@ export default {
                 168,
                 {
                     "input": [
-                        503,
+                        504,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -11750,6 +11756,17 @@ export default {
                 1
             ]
         },
+        "UpdateEmailGroupChannelInput": {
+            "id": [
+                4
+            ],
+            "displayName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "CreateEmailingDomainInput": {
             "domain": [
                 1
@@ -11794,7 +11811,7 @@ export default {
                 4
             ],
             "update": [
-                479
+                480
             ],
             "__typename": [
                 1
@@ -11822,7 +11839,7 @@ export default {
                 4
             ],
             "update": [
-                481
+                482
             ],
             "__typename": [
                 1
@@ -11841,7 +11858,7 @@ export default {
                 4
             ],
             "update": [
-                481
+                482
             ],
             "__typename": [
                 1
@@ -11852,7 +11869,7 @@ export default {
                 4
             ],
             "update": [
-                484
+                485
             ],
             "__typename": [
                 1
@@ -12120,7 +12137,7 @@ export default {
                 1
             ],
             "files": [
-                500
+                501
             ],
             "__typename": [
                 1
@@ -12142,13 +12159,13 @@ export default {
                 1
             ],
             "IMAP": [
-                502
+                503
             ],
             "SMTP": [
-                502
+                503
             ],
             "CALDAV": [
-                502
+                503
             ],
             "__typename": [
                 1
@@ -12199,7 +12216,7 @@ export default {
                 236,
                 {
                     "input": [
-                        505,
+                        506,
                         "LogicFunctionLogsInput!"
                     ]
                 }

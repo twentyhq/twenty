@@ -3185,7 +3185,6 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
-  unsubscribePagePreviewUrl: String!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3483,6 +3482,7 @@ type Mutation {
   deleteUnsubscribeTopic(id: String!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
@@ -4567,6 +4567,11 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  displayName: String
+}
+
+input UpdateEmailGroupChannelInput {
+  id: UUID!
   displayName: String
 }
 
