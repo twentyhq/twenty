@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { getStripeClient, verifyEnterpriseKey } from '@/platform/enterprise';
+import {
+  getStripeClient,
+  resolveSameOriginUrl,
+  verifyEnterpriseKey,
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,10 +62,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const fullReturnUrl =
-      typeof returnUrl === 'string'
-        ? `${frontendUrl}${returnUrl}`
-        : frontendUrl;
+    const resolvedReturnUrl = resolveSameOriginUrl(returnUrl, frontendUrl);
+
+    if (
+      typeof returnUrl === 'string' &&
+      returnUrl.length > 0 &&
+      resolvedReturnUrl === null
+    ) {
+      return NextResponse.json({ error: 'Invalid returnUrl' }, { status: 400 });
+    }
+
+    const fullReturnUrl = resolvedReturnUrl ?? frontendUrl;
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,

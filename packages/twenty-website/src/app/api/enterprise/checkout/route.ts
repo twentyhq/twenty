@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { getEnterprisePriceId, getStripeClient } from '@/platform/enterprise';
+import {
+  getEnterprisePriceId,
+  getStripeClient,
+  resolveSameOriginUrl,
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,8 +34,22 @@ export async function POST(request: Request) {
     const defaultSuccessUrl = websiteUrl
       ? `${websiteUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`
       : undefined;
-    const successUrl =
-      typeof body.successUrl === 'string' ? body.successUrl : defaultSuccessUrl;
+    const requestedSuccessUrl = websiteUrl
+      ? resolveSameOriginUrl(body.successUrl, websiteUrl)
+      : null;
+
+    if (
+      typeof body.successUrl === 'string' &&
+      body.successUrl.length > 0 &&
+      requestedSuccessUrl === null
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid successUrl' },
+        { status: 400 },
+      );
+    }
+
+    const successUrl = requestedSuccessUrl ?? defaultSuccessUrl;
 
     if (!successUrl) {
       return NextResponse.json(
