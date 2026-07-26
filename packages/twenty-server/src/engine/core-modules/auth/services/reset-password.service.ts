@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { PasswordResetLinkEmail } from 'twenty-emails';
+import { PasswordResetLinkEmail, renderEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import {
@@ -197,8 +196,8 @@ export class ResetPasswordService {
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     const i18n = this.i18nService.getI18nInstance(locale);
     const subjectTemplate = hasPassword

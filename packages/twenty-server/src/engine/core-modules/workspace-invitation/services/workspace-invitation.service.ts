@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { SendInviteLinkEmail } from 'twenty-emails';
+import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
 import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Repository } from 'typeorm';
@@ -361,8 +360,8 @@ export class WorkspaceInvitationService {
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = await render(emailTemplate);
-        const text = await render(emailTemplate, {
+        const html = await renderEmail(emailTemplate);
+        const text = await renderEmail(emailTemplate, {
           plainText: true,
         });
 
