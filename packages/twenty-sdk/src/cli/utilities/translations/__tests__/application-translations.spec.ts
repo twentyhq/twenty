@@ -77,7 +77,12 @@ describe('collectTranslatableStrings', () => {
     });
 
     expect(collectTranslatableStrings(manifest)).toEqual(
-      expect.arrayContaining(['Project', 'Projects', 'Project Name', 'Short title']),
+      expect.arrayContaining([
+        'Project',
+        'Projects',
+        'Project Name',
+        'Short title',
+      ]),
     );
   });
 });
