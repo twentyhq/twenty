@@ -35,6 +35,7 @@ describe('generateFrontConfig', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env = { ...ORIGINAL_ENV };
+    delete process.env.ENVIRONMENT_LABEL;
     mockedFs.readFileSync.mockReturnValue(INDEX_TEMPLATE);
   });
 
@@ -80,5 +81,35 @@ describe('generateFrontConfig', () => {
     expect(getInjectedEnv()).toBe(
       '{"REACT_APP_SERVER_BASE_URL":"http://x.com"}',
     );
+  });
+
+  it('should inject ENVIRONMENT_LABEL alongside the server base url', () => {
+    process.env.SERVER_URL = 'http://x.com';
+    delete process.env.FRONT_AUTO_BASE_URL;
+    process.env.ENVIRONMENT_LABEL = 'staging';
+
+    generateFrontConfig();
+
+    expect(getInjectedEnv()).toBe(
+      '{"REACT_APP_SERVER_BASE_URL":"http://x.com","REACT_APP_ENVIRONMENT_LABEL":"staging"}',
+    );
+  });
+
+  it('should inject ENVIRONMENT_LABEL when the base url resolves automatically', () => {
+    delete process.env.SERVER_URL;
+    process.env.ENVIRONMENT_LABEL = 'staging';
+
+    generateFrontConfig();
+
+    expect(getInjectedEnv()).toBe('{"REACT_APP_ENVIRONMENT_LABEL":"staging"}');
+  });
+
+  it('should omit ENVIRONMENT_LABEL when it is set to an empty string', () => {
+    delete process.env.SERVER_URL;
+    process.env.ENVIRONMENT_LABEL = '';
+
+    generateFrontConfig();
+
+    expect(getInjectedEnv()).toBe('{}');
   });
 });

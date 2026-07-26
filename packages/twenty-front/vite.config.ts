@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
     SSL_KEY_PATH,
     REACT_APP_PORT,
     IS_DEBUG_MODE,
+    REACT_APP_ENVIRONMENT_LABEL,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -57,7 +58,10 @@ export default defineConfig(({ mode }) => {
       '/public-assets',
       '/.well-known',
     ];
-    const proxy: Record<string, { target: string; changeOrigin: boolean; ws?: boolean }> = {
+    const proxy: Record<
+      string,
+      { target: string; changeOrigin: boolean; ws?: boolean }
+    > = {
       '/graphql': { target, changeOrigin: true, ws: true },
       '^/auth(/|$)': { target, changeOrigin: true },
       '^/s/': { target, changeOrigin: true },
@@ -150,14 +154,22 @@ export default defineConfig(({ mode }) => {
       {
         name: 'inject-runtime-env-dev',
         transformIndexHtml(html: string) {
-          if (!isNonEmptyString(env.REACT_APP_SERVER_BASE_URL)) {
+          const runtimeEnv = {
+            ...(isNonEmptyString(env.REACT_APP_SERVER_BASE_URL)
+              ? { REACT_APP_SERVER_BASE_URL: env.REACT_APP_SERVER_BASE_URL }
+              : {}),
+            ...(isNonEmptyString(REACT_APP_ENVIRONMENT_LABEL)
+              ? { REACT_APP_ENVIRONMENT_LABEL }
+              : {}),
+          };
+
+          if (Object.keys(runtimeEnv).length === 0) {
             return html;
           }
+
           return html.replace(
             /<script id="twenty-env-config">[\s\S]*?<\/script>/,
-            `<script id="twenty-env-config">window._env_ = ${JSON.stringify(
-              { REACT_APP_SERVER_BASE_URL: env.REACT_APP_SERVER_BASE_URL },
-            )};</script>`,
+            `<script id="twenty-env-config">window._env_ = ${JSON.stringify(runtimeEnv)};</script>`,
           );
         },
       },
@@ -351,9 +363,15 @@ export default defineConfig(({ mode }) => {
         // wyw-in-js 1.x resolves modules in its CSS evaluator via vite's
         // resolve.alias (not resolve.tsconfigPaths), so the `@/` and `~/`
         // tsconfig path aliases must be mirrored here.
-        { find: /^@\//, replacement: path.resolve(__dirname, 'src/modules') + '/' },
+        {
+          find: /^@\//,
+          replacement: path.resolve(__dirname, 'src/modules') + '/',
+        },
         { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
-        { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+        {
+          find: 'path',
+          replacement: 'rollup-plugin-node-polyfills/polyfills/path',
+        },
       ],
     },
   };

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { config } from 'dotenv';
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -16,9 +17,18 @@ export function generateFrontConfig(): void {
   const useAutoUrl =
     process.env.FRONT_AUTO_BASE_URL === 'true' || !process.env.SERVER_URL;
 
-  const envForFront = useAutoUrl
-    ? {}
-    : { REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL };
+  // ENVIRONMENT_LABEL is read at boot rather than baked into the build because
+  // the same image SHA is promoted from staging to production.
+  const environmentLabel = process.env.ENVIRONMENT_LABEL;
+
+  const envForFront = {
+    ...(useAutoUrl
+      ? {}
+      : { REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL }),
+    ...(isNonEmptyString(environmentLabel)
+      ? { REACT_APP_ENVIRONMENT_LABEL: environmentLabel }
+      : {}),
+  };
 
   const configString = `<!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
