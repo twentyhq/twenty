@@ -22,7 +22,7 @@ import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-k
 import { SigningKeyVerifyCounterService } from 'src/engine/core-modules/jwt/services/signing-key-verify-counter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
-import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
+import { unsafeDecodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
 import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 
 type ResolvedVerificationKey = {
@@ -102,7 +102,7 @@ export class JwtWrapperService {
       return { key: publicKeyPem, algorithm: JWT_ASYMMETRIC_ALGORITHM };
     }
 
-    const payload = decodeJwtPayload<JwtPayload>(rawToken);
+    const payload = unsafeDecodeJwtPayload<JwtPayload>(rawToken);
 
     if (!isDefined(payload)) {
       throw new AuthException(
