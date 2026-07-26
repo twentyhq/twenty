@@ -1,0 +1,101 @@
+name: Deploy to staging
+
+# Points staging at a commit without anyone needing SSH to the staging host.
+#
+# This workflow never connects to that machine. It validates the target and
+# moves the `staging-target` ref; a converger on the host polls that ref and
+# pulls the matching image. The host only ever makes outbound calls, so there
+# is no inbound access to the Mac that also runs production.
+#
+# Two checks below are load-bearing. The commit must exist in this repository
+# and an image must already be published for it. Together they mean staging
+# can only ever run code that CI built, so this cannot become a way to run
+# arbitrary code next to production.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or commit SHA to put on staging
+        required: true
+        default: main
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  point-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      deployments: write
+      packages: read
+    steps:
+      - name: Resolve ref to a commit
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.ref }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Fails when the ref does not exist here, which is also what stops an
+          # arbitrary commit from being staged.
+          sha="$(gh api "repos/${REPO}/commits/${REF}" --jq .sha)"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "Resolved ${REF} to ${sha}"
+
+      - name: Require a published image for that commit
+        env:
+          OWNER: ${{ github.repository_owner }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+          ACTOR: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          owner_lower="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          image="ghcr.io/${owner_lower}/twenty:${SHA}"
+          echo "$TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
+          if ! docker manifest inspect "$image" >/dev/null 2>&1; then
+            echo "::error::No image published for ${SHA}."
+            echo "Add the 'needs-staging' label to the pull request, or run" \
+              "'Build and push custom image' on this ref, then retry."
+            exit 1
+          fi
+          echo "Found ${image}"
+
+      - name: Move the staging-target ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          if gh api "repos/${REPO}/git/ref/heads/staging-target" >/dev/null 2>&1; then
+            gh api --method PATCH "repos/${REPO}/git/refs/heads/staging-target" \
+              -f sha="$SHA" -F force=true >/dev/null
+          else
+            gh api --method POST "repos/${REPO}/git/refs" \
+              -f ref=refs/heads/staging-target -f sha="$SHA" >/dev/null
+          fi
+          echo "staging-target now points at ${SHA}"
+
+      - name: Record the deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ steps.resolve.outputs.sha }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<JSON
+          {
+            "ref": "${SHA}",
+            "environment": "staging",
+            "description": "requested by ${ACTOR}",
+            "auto_merge": false,
+            "required_contexts": []
+          }
+          JSON
+          )"
+          gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
+            -f state=in_progress \
+            -f description="waiting for the staging host to converge" >/dev/null
+          echo "Deployment ${id} recorded for ${SHA}"
