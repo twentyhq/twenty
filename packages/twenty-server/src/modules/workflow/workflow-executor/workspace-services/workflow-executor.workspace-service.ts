@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -32,6 +33,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
@@ -52,6 +54,31 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
+
+const getInvalidFindRecordsFilterAttributes = (step: WorkflowAction) => {
+  if (!isWorkflowFindRecordsAction(step)) {
+    return;
+  }
+  const invalidFilter = step.settings.input.filter?.recordFilters?.find(
+    (filter) =>
+      !Object.values(ViewFilterOperand).includes(
+        filter.operand as ViewFilterOperand,
+      ),
+  );
+
+  if (!isDefined(invalidFilter)) {
+    return;
+  }
+
+  return {
+    action_type: step.type,
+    object_name: step.settings.input.objectName,
+    step_id: step.id,
+    field_metadata_id: invalidFilter.fieldMetadataId,
+    filter_type: invalidFilter.type,
+    operand: String(invalidFilter.operand),
+  };
+};
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -513,6 +540,21 @@ export class WorkflowExecutorWorkspaceService {
         (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
           error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
           error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+
+      const invalidFindRecordsFilterAttributes =
+        getInvalidFindRecordsFilterAttributes(step);
+
+      if (isUserError && isDefined(invalidFindRecordsFilterAttributes)) {
+        await this.metricsService.incrementCounterForEvent({
+          key: MetricsKeys.WorkflowFindRecordsInvalidFilterOperand,
+          eventId: workflowRunId,
+          attributes: {
+            ...invalidFindRecordsFilterAttributes,
+            workspace_id: workspaceId,
+          },
+          shouldStoreInCache: false,
+        });
+      }
 
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {

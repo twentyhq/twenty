@@ -23,6 +23,8 @@ export enum MetricsKeys {
   WorkflowRunThrottled = 'workflow-run/throttled',
   WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
   WorkflowRunSystemError = 'workflow-run/system-error',
+  WorkflowFindRecordsInvalidFilterOperand =
+    'workflow/find-records-invalid-filter-operand',
   AiChatToolExecutionSucceeded = 'ai-chat/tool-execution-succeeded',
   AiChatToolExecutionFailed = 'ai-chat/tool-execution-failed',
   McpToolExecutionSucceeded = 'mcp/tool-execution-succeeded',

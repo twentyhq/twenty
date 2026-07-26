@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -65,6 +66,21 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       );
 
     if (workflowActionInput.filter?.recordFilters) {
+      const invalidOperandFilter =
+        workflowActionInput.filter.recordFilters.find(
+          (filter) =>
+            !Object.values(ViewFilterOperand).includes(
+              filter.operand as ViewFilterOperand,
+            ),
+        );
+
+      if (isDefined(invalidOperandFilter)) {
+        throw new WorkflowStepExecutorException(
+          `Filter condition has an unsupported operand. Filter field: ${invalidOperandFilter.fieldMetadataId}, operand: ${invalidOperandFilter.operand}`,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        );
+      }
+
       for (const filter of workflowActionInput.filter.recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
           throw new WorkflowStepExecutorException(
