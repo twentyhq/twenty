@@ -1,6 +1,26 @@
-import { resolveSameOriginUrl } from './resolve-same-origin-url';
+import {
+  optionalRedirectUrlFieldSchema,
+  resolveSameOriginUrl,
+} from './resolve-same-origin-url';
 
 const BASE_URL = 'https://twenty.com';
+
+describe('optionalRedirectUrlFieldSchema', () => {
+  it('should keep a usable candidate', () => {
+    expect(optionalRedirectUrlFieldSchema.parse('/settings/billing')).toBe(
+      '/settings/billing',
+    );
+  });
+
+  // Routes distinguish "caller sent nothing" from "caller sent something
+  // unsafe", so unusable values have to collapse to undefined rather than throw.
+  it.each([undefined, null, '', '   ', 42, {}, `/${'a'.repeat(2048)}`])(
+    'should collapse the unusable candidate %p to undefined',
+    (candidate) => {
+      expect(optionalRedirectUrlFieldSchema.parse(candidate)).toBeUndefined();
+    },
+  );
+});
 
 describe('resolveSameOriginUrl', () => {
   it('should resolve a relative path against the base origin', () => {

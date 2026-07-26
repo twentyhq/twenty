@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import {
   getEnterprisePriceId,
   getStripeClient,
+  optionalRedirectUrlFieldSchema,
   resolveSameOriginUrl,
 } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
+
+// Every field falls back rather than rejecting, preserving how this endpoint
+// has always coerced unusable values. Only an unsafe successUrl gets a 400.
+const checkoutRequestSchema = z.object({
+  billingInterval: z.enum(['monthly', 'yearly']).catch('monthly'),
+  seatCount: z.number().min(1).catch(1),
+  successUrl: optionalRedirectUrlFieldSchema,
+});
 
 export async function POST(request: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -21,27 +31,34 @@ export async function POST(request: Request) {
 
   try {
     const stripe = getStripeClient();
-    const body = (await request.json()) as {
-      billingInterval?: unknown;
-      seatCount?: unknown;
-      successUrl?: unknown;
-    };
+    const parsedBody = checkoutRequestSchema.safeParse(await request.json());
 
-    const billingInterval =
-      body.billingInterval === 'yearly' ? 'yearly' : 'monthly';
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body.' },
+        { status: 400 },
+      );
+    }
+
+    const {
+      billingInterval,
+      seatCount,
+      successUrl: requestedSuccessUrlInput,
+    } = parsedBody.data;
+
     const priceId = getEnterprisePriceId(billingInterval);
     const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
     const defaultSuccessUrl = websiteUrl
       ? `${websiteUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`
       : undefined;
     const requestedSuccessUrl = websiteUrl
-      ? resolveSameOriginUrl(body.successUrl, websiteUrl)
+      ? resolveSameOriginUrl(requestedSuccessUrlInput, websiteUrl)
       : null;
 
-    const hasRequestedSuccessUrl =
-      typeof body.successUrl === 'string' && body.successUrl.length > 0;
-
-    if (hasRequestedSuccessUrl && requestedSuccessUrl === null) {
+    if (
+      requestedSuccessUrlInput !== undefined &&
+      requestedSuccessUrl === null
+    ) {
       return NextResponse.json(
         { error: 'Invalid successUrl' },
         { status: 400 },
@@ -59,11 +76,6 @@ export async function POST(request: Request) {
         { status: 500 },
       );
     }
-
-    const seatCount =
-      typeof body.seatCount === 'number' && body.seatCount >= 1
-        ? body.seatCount
-        : 1;
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',

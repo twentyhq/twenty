@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import {
   getStripeClient,
+  optionalRedirectUrlFieldSchema,
   resolveSameOriginUrl,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
+
+const portalRequestSchema = z.object({
+  enterpriseKey: z
+    .string({ error: 'Missing enterpriseKey' })
+    .min(1, { error: 'Missing enterpriseKey' }),
+  returnUrl: optionalRedirectUrlFieldSchema,
+});
 
 export async function POST(request: Request) {
   if (
@@ -23,18 +32,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = (await request.json()) as {
-      enterpriseKey?: unknown;
-      returnUrl?: unknown;
-    };
-    const { enterpriseKey, returnUrl } = body;
+    const parsedBody = portalRequestSchema.safeParse(await request.json());
 
-    if (!enterpriseKey || typeof enterpriseKey !== 'string') {
+    if (!parsedBody.success) {
       return NextResponse.json(
-        { error: 'Missing enterpriseKey' },
+        {
+          error: parsedBody.error.issues[0]?.message ?? 'Invalid request body.',
+        },
         { status: 400 },
       );
     }
+
+    const { enterpriseKey, returnUrl } = parsedBody.data;
 
     const payload = verifyEnterpriseKey(enterpriseKey);
 
@@ -63,10 +72,8 @@ export async function POST(request: Request) {
     }
 
     const resolvedReturnUrl = resolveSameOriginUrl(returnUrl, frontendUrl);
-    const hasRequestedReturnUrl =
-      typeof returnUrl === 'string' && returnUrl.length > 0;
 
-    if (hasRequestedReturnUrl && resolvedReturnUrl === null) {
+    if (returnUrl !== undefined && resolvedReturnUrl === null) {
       return NextResponse.json({ error: 'Invalid returnUrl' }, { status: 400 });
     }
 

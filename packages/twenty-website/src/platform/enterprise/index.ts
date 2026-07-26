@@ -34,7 +34,10 @@ export { evaluateValidityTokenEmissionRateLimit } from './evaluate-validity-toke
 export { normalizeServerId } from './normalize-server-id';
 export { isBillableSeatReporter } from './is-billable-seat-reporter';
 export { parseInstanceType } from './parse-instance-type';
-export { resolveSameOriginUrl } from './resolve-same-origin-url';
+export {
+  optionalRedirectUrlFieldSchema,
+  resolveSameOriginUrl,
+} from './resolve-same-origin-url';
 export {
   resolveServerBinding,
   type ResolveServerBindingInput,
