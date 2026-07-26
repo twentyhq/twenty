@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -16,7 +17,6 @@ import {
   type MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/message-import-manager/constants/messaging-import-ongoing-sync-timeout.constant';
-import { findWorkspaceIdsWithStaleSync } from 'src/modules/connected-account/utils/find-workspace-ids-with-stale-sync.util';
 
 export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
@@ -36,11 +36,7 @@ export class MessagingOngoingStaleCronJob {
     MESSAGING_ONGOING_STALE_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const staleWorkspaceIds = await findWorkspaceIdsWithStaleSync({
-      repository: this.messageChannelRepository,
-      syncStages: MESSAGING_ONGOING_STALE_SYNC_STAGES,
-      staleTimeout: MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT,
-    });
+    const staleWorkspaceIds = await this.findStaleWorkspaceIds();
 
     for (const workspaceId of staleWorkspaceIds) {
       try {
@@ -58,5 +54,30 @@ export class MessagingOngoingStaleCronJob {
         });
       }
     }
+  }
+
+  private async findStaleWorkspaceIds(): Promise<string[]> {
+    const staleBefore = new Date(
+      Date.now() - MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT,
+    );
+    const staleWorkspaces = await this.messageChannelRepository
+      .createQueryBuilder('messageChannel')
+      .innerJoin('messageChannel.workspace', 'workspace')
+      .select('messageChannel.workspaceId', 'workspaceId')
+      .distinct(true)
+      .where('workspace.activationStatus = :activationStatus', {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      })
+      .andWhere('workspace.deletedAt IS NULL')
+      .andWhere('messageChannel.syncStage IN (:...syncStages)', {
+        syncStages: MESSAGING_ONGOING_STALE_SYNC_STAGES,
+      })
+      .andWhere(
+        '(messageChannel.syncStageStartedAt IS NULL OR messageChannel.syncStageStartedAt < :staleBefore)',
+        { staleBefore },
+      )
+      .getRawMany<{ workspaceId: string }>();
+
+    return staleWorkspaces.map(({ workspaceId }) => workspaceId);
   }
 }

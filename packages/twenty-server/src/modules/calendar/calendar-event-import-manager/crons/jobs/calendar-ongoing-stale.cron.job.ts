@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -16,7 +17,6 @@ import {
   CalendarOngoingStaleJob,
   type CalendarOngoingStaleJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
-import { findWorkspaceIdsWithStaleSync } from 'src/modules/connected-account/utils/find-workspace-ids-with-stale-sync.util';
 
 export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
@@ -36,11 +36,7 @@ export class CalendarOngoingStaleCronJob {
     CALENDAR_ONGOING_STALE_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const staleWorkspaceIds = await findWorkspaceIdsWithStaleSync({
-      repository: this.calendarChannelRepository,
-      syncStages: CALENDAR_ONGOING_STALE_SYNC_STAGES,
-      staleTimeout: CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT,
-    });
+    const staleWorkspaceIds = await this.findStaleWorkspaceIds();
 
     for (const workspaceId of staleWorkspaceIds) {
       try {
@@ -58,5 +54,30 @@ export class CalendarOngoingStaleCronJob {
         });
       }
     }
+  }
+
+  private async findStaleWorkspaceIds(): Promise<string[]> {
+    const staleBefore = new Date(
+      Date.now() - CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT,
+    );
+    const staleWorkspaces = await this.calendarChannelRepository
+      .createQueryBuilder('calendarChannel')
+      .innerJoin('calendarChannel.workspace', 'workspace')
+      .select('calendarChannel.workspaceId', 'workspaceId')
+      .distinct(true)
+      .where('workspace.activationStatus = :activationStatus', {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      })
+      .andWhere('workspace.deletedAt IS NULL')
+      .andWhere('calendarChannel.syncStage IN (:...syncStages)', {
+        syncStages: CALENDAR_ONGOING_STALE_SYNC_STAGES,
+      })
+      .andWhere(
+        '(calendarChannel.syncStageStartedAt IS NULL OR calendarChannel.syncStageStartedAt < :staleBefore)',
+        { staleBefore },
+      )
+      .getRawMany<{ workspaceId: string }>();
+
+    return staleWorkspaces.map(({ workspaceId }) => workspaceId);
   }
 }
