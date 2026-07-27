@@ -130,18 +130,18 @@ export class CommonResultGettersService {
       flatObjectMetadata,
       processingContext,
     );
-    const fieldMetadata = Object.keys(record)
+    const recordFieldMetadataList = Object.keys(record)
       .map((recordFieldName) => fieldMetadataByName.get(recordFieldName))
       .filter(isDefined);
 
     const handlers = [
       this.getObjectHandler(flatObjectMetadata.nameSingular),
-      ...fieldMetadata
+      ...recordFieldMetadataList
         .map((fieldMetadata) => this.fieldHandlers.get(fieldMetadata.type))
         .filter(isDefined),
     ];
 
-    const relationFields = fieldMetadata.filter((fieldMetadata) =>
+    const relationFields = recordFieldMetadataList.filter((fieldMetadata) =>
       isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
     );
 
@@ -186,7 +186,7 @@ export class CommonResultGettersService {
         record,
         processingContext.workspaceId,
         handlers,
-        fieldMetadata,
+        recordFieldMetadataList,
       );
 
     const processedRecord = {
