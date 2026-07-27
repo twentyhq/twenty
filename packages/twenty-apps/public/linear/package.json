@@ -1,7 +1,7 @@
 {
-  "name": "@twentyhq/twenty-discord",
+  "name": "@twentyhq/linear",
   "version": "0.1.0",
-  "description": "Discord workflow connector for Twenty",
+  "description": "Linear integration for Twenty. Connect a user's Linear account and create issues from logic functions.",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
