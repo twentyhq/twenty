@@ -109,6 +109,39 @@ const nonWorkspaceMemberRelationFilter: RecordFilter = {
 
 const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
 
+const Seed = ({
+  recordFilter,
+  dropdownFieldMetadataId,
+  children,
+}: {
+  recordFilter: RecordFilter;
+  dropdownFieldMetadataId: string;
+  children: React.ReactNode;
+}) => {
+  const setCurrentRecordFilters = useSetAtomComponentState(
+    currentRecordFiltersComponentState,
+  );
+  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+    getAdvancedFilterObjectFilterDropdownComponentInstanceId(FILTER_ID),
+  );
+
+  const [isSeeded, setIsSeeded] = useState(false);
+
+  useEffect(() => {
+    setCurrentRecordFilters([recordFilter]);
+    setFieldMetadataItemIdUsedInDropdown(dropdownFieldMetadataId);
+    setIsSeeded(true);
+  }, [
+    recordFilter,
+    dropdownFieldMetadataId,
+    setCurrentRecordFilters,
+    setFieldMetadataItemIdUsedInDropdown,
+  ]);
+
+  return isSeeded ? <>{children}</> : null;
+};
+
 const renderValueInput = ({
   recordFilter,
   dropdownFieldMetadataId,
@@ -116,26 +149,6 @@ const renderValueInput = ({
   recordFilter: RecordFilter;
   dropdownFieldMetadataId: string;
 }) => {
-  const Seed = ({ children }: { children: React.ReactNode }) => {
-    const setCurrentRecordFilters = useSetAtomComponentState(
-      currentRecordFiltersComponentState,
-    );
-    const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
-      fieldMetadataItemIdUsedInDropdownComponentState,
-      getAdvancedFilterObjectFilterDropdownComponentInstanceId(FILTER_ID),
-    );
-
-    const [isSeeded, setIsSeeded] = useState(false);
-
-    useEffect(() => {
-      setCurrentRecordFilters([recordFilter]);
-      setFieldMetadataItemIdUsedInDropdown(dropdownFieldMetadataId);
-      setIsSeeded(true);
-    }, [setCurrentRecordFilters, setFieldMetadataItemIdUsedInDropdown]);
-
-    return isSeeded ? <>{children}</> : null;
-  };
-
   return render(
     <BaseWrapper>
       <AdvancedFilterContext.Provider
@@ -155,7 +168,10 @@ const renderValueInput = ({
                 ),
             }}
           >
-            <Seed>
+            <Seed
+              recordFilter={recordFilter}
+              dropdownFieldMetadataId={dropdownFieldMetadataId}
+            >
               <AdvancedFilterSidePanelValueFormInput
                 recordFilterId={FILTER_ID}
               />

@@ -47,22 +47,28 @@ const CurrentRecordFiltersObserver = () => {
   );
 };
 
+const Seed = ({
+  sourceFieldMetadataId,
+  children,
+}: {
+  sourceFieldMetadataId: string;
+  children: React.ReactNode;
+}) => {
+  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+  );
+
+  const [isSeeded, setIsSeeded] = useState(false);
+
+  useEffect(() => {
+    setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataId);
+    setIsSeeded(true);
+  }, [sourceFieldMetadataId, setFieldMetadataItemIdUsedInDropdown]);
+
+  return isSeeded ? <>{children}</> : null;
+};
+
 const renderSubMenu = (sourceFieldMetadataId: string) => {
-  const Seed = ({ children }: { children: React.ReactNode }) => {
-    const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
-      fieldMetadataItemIdUsedInDropdownComponentState,
-    );
-
-    const [isSeeded, setIsSeeded] = useState(false);
-
-    useEffect(() => {
-      setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataId);
-      setIsSeeded(true);
-    }, [setFieldMetadataItemIdUsedInDropdown]);
-
-    return isSeeded ? <>{children}</> : null;
-  };
-
   return render(
     <BaseWrapper>
       <RecordFiltersComponentInstanceContext.Provider
@@ -71,7 +77,7 @@ const renderSubMenu = (sourceFieldMetadataId: string) => {
         <ObjectFilterDropdownComponentInstanceContext.Provider
           value={{ instanceId: INSTANCE_ID }}
         >
-          <Seed>
+          <Seed sourceFieldMetadataId={sourceFieldMetadataId}>
             <AdvancedFilterRelationTargetFieldSelectMenu
               recordFilterId={FILTER_ID}
             />
