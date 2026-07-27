@@ -1,25 +1,17 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import {
+  InstallPrebuiltLogicFunctionBundlesJob,
+  type InstallPrebuiltLogicFunctionBundlesJobData,
+} from 'src/engine/core-modules/logic-function/jobs/install-prebuilt-logic-function-bundles.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const INSTALL_BATCH_SIZE = 20;
-
-// Logic functions of packaged applications (tarball, npm) ship an immutable
-// build and now execute their prebuilt bundle. Local-source apps stay LIVE.
-// Only functions with a fresh build and a checksum are flipped: PREBUILT
-// execution requires both. Bundles are installed best-effort right after the
-// flip; the executor also installs on-demand at first execution, covering
-// functions whose install failed here and nodes with their own local bundle
-// storage.
 @RegisteredInstanceCommand('2.25.0', 1784921879702, { type: 'slow' })
 export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
   implements SlowInstanceCommand
@@ -29,13 +21,13 @@ export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
   );
 
   constructor(
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    const updatedLogicFunctions: { id: string; workspaceId: string }[] =
+    // An UPDATE ... RETURNING is returned as [rows, affectedCount]
+    const [updatedLogicFunctions]: [{ id: string; workspaceId: string }[]] =
       await dataSource.query(
         `UPDATE "core"."logicFunction" "logicFunction"
          SET "executionMode" = 'PREBUILT'
@@ -67,81 +59,16 @@ export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
       workspaceId,
       logicFunctionIds,
     ] of logicFunctionIdsByWorkspaceId) {
-      await this.installPrebuiltBundlesForWorkspace({
-        workspaceId,
-        logicFunctionIds,
-      });
-    }
-  }
-
-  private async installPrebuiltBundlesForWorkspace({
-    workspaceId,
-    logicFunctionIds,
-  }: {
-    workspaceId: string;
-    logicFunctionIds: string[];
-  }): Promise<void> {
-    try {
-      await this.workspaceCacheService.flush(workspaceId, [
-        'flatLogicFunctionMaps',
-      ]);
-
-      const { flatLogicFunctionMaps, flatApplicationMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-          'flatApplicationMaps',
-        ]);
-
-      const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-
-      for (const logicFunctionIdBatch of chunk(
-        logicFunctionIds,
-        INSTALL_BATCH_SIZE,
-      )) {
-        await Promise.all(
-          logicFunctionIdBatch.map(async (logicFunctionId) => {
-            const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: logicFunctionId,
-              flatEntityMaps: flatLogicFunctionMaps,
-            });
-            const flatApplication = isDefined(flatLogicFunction?.applicationId)
-              ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-              : undefined;
-
-            if (!isDefined(flatLogicFunction) || !isDefined(flatApplication)) {
-              this.logger.warn(
-                `Skipping prebuilt bundle install for function '${logicFunctionId}' (workspace=${workspaceId}): function or application not found in workspace cache`,
-              );
-
-              return;
-            }
-
-            try {
-              await driver.installPrebuiltBundle({
-                flatLogicFunction,
-                flatApplication,
-                applicationUniversalIdentifier:
-                  flatApplication.universalIdentifier,
-              });
-            } catch (error) {
-              // Best-effort: the executor installs the bundle on-demand at first
-              // execution, so a failed install here must not abort the upgrade.
-              this.logger.warn(
-                `Failed to install prebuilt bundle for function '${logicFunctionId}' (workspace=${workspaceId}): ${
-                  error instanceof Error ? error.message : String(error)
-                }`,
-              );
-            }
-          }),
-        );
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Failed to install prebuilt bundles for workspace ${workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+      await this.messageQueueService.add<InstallPrebuiltLogicFunctionBundlesJobData>(
+        InstallPrebuiltLogicFunctionBundlesJob.name,
+        { workspaceId, logicFunctionIds },
+        { retryLimit: 3 },
       );
     }
+
+    this.logger.log(
+      `Enqueued prebuilt bundle installs for ${logicFunctionIdsByWorkspaceId.size} workspace(s)`,
+    );
   }
 
   public async up(_queryRunner: QueryRunner): Promise<void> {}

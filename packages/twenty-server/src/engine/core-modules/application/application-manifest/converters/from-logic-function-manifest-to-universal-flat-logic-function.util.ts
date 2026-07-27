@@ -10,9 +10,6 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
-// Packaged sources (tarball, npm) ship an immutable build, so their functions
-// run the prebuilt bundle installed at sync time. Local-source apps are edited
-// live during development and keep fetching the latest build on each execution.
 const computeExecutionModeForApplicationSource = ({
   applicationSourceType,
   builtHandlerChecksum,

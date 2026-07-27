@@ -229,9 +229,6 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    // A bundle installed under a different checksum is left untouched: this
-    // function's metadata may be a stale cache read, and reinstalling from it
-    // would roll a freshly updated bundle back to an older build.
     if (isDefined(installedChecksum)) {
       throw new LogicFunctionException(
         `Prebuilt bundle is outdated for function '${flatLogicFunction.id}' ` +
@@ -241,10 +238,6 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    // Nothing installed on this node even though the function is legitimately
-    // PREBUILT: mode was backfilled by an upgrade migration, or the install ran
-    // on another server instance. Self-heal by installing from the stored build
-    // before failing the execution.
     try {
       await driver.installPrebuiltBundle({
         flatLogicFunction,
