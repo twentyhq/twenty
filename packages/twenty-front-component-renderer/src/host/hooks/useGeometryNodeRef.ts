@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
@@ -29,11 +29,14 @@ export const useGeometryNodeRef = (
 ): ElementRefCallback | undefined => {
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
 
-  const [geometryNodeRef] = useState(() =>
-    isDefined(geometryTracker) && isDefined(remoteElementId)
-      ? createGeometryNodeRef(geometryTracker, remoteElementId)
-      : undefined,
+  // Keyed on the tracker and remote id so React detaches the previous ref
+  // (unregistering the old mapping) and attaches a fresh one whenever either
+  // changes, instead of staying bound to the first render's values.
+  return useMemo(
+    () =>
+      isDefined(geometryTracker) && isDefined(remoteElementId)
+        ? createGeometryNodeRef(geometryTracker, remoteElementId)
+        : undefined,
+    [geometryTracker, remoteElementId],
   );
-
-  return geometryNodeRef;
 };
