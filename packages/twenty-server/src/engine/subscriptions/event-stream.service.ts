@@ -91,17 +91,16 @@ export class EventStreamService implements OnModuleInit {
 
     await this.cacheStorageService.set(key, streamData, EVENT_STREAM_TTL_MS);
 
-    await Promise.all([
-      this.cacheStorageService.setAdd(
-        this.getActiveStreamsKey(workspaceId),
-        [eventStreamChannelId],
-        EVENT_STREAM_TTL_MS,
-      ),
-      this.trackActiveStream({
-        workspaceId,
-        eventStreamChannelId,
-      }),
-    ]);
+    await this.cacheStorageService.setAdd(
+      this.getActiveStreamsKey(workspaceId),
+      [eventStreamChannelId],
+      EVENT_STREAM_TTL_MS,
+    );
+
+    await this.trackActiveStream({
+      workspaceId,
+      eventStreamChannelId,
+    });
   }
 
   async destroyEventStream({
@@ -115,13 +114,12 @@ export class EventStreamService implements OnModuleInit {
 
     await this.cacheStorageService.del(key);
 
-    await Promise.all([
-      this.cacheStorageService.setRemove(
-        this.getActiveStreamsKey(workspaceId),
-        [eventStreamChannelId],
-      ),
-      this.untrackActiveStreams(workspaceId, [eventStreamChannelId]),
-    ]);
+    await this.cacheStorageService.setRemove(
+      this.getActiveStreamsKey(workspaceId),
+      [eventStreamChannelId],
+    );
+
+    await this.untrackActiveStreams(workspaceId, [eventStreamChannelId]);
   }
 
   async getActiveStreamIds(workspaceId: string): Promise<string[]> {
@@ -138,13 +136,12 @@ export class EventStreamService implements OnModuleInit {
       return;
     }
 
-    await Promise.all([
-      this.cacheStorageService.setRemove(
-        this.getActiveStreamsKey(workspaceId),
-        streamIdsToRemove,
-      ),
-      this.untrackActiveStreams(workspaceId, streamIdsToRemove),
-    ]);
+    await this.cacheStorageService.setRemove(
+      this.getActiveStreamsKey(workspaceId),
+      streamIdsToRemove,
+    );
+
+    await this.untrackActiveStreams(workspaceId, streamIdsToRemove);
   }
 
   async getStreamsData(
@@ -245,18 +242,16 @@ export class EventStreamService implements OnModuleInit {
     );
     const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
-    await this.trackActiveStream({
-      workspaceId,
-      eventStreamChannelId,
-    });
-
     const [eventStreamRefreshed, activeStreamsRefreshed] = await Promise.all([
       this.cacheStorageService.expire(eventStreamKey, EVENT_STREAM_TTL_MS),
       this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
     ]);
 
-    if (!eventStreamRefreshed) {
-      await this.untrackActiveStreams(workspaceId, [eventStreamChannelId]);
+    if (eventStreamRefreshed) {
+      await this.trackActiveStream({
+        workspaceId,
+        eventStreamChannelId,
+      });
     }
 
     return eventStreamRefreshed && activeStreamsRefreshed;

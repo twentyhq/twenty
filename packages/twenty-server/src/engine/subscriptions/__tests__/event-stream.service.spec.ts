@@ -88,7 +88,7 @@ describe('EventStreamService', () => {
     );
   });
 
-  it('refreshes an existing stream and keeps it tracked', async () => {
+  it('tracks a stream after a successful refresh', async () => {
     cacheStorageService.expire
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(true);
@@ -112,7 +112,7 @@ describe('EventStreamService', () => {
     expect(cacheStorageService.sortedSetRemove).not.toHaveBeenCalled();
   });
 
-  it('untracks a stream whose key is missing during refresh', async () => {
+  it('does not track a stream whose key is missing during refresh', async () => {
     cacheStorageService.expire
       .mockResolvedValueOnce(false)
       .mockResolvedValueOnce(true);
@@ -124,19 +124,8 @@ describe('EventStreamService', () => {
       }),
     ).resolves.toBe(false);
 
-    expect(cacheStorageService.sortedSetAdd).toHaveBeenCalledWith(
-      ACTIVE_STREAM_EXPIRATIONS_KEY,
-      [
-        {
-          score: Date.now() + EVENT_STREAM_TTL_MS,
-          value: ACTIVE_STREAM_EXPIRATION_MEMBER,
-        },
-      ],
-    );
-    expect(cacheStorageService.sortedSetRemove).toHaveBeenCalledWith(
-      ACTIVE_STREAM_EXPIRATIONS_KEY,
-      [ACTIVE_STREAM_EXPIRATION_MEMBER],
-    );
+    expect(cacheStorageService.sortedSetAdd).not.toHaveBeenCalled();
+    expect(cacheStorageService.sortedSetRemove).not.toHaveBeenCalled();
   });
 
   it('keeps a valid stream tracked when the workspace stream set is missing', async () => {
