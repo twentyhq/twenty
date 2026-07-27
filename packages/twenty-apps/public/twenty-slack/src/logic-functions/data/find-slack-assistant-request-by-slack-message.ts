@@ -1,8 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-// Slack delivers the same message twice when it is both a mention and a
-// subscribed-thread reply, each time under a distinct event_id, so the channel
-// and message timestamp are the only stable identity of a request.
 export const findSlackAssistantRequestBySlackMessage = async (
   client: CoreApiClient,
   {
