@@ -91,8 +91,7 @@ export class MinimalMetadataService {
     // source string even when `core.applicationTranslation` had the translation.
     // See #23301.
     const standardApplicationId =
-      (await loaders.standardApplicationIdLoader.load({ workspaceId })) ??
-      null;
+      (await loaders.standardApplicationIdLoader.load({ workspaceId })) ?? null;
 
     const objectMetadataItems: MinimalObjectMetadataDTO[] = await Promise.all(
       Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
