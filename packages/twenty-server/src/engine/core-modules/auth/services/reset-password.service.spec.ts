@@ -52,7 +52,7 @@ describe('ResetPasswordService', () => {
         {
           provide: UserService,
           useValue: {
-            findUserByEmailOrThrow: jest.fn(),
+            findUserByEmail: jest.fn(),
             findUserByIdOrThrow: jest.fn(),
           },
         },
@@ -112,160 +112,12 @@ describe('ResetPasswordService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('sendPasswordResetLinkWithoutRevealingUserExistence', () => {
-    it('should return success without sending an email when the user is unknown', async () => {
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
-        );
-
-      const result =
-        await service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'nonexistent@example.com',
-          locale: 'en',
-        });
-
-      expect(result).toEqual({ success: true });
-      expect(emailService.send).not.toHaveBeenCalled();
-    });
-
-    it('should return success without sending an email when a token is already pending', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-      const mockExistingToken = {
-        userId: '1',
-        type: AppTokenType.PasswordResetToken,
-        workspaceId: 'workspace-id',
-        expiresAt: addMilliseconds(new Date(), 3600000),
-      };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest
-        .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockExistingToken as AppTokenEntity);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-
-      const result =
-        await service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-          locale: 'en',
-        });
-
-      expect(result).toEqual({ success: true });
-      expect(emailService.send).not.toHaveBeenCalled();
-    });
-
-    it('should return success without sending an email when no password auth enabled workspace is found', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
-
-      const result =
-        await service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'test@example.com',
-          locale: 'en',
-        });
-
-      expect(result).toEqual({ success: true });
-      expect(emailService.send).not.toHaveBeenCalled();
-    });
-
-    it('should send the email for a known user', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOneBy')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({} as AppTokenEntity);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest
-        .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
-        .mockReturnValue(
-          new URL('https://subdomain.localhost.com:3000/reset-password/token'),
-        );
-
-      const result =
-        await service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-          locale: 'en',
-        });
-
-      expect(result).toEqual({ success: true });
-      expect(emailService.send).toHaveBeenCalled();
-    });
-
-    it('should rethrow when the reset token expiration config is missing', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
-
-      await expect(
-        service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-          locale: 'en',
-        }),
-      ).rejects.toMatchObject({
-        code: AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      });
-    });
-
-    it('should rethrow non auth exceptions', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockRejectedValue(new Error('db down'));
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-
-      await expect(
-        service.sendPasswordResetLinkWithoutRevealingUserExistence({
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-          locale: 'en',
-        }),
-      ).rejects.toThrow('db down');
-    });
-  });
-
   describe('generatePasswordResetToken', () => {
     it('should generate a password reset token for a valid user', async () => {
       const mockUser = { id: '1', email: 'test@example.com' };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
+        .spyOn(userService, 'findUserByEmail')
         .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -281,8 +133,16 @@ describe('ResetPasswordService', () => {
         'workspace-id',
       );
 
-      expect(result.passwordResetToken).toBeDefined();
-      expect(result.passwordResetTokenExpiresAt).toBeDefined();
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: 'TOKEN_GENERATED',
+          resetToken: expect.objectContaining({
+            passwordResetToken: expect.any(String),
+            passwordResetTokenExpiresAt: expect.any(Date),
+            workspaceId: 'workspace-id',
+          }),
+        }),
+      );
       expect(appTokenRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: '1',
@@ -304,7 +164,7 @@ describe('ResetPasswordService', () => {
       const mockUser = { id: '1', email: 'test@example.com' };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
+        .spyOn(userService, 'findUserByEmail')
         .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -323,7 +183,12 @@ describe('ResetPasswordService', () => {
         'foreign-workspace-id',
       );
 
-      expect(result.workspaceId).toBe('fallback-workspace-id');
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: 'TOKEN_GENERATED',
+          workspace: expect.objectContaining({ id: 'fallback-workspace-id' }),
+        }),
+      );
       expect(appTokenRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: 'fallback-workspace-id',
@@ -336,7 +201,7 @@ describe('ResetPasswordService', () => {
       const mockWorkspace = { id: 'resolved-workspace-id' };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
+        .spyOn(userService, 'findUserByEmail')
         .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -350,7 +215,12 @@ describe('ResetPasswordService', () => {
       const result =
         await service.generatePasswordResetToken('test@example.com');
 
-      expect(result.workspaceId).toBe('resolved-workspace-id');
+      expect(result).toEqual(
+        expect.objectContaining({
+          status: 'TOKEN_GENERATED',
+          workspace: expect.objectContaining({ id: 'resolved-workspace-id' }),
+        }),
+      );
       expect(appTokenRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: 'resolved-workspace-id',
@@ -358,36 +228,34 @@ describe('ResetPasswordService', () => {
       );
     });
 
-    it('should throw an error if no password auth enabled workspace found', async () => {
+    it('should return a status instead of sending when no password auth enabled workspace is found', async () => {
       const mockUser = { id: '1', email: 'test@example.com' };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
+        .spyOn(userService, 'findUserByEmail')
         .mockResolvedValue(mockUser as UserEntity);
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
-      await expect(
-        service.generatePasswordResetToken('test@example.com'),
-      ).rejects.toThrow(AuthException);
+      const result =
+        await service.generatePasswordResetToken('test@example.com');
+
+      expect(result).toEqual({
+        status: 'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND',
+      });
     });
 
-    it('should throw an error if user is not found', async () => {
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
-        );
+    it('should return a status instead of sending when the user is unknown', async () => {
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(null);
 
-      await expect(
-        service.generatePasswordResetToken(
-          'nonexistent@example.com',
-          'workspace-id',
-        ),
-      ).rejects.toThrow(AuthException);
+      const result = await service.generatePasswordResetToken(
+        'nonexistent@example.com',
+        'workspace-id',
+      );
+
+      expect(result).toEqual({ status: 'USER_NOT_FOUND' });
     });
 
-    it('should throw an error if a token already exists', async () => {
+    it('should return a status instead of sending when a token is already pending', async () => {
       const mockUser = { id: '1', email: 'test@example.com' };
       const mockExistingToken = {
         userId: '1',
@@ -397,7 +265,7 @@ describe('ResetPasswordService', () => {
       };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
+        .spyOn(userService, 'findUserByEmail')
         .mockResolvedValue(mockUser as UserEntity);
       jest
         .spyOn(workspaceRepository, 'findOne')
@@ -407,9 +275,50 @@ describe('ResetPasswordService', () => {
         .mockResolvedValue(mockExistingToken as AppTokenEntity);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
+      const result = await service.generatePasswordResetToken(
+        'test@example.com',
+        'workspace-id',
+      );
+
+      expect(result).toEqual({ status: 'TOKEN_ALREADY_GENERATED' });
+    });
+
+    it('should throw when the reset token expiration config is missing', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmail')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
+
       await expect(
         service.generatePasswordResetToken('test@example.com', 'workspace-id'),
-      ).rejects.toThrow(AuthException);
+      ).rejects.toMatchObject({
+        code: AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      });
+    });
+
+    it('should rethrow repository errors', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmail')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockRejectedValue(new Error('db down'));
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      await expect(
+        service.generatePasswordResetToken('test@example.com', 'workspace-id'),
+      ).rejects.toThrow('db down');
     });
   });
 
@@ -423,12 +332,6 @@ describe('ResetPasswordService', () => {
       };
 
       jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOneBy')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue('http://localhost:3000');
       jest
@@ -441,34 +344,13 @@ describe('ResetPasswordService', () => {
 
       const result = await service.sendEmailPasswordResetLink({
         resetToken: mockToken,
-        email: 'test@example.com',
+        user: mockUser as UserEntity,
+        workspace: { id: 'workspace-id' } as WorkspaceEntity,
         locale: 'en',
       });
 
       expect(result.success).toBe(true);
       expect(emailService.send).toHaveBeenCalled();
-    });
-
-    it('should throw an error if user is not found', async () => {
-      const mockToken = {
-        workspaceId: 'workspace-id',
-        passwordResetToken: 'token123',
-        passwordResetTokenExpiresAt: new Date(),
-      };
-
-      jest
-        .spyOn(userService, 'findUserByEmailOrThrow')
-        .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
-        );
-
-      await expect(
-        service.sendEmailPasswordResetLink({
-          resetToken: mockToken,
-          email: 'nonexistent@example.com',
-          locale: 'en',
-        }),
-      ).rejects.toThrow(AuthException);
     });
   });
 

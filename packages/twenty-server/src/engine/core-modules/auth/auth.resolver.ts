@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -121,6 +121,8 @@ import { AuthService } from './services/auth.service';
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -926,13 +928,26 @@ export class AuthResolver {
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
-    return await this.resetPasswordService.sendPasswordResetLinkWithoutRevealingUserExistence(
-      {
-        email: emailPasswordResetInput.email,
-        workspaceId: emailPasswordResetInput.workspaceId,
-        locale: context.req.locale,
-      },
-    );
+    const generationResult =
+      await this.resetPasswordService.generatePasswordResetToken(
+        emailPasswordResetInput.email,
+        emailPasswordResetInput.workspaceId,
+      );
+
+    if (generationResult.status !== 'TOKEN_GENERATED') {
+      this.logger.warn(
+        `Password reset request silently ignored: ${generationResult.status}`,
+      );
+
+      return { success: true };
+    }
+
+    return await this.resetPasswordService.sendEmailPasswordResetLink({
+      resetToken: generationResult.resetToken,
+      user: generationResult.user,
+      workspace: generationResult.workspace,
+      locale: context.req.locale,
+    });
   }
 
   @Mutation(() => InvalidatePasswordDTO)
