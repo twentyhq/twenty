@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -38,6 +38,8 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 
 @Injectable()
 export class ResetPasswordService {
+  private readonly logger = new Logger(ResetPasswordService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -49,6 +51,42 @@ export class ResetPasswordService {
     private readonly i18nService: I18nService,
     private readonly userService: UserService,
   ) {}
+
+  async sendPasswordResetLinkWithoutRevealingUserExistence({
+    email,
+    workspaceId,
+    locale,
+  }: {
+    email: string;
+    workspaceId?: string;
+    locale: keyof typeof APP_LOCALES;
+  }): Promise<EmailPasswordResetLinkDTO> {
+    try {
+      const resetToken = await this.generatePasswordResetToken(
+        email,
+        workspaceId,
+      );
+
+      return await this.sendEmailPasswordResetLink({
+        resetToken,
+        email,
+        locale,
+      });
+    } catch (error) {
+      if (
+        error instanceof AuthException &&
+        error.code === AuthExceptionCode.INVALID_INPUT
+      ) {
+        this.logger.warn(
+          `Password reset request silently ignored: ${error.message}`,
+        );
+
+        return { success: true };
+      }
+
+      throw error;
+    }
+  }
 
   async generatePasswordResetToken(
     email: string,

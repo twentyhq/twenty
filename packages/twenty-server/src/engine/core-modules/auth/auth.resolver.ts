@@ -921,22 +921,18 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLinkDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
-    const resetToken =
-      await this.resetPasswordService.generatePasswordResetToken(
-        emailPasswordResetInput.email,
-        emailPasswordResetInput.workspaceId,
-      );
-
-    return await this.resetPasswordService.sendEmailPasswordResetLink({
-      resetToken,
-      email: emailPasswordResetInput.email,
-      locale: context.req.locale,
-    });
+    return await this.resetPasswordService.sendPasswordResetLinkWithoutRevealingUserExistence(
+      {
+        email: emailPasswordResetInput.email,
+        workspaceId: emailPasswordResetInput.workspaceId,
+        locale: context.req.locale,
+      },
+    );
   }
 
   @Mutation(() => InvalidatePasswordDTO)

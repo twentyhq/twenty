@@ -12,6 +12,8 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
@@ -37,6 +39,7 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
+  let resetPasswordService: ResetPasswordService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -105,7 +108,11 @@ describe('AuthResolver', () => {
         },
         {
           provide: ResetPasswordService,
-          useValue: {},
+          useValue: {
+            sendPasswordResetLinkWithoutRevealingUserExistence: jest
+              .fn()
+              .mockResolvedValue({ success: true }),
+          },
         },
         {
           provide: LoginTokenService,
@@ -170,9 +177,35 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
+    resetPasswordService =
+      module.get<ResetPasswordService>(ResetPasswordService);
   });
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe('emailPasswordResetLink', () => {
+    it('should delegate to sendPasswordResetLinkWithoutRevealingUserExistence', async () => {
+      const emailPasswordResetInput = {
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+      } as EmailPasswordResetLinkInput;
+      const context = { req: { locale: 'en' } } as I18nContext;
+
+      const result = await resolver.emailPasswordResetLink(
+        emailPasswordResetInput,
+        context,
+      );
+
+      expect(result).toEqual({ success: true });
+      expect(
+        resetPasswordService.sendPasswordResetLinkWithoutRevealingUserExistence,
+      ).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+        locale: 'en',
+      });
+    });
   });
 });
