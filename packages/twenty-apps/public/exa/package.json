@@ -1,5 +1,5 @@
 {
-  "name": "@twentyhq/twenty-exa",
+  "name": "@twentyhq/exa",
   "version": "0.2.0",
   "description": "Structured web search powered by Exa, exposed to Twenty AI agents as a tool.",
   "license": "MIT",
