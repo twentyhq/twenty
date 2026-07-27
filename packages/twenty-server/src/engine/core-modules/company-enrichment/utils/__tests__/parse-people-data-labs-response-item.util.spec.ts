@@ -38,11 +38,11 @@ describe('parsePeopleDataLabsResponseItem', () => {
     });
   });
 
-  it('treats a 200 item carrying only the envelope as not_found', () => {
+  it('treats a 200 item carrying only the envelope as notFound', () => {
     expect(
       parsePeopleDataLabsResponseItem({ item: { status: 200, likelihood: 6 } }),
     ).toEqual({
-      outcome: 'not_found',
+      outcome: 'notFound',
       httpStatus: 200,
     });
   });
@@ -53,7 +53,7 @@ describe('parsePeopleDataLabsResponseItem', () => {
         item: { status: 200, likelihood: 3, data: { id: 'x' } },
         requestedMinLikelihood: 6,
       }),
-    ).toEqual({ outcome: 'not_found', httpStatus: 200 });
+    ).toEqual({ outcome: 'notFound', httpStatus: 200 });
   });
 
   it('keeps a match whose likelihood meets the requested threshold', () => {
@@ -65,9 +65,9 @@ describe('parsePeopleDataLabsResponseItem', () => {
     ).toMatchObject({ outcome: 'matched', likelihood: 6 });
   });
 
-  it('maps a 404 item to not_found', () => {
+  it('maps a 404 item to notFound', () => {
     expect(parsePeopleDataLabsResponseItem({ item: { status: 404 } })).toEqual({
-      outcome: 'not_found',
+      outcome: 'notFound',
       httpStatus: 404,
     });
   });

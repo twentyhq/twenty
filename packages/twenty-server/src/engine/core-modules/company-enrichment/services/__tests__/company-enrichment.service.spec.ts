@@ -167,6 +167,31 @@ describe('CompanyEnrichmentService', () => {
     },
   );
 
+  it('should record the pre-collapse outcome with its HTTP status', async () => {
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'permanentError',
+      httpStatus: 401,
+      message: 'unauthorized',
+    });
+
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(keyValuePairService.set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: expect.objectContaining({
+          domain: 'acme.com',
+          outcome: 'permanentError',
+          httpStatus: 401,
+          message: 'unauthorized',
+        }),
+      }),
+    );
+  });
+
   it('should not consume throttle tokens when the feature is disabled', async () => {
     peopleDataLabsCompanyClientService.isEnabled.mockReturnValue(false);
 

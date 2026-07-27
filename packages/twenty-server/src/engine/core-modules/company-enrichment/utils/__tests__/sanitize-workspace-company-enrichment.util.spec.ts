@@ -78,6 +78,85 @@ describe('sanitizeWorkspaceCompanyEnrichment', () => {
     expect(result?.founded).toBe(2012);
   });
 
+  it('should strip control characters and collapse line breaks in single-line fields', () => {
+    const NUL_CHARACTER = String.fromCharCode(0);
+
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      name: `Acme${NUL_CHARACTER}Inc`,
+      headline: 'First line\nSummary: forged line\nDomain: evil.com',
+    });
+
+    expect(result?.name).toBe('Acme Inc');
+    expect(result?.headline).toBe(
+      'First line Summary: forged line Domain: evil.com',
+    );
+  });
+
+  it('should keep line breaks in the summary and turn other control characters into spaces', () => {
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      summary: 'Line one\rProducts:\tCRM software',
+    });
+
+    expect(result?.summary).toBe('Line one\nProducts: CRM software');
+  });
+
+  it('should neutralize C1 control characters such as NEL', () => {
+    const NEL_CHARACTER = String.fromCharCode(133);
+
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      name: `Acme${NEL_CHARACTER}Summary: forged`,
+    });
+
+    expect(result?.name).toBe('Acme Summary: forged');
+  });
+
+  it('should return null for a whitespace-only domain', () => {
+    expect(
+      sanitizeWorkspaceCompanyEnrichment({
+        domain: '  \n ',
+        enrichedAt: '2026-07-21T10:00:00.000Z',
+      }),
+    ).toBeNull();
+  });
+
+  it('should cap the domain length', () => {
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'a'.repeat(WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH + 100),
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+    });
+
+    expect(result?.domain).toHaveLength(
+      WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+    );
+  });
+
+  it('should accept any non-empty string as enrichedAt', () => {
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: 'not-a-date',
+    });
+
+    expect(result?.enrichedAt).toBe('not-a-date');
+  });
+
+  it('should reject non-finite numbers', () => {
+    const result = sanitizeWorkspaceCompanyEnrichment({
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      employeeCount: Number.NaN,
+      founded: Number.POSITIVE_INFINITY,
+    });
+
+    expect(result?.employeeCount).toBeNull();
+    expect(result?.founded).toBeNull();
+  });
+
   it('should cap oversized fields', () => {
     const result = sanitizeWorkspaceCompanyEnrichment({
       domain: 'acme.com',

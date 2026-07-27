@@ -1,7 +1,7 @@
-import { isNumber, isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNumber } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { type PeopleDataLabsEnrichResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-enrich-result.type';
+import { type PeopleDataLabsResponseItemParseResult } from 'src/engine/core-modules/company-enrichment/types/people-data-labs-response-item-parse-result.type';
 import { extractPeopleDataLabsErrorMessage } from 'src/engine/core-modules/company-enrichment/utils/extract-people-data-labs-error-message.util';
 
 const ASSUMED_SUCCESS_STATUS_WHEN_MISSING = 200;
@@ -11,8 +11,8 @@ const ENVELOPE_FIELD_NAMES = new Set(['status', 'likelihood']);
 const extractMatchedData = (
   responseItem: Record<string, unknown>,
 ): Record<string, unknown> => {
-  if (isObject(responseItem.data)) {
-    return responseItem.data as Record<string, unknown>;
+  if (isPlainObject(responseItem.data)) {
+    return responseItem.data;
   }
 
   return Object.fromEntries(
@@ -28,8 +28,8 @@ export const parsePeopleDataLabsResponseItem = <TData>({
 }: {
   item: unknown;
   requestedMinLikelihood?: number;
-}): PeopleDataLabsEnrichResult<TData> => {
-  if (!isObject(item)) {
+}): PeopleDataLabsResponseItemParseResult<TData> => {
+  if (!isPlainObject(item)) {
     return {
       outcome: 'error',
       httpStatus: 0,
@@ -37,13 +37,12 @@ export const parsePeopleDataLabsResponseItem = <TData>({
     };
   }
 
-  const responseItem = item as Record<string, unknown>;
-  const httpStatus = isNumber(responseItem.status)
-    ? responseItem.status
+  const httpStatus = isNumber(item.status)
+    ? item.status
     : ASSUMED_SUCCESS_STATUS_WHEN_MISSING;
 
   if (httpStatus === 404) {
-    return { outcome: 'not_found', httpStatus: 404 };
+    return { outcome: 'notFound', httpStatus: 404 };
   }
 
   if (httpStatus < 200 || httpStatus >= 300) {
@@ -51,20 +50,20 @@ export const parsePeopleDataLabsResponseItem = <TData>({
       outcome: 'error',
       httpStatus,
       message: extractPeopleDataLabsErrorMessage({
-        json: responseItem,
+        json: item,
         httpStatus,
       }),
     };
   }
 
-  const matchedData = extractMatchedData(responseItem);
+  const matchedData = extractMatchedData(item);
 
   if (Object.keys(matchedData).length === 0) {
-    return { outcome: 'not_found', httpStatus };
+    return { outcome: 'notFound', httpStatus };
   }
 
-  const matchLikelihood = isNumber(responseItem.likelihood)
-    ? responseItem.likelihood
+  const matchLikelihood = isNumber(item.likelihood)
+    ? item.likelihood
     : undefined;
 
   const isMatchBelowRequestedThreshold =
@@ -73,7 +72,7 @@ export const parsePeopleDataLabsResponseItem = <TData>({
     matchLikelihood < requestedMinLikelihood;
 
   if (isMatchBelowRequestedThreshold) {
-    return { outcome: 'not_found', httpStatus };
+    return { outcome: 'notFound', httpStatus };
   }
 
   return {

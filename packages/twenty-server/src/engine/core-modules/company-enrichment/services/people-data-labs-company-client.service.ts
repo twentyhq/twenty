@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString, isNumber, isObject } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type AxiosInstance } from 'axios';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { PEOPLE_DATA_LABS_BASE_URL } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-base-url.constant';
 import { PEOPLE_DATA_LABS_COMPANY_MIN_LIKELIHOOD } from 'src/engine/core-modules/company-enrichment/constants/people-data-labs-company-min-likelihood.constant';
@@ -51,9 +51,7 @@ export class PeopleDataLabsCompanyClientService {
         headers: { 'X-Api-Key': apiKey },
       });
 
-      const responseBody = isObject(response.data)
-        ? (response.data as Record<string, unknown>)
-        : null;
+      const responseBody = isPlainObject(response.data) ? response.data : null;
 
       if (!isDefined(responseBody)) {
         if (response.status < 200 || response.status >= 300) {
@@ -84,7 +82,7 @@ export class PeopleDataLabsCompanyClientService {
         },
       );
 
-      if (parsed.outcome === 'not_found') {
+      if (parsed.outcome === 'notFound') {
         return { outcome: 'notFound' };
       }
 

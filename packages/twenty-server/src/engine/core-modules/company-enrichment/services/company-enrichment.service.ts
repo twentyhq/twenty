@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -100,7 +101,7 @@ export class CompanyEnrichmentService {
       await this.recordEnrichmentAttempt({
         workspaceId,
         domain,
-        outcome: enrichmentResult.outcome,
+        result,
       });
     }
 
@@ -134,32 +135,44 @@ export class CompanyEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
-    return {
-      outcome: 'matched',
-      enrichment: toWorkspaceCompanyEnrichment({
-        domain,
-        data: result.data,
-        enrichedAt: new Date(),
-      }),
-    };
+    const enrichment = toWorkspaceCompanyEnrichment({
+      domain,
+      data: result.data,
+      enrichedAt: new Date(),
+    });
+
+    if (!isDefined(enrichment)) {
+      return { outcome: 'unavailable', enrichment: null };
+    }
+
+    return { outcome: 'matched', enrichment };
   }
 
   private async recordEnrichmentAttempt({
     workspaceId,
     domain,
-    outcome,
+    result,
   }: {
     workspaceId: string;
     domain: string;
-    outcome: WorkspaceCompanyEnrichmentResult['outcome'];
+    result: Exclude<PeopleDataLabsCompanyEnrichResult, { outcome: 'skipped' }>;
   }): Promise<void> {
     // Best-effort telemetry: never let a key-value write failure fail the enrichment.
+    // The pre-collapse outcome is recorded so an operator can tell "no PDL match for this
+    // domain" apart from "the PDL integration is broken" (both surface as 'unavailable').
     try {
       await this.keyValuePairService.set({
         userId: null,
         workspaceId,
         key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
-        value: { domain, outcome, attemptedAt: new Date().toISOString() },
+        value: {
+          domain,
+          outcome: result.outcome,
+          ...('httpStatus' in result
+            ? { httpStatus: result.httpStatus, message: result.message }
+            : {}),
+          attemptedAt: new Date().toISOString(),
+        },
         type: KeyValuePairType.CONFIG_VARIABLE,
       });
     } catch (error) {

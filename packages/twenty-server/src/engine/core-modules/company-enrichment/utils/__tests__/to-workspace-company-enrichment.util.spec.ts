@@ -1,3 +1,4 @@
+import { WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-field-max-length.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-max-tags.constant';
 import { WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH } from 'src/engine/core-modules/company-enrichment/constants/workspace-company-enrichment-summary-max-length.constant';
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
@@ -17,7 +18,7 @@ describe('toWorkspaceCompanyEnrichment', () => {
       },
     });
 
-    expect(result.summary).toHaveLength(
+    expect(result?.summary).toHaveLength(
       WORKSPACE_COMPANY_ENRICHMENT_SUMMARY_MAX_LENGTH,
     );
   });
@@ -31,7 +32,7 @@ describe('toWorkspaceCompanyEnrichment', () => {
       },
     });
 
-    expect(result.tags).toHaveLength(WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS);
+    expect(result?.tags).toHaveLength(WORKSPACE_COMPANY_ENRICHMENT_MAX_TAGS);
   });
 
   it('should prefer display_name over name', () => {
@@ -41,7 +42,7 @@ describe('toWorkspaceCompanyEnrichment', () => {
       data: { name: 'acme inc', display_name: 'Acme Inc' },
     });
 
-    expect(result.name).toBe('Acme Inc');
+    expect(result?.name).toBe('Acme Inc');
   });
 
   it('should fall back to name when display_name is empty', () => {
@@ -51,7 +52,7 @@ describe('toWorkspaceCompanyEnrichment', () => {
       data: { name: 'acme inc', display_name: '' },
     });
 
-    expect(result.name).toBe('acme inc');
+    expect(result?.name).toBe('acme inc');
   });
 
   it('should flatten the location', () => {
@@ -72,6 +73,24 @@ describe('toWorkspaceCompanyEnrichment', () => {
       region: 'California',
       country: 'United States',
     });
+  });
+
+  it('should sanitize provider data through the shared sanitizer', () => {
+    const result = toWorkspaceCompanyEnrichment({
+      domain,
+      enrichedAt,
+      data: {
+        name: `Acme${String.fromCharCode(0)}Inc`,
+        headline: 'a'.repeat(
+          WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH + 100,
+        ),
+      },
+    });
+
+    expect(result?.name).toBe('Acme Inc');
+    expect(result?.headline).toHaveLength(
+      WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+    );
   });
 
   it('should null every absent field and keep tags an empty array', () => {

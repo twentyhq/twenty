@@ -1,4 +1,4 @@
-export type PeopleDataLabsEnrichResult<TData> =
+export type PeopleDataLabsResponseItemParseResult<TData> =
   | { outcome: 'matched'; httpStatus: number; likelihood?: number; data: TData }
-  | { outcome: 'not_found'; httpStatus: number }
+  | { outcome: 'notFound'; httpStatus: number }
   | { outcome: 'error'; httpStatus: number; message: string };
