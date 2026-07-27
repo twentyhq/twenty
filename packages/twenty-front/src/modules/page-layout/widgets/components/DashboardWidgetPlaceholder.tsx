@@ -36,7 +36,7 @@ export const DashboardWidgetPlaceholder = () => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
-    if (isLayoutCustomizationModeEnabled || !canEditPageLayouts) {
+    if (isLayoutCustomizationModeEnabled) {
       return;
     }
 
@@ -49,10 +49,26 @@ export const DashboardWidgetPlaceholder = () => {
     });
   };
 
+  if (!canEditPageLayouts) {
+    return (
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="noWidgets" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            <Trans>No widgets</Trans>
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            <Trans>You do not have permission to add widgets</Trans>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+
   return (
     <WidgetCard
       variant="dashboard"
-      isEditable={canEditPageLayouts}
+      isEditable={true}
       isEditing={false}
       isDragging={false}
       isResizing={false}

@@ -54,6 +54,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
+    setLayoutsPermission(store);
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(
       pageLayoutPersistedComponentState.atomFamily({

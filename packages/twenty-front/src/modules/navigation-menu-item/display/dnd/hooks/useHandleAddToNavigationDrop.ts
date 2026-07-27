@@ -6,7 +6,6 @@ import { isDefined, normalizeUrl } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
@@ -85,8 +84,8 @@ export const useHandleAddToNavigationDrop = () => {
 
       // Enter customization mode first: it (re)seeds the workspace draft from
       // the live items, so creating beforehand would have the new item
-      // overwritten. It also bails without enabling the mode when a dashboard
-      // is mid-edit, so skip the create unless the mode is actually on —
+      // overwritten. It returns false without the LAYOUTS permission or when
+      // a dashboard is mid-edit, so skip the create in those cases —
       // otherwise the item lands in a draft that is neither shown nor saved.
       const addToWorkspaceAndOpenEdit = (
         input: NewNavigationMenuItemInput,
@@ -96,8 +95,7 @@ export const useHandleAddToNavigationDrop = () => {
           'itemId'
         >,
       ) => {
-        enterLayoutCustomizationMode();
-        if (!store.get(isLayoutCustomizationModeEnabledState.atom)) {
+        if (!enterLayoutCustomizationMode()) {
           return;
         }
         const newItemId = createItem(input, position);
