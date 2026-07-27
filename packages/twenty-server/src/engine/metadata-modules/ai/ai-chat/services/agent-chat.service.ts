@@ -399,21 +399,24 @@ export class AgentChatService {
       { where: { threadId, isHidden: true }, relations: ['parts'] },
     );
 
-    // Only a message that actually carries its parts counts as seeded. The message and its parts
-    // are inserted separately, so an interrupted attempt can leave a part-less row behind; treating
-    // that row as a seed would disable the context for the thread forever.
-    const isAlreadySeeded = existingHiddenMessages.some((hiddenMessage) =>
-      isNonEmptyArray(hiddenMessage.parts),
+    // The message and its parts are inserted separately, so an interrupted attempt can leave a
+    // part-less row behind. Drop those unconditionally: they carry no context yet still reach the
+    // model, and counting one as a seed would disable the context for the thread forever.
+    const partialMessages = existingHiddenMessages.filter(
+      (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
     );
+
+    if (isNonEmptyArray(partialMessages)) {
+      await this.messageRepository.delete(workspaceId, {
+        id: In(partialMessages.map((partialMessage) => partialMessage.id)),
+      });
+    }
+
+    const isAlreadySeeded =
+      existingHiddenMessages.length > partialMessages.length;
 
     if (isAlreadySeeded) {
       return;
-    }
-
-    if (isNonEmptyArray(existingHiddenMessages)) {
-      await this.messageRepository.delete(workspaceId, {
-        id: In(existingHiddenMessages.map((hiddenMessage) => hiddenMessage.id)),
-      });
     }
 
     // Sort before the real first message via an epoch processedAt (a plain column honored on insert);

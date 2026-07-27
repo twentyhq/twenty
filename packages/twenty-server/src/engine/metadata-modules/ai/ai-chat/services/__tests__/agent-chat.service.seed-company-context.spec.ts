@@ -88,6 +88,23 @@ describe('AgentChatService seedCompanyContextMessage', () => {
     expect(messageRepository.delete).not.toHaveBeenCalled();
   });
 
+  it('discards a stray part-less message even when a complete one already exists', async () => {
+    const { service, messageRepository } = buildService({
+      existingHiddenMessages: [
+        { id: 'complete-id', parts: [{ id: 'part-id' }] },
+        { id: 'partial-id', parts: [] },
+      ],
+    });
+
+    await seed(service);
+
+    expect(messageRepository.delete).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ id: expect.anything() }),
+    );
+    expect(messageRepository.insert).not.toHaveBeenCalled();
+  });
+
   it('discards a part-less message left by an interrupted attempt and seeds again', async () => {
     const { service, messageRepository } = buildService({
       existingHiddenMessages: [{ id: 'partial-id', parts: [] }],
