@@ -31,7 +31,7 @@ type RecallBotAutomaticLeave = {
     timeout: number;
     activate_after: number;
   };
-  bot_detection?: RecallBotDetection;
+  bot_detection: RecallBotDetection;
 };
 
 export const getRecallBotAutomaticLeave = ({
@@ -40,7 +40,7 @@ export const getRecallBotAutomaticLeave = ({
 }: {
   botDetectionActivateAfterSeconds: number;
   botName?: string;
-}): RecallBotAutomaticLeave | undefined => {
+}): RecallBotAutomaticLeave => {
   const waitingRoomTimeoutSeconds = getOptionalPositiveIntegerVariable(
     CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
@@ -51,7 +51,12 @@ export const getRecallBotAutomaticLeave = ({
     CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
 
-  const automaticLeave: RecallBotAutomaticLeave = {};
+  const automaticLeave: RecallBotAutomaticLeave = {
+    bot_detection: getRecallBotDetection({
+      botDetectionActivateAfterSeconds,
+      botName,
+    }),
+  };
 
   if (!isUndefined(waitingRoomTimeoutSeconds)) {
     automaticLeave.waiting_room_timeout = waitingRoomTimeoutSeconds;
@@ -68,12 +73,7 @@ export const getRecallBotAutomaticLeave = ({
     };
   }
 
-  automaticLeave.bot_detection = getRecallBotDetection({
-    botDetectionActivateAfterSeconds,
-    botName,
-  });
-
-  return Object.keys(automaticLeave).length === 0 ? undefined : automaticLeave;
+  return automaticLeave;
 };
 
 const getRecallBotDetection = ({

@@ -62,9 +62,7 @@ export const scheduleRecallBot = async ({
       meeting_url: meetingUrl,
       join_at: effectiveJoinAt,
       bot_name: configResult.config.botName,
-      ...(isUndefined(automaticLeave)
-        ? {}
-        : { automatic_leave: automaticLeave }),
+      automatic_leave: automaticLeave,
       ...(isUndefined(automaticVideoOutput)
         ? {}
         : { automatic_video_output: automaticVideoOutput }),

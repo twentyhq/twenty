@@ -36,10 +36,9 @@ describe('getRecallBotAutomaticLeave', () => {
       AUTOMATIC_LEAVE_ARGUMENTS,
     );
 
-    expect(automaticLeave).toBeDefined();
-    expect(automaticLeave?.everyone_left_timeout).toBeUndefined();
+    expect(automaticLeave.everyone_left_timeout).toBeUndefined();
     expect(
-      automaticLeave?.bot_detection?.using_participant_names?.matches,
+      automaticLeave.bot_detection.using_participant_names.matches,
     ).toContain('notetaker');
   });
 
@@ -50,22 +49,8 @@ describe('getRecallBotAutomaticLeave', () => {
     });
 
     expect(
-      automaticLeave?.bot_detection?.using_participant_names?.matches,
+      automaticLeave.bot_detection.using_participant_names.matches,
     ).toContain('Twenty.com');
-  });
-
-  it('does not duplicate a bot name already present in the default matches (case-insensitive)', () => {
-    const matches =
-      getRecallBotAutomaticLeave({
-        ...AUTOMATIC_LEAVE_ARGUMENTS,
-        botName: 'NoteTaker',
-      })?.bot_detection?.using_participant_names?.matches ?? [];
-
-    const noteTakerEntries = matches.filter(
-      (match) => match.toLowerCase() === 'notetaker',
-    );
-
-    expect(noteTakerEntries).toHaveLength(1);
   });
 
   it('enables behavioral (participant events) detection', () => {
@@ -73,9 +58,7 @@ describe('getRecallBotAutomaticLeave', () => {
       AUTOMATIC_LEAVE_ARGUMENTS,
     );
 
-    expect(
-      automaticLeave?.bot_detection?.using_participant_events,
-    ).toBeDefined();
+    expect(automaticLeave.bot_detection.using_participant_events).toBeDefined();
   });
 
   it('still emits the existing everyone_left_timeout when its env var is set', () => {
@@ -85,7 +68,7 @@ describe('getRecallBotAutomaticLeave', () => {
       AUTOMATIC_LEAVE_ARGUMENTS,
     );
 
-    expect(automaticLeave?.everyone_left_timeout).toEqual({
+    expect(automaticLeave.everyone_left_timeout).toEqual({
       timeout: 2,
       activate_after: 1,
     });

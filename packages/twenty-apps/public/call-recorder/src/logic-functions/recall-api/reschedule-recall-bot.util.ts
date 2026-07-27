@@ -1,5 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
-
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
@@ -48,9 +46,7 @@ export const rescheduleRecallBot = async ({
       meeting_url: meetingUrl,
       join_at: effectiveJoinAt,
       bot_name: configResult.config.botName,
-      ...(isUndefined(automaticLeave)
-        ? {}
-        : { automatic_leave: automaticLeave }),
+      automatic_leave: automaticLeave,
       recording_config: getRecallBotRecordingConfig(),
       metadata,
     },
