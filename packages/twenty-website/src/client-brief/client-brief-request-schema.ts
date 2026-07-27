@@ -6,6 +6,14 @@ import { CLIENT_BRIEF_HOSTING_TYPES } from './data/hosting-type-values';
 
 const optionalNonEmptyString = z.string().trim().min(1).optional();
 
+// Mirrors the backend `slugify` output; shared with normalizePartnerSlug so the
+// rule has one owner.
+export const partnerSlugSchema = z
+  .string()
+  .trim()
+  .regex(/^[a-z0-9-]+$/)
+  .max(100);
+
 export const clientBriefRequestSchema = z.strictObject({
   firstName: z.string().trim().min(1, { error: 'First name is required.' }),
   lastName: z.string(),
@@ -19,12 +27,7 @@ export const clientBriefRequestSchema = z.strictObject({
   seatCount: optionalNonEmptyString,
   timeline: optionalNonEmptyString,
   budgetRange: optionalNonEmptyString,
-  partnerSlug: z
-    .string()
-    .trim()
-    .regex(/^[a-z0-9-]+$/)
-    .max(100)
-    .optional(),
+  partnerSlug: partnerSlugSchema.optional(),
 });
 
 export type ClientBriefRequest = z.infer<typeof clientBriefRequestSchema>;

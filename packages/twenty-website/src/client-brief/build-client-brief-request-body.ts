@@ -28,7 +28,7 @@ export function buildClientBriefRequestBody(
   if (state.seatCount.trim()) body.seatCount = state.seatCount.trim();
   if (state.timeline.trim()) body.timeline = state.timeline.trim();
   if (state.budgetRange.trim()) body.budgetRange = state.budgetRange.trim();
-  if (partnerSlug !== undefined) body.partnerSlug = partnerSlug;
+  if (partnerSlug) body.partnerSlug = partnerSlug;
 
   return body;
 }
