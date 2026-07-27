@@ -41,6 +41,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       {
         ...args,
         data: [args.data],
+        upsert: args.upsert,
       },
       queryRunnerContext,
     );

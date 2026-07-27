@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -61,6 +61,7 @@ export const useUpdateJunctionRelationFromCell = ({
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
     objectNameSingular: junctionObjectNameSingular,
     skipPostOptimisticEffect: true,
+    upsert: true,
   });
 
   const { deleteOneRecord: deleteJunctionRecord } = useDeleteOneRecord({
