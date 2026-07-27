@@ -39,7 +39,10 @@ export const generateCreateOneRecordMutation = ({
   );
 
   const createOneRecordMutation = gql`
-    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!, $upsert: Boolean) {
+    mutation CreateOne${capitalizedObjectName}(
+      $input: ${capitalizedObjectName}CreateInput!
+      $upsert: Boolean
+    ) {
       ${mutationResponseField}(data: $input, upsert: $upsert) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
