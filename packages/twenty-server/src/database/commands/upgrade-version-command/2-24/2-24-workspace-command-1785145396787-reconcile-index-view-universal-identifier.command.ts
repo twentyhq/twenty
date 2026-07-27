@@ -27,7 +27,7 @@ type UniversalIdentifierUpdate = {
   };
 };
 
-@RegisteredWorkspaceCommand('2.24.0', 1784798850649)
+@RegisteredWorkspaceCommand('2.24.0', 1785145396787)
 @Command({
   name: 'upgrade:2-24:reconcile-index-view-universal-identifier',
   description:
