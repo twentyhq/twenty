@@ -319,12 +319,16 @@ export class WorkflowVersionCoreSyncService {
     );
   }
 
-  async deleteCoreVersionsByWorkflowId(
+  async deleteCoreVersionsByWorkflowIds(
     workspaceId: string,
-    workflowId: string,
+    workflowIds: string[],
   ): Promise<void> {
+    if (workflowIds.length === 0) {
+      return;
+    }
+
     await this.coreWorkflowVersionRepository.delete(workspaceId, {
-      workflowId,
+      workflowId: In(workflowIds),
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);

@@ -27,11 +27,9 @@ export class WorkflowDestroyManyPostQueryHook implements WorkspacePostQueryHookI
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    for (const workflow of payload) {
-      await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowId(
-        workspace.id,
-        workflow.id,
-      );
-    }
+    await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
+      workspace.id,
+      payload.map((workflow) => workflow.id),
+    );
   }
 }
