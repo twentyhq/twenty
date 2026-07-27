@@ -104,6 +104,40 @@ The converger takes a backup before any schema-changing deploy and aborts if
 the backup fails. It never rolls back on its own, because reverting code does
 not reverse a migration.
 
+## When the converger reports "production is unhealthy after deploying"
+
+This means the merge and the migration already happened. Production is on the
+new commit; there is nothing to un-do by re-running anything. Diagnose before
+acting:
+
+1. **Check health now.** The backend runs in watch mode, so after a large merge
+   it recompiles for a minute or two. The converger polls to a deadline
+   (`TWENTY_HEALTH_TIMEOUT`, default 300s), but a very large sync can still
+   outrun it — and a slow boot is not a failed deploy.
+
+   ```bash
+   curl -sS -o /dev/null -w 'backend %{http_code}\n'  http://127.0.0.1:3000/healthz
+   curl -sS -o /dev/null -w 'frontend %{http_code}\n' http://127.0.0.1:3010/healthz
+   ```
+
+2. **A 200 on :3010 does not mean the frontend is current.**
+   `serve-frontend.mjs` serves the build directory live, so it answers happily
+   with a stale bundle. If the deploy changed `packages/twenty-front/` and you
+   do not see `frontend republished` in the log, rebuild:
+
+   ```bash
+   bash deploy/publish-frontend.sh
+   ```
+
+   A stale bundle against a newer backend is the "blank screen / cannot return
+   null for non-nullable field" class of failure.
+
+3. **Do not re-run the converger to retry.** Once the checkout is on the target,
+   `current_sha == target_sha` and the next tick exits immediately. It cannot
+   finish a partial deploy for you.
+
+4. Only if the app is genuinely broken, go to Rollback below.
+
 ## Rollback
 
 Application rollback does not automatically reverse database migrations. For a
@@ -111,3 +145,7 @@ code-only failure, return to the previously recorded reviewed SHA using a
 dedicated rollback branch/PR or another explicitly recorded emergency action.
 For a schema/data failure, stop and use the migration-specific recovery plan or
 a verified database restore; do not improvise a destructive downgrade.
+
+Backups live in `~/Backups/twenty/` — the nightly `backup-db.sh` dump plus the
+pre-deploy dump the converger takes for any schema-changing release. Confirm
+which one predates the migration before restoring anything.
