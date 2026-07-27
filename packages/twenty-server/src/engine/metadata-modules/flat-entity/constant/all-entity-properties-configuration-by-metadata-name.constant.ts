@@ -502,15 +502,14 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   viewField: {
     isSystemSideEffect: {
-      applicationUniversalIdentifier: {
-        universalProperty: 'applicationUniversalIdentifier',
-        toCompare: true,
-        toStringify: false,
-      },
-
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+    },
+    applicationUniversalIdentifier: {
+      universalProperty: 'applicationUniversalIdentifier',
+      toCompare: true,
+      toStringify: false,
     },
     isVisible: {
       toCompare: true,
