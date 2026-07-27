@@ -217,11 +217,17 @@ export const AdvancedFilterSidePanelValueFormInput = ({
     metadata: fieldDefinition?.metadata as FieldMetadata,
   };
 
-  if (
+  // Only a direct (non-traversal) many-to-one relation to the workspace member
+  // object is filtered by record with a "Me" option. Traversal filters keep a
+  // non-null relationTargetFieldMetadataId and are excluded so a nested
+  // relation targeting workspaceMember does not wrongly show the picker.
+  const isDirectWorkspaceMemberRelationFilter =
+    !isDefined(recordFilter.relationTargetFieldMetadataId) &&
     isFieldRelationManyToOne(field) &&
     field.metadata.relationObjectMetadataNameSingular ===
-      CoreObjectNameSingular.WorkspaceMember
-  ) {
+      CoreObjectNameSingular.WorkspaceMember;
+
+  if (isDirectWorkspaceMemberRelationFilter) {
     return (
       <FormWorkspaceMemberFilterValueInput
         label=""
