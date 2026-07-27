@@ -24,6 +24,9 @@ export const createAnchorNavigationClickHandler =
     requestExternalNavigation,
   }: CreateAnchorNavigationClickHandlerParams) =>
   (event: MouseEvent<HTMLAnchorElement>) => {
+    // Bound to both onClick and onAuxClick: a middle click opens a new tab
+    // through auxclick, never click. auxclick also fires on right click, which
+    // must stay untouched so the native context menu keeps working.
     const clickCanOpenNavigation =
       event.button === PRIMARY_MOUSE_BUTTON ||
       event.button === MIDDLE_MOUSE_BUTTON;
