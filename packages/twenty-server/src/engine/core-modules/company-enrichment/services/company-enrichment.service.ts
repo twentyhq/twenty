@@ -22,6 +22,7 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
@@ -34,6 +35,7 @@ export class CompanyEnrichmentService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
@@ -47,6 +49,12 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
+    if (
+      !this.twentyConfigService.get('IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED')
+    ) {
+      return { outcome: 'unavailable', enrichment: null };
+    }
+
     const isWorkspaceCreator = await this.isWorkspaceCreator({
       userId,
       workspaceId,

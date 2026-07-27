@@ -1952,6 +1952,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Enable or disable workspace company enrichment during onboarding',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Mintlify API key for documentation search',
     isEnvOnly: true,

@@ -11,6 +11,7 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 describe('CompanyEnrichmentService', () => {
@@ -22,6 +23,7 @@ describe('CompanyEnrichmentService', () => {
   };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
+  let twentyConfigService: { get: jest.Mock };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -36,6 +38,7 @@ describe('CompanyEnrichmentService', () => {
     };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
+    twentyConfigService = { get: jest.fn().mockReturnValue(true) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,6 +54,10 @@ describe('CompanyEnrichmentService', () => {
         {
           provide: ThrottlerService,
           useValue: throttlerService,
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: twentyConfigService,
         },
         {
           provide: KeyValuePairService,
@@ -190,6 +197,26 @@ describe('CompanyEnrichmentService', () => {
         }),
       }),
     );
+  });
+
+  it('should return unavailable without any lookup when the enrichment flag is off', async () => {
+    twentyConfigService.get.mockImplementation(
+      (key: string) => key !== 'IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED',
+    );
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
   it('should not consume throttle tokens when the feature is disabled', async () => {
