@@ -20,8 +20,9 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContentContainer = styled.div`
   display: flex;
