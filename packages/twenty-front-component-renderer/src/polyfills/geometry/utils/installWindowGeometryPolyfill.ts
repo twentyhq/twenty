@@ -1,8 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
+
+const VIEWPORT_VALUE_READERS: Record<
+  string,
+  (viewport: ViewportGeometrySnapshot | null) => number
+> = {
+  innerWidth: (viewport) => viewport?.innerWidth ?? 0,
+  innerHeight: (viewport) => viewport?.innerHeight ?? 0,
+  devicePixelRatio: (viewport) => viewport?.devicePixelRatio ?? 1,
+  scrollX: (viewport) => viewport?.scrollX ?? 0,
+  scrollY: (viewport) => viewport?.scrollY ?? 0,
+};
 
 type InstallWindowGeometryPolyfillInput = {
   globalScope: Record<string, unknown>;
@@ -13,43 +22,14 @@ export const installWindowGeometryPolyfill = ({
   globalScope,
   geometryStore,
 }: InstallWindowGeometryPolyfillInput): void => {
-  const installTargets = resolveGlobalScopeInstallTargets(globalScope);
-
-  const defineViewportGetter = (
-    propertyName:
-      | 'innerWidth'
-      | 'innerHeight'
-      | 'devicePixelRatio'
-      | 'scrollX'
-      | 'scrollY'
-      | 'pageXOffset'
-      | 'pageYOffset',
-    readFromViewport: (viewport: ViewportGeometrySnapshot) => number,
-    fallbackValue: number,
-  ): void => {
-    for (const installTarget of installTargets) {
+  for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
+    for (const [propertyName, readViewportValue] of Object.entries(
+      VIEWPORT_VALUE_READERS,
+    )) {
       Object.defineProperty(installTarget, propertyName, {
-        get() {
-          const viewport = geometryStore.getViewportSnapshot();
-
-          return isDefined(viewport)
-            ? readFromViewport(viewport)
-            : fallbackValue;
-        },
+        get: () => readViewportValue(geometryStore.getViewportSnapshot()),
         configurable: true,
       });
     }
-  };
-
-  defineViewportGetter('innerWidth', (viewport) => viewport.innerWidth, 0);
-  defineViewportGetter('innerHeight', (viewport) => viewport.innerHeight, 0);
-  defineViewportGetter(
-    'devicePixelRatio',
-    (viewport) => viewport.devicePixelRatio,
-    1,
-  );
-  defineViewportGetter('scrollX', (viewport) => viewport.scrollX, 0);
-  defineViewportGetter('scrollY', (viewport) => viewport.scrollY, 0);
-  defineViewportGetter('pageXOffset', (viewport) => viewport.scrollX, 0);
-  defineViewportGetter('pageYOffset', (viewport) => viewport.scrollY, 0);
+  }
 };

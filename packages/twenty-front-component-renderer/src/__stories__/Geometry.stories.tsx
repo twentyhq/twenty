@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
@@ -54,36 +54,18 @@ export const MirrorsElementGeometryIntoTheWorker: Story = createGeometryStory(
     );
 
     await waitFor(
-      async () => {
+      () => {
+        expect(canvas.getByTestId('geometry-measure-width')).toHaveTextContent(
+          'width: 240',
+        );
+        expect(canvas.getByTestId('geometry-measure-height')).toHaveTextContent(
+          'height: 80',
+        );
         expect(
-          await canvas.findByTestId('geometry-measure-width'),
-        ).toHaveTextContent('width: 240');
-      },
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    await waitFor(
-      async () => {
-        expect(
-          await canvas.findByTestId('geometry-measure-height'),
-        ).toHaveTextContent('height: 80');
-      },
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    await waitFor(
-      async () => {
-        expect(
-          await canvas.findByTestId('geometry-measure-offset-width'),
+          canvas.getByTestId('geometry-measure-offset-width'),
         ).toHaveTextContent('offsetWidth: 240');
-      },
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    await waitFor(
-      async () => {
         expect(
-          await canvas.findByTestId('geometry-measure-inner-width'),
+          canvas.getByTestId('geometry-measure-inner-width'),
         ).not.toHaveTextContent('innerWidth: 0');
       },
       { timeout: GEOMETRY_TIMEOUT },
@@ -93,56 +75,6 @@ export const MirrorsElementGeometryIntoTheWorker: Story = createGeometryStory(
   },
 );
 
-export const DoesNotBreakAComponentThatNeverMeasures: Story =
-  createGeometryStory('geometry-no-measure', async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByTestId(
-      'geometry-no-measure-component',
-      {},
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    expect(errorHandler).not.toHaveBeenCalled();
-  });
-
-export const CapsObservedElementsAndDoesNotGrowAcrossRemounts: Story =
-  createGeometryStory('geometry-observation-cap', async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByTestId(
-      'geometry-observation-cap-component',
-      {},
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    await waitFor(
-      async () => {
-        expect(
-          await canvas.findByTestId('geometry-observation-cap-count'),
-        ).toHaveTextContent('measured: 500');
-      },
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    await userEvent.click(
-      await canvas.findByTestId('geometry-observation-cap-remount'),
-    );
-
-    await waitFor(
-      async () => {
-        expect(
-          await canvas.findByTestId('geometry-observation-cap-count'),
-        ).toHaveTextContent('measured: 500');
-      },
-      { timeout: GEOMETRY_TIMEOUT },
-    );
-
-    expect(errorHandler).not.toHaveBeenCalled();
-  });
-
-// Hovering does not open the recharts tooltip in the sandbox yet, so this
-// story only verifies the chart itself renders from mirrored geometry.
 export const RendersRechartsAreaChart: Story = createGeometryStory(
   'recharts-example',
   async ({ canvasElement }) => {

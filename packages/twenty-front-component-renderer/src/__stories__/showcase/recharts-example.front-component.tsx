@@ -1,11 +1,4 @@
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { defineFrontComponent } from 'twenty-sdk/define';
 
 const CHART_DATA = [
@@ -26,7 +19,6 @@ const RechartsExampleComponent = () => (
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="month" />
       <YAxis />
-      <Tooltip />
       <Area
         type="monotone"
         dataKey="revenue"

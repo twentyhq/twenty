@@ -14,6 +14,5 @@ export const createViewportGeometrySnapshotFixture = (
   rootContainerHeight: 0,
   rootContainerClientWidth: 0,
   rootContainerClientHeight: 0,
-  defaultFontShorthand: '400 13px sans-serif',
   ...overrides,
 });

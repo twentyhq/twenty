@@ -1,9 +1,8 @@
-import { DEFAULT_FONT_SHORTHAND } from '@/constants/DefaultFontShorthand';
 import { measureViewportGeometry } from '../measureViewportGeometry';
 
 describe('measureViewportGeometry', () => {
   it('should read the window fields', () => {
-    const viewport = measureViewportGeometry(null, DEFAULT_FONT_SHORTHAND);
+    const viewport = measureViewportGeometry(null);
 
     expect(viewport.innerWidth).toBe(window.innerWidth);
     expect(viewport.innerHeight).toBe(window.innerHeight);
@@ -13,7 +12,7 @@ describe('measureViewportGeometry', () => {
   });
 
   it('should return zero root fields for a null root', () => {
-    const viewport = measureViewportGeometry(null, DEFAULT_FONT_SHORTHAND);
+    const viewport = measureViewportGeometry(null);
 
     expect(viewport.rootContainerWidth).toBe(0);
     expect(viewport.rootContainerHeight).toBe(0);
@@ -21,17 +20,11 @@ describe('measureViewportGeometry', () => {
     expect(viewport.rootContainerClientHeight).toBe(0);
   });
 
-  it('should pass the supplied font shorthand through', () => {
-    const viewport = measureViewportGeometry(null, '700 20px Inter');
-
-    expect(viewport.defaultFontShorthand).toBe('700 20px Inter');
-  });
-
   it('should not read computed styles', () => {
     const getComputedStyle = jest.spyOn(window, 'getComputedStyle');
     const rootContainer = document.createElement('div');
 
-    measureViewportGeometry(rootContainer, DEFAULT_FONT_SHORTHAND);
+    measureViewportGeometry(rootContainer);
 
     expect(getComputedStyle).not.toHaveBeenCalled();
     getComputedStyle.mockRestore();
@@ -54,10 +47,7 @@ describe('measureViewportGeometry', () => {
     Object.defineProperty(rootContainer, 'clientWidth', { value: 290 });
     Object.defineProperty(rootContainer, 'clientHeight', { value: 390 });
 
-    const viewport = measureViewportGeometry(
-      rootContainer,
-      DEFAULT_FONT_SHORTHAND,
-    );
+    const viewport = measureViewportGeometry(rootContainer);
 
     expect(viewport.rootContainerX).toBe(1);
     expect(viewport.rootContainerY).toBe(2);

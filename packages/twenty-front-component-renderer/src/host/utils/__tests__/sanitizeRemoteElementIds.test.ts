@@ -14,18 +14,11 @@ describe('sanitizeRemoteElementIds', () => {
     ]);
   });
 
-  it('should drop empty and over-long ids', () => {
-    expect(sanitizeRemoteElementIds(['', 'x'.repeat(65), 'ok'])).toEqual([
-      'ok',
-    ]);
+  it('should drop empty string entries', () => {
+    expect(sanitizeRemoteElementIds(['', 'ok', ''])).toEqual(['ok']);
   });
 
-  it('should cap the array length', () => {
-    const remoteElementIds = Array.from({ length: 1000 }, (_, index) =>
-      String(index),
-    );
-
-    expect(sanitizeRemoteElementIds(remoteElementIds)).toHaveLength(500);
-    expect(sanitizeRemoteElementIds(remoteElementIds, 10)).toHaveLength(10);
+  it('should pass valid ids through unchanged', () => {
+    expect(sanitizeRemoteElementIds(['1', '2', '3'])).toEqual(['1', '2', '3']);
   });
 });

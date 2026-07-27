@@ -4,7 +4,6 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 
 export const measureViewportGeometry = (
   rootContainer: Element | null,
-  defaultFontShorthand: string,
 ): ViewportGeometrySnapshot => {
   const rootContainerRect = isDefined(rootContainer)
     ? rootContainer.getBoundingClientRect()
@@ -22,6 +21,5 @@ export const measureViewportGeometry = (
     rootContainerHeight: rootContainerRect?.height ?? 0,
     rootContainerClientWidth: rootContainer?.clientWidth ?? 0,
     rootContainerClientHeight: rootContainer?.clientHeight ?? 0,
-    defaultFontShorthand,
   };
 };

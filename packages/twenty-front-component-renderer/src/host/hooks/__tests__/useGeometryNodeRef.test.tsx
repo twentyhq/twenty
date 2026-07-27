@@ -1,7 +1,7 @@
 import '../../utils/__tests__/setupServerRenderingGlobals';
 
 import { act, createElement } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 
 import { createStubGeometryTracker } from '@/__tests__/createStubGeometryTracker';
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
@@ -26,12 +26,24 @@ const renderWithTracker = (tracker: GeometryTracker, remoteElementId: string) =>
   );
 
 describe('useGeometryNodeRef', () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
   it('should re-register the mounted element when the remote id changes', () => {
     const tracker = createStubGeometryTracker();
-
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-    const root = createRoot(container);
 
     act(() => {
       root.render(renderWithTracker(tracker, 'first-id'));
@@ -54,9 +66,5 @@ describe('useGeometryNodeRef', () => {
       'second-id',
       expect.any(HTMLElement),
     );
-
-    act(() => {
-      root.unmount();
-    });
   });
 });

@@ -1,4 +1,4 @@
-import { isFunction, isNonEmptyString, isString } from '@sniptt/guards';
+import { isFunction, isNonEmptyString } from '@sniptt/guards';
 
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
@@ -35,73 +35,6 @@ const hasEveryClassNameToken = (
   );
 };
 
-const collectMatchesInTreeOrder = (
-  rootElement: ElementLike,
-  classNameTokens: string[],
-): ElementLike[] => {
-  const matches: ElementLike[] = [];
-
-  if (classNameTokens.length === 0) {
-    return matches;
-  }
-
-  for (const currentNode of iterateElementSubtree(rootElement)) {
-    if (
-      currentNode !== rootElement &&
-      hasEveryClassNameToken(currentNode, classNameTokens)
-    ) {
-      matches.push(currentNode);
-    }
-  }
-
-  return matches;
-};
-
-const createLiveClassNameCollection = (
-  rootElement: ElementLike,
-  classNameTokens: string[],
-): object => {
-  const query = () => collectMatchesInTreeOrder(rootElement, classNameTokens);
-
-  return new Proxy(
-    {},
-    {
-      get: (_target, property) => {
-        if (property === 'length') {
-          return query().length;
-        }
-
-        if (property === 'item') {
-          return (index: number) => query()[index] ?? null;
-        }
-
-        if (property === Symbol.iterator) {
-          return function* () {
-            yield* query();
-          };
-        }
-
-        if (isString(property) && /^\d+$/.test(property)) {
-          return query()[Number(property)];
-        }
-
-        return undefined;
-      },
-      has: (_target, property) => {
-        if (property === 'length' || property === 'item') {
-          return true;
-        }
-
-        if (isString(property) && /^\d+$/.test(property)) {
-          return Number(property) < query().length;
-        }
-
-        return false;
-      },
-    },
-  );
-};
-
 export const installGetElementsByClassName = (installTarget: object): void => {
   Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
@@ -109,7 +42,22 @@ export const installGetElementsByClassName = (installTarget: object): void => {
         .split(/\s+/)
         .filter(isNonEmptyString);
 
-      return createLiveClassNameCollection(this, classNameTokens);
+      const matches: ElementLike[] = [];
+
+      if (classNameTokens.length > 0) {
+        for (const currentNode of iterateElementSubtree(this)) {
+          if (
+            currentNode !== this &&
+            hasEveryClassNameToken(currentNode, classNameTokens)
+          ) {
+            matches.push(currentNode);
+          }
+        }
+      }
+
+      return Object.assign(matches, {
+        item: (index: number) => matches[index] ?? null,
+      });
     },
     configurable: true,
     writable: true,

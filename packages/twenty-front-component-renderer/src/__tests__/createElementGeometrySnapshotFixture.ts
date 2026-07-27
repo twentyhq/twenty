@@ -19,6 +19,5 @@ export const createElementGeometrySnapshotFixture = (
   scrollHeight: 14,
   scrollTop: 15,
   scrollLeft: 16,
-  offsetParentRemoteElementId: null,
   ...overrides,
 });

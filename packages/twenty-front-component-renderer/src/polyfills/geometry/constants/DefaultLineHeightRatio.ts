@@ -1,1 +1,0 @@
-export const DEFAULT_LINE_HEIGHT_RATIO = 1.2;

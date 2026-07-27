@@ -9,12 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
-import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
-import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
-import { createOffscreenCanvasTextMeasurer } from '@/polyfills/geometry/utils/createOffscreenCanvasTextMeasurer';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
@@ -34,21 +31,15 @@ installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
 
-installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
-installLocalStyleOnBaseElements(Element.prototype);
 
-installGetComputedStyle({
-  globalScope: globalThis as unknown as Record<string, unknown>,
-});
+installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
 
 installElementGeometryPolyfill({
   elementPrototype: Element.prototype,
   documentTarget: document,
   geometryStore: workerGeometryStore,
-  measureElementTextGeometry:
-    createOffscreenCanvasTextMeasurer(workerGeometryStore),
 });
 
 installWindowGeometryPolyfill({
@@ -109,12 +100,7 @@ self.addEventListener('message', (event) => {
   });
   hostThread = nextHostThread;
 
-  workerGeometryStore.connectTransport({
-    observeElementGeometry: (remoteElementIds) =>
-      nextHostThread.imports.observeElementGeometry(remoteElementIds),
-    unobserveElementGeometry: (remoteElementIds) =>
-      nextHostThread.imports.unobserveElementGeometry(remoteElementIds),
-  });
+  workerGeometryStore.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });

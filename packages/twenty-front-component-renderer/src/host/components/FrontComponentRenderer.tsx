@@ -1,7 +1,12 @@
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
+import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { createGeometryTracker } from '@/host/utils/createGeometryTracker';
+import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
-import { FrontComponentThreadEffects } from '@/remote/components/FrontComponentThreadEffects';
+import { FrontComponentGeometryTrackerEffect } from '@/remote/components/FrontComponentGeometryTrackerEffect';
+import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
+import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
+import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -22,8 +27,6 @@ import { FrontComponentErrorBox } from './FrontComponentErrorBox';
 
 const fallbackComponentRegistry =
   createFallbackComponentRegistry(componentRegistry);
-
-const ROOT_CONTAINER_STYLE = { width: '100%', height: '100%' };
 
 type FrontComponentRendererProps = {
   componentUrl: string;
@@ -85,18 +88,33 @@ export const FrontComponentRenderer = ({
         )}
 
         {isDefined(thread) && (
-          <FrontComponentThreadEffects
-            thread={thread}
-            geometryTracker={geometryTracker}
-            executionContext={executionContext}
-            frontComponentHostCommunicationApi={
-              frontComponentHostCommunicationApi
-            }
-            onExecutionContextInitialized={() =>
-              setIsExecutionContextInitialized(true)
-            }
-            onError={setError}
-          />
+          <>
+            <FrontComponentUpdateHostCommunicationApiEffect
+              thread={thread}
+              frontComponentHostCommunicationApi={
+                frontComponentHostCommunicationApi
+              }
+            />
+            <FrontComponentInitializeHostCommunicationApiEffect
+              thread={thread}
+            />
+            <FrontComponentGeometryTrackerEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
+            />
+            <FrontComponentUpdateContextEffect
+              thread={thread}
+              executionContext={executionContext}
+              onExecutionContextInitialized={() =>
+                setIsExecutionContextInitialized(true)
+              }
+            />
+            <FrontComponentConfirmationModalResultEffect
+              thread={thread}
+              frontComponentId={executionContext.frontComponentId}
+              onError={setError}
+            />
+          </>
         )}
 
         {!isDefined(error) && !isReady && loadingFallback}

@@ -1,12 +1,12 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type GeometryWakeSources } from '@/host/types/GeometryWakeSources';
 
-const ANIMATION_START_EVENT_TYPES = ['transitionrun', 'animationstart'];
-const ANIMATION_END_EVENT_TYPES = [
+const ANIMATION_EVENT_TYPES = [
+  'transitionrun',
   'transitionend',
   'transitioncancel',
+  'animationstart',
   'animationend',
   'animationcancel',
 ];
@@ -18,46 +18,17 @@ const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {
   characterData: true,
 };
 
-const resolveAnimationIdentity = (event: Event): string => {
-  const transitionProperty = (event as TransitionEvent).propertyName;
-
-  if (isNonEmptyString(transitionProperty)) {
-    return `transition:${transitionProperty}`;
-  }
-
-  const animationName = (event as AnimationEvent).animationName;
-
-  if (isNonEmptyString(animationName)) {
-    return `animation:${animationName}`;
-  }
-
-  return '';
-};
-
 export const createGeometryWakeSources = (
   onWake: () => void,
 ): GeometryWakeSources => {
   const resizeObservedNodes = new Set<Element>();
-  const activeAnimationIdentitiesByTarget = new Map<Element, Set<string>>();
 
   let rootContainer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let documentStyleObserver: MutationObserver | null = null;
-  let viewportDirty = false;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
-
-  const wakeForViewport = (): void => {
-    viewportDirty = true;
-    onWake();
-  };
-
-  const handleVisibilityChange = (): void => {
-    if (document.visibilityState === 'visible') {
-      wakeForViewport();
-    }
-  };
 
   const isEventTargetRelevantToRoot = (target: EventTarget | null): boolean => {
     if (!isDefined(rootContainer)) {
@@ -71,63 +42,12 @@ export const createGeometryWakeSources = (
     return rootContainer.contains(target) || target.contains(rootContainer);
   };
 
-  const handleAnimationStart = (event: Event): void => {
-    if (
-      !isEventTargetRelevantToRoot(event.target) ||
-      !(event.target instanceof Element)
-    ) {
+  const handleAnimationEvent = (event: Event): void => {
+    if (!isEventTargetRelevantToRoot(event.target)) {
       return;
     }
-
-    const activeIdentities =
-      activeAnimationIdentitiesByTarget.get(event.target) ?? new Set<string>();
-    activeIdentities.add(resolveAnimationIdentity(event));
-    activeAnimationIdentitiesByTarget.set(event.target, activeIdentities);
 
     onWake();
-  };
-
-  // The end event is intentionally not filtered against the root: it clears the
-  // matching started animation by identity, so a node reparented outside the
-  // root between start and end still resolves, and an end for an animation that
-  // was never tracked (started outside the root) is a no-op.
-  const handleAnimationEnd = (event: Event): void => {
-    if (!(event.target instanceof Element)) {
-      return;
-    }
-
-    const activeIdentities = activeAnimationIdentitiesByTarget.get(
-      event.target,
-    );
-
-    if (!isDefined(activeIdentities)) {
-      return;
-    }
-
-    activeIdentities.delete(resolveAnimationIdentity(event));
-
-    if (activeIdentities.size === 0) {
-      activeAnimationIdentitiesByTarget.delete(event.target);
-    }
-  };
-
-  // A node removed mid-animation never delivers its end event; pruning
-  // disconnected targets here releases them without a time cap, so genuinely
-  // long-running animations on connected nodes keep the loop scheduling.
-  const hasAnimationInFlight = (): boolean => {
-    for (const [
-      target,
-      activeIdentities,
-    ] of activeAnimationIdentitiesByTarget) {
-      if (!target.isConnected || activeIdentities.size === 0) {
-        activeAnimationIdentitiesByTarget.delete(target);
-        continue;
-      }
-
-      return true;
-    }
-
-    return false;
   };
 
   const handleScroll = (event: Event): void => {
@@ -146,7 +66,7 @@ export const createGeometryWakeSources = (
       return resizeObserver;
     }
 
-    resizeObserver = new ResizeObserver(wakeForViewport);
+    resizeObserver = new ResizeObserver(onWake);
 
     return resizeObserver;
   };
@@ -188,7 +108,7 @@ export const createGeometryWakeSources = (
       return;
     }
 
-    documentStyleObserver = new MutationObserver(wakeForViewport);
+    documentStyleObserver = new MutationObserver(onWake);
     documentStyleObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'style'],
@@ -197,53 +117,39 @@ export const createGeometryWakeSources = (
       attributes: true,
       attributeFilter: ['class', 'style'],
     });
-    documentStyleObserver.observe(document.head, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
   };
 
-  const attachViewportSources = (): boolean => {
+  const attachViewportSources = (): void => {
     if (areViewportSourcesAttached) {
-      return false;
+      return;
     }
 
     areViewportSourcesAttached = true;
 
-    window.addEventListener('resize', wakeForViewport);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('resize', onWake);
     observeDocumentStyleMutations();
 
     if (isDefined(rootContainer)) {
       resolveResizeObserver()?.observe(rootContainer);
     }
-
-    return true;
   };
 
-  const attachElementSources = (): boolean => {
+  const attachElementSources = (): void => {
     if (areElementSourcesAttached) {
-      return false;
+      return;
     }
 
     areElementSourcesAttached = true;
 
     document.addEventListener('scroll', handleScroll, true);
 
-    for (const eventType of ANIMATION_START_EVENT_TYPES) {
-      document.addEventListener(eventType, handleAnimationStart, true);
-    }
-
-    for (const eventType of ANIMATION_END_EVENT_TYPES) {
-      document.addEventListener(eventType, handleAnimationEnd, true);
+    for (const eventType of ANIMATION_EVENT_TYPES) {
+      document.addEventListener(eventType, handleAnimationEvent, true);
     }
 
     if (isDefined(rootContainer)) {
       observeRootMutations(rootContainer);
     }
-
-    return true;
   };
 
   const detachElementSources = (): void => {
@@ -255,12 +161,8 @@ export const createGeometryWakeSources = (
 
     document.removeEventListener('scroll', handleScroll, true);
 
-    for (const eventType of ANIMATION_START_EVENT_TYPES) {
-      document.removeEventListener(eventType, handleAnimationStart, true);
-    }
-
-    for (const eventType of ANIMATION_END_EVENT_TYPES) {
-      document.removeEventListener(eventType, handleAnimationEnd, true);
+    for (const eventType of ANIMATION_EVENT_TYPES) {
+      document.removeEventListener(eventType, handleAnimationEvent, true);
     }
 
     mutationObserver?.disconnect();
@@ -270,8 +172,6 @@ export const createGeometryWakeSources = (
       resizeObserver?.unobserve(node);
     }
     resizeObservedNodes.clear();
-
-    activeAnimationIdentitiesByTarget.clear();
   };
 
   const detachAllSources = (): void => {
@@ -279,15 +179,13 @@ export const createGeometryWakeSources = (
 
     if (areViewportSourcesAttached) {
       areViewportSourcesAttached = false;
-      window.removeEventListener('resize', wakeForViewport);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('resize', onWake);
       documentStyleObserver?.disconnect();
       documentStyleObserver = null;
     }
 
     resizeObserver?.disconnect();
     resizeObserver = null;
-    viewportDirty = false;
   };
 
   const setRoot = (node: Element | null): void => {
@@ -321,10 +219,5 @@ export const createGeometryWakeSources = (
     setRoot,
     startObservingNode,
     stopObservingNode,
-    hasAnimationInFlight,
-    isViewportDirty: () => viewportDirty,
-    clearViewportDirty: () => {
-      viewportDirty = false;
-    },
   };
 };

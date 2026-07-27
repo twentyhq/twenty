@@ -1,4 +1,5 @@
 import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
+import { createWorkerGeometryStoreStub } from '@/__tests__/createWorkerGeometryStoreStub';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 import { installWindowGeometryPolyfill } from '../installWindowGeometryPolyfill';
 
@@ -11,18 +12,6 @@ const createViewport = (): ViewportGeometrySnapshot =>
     scrollY: 40,
   });
 
-const createGeometryStore = (
-  getViewportSnapshot: () => ViewportGeometrySnapshot | null,
-) =>
-  ({
-    setRootElement: jest.fn(),
-    connectTransport: jest.fn(),
-    applyGeometryBatch: jest.fn(),
-    getViewportSnapshot,
-    resolveMirroredElementState: () => ({ isMirrored: false, snapshot: null }),
-    resolveElementByRemoteElementId: () => null,
-  }) as never;
-
 describe('installWindowGeometryPolyfill', () => {
   it('should define the properties on both the global scope and a distinct window', () => {
     const polyfillWindow: Record<string, unknown> = {};
@@ -30,7 +19,9 @@ describe('installWindowGeometryPolyfill', () => {
 
     installWindowGeometryPolyfill({
       globalScope,
-      geometryStore: createGeometryStore(createViewport),
+      geometryStore: createWorkerGeometryStoreStub({
+        getViewportSnapshot: createViewport,
+      }),
     });
 
     expect(globalScope.innerWidth).toBe(1024);
@@ -38,8 +29,6 @@ describe('installWindowGeometryPolyfill', () => {
     expect(polyfillWindow.devicePixelRatio).toBe(2);
     expect(globalScope.scrollX).toBe(30);
     expect(polyfillWindow.scrollY).toBe(40);
-    expect(globalScope.pageXOffset).toBe(30);
-    expect(polyfillWindow.pageYOffset).toBe(40);
   });
 
   it('should fall back to zero sizes and a device pixel ratio of one before the first push', () => {
@@ -47,14 +36,14 @@ describe('installWindowGeometryPolyfill', () => {
 
     installWindowGeometryPolyfill({
       globalScope,
-      geometryStore: createGeometryStore(() => null),
+      geometryStore: createWorkerGeometryStoreStub(),
     });
 
     expect(globalScope.innerWidth).toBe(0);
     expect(globalScope.innerHeight).toBe(0);
     expect(globalScope.devicePixelRatio).toBe(1);
     expect(globalScope.scrollX).toBe(0);
-    expect(globalScope.pageYOffset).toBe(0);
+    expect(globalScope.scrollY).toBe(0);
   });
 
   it('should reflect a later viewport push without reinstalling', () => {
@@ -63,7 +52,9 @@ describe('installWindowGeometryPolyfill', () => {
 
     installWindowGeometryPolyfill({
       globalScope,
-      geometryStore: createGeometryStore(() => viewport),
+      geometryStore: createWorkerGeometryStoreStub({
+        getViewportSnapshot: () => viewport,
+      }),
     });
 
     expect(globalScope.innerWidth).toBe(0);

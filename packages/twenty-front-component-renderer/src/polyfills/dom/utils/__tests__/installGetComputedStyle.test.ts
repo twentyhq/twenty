@@ -15,7 +15,7 @@ describe('installGetComputedStyle', () => {
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-    installGetComputedStyle({ globalScope });
+    installGetComputedStyle(globalScope);
 
     expect(typeof globalScope.getComputedStyle).toBe('function');
     expect(typeof polyfillWindow.getComputedStyle).toBe('function');
@@ -23,7 +23,7 @@ describe('installGetComputedStyle', () => {
 
   it('should return the declared style of the element', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle({ globalScope });
+    installGetComputedStyle(globalScope);
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
 
@@ -35,7 +35,7 @@ describe('installGetComputedStyle', () => {
 
   it('should return an empty declaration for an element without a style', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle({ globalScope });
+    installGetComputedStyle(globalScope);
 
     const declaration = (globalScope.getComputedStyle as GetComputedStyleLike)(
       {},
@@ -47,7 +47,7 @@ describe('installGetComputedStyle', () => {
 
   it('should return an empty declaration for a pseudo-element argument', () => {
     const globalScope: Record<string, unknown> = {};
-    installGetComputedStyle({ globalScope });
+    installGetComputedStyle(globalScope);
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
 
@@ -58,16 +58,5 @@ describe('installGetComputedStyle', () => {
 
     expect(declaration.getPropertyValue('font-size')).toBe('');
     expect(declaration.fontSize).toBe('');
-  });
-
-  it('should not override an existing getComputedStyle', () => {
-    const existingGetComputedStyle = jest.fn();
-    const globalScope: Record<string, unknown> = {
-      getComputedStyle: existingGetComputedStyle,
-    };
-
-    installGetComputedStyle({ globalScope });
-
-    expect(globalScope.getComputedStyle).toBe(existingGetComputedStyle);
   });
 });

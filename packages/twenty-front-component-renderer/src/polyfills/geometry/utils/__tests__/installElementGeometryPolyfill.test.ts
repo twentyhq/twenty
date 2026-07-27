@@ -1,37 +1,32 @@
 import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
 import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
-import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
+import { createWorkerGeometryStoreStub } from '@/__tests__/createWorkerGeometryStoreStub';
+import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 
-class FakeElement {
-  textContent: string | null = null;
-}
+class FakeElement {}
 
-const createGeometryStore = (
-  overrides: Partial<{
-    resolveMirroredElementState: (element: object) => MirroredElementState;
-    resolveElementByRemoteElementId: (remoteElementId: string) => object | null;
-    getViewportSnapshot: () => ReturnType<() => Record<string, unknown>> | null;
-  }> = {},
-) =>
-  ({
-    setRootElement: jest.fn(),
-    connectTransport: jest.fn(),
-    applyGeometryBatch: jest.fn(),
-    getViewportSnapshot: overrides.getViewportSnapshot ?? (() => null),
-    resolveMirroredElementState:
-      overrides.resolveMirroredElementState ??
-      (() => ({ isMirrored: false, snapshot: null })),
-    resolveElementByRemoteElementId:
-      overrides.resolveElementByRemoteElementId ?? (() => null),
-  }) as never;
+type GeometryPolyfilledElement = FakeElement & {
+  getBoundingClientRect: () => DOMRect;
+  offsetWidth: number;
+  offsetHeight: number;
+  offsetTop: number;
+  offsetLeft: number;
+  clientWidth: number;
+  clientHeight: number;
+  clientTop: number;
+  clientLeft: number;
+  scrollWidth: number;
+  scrollHeight: number;
+  scrollTop: number;
+  scrollLeft: number;
+  offsetParent: FakeElement | null;
+};
 
-const installOn = (
-  geometryStore: never,
-  measureElementTextGeometry: Parameters<
-    typeof installElementGeometryPolyfill
-  >[0]['measureElementTextGeometry'] = null,
-) => {
+const asPolyfilled = (element: FakeElement) =>
+  element as GeometryPolyfilledElement;
+
+const installOn = (geometryStore: WorkerGeometryStore) => {
   const documentBody = new FakeElement();
   const documentElement = new FakeElement();
 
@@ -39,52 +34,43 @@ const installOn = (
     elementPrototype: FakeElement.prototype,
     documentTarget: { body: documentBody, documentElement },
     geometryStore,
-    measureElementTextGeometry,
   });
 
   return { documentBody, documentElement };
 };
 
 describe('installElementGeometryPolyfill', () => {
-  it('should return a zero rect before any push and not throw', () => {
-    installOn(createGeometryStore());
+  it('should return a zero rect when the store has no snapshot', () => {
+    installOn(createWorkerGeometryStoreStub());
 
-    const element = new FakeElement() as unknown as Element;
+    const element = asPolyfilled(new FakeElement());
 
     expect(() => element.getBoundingClientRect()).not.toThrow();
     expect(element.getBoundingClientRect().width).toBe(0);
   });
 
-  it('should return the mirrored rect after a push', () => {
+  it('should return the mirrored rect when the store resolves a snapshot', () => {
     installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture(),
-        }),
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => createElementGeometrySnapshotFixture(),
       }),
     );
 
-    const rect = (
-      new FakeElement() as unknown as Element
-    ).getBoundingClientRect();
+    const rect = asPolyfilled(new FakeElement()).getBoundingClientRect();
 
     expect(rect.x).toBe(1);
     expect(rect.width).toBe(3);
     expect(rect.bottom).toBe(6);
   });
 
-  it('should expose the mirrored numeric metrics', () => {
+  it('should expose the mirrored numeric metrics when the store resolves a snapshot', () => {
     installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture(),
-        }),
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => createElementGeometrySnapshotFixture(),
       }),
     );
 
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = asPolyfilled(new FakeElement());
 
     expect(element.offsetWidth).toBe(5);
     expect(element.clientHeight).toBe(10);
@@ -93,9 +79,9 @@ describe('installElementGeometryPolyfill', () => {
   });
 
   it('should return 0 from every numeric getter when no snapshot exists', () => {
-    installOn(createGeometryStore());
+    installOn(createWorkerGeometryStoreStub());
 
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = asPolyfilled(new FakeElement());
 
     expect(element.offsetWidth).toBe(0);
     expect(element.clientHeight).toBe(0);
@@ -104,7 +90,7 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should synthesize body geometry from the viewport root container', () => {
     const { documentBody } = installOn(
-      createGeometryStore({
+      createWorkerGeometryStoreStub({
         getViewportSnapshot: () =>
           createViewportGeometrySnapshotFixture({
             rootContainerWidth: 640,
@@ -115,16 +101,16 @@ describe('installElementGeometryPolyfill', () => {
       }),
     );
 
-    const rect = (documentBody as unknown as Element).getBoundingClientRect();
+    const rect = asPolyfilled(documentBody).getBoundingClientRect();
 
     expect(rect.width).toBe(640);
     expect(rect.height).toBe(480);
-    expect((documentBody as unknown as HTMLElement).clientWidth).toBe(630);
+    expect(asPolyfilled(documentBody).clientWidth).toBe(630);
   });
 
   it('should place document-scoped rects at the root container host-viewport position', () => {
     const { documentBody, documentElement } = installOn(
-      createGeometryStore({
+      createWorkerGeometryStoreStub({
         getViewportSnapshot: () =>
           createViewportGeometrySnapshotFixture({
             rootContainerX: 120,
@@ -135,12 +121,9 @@ describe('installElementGeometryPolyfill', () => {
       }),
     );
 
-    const bodyRect = (
-      documentBody as unknown as Element
-    ).getBoundingClientRect();
-    const documentElementRect = (
-      documentElement as unknown as Element
-    ).getBoundingClientRect();
+    const bodyRect = asPolyfilled(documentBody).getBoundingClientRect();
+    const documentElementRect =
+      asPolyfilled(documentElement).getBoundingClientRect();
 
     expect(bodyRect.x).toBe(120);
     expect(bodyRect.y).toBe(45);
@@ -150,7 +133,7 @@ describe('installElementGeometryPolyfill', () => {
 
   it('should mirror host scroll offsets on documentElement only', () => {
     const { documentBody, documentElement } = installOn(
-      createGeometryStore({
+      createWorkerGeometryStoreStub({
         getViewportSnapshot: () =>
           createViewportGeometrySnapshotFixture({
             scrollX: 30,
@@ -159,98 +142,27 @@ describe('installElementGeometryPolyfill', () => {
       }),
     );
 
-    expect((documentElement as unknown as HTMLElement).scrollTop).toBe(700);
-    expect((documentElement as unknown as HTMLElement).scrollLeft).toBe(30);
-    expect((documentBody as unknown as HTMLElement).scrollTop).toBe(0);
-    expect((documentBody as unknown as HTMLElement).scrollLeft).toBe(0);
+    expect(asPolyfilled(documentElement).scrollTop).toBe(700);
+    expect(asPolyfilled(documentElement).scrollLeft).toBe(30);
+    expect(asPolyfilled(documentBody).scrollTop).toBe(0);
+    expect(asPolyfilled(documentBody).scrollLeft).toBe(0);
   });
 
-  it('should return a single entry array from getClientRects', () => {
-    installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture(),
-        }),
-      }),
-    );
+  it('should return zero document-scoped geometry when no viewport snapshot exists', () => {
+    const { documentBody } = installOn(createWorkerGeometryStoreStub());
 
-    const rects = (new FakeElement() as unknown as Element).getClientRects();
-
-    expect(rects).toHaveLength(1);
-    expect(rects[0].width).toBe(3);
-  });
-
-  it('should expose item on getClientRects', () => {
-    installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture(),
-        }),
-      }),
-    );
-
-    const rects = (new FakeElement() as unknown as Element).getClientRects();
-
-    expect(rects.item(0)?.width).toBe(3);
-    expect(rects.item(1)).toBeNull();
-  });
-
-  it('should return an empty list from getClientRects when no snapshot exists', () => {
-    installOn(createGeometryStore());
-
-    const rects = (new FakeElement() as unknown as Element).getClientRects();
-
-    expect(rects).toHaveLength(0);
-    expect(rects.item(0)).toBeNull();
-  });
-
-  it('should fall back to text measurement for an element outside the remote root', () => {
-    installOn(createGeometryStore(), () => ({ width: 120, height: 16 }));
-
-    const element = new FakeElement();
-    element.textContent = 'hello';
-
-    const rect = (element as unknown as Element).getBoundingClientRect();
-
-    expect(rect.width).toBe(120);
-    expect(rect.height).toBe(16);
-  });
-
-  it('should not fall back to text measurement for a mirrored element', () => {
-    installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: null,
-        }),
-      }),
-      () => ({
-        width: 120,
-        height: 16,
-      }),
-    );
-
-    const element = new FakeElement();
-    element.textContent = 'hello';
-
-    expect((element as unknown as Element).getBoundingClientRect().width).toBe(
-      0,
-    );
+    expect(asPolyfilled(documentBody).getBoundingClientRect().width).toBe(0);
+    expect(asPolyfilled(documentBody).clientWidth).toBe(0);
   });
 
   it('should not throw when scrollTop is assigned and should keep reading the mirrored value', () => {
     installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture(),
-        }),
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => createElementGeometrySnapshotFixture(),
       }),
     );
 
-    const element = new FakeElement() as unknown as HTMLElement;
+    const element = asPolyfilled(new FakeElement());
 
     expect(() => {
       element.scrollTop = 999;
@@ -258,76 +170,22 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.scrollTop).toBe(15);
   });
 
-  it('should return the document body from offsetParent for a mirrored element', () => {
-    const { documentBody } = installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: null,
-        }),
-      }),
-    );
+  it('should return the document body from offsetParent', () => {
+    const { documentBody } = installOn(createWorkerGeometryStoreStub());
 
-    expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
-      documentBody,
-    );
-  });
-
-  it('should resolve offsetParent through the mirrored parent id', () => {
-    const mirroredParent = new FakeElement();
-    installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture({
-            offsetParentRemoteElementId: '9',
-          }),
-        }),
-        resolveElementByRemoteElementId: (remoteElementId) =>
-          remoteElementId === '9' ? mirroredParent : null,
-      }),
-    );
-
-    expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
-      mirroredParent,
-    );
-  });
-
-  it('should fall back to the document body when the parent id cannot be resolved', () => {
-    const { documentBody } = installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => ({
-          isMirrored: true,
-          snapshot: createElementGeometrySnapshotFixture({
-            offsetParentRemoteElementId: '9',
-          }),
-        }),
-      }),
-    );
-
-    expect((new FakeElement() as unknown as HTMLElement).offsetParent).toBe(
-      documentBody,
-    );
-  });
-
-  it('should return null from offsetParent for a non mirrored element', () => {
-    installOn(createGeometryStore());
-
-    expect(
-      (new FakeElement() as unknown as HTMLElement).offsetParent,
-    ).toBeNull();
+    expect(asPolyfilled(new FakeElement()).offsetParent).toBe(documentBody);
   });
 
   it('should return a zero rect when snapshot resolution throws', () => {
     installOn(
-      createGeometryStore({
-        resolveMirroredElementState: () => {
+      createWorkerGeometryStoreStub({
+        resolveElementSnapshot: () => {
           throw new Error('boom');
         },
       }),
     );
 
-    const element = new FakeElement() as unknown as Element;
+    const element = asPolyfilled(new FakeElement());
 
     expect(() => element.getBoundingClientRect()).not.toThrow();
     expect(element.getBoundingClientRect().width).toBe(0);

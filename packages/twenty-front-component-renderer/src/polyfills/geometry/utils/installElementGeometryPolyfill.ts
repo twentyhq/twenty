@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type TextGeometry } from '@/polyfills/geometry/types/TextGeometry';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -22,29 +21,24 @@ const EMPTY_ELEMENT_GEOMETRY_SNAPSHOT: ElementGeometrySnapshot = {
   scrollHeight: 0,
   scrollTop: 0,
   scrollLeft: 0,
-  offsetParentRemoteElementId: null,
 };
 
 type InstallElementGeometryPolyfillInput = {
   elementPrototype: object;
   documentTarget: { body?: unknown; documentElement?: unknown };
   geometryStore: WorkerGeometryStore;
-  measureElementTextGeometry: ((element: object) => TextGeometry | null) | null;
 };
 
 export const installElementGeometryPolyfill = ({
   elementPrototype,
   documentTarget,
   geometryStore,
-  measureElementTextGeometry,
 }: InstallElementGeometryPolyfillInput): void => {
   const isDocumentScopedElement = (element: object): boolean =>
     element === documentTarget.body ||
     element === documentTarget.documentElement;
 
-  // Element snapshots carry host-viewport x/y, so the document-scoped rects
-  // must live in the same frame for container-relative math to work.
-  const resolveDocumentScopedSnapshot = (
+  const resolveDocumentScopedSnapshotInHostViewportFrame = (
     element: object,
   ): ElementGeometrySnapshot => {
     const viewport = geometryStore.getViewportSnapshot();
@@ -72,50 +66,13 @@ export const installElementGeometryPolyfill = ({
     };
   };
 
-  const resolveTextSnapshot = (
-    element: object,
-  ): ElementGeometrySnapshot | null => {
-    if (!isDefined(measureElementTextGeometry)) {
-      return null;
-    }
-
-    const textGeometry = measureElementTextGeometry(element);
-
-    if (!isDefined(textGeometry)) {
-      return null;
-    }
-
-    return {
-      ...EMPTY_ELEMENT_GEOMETRY_SNAPSHOT,
-      width: textGeometry.width,
-      height: textGeometry.height,
-      offsetWidth: textGeometry.width,
-      offsetHeight: textGeometry.height,
-      clientWidth: textGeometry.width,
-      clientHeight: textGeometry.height,
-      scrollWidth: textGeometry.width,
-      scrollHeight: textGeometry.height,
-    };
-  };
-
   const resolveSnapshot = (element: object): ElementGeometrySnapshot | null => {
     try {
       if (isDocumentScopedElement(element)) {
-        return resolveDocumentScopedSnapshot(element);
+        return resolveDocumentScopedSnapshotInHostViewportFrame(element);
       }
 
-      const { isMirrored, snapshot } =
-        geometryStore.resolveMirroredElementState(element);
-
-      if (isDefined(snapshot)) {
-        return snapshot;
-      }
-
-      if (isMirrored) {
-        return null;
-      }
-
-      return resolveTextSnapshot(element);
+      return geometryStore.resolveElementSnapshot(element);
     } catch {
       return null;
     }
@@ -124,20 +81,6 @@ export const installElementGeometryPolyfill = ({
   Object.defineProperty(elementPrototype, 'getBoundingClientRect', {
     value: function (this: object) {
       return createDomRectFromSnapshot(resolveSnapshot(this));
-    },
-    configurable: true,
-    writable: true,
-  });
-
-  Object.defineProperty(elementPrototype, 'getClientRects', {
-    value: function (this: object) {
-      const snapshot = resolveSnapshot(this);
-      const rects = (
-        isDefined(snapshot) ? [createDomRectFromSnapshot(snapshot)] : []
-      ) as DOMRect[] & { item: (index: number) => DOMRect | null };
-      rects.item = (index: number) => rects[index] ?? null;
-
-      return rects;
     },
     configurable: true,
     writable: true,
@@ -177,27 +120,7 @@ export const installElementGeometryPolyfill = ({
 
   Object.defineProperty(elementPrototype, 'offsetParent', {
     get(this: object) {
-      try {
-        const { isMirrored, snapshot } =
-          geometryStore.resolveMirroredElementState(this);
-        const offsetParentRemoteElementId =
-          snapshot?.offsetParentRemoteElementId;
-
-        if (isDefined(offsetParentRemoteElementId)) {
-          const offsetParentElement =
-            geometryStore.resolveElementByRemoteElementId(
-              offsetParentRemoteElementId,
-            );
-
-          if (isDefined(offsetParentElement)) {
-            return offsetParentElement;
-          }
-        }
-
-        return isMirrored ? (documentTarget.body ?? null) : null;
-      } catch {
-        return null;
-      }
+      return documentTarget.body ?? null;
     },
     configurable: true,
   });

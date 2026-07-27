@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
+import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
-import { type MirroredElementState } from '@/polyfills/geometry/types/MirroredElementState';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -14,7 +14,6 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const elementSnapshots = new Map<string, ElementGeometrySnapshot>();
   const enrolledRemoteElementIds = new WeakMap<object, string>();
-  const enrolledElementsByRemoteElementId = new Map<string, WeakRef<object>>();
   const observedRemoteElementIds = new Set<string>();
   const pendingObservationIds = new Set<string>();
 
@@ -23,6 +22,16 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   let viewportSnapshot: ViewportGeometrySnapshot | null = null;
   let hasScheduledObservationFlush = false;
   let hasWarnedAboutObservationLimit = false;
+  let hasWarnedAboutTransportFailure = false;
+
+  const warnAboutTransportFailure = (): void => {
+    if (hasWarnedAboutTransportFailure) {
+      return;
+    }
+
+    hasWarnedAboutTransportFailure = true;
+    console.warn(GEOMETRY_TRANSPORT_FAILURE_WARNING);
+  };
 
   const flushPendingObservations = (): void => {
     hasScheduledObservationFlush = false;
@@ -34,7 +43,9 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     const remoteElementIds = [...pendingObservationIds];
     pendingObservationIds.clear();
 
-    transport.observeElementGeometry(remoteElementIds).catch(() => {});
+    transport
+      .observeElementGeometry(remoteElementIds)
+      .catch(warnAboutTransportFailure);
   };
 
   const scheduleObservationFlush = (): void => {
@@ -59,10 +70,6 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     const remoteElementId = remoteId(element as Node);
 
     enrolledRemoteElementIds.set(element, remoteElementId);
-    enrolledElementsByRemoteElementId.set(
-      remoteElementId,
-      new WeakRef(element),
-    );
     observedRemoteElementIds.add(remoteElementId);
     pendingObservationIds.add(remoteElementId);
     scheduleObservationFlush();
@@ -70,36 +77,30 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     return remoteElementId;
   };
 
-  const resolveMirroredElementState = (
+  const resolveElementSnapshot = (
     element: object,
-  ): MirroredElementState => {
+  ): ElementGeometrySnapshot | null => {
     const enrolledRemoteElementId = enrolledRemoteElementIds.get(element);
 
     if (isDefined(enrolledRemoteElementId)) {
       if (observedRemoteElementIds.has(enrolledRemoteElementId)) {
-        return {
-          isMirrored: true,
-          snapshot: elementSnapshots.get(enrolledRemoteElementId) ?? null,
-        };
+        return elementSnapshots.get(enrolledRemoteElementId) ?? null;
       }
 
       enrolledRemoteElementIds.delete(element);
     }
 
     if (!isElementUnderRemoteRoot(element, rootElement)) {
-      return { isMirrored: false, snapshot: null };
+      return null;
     }
 
     const remoteElementId = enrollElement(element);
 
     if (!isDefined(remoteElementId)) {
-      return { isMirrored: true, snapshot: null };
+      return null;
     }
 
-    return {
-      isMirrored: true,
-      snapshot: elementSnapshots.get(remoteElementId) ?? null,
-    };
+    return elementSnapshots.get(remoteElementId) ?? null;
   };
 
   const applyGeometryBatch = (batch: GeometryUpdateBatch): void => {
@@ -121,7 +122,6 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       for (const remoteElementId of batch.removedRemoteElementIds) {
         elementSnapshots.delete(remoteElementId);
         pendingObservationIds.delete(remoteElementId);
-        enrolledElementsByRemoteElementId.delete(remoteElementId);
 
         if (observedRemoteElementIds.delete(remoteElementId)) {
           prunedObservedRemoteElementIds.push(remoteElementId);
@@ -131,7 +131,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       if (prunedObservedRemoteElementIds.length > 0 && isDefined(transport)) {
         transport
           .unobserveElementGeometry(prunedObservedRemoteElementIds)
-          .catch(() => {});
+          .catch(warnAboutTransportFailure);
       }
     }
   };
@@ -146,8 +146,6 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     },
     applyGeometryBatch,
     getViewportSnapshot: () => viewportSnapshot,
-    resolveMirroredElementState,
-    resolveElementByRemoteElementId: (remoteElementId: string) =>
-      enrolledElementsByRemoteElementId.get(remoteElementId)?.deref() ?? null,
+    resolveElementSnapshot,
   };
 };

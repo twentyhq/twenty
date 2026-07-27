@@ -29,9 +29,6 @@ export const useGeometryNodeRef = (
 ): ElementRefCallback | undefined => {
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
 
-  // Keyed on the tracker and remote id so React detaches the previous ref
-  // (unregistering the old mapping) and attaches a fresh one whenever either
-  // changes, instead of staying bound to the first render's values.
   return useMemo(
     () =>
       isDefined(geometryTracker) && isDefined(remoteElementId)

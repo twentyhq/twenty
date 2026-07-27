@@ -10,5 +10,4 @@ export type ViewportGeometrySnapshot = {
   rootContainerHeight: number;
   rootContainerClientWidth: number;
   rootContainerClientHeight: number;
-  defaultFontShorthand: string;
 };

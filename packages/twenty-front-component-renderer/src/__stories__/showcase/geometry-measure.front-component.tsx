@@ -6,10 +6,15 @@ const MEASURED_BOX_HEIGHT = 80;
 
 const GeometryMeasureComponent = () => {
   const measuredBoxRef = useRef<HTMLDivElement>(null);
-  const [measuredSize, setMeasuredSize] = useState({ width: 0, height: 0 });
+  const [measuredGeometry, setMeasuredGeometry] = useState({
+    width: 0,
+    height: 0,
+    offsetWidth: 0,
+    innerWidth: 0,
+  });
 
   useEffect(() => {
-    const readMeasuredSize = () => {
+    const readMeasuredGeometry = () => {
       const measuredBox = measuredBoxRef.current;
 
       if (measuredBox === null) {
@@ -18,13 +23,15 @@ const GeometryMeasureComponent = () => {
 
       const rect = measuredBox.getBoundingClientRect();
 
-      setMeasuredSize({
+      setMeasuredGeometry({
         width: Math.round(rect.width),
         height: Math.round(rect.height),
+        offsetWidth: measuredBox.offsetWidth,
+        innerWidth: window.innerWidth,
       });
     };
 
-    const intervalId = setInterval(readMeasuredSize, 50);
+    const intervalId = setInterval(readMeasuredGeometry, 50);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -44,13 +51,17 @@ const GeometryMeasureComponent = () => {
           borderRadius: 8,
         }}
       />
-      <p data-testid="geometry-measure-width">width: {measuredSize.width}</p>
-      <p data-testid="geometry-measure-height">height: {measuredSize.height}</p>
+      <p data-testid="geometry-measure-width">
+        width: {measuredGeometry.width}
+      </p>
+      <p data-testid="geometry-measure-height">
+        height: {measuredGeometry.height}
+      </p>
       <p data-testid="geometry-measure-offset-width">
-        offsetWidth: {measuredBoxRef.current?.offsetWidth ?? 0}
+        offsetWidth: {measuredGeometry.offsetWidth}
       </p>
       <p data-testid="geometry-measure-inner-width">
-        innerWidth: {typeof window === 'undefined' ? 0 : window.innerWidth}
+        innerWidth: {measuredGeometry.innerWidth}
       </p>
     </div>
   );
