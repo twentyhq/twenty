@@ -1,14 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
-import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
-import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
+import { useCaretPreservingElementRef } from '@/host/hooks/useCaretPreservingElementRef';
+import { useHtmlHostElementProps } from '@/host/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
-import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
-import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
+import { createPlainHostElement } from '@/host/utils/createPlainHostElement';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
-import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
-import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const VOID_ELEMENTS = new Set([
   'area',
@@ -26,58 +22,64 @@ const VOID_ELEMENTS = new Set([
   'wbr',
 ]);
 
+const CARET_PRESERVING_TAGS = new Set(['input', 'textarea']);
+
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
-  const isIframe = htmlTag === 'iframe';
-  const isForm = htmlTag === 'form';
+
+  if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
+    return ({ children, ...props }: WrapperProps) => {
+      const { reactBindableProps, hostEnforcedProps, composedElementRef } =
+        useHtmlHostElementProps(props, htmlTag);
+
+      return createPlainHostElement({
+        htmlTag,
+        isVoid,
+        reactBindableProps,
+        hostEnforcedProps,
+        composedElementRef,
+        children,
+      });
+    };
+  }
+
+  const caretPreservingTag = htmlTag as 'input' | 'textarea';
 
   return ({ children, ...props }: WrapperProps) => {
-    const setEditableFocused = useContext(FrontComponentInputFocusContext);
+    const {
+      setEditableFocused,
+      reactBindableProps,
+      hostEnforcedProps,
+      composedElementRef,
+    } = useHtmlHostElementProps(props, htmlTag);
 
-    const { reactUnsupportedEventHandlers, reactBindableProps } =
-      extractReactUnsupportedEventHandlers(
-        buildHostReactPropsFromRemoteProps(props, htmlTag),
-      );
-
-    const reactUnsupportedEventListenerRef =
-      useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
-
-    const hostEnforcedProps: Record<string, unknown> = {
-      ...createDropTargetGuardProps(reactBindableProps),
-      ...(isIframe && {
-        sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
-      }),
-      // React 19 blocks the previous `action="javascript:void(0)"` guard.
-      ...(isForm && {
-        onSubmit: preventDefaultThenForwardToRemote(
-          reactBindableProps.onSubmit,
-        ),
-      }),
-    };
+    const caretPreservingElementRef = useCaretPreservingElementRef(
+      composedElementRef,
+      reactBindableProps.value,
+    );
 
     if (
-      htmlTag === 'textarea' ||
-      (htmlTag === 'input' && isTextLikeInputType(reactBindableProps.type))
+      caretPreservingTag === 'textarea' ||
+      isTextLikeInputType(reactBindableProps.type)
     ) {
       return createCaretPreservingElement({
-        htmlTag,
+        htmlTag: caretPreservingTag,
         reactBindableProps,
         hostEnforcedProps,
         setEditableFocused,
-        reactUnsupportedEventListenerRef,
+        caretPreservingElementRef,
       });
     }
 
-    return React.createElement(
+    return createPlainHostElement({
       htmlTag,
-      {
-        ...reactBindableProps,
-        ...hostEnforcedProps,
-        ref: reactUnsupportedEventListenerRef,
-      },
-      isVoid ? undefined : children,
-    );
+      isVoid,
+      reactBindableProps,
+      hostEnforcedProps,
+      composedElementRef,
+      children,
+    });
   };
 };

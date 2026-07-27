@@ -110,7 +110,7 @@ export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceComman
               uuidv4(),
               applicationId,
               workflow.name ?? null,
-              workflow.lastPublishedVersionId ?? null,
+              workflow.lastPublishedVersionId || null,
             ],
           );
 

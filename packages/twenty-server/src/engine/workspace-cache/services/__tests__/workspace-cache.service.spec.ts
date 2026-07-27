@@ -1,6 +1,8 @@
 import { DiscoveryService, Reflector } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import * as Sentry from '@sentry/node';
+
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -12,6 +14,10 @@ import {
   WORKSPACE_CACHE_OPTIONS,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+jest.mock('@sentry/node', () => ({
+  startSpan: jest.fn(),
+}));
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
@@ -48,6 +54,9 @@ describe('WorkspaceCacheService', () => {
 
   beforeEach(async () => {
     jest.useFakeTimers();
+    jest
+      .mocked(Sentry.startSpan)
+      .mockImplementation((_options, callback) => callback({} as never));
 
     mockProvider = new MockFeatureFlagsCacheProvider();
 
@@ -186,6 +195,19 @@ describe('WorkspaceCacheService', () => {
       });
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
       expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(Sentry.startSpan).toHaveBeenCalledWith(
+        {
+          name: 'compute workspace metadata cache entry from provider',
+          op: 'cache.recompute',
+          onlyIfParent: true,
+          attributes: {
+            'cache.key_name': 'featureFlagsMap',
+            'cache.recompute.strategy': 'recover',
+            'cache.local_data_only': false,
+          },
+        },
+        expect.any(Function),
+      );
     });
 
     it('should return data from redis when available', async () => {
@@ -203,6 +225,7 @@ describe('WorkspaceCacheService', () => {
       ]);
 
       expect(result).toEqual({ featureFlagsMap: cachedData });
+      expect(Sentry.startSpan).not.toHaveBeenCalled();
     });
 
     it('should use local cache when within TTL staleness window', async () => {
@@ -295,6 +318,15 @@ describe('WorkspaceCacheService', () => {
       ]);
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
       expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(Sentry.startSpan).toHaveBeenCalledWith(
+        {
+          name: 'invalidate and recompute workspace metadata cache',
+          op: 'cache.invalidate',
+          onlyIfParent: true,
+          attributes: { 'cache.key_count': 1 },
+        },
+        expect.any(Function),
+      );
     });
 
     it('should invalidate multiple cache keys at once', async () => {

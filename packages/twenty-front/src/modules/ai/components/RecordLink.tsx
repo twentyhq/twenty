@@ -49,21 +49,3 @@ export const RecordLink = ({
     />
   );
 };
-
-export const RECORD_REFERENCE_REGEX =
-  /\[\[(?:record:)?([a-zA-Z]+):([a-f0-9-]+):([^\]]+)\]\]/g;
-
-export const parseRecordReference = (match: string) => {
-  const regex = /\[\[(?:record:)?([a-zA-Z]+):([a-f0-9-]+):([^\]]+)\]\]/;
-  const result = regex.exec(match);
-
-  if (!result) {
-    return null;
-  }
-
-  return {
-    objectNameSingular: result[1],
-    recordId: result[2],
-    displayName: result[3],
-  };
-};

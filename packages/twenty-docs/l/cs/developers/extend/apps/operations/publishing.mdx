@@ -170,6 +170,17 @@ Publikuje vaši aplikaci na npm s doloženým původem, když odešlete tag verz
 
 Na npmjs.com otevřete svůj balíček > **Settings → Trusted Publisher** a zaregistrujte tento repozitář s workflowem `publish.yml` (viz [dokumentaci k důvěryhodnému publikování na npm](https://docs.npmjs.com/trusted-publishers)). Publikování s provenance potvrzuje, který repozitář na GitHubu balíček sestavil, a zároveň tak uplatňujete vlastnictví své aplikace na tržišti Twenty.
 
+<Note>
+npm přijímá údaje o původu pouze z **veřejných** zdrojových repozitářů. Pokud publikujete ze soukromého repozitáře, npm odmítne balíček údajů o původu OIDC s chybou `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. Chcete-li publikovat ze soukromého repozitáře, vypněte prokazování původu nastavením `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` v `env` publikačního kroku (ve vygenerovaném `publish.yml` je uveden zakomentovaný tip):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Připnutí verzí znovupoužitelných akcí
 
 Workflowy `ci.yml` a `cd.yml` odkazují na znovupoužitelné akce na `@main`, takže aktualizace akcí v repozitáři `twentyhq/twenty` se přeberou automaticky. Pokud chcete deterministická sestavení, nahraďte `@main` v každém řádku `uses:` za commit SHA nebo tag vydání.

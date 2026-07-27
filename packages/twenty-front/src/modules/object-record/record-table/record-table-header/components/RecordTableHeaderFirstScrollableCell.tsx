@@ -8,7 +8,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { DragDropColumnSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableHandle';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -99,7 +99,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       )}
-      <DragDropColumnSortableHandle>
+      <DragDropItemSortableHandle>
         {isRecordTableColumnHeadersReadOnly ? (
           <RecordTableColumnHead recordField={firstScrollableRecordField} />
         ) : (
@@ -108,7 +108,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
             objectMetadataId={objectMetadataItem.id}
           />
         )}
-      </DragDropColumnSortableHandle>
+      </DragDropItemSortableHandle>
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
       )}

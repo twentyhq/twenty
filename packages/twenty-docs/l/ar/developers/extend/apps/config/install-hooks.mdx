@@ -1,12 +1,12 @@
 ---
 title: خطافات التثبيت
-description: شغّل منطقًا قبل التثبيت أو بعده — لتهيئة البيانات، أو نسخ السجلات احتياطيًا، أو التحقّق من صحة الترقية.
+description: تشغيل المنطق أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت — مثل تعبئة البيانات الأوّلية، ونسخ السجلات احتياطيًا، والتحقق من الترقية، وتنظيف الموارد الخارجية.
 icon: wrench
 ---
 
-خطافات التثبيت هي دوال منطقية خاصة تعمل أثناء دورة حياة التثبيت أو الترقية. تشارك نفس وقت تشغيل المعالج مثل [دوال المنطق](/l/ar/developers/extend/apps/logic/logic-functions) العادية وتتلقى `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — تكون `previousVersion` بقيمة `undefined` في التثبيت الجديد)، ولكن يتم التصريح عنها بدوال تعريف خاصة بها وتعمل خارج نموذج المشغّل المعتاد (HTTP، وcron، وأحداث قاعدة البيانات).
+خطافات التثبيت هي دوال منطقية خاصة تعمل أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت. تستخدم نفس وقت تشغيل المعالج مثل [دوال المنطق](/l/ar/developers/extend/apps/logic/logic-functions) العادية، ولكن يتم التصريح عنها بدوال تعريف خاصة بها وتعمل خارج نموذج المشغّل المعتاد (HTTP، وcron، وأحداث قاعدة البيانات). تتلقى خطافات التثبيت `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — تكون قيمة `previousVersion` هي `undefined` في حالة التثبيت الجديد)، بينما يتلقى خطاف إلغاء التثبيت `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
 
-يمكن لكل تطبيق تعريف دالة واحدة على الأكثر لما قبل التثبيت ودالة واحدة على الأكثر لما بعد التثبيت. سيُنتِج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من واحدة من أيٍّ منهما.
+يمكن لكل تطبيق تعريف **خطاف واحد كحد أقصى** من كل نوع (قبل التثبيت، بعد التثبيت، إلغاء التثبيت). سيُنتِج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من خطاف واحد من أي نوع.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## خطاف إلغاء التثبيت
+
+تُصرّح `defineUninstallLogicFunction` عن خطاف يتم تشغيله عندما يلغي المستخدم تثبيت تطبيقك. يتم تنفيذه **قبل** إزالة بيانات التعريف للتطبيق وبياناته وكوده — بمجرد تشغيل ترحيل الحذف، لن يتبقى أي شيء للتنفيذ — لذلك لا يزال بإمكان معالجك الاستعلام عن كائنات التطبيق وسجلاته. استخدمه لتنظيف الموارد الخارجية: إلغاء توفير موارد واجهة برمجة التطبيقات (API)، وحذف الروبوتات المتبقية، وإبطال خطافات الويب.
+
+الملاحظات:
+
+* الخطاف يعتمد على مبدأ "أقصى جهد ممكن": يتم تشغيله بشكل متزامن، ولكن في حالة الفشل يتم تسجيل الخطأ و**لا يعرقل عملية إلغاء التثبيت مطلقًا** — يجب ألا يجعل التنظيف إزالة التطبيق مستحيلة.
+* يتلقى `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
+* لا يتم تشغيله عند التراجع عن عملية تثبيت جديدة فاشلة — حيث لم يكتمل تثبيت التطبيق مطلقًا.
+* لا يمكن للخطاف أن يعمل بعد إزالة التطبيق، لذلك يجب أن يتم هنا أي تنظيف خارجي يعتمد على بيانات التطبيق (مثلًا: معرّفات الروبوتات المخزنة في السجلات)، وليس في مهمة مجدولة خارجية.
+* ومثل خطافات التثبيت، **لا يتم تنفيذه في وضع التطوير (dev mode)** — بدلًا من ذلك، قم بتشغيله يدويًا:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

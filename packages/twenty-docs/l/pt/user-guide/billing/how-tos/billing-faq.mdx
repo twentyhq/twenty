@@ -9,7 +9,7 @@ description: Perguntas frequentes sobre preços e faturação da Twenty.
 <Accordion title="Posso usar a Twenty gratuitamente enquanto hospedo por conta própria?">
 Sim, você pode usar a Twenty gratuitamente enquanto hospeda por conta própria. Você terá acesso a tudo incluído no plano Pro (Cloud), exceto o suporte da nossa equipe central. O suporte está acessível por meio da nossa comunidade no Discord.
 
-Se você quiser hospedar por conta própria e precisar dos recursos Premium (SSO e permissões em nível de linha), pode escolher a licença paga Organization (Self-Hosted). Isso também inclui suporte da equipe da Twenty e remove a exigência de publicar código personalizado como código aberto antes de distribuir.
+Se você quiser hospedar por conta própria e precisar dos recursos Premium (SSO, permissões em nível de linha e mais), pode escolher a licença paga Organization (Self-Hosted). Isso também inclui suporte da equipe da Twenty e remove a exigência de publicar código personalizado como código aberto antes de distribuir.
 </Accordion>
 
 <Accordion title="Quais são os recursos Premium?">
@@ -17,6 +17,10 @@ Os recursos Premium estão disponíveis apenas nos planos Organization (Cloud ou
 * **Integração de SSO**: Single Sign-On com seu provedor de identidade
 * **Permissões em nível de linha**: Controle de acesso granular no nível de registro
 * **Dados de uso de IA**: Acompanhe o consumo de IA em todo o espaço de trabalho
+* **Registros de auditoria**: Verifique o que cada membro do workspace tem feito
+* **Campanhas de email**: Planeje quais emails devem ser enviados (disponível em breve)
+* **Workspaces ilimitados**: Crie quantos workspaces quiser (somente para auto-hospedagem)
+* **Código-fonte privado**: Nenhuma exigência de publicar alterações em um repositório público (somente para auto-hospedagem)
 </Accordion>
 
 <Accordion title="O plano Organization na nuvem e o plano Organization em ambiente autohospedado são iguais?">
@@ -28,19 +32,19 @@ Não oferecemos assentos gratuitos. A precificação é por usuário e cada usu�
 </Accordion>
 
 <Accordion title="Onde posso mudar minha assinatura para o plano Organization?">
-Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Alterar para Organização`.
+Você pode fazer isso em `Configurações → Cobrança → Planos`. Depois, clique em `Alterar para Organização`.
 </Accordion>
 
 <Accordion title="Onde posso mudar minha assinatura para o plano Pro?">
-Por favor, entre em contato diretamente com nossa equipe através do Suporte, não há uma maneira fácil de fazer isso usando a interface no momento.
+Você pode fazer isso em `Configurações → Cobrança → Planos`. Depois, clique em `Alterar para Pro`.
 </Accordion>
 
-<Accordion title="Onde posso mudar minha assinatura para Anual?">
-Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Alterar para Anual`.
+<Accordion title="Onde posso mudar minha assinatura para anual?">
+Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Atualizar para anual`.
 </Accordion>
 
-<Accordion title="Onde posso mudar minha assinatura para Mensal?">
-Por favor, entre em contato diretamente com nossa equipe através do Suporte, não há uma maneira fácil de fazer isso usando a interface no momento.
+<Accordion title="Onde posso mudar minha assinatura para mensal?">
+Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Alterar para Mensal`.
 </Accordion>
 
 <Accordion title="Onde posso ver o uso dos meus créditos?">
@@ -57,13 +61,18 @@ A quantidade de créditos depende do seu ciclo de faturação, não do seu plano
 Cada ação de fluxo de trabalho consome créditos com base em sua complexidade:
 * **Operações internas básicas** (como pesquisa, atualização, criação de registros) consomem muito poucos créditos
 * **Operações mais complexas** como nós de código e solicitações a serviços externos consomem mais créditos
-* **Prompts de IA** (em breve!) também consomem mais créditos com base no uso
+* **Prompts de IA** também consomem mais créditos com base no uso
+* **Apps** também consomem mais créditos de forma semelhante ao nó Code
 
-Os créditos são deduzidos em tempo real à medida que os fluxos de trabalho são executados. Você pode monitorar seu uso em **Configurações → Cobrança** para acompanhar o consumo e os créditos restantes.
+Os créditos são deduzidos em tempo real à medida que os fluxos de trabalho ou apps são executados. Você pode monitorar seu uso em **Configurações → Cobrança** para acompanhar o consumo e os créditos restantes.
 </Accordion>
 
 <Accordion title="Posso comprar mais créditos de fluxo de trabalho?">
 Você pode comprar créditos adicionais em `Configurações → Cobrança`.
+</Accordion>
+
+<Accordion title="Posso comprar mais créditos de fluxo de trabalho apenas por 1 mês?">
+Sim, acesse `Configurações → Cobrança`, clique no botão `Aumentar`, escolha quantos créditos você quer e confirme; eles serão aplicados ao período de cobrança atual. Depois, clique novamente no botão `Aumentar`, altere o valor de volta ao original e confirme; o downgrade será aplicado a partir do próximo período de cobrança.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Ver
 
 <Accordion title="Onde posso acessar minhas faturas?">
 Você pode fazer isso em `Configurações → Cobrança`. Depois, clique em `Ver detalhes de cobrança`. Você verá todas as suas faturas na parte inferior da tela.
+</Accordion>
+
+<Accordion title="Por que meus assentos são diferentes do número de usuários no meu workspace?">
+A contagem de assentos do workspace é sincronizada com o sistema de pagamento a cada 6 horas; as faturas são ajustadas com base na diferença.
+</Accordion>
+
+<Accordion title="Por que recebi uma fatura por um novo membro do workspace?">
+Quando um novo membro é adicionado ao workspace, uma fatura é enviada para cobrir a diferença. Quando um membro do workspace é removido, a alteração é aplicada na próxima fatura mensal/anual padrão.
 </Accordion>
 </AccordionGroup>

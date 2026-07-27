@@ -45,4 +45,8 @@ jobs:
         run: yarn install --immutable
 
       - name: Publish to npm
+        # Uncomment if publishing from a private source repo: npm rejects
+        # OIDC provenance for private repos
+        # env:
+        #   TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
         run: yarn twenty app:publish

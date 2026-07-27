@@ -3,10 +3,6 @@ title: خادم MCP
 description: اربط مساعدي الذكاء الاصطناعي بمساحة عمل Twenty الخاصة بك باستخدام بروتوكول سياق النموذج.
 ---
 
-<Warning>
-MCP حاليًا في مرحلة **ألفا** وهو متاح فقط في بعض مساحات العمل. قد لا يكون مفعّلًا لمساحة عملك بعد.
-</Warning>
-
 تعرض Twenty خادم [MCP](https://modelcontextprotocol.io/) بحيث تتمكّن مساعدات الذكاء الاصطناعي — Claude Desktop وClaude Code وCursor وChatGPT وغيرها — من قراءة وكتابة بيانات نظام إدارة علاقات العملاء (CRM) لديك باستخدام اللغة الطبيعية.
 
 استخدم **عنوان URL لمساحة العمل** (عنوان URL الذي تستخدمه للوصول إلى Twenty) كنقطة نهاية MCP. على Twenty Cloud، قد يكون عنوان URL لمساحة العمل هو `https://{mycompany}.twenty.com` أو نطاق مخصص. الخادم متاح على:
@@ -72,20 +68,20 @@ MCP حاليًا في مرحلة **ألفا** وهو متاح فقط في بعض
 يمنح مفتاح API الخاص بك حق الوصول إلى بيانات مساحة العمل. أبعِده عن أنظمة التحكم في الإصدارات وملفات dotfiles المشتركة.
 </Warning>
 
-لإنشاء مفتاح API، انتقل إلى **Settings > APIs & Webhooks > + Create key**. راجع [واجهات برمجة التطبيقات](/l/ar/developers/extend/api#create-an-api-key) للتفاصيل.
+لإنشاء مفتاح API، انتقل إلى **Settings → MCP & APIs → API → + Create key**. راجع [واجهات برمجة التطبيقات](/l/ar/developers/extend/api#create-an-api-key) للتفاصيل.
 
 ## البدء السريع
 
 ### 1. انسخ الإعداد
 
-انتقل إلى **Settings > AI > More > MCP Server** في Twenty. اختر طريقة المصادقة (OAuth أو مفتاح API)، وانسخ مقطع JSON (سيستخدم بالفعل عنوان URL لمساحة العمل لديك)، ثم الصقه في ملف إعدادات عميل MCP لديك.
+انتقل إلى **Settings → MCP & APIs → MCP** في Twenty. اختر طريقة المصادقة (OAuth أو مفتاح API)، وانسخ مقطع JSON (سيستخدم بالفعل عنوان URL لمساحة العمل لديك)، ثم الصقه في ملف إعدادات عميل MCP لديك.
 
 | العميل             | موقع ملف الإعداد                                                                                                                                    |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) أو `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                |
 | **Claude Code**    | `~/.claude.json` (المستخدم) أو `.mcp.json` (المشروع)                                                                                                |
 | **Cursor**         | `.cursor/mcp.json` ضمن مشروعك، أو `~/.cursor/mcp.json` عالميًا                                                                                      |
-| **ChatGPT**        | فعِّل وضع المطوّر في **Settings > Apps & Connectors > Advanced settings**، ثم استخدم **Create** في **Settings > Apps & Connectors** لإضافة خادم MCP |
+| **ChatGPT**        | فعِّل وضع المطوّر في **Settings → Apps & Connectors → Advanced settings**، ثم استخدم **Create** في **Settings → Apps & Connectors** لإضافة خادم MCP |
 
 ### 2. الاتصال
 
@@ -113,7 +109,7 @@ MCP حاليًا في مرحلة **ألفا** وهو متاح فقط في بعض
 ترث اتصالات MCP أذونات المستخدم المُصادَق عليه (OAuth) أو الدور المُعيَّن لمفتاح API. لتقييد ما يمكن لخادم MCP القيام به:
 
 * **OAuth**: ينطبق دور المستخدم في مساحة العمل.
-* **API Key**: عيِّن دورًا لمفتاح API ضمن **Settings > Roles**. راجع [الأذونات](/l/ar/user-guide/permissions-access/capabilities/permissions).
+* **API Key**: عيِّن دورًا لمفتاح API ضمن **Settings → Members → Roles**. راجع [الأذونات](/l/ar/user-guide/permissions-access/capabilities/permissions).
 
 ## التكوين ذاتي الاستضافة
 

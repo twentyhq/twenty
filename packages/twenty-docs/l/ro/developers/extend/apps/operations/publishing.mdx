@@ -170,6 +170,17 @@ Publică aplicația pe npm, cu proveniență, când împingi un tag de versiune 
 
 Pe npmjs.com deschide pachetul tău > **Settings → Trusted Publisher** și înregistrează acest repozitoriu cu fluxul de lucru `publish.yml` (vezi [documentația npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). Publicarea cu provenance certifică ce repozitoriu GitHub a construit pachetul, ceea ce este, de asemenea, modul în care îți revendici proprietatea asupra aplicației tale într-un marketplace Twenty.
 
+<Note>
+npm acceptă doar proveniență din depozite sursă **publice**. Dacă publici dintr-un depozit privat, npm respinge pachetul de proveniență OIDC cu un `E422 ... Eroare „Unsupported GitHub Actions source repository visibility: "private"`.” Pentru a publica dintr-un depozit privat, renunță la proveniență setând `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` în `env` al etapei de publicare (un indiciu comentat este inclus în fișierul generat `publish.yml`):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Fixarea acțiunilor reutilizabile
 
 Fluxurile de lucru `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile la `@main`, astfel încât actualizările acțiunilor din repo-ul `twentyhq/twenty` sunt preluate automat. Dacă dorești builduri deterministe, înlocuiește `@main` cu un SHA de commit sau cu un tag de release pe fiecare linie `uses:`.

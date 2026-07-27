@@ -864,6 +864,11 @@ msgstr "审计日志需要配置 ClickHouse。"
 msgid "August"
 msgstr "八月"
 
+#. js-lingui-id: X7GoTa
+#: src/engine/core-modules/auth/token/services/sso-exchange-token.service.ts
+msgid "Authentication failed, please sign in again."
+msgstr ""
+
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
@@ -1210,6 +1215,12 @@ msgstr ""
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
+#. js-lingui-id: D9pZ2l
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar widget views only support the month layout"
+msgstr ""
+
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Call Recording"
@@ -1467,11 +1478,6 @@ msgstr "无法更新标准权限标志定义"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "无法更新标准技能属性（仅允许启用/停用）"
-
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "不能手动更新工作流程版本状态"
 
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -2055,11 +2061,6 @@ msgstr "仪表板"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "数据结构无效。"
-
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "数据版本不匹配。请刷新后重试。"
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -5262,6 +5263,7 @@ msgid "Not authorized to access this OAuth provider."
 msgstr "无权访问此 OAuth 提供商。"
 
 #. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
@@ -6694,10 +6696,10 @@ msgstr "角色目标已存在"
 msgid "Role target is missing identifier."
 msgstr "角色目标缺少标识符。"
 
-#. js-lingui-id: oCyyzG
+#. js-lingui-id: vYrPc5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
 msgstr ""
 
 #. js-lingui-id: oNYUjk
@@ -6974,6 +6976,11 @@ msgstr "九月"
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "Server administrator access changed"
 msgstr "服务器管理员访问权限已更改"
+
+#. js-lingui-id: uK5uBy
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "Server keys require the application publisher workspace to have the application installed."
+msgstr ""
 
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -7503,6 +7510,11 @@ msgstr "应用源通道与预期类型不匹配。"
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "应用程序没有分配有效角色。请检查您的应用程序配置。"
 
+#. js-lingui-id: QyGlqv
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The application key-value entry could not be saved. Please try again."
+msgstr ""
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -7658,6 +7670,11 @@ msgstr "此人所属的列表"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "The list this campaign was sent to"
 msgstr "此营销活动发送到的列表"
+
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -7874,6 +7891,11 @@ msgstr "没有可重试的失败消息。"
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "此{fieldLabel}的值已被占用。请检查您的数据并重试。"
 
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -7990,6 +8012,11 @@ msgstr "未启用此功能。"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "此字段无法修改。"
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -8170,6 +8197,11 @@ msgstr "此角色无法修改，因为它是系统角色。只有自定义角色
 #: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
 msgid "This role cannot be modified."
 msgstr "此角色无法修改。"
+
+#. js-lingui-id: DEJJoY
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "This server key is already claimed by another workspace."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -8429,6 +8461,12 @@ msgstr "无法为类型为 {fieldType} 的字段 {fieldName} 创建唯一索引"
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "Universal identifier is reserved for system-managed metadata"
 msgstr "通用标识符保留给系统管理的元数据使用"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -9165,6 +9203,11 @@ msgstr "小部件行超出网格高度"
 msgid "Widget type VIEW is not supported yet."
 msgstr "小部件类型 VIEW 尚不支持。"
 
+#. js-lingui-id: s8y6wj
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Widget views must use a widget view type"
+msgstr ""
+
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Work"
@@ -9426,6 +9469,11 @@ msgstr "工作区 ID 与角色不匹配。"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "工作空间尚未准备好迎接新成员"
+
+#. js-lingui-id: 8RwcFg
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "Workspace is suspended."
+msgstr ""
 
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

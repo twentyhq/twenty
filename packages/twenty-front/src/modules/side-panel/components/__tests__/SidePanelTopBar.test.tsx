@@ -28,6 +28,10 @@ jest.mock('@/side-panel/components/SidePanelTopBarRightCornerIcon', () => ({
   SidePanelTopBarRightCornerIcon: () => null,
 }));
 
+jest.mock('@/side-panel/components/SidePanelExpandAiChatButton', () => ({
+  SidePanelExpandAiChatButton: () => null,
+}));
+
 const mockCloseSidePanelMenu = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelContextChips', () => ({

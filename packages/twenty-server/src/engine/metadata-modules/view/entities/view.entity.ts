@@ -72,7 +72,7 @@ export type ViewOverrides = {
 @Index('IDX_VIEW_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
 @Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
-  `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
+  `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>

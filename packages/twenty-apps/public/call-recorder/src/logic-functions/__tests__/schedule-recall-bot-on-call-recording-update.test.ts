@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { scheduleRecallBotOnCallRecordingUpdateHandler } from 'src/logic-functions/schedule-recall-bot-on-call-recording-update';
+import scheduleRecallBotOnCallRecordingUpdateLogicFunction, {
+  scheduleRecallBotOnCallRecordingUpdateHandler,
+} from 'src/logic-functions/schedule-recall-bot-on-call-recording-update';
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
@@ -128,6 +130,21 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     vi.unstubAllEnvs();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('declares the pending-transition fields on the trigger so the server drops other updates', () => {
+    expect(
+      scheduleRecallBotOnCallRecordingUpdateLogicFunction.config
+        .databaseEventTriggerSettings,
+    ).toEqual({
+      eventName: 'callRecording.updated',
+      updatedFields: [
+        'recordingRequestStatus',
+        'status',
+        'externalBotId',
+        'calendarEventId',
+      ],
+    });
   });
 
   it('schedules a bot when an update clears the bot id of a requested recording', async () => {

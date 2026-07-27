@@ -9,7 +9,7 @@ description: Často kladené otázky k cenám a fakturaci Twenty.
 <Accordion title="Mohu používat Twenty zdarma při vlastním hostingu?">
 Ano, můžete používat Twenty zdarma při vlastním hostingu. Budete mít přístup ke všemu, co je součástí plánu Pro (Cloud), s výjimkou podpory od našeho hlavního týmu. Podpora je dostupná prostřednictvím naší komunity na Discordu.
 
-Pokud chcete hostovat sami a potřebujete prémiové funkce (SSO a oprávnění na úrovni řádků), můžete si zvolit placenou licenci Organization (Self-Hosted). To také zahrnuje podporu od týmu Twenty a ruší požadavek na zveřejnění vlastního kódu jako open-source před distribucí.
+Pokud chcete hostovat sami a potřebujete prémiové funkce (SSO, oprávnění na úrovni řádků a další), můžete si zvolit placenou licenci Organization (Self-Hosted). To také zahrnuje podporu od týmu Twenty a ruší požadavek na zveřejnění vlastního kódu jako open-source před distribucí.
 </Accordion>
 
 <Accordion title="Jaké jsou prémiové funkce?">
@@ -17,6 +17,10 @@ Prémiové funkce jsou dostupné pouze v plánech Organization (Cloud nebo Self-
 * **Integrace SSO**: Jednotné přihlášení s vaším poskytovatelem identity
 * **Oprávnění na úrovni řádků**: Jemně granulované řízení přístupu na úrovni záznamu
 * **AI využití data**: Sledovat spotřebu AI v pracovním prostoru
+* **Protokoly auditu**: Zkontrolujte, co jednotliví členové pracovního prostoru dělali
+* **E-mailové kampaně**: Naplánujte, které e-maily by se měly odesílat (brzy k dispozici)
+* **Neomezené pracovní prostory**: Vytvářejte tolik pracovních prostorů, kolik chcete (pouze self-hosted)
+* **Soukromý zdrojový kód**: Není vyžadováno zveřejnění změn do veřejně dostupného repozitáře (pouze self-hosted)
 </Accordion>
 
 <Accordion title="Plánuje organizace na mraky a plán Organizace na totéž?">
@@ -28,19 +32,19 @@ Neposkytujeme bezplatná místa. Cena je stanovena za uživatele a každý uživ
 </Accordion>
 
 <Accordion title="Kde mohu přepnout své předplatné na plán Organization?">
-To můžete udělat v `Nastavení → Fakturace`. Pak klikněte na `Přepnout na Organizaci`.
+To můžete udělat v `Nastavení → Fakturace → Plány`. Pak klikněte na `Přepnout na Organizaci`.
 </Accordion>
 
 <Accordion title="Kde mohu přepnout své předplatné na plán Pro?">
-Obraťte se přímo na náš tým prostřednictvím Podpory, momentálně není snadné toto provést pomocí uživatelského rozhraní.
+To můžete udělat v `Nastavení → Fakturace → Plány`. Poté klikněte na `Switch to Pro`.
 </Accordion>
 
 <Accordion title="Kde mohu přepnout svoje předplatné na roční plán?">
-To můžete udělat v `Nastavení → Fakturace`. Poté klikněte na `Switch to Yearly`.
+To můžete udělat v `Nastavení → Fakturace`. Poté klikněte na `Upgrade to yearly`.
 </Accordion>
 
 <Accordion title="Kde mohu přepnout své předplatné na měsíční plán?">
-Obraťte se přímo na náš tým prostřednictvím Podpory, momentálně není snadné toto provést pomocí uživatelského rozhraní.
+To můžete udělat v `Nastavení → Fakturace`. Poté klikněte na `Downgrade to monthly`.
 </Accordion>
 
 <Accordion title="Kde mohu vidět své využití kreditů?">
@@ -57,13 +61,18 @@ Počet kreditů závisí na vašem fakturačním cyklu, nikoli na plánu:
 Každá akce v pracovním postupu spotřebovává kredity podle své složitosti:
 * **Základní interní operace** (jako je vyhledávání, aktualizace, vytváření záznamů) spotřebovávají velmi málo kreditů
 * **Složitější operace** jako uzly pro kód a požadavky na externí služby spotřebovávají více kreditů
-* **AI návrhy** (brzy k dispozici) také budou spotřebovávat více kreditů na základě použití.
+* **AI výzvy** také spotřebovávají více kreditů v závislosti na využití
+* **Aplikace** také spotřebovávají více kreditů podobně jako uzel Code
 
-Kredity jsou odečítány v reálném čase, když se pracovní postupy provádějí. Svou spotřebu můžete sledovat v **Nastavení → Fakturace**, abyste mohli sledovat spotřebu a zbývající kredity.
+Kredity jsou odečítány v reálném čase, když se spouštějí pracovní postupy nebo aplikace. Svou spotřebu můžete sledovat v **Nastavení → Fakturace**, abyste mohli sledovat spotřebu a zbývající kredity.
 </Accordion>
 
 <Accordion title="Mohu si koupit více kreditů pro pracovní postupy?">
 Další kredity si můžete zakoupit v `Nastavení → Fakturace`.
+</Accordion>
+
+<Accordion title="Mohu si koupit více kreditů pro pracovní postupy jen na 1 měsíc?">
+Ano, přejděte do `Settings → Billing`, klikněte na tlačítko `Increase`, vyberte, kolik kreditů chcete, a potvrďte, budou použity na aktuální fakturační období. Poté znovu klikněte na tlačítko `Increase`, změňte hodnotu zpět na původní a potvrďte, snížení se uplatní od dalšího fakturačního období.
 </Accordion>
 </AccordionGroup>
 
@@ -84,5 +93,13 @@ To můžete udělat v `Nastavení → Fakturace`. Pak klikněte na `Zobrazit pod
 
 <Accordion title="Kde mám přístup ke svým fakturám?">
 To můžete udělat v `Nastavení → Fakturace`. Pak klikněte na `Zobrazit podrobnosti fakturace`. Všechny své faktury uvidíte v dolní části obrazovky.
+</Accordion>
+
+<Accordion title="Proč se počet mých míst liší od počtu uživatelů v mém pracovním prostoru?">
+Počty míst v pracovním prostoru jsou synchronizovány s platebním systémem každých 6 hodin; faktury jsou upravovány na základě rozdílu.
+</Accordion>
+
+<Accordion title="Proč jsem dostal fakturu za nového člena pracovního prostoru?">
+Když je do pracovního prostoru přidán nový člen, je odeslána faktura na pokrytí rozdílu. Když je člen pracovního prostoru odstraněn, změna se projeví v příští standardní měsíční/roční faktuře.
 </Accordion>
 </AccordionGroup>

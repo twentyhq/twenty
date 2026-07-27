@@ -70,6 +70,11 @@ export const WidgetCardShell = ({
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
 
+  // A widget stacked in the main tab area gets a bounded slot with its own
+  // scroll, so no single widget swallows the tab. Solo widgets own the tab,
+  // and pinned/side-column stacks keep their flowing column behavior.
+  const hasBoundedHeight = variant === 'record-page' && isInVerticalListTab;
+
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
       <WidgetCard
@@ -116,6 +121,7 @@ export const WidgetCardShell = ({
           isInVerticalListTab={isInVerticalListTab}
           isMobile={isMobile}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
+          hasBoundedHeight={hasBoundedHeight}
         >
           {hasAccess ? (
             <ErrorBoundary

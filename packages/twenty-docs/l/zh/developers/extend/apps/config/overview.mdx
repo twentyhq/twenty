@@ -24,6 +24,11 @@ Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## 本节内容
@@ -36,7 +41,7 @@ Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用
     `defineRole` —— 声明应用的逻辑函数可以读取和写入什么。
   </Card>
   <Card title="安装钩子" icon="wrench" href="/l/zh/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` 和 `definePostInstallLogicFunction` —— 备份数据、写入默认值、验证升级。
+    `definePreInstallLogicFunction`、`definePostInstallLogicFunction` 和 `defineUninstallLogicFunction` —— 备份数据、写入默认值、验证升级、在卸载时清理。
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用
 
 * **Application** 是入口点。 每个应用都有且仅有一次 `defineApplication()` 调用，并将一个 **Role** 作为其默认角色。
 * **Role** 控制应用的逻辑函数和前端组件可以读取和写入什么。 遵循最小权限原则：只授予代码实际需要的权限。
-* **Install Hooks（安装钩子）** 在安装或升级过程中运行——预安装钩子在元数据迁移之前运行（因此可以拒绝存在风险的升级），后安装钩子在迁移之后运行（因此可以根据新模式写入默认数据）。
+* **Install Hooks（安装钩子）** 在安装或升级过程中运行——预安装钩子在元数据迁移之前运行（因此可以拒绝存在风险的升级），后安装钩子在迁移之后运行（因此可以根据新模式写入默认数据）。 卸载钩子会在应用被移除之前立即运行，因此它可以在应用数据仍然可读时清理外部资源。
 
 <Note>
 安装钩子与 [logic function](/l/zh/developers/extend/apps/logic/logic-functions) 共用运行时——相同的处理器签名、相同的环境变量、相同的类型化 API 客户端——但它们使用各自的 define 函数声明，并且位于常规触发模型（HTTP、cron、数据库事件）之外。

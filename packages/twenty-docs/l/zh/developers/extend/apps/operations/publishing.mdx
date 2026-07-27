@@ -170,6 +170,17 @@ yarn twenty app:publish --private
 
 在 npmjs.com 上打开你的包 > **Settings → Trusted Publisher**，并使用 `publish.yml` 工作流为此仓库注册（参见 [npm trusted publishing 文档](https://docs.npmjs.com/trusted-publishers)）。 带有 provenance 的发布会证明是哪个 GitHub 仓库构建了该包，这也同样是你在 Twenty 市场中声明应用所有权的方式。
 
+<Note>
+npm 仅接受来自**公共**源代码仓库的 provenance。 如果你从私有仓库发布，npm 会以 `E422 ...` 错误拒绝 OIDC provenance 包。 Unsupported GitHub Actions source repository visibility: "private"`错误。 要从私有仓库进行发布，请在发布步骤的`env`中将`TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'`设置为退出 provenance（在脚手架生成的`publish.yml\` 中包含了一条已注释的提示）：
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### 固定可复用的 actions
 
 `ci.yml` 和 `cd.yml` 工作流引用了 `@main` 上的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。

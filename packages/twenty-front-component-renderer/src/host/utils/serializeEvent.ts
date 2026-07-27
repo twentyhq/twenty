@@ -1,7 +1,9 @@
 import { isBoolean, isNumber, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MAX_SERIALIZED_EVENT_TEXT_LENGTH } from '@/host/constants/MaxSerializedEventTextLength';
 import { applyFirstChangedTouchCoordinates } from '@/host/utils/applyFirstChangedTouchCoordinates';
+import { applyPasteClipboardText } from '@/host/utils/applyPasteClipboardText';
 import { serializeFileList } from '@/host/utils/serializeFileList';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -113,6 +115,15 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
   if (isBoolean(domEvent.repeat)) {
     serialized.repeat = domEvent.repeat;
   }
+
+  if (isString(domEvent.inputType)) {
+    serialized.inputType = domEvent.inputType;
+  }
+  if (isString(domEvent.data)) {
+    serialized.data = domEvent.data.slice(0, MAX_SERIALIZED_EVENT_TEXT_LENGTH);
+  }
+
+  applyPasteClipboardText(serialized, domEvent);
 
   if (isNumber(domEvent.deltaX)) {
     serialized.deltaX = domEvent.deltaX;

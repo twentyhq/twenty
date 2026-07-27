@@ -1,13 +1,10 @@
 import { SubTitle } from '@/auth/components/SubTitle';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useLazyQuery } from '@apollo/client/react';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -15,7 +12,6 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
@@ -26,11 +22,7 @@ const StyledRetryButtonContainer = styled.div`
 `;
 
 export const PaymentSuccess = () => {
-  const subscriptionStatus = useSubscriptionStatus();
-  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
-    fetchPolicy: 'network-only',
-  });
-  const setCurrentUser = useSetAtomState(currentUserState);
+  const { loadCurrentUser } = useLoadCurrentUser();
   const showWelcomeAnimationAfterOnboardingCheckout =
     useShowWelcomeAnimationAfterOnboardingCheckout();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -47,23 +39,18 @@ export const PaymentSuccess = () => {
         return;
       }
 
-      if (isDefined(subscriptionStatus)) {
-        showWelcomeAnimationAfterOnboardingCheckout();
-        return;
-      }
-
-      const result = await getCurrentUser();
+      const refreshedWorkspace = await loadCurrentUser()
+        .then(({ workspace }) => workspace)
+        .catch(() => null);
 
       if (cancelled) {
         return;
       }
 
-      const currentUser = result.data?.currentUser;
       const refreshedSubscriptionStatus =
-        currentUser?.currentWorkspace?.currentBillingSubscription?.status;
+        refreshedWorkspace?.currentBillingSubscription?.status;
 
-      if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
-        setCurrentUser(currentUser);
+      if (isDefined(refreshedSubscriptionStatus)) {
         showWelcomeAnimationAfterOnboardingCheckout();
         return;
       }
@@ -93,7 +80,7 @@ export const PaymentSuccess = () => {
       }
     };
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmationRunIndex, subscriptionStatus]);
+  }, [confirmationRunIndex]);
 
   const handleRetry = () => {
     setHasTimedOut(false);

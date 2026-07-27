@@ -29,6 +29,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
+import { TextWithRecordLinks } from '@/ai/components/TextWithRecordLinks';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
@@ -345,7 +346,9 @@ export const AiChatQuestionCard = ({
     <StyledCard>
       <StyledQuestionSection>
         <StyledQuestionHeaderRow>
-          <StyledQuestionText>{currentQuestion.question}</StyledQuestionText>
+          <StyledQuestionText>
+            <TextWithRecordLinks text={currentQuestion.question} />
+          </StyledQuestionText>
           {hasMultipleQuestions && (
             <StyledPager>
               <LightIconButton
@@ -410,7 +413,9 @@ export const AiChatQuestionCard = ({
                     size={theme.icon.size.sm}
                     color={themeCssVariables.font.color.tertiary}
                   />
-                  <StyledOptionLabel>{option.label}</StyledOptionLabel>
+                  <StyledOptionLabel>
+                    <TextWithRecordLinks text={option.label} />
+                  </StyledOptionLabel>
                   {option.isRecommended === true && (
                     <StyledRecommended>· {t`Recommended`}</StyledRecommended>
                   )}

@@ -196,6 +196,63 @@ describe('manifestValidate', () => {
         'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
       );
     });
+
+    it('should not flag a connection provider referencing a logic function via onConnectLogicFunction as a duplicate', () => {
+      const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
+
+      const logicFunction = {
+        universalIdentifier: logicFunctionId,
+        name: 'onConnect',
+        sourceHandlerPath: 'src/logic-functions/on-connect.ts',
+        builtHandlerPath: 'dist/on-connect.js',
+        builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+        handlerName: 'handler',
+      } as unknown as Manifest['logicFunctions'][number];
+
+      const connectionProvider = {
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
+        name: 'slack',
+        displayName: 'Slack',
+        type: 'oauth',
+        oauth: {},
+        onConnectLogicFunction: { universalIdentifier: logicFunctionId },
+      } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+
+      const result = manifestValidate({
+        ...validManifest,
+        logicFunctions: [logicFunction],
+        connectionProviders: [connectionProvider],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
+      const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
+
+      const frontComponent = {
+        universalIdentifier: frontComponentId,
+        name: 'app-settings',
+        componentName: 'AppSettings',
+        sourceComponentPath: 'src/front-components/app-settings.tsx',
+        builtComponentPath: 'dist/app-settings.mjs',
+        builtComponentChecksum: '00000000-0000-4000-8000-000000000000',
+        isHeadless: false,
+      } as unknown as Manifest['frontComponents'][number];
+
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          settingsFrontComponent: { universalIdentifier: frontComponentId },
+        },
+        frontComponents: [frontComponent],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe('relation field validation', () => {

@@ -87,15 +87,38 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect('onmouseover' in result).toBe(false);
   });
 
+  it('should normalize and wrap editing and clipboard event handlers', () => {
+    const handler = jest.fn();
+    const result = buildHostReactPropsFromRemoteProps(
+      {
+        onBeforeinput: handler,
+        onCompositionstart: handler,
+        onCompositionupdate: handler,
+        onCompositionend: handler,
+        onCopy: handler,
+        onPaste: handler,
+        onCut: handler,
+      },
+      'div',
+    );
+
+    expect(typeof result.onBeforeInput).toBe('function');
+    expect(typeof result.onCompositionStart).toBe('function');
+    expect(typeof result.onCompositionUpdate).toBe('function');
+    expect(typeof result.onCompositionEnd).toBe('function');
+    expect(typeof result.onCopy).toBe('function');
+    expect(typeof result.onPaste).toBe('function');
+    expect(typeof result.onCut).toBe('function');
+  });
+
   it('should drop handler props whose event type is not allow-listed', () => {
     const handler = jest.fn();
     const result = buildHostReactPropsFromRemoteProps(
       {
-        onCopy: handler,
-        onCut: handler,
-        onPaste: handler,
         onSelect: handler,
-        onBeforeInput: handler,
+        onInvalid: handler,
+        onReset: handler,
+        onAbort: handler,
       },
       'div',
     );

@@ -67,5 +67,6 @@ export const buildRecordTableWidgetViewSnapshot = (
     viewFilters: [],
     viewFilterGroups: [],
     viewSorts: [],
+    viewGroups: [],
   };
 };

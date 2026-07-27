@@ -125,5 +125,6 @@ export default defineLogicFunction({
   handler: scheduleRecallBotOnCallRecordingUpdateHandler,
   databaseEventTriggerSettings: {
     eventName: `${CALL_RECORDING_OBJECT_NAME}.updated`,
+    updatedFields: PENDING_TRANSITION_FIELDS,
   },
 });

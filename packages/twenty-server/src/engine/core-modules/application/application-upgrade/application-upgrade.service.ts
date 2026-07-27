@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
@@ -21,7 +21,7 @@ const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
 
-const UPGRADE_APPLICATIONS_BATCH_SIZE = 20;
+const UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE = 5;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -111,13 +111,21 @@ export class ApplicationUpgradeService {
     }
   }
 
-  async upgradeAllApplications({
+  async findApplicationsToUpgrade({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
+    workspaceIds,
+    workspaceCountLimit,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-  }): Promise<void> {
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<{
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string | null;
+    applicationsToUpgrade: ApplicationEntity[];
+  }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
     });
@@ -125,28 +133,58 @@ export class ApplicationUpgradeService {
     const targetVersion = appRegistration.latestAvailableVersion;
 
     if (!isDefined(targetVersion)) {
-      return;
+      return {
+        appRegistration,
+        targetVersion: null,
+        applicationsToUpgrade: [],
+      };
     }
 
     const applications = await this.applicationRepository.find({
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isNonEmptyArray(workspaceIds)
+          ? { workspaceId: In(workspaceIds) }
+          : {}),
       },
     });
 
-    const applicationsToUpgrade = applications.filter(
+    let applicationsToUpgrade = applications.filter(
       (application) => application.version !== targetVersion,
     );
 
+    if (isDefined(workspaceCountLimit)) {
+      applicationsToUpgrade = applicationsToUpgrade.slice(
+        0,
+        workspaceCountLimit,
+      );
+    }
+
+    return { appRegistration, targetVersion, applicationsToUpgrade };
+  }
+
+  async upgradeApplications({
+    appRegistration,
+    targetVersion,
+    applications,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    applications: ApplicationEntity[];
+    batchSize?: number;
+  }): Promise<void> {
+    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+
     for (
       let batchStart = 0;
-      batchStart < applicationsToUpgrade.length;
-      batchStart += UPGRADE_APPLICATIONS_BATCH_SIZE
+      batchStart < applications.length;
+      batchStart += sanitizedBatchSize
     ) {
-      const batch = applicationsToUpgrade.slice(
+      const batch = applications.slice(
         batchStart,
-        batchStart + UPGRADE_APPLICATIONS_BATCH_SIZE,
+        batchStart + sanitizedBatchSize,
       );
 
       await Promise.all(
@@ -168,10 +206,44 @@ export class ApplicationUpgradeService {
     }
   }
 
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    batchSize?: number;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<void> {
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
+      await this.findApplicationsToUpgrade({
+        applicationRegistrationId,
+        onlyAutoUpgrade,
+        workspaceIds,
+        workspaceCountLimit,
+      });
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    await this.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
+      batchSize,
+    });
+  }
+
   async upgradeApplication(params: {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -181,6 +253,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
+      skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
     });
   }
 
@@ -188,6 +261,7 @@ export class ApplicationUpgradeService {
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -209,6 +283,7 @@ export class ApplicationUpgradeService {
         appRegistrationId: appRegistration.id,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
+        skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       });
     } catch (error) {
       const appName =

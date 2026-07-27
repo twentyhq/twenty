@@ -1,4 +1,4 @@
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 
 export type HostToWorkerRenderContext = {
   componentUrl: string;
@@ -6,7 +6,7 @@ export type HostToWorkerRenderContext = {
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
-  sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
 };
