@@ -181,8 +181,7 @@ export const useAgentChat = (
           text: contentToSend,
           messageId,
           browsingContext: browsingContextToSend,
-          companyContext:
-            store.get(companyEnrichmentState.atom)?.enrichment ?? null,
+          companyContext: store.get(companyEnrichmentState.atom),
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,

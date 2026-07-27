@@ -4,5 +4,6 @@ export const hasAttemptedCompanyEnrichmentFetchState = createAtomState<boolean>(
   {
     key: 'hasAttemptedCompanyEnrichmentFetchState',
     defaultValue: false,
+    useSessionStorage: true,
   },
 );
