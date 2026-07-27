@@ -308,9 +308,13 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             });
 
-            await this.workflowVersionCoreSyncService.softDeleteVersionsAndMirror(
-              workspaceId,
+            await workflowVersionRepository.softDelete({
               workflowId,
+            });
+
+            await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
+              workspaceId,
+              [workflowId],
             );
 
             break;
@@ -323,7 +327,11 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             });
 
-            await this.workflowVersionCoreSyncService.restoreVersionsAndMirror(
+            await workflowVersionRepository.restore({
+              workflowId,
+            });
+
+            await this.workflowVersionCoreSyncService.recreateCoreVersionsByWorkflowId(
               workspaceId,
               workflowId,
             );

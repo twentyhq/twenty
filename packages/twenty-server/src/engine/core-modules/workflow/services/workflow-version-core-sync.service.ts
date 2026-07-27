@@ -265,60 +265,6 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
-  async softDeleteVersionsAndMirror(
-    workspaceId: string,
-    workflowId: string,
-  ): Promise<void> {
-    await this.runVersionLifecycleInTransaction(
-      workspaceId,
-      async (workflowVersionRepository, entityManager) => {
-        const versions = await workflowVersionRepository.find(
-          { where: { workflowId } },
-          entityManager,
-        );
-
-        const coreWorkflowVersionIds = versions
-          .map((version) => version.coreWorkflowVersionId)
-          .filter(isNonEmptyString);
-
-        await workflowVersionRepository.softDelete(
-          { workflowId },
-          entityManager,
-        );
-
-        await this.deleteCoreRowsOnManager(
-          entityManager,
-          coreWorkflowVersionIds,
-        );
-      },
-    );
-  }
-
-  async restoreVersionsAndMirror(
-    workspaceId: string,
-    workflowId: string,
-  ): Promise<void> {
-    await this.runVersionLifecycleInTransaction(
-      workspaceId,
-      async (workflowVersionRepository, entityManager) => {
-        await workflowVersionRepository.restore({ workflowId }, entityManager);
-
-        const versions = await workflowVersionRepository.find(
-          { where: { workflowId } },
-          entityManager,
-        );
-
-        for (const version of versions) {
-          await this.mirrorWorkflowVersionWrite({
-            workspaceId,
-            entityManager,
-            workflowVersion: version,
-          });
-        }
-      },
-    );
-  }
-
   async deleteCoreVersionsByWorkflowIds(
     workspaceId: string,
     workflowIds: string[],
@@ -334,12 +280,9 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
-  private async runVersionLifecycleInTransaction(
+  async recreateCoreVersionsByWorkflowId(
     workspaceId: string,
-    run: (
-      workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-      entityManager: WorkspaceEntityManager,
-    ) => Promise<void>,
+    workflowId: string,
   ): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
@@ -349,51 +292,12 @@ export class WorkflowVersionCoreSyncService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const dataSource =
-        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-      const queryRunner = dataSource.createQueryRunner();
+      const versions = await workflowVersionRepository.find({
+        where: { workflowId },
+      });
 
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
-      try {
-        await run(workflowVersionRepository, queryRunner.manager);
-
-        await queryRunner.commitTransaction();
-      } catch (error) {
-        if (queryRunner.isTransactionActive) {
-          await queryRunner.rollbackTransaction();
-        }
-
-        throw error;
-      } finally {
-        await queryRunner.release();
-      }
+      await this.upsertToCore(workspaceId, versions);
     }, buildSystemAuthContext(workspaceId));
-
-    await this.invalidateAutomatedTriggerMaps(workspaceId);
-  }
-
-  private async deleteCoreRowsOnManager(
-    entityManager: WorkspaceEntityManager,
-    coreWorkflowVersionIds: string[],
-  ): Promise<void> {
-    if (coreWorkflowVersionIds.length === 0) {
-      return;
-    }
-
-    const queryRunner = entityManager.queryRunner;
-
-    if (!isDefined(queryRunner)) {
-      throw new Error(
-        'Transactional core mirror requires a transaction-scoped entity manager',
-      );
-    }
-
-    await queryRunner.query(
-      `DELETE FROM core."workflowVersion" WHERE "id" = ANY($1)`,
-      [coreWorkflowVersionIds],
-    );
   }
 
   private async writeBackCoreVersionIds(
