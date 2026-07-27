@@ -1,0 +1,32 @@
+---
+title: Exportar FAQ
+description: Preguntas frecuentes sobre la exportación de datos.
+---
+
+<AccordionGroup>
+<Accordion title="¿Podemos exportar todos los datos del espacio de trabajo antes de la cancelación, incluyendo objetos personalizados, campos personalizados, relaciones, notas, tareas, oportunidades, accesos, flujos de trabajo, permisos e historial de auditorías?">
+Los datos del espacio de trabajo pueden ser exportados antes de la cancelación con algunas excepciones: los paneles, los flujos de trabajo y los permisos deben ser transferidos manualmente y los registros de auditoría no pueden ser transferidos.
+</Accordion>
+<Accordion title="¿Qué elementos no se pueden exportar o migrar actualmente?">
+La mayoría de los elementos pueden ser exportados o migrados con algunas excepciones:
+* flujos de trabajo, paneles de control y todos los ajustes (teclas API, webhooks, registros de auditoría, configuración de usuario, etc.) debe migrarse manualmente
+* objetos y campos creados por la aplicación pueden ser migrados instalando dicha aplicación en un espacio de trabajo diferente, no deberían ser migrados manualmente
+* algunos registros, como versiones de flujo de trabajo y ejecuciones de flujo de trabajo. no son transferibles en absoluto y se espera que se pierda
+* algunos objetos como mensajes y objetos relacionados con el calendario no deberían ser exportados ya que son creados cuando la cuenta está conectada y sincronizada periódicamente, volverán a sincronizarse una vez que conectes tu cuenta (siempre y cuando tengas acceso a dicha cuenta) si es una cuenta de miembro del equipo que abandonó su empresa, entonces esos mensajes deben ser exportados, de lo contrario se perderán)
+</Accordion>
+<Accordion title="¿Hay una nube oficial para el procedimiento de migración autoalojada o un servicio de migración asistida?">
+Hasta ahora, no existe ningún procedimiento oficial de migración en la nube. La idea general es:
+* primero, instalar aplicaciones para introducir objetos y campos de aplicación
+* replicar objetos personalizados y campos añadidos por los usuarios
+* usar script con claves API o herramientas de IA para migrar todos los datos de un espacio de trabajo a otro
+* todos los objetos no transferibles deben migrarse manualmente
+
+Por favor, tenga en cuenta algunas cosas:
+* puede enviar hasta 50 solicitudes por minuto en plan Pro o 100 solicitudes por minuto en plan de organización antes de alcanzar un límite mínimo
+* cada solicitud de API puede tener hasta 200 registros
+* algunos datos en campos como Creado por, Actividades de cronología y Actualizadas por el sistema se perderán durante la importación y sobrescritos por el sistema
+</Accordion>
+<Accordion title="¿Los archivos exportados se proporcionan en formatos abiertos y documentados?">
+Los archivos exportados en la interfaz de usuario están en formato Excel, y todas las peticiones API se pueden guardar en formato JSON.
+</Accordion>
+</AccordionGroup>
