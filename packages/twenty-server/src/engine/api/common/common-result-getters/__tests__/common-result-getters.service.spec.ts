@@ -1,6 +1,7 @@
 import {
   FieldMetadataType,
   FileFolder,
+  RelationType,
   type ObjectRecord,
 } from 'twenty-shared/types';
 
@@ -45,16 +46,18 @@ const createField = ({
     ...overrides,
   });
 
-const buildFlatFieldMetadataMaps = (
-  fields: FlatFieldMetadata[],
-): FlatEntityMaps<FlatFieldMetadata> =>
-  fields.reduce(
-    (maps, field) =>
+const buildFlatEntityMaps = <
+  TFlatEntity extends FlatFieldMetadata | FlatObjectMetadata,
+>(
+  flatEntities: TFlatEntity[],
+): FlatEntityMaps<TFlatEntity> =>
+  flatEntities.reduce(
+    (maps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: field,
+        flatEntity,
         flatEntityMaps: maps,
       }),
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+    createEmptyFlatEntityMaps() as FlatEntityMaps<TFlatEntity>,
   );
 
 describe('CommonResultGettersService', () => {
@@ -96,7 +99,7 @@ describe('CommonResultGettersService', () => {
       namePlural: 'documents',
       fieldIds: [filesField.id, attachmentsField.id],
     });
-    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+    const flatFieldMetadataMaps = buildFlatEntityMaps([
       filesField,
       attachmentsField,
     ]);
@@ -161,65 +164,87 @@ describe('CommonResultGettersService', () => {
     });
   });
 
-  it('reuses field metadata while its source references stay unchanged', async () => {
-    const objectMetadataId = 'document-object-id';
-    const idField = createField({
-      id: 'document-id-field-id',
-      name: 'id',
-      objectMetadataId,
-      type: FieldMetadataType.UUID,
+  it('resolves field metadata once per object type within a single invocation', async () => {
+    const companyObjectMetadataId = 'company-object-id';
+    const personObjectMetadataId = 'person-object-id';
+    const companyNameField = createField({
+      id: 'company-name-field-id',
+      name: 'name',
+      objectMetadataId: companyObjectMetadataId,
+      type: FieldMetadataType.TEXT,
     });
-    const objectMetadata = getFlatObjectMetadataMock({
-      id: objectMetadataId,
-      universalIdentifier: 'document-object-universal-identifier',
-      nameSingular: 'document',
-      namePlural: 'documents',
-      fieldIds: [idField.id],
+    const companyPeopleField = createField({
+      id: 'company-people-field-id',
+      name: 'people',
+      objectMetadataId: companyObjectMetadataId,
+      type: FieldMetadataType.RELATION,
+      relationTargetObjectMetadataId: personObjectMetadataId,
+      settings: { relationType: RelationType.ONE_TO_MANY },
     });
-    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([idField]);
-    const flatObjectMetadataMaps =
-      createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>;
-    const record: ObjectRecord = {
-      id: 'document-id',
-    };
+    const personNameField = createField({
+      id: 'person-name-field-id',
+      name: 'name',
+      objectMetadataId: personObjectMetadataId,
+      type: FieldMetadataType.TEXT,
+    });
+    const companyObjectMetadata = getFlatObjectMetadataMock({
+      id: companyObjectMetadataId,
+      universalIdentifier: 'company-object-universal-identifier',
+      nameSingular: 'company',
+      namePlural: 'companies',
+      fieldIds: [companyNameField.id, companyPeopleField.id],
+    });
+    const personObjectMetadata = getFlatObjectMetadataMock({
+      id: personObjectMetadataId,
+      universalIdentifier: 'person-object-universal-identifier',
+      nameSingular: 'person',
+      namePlural: 'people',
+      fieldIds: [personNameField.id],
+    });
+    const flatFieldMetadataMaps = buildFlatEntityMaps([
+      companyNameField,
+      companyPeopleField,
+      personNameField,
+    ]);
+    const flatObjectMetadataMaps = buildFlatEntityMaps([
+      companyObjectMetadata,
+      personObjectMetadata,
+    ]);
+    const records: ObjectRecord[] = [
+      {
+        id: 'company-1',
+        name: 'Acme',
+        people: [
+          { id: 'person-1', name: 'Alice' },
+          { id: 'person-2', name: 'Bob' },
+        ],
+      },
+      {
+        id: 'company-2',
+        name: 'Globex',
+        people: [{ id: 'person-3', name: 'Carol' }],
+      },
+    ];
 
-    await service.processRecord(
-      record,
-      objectMetadata,
+    const result = await service.processRecordArray(
+      records,
+      companyObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       'workspace-id',
     );
-    await service.processRecord(
-      record,
-      objectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      'workspace-id',
-    );
 
-    expect(getFlatFieldsFromFlatObjectMetadata).toHaveBeenCalledTimes(1);
-
-    const refreshedObjectMetadata = { ...objectMetadata };
-
-    await service.processRecord(
-      record,
-      refreshedObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      'workspace-id',
-    );
-
+    expect(result).toEqual(records);
     expect(getFlatFieldsFromFlatObjectMetadata).toHaveBeenCalledTimes(2);
 
-    await service.processRecord(
-      record,
-      refreshedObjectMetadata,
+    await service.processRecordArray(
+      records,
+      companyObjectMetadata,
       flatObjectMetadataMaps,
-      buildFlatFieldMetadataMaps([idField]),
+      flatFieldMetadataMaps,
       'workspace-id',
     );
 
-    expect(getFlatFieldsFromFlatObjectMetadata).toHaveBeenCalledTimes(3);
+    expect(getFlatFieldsFromFlatObjectMetadata).toHaveBeenCalledTimes(4);
   });
 });
