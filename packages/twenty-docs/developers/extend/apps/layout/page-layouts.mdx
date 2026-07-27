@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### Key points
 
-- `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
+- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` or `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
 - Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`VERTICAL_LIST` for record pages, `GRID` for dashboards). A tab holding a single widget renders it full-bleed automatically; with several widgets they stack as cards.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
