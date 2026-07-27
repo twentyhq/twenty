@@ -1957,7 +1957,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED = true;
+  IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
