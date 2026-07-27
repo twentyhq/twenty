@@ -943,9 +943,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@twentyhq/twenty-discord@workspace:.":
+"@twentyhq/discord@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@twentyhq/twenty-discord@workspace:."
+  resolution: "@twentyhq/discord@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^18.2.0"

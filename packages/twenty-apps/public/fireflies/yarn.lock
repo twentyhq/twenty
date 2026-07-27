@@ -1362,9 +1362,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@twentyhq/twenty-fireflies@workspace:.":
+"@twentyhq/fireflies@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@twentyhq/twenty-fireflies@workspace:."
+  resolution: "@twentyhq/fireflies@workspace:."
   dependencies:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"

@@ -943,9 +943,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@twentyhq/twenty-exa@workspace:.":
+"@twentyhq/exa@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@twentyhq/twenty-exa@workspace:."
+  resolution: "@twentyhq/exa@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
