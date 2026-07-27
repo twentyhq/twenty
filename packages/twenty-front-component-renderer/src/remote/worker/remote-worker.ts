@@ -12,6 +12,7 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteCompo
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
+import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
@@ -35,6 +36,7 @@ installErrorEventBridge();
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
+installLocalStyleOnBaseElements(Element.prototype);
 
 installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
 
