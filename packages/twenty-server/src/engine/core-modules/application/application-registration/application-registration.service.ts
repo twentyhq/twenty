@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +25,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -35,8 +37,15 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  UPGRADE_APPLICATIONS_JOB_NAME,
+  type UpgradeApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -115,7 +124,27 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
+
+  // Best-effort: a queue outage must not fail the publish flow that
+  // triggered the upgrade.
+  async enqueueAutoUpgradeApplications(
+    applicationRegistrationId: string,
+  ): Promise<void> {
+    try {
+      await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+        UPGRADE_APPLICATIONS_JOB_NAME,
+        { applicationRegistrationId, onlyAutoUpgrade: true },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue auto-upgrade for registration ${applicationRegistrationId}`,
+        error,
+      );
+    }
+  }
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
     try {
@@ -618,6 +647,8 @@ export class ApplicationRegistrationService {
           sourceType: params.sourceType,
           version: params.latestAvailableVersion,
         });
+
+        await this.enqueueAutoUpgradeApplications(existing.id);
       }
 
       return;
@@ -659,6 +690,8 @@ export class ApplicationRegistrationService {
           sourceType: params.sourceType,
           version: params.latestAvailableVersion,
         });
+
+        await this.enqueueAutoUpgradeApplications(existing.id);
       }
 
       return;
@@ -883,6 +916,49 @@ export class ApplicationRegistrationService {
     };
   }
 
+  async findClaimable(params: {
+    sourcePackage?: string;
+    universalIdentifier?: string;
+  }): Promise<ClaimableApplicationRegistrationDTO | null> {
+    const hasPackage = isNonEmptyString(params.sourcePackage);
+    const hasUniversalIdentifier = isNonEmptyString(params.universalIdentifier);
+
+    if (hasPackage === hasUniversalIdentifier) {
+      throw new ApplicationRegistrationException(
+        'Provide exactly one of sourcePackage or universalIdentifier',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const where: FindOptionsWhere<ApplicationRegistrationEntity> = {
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      ...(hasPackage
+        ? { sourcePackage: params.sourcePackage }
+        : { universalIdentifier: params.universalIdentifier }),
+    };
+
+    const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+      where,
+    });
+
+    if (!isDefined(registration)) {
+      return null;
+    }
+
+    return {
+      id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      description: registration.description,
+      author: registration.author,
+      isOwned: isDefined(registration.ownerWorkspaceId),
+    };
+  }
+
   async claimOwnership(params: {
     applicationRegistrationId: string;
     claimingWorkspaceId: string;
@@ -895,7 +971,7 @@ export class ApplicationRegistrationService {
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 
@@ -909,7 +985,7 @@ export class ApplicationRegistrationService {
     if (updateResult.affected === 0) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 

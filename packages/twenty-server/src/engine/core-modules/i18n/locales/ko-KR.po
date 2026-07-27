@@ -251,6 +251,11 @@ msgstr "이 이름의 스킬이 이미 존재합니다"
 msgid "A skill with this name already exists."
 msgstr "이 이름의 스킬이 이미 존재합니다."
 
+#. js-lingui-id: IAfaPi
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
+msgid "A standard object required to provision default relations could not be found"
+msgstr ""
+
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
@@ -859,6 +864,11 @@ msgstr "감사 로그를 사용하려면 ClickHouse가 구성되어 있어야 �
 msgid "August"
 msgstr "8월"
 
+#. js-lingui-id: X7GoTa
+#: src/engine/core-modules/auth/token/services/sso-exchange-token.service.ts
+msgid "Authentication failed, please sign in again."
+msgstr ""
+
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
@@ -1205,6 +1215,12 @@ msgstr ""
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
+#. js-lingui-id: D9pZ2l
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar widget views only support the month layout"
+msgstr ""
+
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Call Recording"
@@ -1463,11 +1479,6 @@ msgstr "표준 권한 플래그 정의는 업데이트할 수 없습니다"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "표준 스킬 속성은 업데이트할 수 없습니다(활성화/비활성화만 허용됨)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "워크플로우 버전 상태를 수동으로 업데이트할 수 없습니다"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -1510,6 +1521,11 @@ msgstr "내비게이션 메뉴 항목 계층에서 순환 의존성이 감지되
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Circular dependency detected in view filter group hierarchy"
 msgstr "뷰 필터 그룹 계층에서 순환 의존성이 감지되었습니다"
+
+#. js-lingui-id: fDGNL3
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
+msgstr ""
 
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -1561,8 +1577,12 @@ msgstr "회사"
 
 #. js-lingui-id: 7i8j3G
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Company"
 msgstr "회사"
@@ -1844,6 +1864,17 @@ msgstr "업데이트된 필드 메타데이터를 찾을 수 없습니다"
 msgid "Could not resolve parent object metadata \"{0}\" for field unique index side effect"
 msgstr "필드 고유 인덱스 부수 효과에 대해 상위 객체 메타데이터 \"{0}\"를 확인할 수 없습니다."
 
+#. js-lingui-id: 5I3Pop
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
+msgid "Could not resolve standard relation object \"{standardObjectNameSingular}\" to provision default relations"
+msgstr ""
+
+#. js-lingui-id: NJXy7w
+#. placeholder {0}: updatedFlatObjectMetadata.nameSingular
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
+msgid "Could not resolve the existing object \"{0}\" to rename its default relations"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -1995,6 +2026,8 @@ msgid "Customer"
 msgstr "고객"
 
 #. js-lingui-id: 7p5kLi
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Dashboard"
 msgstr "대시보드"
@@ -2028,11 +2061,6 @@ msgstr "대시보드"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "데이터 구조가 잘못되었습니다."
-
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "데이터 버전이 일치하지 않습니다. 새로고침 후 다시 시도해 주세요."
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -3223,6 +3251,11 @@ msgstr "GIN 인덱스는 multi-select, 배열, JSON 및 search-vector 열에서 
 #: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
 msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" sub-properties don't qualify."
 msgstr "GIN 인덱스는 multi-select, 배열, JSON 및 search-vector 열에서 작동합니다. \"{0}\"의 하위 속성은 해당되지 않습니다."
+
+#. js-lingui-id: odCOaU
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "GitHub authentication failed. Try connecting your GitHub account again."
+msgstr ""
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4882,6 +4915,16 @@ msgstr "메시지 스레드 레코드 위치"
 msgid "Message Threads"
 msgstr "메시지 스레드"
 
+#. js-lingui-id: SW66cn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgid "MessageCampaign"
+msgstr ""
+
+#. js-lingui-id: DJS/Oe
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgid "MessageList"
+msgstr ""
+
 #. js-lingui-id: t7TeQU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -5154,6 +5197,11 @@ msgstr "선택된 개체에 대한 이 역할의 권한이 설정되지 않았�
 msgid "No permissions found in datasource."
 msgstr "데이터 소스에서 권한을 찾을 수 없음."
 
+#. js-lingui-id: 9iQhTU
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "No provenance attestation was found for the published package. Publish it with npm trusted publishing from GitHub Actions, then try again."
+msgstr ""
+
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "No records were affected."
@@ -5215,6 +5263,7 @@ msgid "Not authorized to access this OAuth provider."
 msgstr "이 OAuth 공급자에 액세스할 권한이 없습니다."
 
 #. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
@@ -5228,7 +5277,9 @@ msgstr "시작되지 않음"
 #. js-lingui-id: KiJn9B
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Note"
 msgstr "노트"
@@ -5537,6 +5588,11 @@ msgstr "요청된 스코프 중 하나 이상이 유효하지 않음."
 msgid "Only administrators can impersonate users with admin privileges."
 msgstr "관리자만 관리자 권한이 있는 사용자를 가장할 수 있습니다."
 
+#. js-lingui-id: JzXn58
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Only applications published to npm can be claimed this way."
+msgstr ""
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -5577,6 +5633,10 @@ msgid "Opportunities owned by the workspace member"
 msgstr "워크스페이스 멤버가 소유한 기회"
 
 #. js-lingui-id: SV/iis
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Opportunity"
 msgstr "기회"
@@ -6018,11 +6078,15 @@ msgid "Permission not found."
 msgstr "권한을 찾을 수 없음."
 
 #. js-lingui-id: OZdaTZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Person"
 msgstr "사람"
@@ -6632,10 +6696,10 @@ msgstr "역할 대상이 이미 존재합니다"
 msgid "Role target is missing identifier."
 msgstr "역할 대상에 식별자가 누락되었습니다."
 
-#. js-lingui-id: oCyyzG
+#. js-lingui-id: vYrPc5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
 msgstr ""
 
 #. js-lingui-id: oNYUjk
@@ -6912,6 +6976,11 @@ msgstr "9월"
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "Server administrator access changed"
 msgstr "서버 관리자 액세스가 변경되었습니다."
+
+#. js-lingui-id: uK5uBy
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "Server keys require the application publisher workspace to have the application installed."
+msgstr ""
 
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -7235,34 +7304,6 @@ msgstr "탭 1"
 msgid "Tab not found for widget duplication."
 msgstr "위젯 복제를 위한 탭을 찾을 수 없음."
 
-#. js-lingui-id: Yrrg+y
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgid "Target"
-msgstr "대상"
-
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
@@ -7303,7 +7344,9 @@ msgstr "RECORD 유형의 경우 targetRecordId와 targetObjectMetadataId가 필�
 
 #. js-lingui-id: Q3P/4s
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Task"
 msgstr "작업"
@@ -7467,6 +7510,11 @@ msgstr "앱 소스 채널이 예상된 유형과 일치하지 않습니다."
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "애플리케이션에 할당된 유효한 역할이 없습니다. 애플리케이션 구성을 확인하십시오."
 
+#. js-lingui-id: QyGlqv
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The application key-value entry could not be saved. Please try again."
+msgstr ""
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -7623,6 +7671,11 @@ msgstr "해당 사람이 속한 목록"
 msgid "The list this campaign was sent to"
 msgstr "이 캠페인이 전송된 목록"
 
+#. js-lingui-id: zIwdvk
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The logic function to run on connect was not found."
+msgstr ""
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -7632,6 +7685,11 @@ msgstr "OAuth 요청에 필수 매개변수가 누락되었습니다."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth state parameter is invalid or expired."
 msgstr "OAuth state 매개변수가 유효하지 않거나 만료되었습니다."
+
+#. js-lingui-id: w/9iNJ
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
+msgid "The object to rename could not be found to update its default relations"
+msgstr ""
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -7643,6 +7701,11 @@ msgstr "권한을 설정하려는 객체를 찾을 수 없습니다. 삭제되�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "The opportunity name"
 msgstr "기회 이름"
+
+#. js-lingui-id: D/w+3o
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The package registry could not be reached to verify the package provenance. Try again later."
+msgstr ""
 
 #. js-lingui-id: NQP08Q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7828,6 +7891,11 @@ msgstr "재시도할 실패한 메시지가 없습니다."
 msgid "This {fieldLabel} value is already in use. Please check your data and try again."
 msgstr "이 {fieldLabel} 값은 이미 사용 중입니다. 데이터를 확인하고 다시 시도하십시오."
 
+#. js-lingui-id: bypqPt
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This action is currently unavailable."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -7863,6 +7931,11 @@ msgstr "이 앱을 사용하려면 더 최신 버전의 Twenty 서버가 필요�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "이 앱은 현재 워크스페이스가 업그레이드를 완료한 버전보다 더 높은 버전을 필요로 합니다. 워크스페이스 업그레이드가 완료된 후 다시 시도하세요."
+
+#. js-lingui-id: ecIX3O
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This application is already owned by a workspace."
+msgstr ""
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -7939,6 +8012,11 @@ msgstr "이 기능은 활성화되어 있지 않습니다."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "이 필드는 수정할 수 없습니다."
+
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -8119,6 +8197,11 @@ msgstr "이 역할은 시스템 역할이기 때문에 수정할 수 없습니�
 #: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
 msgid "This role cannot be modified."
 msgstr "이 역할은 수정할 수 없습니다."
+
+#. js-lingui-id: DEJJoY
+#: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
+msgid "This server key is already claimed by another workspace."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -8378,6 +8461,12 @@ msgstr "필드 {fieldName}의 유형 {fieldType}에 대한 고유 인덱스를 �
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "Universal identifier is reserved for system-managed metadata"
 msgstr "범용 식별자는 시스템에서 관리하는 메타데이터용으로 예약되어 있습니다."
+
+#. js-lingui-id: Ef7StM
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -9114,6 +9203,11 @@ msgstr "위젯 행이 그리드 높이를 초과합니다"
 msgid "Widget type VIEW is not supported yet."
 msgstr "위젯 유형 VIEW는 아직 지원되지 않습니다."
 
+#. js-lingui-id: s8y6wj
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Widget views must use a widget view type"
+msgstr ""
+
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Work"
@@ -9121,6 +9215,8 @@ msgstr "직장"
 
 #. js-lingui-id: bLt/0J
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -9305,10 +9401,20 @@ msgstr "워크플로우 자동 트리거 레코드 위치"
 msgid "WorkflowAutomatedTrigger workflow"
 msgstr "워크플로우 자동 트리거의 워크플로우"
 
+#. js-lingui-id: 2NVkfi
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgid "WorkflowRun"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Workflows"
 msgstr "워크플로우"
+
+#. js-lingui-id: urCUgs
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgid "WorkflowVersion"
+msgstr ""
 
 #. js-lingui-id: b4kire
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -9363,6 +9469,11 @@ msgstr "워크스페이스 ID와 역할이 일치하지 않습니다."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "작업 공간은 새로운 멤버를 환영할 준비가 되어 있지 않습니다"
+
+#. js-lingui-id: 8RwcFg
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "Workspace is suspended."
+msgstr ""
 
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9736,6 +9847,11 @@ msgstr "앱 버전이 오래되었습니다. 계속하려면 페이지를 새로
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "결제 구독에 문제가 있습니다. 지원팀에 문의하십시오."
+
+#. js-lingui-id: K48BuZ
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section)."
+msgstr ""
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

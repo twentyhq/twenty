@@ -14,6 +14,12 @@ export interface MessageQueueDriver {
     data: T,
     options?: QueueJobOptions,
   ): Promise<void>;
+  bulkAdd<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+    options?: QueueJobOptions,
+  ): Promise<void>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
@@ -42,4 +48,12 @@ export interface MessageQueueDriver {
     jobId?: string;
   }): Promise<void>;
   register?(queueName: MessageQueue): void;
+  getInFlightJobs?<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+  ): Promise<InFlightQueueJob<T>[]>;
+}
+
+export interface InFlightQueueJob<T extends MessageQueueJobData> {
+  id?: string;
+  data: T;
 }

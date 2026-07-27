@@ -1,10 +1,11 @@
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useIsRecordCalendarCardDragDisabled = (recordId: string) => {
@@ -16,11 +17,15 @@ export const useIsRecordCalendarCardDragDisabled = (recordId: string) => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarFieldMetadataIdState,
+  const isRecordCalendarReadOnly = useAtomComponentStateValue(
+    isRecordCalendarReadOnlyComponentState,
   );
-  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarEndFieldMetadataIdState,
+
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
+  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
   );
 
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
@@ -46,6 +51,9 @@ export const useIsRecordCalendarCardDragDisabled = (recordId: string) => {
       }));
 
   return (
-    recordIsReadOnly || calendarFieldIsReadOnly || calendarEndFieldIsReadOnly
+    isRecordCalendarReadOnly ||
+    recordIsReadOnly ||
+    calendarFieldIsReadOnly ||
+    calendarEndFieldIsReadOnly
   );
 };

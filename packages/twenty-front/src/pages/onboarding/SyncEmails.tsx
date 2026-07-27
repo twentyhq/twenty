@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -47,11 +48,17 @@ export const SyncEmails = () => {
     clientConfigApiStatusState,
   ).isLoadedOnce;
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  const isFirstWorkspaceUser = currentWorkspace?.workspaceMembersCount === 1;
+  const creditsReward = isFirstWorkspaceUser
+    ? onboardingConfig?.importContactsCreditsReward
+    : undefined;
 
   const connectWithProvider = async (provider: ConnectedAccountProvider) => {
     setOnboardingFreeCredits((current) => ({
       ...current,
-      importContacts: onboardingConfig?.importContactsCreditsReward ?? 0,
+      importContacts: creditsReward ?? 0,
     }));
 
     try {
@@ -94,7 +101,7 @@ export const SyncEmails = () => {
 
   return (
     <ImportContacts
-      creditsReward={onboardingConfig?.importContactsCreditsReward}
+      creditsReward={creditsReward}
       onContinueWithGoogle={
         isGoogleProviderEnabled
           ? () => connectWithProvider(ConnectedAccountProvider.GOOGLE)

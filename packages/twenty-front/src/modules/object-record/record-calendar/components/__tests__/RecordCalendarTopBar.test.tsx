@@ -3,13 +3,14 @@ import { enUS } from 'date-fns/locale';
 import { Temporal } from 'temporal-polyfill';
 
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
+import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const mockSetRecordCalendarSelectedDate = jest.fn();
 const mockSetRecordIndexCalendarLayout = jest.fn();
 const mockUpdateCurrentView = jest.fn();
 const mockUseAtomComponentState = jest.fn();
-const mockUseAtomState = jest.fn();
 const mockUseAtomStateValue = jest.fn();
 const mockUseRecordCalendarWeekDaysRange = jest.fn();
 
@@ -68,9 +69,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
   useAtomComponentState: (...args: unknown[]) =>
     mockUseAtomComponentState(...args),
 }));
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomState', () => ({
-  useAtomState: (...args: unknown[]) => mockUseAtomState(...args),
-}));
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: (...args: unknown[]) => mockUseAtomStateValue(...args),
 }));
@@ -101,14 +99,20 @@ jest.mock('twenty-ui/input', () => ({
 describe('RecordCalendarTopBar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAtomComponentState.mockReturnValue([
-      Temporal.PlainDate.from('2026-07-15'),
-      mockSetRecordCalendarSelectedDate,
-    ]);
-    mockUseAtomState.mockReturnValue([
-      ViewCalendarLayout.DAY,
-      mockSetRecordIndexCalendarLayout,
-    ]);
+    mockUseAtomComponentState.mockImplementation((state: unknown) => {
+      if (state === recordIndexCalendarLayoutComponentState) {
+        return [ViewCalendarLayout.DAY, mockSetRecordIndexCalendarLayout];
+      }
+
+      if (state === recordCalendarSelectedDateComponentState) {
+        return [
+          Temporal.PlainDate.from('2026-07-15'),
+          mockSetRecordCalendarSelectedDate,
+        ];
+      }
+
+      return [undefined, jest.fn()];
+    });
     mockUseAtomStateValue.mockReturnValue({
       locale: 'en-US',
       localeCatalog: enUS,

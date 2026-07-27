@@ -1,5 +1,4 @@
-import { type DragDropProvider } from '@dnd-kit/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -13,25 +12,16 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
-import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 export type RecordTableHeaderDndKitContextValues = {
   activeDropTargetIndex: number | null;
@@ -95,7 +85,7 @@ export const useRecordTableHeaderDndKit = (): {
     const { scrollWrapperElement } = getScrollWrapperElement();
     if (!isDefined(scrollWrapperElement)) return null;
 
-    return resolveDragDropColumnDrop({
+    return resolveDragDropItemDrop({
       pointerX,
       sourceIndex,
       scrollWrapperElement,

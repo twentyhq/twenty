@@ -1,3 +1,4 @@
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
@@ -14,12 +15,11 @@ import {
   type RecordCalendarWeekSlotInteractionMode,
   updateRecordCalendarWeekActiveSlot,
 } from '@/object-record/record-calendar/week/utils/updateRecordCalendarWeekActiveSlot';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -441,11 +441,11 @@ export const RecordCalendarTimeGrid = ({
 }: RecordCalendarTimeGridProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const { timeFormat, timeZone } = useDateTimeFormat();
-  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarFieldMetadataIdState,
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
   );
-  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarEndFieldMetadataIdState,
+  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
   );
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);

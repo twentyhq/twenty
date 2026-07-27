@@ -259,4 +259,4 @@ yarn twenty dev:typecheck
 
 脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的工作流。 在每次向 `main` 推送代码以及每个拉取请求上，它都会在 runner 中启动一个临时的 Twenty 服务器（通过 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` action），然后运行 `yarn lint`、`yarn typecheck`、`yarn test:unit` 和 `yarn test`，并将 `TWENTY_API_URL` / `TWENTY_API_KEY` 指向该服务器。 无需任何机密信息，你可以在工作流顶部通过 `TWENTY_VERSION` 环境变量固定服务器版本。
 
-完整的脚手架工作流（`ci.yml` 和 `cd.yml` 部署流水线）的演练说明，请参见 [发布 → 自动化 CI/CD](/l/zh/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows)。
+完整的三个脚手架工作流（`ci.yml`、`cd.yml` 部署流水线以及用于 npm 发布的 `publish.yml`）的详细演练说明，请参见 [发布 → 自动化 CI/CD](/l/zh/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows)。

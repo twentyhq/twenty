@@ -9,27 +9,27 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
-import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import {
-  type ResolvedPackage,
   ApplicationPackageFetcherService,
+  type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import {
   VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
   VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
-import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
-import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -69,6 +69,7 @@ export class ApplicationInstallService {
     appRegistrationId: string;
     version?: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -109,6 +110,8 @@ export class ApplicationInstallService {
         this.doInstallApplication(appRegistration, {
           version: params.version,
           workspaceId: params.workspaceId,
+          skipWorkspaceCompatibilityCheck:
+            params.skipWorkspaceCompatibilityCheck,
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
@@ -117,7 +120,11 @@ export class ApplicationInstallService {
 
   private async doInstallApplication(
     preLockAppRegistration: ApplicationRegistrationEntity,
-    params: { version?: string; workspaceId: string },
+    params: {
+      version?: string;
+      workspaceId: string;
+      skipWorkspaceCompatibilityCheck?: boolean;
+    },
   ): Promise<boolean> {
     // Re-read inside the lock so the authorization below cannot act on stale
     // listing or ownership state.
@@ -184,7 +191,11 @@ export class ApplicationInstallService {
     existingApplication,
   }: {
     appRegistration: ApplicationRegistrationEntity;
-    params: { version?: string; workspaceId: string };
+    params: {
+      version?: string;
+      workspaceId: string;
+      skipWorkspaceCompatibilityCheck?: boolean;
+    };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
@@ -238,28 +249,36 @@ export class ApplicationInstallService {
     existingApplication,
   }: {
     appRegistration: ApplicationRegistrationEntity;
-    params: { version?: string; workspaceId: string };
+    params: {
+      version?: string;
+      workspaceId: string;
+      skipWorkspaceCompatibilityCheck?: boolean;
+    };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
     const universalIdentifier = appRegistration.universalIdentifier;
 
-    const requiredServerVersion =
-      resolvedPackage.packageJson.engines?.['twenty'];
+    if (params.skipWorkspaceCompatibilityCheck !== true) {
+      const requiredServerVersion =
+        resolvedPackage.packageJson.engines?.['twenty'];
 
-    const versionValidation =
-      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
-        {
-          requiredServerVersion,
-          workspaceId: params.workspaceId,
-        },
-      );
+      const versionValidation =
+        await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+          {
+            requiredServerVersion,
+            workspaceId: params.workspaceId,
+          },
+        );
 
-    if (!versionValidation.compatible) {
-      throw new ApplicationException(
-        versionValidation.message,
-        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
-      );
+      if (!versionValidation.compatible) {
+        throw new ApplicationException(
+          versionValidation.message,
+          VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[
+            versionValidation.reason
+          ],
+        );
+      }
     }
 
     const isVersionUpgrade = isDefined(existingApplication);
@@ -279,7 +298,10 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
-      logo: resolvedPackage.manifest.application.logoUrl ?? null,
+      logo:
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -381,9 +403,12 @@ export class ApplicationInstallService {
       );
 
       if (!isVersionUpgrade) {
+        // Rollback of a failed fresh install: the app never finished
+        // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
+          shouldRunUninstallHook: false,
         });
       }
 
@@ -538,15 +563,13 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: flatLogicFunction.id,
-            workspaceId,
-            payload,
-          },
-        ],
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        },
         { retryLimit: 3 },
       );
       return;

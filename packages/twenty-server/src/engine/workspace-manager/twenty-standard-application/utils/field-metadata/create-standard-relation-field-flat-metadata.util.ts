@@ -1,3 +1,9 @@
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -5,14 +11,6 @@ import {
   type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
@@ -36,6 +34,7 @@ export type CreateStandardMorphOrRelationFieldContext<
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
   isUIEditable?: boolean;
+  isSystemSideEffect?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
@@ -66,6 +65,7 @@ export const createStandardRelationFieldFlatMetadata = <
     targetFieldName,
     isNullable = true,
     isUIEditable = true,
+    isSystemSideEffect = false,
     defaultValue = null,
     settings,
     options: fieldOptions = null,
@@ -101,7 +101,7 @@ export const createStandardRelationFieldFlatMetadata = <
     icon,
     isActive: true,
     isSystem: false,
-    isSystemSideEffect: false,
+    isSystemSideEffect,
     isNullable,
     isUnique: false,
     isUIEditable,

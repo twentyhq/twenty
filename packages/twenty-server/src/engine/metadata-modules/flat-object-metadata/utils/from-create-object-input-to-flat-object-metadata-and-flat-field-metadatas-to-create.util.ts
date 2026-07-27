@@ -7,30 +7,24 @@ import {
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildNameFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-name-flat-field-metadata-for-custom-object.util';
-import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
     createObjectInput: CreateObjectInput;
     flatApplication: FlatApplication;
-  } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
+  };
 
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     flatApplication,
-    flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: UniversalFlatObjectMetadata & { id: string };
     flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[];
-    relationTargetFlatFieldMetadataToCreate: UniversalFlatFieldMetadata[];
-    flatIndexMetadataToCreate: UniversalFlatIndexMetadata[];
   } => {
     const createObjectInput =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -105,25 +99,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
             },
           });
 
-    const {
-      standardSourceFlatFieldMetadatas,
-      standardTargetFlatFieldMetadatas,
-      standardTargetFlatIndexMetadatas,
-    } = buildDefaultRelationFlatFieldMetadatasForCustomObject({
-      existingFlatObjectMetadataMaps,
-      sourceFlatObjectMetadata: universalFlatObjectMetadataToCreate,
-      flatApplication,
-    });
-
-    const flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[] = [
-      ...(isDefined(nameFlatFieldMetadata) ? [nameFlatFieldMetadata] : []),
-      ...standardSourceFlatFieldMetadatas,
-    ];
+    const flatFieldMetadataToCreateOnObject: UniversalFlatFieldMetadata[] =
+      isDefined(nameFlatFieldMetadata) ? [nameFlatFieldMetadata] : [];
 
     return {
       flatObjectMetadataToCreate: universalFlatObjectMetadataToCreate,
       flatFieldMetadataToCreateOnObject,
-      relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
-      flatIndexMetadataToCreate: standardTargetFlatIndexMetadatas,
     };
   };

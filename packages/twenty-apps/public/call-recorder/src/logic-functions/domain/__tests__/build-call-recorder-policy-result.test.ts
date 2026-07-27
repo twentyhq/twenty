@@ -13,7 +13,7 @@ const buildCalendarEventInput = (
   startsAt: '2026-01-01T13:00:00.000Z',
   endsAt: '2026-01-01T14:00:00.000Z',
   iCalUid: 'ical-uid-1',
-  conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+  conferenceLinkUrl: 'https://meet.google.com/customer-sync',
   callRecorderPreference: undefined,
   ...overrides,
 });

@@ -69,7 +69,7 @@ Chcete-li vydat aktualizaci:
 
 1. Zvyšte hodnotu pole `version` v souboru `package.json` (např. `1.2.3` → `1.2.4`, `1.3.0` nebo `2.0.0`)
 2. Spusťte `yarn twenty app:publish --private` (nebo `yarn twenty app:publish --private --remote production`)
-3. Pracovní prostory, které mají aplikaci nainstalovanou, uvidí dostupnou aktualizaci ve svém nastavení
+3. Pracovní prostory, které mají aplikaci nainstalovanou a mají pro ni povolené automatické aktualizace (na kartě Nastavení aplikace), jsou na pozadí aktualizovány automaticky; ostatní uvidí dostupnou aktualizaci ve svém nastavení
 
 <Note>
 Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `1.0.0-rc.2` je povoleno a finální vydání jako `1.0.0` je správně rozpoznáno jako vyšší než `1.0.0-rc.5`. Verze v `package.json` musí být platným řetězcem semver.
@@ -112,7 +112,7 @@ Server je rozhodující autoritou — ověřuje `engines.twenty` jak při nahrá
 
 ## Automatizované CI/CD (předpřipravené workflowy)
 
-Aplikace vygenerované pomocí `create-twenty-app` jsou hned připravené se dvěma workflowy GitHub Actions ve složce `.github/workflows/`. Jsou připravené ke spuštění hned, jakmile repozitář pushnete na GitHub — pro CI není potřeba žádné další nastavení a CD vyžaduje pouze jeden secret.
+Aplikace vygenerované pomocí `create-twenty-app` jsou hned připravené se třemi workflowy GitHub Actions ve složce `.github/workflows/`. CI běží bez jakéhokoli nastavování, CD vyžaduje jediný secret a publikování na npm vyžaduje jednorázové nastavení npm trusted-publisher.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,33 @@ Výchozí `TWENTY_DEPLOY_URL` `http://localhost:3000` je pouze zástupná hodnot
 
 Přidejte k pull requestu štítek `deploy`. Podmínka `if:` v `cd.yml` spustí úlohu pro dané PR s použitím head commitu PR, což vám umožní ověřit změnu na cílovém serveru před sloučením.
 
+### Publish — `publish.yml`
+
+Publikuje vaši aplikaci na npm s doloženým původem, když odešlete tag verze (např. `v1.0.0`), nebo když workflow spustíte ručně na kartě Actions.
+
+**K čemu slouží:**
+
+1. Načte repozitář vaší aplikace, nastaví Node.js a aktualizuje npm (důvěryhodné publikování vyžaduje npm 11.5.1 nebo novější).
+2. Spustí `yarn twenty app:publish`, který sestaví aplikaci a publikuje `.twenty/output` na npm. V CI automaticky přidá `--provenance` a `--access public`, takže ve workflowu nejsou potřeba žádné přepínače.
+
+**Jednorázové nastavení:**
+
+Na npmjs.com otevřete svůj balíček > **Settings → Trusted Publisher** a zaregistrujte tento repozitář s workflowem `publish.yml` (viz [dokumentaci k důvěryhodnému publikování na npm](https://docs.npmjs.com/trusted-publishers)). Publikování s provenance potvrzuje, který repozitář na GitHubu balíček sestavil, a zároveň tak uplatňujete vlastnictví své aplikace na tržišti Twenty.
+
+<Note>
+npm přijímá údaje o původu pouze z **veřejných** zdrojových repozitářů. Pokud publikujete ze soukromého repozitáře, npm odmítne balíček údajů o původu OIDC s chybou `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. Chcete-li publikovat ze soukromého repozitáře, vypněte prokazování původu nastavením `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` v `env` publikačního kroku (ve vygenerovaném `publish.yml` je uveden zakomentovaný tip):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Připnutí verzí znovupoužitelných akcí
 
-Obě workflowy odkazují na znovupoužitelné akce na `@main`, takže aktualizace akcí v repozitáři `twentyhq/twenty` se přeberou automaticky. Pokud chcete deterministická sestavení, nahraďte `@main` v každém řádku `uses:` za commit SHA nebo tag vydání.
+Workflowy `ci.yml` a `cd.yml` odkazují na znovupoužitelné akce na `@main`, takže aktualizace akcí v repozitáři `twentyhq/twenty` se přeberou automaticky. Pokud chcete deterministická sestavení, nahraďte `@main` v každém řádku `uses:` za commit SHA nebo tag vydání.
 
 ## Publikování na npm
 
@@ -241,37 +265,12 @@ Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, trž
 
 ### Publikování pomocí CI
 
-Použijte tento pracovní postup GitHub Actions k automatickému publikování při každém vydání (používá [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Vygenerované workflow `publish.yml` popsané výše publikuje na npm automaticky při verzovacích tagách, s provenance. Protože `yarn twenty app:publish` při běhu v CI přidá `--provenance` a `--access public` za vás, workflow nepotřebuje žádné přepínače npm — pouze jednorázové nastavení důvěryhodného vydavatele.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Pro jiné systémy CI (GitLab CI, CircleCI atd.) platí stejné tři příkazy: `yarn install`, `yarn twenty dev:build` a poté `npm publish` z `.twenty/output`.
+Pro jiné CI systémy (GitLab CI, CircleCI atd.) spusťte `yarn install` a poté `yarn twenty app:publish`. Provenance se vydává, pokud prostředí umí vytvořit token OIDC, a v opačném případě se automaticky vynechá.
 
 <Note>
-**npm provenance** je volitelné, ale doporučené. Publikování s `--provenance` přidá k vašemu záznamu na npm odznak důvěryhodnosti a umožní uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Pokyny k nastavení najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
+**npm provenance** přidává k vašemu záznamu na npm odznak důvěryhodnosti a umožňuje uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Také vám umožňuje uplatnit vlastnictví vaší aplikace na tržišti Twenty. Podrobnosti najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
 </Note>
 
 ## Instalace aplikací

@@ -82,4 +82,28 @@ describe('defineConnectionProvider', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('accepts a valid onConnectLogicFunction', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      onConnectLogicFunction: {
+        universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a non-UUID onConnectLogicFunction universalIdentifier', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      onConnectLogicFunction: { universalIdentifier: 'claim-team-id' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      result.errors.some((error) => error.includes('onConnectLogicFunction')),
+    ).toBe(true);
+  });
 });

@@ -84,6 +84,51 @@ Aynı çözümlenen id, bir `fieldMetadataUniversalIdentifier` beklendiği her y
   türettiği için, `getFieldUniversalIdentifier` çağrısı, bu girdiler değişse bile referansınızı doğru tutar ve türetme zaman içinde gelişirse sapmayı önler.
 </Note>
 
+## Sistem ilişki alanları
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` 2.23 sürümünden itibaren `twenty-sdk` içinde kullanılabilir ve Twenty sunucusunun 2.23 veya daha yeni bir sürümünü gerektirir.
+</Note>
+
+Yukarıdaki skaler sistem alanlarının yanı sıra, sunucu her nesne üzerinde dört **sistem ilişki alanı** da sağlar: `timelineActivities`, `attachments`, `noteTargets` ve `taskTargets`. Bunların her biri, karşılık gelen standart ilişki nesnesini işaret eder.
+
+Bu alanlar `getFieldUniversalIdentifier` ile çözümlenmez: tanımlayıcıları, alanı barındıran nesne ve alanın işaret ettiği nesneden **isimden bağımsız** olarak türetilir. Bu sayede bir nesnenin adını değiştirmek, ilişki alanlarının tanımlayıcılarını asla değiştirmez.
+
+Bunları çözümlemek için `getSystemRelationFieldUniversalIdentifier` kullanın:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier`, alanın **barındırıldığı** nesnedir.
+* `relationTargetObjectUniversalIdentifier`, alanın **işaret ettiği** nesnedir.
+
+Yön, argüman sırasına göre kodlanır. Ters tarafı çözümlemek için (örneğin, `attachment.targetRocket`, sunucunun standart ilişki nesnesi üzerinde oluşturduğu morph alanı), ikisini değiştirin:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Skaler sistem alanlarında olduğu gibi, çözümlenen kimlik, `fieldMetadataUniversalIdentifier` beklendiği her yerde çalışır.
+
 ## Standart Twenty nesneleri
 
 **Standart** bir Twenty nesnesi (Person, Company, Opportunity, …) için hiçbir şey türetmeniz gerekmez: sistem alanı tanımlayıcıları, doğrudan içe aktarabileceğiniz önceden hesaplanmış sabitlerdir.

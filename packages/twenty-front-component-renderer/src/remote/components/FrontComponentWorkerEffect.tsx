@@ -1,17 +1,20 @@
 import { release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
 import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
+import { fetchSdkClientSources } from '@/host/utils/fetchSdkClientSources';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
+import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -77,12 +80,27 @@ export const FrontComponentWorkerEffect = ({
 
     const resolveComponentSourceAndRender = async () => {
       try {
+        const authorizationHeaders = buildAuthorizationHeadersFromAccessToken(
+          applicationAccessToken,
+        );
+
         const componentSource = await fetchComponentSource({
           url: componentUrl,
-          headers: buildAuthorizationHeadersFromAccessToken(
-            applicationAccessToken,
-          ),
+          headers: authorizationHeaders,
         });
+
+        if (isCancelled) {
+          return;
+        }
+
+        const sdkClientSources =
+          isDefined(sdkClientUrls) &&
+          containsSdkClientImportSpecifier(componentSource)
+            ? await fetchSdkClientSources({
+                sdkClientUrls,
+                headers: authorizationHeaders,
+              })
+            : undefined;
 
         if (isCancelled) {
           return;
@@ -94,7 +112,7 @@ export const FrontComponentWorkerEffect = ({
           applicationAccessToken,
           apiUrl,
           functionsBaseUrl,
-          sdkClientUrls,
+          sdkClientSources,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
         });

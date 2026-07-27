@@ -1,18 +1,14 @@
-import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { Fragment } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
-import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
-
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
+import { RecordBoardCardContextProvider } from '@/object-record/record-board/record-board-card/components/RecordBoardCardContextProvider';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -31,8 +27,6 @@ type RecordBoardColumnCardsContainerProps = {
 export const RecordBoardColumnCardsContainer = ({
   recordBoardColumnId,
 }: RecordBoardColumnCardsContainerProps) => {
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
-
   const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
@@ -46,30 +40,29 @@ export const RecordBoardColumnCardsContainer = ({
   return (
     <StyledColumnCardsContainer data-replay-ignore-mutations="true">
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
-        <RecordBoardCardDraggableContainer
-          key={recordId}
-          recordId={recordId}
-          rowIndex={index}
-        />
+        <Fragment key={recordId}>
+          <DragDropItemDropTarget
+            index={index}
+            droppableId={recordBoardColumnId}
+            orientation="horizontal"
+            compact
+          />
+          <RecordBoardCardContextProvider
+            recordId={recordId}
+            rowIndex={index}
+            group={recordBoardColumnId}
+          />
+        </Fragment>
       ))}
       {recordBoardShouldFetchMoreInColumn ? (
         <RecordBoardColumnLoadingSkeletonCards />
       ) : null}
-      <Draggable
-        draggableId={`new-${columnDefinition.id}-bottom`}
+      <DragDropItemDropTarget
         index={recordIndexRecordIdsByGroup.length}
-        isDragDisabled={true}
-      >
-        {(draggableProvided) => (
-          <div
-            ref={draggableProvided.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getCssCompatibleDraggableProps(
-              draggableProvided.draggableProps,
-            )}
-          ></div>
-        )}
-      </Draggable>
+        droppableId={recordBoardColumnId}
+        orientation="horizontal"
+        compact
+      />
       <StyledNewButtonContainer>
         <RecordBoardColumnNewRecordButton />
       </StyledNewButtonContainer>

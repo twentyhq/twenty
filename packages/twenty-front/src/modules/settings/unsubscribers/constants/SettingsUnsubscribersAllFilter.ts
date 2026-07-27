@@ -1,0 +1,1 @@
+export const SETTINGS_UNSUBSCRIBERS_ALL_FILTER = 'all';

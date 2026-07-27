@@ -259,4 +259,4 @@ Spustí se `tsc --noEmit` proti souboru `tsconfig.json` vaší aplikace a nahlá
 
 Generátor kostry vytvoří připravený k použití workflow v `.github/workflows/ci.yml`. Při každém pushi do `main` a při každém pull requestu spustí efemérní server Twenty v runneru (pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), poté spustí `yarn lint`, `yarn typecheck`, `yarn test:unit` a `yarn test` s `TWENTY_API_URL` / `TWENTY_API_KEY` směřujícími na tento server. Nejsou vyžadovány žádné tajné údaje a verzi serveru můžete připnout pomocí proměnné prostředí `TWENTY_VERSION` na začátku workflow.
 
-Úplný postup pro obě workflow generované kostrou (`ci.yml` a nasazovací pipeline `cd.yml`) najdete v části [Publishing → Automated CI/CD](/l/cs/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows).
+Úplný postup pro tři workflow generované kostrou (`ci.yml`, nasazovací pipeline `cd.yml` a `publish.yml` pro publikování na npm) najdete v části [Publishing → Automated CI/CD](/l/cs/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows).

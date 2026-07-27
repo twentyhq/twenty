@@ -1,9 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationInstalledWorkspaces } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces';
 import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats';
-import { H2Title } from 'twenty-ui/typography';
-import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/layout';
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,

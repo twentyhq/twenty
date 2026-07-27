@@ -16,7 +16,7 @@ const CLIENT: CoreApiClient = Object.assign(
   },
 );
 
-const MEETING_URL = 'https://meet.example.com/abc';
+const MEETING_URL = 'https://meet.google.com/abc';
 const MEETING_STARTS_AT = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 const MEETING_ENDS_AT = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 
@@ -291,24 +291,24 @@ describe('reconcileUpcomingCalendarEventBatches', () => {
       calendarEventNodesById: {
         'calendar-event-1': buildCalendarEventNode('calendar-event-1', {
           conferenceLink: {
-            primaryLinkUrl: 'https://meet.example.com/created',
+            primaryLinkUrl: 'https://meet.google.com/created',
           },
         }),
         'calendar-event-2': buildCalendarEventNode('calendar-event-2', {
           isCanceled: true,
           conferenceLink: {
-            primaryLinkUrl: 'https://meet.example.com/canceled',
+            primaryLinkUrl: 'https://meet.google.com/canceled',
           },
         }),
         'calendar-event-3': buildCalendarEventNode('calendar-event-3', {
           isCanceled: true,
           conferenceLink: {
-            primaryLinkUrl: 'https://meet.example.com/skipped',
+            primaryLinkUrl: 'https://meet.google.com/skipped',
           },
         }),
         'calendar-event-4': buildCalendarEventNode('calendar-event-4', {
           conferenceLink: {
-            primaryLinkUrl: 'https://meet.example.com/failed',
+            primaryLinkUrl: 'https://meet.google.com/failed',
           },
         }),
       },

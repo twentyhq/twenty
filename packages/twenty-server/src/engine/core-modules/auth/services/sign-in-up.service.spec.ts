@@ -32,7 +32,7 @@ const createSignInUpServiceForTests = () => {
 
   const mockWorkspaceRepository = {
     count: jest.fn(),
-    create: jest.fn(),
+    create: jest.fn((workspace) => workspace),
   };
 
   const mockConfigurationValues: MockConfigurationValues = {
@@ -50,7 +50,8 @@ const createSignInUpServiceForTests = () => {
 
   const queryRunnerMock = {
     manager: {
-      save: jest.fn(),
+      save: jest.fn((_entity, entity) => entity),
+      update: jest.fn(),
     },
     connect: jest.fn(),
     startTransaction: jest.fn(),
@@ -101,7 +102,9 @@ const createSignInUpServiceForTests = () => {
       invalidateAndRecompute: jest.fn(),
     } as any,
     {
-      createWorkspaceCustomApplication: jest.fn(),
+      createWorkspaceCustomApplication: jest.fn().mockResolvedValue({
+        universalIdentifier: 'custom-application-universal-identifier',
+      }),
     } as any,
     {
       uploadWorkspaceLogoFromUrl: jest.fn(),
@@ -122,6 +125,9 @@ const createSignInUpServiceForTests = () => {
     } as any,
     {
       createQueryRunner: jest.fn(() => queryRunnerMock),
+      transaction: jest.fn(async (runInTransaction) =>
+        runInTransaction({ queryRunner: queryRunnerMock }),
+      ),
     } as any,
   );
 
@@ -321,7 +327,7 @@ describe('SignInUpService workspace-creation policy', () => {
 });
 
 describe('SignInUpService onboarding steps', () => {
-  it('does not flag the install-apps step for a new user joining an existing workspace', async () => {
+  it('flags the connect-account step but not the install-apps step for a new user joining an existing workspace', async () => {
     const { service, mockOnboardingService } = createSignInUpServiceForTests();
 
     await service.signInUpOnExistingWorkspace({
@@ -347,6 +353,37 @@ describe('SignInUpService onboarding steps', () => {
     ).not.toHaveBeenCalled();
     expect(
       mockOnboardingService.setOnboardingConnectAccountPending,
-    ).not.toHaveBeenCalled();
+    ).toHaveBeenCalledWith(expect.objectContaining({ value: true }), undefined);
+  });
+
+  it('flags the install-apps step for a user creating a new workspace', async () => {
+    const {
+      service,
+      mockOnboardingService,
+      mockWorkspaceRepository,
+      mockUserRepository,
+    } = createSignInUpServiceForTests();
+
+    mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(0);
+
+    await service.signUpOnNewWorkspace(
+      {
+        type: 'newUserWithPicture',
+        newUserWithPicture: {
+          email: 'creator@gmail.com',
+          firstName: 'Creator',
+          lastName: 'User',
+        },
+      },
+      { displayName: 'Acme Inc' },
+    );
+
+    expect(
+      mockOnboardingService.setOnboardingInstallAppsPending,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ value: true }),
+      expect.anything(),
+    );
   });
 });

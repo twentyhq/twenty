@@ -51,6 +51,7 @@ export class ApplicationManifestApplyService {
         workspaceId,
         applicationId: application.id,
         applicationUniversalIdentifier: application.universalIdentifier,
+        trigger: 'manifest-sync',
       });
     }
 

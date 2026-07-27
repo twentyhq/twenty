@@ -490,11 +490,9 @@ const createOpportunitiesByOwner = ({
         aggregateFieldMetadataId: opportunityFields.id.id,
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataId: opportunityFields.owner.id,
-        primaryAxisGroupBySubFieldName: 'name.firstName',
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         secondaryAxisGroupByFieldMetadataId: opportunityFields.owner.id,
-        secondaryAxisGroupBySubFieldName: 'name.firstName',
         secondaryAxisGroupByDateGranularity:
           ObjectRecordGroupByDateGranularity.DAY,
         secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -514,12 +512,10 @@ const createOpportunitiesByOwner = ({
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
-        primaryAxisGroupBySubFieldName: 'name.firstName',
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
-        secondaryAxisGroupBySubFieldName: 'name.firstName',
         secondaryAxisGroupByDateGranularity:
           ObjectRecordGroupByDateGranularity.DAY,
         secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,

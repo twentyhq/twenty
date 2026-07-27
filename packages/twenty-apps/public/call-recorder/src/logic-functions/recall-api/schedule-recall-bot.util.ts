@@ -20,6 +20,7 @@ export type ScheduleRecallBotArgs = {
   joinAt: string;
   metadata: RecallRoutingMetadata;
   automaticVideoOutput?: RecallBotAutomaticVideoOutput;
+  idempotencyKey?: string;
 };
 
 export const scheduleRecallBot = async ({
@@ -27,6 +28,11 @@ export const scheduleRecallBot = async ({
   joinAt,
   metadata,
   automaticVideoOutput,
+  idempotencyKey = computeRecallBotCreationIdempotencyKey({
+    meetingUrl,
+    joinAt,
+    metadata,
+  }),
 }: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
@@ -35,11 +41,6 @@ export const scheduleRecallBot = async ({
   }
 
   const automaticLeave = getRecallBotAutomaticLeave();
-  const idempotencyKey = computeRecallBotCreationIdempotencyKey({
-    meetingUrl,
-    joinAt,
-    metadata,
-  });
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
@@ -82,7 +83,7 @@ export const scheduleRecallBot = async ({
   };
 };
 
-const computeRecallBotCreationIdempotencyKey = ({
+export const computeRecallBotCreationIdempotencyKey = ({
   meetingUrl,
   joinAt,
   metadata,

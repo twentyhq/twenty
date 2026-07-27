@@ -1,9 +1,15 @@
-import { fetchLiveMarketplacePartners } from './fetch-live-marketplace-partners';
+import { DUMMY_PARTNERS } from './dummy-marketplace-partners';
+import { fetchLivePartnerProfile } from './fetch-live-partner-profile';
 import { type MarketplacePartner } from './marketplace-partner';
 
-export async function getMarketplacePartnerBySlug(
+const useDummy = process.env.NEXT_PUBLIC_USE_DUMMY_PARTNERS === '1';
+
+export const getMarketplacePartnerBySlug = async (
   slug: string,
-): Promise<MarketplacePartner | null> {
-  const partners = await fetchLiveMarketplacePartners();
-  return partners.find((partner) => partner.slug === slug) ?? null;
-}
+): Promise<MarketplacePartner | undefined> => {
+  if (useDummy) {
+    return DUMMY_PARTNERS.find((partner) => partner.slug === slug);
+  }
+
+  return fetchLivePartnerProfile(slug);
+};

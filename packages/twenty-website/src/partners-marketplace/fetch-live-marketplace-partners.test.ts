@@ -12,6 +12,8 @@ describe('fetchLiveMarketplacePartners', () => {
 
   it('normalizes the CRM payload (micros -> USD, links -> URLs, nulls)', async () => {
     mockedFetch.mockResolvedValue({
+      ok: true,
+      count: 1,
       partners: [
         {
           name: 'Acme',
@@ -23,8 +25,8 @@ describe('fetchLiveMarketplacePartners', () => {
           calendarLink: { primaryLinkUrl: 'cal.com/acme' },
           hourlyRate: { amountMicros: 150_000_000, currencyCode: 'USD' },
           projectBudgetMin: null,
-          projectBudgetTypical: null,
           linkedin: { primaryLinkUrl: 'https://linkedin.com/acme' },
+          website: { primaryLinkUrl: 'https://agency-twenty.com' },
           profilePicture: null,
           skills: null,
           city: null,
@@ -37,19 +39,26 @@ describe('fetchLiveMarketplacePartners', () => {
       {
         slug: 'acme',
         name: 'Acme',
-        introduction: 'Hi',
+        description: 'Hi',
         languagesSpoken: ['ENGLISH'],
         partnerScope: ['ADVISORY'],
         region: ['US'],
         calendarLink: 'https://cal.com/acme',
         hourlyRateUsd: 150,
         projectBudgetMinUsd: null,
-        projectBudgetTypicalUsd: null,
-        linkedinUrl: 'https://linkedin.com/acme',
+        links: {
+          website: 'https://agency-twenty.com',
+          linkedin: 'https://linkedin.com/acme',
+          x: null,
+          github: null,
+        },
         profilePictureUrl: '',
         skills: [],
         city: '',
         country: '',
+        services: [],
+        portfolio: [],
+        clients: [],
       },
     ]);
   });

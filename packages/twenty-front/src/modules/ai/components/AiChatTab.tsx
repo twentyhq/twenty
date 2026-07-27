@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
+import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
+import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
+import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -44,6 +47,9 @@ export const AiChatTab = () => {
       onDragEnter={() => setIsDraggingFile(true)}
       onDragLeave={() => setIsDraggingFile(false)}
     >
+      <AgentChatHasBeenOpenedEffect />
+      <AgentChatStreamingPartsDiffSyncEffect />
+      <AgentChatStreamingAutoScrollEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}

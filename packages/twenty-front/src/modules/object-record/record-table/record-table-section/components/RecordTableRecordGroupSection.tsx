@@ -23,6 +23,7 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -89,6 +90,14 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
 
 const StyledTagContainer = styled.div`
   flex-shrink: 0;
+`;
+
+const StyledAggregateDropdownContainer = styled.div<{
+  isNonInteractive: boolean;
+}>`
+  display: flex;
+  pointer-events: ${({ isNonInteractive }) =>
+    isNonInteractive ? 'none' : 'auto'};
 `;
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
@@ -164,6 +173,10 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
+
   const handleDropdownToggle = useCallback(() => {
     setIsRecordGroupTableSectionToggled((prevState) => !prevState);
   }, [setIsRecordGroupTableSectionToggled]);
@@ -216,12 +229,17 @@ export const RecordTableRecordGroupSection = () => {
             valueTagWeight="medium"
           />
         </StyledTagContainer>
-        <RecordBoardColumnHeaderAggregateDropdown
-          aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-          dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
-          objectMetadataItem={objectMetadataItem}
-          aggregateLabel={recordIndexAggregateDisplayLabel}
-        />
+        <StyledAggregateDropdownContainer
+          isNonInteractive={isRecordTableCellsNonEditable}
+          inert={isRecordTableCellsNonEditable || undefined}
+        >
+          <RecordBoardColumnHeaderAggregateDropdown
+            aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+            dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
+            objectMetadataItem={objectMetadataItem}
+            aggregateLabel={recordIndexAggregateDisplayLabel}
+          />
+        </StyledAggregateDropdownContainer>
       </StyledRecordGroupSection>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />
       <RecordTableAddButtonPlaceholderCell />

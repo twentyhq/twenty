@@ -10,6 +10,7 @@ import { Button } from '@/ui';
 import { ActiveFilterPills, type ActivePill } from './ActiveFilterPills';
 import { type FilterCriteria } from './filter-criteria';
 import { FilterDropdown } from './FilterDropdown';
+import { MARKETPLACE_COPY } from './marketplace-copy';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
 import { PARTNER_SCOPES, type PartnerScope } from './partner-scopes';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
@@ -109,7 +110,7 @@ export function FilterBar({
           selected={criteria.languages}
         />
         <FilterDropdown
-          label={msg`Categories`}
+          label={MARKETPLACE_COPY.partnerScopeHeading}
           onToggle={onToggleCategory}
           optionLabels={PARTNER_SCOPE_LABELS}
           options={PARTNER_SCOPES}

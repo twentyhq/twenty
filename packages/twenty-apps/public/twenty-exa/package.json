@@ -1,12 +1,13 @@
 {
   "name": "@twentyhq/twenty-exa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Structured web search powered by Exa, exposed to Twenty AI agents as a tool.",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
   },
   "keywords": [
     "twenty-app"

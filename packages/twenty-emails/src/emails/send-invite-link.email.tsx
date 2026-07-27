@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/react';
-import { Img } from '@react-email/components';
+import { Img } from 'react-email';
 import { emailTheme } from 'src/common-style';
 
 import { BaseEmail } from 'src/components/BaseEmail';

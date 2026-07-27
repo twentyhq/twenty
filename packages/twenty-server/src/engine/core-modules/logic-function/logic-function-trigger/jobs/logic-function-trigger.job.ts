@@ -4,6 +4,10 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 export type LogicFunctionTriggerJobData = {
   logicFunctionId: string;
@@ -23,18 +27,33 @@ export class LogicFunctionTriggerJob {
   ) {}
 
   @Process(LogicFunctionTriggerJob.name)
-  async handle(logicFunctionPayloads: LogicFunctionTriggerJobData[]) {
-    await Promise.all(
-      logicFunctionPayloads.map(
-        async (logicFunctionPayload) =>
-          await this.logicFunctionExecutorService.execute({
-            logicFunctionId: logicFunctionPayload.logicFunctionId,
-            workspaceId: logicFunctionPayload.workspaceId,
-            payload: logicFunctionPayload.payload ?? {},
-            userId: logicFunctionPayload.userId,
-            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          }),
-      ),
-    );
+  async handle(
+    jobData: LogicFunctionTriggerJobData | LogicFunctionTriggerJobData[],
+  ) {
+    // Jobs enqueued in version <=2.24.x carry arrays, remove this case once those jobs are drained
+    const logicFunctionPayloads = Array.isArray(jobData) ? jobData : [jobData];
+
+    for (const logicFunctionPayload of logicFunctionPayloads) {
+      try {
+        await this.logicFunctionExecutorService.execute({
+          logicFunctionId: logicFunctionPayload.logicFunctionId,
+          workspaceId: logicFunctionPayload.workspaceId,
+          payload: logicFunctionPayload.payload ?? {},
+          userId: logicFunctionPayload.userId,
+          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+        });
+      } catch (error) {
+        // A stopped application must not fail the job: failing would make
+        // the queue retry an execution that is intentionally blocked.
+        if (
+          error instanceof LogicFunctionException &&
+          error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+        ) {
+          continue;
+        }
+
+        throw error;
+      }
+    }
   }
 }

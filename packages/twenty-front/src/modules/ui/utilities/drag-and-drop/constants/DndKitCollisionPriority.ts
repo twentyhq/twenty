@@ -1,0 +1,1 @@
+export const DND_KIT_COLLISION_PRIORITY = 1;

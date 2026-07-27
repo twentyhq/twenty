@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,6 +14,7 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AppTokenType {
@@ -24,9 +26,14 @@ export enum AppTokenType {
   OnboardingInvitationToken = 'ONBOARDING_INVITATION_TOKEN',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
+  SSOExchangeToken = 'SSO_EXCHANGE_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
+@Index('IDX_APP_TOKEN_TYPE_VALUE_SSO_EXCHANGE_UNIQUE', ['type', 'value'], {
+  unique: true,
+  where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
+})
 export class AppTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -86,5 +93,6 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    authProvider?: AuthProviderEnum;
   } | null;
 }

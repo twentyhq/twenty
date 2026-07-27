@@ -10,7 +10,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { type ViewType } from '@/views/types/ViewType';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useState } from 'react';
 
 type UseRecordGroupReorderConfirmationModalParams = {
@@ -30,14 +30,14 @@ export const useRecordGroupReorderConfirmationModal = ({
   const { openModal } = useModal();
 
   const [pendingDragEndHandlerParams, setPendingDragEndHandlerParams] =
-    useState<Parameters<OnDragEndResponder> | null>(null);
+    useState<DraggableListDropResult | null>(null);
 
   const { reorderRecordGroups } = useReorderRecordGroups({
     recordIndexId,
     viewType,
   });
 
-  const handleDragEnd: OnDragEndResponder = (result) => {
+  const handleDragEnd = (result: DraggableListDropResult) => {
     if (!result.destination) {
       return;
     }
@@ -57,14 +57,14 @@ export const useRecordGroupReorderConfirmationModal = ({
   );
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
-  const handleDragEndWithModal: OnDragEndResponder = (result, provided) => {
+  const handleDragEndWithModal = (result: DraggableListDropResult) => {
     if (!isDragableSortRecordGroup) {
       closeAnyOpenDropdown();
       openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
       setActiveDropdownFocusIdAndMemorizePrevious(null);
-      setPendingDragEndHandlerParams([result, provided]);
+      setPendingDragEndHandlerParams(result);
     } else {
-      handleDragEnd(result, provided);
+      handleDragEnd(result);
     }
   };
 
@@ -75,7 +75,7 @@ export const useRecordGroupReorderConfirmationModal = ({
 
     setRecordIndexRecordGroupSort(RecordGroupSort.Manual);
     setPendingDragEndHandlerParams(null);
-    handleDragEnd(...pendingDragEndHandlerParams);
+    handleDragEnd(pendingDragEndHandlerParams);
     goBackToPreviousDropdownFocusId();
   };
 

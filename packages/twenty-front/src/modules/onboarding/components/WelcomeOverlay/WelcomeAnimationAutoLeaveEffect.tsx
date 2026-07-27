@@ -1,24 +1,56 @@
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-const WELCOME_HOLD_DURATION_MS = 2900;
+import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
+import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
+import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
+import { measureWelcomeTitleFlight } from '@/onboarding/utils/measureWelcomeTitleFlight';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-type WelcomeAnimationAutoLeaveEffectProps = {
-  onAutoLeave: () => void;
-};
+const WELCOME_HOLD_MIN_DURATION_MS = 2900;
+const WELCOME_HOLD_MAX_DURATION_MS = 5000;
 
-export const WelcomeAnimationAutoLeaveEffect = ({
-  onAutoLeave,
-}: WelcomeAnimationAutoLeaveEffectProps) => {
+export const WelcomeAnimationAutoLeaveEffect = () => {
+  const setIsWelcomeAnimationLeaving = useSetAtomState(
+    isWelcomeAnimationLeavingState,
+  );
+  const setWelcomeTitleFlight = useSetAtomState(welcomeTitleFlightState);
+
   useEffect(() => {
-    const autoLeaveTimeoutId = setTimeout(
-      onAutoLeave,
-      WELCOME_HOLD_DURATION_MS,
-    );
+    let hasFired = false;
+
+    const leave = () => {
+      if (hasFired) {
+        return;
+      }
+      hasFired = true;
+
+      setWelcomeTitleFlight(measureWelcomeTitleFlight());
+      setIsWelcomeAnimationLeaving(true);
+    };
+
+    const capTimeoutId = setTimeout(leave, WELCOME_HOLD_MAX_DURATION_MS);
+    const minHoldTimeoutId = setTimeout(() => {
+      const hasHandoffTarget = isDefined(
+        document.getElementById(WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID),
+      );
+      if (!hasHandoffTarget) {
+        return;
+      }
+
+      if (isDefined(document.fonts)) {
+        void document.fonts.ready.then(leave);
+      } else {
+        leave();
+      }
+    }, WELCOME_HOLD_MIN_DURATION_MS);
 
     return () => {
-      clearTimeout(autoLeaveTimeoutId);
+      clearTimeout(capTimeoutId);
+      clearTimeout(minHoldTimeoutId);
+      hasFired = true;
     };
-  }, [onAutoLeave]);
+  }, [setIsWelcomeAnimationLeaving, setWelcomeTitleFlight]);
 
   return null;
 };

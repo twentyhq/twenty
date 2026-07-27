@@ -62,3 +62,6 @@ output/playwright/
 screenshots/
 !**/public/screenshots/
 !**/assets/screenshots/
+
+# local graphify knowledge-graph output (never commit)
+**/graphify-out/

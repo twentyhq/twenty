@@ -3,10 +3,6 @@ title: Server MCP
 description: Collega gli assistenti AI al tuo spazio di lavoro di Twenty utilizzando il Model Context Protocol.
 ---
 
-<Warning>
-MCP è attualmente in **alpha** ed è disponibile solo su alcuni spazi di lavoro. Potrebbe non essere ancora abilitato per il tuo spazio di lavoro.
-</Warning>
-
 Twenty espone un server [MCP](https://modelcontextprotocol.io/) affinché gli assistenti AI — Claude Desktop, Claude Code, Cursor, ChatGPT e altri — possano leggere e scrivere i dati del tuo CRM in linguaggio naturale.
 
 Usa l'**URL dello spazio di lavoro** (l'URL che usi per accedere a Twenty) come endpoint MCP. Su Twenty Cloud, l'URL del tuo spazio di lavoro potrebbe essere `https://{mycompany}.twenty.com` oppure un dominio personalizzato. Il server è disponibile all'indirizzo:
@@ -72,20 +68,20 @@ Se il tuo client MCP non supporta OAuth, o preferisci credenziali statiche, pass
 La tua chiave API concede l'accesso ai dati dello spazio di lavoro. Mantienila fuori dal controllo versione e dai dotfile condivisi.
 </Warning>
 
-Per creare una chiave API, vai su **Impostazioni > API e Webhook > + Crea chiave**. Vedi [API](/l/it/developers/extend/api#create-an-api-key) per i dettagli.
+Per creare una chiave API, vai su **Impostazioni → MCP e API → API → + Crea chiave**. Vedi [API](/l/it/developers/extend/api#create-an-api-key) per i dettagli.
 
 ## Avvio rapido
 
 ### 1. Copia la configurazione
 
-Vai su **Impostazioni > AI > Altro > MCP Server** in Twenty. Scegli il metodo di autenticazione (OAuth o Chiave API), copia lo snippet JSON (userà già l'URL del tuo spazio di lavoro) e incollalo nel file di configurazione del tuo client MCP.
+Vai su **Impostazioni → MCP e API → MCP** in Twenty. Scegli il metodo di autenticazione (OAuth o Chiave API), copia lo snippet JSON (userà già l'URL del tuo spazio di lavoro) e incollalo nel file di configurazione del tuo client MCP.
 
 | Client             | Percorso del file di configurazione                                                                                                                                                     |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                     |
 | **Claude Code**    | `~/.claude.json` (utente) o `.mcp.json` (progetto)                                                                                                                                      |
 | **Cursor**         | `.cursor/mcp.json` nel tuo progetto, oppure `~/.cursor/mcp.json` globalmente                                                                                                            |
-| **ChatGPT**        | Attiva la Modalità sviluppatore in **Impostazioni > App e Connettori > Impostazioni avanzate**, quindi usa **Crea** in **Impostazioni > App e Connettori** per aggiungere il server MCP |
+| **ChatGPT**        | Attiva la Modalità sviluppatore in **Impostazioni → App e Connettori → Impostazioni avanzate**, quindi usa **Crea** in **Impostazioni → App e Connettori** per aggiungere il server MCP |
 
 ### 2. Connetti
 
@@ -113,7 +109,7 @@ Non è necessario ricordare i nomi degli strumenti. Chiedi al tuo assistente AI 
 Le connessioni MCP ereditano le autorizzazioni dell'utente autenticato (OAuth) o il ruolo assegnato alla chiave API. Per limitare ciò che il server MCP può fare:
 
 * **OAuth**: si applica il ruolo dell'utente nello spazio di lavoro.
-* **Chiave API**: assegna un ruolo alla chiave API in **Impostazioni > Ruoli**. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions).
+* **Chiave API**: assegna un ruolo alla chiave API in **Impostazioni → Membri → Ruoli**. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions).
 
 ## Configurazione self-hosted
 

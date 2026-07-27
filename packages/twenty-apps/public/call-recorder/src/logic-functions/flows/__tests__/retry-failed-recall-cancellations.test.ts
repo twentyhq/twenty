@@ -304,8 +304,8 @@ describe('retryFailedRecallCancellations', () => {
     expect(listRequestParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(listRequestParameters.get('metadata__twentyCallRecordingId')).toBe(
-      'call-recording-1',
+    expect(listRequestParameters.has('metadata__twentyCallRecordingId')).toBe(
+      false,
     );
     expect(fetchMock).toHaveBeenCalledWith(
       `${BASE_URL}/bot/recall-bot-recovered/`,
@@ -338,7 +338,15 @@ describe('retryFailedRecallCancellations', () => {
         ...buildJsonResponse(200),
         json: async () => ({
           next: null,
-          results: [{ id: 'recall-bot-recovered' }],
+          results: [
+            {
+              id: 'recall-bot-recovered',
+              metadata: {
+                twentyWorkspaceId: WORKSPACE_ID,
+                twentyCallRecordingId: 'call-recording-1',
+              },
+            },
+          ],
         }),
       })
       .mockResolvedValueOnce(buildJsonResponse(400))
@@ -422,7 +430,15 @@ describe('retryFailedRecallCancellations', () => {
             ...buildJsonResponse(200),
             json: async () => ({
               next: null,
-              results: [{ id: 'recall-bot-recovered' }],
+              results: [
+                {
+                  id: 'recall-bot-recovered',
+                  metadata: {
+                    twentyWorkspaceId: WORKSPACE_ID,
+                    twentyCallRecordingId: 'call-recording-1',
+                  },
+                },
+              ],
             }),
           };
         }
@@ -467,7 +483,15 @@ describe('retryFailedRecallCancellations', () => {
             ...buildJsonResponse(200),
             json: async () => ({
               next: null,
-              results: [{ id: 'recall-bot-recovered' }],
+              results: [
+                {
+                  id: 'recall-bot-recovered',
+                  metadata: {
+                    twentyWorkspaceId: WORKSPACE_ID,
+                    twentyCallRecordingId: 'call-recording-1',
+                  },
+                },
+              ],
             }),
           };
         }
@@ -488,6 +512,74 @@ describe('retryFailedRecallCancellations', () => {
     expect(result.canceledExternalBotCallRecordingIds).toEqual([
       'call-recording-1',
     ]);
+  });
+
+  it('does not claim a listed bot for a cancellation whose recovery window elapsed', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-recent',
+        recordingRequestStatus: 'CANCELED',
+        status: 'SCHEDULED',
+        createdAt: '2026-01-02T11:30:00.000Z',
+        calendarEventId: null,
+        externalBotId: null,
+      },
+      {
+        id: 'call-recording-aged',
+        recordingRequestStatus: 'CANCELED',
+        status: 'SCHEDULED',
+        createdAt: '2026-01-01T11:00:00.000Z',
+        calendarEventId: null,
+        externalBotId: null,
+      },
+    ]);
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit?: { method?: string }) => {
+        if (requestInit?.method === 'DELETE') {
+          return buildJsonResponse(204);
+        }
+
+        if (requestUrl.startsWith(`${BASE_URL}/bot/?`)) {
+          return {
+            ...buildJsonResponse(200),
+            json: async () => ({
+              next: null,
+              results: [
+                {
+                  id: 'recall-bot-recent',
+                  metadata: {
+                    twentyWorkspaceId: WORKSPACE_ID,
+                    twentyCallRecordingId: 'call-recording-recent',
+                  },
+                },
+                {
+                  id: 'recall-bot-aged',
+                  metadata: {
+                    twentyWorkspaceId: WORKSPACE_ID,
+                    twentyCallRecordingId: 'call-recording-aged',
+                  },
+                },
+              ],
+            }),
+          };
+        }
+
+        throw new Error(`Unhandled fetch: ${requestUrl}`);
+      },
+    );
+
+    const result = await retryFailedRecallCancellations({
+      client: client as unknown as CoreApiClient,
+      now: new Date('2026-01-02T12:00:00.000Z'),
+    });
+
+    expect(result.canceledExternalBotCallRecordingIds).toEqual([
+      'call-recording-recent',
+    ]);
+    expect(fetchMock).not.toHaveBeenCalledWith(
+      `${BASE_URL}/bot/recall-bot-aged/`,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
   });
 
   it('does not repeatedly look up botless cancellations after their meeting ended', async () => {
