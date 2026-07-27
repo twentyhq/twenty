@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   compositeTypeDefinitions,
@@ -8,6 +9,10 @@ import {
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -17,6 +22,12 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
+
+// Mirrors how TypeORM renders empty Brackets, so nested empty logical groups
+// behave the same on joined relations as on the main alias
+const ALWAYS_TRUE_CONDITION = '1=1';
 
 type SqlRenderingContext = {
   tableAlias: string;
@@ -99,9 +110,11 @@ const renderFilterEntry = (
         context,
       );
 
-      return isNonEmptyString(negatedCondition)
-        ? `NOT (${negatedCondition})`
-        : '';
+      const conditionToNegate = isNonEmptyString(negatedCondition)
+        ? negatedCondition
+        : ALWAYS_TRUE_CONDITION;
+
+      return `NOT (${conditionToNegate})`;
     }
     default:
       return renderFieldCondition(filterKey, filterValue, context);
@@ -113,12 +126,16 @@ const renderLogicalGroup = (
   logicalOperator: 'AND' | 'OR',
   context: SqlRenderingContext,
 ): string => {
-  const conditions = filters
-    .map((filter) => renderFilterAsConjunction(filter, context))
-    .filter(isNonEmptyString);
+  const conditions = filters.map((filter) => {
+    const renderedCondition = renderFilterAsConjunction(filter, context);
+
+    return isNonEmptyString(renderedCondition)
+      ? renderedCondition
+      : ALWAYS_TRUE_CONDITION;
+  });
 
   if (conditions.length === 0) {
-    return '';
+    return ALWAYS_TRUE_CONDITION;
   }
 
   return `(${conditions.join(` ${logicalOperator} `)})`;
@@ -185,21 +202,50 @@ const renderFieldCondition = (
     return renderCompositeFieldCondition(fieldMetadata, filterValue, context);
   }
 
-  const [[operator, operatorValue]] = Object.entries(
+  const operatorConditions = Object.entries(
     filterValue as Record<string, unknown>,
-  );
+  ).map(([operator, operatorValue]) => {
+    assertArrayOperatorValueIsNonEmptyArray({
+      operator,
+      value: operatorValue,
+      key: fieldNameOrJoinColumnName,
+    });
 
-  const { sql, params } = computeWhereConditionParts({
-    operator,
-    objectNameSingular: tableAlias,
-    key: fieldNameOrJoinColumnName,
-    value: operatorValue,
-    fieldMetadataType: fieldMetadata.type,
+    const { sql, params } = computeWhereConditionParts({
+      operator,
+      objectNameSingular: tableAlias,
+      key: fieldNameOrJoinColumnName,
+      value: operatorValue,
+      fieldMetadataType: fieldMetadata.type,
+    });
+
+    Object.assign(context.collectedParameters, params);
+
+    return `(${sql})`;
   });
 
-  Object.assign(context.collectedParameters, params);
+  return joinConditions(operatorConditions, 'AND');
+};
 
-  return `(${sql})`;
+const assertArrayOperatorValueIsNonEmptyArray = ({
+  operator,
+  value,
+  key,
+}: {
+  operator: string;
+  value: unknown;
+  key: string;
+}): void => {
+  if (
+    ARRAY_OPERATORS.includes(operator) &&
+    (!Array.isArray(value) || value.length === 0)
+  ) {
+    throw new GraphqlQueryRunnerException(
+      `Invalid filter value for field ${key}. Expected non-empty array`,
+      GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
+    );
+  }
 };
 
 const renderCompositeFieldCondition = (
@@ -219,7 +265,7 @@ const renderCompositeFieldCondition = (
 
   const conditions = Object.entries(
     filterValue as Record<string, Record<string, unknown>>,
-  ).map(([subFieldName, subFieldFilter]) => {
+  ).flatMap(([subFieldName, subFieldFilter]) => {
     const isKnownSubField = compositeType.properties.some(
       (property) => property.name === subFieldName,
     );
@@ -230,20 +276,26 @@ const renderCompositeFieldCondition = (
       );
     }
 
-    const [[operator, operatorValue]] = Object.entries(subFieldFilter);
+    return Object.entries(subFieldFilter).map(([operator, operatorValue]) => {
+      assertArrayOperatorValueIsNonEmptyArray({
+        operator,
+        value: operatorValue,
+        key: subFieldName,
+      });
 
-    const { sql, params } = computeWhereConditionParts({
-      operator,
-      objectNameSingular: context.tableAlias,
-      key: `${fieldMetadata.name}${capitalize(subFieldName)}`,
-      subFieldKey: subFieldName,
-      value: operatorValue,
-      fieldMetadataType: fieldMetadata.type,
+      const { sql, params } = computeWhereConditionParts({
+        operator,
+        objectNameSingular: context.tableAlias,
+        key: `${fieldMetadata.name}${capitalize(subFieldName)}`,
+        subFieldKey: subFieldName,
+        value: operatorValue,
+        fieldMetadataType: fieldMetadata.type,
+      });
+
+      Object.assign(context.collectedParameters, params);
+
+      return `(${sql})`;
     });
-
-    Object.assign(context.collectedParameters, params);
-
-    return `(${sql})`;
   });
 
   return joinConditions(conditions, 'AND');

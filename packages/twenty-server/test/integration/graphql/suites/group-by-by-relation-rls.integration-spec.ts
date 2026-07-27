@@ -259,4 +259,41 @@ describe('group-by on a relation respects row-level permission predicates', () =
       PEOPLE_LINKED_TO_HIDDEN_COMPANY_OR_NO_COMPANY_COUNT,
     );
   });
+
+  it('sorts records linked to a hidden related record as null when ordering records within groups by that relation', async () => {
+    const response = await makeGraphqlAPIRequest(
+      groupByOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        groupBy: [{ jobTitle: true }],
+        filter: PEOPLE_FILTER,
+        orderByForRecords: [{ company: { name: 'AscNullsLast' } }],
+        offsetForRecords: 1,
+        gqlFields: 'edges { node { id } }',
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const groups = response.body.data.peopleGroupBy;
+
+    jestExpectToBeDefined(groups);
+    expect(groups).toHaveLength(1);
+
+    const recordIdsAfterSkippingFirstRankedRecord = groups[0].edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(recordIdsAfterSkippingFirstRankedRecord).not.toContain(
+      personWithVisibleCompanyId,
+    );
+    expect(recordIdsAfterSkippingFirstRankedRecord).toEqual(
+      expect.arrayContaining([
+        personWithHiddenCompanyId,
+        personWithoutCompanyId,
+      ]),
+    );
+    expect(recordIdsAfterSkippingFirstRankedRecord).toHaveLength(2);
+  });
 });

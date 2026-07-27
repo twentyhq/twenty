@@ -85,8 +85,6 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
     });
 
-    queryBuilderWithFiltersAndWithoutGroupBy.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
-
     const queryBuilderWithPartitionBy = this.addPartitionByToQueryBuilder({
       queryBuilderForSubQuery: queryBuilderWithFiltersAndWithoutGroupBy,
       columnsToSelect,
@@ -201,6 +199,10 @@ export class GroupByWithRecordsService {
       orderByForRecords,
       queryBuilder: subQuery,
     });
+
+    // Applied after applyPartitionByToBuilder so the relation joins it adds
+    // for orderByForRecords are covered before the builder is serialized
+    subQuery.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
 
     let mainQueryQueryBuilder = repository.createQueryBuilder();
 

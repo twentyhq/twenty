@@ -14,6 +14,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -36,7 +37,25 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
 
-const joinAttributesWithRowLevelPermissionApplied = new WeakSet<object>();
+type JoinAttributeWithRowLevelPermissionMarker = JoinAttribute & {
+  hasRowLevelPermissionPredicateApplied?: true;
+};
+
+// Stored as an own property so it survives TypeORM's JoinAttribute cloning
+// (ObjectUtils.assign copies own properties, condition string included)
+const hasRowLevelPermissionPredicateApplied = (
+  joinAttribute: JoinAttribute,
+): boolean =>
+  (joinAttribute as JoinAttributeWithRowLevelPermissionMarker)
+    .hasRowLevelPermissionPredicateApplied === true;
+
+const markRowLevelPermissionPredicateApplied = (
+  joinAttribute: JoinAttribute,
+): void => {
+  (
+    joinAttribute as JoinAttributeWithRowLevelPermissionMarker
+  ).hasRowLevelPermissionPredicateApplied = true;
+};
 
 const andWithExistingJoinCondition = (
   existingJoinCondition: string | undefined,
@@ -433,7 +452,7 @@ export class WorkspaceSelectQueryBuilder<
       : undefined;
 
     for (const joinAttribute of this.expressionMap.joinAttributes) {
-      if (joinAttributesWithRowLevelPermissionApplied.has(joinAttribute)) {
+      if (hasRowLevelPermissionPredicateApplied(joinAttribute)) {
         continue;
       }
 
@@ -444,7 +463,7 @@ export class WorkspaceSelectQueryBuilder<
         continue;
       }
 
-      joinAttributesWithRowLevelPermissionApplied.add(joinAttribute);
+      markRowLevelPermissionPredicateApplied(joinAttribute);
 
       const recordFilter = buildRowLevelPermissionRecordFilter({
         flatRowLevelPermissionPredicateMaps:
@@ -499,9 +518,16 @@ export class WorkspaceSelectQueryBuilder<
       return undefined;
     }
 
-    return getObjectMetadataFromEntityTarget(
-      joinedEntityTarget,
-      this.internalContext,
-    );
+    const joinedObjectMetadataId =
+      this.internalContext.objectIdByNameSingular[joinedEntityTarget];
+
+    if (!isDefined(joinedObjectMetadataId)) {
+      return undefined;
+    }
+
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: joinedObjectMetadataId,
+      flatEntityMaps: this.internalContext.flatObjectMetadataMaps,
+    });
   }
 }
