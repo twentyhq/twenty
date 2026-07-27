@@ -114,7 +114,7 @@ describe('AgentRunService', () => {
     });
   });
 
-  it('returns an error result when agent execution throws instead of bubbling GraphQL errors', async () => {
+  it('returns a generic error result when agent execution throws instead of bubbling GraphQL errors', async () => {
     agentAsyncExecutorService.executeAgent.mockRejectedValue(
       new Error('Failed to process successful response'),
     );
@@ -127,7 +127,7 @@ describe('AgentRunService', () => {
 
     expect(result).toEqual({
       result: null,
-      error: 'Failed to process successful response',
+      error: 'Agent execution failed.',
       success: false,
     });
   });

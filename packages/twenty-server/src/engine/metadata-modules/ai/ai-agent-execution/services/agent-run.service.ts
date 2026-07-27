@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import {
   type RunAgentInput,
@@ -16,6 +16,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 @Injectable()
 export class AgentRunService {
+  private readonly logger = new Logger(AgentRunService.name);
+
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
@@ -81,10 +83,15 @@ export class AgentRunService {
 
       return { result, error: null, success: true };
     } catch (error) {
+      // Keep client-facing errors generic; log details for diagnostics only.
+      this.logger.error(
+        `Agent execution failed for ${input.agentUniversalIdentifier}`,
+        error instanceof Error ? error.stack : error,
+      );
+
       return {
         result: null,
-        error:
-          error instanceof Error ? error.message : 'Agent execution failed',
+        error: 'Agent execution failed.',
         success: false,
       };
     }
