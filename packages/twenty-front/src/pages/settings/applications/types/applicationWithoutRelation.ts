@@ -1,12 +1,7 @@
-import { type Application } from '~/generated-metadata/graphql';
+import { type FindManyApplicationsQuery } from '~/generated-metadata/graphql';
 
-export type ApplicationWithoutRelation = Pick<
-  Application,
-  | 'id'
-  | 'name'
-  | 'description'
-  | 'version'
-  | 'universalIdentifier'
-  | 'applicationRegistrationId'
-  | 'applicationRegistration'
->;
+// Derived from the query result rather than from the schema `Application` type,
+// so that dropping a field from FIND_MANY_APPLICATIONS becomes a type error
+// instead of a silently undefined value at runtime.
+export type ApplicationWithoutRelation =
+  FindManyApplicationsQuery['findManyApplications'][number];
