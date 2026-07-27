@@ -82,6 +82,7 @@ export class ActionToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.HTTP_REQUEST_TOOL,
+      context.permissionsEvaluationContext,
     );
 
     if (hasHttpPermission) {
@@ -99,6 +100,7 @@ export class ActionToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.SEND_EMAIL_TOOL,
+      context.permissionsEvaluationContext,
     );
 
     if (hasEmailPermission) {
@@ -125,6 +127,7 @@ export class ActionToolProvider implements ToolProvider {
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+        context.permissionsEvaluationContext,
       );
 
     if (hasCreateCalendarEventPermission) {
@@ -178,6 +181,7 @@ export class ActionToolProvider implements ToolProvider {
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CODE_INTERPRETER_TOOL,
+        context.permissionsEvaluationContext,
       ));
 
     if (hasCodeInterpreterPermission) {

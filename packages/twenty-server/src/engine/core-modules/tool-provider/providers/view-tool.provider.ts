@@ -76,6 +76,7 @@ export class ViewToolProvider implements ToolProvider {
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.VIEWS,
+        context.permissionsEvaluationContext,
       );
 
     if (!hasViewPermission) {

@@ -18,6 +18,7 @@ import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/util
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { PermissionsEvaluationContext } from 'src/engine/metadata-modules/permissions/permissions-evaluation-context';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -32,6 +33,14 @@ export class ToolRegistryService {
   ) {}
 
   async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
+    return this.getCatalogWithContext(
+      this.withPermissionsEvaluationContext(context),
+    );
+  }
+
+  private async getCatalogWithContext(
+    context: ToolProviderContext,
+  ): Promise<ToolIndexEntry[]> {
     const results = await Promise.all(
       this.providers.map(async (provider) => {
         if (await provider.isAvailable(context)) {
@@ -56,7 +65,24 @@ export class ToolRegistryService {
     context: ToolProviderContext;
     precomputedCatalog?: ToolIndexEntry[];
   }): Promise<Map<string, object>> {
-    const index = precomputedCatalog ?? (await this.getCatalog(context));
+    return this.resolveSchemasWithContext({
+      toolNames,
+      context: this.withPermissionsEvaluationContext(context),
+      precomputedCatalog,
+    });
+  }
+
+  private async resolveSchemasWithContext({
+    toolNames,
+    context,
+    precomputedCatalog,
+  }: {
+    toolNames: string[];
+    context: ToolProviderContext;
+    precomputedCatalog?: ToolIndexEntry[];
+  }): Promise<Map<string, object>> {
+    const index =
+      precomputedCatalog ?? (await this.getCatalogWithContext(context));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
@@ -181,14 +207,15 @@ export class ToolRegistryService {
     },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
+    const scopedContext = this.withPermissionsEvaluationContext(fullContext);
 
-    const catalog = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalogWithContext(scopedContext);
     const nameSet = new Set(names);
     const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
-    const schemas = await this.resolveSchemas({
+    const schemas = await this.resolveSchemasWithContext({
       toolNames: names,
-      context: fullContext,
+      context: scopedContext,
       precomputedCatalog: catalog,
     });
 
@@ -217,17 +244,18 @@ export class ToolRegistryService {
     }>
   > {
     const fullContext = this.buildContextFromToolContext(context);
+    const scopedContext = this.withPermissionsEvaluationContext(fullContext);
 
-    const catalog = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalogWithContext(scopedContext);
     const nameSet = new Set(names);
     const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
     let schemas: Map<string, object> | undefined;
 
     if (aspects.includes('schema')) {
-      schemas = await this.resolveSchemas({
+      schemas = await this.resolveSchemasWithContext({
         toolNames: names,
-        context: fullContext,
+        context: scopedContext,
         precomputedCatalog: catalog,
       });
     }
@@ -354,6 +382,7 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
+    const scopedContext = this.withPermissionsEvaluationContext(context);
     const {
       categories,
       excludeTools,
@@ -369,8 +398,8 @@ export class ToolRegistryService {
           (provider) => !categorySet || categorySet.has(provider.category),
         )
         .map(async (provider) => {
-          if (await provider.isAvailable(context)) {
-            return provider.generateDescriptors(context, {
+          if (await provider.isAvailable(scopedContext)) {
+            return provider.generateDescriptors(scopedContext, {
               includeSchemas: true,
             });
           }
@@ -402,6 +431,15 @@ export class ToolRegistryService {
     );
 
     return toolSet;
+  }
+
+  private withPermissionsEvaluationContext(
+    context: ToolProviderContext,
+  ): ToolProviderContext {
+    return {
+      ...context,
+      permissionsEvaluationContext: new PermissionsEvaluationContext(),
+    };
   }
 
   private buildContextFromToolContext(

@@ -21,6 +21,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  type PermissionsEvaluationContext,
+  type RolesFromPermissionConfig,
+} from 'src/engine/metadata-modules/permissions/permissions-evaluation-context';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -272,7 +276,8 @@ export class PermissionsService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     relations: string[] = [],
-  ): Promise<{ roles: RoleEntity[]; useIntersection: boolean } | null> {
+    evaluationContext?: PermissionsEvaluationContext,
+  ): Promise<RolesFromPermissionConfig> {
     if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
       return null;
     }
@@ -292,28 +297,41 @@ export class PermissionsService {
       throw new Error('No role IDs provided');
     }
 
-    const roles = await this.roleRepository.find(workspaceId, {
-      where: { id: In(roleIds) },
-      relations,
-    });
+    const loadRoles = async (): Promise<RolesFromPermissionConfig> => {
+      const roles = await this.roleRepository.find(workspaceId, {
+        where: { id: In(roleIds) },
+        relations,
+      });
 
-    if (roles.length !== roleIds.length) {
-      throw new Error('Some roles not found');
-    }
+      if (roles.length !== roleIds.length) {
+        throw new Error('Some roles not found');
+      }
 
-    return { roles, useIntersection };
+      return { roles, useIntersection };
+    };
+
+    return evaluationContext
+      ? evaluationContext.getRoles({
+          rolePermissionConfig,
+          workspaceId,
+          relations,
+          load: loadRoles,
+        })
+      : loadRoles();
   }
 
   public async checkRolesPermissions(
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     setting: PermissionFlagType,
+    evaluationContext?: PermissionsEvaluationContext,
   ): Promise<boolean> {
     try {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
         ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
+        evaluationContext,
       );
 
       if (result === null) {
@@ -334,12 +352,14 @@ export class PermissionsService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     flag: PermissionFlagType,
+    evaluationContext?: PermissionsEvaluationContext,
   ): Promise<boolean> {
     try {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
         ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
+        evaluationContext,
       );
 
       if (result === null) {

@@ -41,6 +41,7 @@ export class WorkflowToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.WORKFLOWS,
+      context.permissionsEvaluationContext,
     );
   }
 

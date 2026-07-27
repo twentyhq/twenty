@@ -29,6 +29,7 @@ export class WebhookToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      context.permissionsEvaluationContext,
     );
   }
 
