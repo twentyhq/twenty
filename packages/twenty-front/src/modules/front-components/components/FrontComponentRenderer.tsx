@@ -4,6 +4,7 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { useRequestFrontComponentExternalNavigation } from '@/front-components/hooks/useRequestFrontComponentExternalNavigation';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
@@ -91,6 +92,10 @@ const FrontComponentRendererContent = ({
       colorScheme,
     });
 
+  const requestExternalNavigation = useRequestFrontComponentExternalNavigation({
+    applicationId,
+  });
+
   const handleError = useCallback(
     (error?: Error) => {
       if (!isDefined(error)) {
@@ -157,6 +162,7 @@ const FrontComponentRendererContent = ({
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
+            onRequestExternalNavigation={requestExternalNavigation}
             applicationVariables={applicationVariables}
             onError={handleError}
             loadingFallback={loadingFallback}

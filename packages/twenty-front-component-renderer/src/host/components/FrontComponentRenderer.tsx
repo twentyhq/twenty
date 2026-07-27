@@ -1,5 +1,7 @@
-import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
+import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
+import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
+import { type RequestExternalNavigation } from '@/host/types/RequestExternalNavigation';
 import { createGeometryTracker } from '@/host/utils/createGeometryTracker';
 import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
@@ -37,6 +39,7 @@ type FrontComponentRendererProps = {
   applicationVariables?: Record<string, string>;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  onRequestExternalNavigation?: RequestExternalNavigation;
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
@@ -51,6 +54,7 @@ export const FrontComponentRenderer = ({
   applicationVariables,
   executionContext,
   frontComponentHostCommunicationApi,
+  onRequestExternalNavigation,
   onError,
   colorScheme,
   loadingFallback,
@@ -127,10 +131,14 @@ export const FrontComponentRenderer = ({
               resetKeys={[componentUrl]}
               fallbackRender={() => null}
             >
-              <RemoteRootRenderer
-                receiver={receiver}
-                components={fallbackComponentRegistry}
-              />
+              <FrontComponentExternalNavigationContext.Provider
+                value={onRequestExternalNavigation ?? null}
+              >
+                <RemoteRootRenderer
+                  receiver={receiver}
+                  components={fallbackComponentRegistry}
+                />
+              </FrontComponentExternalNavigationContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>
         )}

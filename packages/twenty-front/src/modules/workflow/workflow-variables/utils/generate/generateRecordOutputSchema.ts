@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import {
   type FieldOutputSchemaV2,
   type RecordFieldLeaf,
@@ -112,18 +113,19 @@ const generateRecordFields = (
       fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
 
     if (isRelationField) {
-      const relationIdFieldName = `${fieldMetadataItem.name}Id`;
-      const relationIdFieldLabel = camelToTitleCase(relationIdFieldName);
-
-      result[relationIdFieldName] = {
-        isLeaf: true,
-        icon: fieldMetadataItem.icon ?? undefined,
-        type: FieldMetadataType.UUID,
-        label: relationIdFieldLabel,
-        value: generateFakeValue(FieldMetadataType.UUID, 'FieldMetadataType'),
-        fieldMetadataId: fieldMetadataItem.id,
-        isCompositeSubField: false,
-      };
+      for (const relationIdFieldName of getRelationIdFieldNames(
+        fieldMetadataItem,
+      )) {
+        result[relationIdFieldName] = {
+          isLeaf: true,
+          icon: fieldMetadataItem.icon ?? undefined,
+          type: FieldMetadataType.UUID,
+          label: camelToTitleCase(relationIdFieldName),
+          value: generateFakeValue(FieldMetadataType.UUID, 'FieldMetadataType'),
+          fieldMetadataId: fieldMetadataItem.id,
+          isCompositeSubField: false,
+        };
+      }
     } else {
       result[fieldMetadataItem.name] = generateRecordField(fieldMetadataItem);
     }
