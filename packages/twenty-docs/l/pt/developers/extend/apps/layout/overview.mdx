@@ -45,12 +45,13 @@ A **camada de layout** de um app do Twenty é tudo o que o usuário vê: onde o 
 
 ## Onde o app aparece
 
-| Superfície                                  | O que controla                                                                             | Entidade                                  |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------- |
-| **Barra lateral**                           | Uma entrada personalizada que aponta para uma visualização salva ou URL externa            | `defineNavigationMenuItem`                |
-| **Lista de registros**                      | Uma configuração salva para um objeto — colunas visíveis, ordem, filtros, grupos           | `defineView`                              |
-| **Página de detalhes do registro**          | As abas e widgets em uma página de registro (do seu próprio objeto ou de um objeto padrão) | `definePageLayout`, `definePageLayoutTab` |
-| **Dentro de qualquer uma das opções acima** | Um widget React personalizado — botões, formulários, dashboards, integrações               | `defineFrontComponent`                    |
-| **Menu de comandos (Cmd+K)**                | Uma ação rápida fixada ou comando oculto                                                   | `defineCommandMenuItem`                   |
+| Superfície                                  | O que controla                                                                                                      | Entidade                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Barra lateral**                           | Uma entrada personalizada que aponta para uma visualização salva ou URL externa                                     | `defineNavigationMenuItem`                |
+| **Lista de registros**                      | Uma configuração salva para um objeto — colunas visíveis, ordem, filtros, grupos                                    | `defineView`                              |
+| **Página de detalhes do registro**          | As abas e widgets em uma página de registro (do seu próprio objeto ou de um objeto padrão)                          | `definePageLayout`, `definePageLayoutTab` |
+| **Dentro de qualquer uma das opções acima** | Um widget React personalizado — botões, formulários, dashboards, integrações                                        | `defineFrontComponent`                    |
+| **Configurações do app**                    | Uma seção de configuração personalizada dentro da aba Configurações do app, em vez da interface padrão de variáveis | `defineSettingsFrontComponent`            |
+| **Menu de comandos (Cmd+K)**                | Uma ação rápida fixada ou comando oculto                                                                            | `defineCommandMenuItem`                   |
 
 Os componentes de front-end são executados dentro de um Web Worker isolado usando Remote DOM — eles são renderizados *nativamente* na página (não dentro de um iframe), mas não podem acessar diretamente a página host ou o DOM. A comunicação com o Twenty acontece por meio de uma API de host com passagem de mensagens.

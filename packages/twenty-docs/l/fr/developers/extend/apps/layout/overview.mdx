@@ -45,12 +45,13 @@ La **couche de mise en page** d’une application Twenty est tout ce que l’uti
 
 ## Où l’application apparaît
 
-| Surface                                                      | Ce qu'il contrôle                                                                                       | Entité                                    |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Barre latérale**                                           | Une entrée personnalisée pointant vers une vue enregistrée ou une URL externe                           | `defineNavigationMenuItem`                |
-| **Liste des enregistrements**                                | Une configuration enregistrée pour un objet — colonnes visibles, ordre, filtres, groupes                | `defineView`                              |
-| **Page de détails de l’enregistrement**                      | Les onglets et widgets sur une page d’enregistrement (celle de votre propre objet ou une page standard) | `definePageLayout`, `definePageLayoutTab` |
-| **À l’intérieur de n’importe lequel des éléments ci-dessus** | Un widget React personnalisé — boutons, formulaires, tableaux de bord, intégrations                     | `defineFrontComponent`                    |
-| **Menu de commande (Cmd+K)**                                 | Une action rapide épinglée ou une commande masquée                                                      | `defineCommandMenuItem`                   |
+| Surface                                                      | Ce qu'il contrôle                                                                                                                                 | Entité                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Barre latérale**                                           | Une entrée personnalisée pointant vers une vue enregistrée ou une URL externe                                                                     | `defineNavigationMenuItem`                |
+| **Liste des enregistrements**                                | Une configuration enregistrée pour un objet — colonnes visibles, ordre, filtres, groupes                                                          | `defineView`                              |
+| **Page de détails de l’enregistrement**                      | Les onglets et widgets sur une page d’enregistrement (celle de votre propre objet ou une page standard)                                           | `definePageLayout`, `definePageLayoutTab` |
+| **À l’intérieur de n’importe lequel des éléments ci-dessus** | Un widget React personnalisé — boutons, formulaires, tableaux de bord, intégrations                                                               | `defineFrontComponent`                    |
+| **Paramètres de l’application**                              | Une section de configuration personnalisée dans l’onglet Paramètres de l’application, au lieu de l’interface utilisateur par défaut des variables | `defineSettingsFrontComponent`            |
+| **Menu de commande (Cmd+K)**                                 | Une action rapide épinglée ou une commande masquée                                                                                                | `defineCommandMenuItem`                   |
 
 Les composants frontaux s’exécutent à l’intérieur d’un Web Worker isolé en utilisant Remote DOM — ils sont rendus *nativement* dans la page (et non dans une iframe), mais ne peuvent pas accéder directement à la page hôte ou au DOM. La communication avec Twenty se fait via une API hôte de passage de messages.

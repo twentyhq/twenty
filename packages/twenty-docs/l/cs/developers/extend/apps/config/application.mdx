@@ -37,6 +37,7 @@ Poznámky:
 * Předinstalační, postinstalační a odinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
 * Předávání `defaultRoleUniversalIdentifier` explicitně je stále podporováno kvůli zpětné kompatibilitě, ale je zastaralé ve prospěch `defineApplicationRole()`.
 * `serverVariables` představují konfiguraci a tajné údaje vázané na instanci (např. klíče API). Na rozdíl od `applicationVariables` neuvádějí v manifestu žádnou hodnotu — operátor pracovního prostoru je vyplní v nastavení aplikace a do logických funkcí jsou injektovány až poté, co jsou nastaveny.
+* Chcete-li vykreslit vlastní konfigurační uživatelské rozhraní na kartě **Settings** aplikace (namísto výchozí sekce pro konfiguraci proměnných), deklarujte frontovou komponentu pomocí [`defineSettingsFrontComponent()`](/l/cs/developers/extend/apps/layout/front-components#custom-settings-component) v jejím vlastním souboru. Na jednu aplikaci je povolena pouze jedna instance. Sekce spravované systémem (automatická aktualizace, App URL, připojení) zůstávají vždy viditelné.
 
 ## Typy proměnných
 

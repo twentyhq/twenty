@@ -215,12 +215,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    const settingsFrontComponentUniversalIdentifier =
+      manifest.application.settingsFrontComponent?.universalIdentifier;
+
     for (const frontComponentManifest of manifest.frontComponents) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromFrontComponentManifestToUniversalFlatFrontComponent({
             frontComponentManifest,
             applicationUniversalIdentifier,
+            isSettingsFrontComponent:
+              frontComponentManifest.universalIdentifier ===
+              settingsFrontComponentUniversalIdentifier,
             now,
           }),
         universalFlatEntityMapsToMutate:

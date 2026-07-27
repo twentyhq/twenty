@@ -6,6 +6,7 @@ import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-funct
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -168,6 +169,25 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
             getOrRecomputeManyOrAllFlatEntityMaps: jest
               .fn()
               .mockResolvedValue(createEmptyAllFlatEntityMaps()),
+          },
+        },
+        {
+          provide: WorkflowVersionCoreSyncService,
+          useValue: {
+            writeWorkflowVersionAndMirror: jest.fn(
+              async (_workspaceId: string, write: any) => {
+                const scopedRepository =
+                  (await globalWorkspaceOrmManager.getRepository(
+                    _workspaceId,
+                    'workflowVersion',
+                    { shouldBypassPermissionChecks: true },
+                  )) ?? {};
+
+                return write(scopedRepository, {});
+              },
+            ),
+            mirrorWorkflowVersionWrite: jest.fn(),
+            invalidateAutomatedTriggerMaps: jest.fn(),
           },
         },
       ],
