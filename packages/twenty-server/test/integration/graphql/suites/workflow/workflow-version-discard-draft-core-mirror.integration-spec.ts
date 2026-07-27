@@ -16,14 +16,12 @@ describe('discard draft workflow version core mirror (e2e)', () => {
   let firstVersionId: string;
   let draftVersionId: string;
 
-  const coreVersionRowIds = async (): Promise<string[]> => {
-    const rows = await global.testDataSource.query(
-      `SELECT "id" FROM core."workflowVersion"
+  const coreVersions = async (): Promise<{ id: string; status: string }[]> => {
+    return global.testDataSource.query(
+      `SELECT "id", "status" FROM core."workflowVersion"
        WHERE "workspaceId" = $1 AND "workflowId" = $2`,
       [SEED_APPLE_WORKSPACE_ID, workflowId],
     );
-
-    return rows.map((row: { id: string }) => row.id);
   };
 
   beforeAll(async () => {
@@ -138,9 +136,22 @@ describe('discard draft workflow version core mirror (e2e)', () => {
 
   it('removes only the discarded draft core row, keeping the active version', async () => {
     // the active version and the new draft are both mirrored to core
-    const idsBefore = await coreVersionRowIds();
+    const versionsBefore = await coreVersions();
 
-    expect(idsBefore).toHaveLength(2);
+    expect(versionsBefore.map((version) => version.status).sort()).toEqual([
+      'ACTIVE',
+      'DRAFT',
+    ]);
+
+    const activeCoreId = versionsBefore.find(
+      (version) => version.status === 'ACTIVE',
+    )?.id;
+    const draftCoreId = versionsBefore.find(
+      (version) => version.status === 'DRAFT',
+    )?.id;
+
+    expect(activeCoreId).toBeDefined();
+    expect(draftCoreId).toBeDefined();
 
     const deleteResponse = await graphql(
       `
@@ -155,8 +166,11 @@ describe('discard draft workflow version core mirror (e2e)', () => {
 
     expect(deleteResponse.body.errors).toBeUndefined();
 
-    const idsAfter = await coreVersionRowIds();
+    const versionsAfter = await coreVersions();
 
-    expect(idsAfter).toHaveLength(1);
+    // only the discarded draft's core row is removed; the active row remains
+    expect(versionsAfter).toHaveLength(1);
+    expect(versionsAfter[0].id).toBe(activeCoreId);
+    expect(versionsAfter[0].id).not.toBe(draftCoreId);
   });
 });
