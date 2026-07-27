@@ -4,17 +4,6 @@ import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 
-let hasWarnedAboutGeometryPushFailure = false;
-
-const warnAboutGeometryPushFailure = (): void => {
-  if (hasWarnedAboutGeometryPushFailure) {
-    return;
-  }
-
-  hasWarnedAboutGeometryPushFailure = true;
-  console.warn(GEOMETRY_TRANSPORT_FAILURE_WARNING);
-};
-
 type FrontComponentGeometryTrackerEffectProps = {
   thread: FrontComponentThread;
   geometryTracker: GeometryTracker;
@@ -25,10 +14,17 @@ export const FrontComponentGeometryTrackerEffect = ({
   geometryTracker,
 }: FrontComponentGeometryTrackerEffectProps) => {
   useEffect(() => {
+    let hasWarnedAboutGeometryPushFailure = false;
+
     geometryTracker.setPushGeometryUpdates((batch) => {
-      thread.imports
-        .pushGeometryUpdates(batch)
-        .catch(warnAboutGeometryPushFailure);
+      thread.imports.pushGeometryUpdates(batch).catch(() => {
+        if (hasWarnedAboutGeometryPushFailure) {
+          return;
+        }
+
+        hasWarnedAboutGeometryPushFailure = true;
+        console.warn(GEOMETRY_TRANSPORT_FAILURE_WARNING);
+      });
     });
 
     return () => {
