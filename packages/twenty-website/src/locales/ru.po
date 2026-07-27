@@ -777,11 +777,6 @@ msgstr "Фильтр Any Field"
 msgid "Any Questions?"
 msgstr "Есть вопросы?"
 
-#. js-lingui-id: lgSvgF
-#: src/partner-application/partner-application-copy.ts
-msgid "Anything else we should know?"
-msgstr "Есть ли ещё что-то, о чём нам стоит знать?"
-
 #. js-lingui-id: pkMjbA
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
@@ -1799,6 +1794,7 @@ msgstr "Пользовательские модели ИИ"
 
 #. js-lingui-id: OaTurC
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Custom apps"
 msgstr "Пользовательские приложения"
 
@@ -1994,6 +1990,11 @@ msgstr "Диаграмма модели данных"
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "Моделирование данных · Миграции · No-code рабочие процессы · Дашборды · SSO/SCIM · Интеграции"
 
+#. js-lingui-id: pSXc9s
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Data models"
+msgstr ""
+
 #. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Date & Time"
@@ -2038,6 +2039,11 @@ msgstr "Демонстрации"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Denmark 🇩🇰"
 msgstr "Дания 🇩🇰"
+
+#. js-lingui-id: 59TXqJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: tqbpyT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2144,6 +2150,7 @@ msgstr "Не запирайтесь в чужой экосистеме. Опыт
 
 #. js-lingui-id: DPfwMq
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/partner-application/partner-application-copy.ts
 msgid "Done"
 msgstr "Готово"
 
@@ -2507,6 +2514,11 @@ msgstr ""
 msgid "Expanded support for 30+ languages, so users can navigate and use the software in their preferred language."
 msgstr "Расширенная поддержка более чем 30 языков, чтобы пользователи могли работать с программой на предпочитаемом языке."
 
+#. js-lingui-id: bKBhgb
+#: src/partner-application/partner-application-copy.ts
+msgid "Experience"
+msgstr ""
+
 #. js-lingui-id: 14xdUh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Experience a more compact and intuitive settings layout, now featuring a breadcrumb navigation for easier access and better organization."
@@ -2517,10 +2529,10 @@ msgstr "Испытайте более компактный и интуитивн
 msgid "Experience enterprise-grade granularity, starting with an 11th permission."
 msgstr "Испытайте корпоративный уровень детализации, начиная с 11-го разрешения."
 
-#. js-lingui-id: uZRQi+
+#. js-lingui-id: PXKAnm
 #: src/partner-application/partner-application-copy.ts
-msgid "Expertise & experience"
-msgstr "Экспертиза и опыт"
+msgid "Expertise"
+msgstr ""
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -2860,6 +2872,11 @@ msgstr "От простого к *продвинутому*"
 msgid "From simple to advanced"
 msgstr "От простого к продвинутому"
 
+#. js-lingui-id: IvIKDS
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Front components"
+msgstr ""
+
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Full communication history in one place"
@@ -2971,11 +2988,6 @@ msgstr "Хороший выбор!"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Google Calendar Integration"
 msgstr "Интеграция Google Calendar"
-
-#. js-lingui-id: Zh0acB
-#: src/partner-application/partner-application-copy.ts
-msgid "Grab 30 minutes so we can get to know your team."
-msgstr "Забронируйте 30 минут, чтобы мы могли познакомиться с вашей командой."
 
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3180,15 +3192,15 @@ msgstr "Как Twenty собирает, использует и защищает
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "Как W3villa Technologies запустила W3Grads — платформу ИИ-симуляции собеседований для учебных заведений — на Twenty как операционном «скелете»."
 
+#. js-lingui-id: vXtlks
+#: src/partner-application/wizard/steps/ExperienceStep.tsx
+msgid "https://"
+msgstr ""
+
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
 msgstr "Венгрия 🇭🇺"
-
-#. js-lingui-id: T6wyby
-#: src/partner-application/partner-application-copy.ts
-msgid "I'll book later →"
-msgstr "Я запишусь позже →"
 
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
@@ -3716,6 +3728,11 @@ msgstr "Как и для любого стандартного объекта, �
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Поле Link"
+
+#. js-lingui-id: YOe6r4
+#: src/partner-application/partner-application-copy.ts
+msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
+msgstr ""
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4441,6 +4458,11 @@ msgstr "Другие улучшения"
 msgid "Our onboarding process has been streamlined to let you import your calendar and emails seamlessly. You can now also configure your privacy settings directly during onboarding, allowing you to choose between sharing content with your team or keeping it hidden."
 msgstr "Наш процесс онбординга был упрощен, чтобы вы могли бесшовно импортировать календарь и электронную почту. Теперь вы также можете настроить параметры конфиденциальности прямо во время онбординга, выбрав, делиться ли содержимым с командой или скрывать его."
 
+#. js-lingui-id: V+7KMm
+#: src/partner-application/partner-application-copy.ts
+msgid "Our team reviews every application and will reach out if there's a fit."
+msgstr ""
+
 #. js-lingui-id: XR9aQ6
 #: src/client-brief/client-brief-copy.ts
 msgid "Our team will review your project and follow up by email. You won't hear from partners until we've matched you."
@@ -4626,6 +4648,11 @@ msgstr "Воронки, пользовательские объекты, ИИ‑
 msgid "Please complete all required fields before continuing."
 msgstr "Пожалуйста, заполните все обязательные поля перед продолжением."
 
+#. js-lingui-id: LjJ5i7
+#: src/partner-application/partner-application-copy.ts
+msgid "Please write at least {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation."
+msgstr ""
+
 #. js-lingui-id: P04j61
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Point of Contact"
@@ -4749,6 +4776,11 @@ msgstr "Программы, которые раньше требовали тя�
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Project minimum"
 msgstr "Минимальный размер проекта"
+
+#. js-lingui-id: wwBgHX
+#: src/partner-application/partner-application-copy.ts
+msgid "Proof URL *"
+msgstr ""
 
 #. js-lingui-id: qcybNQ
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -5245,6 +5277,11 @@ msgstr "Выбрать {0}"
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Select all"
 msgstr "Выбрать всё"
+
+#. js-lingui-id: /a1JwJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Select every area you used in a real project — not what you offer, what you actually did."
+msgstr ""
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -5800,6 +5837,11 @@ msgstr "Технические заметки"
 msgid "Technical skills"
 msgstr "Технические навыки"
 
+#. js-lingui-id: JOu8tZ
+#: src/partner-application/partner-application-copy.ts
+msgid "Tell us about the implementation *"
+msgstr ""
+
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
 msgid "Tell us more"
@@ -5857,14 +5899,10 @@ msgstr "Таиланд 🇹🇭"
 msgid "Thanks — we received your brief."
 msgstr ""
 
-#. js-lingui-id: Pa/Y6/
+#. js-lingui-id: 0ClTlj
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Thanks, you're in.\n"
-"*Now book your intro call.*"
+msgid "Thanks for applying."
 msgstr ""
-"Спасибо, вы с нами.\n"
-"*Теперь забронируйте вводный звонок.*"
 
 #. js-lingui-id: FjkPYg
 #: src/case-studies/case-study-stories.ts
@@ -6828,6 +6866,11 @@ msgstr "Что это означает"
 msgid "What you cover *"
 msgstr "Что вы покрываете *"
 
+#. js-lingui-id: QFLt0F
+#: src/partner-application/partner-application-copy.ts
+msgid "What you've built in Twenty *"
+msgstr ""
+
 #. js-lingui-id: 1kfjxX
 #: src/case-studies/case-study-stories.ts
 msgid "Whatever came next had to be something they could own."
@@ -6886,6 +6929,11 @@ msgstr "Когда ваша CRM — это продукт: W3Grads на Twenty |
 #: src/case-studies/case-study-stories.ts
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "Хотя NetZero по-прежнему использует вторую CRM параллельно для операций с активным использованием WhatsApp с фермерами в Бразилии, они рассчитывают перенести всё это в Twenty по мере развития функциональности и экосистемы. Уже сейчас их структурированный, многонациональный конвейер работает на Twenty."
+
+#. js-lingui-id: oa2Bs3
+#: src/partner-application/partner-application-copy.ts
+msgid "Who it was for, what you built, which of the four areas you used…"
+msgstr ""
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -6993,6 +7041,7 @@ msgstr "Версии рабочих процессов"
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Workflows"
 msgstr "Рабочие процессы"
 
@@ -7011,11 +7060,6 @@ msgstr "Рабочие процессы, которые действительн
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace"
 msgstr "Рабочее пространство"
-
-#. js-lingui-id: bwECg/
-#: src/partner-application/partner-application-copy.ts
-msgid "Workspace URL, customer references, relevant links…"
-msgstr "URL рабочего пространства, рекомендации клиентов, релевантные ссылки…"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts
