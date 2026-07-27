@@ -33,6 +33,7 @@ import { WorkflowUpdateOnePreQueryHook } from 'src/modules/workflow/common/query
 import { WorkflowVersionCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-many.pre-query.hook';
 import { WorkflowVersionCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-one.pre-query.hook';
 import { WorkflowVersionDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-many.pre-query.hook';
+import { WorkflowVersionDeleteOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.post-query.hook';
 import { WorkflowVersionDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.pre-query.hook';
 import { WorkflowVersionDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-many.pre-query.hook';
 import { WorkflowVersionDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-one.pre-query.hook';
@@ -74,6 +75,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowVersionUpdateOnePreQueryHook,
     WorkflowVersionUpdateManyPreQueryHook,
     WorkflowVersionDeleteOnePreQueryHook,
+    WorkflowVersionDeleteOnePostQueryHook,
     WorkflowVersionDeleteManyPreQueryHook,
     WorkflowVersionDestroyOnePreQueryHook,
     WorkflowVersionDestroyManyPreQueryHook,
