@@ -41,7 +41,6 @@ export class DashboardToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.LAYOUTS,
-      context.permissionsEvaluationContext,
     );
   }
 

@@ -7,7 +7,7 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -15,16 +15,14 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import {
-  type PermissionsEvaluationContext,
-  type RolesFromPermissionConfig,
-} from 'src/engine/metadata-modules/permissions/permissions-evaluation-context';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -32,6 +30,12 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+type CachedRolesFromPermissionConfig = {
+  roles: FlatRole[];
+  useIntersection: boolean;
+  flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
+} | null;
 
 @Injectable()
 export class PermissionsService {
@@ -275,9 +279,7 @@ export class PermissionsService {
   private async getRolesFromPermissionConfig(
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
-    relations: string[] = [],
-    evaluationContext?: PermissionsEvaluationContext,
-  ): Promise<RolesFromPermissionConfig> {
+  ): Promise<CachedRolesFromPermissionConfig> {
     if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
       return null;
     }
@@ -297,52 +299,100 @@ export class PermissionsService {
       throw new Error('No role IDs provided');
     }
 
-    const loadRoles = async (): Promise<RolesFromPermissionConfig> => {
-      const roles = await this.roleRepository.find(workspaceId, {
-        where: { id: In(roleIds) },
-        relations,
-      });
+    if (new Set(roleIds).size !== roleIds.length) {
+      throw new Error('Duplicate role IDs provided');
+    }
 
-      if (roles.length !== roleIds.length) {
-        throw new Error('Some roles not found');
+    const { flatRoleMaps, flatRolePermissionFlagMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleMaps',
+        'flatRolePermissionFlagMaps',
+      ]);
+    const roles = roleIds
+      .map((roleId) => {
+        const roleUniversalIdentifier =
+          flatRoleMaps.universalIdentifierById[roleId];
+
+        return isDefined(roleUniversalIdentifier)
+          ? flatRoleMaps.byUniversalIdentifier[roleUniversalIdentifier]
+          : undefined;
+      })
+      .filter(isDefined);
+
+    if (roles.length !== roleIds.length) {
+      throw new Error('Some roles not found');
+    }
+
+    return { roles, useIntersection, flatRolePermissionFlagMaps };
+  }
+
+  private flatRoleHasPermissionFlag(
+    role: FlatRole,
+    flag: PermissionFlagType,
+    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps,
+  ): boolean {
+    const permissionFlagUniversalIdentifier = SystemPermissionFlag[flag];
+
+    return role.rolePermissionFlagIds.some((rolePermissionFlagId) => {
+      const rolePermissionFlagUniversalIdentifier =
+        flatRolePermissionFlagMaps.universalIdentifierById[
+          rolePermissionFlagId
+        ];
+
+      if (!isDefined(rolePermissionFlagUniversalIdentifier)) {
+        return false;
       }
 
-      return { roles, useIntersection };
-    };
+      return (
+        flatRolePermissionFlagMaps.byUniversalIdentifier[
+          rolePermissionFlagUniversalIdentifier
+        ]?.permissionFlagUniversalIdentifier ===
+        permissionFlagUniversalIdentifier
+      );
+    });
+  }
 
-    return evaluationContext
-      ? evaluationContext.getRoles({
-          rolePermissionConfig,
-          workspaceId,
-          relations,
-          load: loadRoles,
-        })
-      : loadRoles();
+  private checkFlatRolePermissions(
+    role: FlatRole,
+    setting: PermissionFlagType,
+    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps,
+  ): boolean {
+    const hasBasePermission = this.isToolPermission(setting)
+      ? role.canAccessAllTools
+      : role.canUpdateAllSettings;
+
+    return (
+      hasBasePermission === true ||
+      this.flatRoleHasPermissionFlag(role, setting, flatRolePermissionFlagMaps)
+    );
   }
 
   public async checkRolesPermissions(
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     setting: PermissionFlagType,
-    evaluationContext?: PermissionsEvaluationContext,
   ): Promise<boolean> {
     try {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
-        evaluationContext,
       );
 
       if (result === null) {
         return true;
       }
 
-      const { roles, useIntersection } = result;
+      const { roles, useIntersection, flatRolePermissionFlagMaps } = result;
+      const checkRoleHasPermission = (role: FlatRole) =>
+        this.checkFlatRolePermissions(
+          role,
+          setting,
+          flatRolePermissionFlagMaps,
+        );
 
       return useIntersection
-        ? roles.every((role) => this.checkRolePermissions(role, setting))
-        : roles.some((role) => this.checkRolePermissions(role, setting));
+        ? roles.every(checkRoleHasPermission)
+        : roles.some(checkRoleHasPermission);
     } catch {
       return false;
     }
@@ -352,28 +402,29 @@ export class PermissionsService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     flag: PermissionFlagType,
-    evaluationContext?: PermissionsEvaluationContext,
   ): Promise<boolean> {
     try {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
-        evaluationContext,
       );
 
       if (result === null) {
         return true;
       }
 
-      const { roles, useIntersection } = result;
+      const { roles, useIntersection, flatRolePermissionFlagMaps } = result;
 
-      const checkRoleHasPermission = (role: RoleEntity) => {
+      const checkRoleHasPermission = (role: FlatRole) => {
         if (role.canAccessAllTools === true) {
           return true;
         }
 
-        return this.roleHasPermissionFlag(role, flag);
+        return this.flatRoleHasPermissionFlag(
+          role,
+          flag,
+          flatRolePermissionFlagMaps,
+        );
       };
 
       return useIntersection

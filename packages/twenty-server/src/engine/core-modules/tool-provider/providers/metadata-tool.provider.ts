@@ -32,7 +32,6 @@ export class MetadataToolProvider implements ToolProvider {
       context.rolePermissionConfig,
       context.workspaceId,
       PermissionFlagType.DATA_MODEL,
-      context.permissionsEvaluationContext,
     );
   }
 
