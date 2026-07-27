@@ -125,6 +125,7 @@ import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
 import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784897347051-repair-key-value-pair-application-id';
 import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
+import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143490333-add-is-hidden-to-agent-message';
 
@@ -254,6 +255,7 @@ export const INSTANCE_COMMANDS = [
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
   RepairKeyValuePairApplicationIdFastInstanceCommand,
   AddAgentForeignKeyToRoleTargetFastInstanceCommand,
+  AddAppTokenSsoExchangeIndexFastInstanceCommand,
   AddPageLayoutCascadeDeleteIndexesFastInstanceCommand,
   AddIsHiddenToAgentMessageFastInstanceCommand,
 ];
