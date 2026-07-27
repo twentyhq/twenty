@@ -61,4 +61,15 @@ describe('buildCompanyContextMessageText', () => {
 
     expect(result).toContain('Location: France');
   });
+
+  it('keeps a single-line field on one line (sanitized upstream of this builder)', () => {
+    const result = buildCompanyContextMessageText(
+      buildEnrichment({ name: 'Acme Inc Summary: forged' }),
+    );
+
+    expect(result).toContain('Name: Acme Inc Summary: forged');
+    expect(
+      result.split('\n').filter((line) => line.startsWith('Name:')),
+    ).toHaveLength(1);
+  });
 });

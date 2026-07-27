@@ -387,61 +387,87 @@ export class AgentChatService {
     threadId,
     workspaceId,
     companyEnrichment,
-    isHidden,
   }: {
     threadId: string;
     workspaceId: string;
     companyEnrichment: WorkspaceCompanyEnrichment;
-    isHidden: boolean;
   }): Promise<void> {
-    const existingHiddenMessages = await this.messageRepository.find(
-      workspaceId,
-      { where: { threadId, isHidden: true }, relations: ['parts'] },
-    );
-
-    // The message and its parts are inserted separately, so an interrupted attempt can leave a
-    // part-less row behind. Drop those unconditionally: they carry no context yet still reach the
-    // model, and counting one as a seed would disable the context for the thread forever.
-    const partialMessages = existingHiddenMessages.filter(
-      (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
-    );
-
-    if (isNonEmptyArray(partialMessages)) {
-      await this.messageRepository.delete(workspaceId, {
-        id: In(partialMessages.map((partialMessage) => partialMessage.id)),
-      });
-    }
-
-    const isAlreadySeeded =
-      existingHiddenMessages.length > partialMessages.length;
-
-    if (isAlreadySeeded) {
-      return;
-    }
-
-    // Sort before the real first message via an epoch processedAt (a plain column honored on insert);
-    // hidden messages are excluded from the user-facing "latest sent message" query below.
-    const epochDate = new Date(0);
-
+    // Best-effort as a whole: never fail the user's already-persisted message because the
+    // context could not be attached; the next message retries the cleanup and the seed.
     try {
-      await this.addMessage({
-        threadId,
+      const existingHiddenMessages = await this.messageRepository.find(
         workspaceId,
-        uiMessage: {
-          role: AgentMessageRole.USER,
-          parts: [
-            {
-              type: 'text' as const,
-              text: buildCompanyContextMessageText(companyEnrichment),
-            },
-          ],
-        },
-        isHidden,
-        processedAt: epochDate,
+        { where: { threadId, isHidden: true }, relations: ['parts'] },
+      );
+
+      // The message and its parts are inserted separately, so an interrupted attempt can leave a
+      // part-less row behind. Drop those unconditionally: they carry no context yet still reach the
+      // model, and counting one as a seed would disable the context for the thread forever.
+      const partialMessages = existingHiddenMessages.filter(
+        (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
+      );
+
+      if (isNonEmptyArray(partialMessages)) {
+        await this.messageRepository.delete(workspaceId, {
+          id: In(partialMessages.map((partialMessage) => partialMessage.id)),
+        });
+
+        // Each seed attempt creates its own turn, so dropped partial messages leave orphan turns.
+        const partialTurnIds = [
+          ...new Set(
+            partialMessages
+              .map((partialMessage) => partialMessage.turnId)
+              .filter(isDefined),
+          ),
+        ];
+
+        if (isNonEmptyArray(partialTurnIds)) {
+          await this.turnRepository.delete(workspaceId, {
+            id: In(partialTurnIds),
+          });
+        }
+      }
+
+      const isAlreadySeeded =
+        existingHiddenMessages.length > partialMessages.length;
+
+      if (isAlreadySeeded) {
+        return;
+      }
+
+      // The turn is created explicitly so a failed message insert (e.g. losing the race on the
+      // partial unique hidden-message index) can clean it up; deleting the turn cascades to the
+      // message rows, so a failed attempt leaves nothing behind.
+      const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+        threadId,
+        agentId: null,
       });
+      const seedTurnId = turnInsertResult.identifiers[0].id as string;
+
+      try {
+        // Sort before the real first message via an epoch processedAt (a plain column honored on
+        // insert); hidden messages are excluded from the user-facing "latest sent message" query.
+        await this.addMessage({
+          threadId,
+          workspaceId,
+          turnId: seedTurnId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: [
+              {
+                type: 'text' as const,
+                text: buildCompanyContextMessageText(companyEnrichment),
+              },
+            ],
+          },
+          isHidden: true,
+          processedAt: new Date(0),
+        });
+      } catch (error) {
+        await this.turnRepository.delete(workspaceId, { id: seedTurnId });
+        throw error;
+      }
     } catch (error) {
-      // Never fail the user's message because the context could not be attached; the next message
-      // cleans up whatever this attempt left behind and seeds again.
       this.logger.warn(
         `Failed to seed company context on thread ${threadId}: ${
           error instanceof Error ? error.message : String(error)

@@ -11,9 +11,15 @@ export class AddIsHiddenToAgentMessageFastInstanceCommand
     await queryRunner.query(
       'ALTER TABLE "core"."agentMessage" ADD COLUMN IF NOT EXISTS "isHidden" boolean NOT NULL DEFAULT false',
     );
+    await queryRunner.query(
+      'CREATE UNIQUE INDEX IF NOT EXISTS "IDX_AGENT_MESSAGE_THREAD_ID_IS_HIDDEN_UNIQUE" ON "core"."agentMessage" ("threadId") WHERE "isHidden" = true',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'DROP INDEX IF EXISTS "core"."IDX_AGENT_MESSAGE_THREAD_ID_IS_HIDDEN_UNIQUE"',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."agentMessage" DROP COLUMN IF EXISTS "isHidden"',
     );

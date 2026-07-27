@@ -27,6 +27,10 @@ export enum AgentMessageStatus {
 }
 
 @Entity({ name: 'agentMessage', schema: 'core' })
+@Index('IDX_AGENT_MESSAGE_THREAD_ID_IS_HIDDEN_UNIQUE', ['threadId'], {
+  unique: true,
+  where: '"isHidden" = true',
+})
 export class AgentMessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

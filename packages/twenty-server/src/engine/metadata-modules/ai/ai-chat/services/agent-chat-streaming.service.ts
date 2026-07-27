@@ -8,7 +8,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
@@ -26,7 +26,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import { COMPANY_CONTEXT_MESSAGE_IS_HIDDEN } from 'src/engine/metadata-modules/ai/ai-chat/constants/company-context-message-is-hidden.constant';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
@@ -257,7 +256,6 @@ export class AgentChatStreamingService {
           threadId,
           workspaceId: workspace.id,
           companyEnrichment: companyContext,
-          isHidden: COMPANY_CONTEXT_MESSAGE_IS_HIDDEN,
         });
       }
 
@@ -726,8 +724,12 @@ export class AgentChatStreamingService {
       includeHidden: true,
     });
 
+    // A hidden row without parts is an interrupted seed attempt: it carries no context and
+    // would otherwise reach the model as an empty user message.
     const filteredMessages = allMessages.filter(
-      (message) => message.status !== AgentMessageStatus.QUEUED,
+      (message) =>
+        message.status !== AgentMessageStatus.QUEUED &&
+        (!message.isHidden || isNonEmptyArray(message.parts)),
     );
 
     return Promise.all(
@@ -752,7 +754,11 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        metadata: { createdAt: message.createdAt.toISOString() },
+        // The hidden context seed gets no createdAt so injectMessageTimestamps skips it: its
+        // insert time is meaningless and later than the first real message it sorts before.
+        ...(message.isHidden
+          ? {}
+          : { metadata: { createdAt: message.createdAt.toISOString() } }),
       })),
     );
   }
