@@ -5,6 +5,7 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   type WorkflowFormAction,
   type WorkflowTriggerType,
@@ -14,7 +15,6 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -57,6 +57,7 @@ const StyledFormFieldContainer = styled.div`
     'grip input delete'
     '. settings .';
   grid-template-columns: 24px 1fr 24px;
+  margin-bottom: ${themeCssVariables.spacing[4]};
   position: relative;
 `;
 
@@ -191,7 +192,7 @@ export const WorkflowEditActionFormBuilder = ({
     saveAction(updatedFormData);
   };
 
-  const handleDragEnd: OnDragEndResponder = ({ source, destination }) => {
+  const handleDragEnd = ({ source, destination }: DraggableListDropResult) => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -279,11 +280,7 @@ export const WorkflowEditActionFormBuilder = ({
                   draggableId={field.id}
                   index={index}
                   isDragDisabled={actionOptions.readonly}
-                  isInsideScrollableContainer
                   disableDraggingBackground
-                  draggableComponentStyles={{
-                    marginBottom: themeCssVariables.spacing[4],
-                  }}
                   itemComponent={({ isDragging }) => {
                     const showButtons =
                       !actionOptions.readonly &&

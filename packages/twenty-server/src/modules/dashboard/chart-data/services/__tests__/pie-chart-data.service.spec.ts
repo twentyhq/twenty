@@ -4,14 +4,17 @@ import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
 
 describe('PieChartDataService', () => {
   let service: PieChartDataService;
   let mockExecuteGroupByQuery: jest.Mock;
+  let mockResolveRelationLabels: jest.Mock;
   let mockGetOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
 
   const workspaceId = 'test-workspace-id';
@@ -46,6 +49,13 @@ describe('PieChartDataService', () => {
     type: FieldMetadataType.UUID,
   };
 
+  const mockRelationField = {
+    id: 'relation-field-id',
+    name: 'assignedAgent',
+    label: 'Assigned Agent',
+    type: FieldMetadataType.RELATION,
+  };
+
   const mockObjectMetadata = {
     id: objectMetadataId,
     nameSingular: 'company',
@@ -54,6 +64,7 @@ describe('PieChartDataService', () => {
 
   beforeEach(async () => {
     mockExecuteGroupByQuery = jest.fn();
+    mockResolveRelationLabels = jest.fn().mockResolvedValue({});
     mockGetOrRecomputeManyOrAllFlatEntityMaps = jest.fn().mockResolvedValue({
       flatObjectMetadataMaps: {
         byUniversalIdentifier: {
@@ -81,11 +92,16 @@ describe('PieChartDataService', () => {
             ...mockAggregateField,
             universalIdentifier: 'aggregate-field-universal-id',
           },
+          'relation-field-universal-id': {
+            ...mockRelationField,
+            universalIdentifier: 'relation-field-universal-id',
+          },
         },
         universalIdentifierById: {
           [mockGroupByField.id]: 'group-by-field-universal-id',
           [mockSelectField.id]: 'select-field-universal-id',
           [mockAggregateField.id]: 'aggregate-field-universal-id',
+          [mockRelationField.id]: 'relation-field-universal-id',
         },
         universalIdentifiersByApplicationId: {},
       },
@@ -105,6 +121,12 @@ describe('PieChartDataService', () => {
           provide: ChartDataQueryService,
           useValue: {
             executeGroupByQuery: mockExecuteGroupByQuery,
+          },
+        },
+        {
+          provide: ChartRelationLabelService,
+          useValue: {
+            resolveRelationLabels: mockResolveRelationLabels,
           },
         },
       ],
@@ -189,6 +211,64 @@ describe('PieChartDataService', () => {
       expect(result.data[0].key).toBe('Active');
     });
 
+    it('should resolve relation labels from the buckets surviving hideEmptyCategory', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: [null], aggregateValue: 2 },
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 0 },
+        { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+      ]);
+
+      await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          hideEmptyCategory: true,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(mockResolveRelationLabels).toHaveBeenCalledWith(
+        expect.objectContaining({
+          rawResults: [
+            { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+          ],
+        }),
+      );
+    });
+
+    it('should drop unresolved relation buckets while keeping resolved and Not Set slices', async () => {
+      mockExecuteGroupByQuery.mockResolvedValue([
+        { groupByDimensionValues: [null], aggregateValue: 2 },
+        { groupByDimensionValues: ['agent-id-1'], aggregateValue: 8 },
+        { groupByDimensionValues: ['agent-id-2'], aggregateValue: 5 },
+      ]);
+      mockResolveRelationLabels.mockResolvedValue({
+        primary: {
+          labelByRecordId: new Map([['agent-id-1', 'Alice']]),
+          unresolvedRecordIds: new Set(['agent-id-2']),
+        },
+      });
+
+      const result = await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          groupByFieldMetadataId: mockRelationField.id,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      const keys = result.data.map((item) => item.key);
+
+      expect(keys).toContain('Alice');
+      expect(keys).toContain('Not Set');
+      expect(keys).not.toContain('Unknown');
+      expect(keys).not.toContain('agent-id-2');
+      expect(result.data).toHaveLength(2);
+    });
+
     it('should flag too many groups and limit slices', async () => {
       const manyResults = Array.from(
         { length: PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + 5 },
@@ -209,6 +289,39 @@ describe('PieChartDataService', () => {
 
       expect(result.hasTooManyGroups).toBe(true);
       expect(result.data).toHaveLength(PIE_CHART_MAXIMUM_NUMBER_OF_SLICES);
+    });
+
+    it('should keep the highest-value slices when ordering by value with too many groups', async () => {
+      const extraSlices = 5;
+      const manyResults = Array.from(
+        { length: PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + extraSlices },
+        (_, index) => ({
+          groupByDimensionValues: [`Group ${index}`],
+          aggregateValue: index + 1,
+        }),
+      );
+
+      mockExecuteGroupByQuery.mockResolvedValue(manyResults);
+
+      const result = await service.getPieChartData({
+        workspaceId,
+        objectMetadataId,
+        configuration: {
+          ...baseConfiguration,
+          orderBy: GraphOrderBy.VALUE_DESC,
+        } as any,
+        authContext: mockAuthContext,
+      });
+
+      expect(result.data).toHaveLength(PIE_CHART_MAXIMUM_NUMBER_OF_SLICES);
+      expect(result.data[0].value).toBe(
+        PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + extraSlices,
+      );
+      const smallestSurvivingValue = Math.min(
+        ...result.data.map((slice) => slice.value),
+      );
+
+      expect(smallestSurvivingValue).toBe(extraSlices + 1);
     });
 
     it('should respect displayLegend configuration', async () => {

@@ -37,6 +37,7 @@ Notlar:
 * Kurulum öncesi, kurulum sonrası ve kaldırma fonksiyonları manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 * Geriye dönük uyumluluk için `defaultRoleUniversalIdentifier` değerini açıkça geçmek hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
 * `serverVariables`, API anahtarları gibi örnek düzeyindeki yapılandırmalar ve gizli bilgilerdir. `applicationVariables`'ın aksine, manifest içinde herhangi bir değer belirtmezler — çalışma alanı operatörü bunları uygulamanın ayarlarından doldurur ve yalnızca ayarlandıklarında mantık fonksiyonlarına enjekte edilirler.
+* Uygulamanın **Ayarlar** sekmesinde (varsayılan değişken yapılandırma bölümünün yerine) özel bir yapılandırma arayüzü oluşturmak için, kendi dosyasında [`defineSettingsFrontComponent()`](/l/tr/developers/extend/apps/layout/front-components#custom-settings-component) ile bir ön bileşen tanımlayın. Her uygulama için yalnızca bir tane olabilir. Sistem tarafından yönetilen bölümler (otomatik yükseltme, App URL, bağlantılar) her zaman görünür durumda kalır.
 
 ## Değişken türleri
 

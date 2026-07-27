@@ -1,18 +1,17 @@
 import { isFunction, isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type SetEditableFocused } from '@/host/contexts/FrontComponentInputFocusContext';
-import { syncValuePreservingCaret } from '@/host/utils/syncValuePreservingCaret';
+import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 
 type CreateCaretPreservingElementParams = {
   htmlTag: 'input' | 'textarea';
   reactBindableProps: Record<string, unknown>;
-  hostEnforcedProps: Record<string, unknown> | undefined;
+  hostEnforcedProps: Record<string, unknown>;
   setEditableFocused: SetEditableFocused | null;
-  reactUnsupportedEventListenerRef?: (node: Element | null) => void;
+  caretPreservingElementRef: ElementRefCallback;
 };
 
 export const createCaretPreservingElement = ({
@@ -20,7 +19,7 @@ export const createCaretPreservingElement = ({
   reactBindableProps,
   hostEnforcedProps,
   setEditableFocused,
-  reactUnsupportedEventListenerRef,
+  caretPreservingElementRef,
 }: CreateCaretPreservingElementParams) => {
   const {
     value,
@@ -55,14 +54,6 @@ export const createCaretPreservingElement = ({
     defaultValue: initialValue,
     onFocus: handleFocus,
     onBlur: handleBlur,
-    ref: (node: CaretPreservingElement | null) => {
-      reactUnsupportedEventListenerRef?.(node);
-      if (!isDefined(node)) {
-        return;
-      }
-      if (isNonEmptyString(value)) {
-        syncValuePreservingCaret(node, value);
-      }
-    },
+    ref: caretPreservingElementRef,
   });
 };

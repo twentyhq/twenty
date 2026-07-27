@@ -68,6 +68,9 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: false })
   handle: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  displayName: string | null;
+
   @Column({
     type: 'enum',
     enum: MessageChannelType,

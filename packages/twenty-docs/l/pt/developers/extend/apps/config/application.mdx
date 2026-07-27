@@ -37,6 +37,7 @@ Notas:
 * As funções de pré-instalação, pós-instalação e desinstalação são detectadas automaticamente durante a construção do manifesto — você não precisa referenciá-las em `defineApplication()`.
 * Passar `defaultRoleUniversalIdentifier` explicitamente ainda é compatível para retrocompatibilidade, mas foi preterido em favor de `defineApplicationRole()`.
 * `serverVariables` são configurações e segredos com escopo de instância (por exemplo, chaves de API). Ao contrário de `applicationVariables`, eles não declaram nenhum valor no manifesto — o operador do workspace os preenche nas configurações do app, e eles são injetados nas funções de lógica somente depois de definidos.
+* Para renderizar uma interface de configuração personalizada na guia **Configurações** do app (no lugar da seção padrão de configuração de variáveis), declare um componente de front-end com [`defineSettingsFrontComponent()`](/l/pt/developers/extend/apps/layout/front-components#custom-settings-component) em seu próprio arquivo. Só é permitido um por app. Seções gerenciadas pelo sistema (atualização automática, URL do app, conexões) permanecem sempre visíveis.
 
 ## Tipos de variáveis
 

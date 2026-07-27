@@ -1,14 +1,13 @@
-import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
+import { FIELDS_CONFIGURATION_FIELD_DND_TYPE } from '@/page-layout/widgets/fields/constants/FieldsConfigurationFieldDndType';
+import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
+import { type FieldsConfigurationFieldListEndDropData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldListEndDropData';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -16,6 +15,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 
 import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -25,7 +27,7 @@ const StyledFieldsDroppable = styled.div`
   flex-direction: column;
 `;
 
-const StyledEmptyGroupDropZone = styled.div`
+const StyledEmptyGroupDropZone = styled(DragDropItemEndDropZone)`
   align-items: center;
   border: 1px dashed ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -35,6 +37,12 @@ const StyledEmptyGroupDropZone = styled.div`
   justify-content: center;
   margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   min-height: ${themeCssVariables.spacing[10]};
+`;
+
+// Kept tall enough that appending after the group's last field stays an easy
+// target.
+const StyledFieldsEndDropZone = styled(DragDropItemEndDropZone)`
+  min-height: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
@@ -71,9 +79,7 @@ const StyledDropdownContainer = styled.div`
 
 type FieldsConfigurationGroupEditorProps = {
   group: FieldsWidgetGroup;
-  index: number;
   objectMetadataItem: EnrichedObjectMetadataItem;
-  draggableProvided: DraggableProvided;
   isDragging: boolean;
   onAddGroup?: () => void;
   onToggleFieldVisibility: (fieldMetadataId: string) => void;
@@ -86,7 +92,6 @@ type FieldsConfigurationGroupEditorProps = {
 
 export const FieldsConfigurationGroupEditor = ({
   group,
-  draggableProvided,
   isDragging,
   onAddGroup,
   onToggleFieldVisibility,
@@ -127,45 +132,48 @@ export const FieldsConfigurationGroupEditor = ({
     onRenameGroup({ groupId, newName });
   };
 
+  const fieldsEndDropData: FieldsConfigurationFieldListEndDropData = {
+    type: 'field-list-end',
+    groupId: group.id,
+  };
+
   const sortedFields = [...group.fields].sort(
     (a, b) => a.position - b.position,
   );
 
   return (
-    <StyledGroupContainer
-      ref={draggableProvided.innerRef}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...getCssCompatibleDraggableProps(draggableProvided.draggableProps)}
-      isDragging={isDragging}
-    >
-      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-      <StyledGroupHeaderRow {...draggableProvided.dragHandleProps}>
-        <Dropdown
-          dropdownId={renameDropdownId}
-          clickableComponentWidth="100%"
-          clickableComponent={
-            <StyledMenuItemDraggableWrapper>
-              <FieldsConfigurationGroupDraggableHeader text={group.name} />
-            </StyledMenuItemDraggableWrapper>
-          }
-          disableClickForClickableComponent
-          dropdownPlacement="bottom-start"
-          dropdownOffset={{ x: 32 }}
-          onClose={handleCancelRename}
-          dropdownComponents={
-            <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
-              <FieldsConfigurationGroupRenameInput
-                dropdownId={renameDropdownId}
-                renameValue={renamingGroupValue}
-                onRenameValueChange={onRenamingGroupValueChange}
-                onSave={(newName) =>
-                  handleRenameGroup({ groupId: group.id, newName })
-                }
-                onCancel={handleCancelRename}
-              />
-            </DropdownContent>
-          }
-        />
+    <StyledGroupContainer isDragging={isDragging}>
+      <StyledGroupHeaderRow>
+        <DragDropItemSortableHandle fill>
+          <Dropdown
+            dropdownId={renameDropdownId}
+            clickableComponentWidth="100%"
+            clickableComponent={
+              <StyledMenuItemDraggableWrapper>
+                <FieldsConfigurationGroupDraggableHeader text={group.name} />
+              </StyledMenuItemDraggableWrapper>
+            }
+            disableClickForClickableComponent
+            dropdownPlacement="bottom-start"
+            dropdownOffset={{ x: 32 }}
+            onClose={handleCancelRename}
+            dropdownComponents={
+              <DropdownContent
+                widthInPixels={GenericDropdownContentWidth.Large}
+              >
+                <FieldsConfigurationGroupRenameInput
+                  dropdownId={renameDropdownId}
+                  renameValue={renamingGroupValue}
+                  onRenameValueChange={onRenamingGroupValueChange}
+                  onSave={(newName) =>
+                    handleRenameGroup({ groupId: group.id, newName })
+                  }
+                  onCancel={handleCancelRename}
+                />
+              </DropdownContent>
+            }
+          />
+        </DragDropItemSortableHandle>
         <StyledDropdownContainer>
           <FieldsConfigurationGroupDropdown
             groupId={group.id}
@@ -176,45 +184,59 @@ export const FieldsConfigurationGroupEditor = ({
         </StyledDropdownContainer>
       </StyledGroupHeaderRow>
 
-      <Droppable droppableId={`group-${group.id}`} type="FIELD">
-        {(droppableProvided) => (
-          <StyledFieldsDroppable
-            ref={droppableProvided.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...droppableProvided.droppableProps}
+      <StyledFieldsDroppable>
+        {sortedFields.length === 0 ? (
+          <StyledEmptyGroupDropZone
+            id={`fields-configuration-group-${group.id}-end`}
+            accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+            data={fieldsEndDropData}
           >
-            {sortedFields.length === 0 && (
-              <StyledEmptyGroupDropZone>
-                {t`Drop fields here`}
-              </StyledEmptyGroupDropZone>
-            )}
+            {t`Drop fields here`}
+          </StyledEmptyGroupDropZone>
+        ) : (
+          <>
             {sortedFields.map((field, fieldIndex) => {
+              const fieldDragData: FieldsConfigurationFieldDragData = {
+                type: 'field',
+                groupId: group.id,
+                index: fieldIndex,
+              };
+
               return (
-                <DraggableItem
+                <DragDropItemSortableCell
                   key={field.fieldMetadataItem.id}
-                  draggableId={`field-${field.fieldMetadataItem.id}`}
+                  id={field.fieldMetadataItem.id}
                   index={fieldIndex}
-                  isInsideScrollableContainer
-                  itemComponent={
-                    <FieldsConfigurationFieldEditor
-                      field={{
-                        fieldMetadataId: field.fieldMetadataItem.id,
-                        position: field.position,
-                        isVisible: field.isVisible,
-                      }}
-                      fieldMetadata={field.fieldMetadataItem}
-                      onToggleVisibility={() => {
-                        onToggleFieldVisibility(field.fieldMetadataItem.id);
-                      }}
-                    />
-                  }
-                />
+                  group={group.id}
+                  data={fieldDragData}
+                  type={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+                  accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+                  hasTransition={false}
+                  highlightWhileDragging
+                  dropLine="horizontal"
+                >
+                  <FieldsConfigurationFieldEditor
+                    field={{
+                      fieldMetadataId: field.fieldMetadataItem.id,
+                      position: field.position,
+                      isVisible: field.isVisible,
+                    }}
+                    fieldMetadata={field.fieldMetadataItem}
+                    onToggleVisibility={() => {
+                      onToggleFieldVisibility(field.fieldMetadataItem.id);
+                    }}
+                  />
+                </DragDropItemSortableCell>
               );
             })}
-            {droppableProvided.placeholder}
-          </StyledFieldsDroppable>
+            <StyledFieldsEndDropZone
+              id={`fields-configuration-group-${group.id}-end`}
+              accept={FIELDS_CONFIGURATION_FIELD_DND_TYPE}
+              data={fieldsEndDropData}
+            />
+          </>
         )}
-      </Droppable>
+      </StyledFieldsDroppable>
     </StyledGroupContainer>
   );
 };
