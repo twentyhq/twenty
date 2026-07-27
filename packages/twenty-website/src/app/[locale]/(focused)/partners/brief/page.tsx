@@ -16,14 +16,8 @@ export default async function ClientBriefPage({
   params: Promise<LocaleRouteParams>;
   searchParams: Promise<{ partner?: string | string[] }>;
 }) {
-  const [, resolvedSearchParams] = await Promise.all([
-    getRouteI18n(params),
-    searchParams,
-  ]);
+  await getRouteI18n(params);
+  const { partner } = await searchParams;
 
-  return (
-    <ClientBriefPageContent
-      partnerSlug={normalizePartnerSlug(resolvedSearchParams.partner)}
-    />
-  );
+  return <ClientBriefPageContent partnerSlug={normalizePartnerSlug(partner)} />;
 }
