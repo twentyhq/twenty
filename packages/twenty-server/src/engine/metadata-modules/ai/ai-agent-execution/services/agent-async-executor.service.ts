@@ -35,9 +35,9 @@ import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
-import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { AgentToolPreloadService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-tool-preload.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -129,6 +129,7 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
+    stepId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
   }: {
     agent: AgentEntity | null;
@@ -137,6 +138,7 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
+    stepId?: string;
     operationType?: UsageOperationType;
   }): Promise<AgentExecutionResult> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
@@ -167,13 +169,18 @@ export class AgentAsyncExecutorService {
       let systemPrompt = `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${
         agent ? agent.prompt : ''
       }`;
-      // Registry tool names available this run, used after execution to record
-      // which tools were actually called for the next run's preload set.
+
       let recordableToolNames: Set<string> | null = null;
+
+      const promptCacheKey =
+        isDefined(agent) && isDefined(stepId)
+          ? `${agent.id}:${stepId}`
+          : agent?.id;
+
       let providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
-        promptCacheKey: agent?.id,
+        promptCacheKey,
       });
 
       if (agent) {
@@ -195,14 +202,6 @@ export class AgentAsyncExecutorService {
 
         let registryTools: ToolSet = {};
 
-        // Workflow agent registry tools are scoped exclusively by the agent
-        // permission-tab role. No role means no registry tools.
-        //
-        // Tools use progressive disclosure: the model sees a lightweight
-        // catalog (names + descriptions) in the system prompt and pulls a
-        // tool's input schema on demand via learn_tools/execute_tool. This
-        // avoids eagerly serializing every CRUD schema for every object the
-        // role can access, which otherwise dominates the prompt token cost.
         if (isDefined(agentRoleId)) {
           const userId =
             isDefined(authContext) && isUserAuthContext(authContext)
@@ -237,7 +236,7 @@ export class AgentAsyncExecutorService {
           };
 
           const excludedToolNames = new Set<string>(
-            OUTPUT_NAVIGATION_TOOL_NAMES,
+            WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
           );
 
           const toolCatalog = (
@@ -252,11 +251,12 @@ export class AgentAsyncExecutorService {
 
           recordableToolNames = catalogToolNames;
 
-          // Preload the schemas of tools this agent used in recent runs so the
-          // common path skips the learn_tools round-trip. Names no longer in the
-          // catalog (permissions or metadata changed) are dropped.
-          const historicalToolNames =
-            await this.agentToolPreloadService.getPreloadToolNames(agent);
+          const historicalToolNames = isDefined(stepId)
+            ? await this.agentToolPreloadService.getPreloadToolNames(
+                agent,
+                stepId,
+              )
+            : [];
           const preloadToolNames = historicalToolNames.filter((name) =>
             catalogToolNames.has(name),
           );
@@ -266,7 +266,7 @@ export class AgentAsyncExecutorService {
               ? await this.toolRegistry.getToolsByName(
                   preloadToolNames,
                   toolContext,
-                  { compactOutput: true, spillLargeOutput: true },
+                  { compactOutput: true },
                 )
               : {};
 
@@ -283,7 +283,6 @@ export class AgentAsyncExecutorService {
               {
                 excludeTools: excludedToolNames,
                 compactOutput: true,
-                spillLargeOutput: true,
               },
             ),
           };
@@ -305,7 +304,7 @@ export class AgentAsyncExecutorService {
             this.aiModelConfigService.getReasoningProviderOptions(
               registeredModel,
             ),
-          promptCacheKey: agent?.id,
+          promptCacheKey,
         });
       }
 
@@ -410,7 +409,7 @@ export class AgentAsyncExecutorService {
       );
       executionSteps = textResponse.steps;
 
-      if (agent && isDefined(recordableToolNames)) {
+      if (agent && isDefined(recordableToolNames) && isDefined(stepId)) {
         try {
           await this.agentToolPreloadService.recordToolUsage(
             agent,
@@ -418,6 +417,7 @@ export class AgentAsyncExecutorService {
               textResponse.steps,
               recordableToolNames,
             ),
+            stepId,
           );
         } catch (error) {
           this.logger.warn(
@@ -448,7 +448,7 @@ export class AgentAsyncExecutorService {
           providerOptions: getCallLevelProviderOptions({
             sdkPackage: registeredModel.sdkPackage,
             providerOptions: undefined,
-            promptCacheKey: agent?.id,
+            promptCacheKey,
           }),
           experimental_telemetry: AI_TELEMETRY_CONFIG,
           onStepFinish: async (step) => {

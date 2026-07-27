@@ -90,6 +90,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       authContext: executionContext.authContext,
       workspaceId,
       userWorkspaceId,
+      stepId: currentStepId,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     });
 

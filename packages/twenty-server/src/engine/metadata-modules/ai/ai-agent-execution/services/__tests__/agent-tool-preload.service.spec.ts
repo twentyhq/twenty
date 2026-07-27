@@ -5,7 +5,8 @@ const AGENT = {
   id: 'agent-1',
   updatedAt: new Date('2026-01-01T00:00:00.000Z'),
 };
-const EXPECTED_KEY = `agent-1:${AGENT.updatedAt.getTime()}`;
+const STEP_ID = 'step-1';
+const EXPECTED_KEY = `agent-1:${AGENT.updatedAt.getTime()}:${STEP_ID}`;
 const TTL_MS = 1000 * 60 * 5;
 
 describe('AgentToolPreloadService', () => {
@@ -23,19 +24,20 @@ describe('AgentToolPreloadService', () => {
     it('returns an empty array and does not slide when nothing is cached', async () => {
       cacheStorageService.get.mockResolvedValue(undefined);
 
-      const result = await service.getPreloadToolNames(AGENT);
+      const result = await service.getPreloadToolNames(AGENT, STEP_ID);
 
       expect(result).toEqual([]);
       expect(cacheStorageService.get).toHaveBeenCalledWith(EXPECTED_KEY);
       expect(cacheStorageService.set).not.toHaveBeenCalled();
     });
 
-    it('returns the cached set and slides the TTL, keyed by updatedAt', async () => {
+    it('returns the cached set and slides the TTL, keyed by updatedAt and stepId', async () => {
       cacheStorageService.get.mockResolvedValue(['find_many_customers']);
 
-      const result = await service.getPreloadToolNames(AGENT);
+      const result = await service.getPreloadToolNames(AGENT, STEP_ID);
 
       expect(result).toEqual(['find_many_customers']);
+      expect(cacheStorageService.get).toHaveBeenCalledWith(EXPECTED_KEY);
       expect(cacheStorageService.set).toHaveBeenCalledWith(
         EXPECTED_KEY,
         ['find_many_customers'],
@@ -46,7 +48,7 @@ describe('AgentToolPreloadService', () => {
 
   describe('recordToolUsage', () => {
     it('does nothing when there are no usable tool names', async () => {
-      await service.recordToolUsage(AGENT, ['', '']);
+      await service.recordToolUsage(AGENT, ['', ''], STEP_ID);
 
       expect(cacheStorageService.get).not.toHaveBeenCalled();
       expect(cacheStorageService.set).not.toHaveBeenCalled();
@@ -58,10 +60,11 @@ describe('AgentToolPreloadService', () => {
         'find_many_customers',
       ]);
 
-      await service.recordToolUsage(AGENT, [
-        'create_many_customers',
-        'find_many_customers',
-      ]);
+      await service.recordToolUsage(
+        AGENT,
+        ['create_many_customers', 'find_many_customers'],
+        STEP_ID,
+      );
 
       expect(cacheStorageService.set).toHaveBeenLastCalledWith(
         EXPECTED_KEY,
@@ -82,7 +85,7 @@ describe('AgentToolPreloadService', () => {
         (_, index) => `tool_${String(index).padStart(2, '0')}`,
       );
 
-      await service.recordToolUsage(AGENT, manyToolNames);
+      await service.recordToolUsage(AGENT, manyToolNames, STEP_ID);
 
       const setCalls = cacheStorageService.set.mock.calls;
       const storedToolNames = setCalls[setCalls.length - 1]?.[1];

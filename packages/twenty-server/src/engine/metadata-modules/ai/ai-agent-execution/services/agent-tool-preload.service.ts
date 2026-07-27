@@ -15,9 +15,6 @@ const AGENT_TOOL_PRELOAD_TTL_MS = 1000 * 60 * 5;
 
 type AgentToolPreloadKey = Pick<AgentEntity, 'id' | 'updatedAt'>;
 
-// Remembers which registry tools a workflow agent actually used, so future runs
-// can preload their schemas directly instead of paying a learn_tools round-trip
-// for the tools the agent relies on every time.
 @Injectable()
 export class AgentToolPreloadService {
   constructor(
@@ -25,8 +22,11 @@ export class AgentToolPreloadService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  async getPreloadToolNames(agent: AgentToolPreloadKey): Promise<string[]> {
-    const cacheKey = this.buildCacheKey(agent);
+  async getPreloadToolNames(
+    agent: AgentToolPreloadKey,
+    stepId: string,
+  ): Promise<string[]> {
+    const cacheKey = this.buildCacheKey(agent, stepId);
     const storedToolNames =
       await this.cacheStorageService.get<string[]>(cacheKey);
 
@@ -48,6 +48,7 @@ export class AgentToolPreloadService {
   async recordToolUsage(
     agent: AgentToolPreloadKey,
     usedToolNames: string[],
+    stepId: string,
   ): Promise<void> {
     const normalizedToolNames = usedToolNames.filter(isNonEmptyString);
 
@@ -55,7 +56,7 @@ export class AgentToolPreloadService {
       return;
     }
 
-    const existingToolNames = await this.getPreloadToolNames(agent);
+    const existingToolNames = await this.getPreloadToolNames(agent, stepId);
 
     // Sorted so the preloaded set serializes to stable bytes across runs, which
     // keeps the model's prompt cache warm.
@@ -66,15 +67,13 @@ export class AgentToolPreloadService {
       .slice(0, MAX_PRELOAD_TOOL_NAMES);
 
     await this.cacheStorageService.set(
-      this.buildCacheKey(agent),
+      this.buildCacheKey(agent, stepId),
       mergedToolNames,
       AGENT_TOOL_PRELOAD_TTL_MS,
     );
   }
 
-  // Keyed by updatedAt so editing the agent (prompt, permissions, config)
-  // abandons the old learned set and relearns from scratch.
-  private buildCacheKey(agent: AgentToolPreloadKey): string {
-    return `${agent.id}:${new Date(agent.updatedAt).getTime()}`;
+  private buildCacheKey(agent: AgentToolPreloadKey, stepId: string): string {
+    return `${agent.id}:${new Date(agent.updatedAt).getTime()}:${stepId}`;
   }
 }
