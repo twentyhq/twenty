@@ -65,12 +65,9 @@ export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
         await this.messageQueueService.add<InstallPrebuiltLogicFunctionBundlesJobData>(
           InstallPrebuiltLogicFunctionBundlesJob.name,
           { workspaceId, logicFunctionIds },
-          { retryLimit: 3 },
         );
         enqueuedWorkspaceCount++;
       } catch (error) {
-        // The job only warms bundles ahead of first execution, so a queue
-        // outage must not fail the upgrade: the executor installs on-demand.
         this.logger.warn(
           `Failed to enqueue prebuilt bundle installs for workspace ${workspaceId}: ${
             error instanceof Error ? error.message : String(error)

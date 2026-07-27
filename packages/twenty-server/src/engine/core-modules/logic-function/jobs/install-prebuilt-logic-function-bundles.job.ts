@@ -35,8 +35,6 @@ export class InstallPrebuiltLogicFunctionBundlesJob {
     workspaceId,
     logicFunctionIds,
   }: InstallPrebuiltLogicFunctionBundlesJobData): Promise<void> {
-    // The mode flip was a raw UPDATE, so cached maps still carry LIVE and
-    // executions would keep using live code until an unrelated invalidation.
     await this.workspaceCacheService.flush(workspaceId, [
       'flatLogicFunctionMaps',
     ]);
@@ -79,8 +77,6 @@ export class InstallPrebuiltLogicFunctionBundlesJob {
                 flatApplication.universalIdentifier,
             });
           } catch (error) {
-            // Warming only: the executor installs the bundle on-demand at first
-            // execution, so one failed install must not fail the whole job.
             this.logger.warn(
               `Failed to install prebuilt bundle for function '${logicFunctionId}' (workspace=${workspaceId}): ${
                 error instanceof Error ? error.message : String(error)
