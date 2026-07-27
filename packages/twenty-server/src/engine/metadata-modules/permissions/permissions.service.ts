@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
@@ -326,32 +327,6 @@ export class PermissionsService {
     return { roles, useIntersection, flatRolePermissionFlagMaps };
   }
 
-  private flatRoleHasPermissionFlag(
-    role: FlatRole,
-    flag: PermissionFlagType,
-    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps,
-  ): boolean {
-    const permissionFlagUniversalIdentifier = SystemPermissionFlag[flag];
-
-    return role.rolePermissionFlagIds.some((rolePermissionFlagId) => {
-      const rolePermissionFlagUniversalIdentifier =
-        flatRolePermissionFlagMaps.universalIdentifierById[
-          rolePermissionFlagId
-        ];
-
-      if (!isDefined(rolePermissionFlagUniversalIdentifier)) {
-        return false;
-      }
-
-      return (
-        flatRolePermissionFlagMaps.byUniversalIdentifier[
-          rolePermissionFlagUniversalIdentifier
-        ]?.permissionFlagUniversalIdentifier ===
-        permissionFlagUniversalIdentifier
-      );
-    });
-  }
-
   private checkFlatRolePermissions(
     role: FlatRole,
     setting: PermissionFlagType,
@@ -363,7 +338,11 @@ export class PermissionsService {
 
     return (
       hasBasePermission === true ||
-      this.flatRoleHasPermissionFlag(role, setting, flatRolePermissionFlagMaps)
+      flatRoleHasPermissionFlag({
+        flatRole: role,
+        permissionFlag: setting,
+        flatRolePermissionFlagMaps,
+      })
     );
   }
 
@@ -420,11 +399,11 @@ export class PermissionsService {
           return true;
         }
 
-        return this.flatRoleHasPermissionFlag(
-          role,
-          flag,
+        return flatRoleHasPermissionFlag({
+          flatRole: role,
+          permissionFlag: flag,
           flatRolePermissionFlagMaps,
-        );
+        });
       };
 
       return useIntersection
