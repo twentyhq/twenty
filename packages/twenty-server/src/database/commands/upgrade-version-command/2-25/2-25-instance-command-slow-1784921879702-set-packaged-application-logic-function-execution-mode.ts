@@ -55,19 +55,32 @@ export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
       logicFunctionIdsByWorkspaceId.set(workspaceId, bucket);
     }
 
+    let enqueuedWorkspaceCount = 0;
+
     for (const [
       workspaceId,
       logicFunctionIds,
     ] of logicFunctionIdsByWorkspaceId) {
-      await this.messageQueueService.add<InstallPrebuiltLogicFunctionBundlesJobData>(
-        InstallPrebuiltLogicFunctionBundlesJob.name,
-        { workspaceId, logicFunctionIds },
-        { retryLimit: 3 },
-      );
+      try {
+        await this.messageQueueService.add<InstallPrebuiltLogicFunctionBundlesJobData>(
+          InstallPrebuiltLogicFunctionBundlesJob.name,
+          { workspaceId, logicFunctionIds },
+          { retryLimit: 3 },
+        );
+        enqueuedWorkspaceCount++;
+      } catch (error) {
+        // The job only warms bundles ahead of first execution, so a queue
+        // outage must not fail the upgrade: the executor installs on-demand.
+        this.logger.warn(
+          `Failed to enqueue prebuilt bundle installs for workspace ${workspaceId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
     }
 
     this.logger.log(
-      `Enqueued prebuilt bundle installs for ${logicFunctionIdsByWorkspaceId.size} workspace(s)`,
+      `Enqueued prebuilt bundle installs for ${enqueuedWorkspaceCount}/${logicFunctionIdsByWorkspaceId.size} workspace(s)`,
     );
   }
 

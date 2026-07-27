@@ -35,6 +35,12 @@ export class InstallPrebuiltLogicFunctionBundlesJob {
     workspaceId,
     logicFunctionIds,
   }: InstallPrebuiltLogicFunctionBundlesJobData): Promise<void> {
+    // The mode flip was a raw UPDATE, so cached maps still carry LIVE and
+    // executions would keep using live code until an unrelated invalidation.
+    await this.workspaceCacheService.flush(workspaceId, [
+      'flatLogicFunctionMaps',
+    ]);
+
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
