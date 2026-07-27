@@ -8,15 +8,17 @@ Componentele front-end sunt componente React care se afișează direct în inter
 
 ## Unde pot fi utilizate componentele front-end
 
-Componentele front-end pot fi afișate în două locații în cadrul Twenty:
+Componentele front-end pot fi afișate în trei locații în cadrul Twenty:
 
 * **Panou lateral** — Componentele front-end care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă front-end este declanșată din meniul de comenzi.
 * **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în [machetele de pagină](/l/ro/developers/extend/apps/layout/page-layouts). La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă front-end.
+* **Setările aplicației** — Definită cu [`defineSettingsFrontComponent()`](#custom-settings-component), componenta front-end este afișată ca o secțiune în interiorul filei **Settings** a aplicației, în locul interfeței UI implicite de configurare a variabilelor.
 
-O componentă frontală, de una singură, nu este accesibilă din interfața utilizatorului — trebuie să o *expui*. Cele două moduri de a face asta sunt:
+O componentă frontală, de una singură, nu este accesibilă din interfața utilizatorului — trebuie să o *expui*. Cele trei moduri de a face asta sunt:
 
 * **Asociază-l cu un [element de meniu de comenzi](/l/ro/developers/extend/apps/layout/command-menu-items)** — îl înregistrează în meniul de comenzi (Cmd+K) și, opțional, ca acțiune rapidă fixată.
 * **Încorporează-l ca widget într-o [machetă de pagină](/l/ro/developers/extend/apps/layout/page-layouts)** — îl plasează pe pagina de detalii a unei înregistrări sau pe un tablou de bord.
+* **Definește-o cu [`defineSettingsFrontComponent()`](#custom-settings-component)** — o afișează ca o secțiune în interiorul filei **Settings** a aplicației, în locul interfeței UI implicite de configurare a variabilelor.
 
 ## Exemplu de bază
 
@@ -76,6 +78,34 @@ Faceți clic pe el pentru a afișa componenta inline.
 ## Plasarea unei componente front-end pe o pagină
 
 Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. Vezi [Machete de pagină](/l/ro/developers/extend/apps/layout/page-layouts) pentru detalii.
+
+## Componentă de setări personalizată
+
+Pentru a înlocui interfața UI de configurare a variabilelor generată automat din fila **Settings** a aplicației cu propria ta componentă, definește-o cu `defineSettingsFrontComponent` în loc de `defineFrontComponent`. Acesta folosește aceleași [câmpuri de configurare](#configuration-fields) (cu excepția lui `isHeadless`, care nu este acceptat deoarece o componentă de setări afișează întotdeauna o interfață vizibilă) și, în plus, marchează componenta ca interfața de setări a aplicației.
+
+Componenta este afișată ca o secțiune în interiorul filei Settings, nu ca un înlocuitor pentru întreaga filă. Secțiunile gestionate de sistem ale Twenty — actualizare automată, URL aplicație și conexiuni — sunt întotdeauna afișate deasupra și nu pot fi suprascrise de aplicație.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Este permisă o singură componentă front de setări pentru fiecare aplicație; declararea a mai mult de una duce la eșecul build-ului. Atunci când este prezentă, fila **Settings** a aplicației afișează această componentă în locul interfeței implicite de configurare a variabilelor.
 
 ## Headless vs non-headless
 

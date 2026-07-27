@@ -218,9 +218,9 @@ export default defineFrontComponent({
 });
 ```
 
-Montarlo con un [diseño de página](/l/es/developers/extend/apps/layout/page-layouts). Un diseño
-`RECORD_PAGE` añade pestañas a la vista de registro de un objeto; un widget `FRONT_COMPONENT`
-en una pestaña `CANVAS` aloja el componente:
+Montarlo con un [diseño de página](/l/es/developers/extend/apps/layout/page-layouts). Un diseño de
+`RECORD_PAGE` agrega pestañas a la vista de registro de un objeto; una pestaña con un solo widget
+`FRONT_COMPONENT` aloja el componente a todo lo ancho:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -235,7 +235,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

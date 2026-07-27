@@ -1,10 +1,13 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
+import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
+import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
@@ -17,6 +20,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -70,7 +74,11 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
+  const { updateEmailGroupChannel, loading: updatingDisplayName } =
+    useUpdateEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
+
+  const [displayNameDraft, setDisplayNameDraft] = useState<string | null>(null);
 
   if (loading) {
     return <SettingsSkeletonLoader />;
@@ -118,6 +126,31 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       ? EmailingDomainStatus.FAILED
       : EmailingDomainStatus.PENDING;
 
+  const displayName = channel.displayName ?? '';
+
+  const handleDisplayNameSave = async () => {
+    if (!isDefined(displayNameDraft) || displayNameDraft === displayName) {
+      setDisplayNameDraft(null);
+
+      return;
+    }
+
+    const nextDisplayName = displayNameDraft.trim();
+
+    try {
+      await updateEmailGroupChannel(
+        channel.id,
+        isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
+      );
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to update sender name.`,
+      });
+    } finally {
+      setDisplayNameDraft(null);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
@@ -131,7 +164,19 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
 
   return (
     <SettingsPageLayout
-      title={sourceHandle}
+      title={
+        <SettingsEditableTitle
+          instanceId="email-group-display-name"
+          value={displayNameDraft ?? displayName}
+          placeholder={t`Sender name`}
+          disabled={updatingDisplayName}
+          onChange={setDisplayNameDraft}
+          onEnter={handleDisplayNameSave}
+          onTab={handleDisplayNameSave}
+          onClickOutside={handleDisplayNameSave}
+          onEscape={() => setDisplayNameDraft(null)}
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -141,6 +186,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
+        { children: sourceHandle },
       ]}
       actionButton={
         <Button

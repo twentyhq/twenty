@@ -6,11 +6,13 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -37,6 +39,7 @@ const PageLayoutSingleTabRendererInner = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const sortedActiveTabs = sortTabsByPosition(
     currentPageLayout.tabs.filter((tab) => tab.isActive),
@@ -52,6 +55,12 @@ const PageLayoutSingleTabRendererInner = () => {
     pageLayoutType: currentPageLayout.type,
   });
 
+  const presentation = getTabPresentation({
+    widgets: firstTabWithVisibleWidgets.widgets,
+    layoutMode,
+    isInEditMode: isPageLayoutInEditMode,
+  });
+
   return (
     <>
       <SummaryCard
@@ -64,6 +73,7 @@ const PageLayoutSingleTabRendererInner = () => {
         value={{
           tabId: firstTab.id,
           layoutMode,
+          presentation,
         }}
       >
         <PageLayoutWidgetDndProvider>

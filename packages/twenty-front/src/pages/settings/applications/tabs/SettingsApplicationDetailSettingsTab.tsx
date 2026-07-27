@@ -1,6 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
+import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
 import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
@@ -19,6 +21,7 @@ export const SettingsApplicationDetailSettingsTab = ({
     | 'autoUpgrade'
     | 'applicationRegistration'
     | 'logicFunctions'
+    | 'settingsCustomTabFrontComponentId'
   >;
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
@@ -33,6 +36,9 @@ export const SettingsApplicationDetailSettingsTab = ({
   const isUpgradable = isUpgradableApplicationSourceType(
     application?.applicationRegistration?.sourceType,
   );
+
+  const settingsFrontComponentId =
+    application?.settingsCustomTabFrontComponentId;
 
   return (
     <>
@@ -50,18 +56,24 @@ export const SettingsApplicationDetailSettingsTab = ({
       {application?.id && (
         <SettingsApplicationConnectionsSection applicationId={application.id} />
       )}
-      <SettingsApplicationDetailEnvironmentVariablesTable
-        envVariables={envVariables}
-        onUpdate={({ key, value }) =>
-          application?.id
-            ? updateOneApplicationVariable({
-                key,
-                value,
-                applicationId: application.id,
-              })
-            : null
-        }
-      />
+      {isDefined(settingsFrontComponentId) ? (
+        <SettingsApplicationCustomSettingsSection
+          frontComponentId={settingsFrontComponentId}
+        />
+      ) : (
+        <SettingsApplicationDetailEnvironmentVariablesTable
+          envVariables={envVariables}
+          onUpdate={({ key, value }) =>
+            application?.id
+              ? updateOneApplicationVariable({
+                  key,
+                  value,
+                  applicationId: application.id,
+                })
+              : null
+          }
+        />
+      )}
     </>
   );
 };

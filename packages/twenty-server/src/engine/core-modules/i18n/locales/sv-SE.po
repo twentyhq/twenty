@@ -1474,11 +1474,6 @@ msgstr "Standarddefinition för behörighetsflagga kan inte uppdateras"
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
 msgstr "Det går inte att uppdatera egenskaper för standardfärdighet (endast aktivering/inaktivering tillåts)"
 
-#. js-lingui-id: 4DKo3U
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
-msgid "Cannot update workflow version status manually"
-msgstr "Kan inte manuellt uppdatera arbetsflödesversionens status"
-
 #. js-lingui-id: RpYfjZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Cc"
@@ -5265,6 +5260,7 @@ msgid "Not authorized to access this OAuth provider."
 msgstr "Behörighet saknas för åtkomst till den här OAuth-leverantören."
 
 #. js-lingui-id: NpVtef
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
@@ -8018,6 +8014,11 @@ msgstr "Denna funktion är inte aktiverad."
 msgid "This field cannot be modified."
 msgstr "Detta fält kan inte ändras."
 
+#. js-lingui-id: dxfM0y
+#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+msgid "This field cannot be updated directly on a workflow version"
+msgstr ""
+
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field name is not available."
@@ -8461,6 +8462,12 @@ msgstr "Unik index kan inte skapas för fältet {fieldName} av typen {fieldType}
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "Universal identifier is reserved for system-managed metadata"
 msgstr "Universell identifierare är reserverad för systemhanterad metadata"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
+#: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

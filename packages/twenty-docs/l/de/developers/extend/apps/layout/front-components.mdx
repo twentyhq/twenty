@@ -8,15 +8,17 @@ Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI ger
 
 ## Wo Front-Komponenten verwendet werden können
 
-Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
+Front-Komponenten können an drei Stellen innerhalb von Twenty gerendert werden:
 
 * **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
 * **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts) eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
+* **App settings** — Definiert mit [`defineSettingsFrontComponent()`](#custom-settings-component), wird die Front-Komponente als Abschnitt im **Settings**-Tab der App gerendert und ersetzt dabei die standardmäßige Variablenkonfigurationsoberfläche.
 
-Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die beiden Möglichkeiten dafür sind:
+Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die drei Möglichkeiten dafür sind:
 
 * **Mit einem [Befehlsmenüeintrag](/l/de/developers/extend/apps/layout/command-menu-items) verknüpfen** — registriert sie im Befehlsmenü (Cmd+K) und optional als angeheftete Schnellaktion.
 * **Als Widget in ein [Seitenlayout](/l/de/developers/extend/apps/layout/page-layouts) einbetten** — platziert es auf der Detailseite eines Datensatzes oder in einem Dashboard.
+* **Definiere sie mit [`defineSettingsFrontComponent()`](#custom-settings-component)** — rendert sie als Abschnitt im **Settings**-Tab der App und ersetzt dabei die standardmäßige Variablenkonfigurationsoberfläche.
 
 ## Einfaches Beispiel
 
@@ -76,6 +78,34 @@ Klicken Sie darauf, um die Komponente inline zu rendern.
 ## Eine Front-Komponente auf einer Seite platzieren
 
 Über Befehle hinaus können Sie eine Front-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie unter [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts).
+
+## Benutzerdefinierte Einstellungen-Komponente
+
+Um die automatisch generierte Variablenkonfigurationsoberfläche im **Settings**-Tab deiner App durch deine eigene Komponente zu ersetzen, definiere sie mit `defineSettingsFrontComponent` statt mit `defineFrontComponent`. Es verwendet dieselben [Konfigurationsfelder](#configuration-fields) (mit Ausnahme von `isHeadless`, das nicht akzeptiert wird, da eine Einstellungskomponente immer eine sichtbare Benutzeroberfläche rendert) und kennzeichnet die Komponente zusätzlich als Einstellungen-UI der App.
+
+Die Komponente wird als Abschnitt innerhalb des **Settings**-Tabs gerendert, nicht als Ersatz für den gesamten Tab. Die von Twenty verwalteten Systembereiche – Auto-Upgrade, App-URL und Verbindungen – werden immer darüber gerendert und können von der App nicht überschrieben werden.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Pro App ist nur eine Einstellungs-Frontkomponente zulässig; wenn mehr als eine deklariert wird, schlägt der Build fehl. Wenn vorhanden, rendert der **Settings**-Tab der App diese Komponente anstelle der standardmäßigen Konfigurationsoberfläche für Variablen.
 
 ## Headless vs. Nicht-Headless
 
