@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import {
+  type ObjectRecord as ObjectRecordShared,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -17,26 +23,20 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import {
-  type ObjectRecord as ObjectRecordShared,
-  type RecordGqlOperationGqlRecordFields,
-} from 'twenty-shared/types';
-
 import { type BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
+  upsert?: boolean;
 };
 
 export const useCreateOneRecord = <
@@ -46,6 +46,7 @@ export const useCreateOneRecord = <
   recordGqlFields,
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
+  upsert,
 }: useCreateOneRecordProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apolloCoreClient = useApolloCoreClient();
@@ -141,6 +142,7 @@ export const useCreateOneRecord = <
         mutation: createOneRecordMutation,
         variables: {
           input: sanitizedInput,
+          upsert,
         },
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];

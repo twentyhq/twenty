@@ -1,13 +1,14 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
-import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { gql } from '@apollo/client';
 import {
   type ObjectPermissions,
   type RecordGqlOperationGqlRecordFields,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
+
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 
 export const generateCreateOneRecordMutation = ({
   objectMetadataItem,
@@ -38,8 +39,8 @@ export const generateCreateOneRecordMutation = ({
   );
 
   const createOneRecordMutation = gql`
-    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
-      ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
+    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!, $upsert: Boolean) {
+      ${mutationResponseField}(data: $input, upsert: $upsert) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
         recordGqlFields: appliedRecordGqlFields,
