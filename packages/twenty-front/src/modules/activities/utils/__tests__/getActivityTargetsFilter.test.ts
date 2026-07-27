@@ -2,47 +2,47 @@ import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsF
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-const buildNoteTargetMetadata = ({
-  fieldName,
-  joinColumnName,
-  targetNameSingular,
-}: {
-  fieldName: string;
-  joinColumnName: string;
-  targetNameSingular: string;
-}) =>
+// The metadata API collapses the per-target join fields on noteTarget/taskTarget
+// into a single MORPH_RELATION field named "target" and strips the target-name
+// suffix from each morph relation's source field name. For a non-renamed target
+// the source field name is the base "target"; for a renamed target the suffix no
+// longer matches so it keeps the original (frozen) field name (e.g. "targetPet").
+const buildActivityTargetMetadata = (
+  morphTargets: { nameSingular: string; sourceFieldName: string }[],
+) =>
   ({
     nameSingular: 'noteTarget',
     fields: [
       {
-        name: fieldName,
+        name: 'target',
         type: FieldMetadataType.MORPH_RELATION,
-        settings: { joinColumnName },
-        morphRelations: [
-          {
+        morphRelations: morphTargets.map(
+          ({ nameSingular, sourceFieldName }) => ({
             type: RelationType.MANY_TO_ONE,
             targetObjectMetadata: {
-              id: 'target-object-id',
-              nameSingular: targetNameSingular,
-              namePlural: `${targetNameSingular}s`,
+              id: `${nameSingular}-object-id`,
+              nameSingular,
+              namePlural: `${nameSingular}s`,
             },
-          },
-        ],
+            sourceFieldMetadata: {
+              id: `${nameSingular}-field-id`,
+              name: sourceFieldName,
+            },
+          }),
+        ),
       },
     ],
   }) as unknown as EnrichedObjectMetadataItem;
 
 describe('getActivityTargetsFilter', () => {
-  it('uses the stored join column even when the target object was renamed', () => {
-    // Object renamed from "pet" to "ligacao": the noteTarget field name and its
-    // join column stay frozen as targetPet/targetPetId while the object now
-    // reports nameSingular "ligacao". Deriving target<Name>Id would produce
-    // targetLigacaoId, which does not exist on noteTarget.
-    const activityTargetObjectMetadataItem = buildNoteTargetMetadata({
-      fieldName: 'targetPet',
-      joinColumnName: 'targetPetId',
-      targetNameSingular: 'ligacao',
-    });
+  it('uses the frozen join column when the target object was renamed', () => {
+    // "pet" was renamed to "ligacao": the morph relation keeps the frozen source
+    // field name "targetPet", so the join column is targetPetId. Recomputing from
+    // the current name would produce targetLigacaoId, which does not exist.
+    const activityTargetObjectMetadataItem = buildActivityTargetMetadata([
+      { nameSingular: 'company', sourceFieldName: 'target' },
+      { nameSingular: 'ligacao', sourceFieldName: 'targetPet' },
+    ]);
 
     const filter = getActivityTargetsFilter({
       targetableObjects: [
@@ -56,11 +56,10 @@ describe('getActivityTargetsFilter', () => {
   });
 
   it('resolves the join column for a non-renamed object', () => {
-    const activityTargetObjectMetadataItem = buildNoteTargetMetadata({
-      fieldName: 'targetCompany',
-      joinColumnName: 'targetCompanyId',
-      targetNameSingular: 'company',
-    });
+    const activityTargetObjectMetadataItem = buildActivityTargetMetadata([
+      { nameSingular: 'company', sourceFieldName: 'target' },
+      { nameSingular: 'ligacao', sourceFieldName: 'targetPet' },
+    ]);
 
     const filter = getActivityTargetsFilter({
       targetableObjects: [
