@@ -1,10 +1,13 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
-import { shouldTriggerStaleChunkReload } from '@/error-handler/utils/shouldTriggerStaleChunkReload';
+import { isStaleChunkReloadCooldownActive } from '@/error-handler/utils/isStaleChunkReloadCooldownActive';
+import { storeStaleChunkReloadTimestamp } from '@/error-handler/utils/storeStaleChunkReloadTimestamp';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
 import { reloadWindow } from '~/utils/reloadWindow';
+
+const SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS = 2_000;
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -18,9 +21,9 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
-const captureAppError = (error: Error | CustomError, info: ErrorInfo) => {
+const captureAppError = (error: Error | CustomError, info: ErrorInfo) =>
   import('@sentry/react')
-    .then(({ captureException }) => {
+    .then(({ captureException, flush }) => {
       captureException(error, (scope) => {
         scope.setExtras({ info });
 
@@ -29,12 +32,13 @@ const captureAppError = (error: Error | CustomError, info: ErrorInfo) => {
         error.name = error.message;
         return scope;
       });
+
+      return flush(SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS);
     })
     .catch((sentryError) => {
       // oxlint-disable-next-line no-console
       console.error('Failed to capture exception with Sentry:', sentryError);
     });
-};
 
 export const AppErrorBoundary = ({
   children,
@@ -42,14 +46,31 @@ export const AppErrorBoundary = ({
   resetOnLocationChange = true,
 }: AppErrorBoundaryProps) => {
   const handleError = (error: Error | CustomError, info: ErrorInfo) => {
-    captureAppError(error, info);
+    const captureAppErrorPromise = captureAppError(error, info);
 
     const isViteStaleChunkLazyLoadingError =
       checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-    if (isViteStaleChunkLazyLoadingError && shouldTriggerStaleChunkReload()) {
-      reloadWindow();
+    const shouldAttemptStaleChunkReload =
+      isViteStaleChunkLazyLoadingError && !isStaleChunkReloadCooldownActive();
+
+    if (!shouldAttemptStaleChunkReload) {
+      return;
     }
+
+    const isReloadTimestampStored = storeStaleChunkReloadTimestamp();
+
+    if (!isReloadTimestampStored) {
+      return;
+    }
+
+    const captureTimeoutPromise = new Promise((resolve) =>
+      setTimeout(resolve, SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS),
+    );
+
+    void Promise.race([captureAppErrorPromise, captureTimeoutPromise]).then(
+      () => reloadWindow(),
+    );
   };
 
   const handleReset = () => {
