@@ -1,4 +1,4 @@
-import { partnerSlugSchema } from './client-brief-request-schema';
+import { partnerSlugSchema } from './partner-slug-schema';
 
 // The API schema is strict: a malformed value must be dropped here, not
 // forwarded, or it fails the whole brief submission.
