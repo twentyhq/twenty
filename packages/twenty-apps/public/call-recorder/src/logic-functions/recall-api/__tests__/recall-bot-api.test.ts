@@ -88,8 +88,8 @@ describe('recall bot api', () => {
         bot_detection: {
           using_participant_names: {
             matches: expect.arrayContaining(['Call Recorder', 'notetaker']),
-            activate_after: 1,
-            timeout: 2,
+            activate_after: 300,
+            timeout: 5,
           },
           using_participant_events: {
             activate_after: 300,
