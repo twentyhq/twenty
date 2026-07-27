@@ -9122,7 +9122,7 @@ export default {
                 }
             ],
             "getAuthTokensFromSSOExchangeToken": [
-                258,
+                260,
                 {
                     "ssoExchangeToken": [
                         1,
