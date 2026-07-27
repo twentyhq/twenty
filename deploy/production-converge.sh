@@ -27,6 +27,8 @@ REPO_SLUG="${TWENTY_REPO_SLUG:-SpeculativeTechnologies/CRM}"
 
 BACKEND_HEALTH="http://127.0.0.1:3000/healthz"
 FRONTEND_HEALTH="http://127.0.0.1:3010/healthz"
+HEALTH_TIMEOUT="${TWENTY_HEALTH_TIMEOUT:-300}"
+HEALTH_INTERVAL="${TWENTY_HEALTH_INTERVAL:-15}"
 
 log() {
   echo "$LOG_PREFIX $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"
@@ -72,26 +74,56 @@ git merge-base --is-ancestor "$target_sha" origin/main ||
 git merge-base --is-ancestor "$current_sha" "$target_sha" ||
   fail "${target_sha} is not a descendant of the running commit; refusing"
 
+# Reporting to GitHub is best-effort, but it says so out loud. Silently
+# returning here is why the 2026-07-27 deploy sat at "in_progress" in the
+# Deployments UI long after it had actually finished and then failed.
 report() {
   local state="$1" description="$2" deployment_id
-  [ -f "$TOKEN_FILE" ] || return 0
+  if [ ! -f "$TOKEN_FILE" ]; then
+    log "cannot report '${state}' to GitHub: no token at ${TOKEN_FILE}"
+    return 0
+  fi
   deployment_id="$(
     GH_TOKEN="$(cat "$TOKEN_FILE")" gh api \
       "repos/${REPO_SLUG}/deployments?environment=production&sha=${target_sha}" \
       --jq '.[0].id' 2>/dev/null || true
   )"
-  [ -n "$deployment_id" ] && [ "$deployment_id" != "null" ] || return 0
+  if [ -z "$deployment_id" ] || [ "$deployment_id" = "null" ]; then
+    log "cannot report '${state}' to GitHub: no deployment found for ${target_sha}"
+    return 0
+  fi
   GH_TOKEN="$(cat "$TOKEN_FILE")" gh api --method POST \
     "repos/${REPO_SLUG}/deployments/${deployment_id}/statuses" \
-    -f state="$state" -f description="$description" >/dev/null 2>&1 || true
+    -f state="$state" -f description="$description" >/dev/null 2>&1 ||
+    log "failed to POST '${state}' status to GitHub deployment ${deployment_id}"
 }
+
+# Compute the changed-file list ONCE, into a variable, and match against that.
+#
+# This must not be `git diff-tree … | grep -q …`. Under `set -o pipefail`,
+# `grep -q` exits on its first match and closes the pipe, `git` dies of SIGPIPE
+# (141), and the pipeline reports FAILURE even though the pattern matched. The
+# gate then reads as "nothing changed". It only misfires when the producer is
+# still writing when grep quits — i.e. on big diffs — so it passes every routine
+# deploy and fails on upstream syncs, the ones that most need the backup.
+#
+# That is exactly what happened on 2026-07-27: a 2737-file sync skipped both the
+# pre-deploy backup AND the frontend republish, and production served a stale
+# bundle against a 226-commit-newer backend. Same bug as the post-merge hook's
+# (fixed in #3, which is why that hook already uses a herestring) — this script
+# just never got the same treatment.
+changed_files="$(git diff-tree -r --name-only --no-commit-id "$current_sha" "$target_sha")"
 
 schema_changed() {
-  git diff-tree -r --name-only --no-commit-id "$current_sha" "$target_sha" |
-    grep -qE 'packages/twenty-server/src/database/commands/upgrade-version-command/|\.entity\.ts$|packages/twenty-server/src/database/typeorm/'
+  grep -qE 'packages/twenty-server/src/database/commands/upgrade-version-command/|\.entity\.ts$|packages/twenty-server/src/database/typeorm/' \
+    <<<"$changed_files"
 }
 
-log "converging ${current_sha} -> ${target_sha}"
+frontend_changed() {
+  grep -q '^packages/twenty-front/' <<<"$changed_files"
+}
+
+log "converging ${current_sha} -> ${target_sha} ($(wc -l <<<"$changed_files" | tr -d ' ') files changed)"
 
 if schema_changed; then
   log "schema files changed; taking a backup before deploying"
@@ -119,24 +151,41 @@ retry blindly. Inspect the output above and follow the recovery guidance in
 deploy/PRODUCTION.md."
 fi
 
-if git diff-tree -r --name-only --no-commit-id "$current_sha" "$target_sha" |
-  grep -q '^packages/twenty-front/'; then
+if frontend_changed; then
   log "frontend changed; republishing"
   bash "$DEPLOY_ROOT/deploy/publish-frontend.sh" || {
     report failure "frontend publish failed for ${target_sha}"
     fail "publish-frontend.sh failed"
   }
+  log "frontend republished"
+else
+  log "no frontend changes; skipping republish"
 fi
 
-healthy=true
-for url in "$BACKEND_HEALTH" "$FRONTEND_HEALTH"; do
-  if ! curl --fail --silent --show-error --max-time 10 "$url" >/dev/null 2>&1; then
-    log "health check failed: $url"
-    healthy=false
-  fi
-done
+# The backend runs in watch mode (see update-after-merge.sh), so after a large
+# merge it is still recompiling when we reach here. On 2026-07-27 a single
+# immediate probe failed both endpoints one second after the migration finished,
+# aborting a deploy that was in fact fine minutes later. Poll to a deadline
+# instead: a slow boot is not a failed deploy.
+wait_for_health() {
+  local deadline=$((SECONDS + HEALTH_TIMEOUT)) url unhealthy
+  while :; do
+    unhealthy=""
+    for url in "$BACKEND_HEALTH" "$FRONTEND_HEALTH"; do
+      curl --fail --silent --show-error --max-time 10 "$url" >/dev/null 2>&1 ||
+        unhealthy="$unhealthy $url"
+    done
+    [ -z "$unhealthy" ] && return 0
+    if [ "$SECONDS" -ge "$deadline" ]; then
+      log "still unhealthy after ${HEALTH_TIMEOUT}s:$unhealthy"
+      return 1
+    fi
+    log "waiting for health (${HEALTH_INTERVAL}s):$unhealthy"
+    sleep "$HEALTH_INTERVAL"
+  done
+}
 
-if [ "$healthy" != true ]; then
+if ! wait_for_health; then
   report failure "deployed ${target_sha} but health checks failed"
   fail "production is unhealthy after deploying ${target_sha}. It is already
 running the new commit, so this needs a person: see the rollback section of
