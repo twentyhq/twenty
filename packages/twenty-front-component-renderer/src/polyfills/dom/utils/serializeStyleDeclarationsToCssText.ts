@@ -1,11 +1,6 @@
 export const serializeStyleDeclarationsToCssText = (
-  cssValueByStoreKey: Record<string, string>,
-  importantPriorityStoreKeys: Set<string>,
+  cssValueByCssPropertyName: Record<string, string>,
 ): string =>
-  Object.entries(cssValueByStoreKey)
-    .map(([storeKey, cssValue]) =>
-      importantPriorityStoreKeys.has(storeKey)
-        ? `${storeKey}:${cssValue} !important`
-        : `${storeKey}:${cssValue}`,
-    )
+  Object.entries(cssValueByCssPropertyName)
+    .map(([cssPropertyName, cssValue]) => `${cssPropertyName}:${cssValue}`)
     .join(';');

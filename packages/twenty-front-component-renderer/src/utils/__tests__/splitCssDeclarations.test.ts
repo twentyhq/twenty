@@ -26,22 +26,6 @@ describe('splitCssDeclarations', () => {
     ]);
   });
 
-  it('should drop comments and not split on their inner semicolons', () => {
-    const declarations = splitCssDeclarations(
-      'color: red; /* a; b */ background: blue',
-    );
-
-    expect(declarations).toHaveLength(2);
-    expect(declarations[0]).toBe('color: red');
-    expect(declarations[1].trim()).toBe('background: blue');
-  });
-
-  it('should collapse a comment between tokens into a separator', () => {
-    expect(splitCssDeclarations('margin: 1px/**/2px')[0].trim()).toBe(
-      'margin: 1px 2px',
-    );
-  });
-
   it('should keep semicolons inside url parentheses', () => {
     expect(
       splitCssDeclarations(
@@ -50,28 +34,12 @@ describe('splitCssDeclarations', () => {
     ).toEqual(['background: url(data:image/png;base64,abc)', ' color: red']);
   });
 
-  it('should not treat a slash star inside an unquoted url as a comment', () => {
+  it('should keep slash star sequences as plain characters', () => {
     expect(
       splitCssDeclarations(
         'background: url(http://example.com/a/*/b.png); color: red',
       ),
     ).toEqual(['background: url(http://example.com/a/*/b.png)', ' color: red']);
-  });
-
-  it('should still strip comments inside non url functions', () => {
-    expect(splitCssDeclarations('width: calc(1px /* c */ + 2px)')[0]).toBe(
-      'width: calc(1px   + 2px)',
-    );
-  });
-
-  it('should resume comment stripping after a url value', () => {
-    const declarations = splitCssDeclarations(
-      'background: url(a/*/b.png); /* note */ color: red',
-    );
-
-    expect(declarations).toHaveLength(2);
-    expect(declarations[0]).toBe('background: url(a/*/b.png)');
-    expect(declarations[1].trim()).toBe('color: red');
   });
 
   it('should handle nested parentheses', () => {

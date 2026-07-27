@@ -1,51 +1,34 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
-import { formatStyleValueForCssStore } from '@/polyfills/dom/utils/formatStyleValueForCssStore';
+import { type StyleProxy } from '@/polyfills/dom/types/StyleProxy';
+import { formatCssValue } from '@/polyfills/dom/utils/formatCssValue';
 import { isImportantPriorityKeyword } from '@/polyfills/dom/utils/isImportantPriorityKeyword';
 import { isObjectPrototypeMember } from '@/polyfills/dom/utils/isObjectPrototypeMember';
+import { normalizeCssPropertyName } from '@/polyfills/dom/utils/normalizeCssPropertyName';
 import { parseCssTextIntoStyleDeclarations } from '@/polyfills/dom/utils/parseCssTextIntoStyleDeclarations';
-import { resolveStyleStoreKeyFromPropertyName } from '@/polyfills/dom/utils/resolveStyleStoreKeyFromPropertyName';
+import { resolveCssPropertyNameFromJsPropertyName } from '@/polyfills/dom/utils/resolveCssPropertyNameFromJsPropertyName';
 import { serializeStyleDeclarationsToCssText } from '@/polyfills/dom/utils/serializeStyleDeclarationsToCssText';
-import { createMicrotaskCoalescedCallback } from '@/utils/createMicrotaskCoalescedCallback';
 
-type CreateStyleProxyOptions = {
-  flushSerializedCssTextToHost?: (serializedCssText: string) => void;
-  shouldConvertNumbersToPixels?: boolean;
-};
+export const createStyleProxy = (
+  flushSerializedCssTextToHost: (serializedCssText: string) => void,
+): StyleProxy => {
+  const cssValueByCssPropertyName: Record<string, string> = {};
 
-export const createStyleProxy = ({
-  flushSerializedCssTextToHost,
-  shouldConvertNumbersToPixels = false,
-}: CreateStyleProxyOptions = {}): Record<string, unknown> => {
-  const cssValueByStoreKey: Record<string, string> = {};
-  const importantPriorityStoreKeys = new Set<string>();
-
-  const readSerializedCssText = (): string =>
-    serializeStyleDeclarationsToCssText(
-      cssValueByStoreKey,
-      importantPriorityStoreKeys,
+  const flushToHost = (): void => {
+    flushSerializedCssTextToHost(
+      serializeStyleDeclarationsToCssText(cssValueByCssPropertyName),
     );
-
-  const scheduleHostFlush = isDefined(flushSerializedCssTextToHost)
-    ? createMicrotaskCoalescedCallback(() => {
-        flushSerializedCssTextToHost(readSerializedCssText());
-      })
-    : () => {};
+  };
 
   const replaceAllDeclarationsFromCssText = (cssText: string): void => {
-    for (const storeKey of Object.keys(cssValueByStoreKey)) {
-      delete cssValueByStoreKey[storeKey];
+    for (const cssPropertyName of Object.keys(cssValueByCssPropertyName)) {
+      delete cssValueByCssPropertyName[cssPropertyName];
     }
-    importantPriorityStoreKeys.clear();
 
-    const parsedDeclarations = parseCssTextIntoStyleDeclarations(cssText);
-
-    Object.assign(cssValueByStoreKey, parsedDeclarations.cssValueByStoreKey);
-
-    for (const storeKey of parsedDeclarations.importantPriorityStoreKeys) {
-      importantPriorityStoreKeys.add(storeKey);
-    }
+    Object.assign(
+      cssValueByCssPropertyName,
+      parseCssTextIntoStyleDeclarations(cssText),
+    );
   };
 
   const setPropertyValue = (
@@ -53,51 +36,41 @@ export const createStyleProxy = ({
     value: string | null,
     priority?: string,
   ): void => {
+    const normalizedCssPropertyName = normalizeCssPropertyName(cssPropertyName);
+
     if (value === null || value === '') {
-      delete cssValueByStoreKey[cssPropertyName];
-      importantPriorityStoreKeys.delete(cssPropertyName);
-      scheduleHostFlush();
+      delete cssValueByCssPropertyName[normalizedCssPropertyName];
+      flushToHost();
 
       return;
     }
 
-    const hasExplicitPriority = isNonEmptyString(priority);
-
-    if (hasExplicitPriority && !isImportantPriorityKeyword(priority)) {
+    if (isNonEmptyString(priority) && !isImportantPriorityKeyword(priority)) {
       return;
     }
 
-    cssValueByStoreKey[cssPropertyName] = String(value);
-
-    if (hasExplicitPriority) {
-      importantPriorityStoreKeys.add(cssPropertyName);
-    } else {
-      importantPriorityStoreKeys.delete(cssPropertyName);
-    }
-
-    scheduleHostFlush();
+    cssValueByCssPropertyName[normalizedCssPropertyName] = String(value);
+    flushToHost();
   };
 
   const removePropertyValue = (cssPropertyName: string): string => {
-    const previousValue = cssValueByStoreKey[cssPropertyName] ?? '';
+    const normalizedCssPropertyName = normalizeCssPropertyName(cssPropertyName);
+    const previousValue =
+      cssValueByCssPropertyName[normalizedCssPropertyName] ?? '';
 
-    delete cssValueByStoreKey[cssPropertyName];
-    importantPriorityStoreKeys.delete(cssPropertyName);
-    scheduleHostFlush();
+    delete cssValueByCssPropertyName[normalizedCssPropertyName];
+    flushToHost();
 
     return previousValue;
   };
 
   const readPropertyValue = (cssPropertyName: string): string =>
-    cssValueByStoreKey[cssPropertyName] ?? '';
+    cssValueByCssPropertyName[normalizeCssPropertyName(cssPropertyName)] ?? '';
 
-  const readPropertyPriority = (cssPropertyName: string): string =>
-    importantPriorityStoreKeys.has(cssPropertyName) ? 'important' : '';
-
-  return new Proxy(cssValueByStoreKey, {
+  return new Proxy(cssValueByCssPropertyName, {
     get: (target, property) => {
       if (property === 'cssText') {
-        return readSerializedCssText();
+        return serializeStyleDeclarationsToCssText(target);
       }
 
       if (property === 'setProperty') {
@@ -112,16 +85,12 @@ export const createStyleProxy = ({
         return readPropertyValue;
       }
 
-      if (property === 'getPropertyPriority') {
-        return readPropertyPriority;
-      }
-
       if (isObjectPrototypeMember(property)) {
         return Reflect.get(Object.prototype, property);
       }
 
       if (isString(property)) {
-        return target[resolveStyleStoreKeyFromPropertyName(property)] ?? '';
+        return target[resolveCssPropertyNameFromJsPropertyName(property)] ?? '';
       }
 
       return undefined;
@@ -133,29 +102,24 @@ export const createStyleProxy = ({
 
       if (property === 'cssText') {
         replaceAllDeclarationsFromCssText(String(value));
-        scheduleHostFlush();
+        flushToHost();
 
         return true;
       }
 
-      const storeKey = resolveStyleStoreKeyFromPropertyName(property);
-      importantPriorityStoreKeys.delete(storeKey);
+      const cssPropertyName = resolveCssPropertyNameFromJsPropertyName(property);
 
       if (value === null || value === undefined || value === '') {
-        delete target[storeKey];
-        scheduleHostFlush();
+        delete target[cssPropertyName];
+        flushToHost();
 
         return true;
       }
 
-      target[storeKey] = formatStyleValueForCssStore(
-        value,
-        property,
-        shouldConvertNumbersToPixels,
-      );
-      scheduleHostFlush();
+      target[cssPropertyName] = formatCssValue(value, property);
+      flushToHost();
 
       return true;
     },
-  });
+  }) as unknown as StyleProxy;
 };

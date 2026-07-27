@@ -17,7 +17,7 @@ export const installLocalStyleOnBaseElements = (
       return existingDeclaration;
     }
 
-    const declaration = createStyleProxy();
+    const declaration = createStyleProxy(() => {});
     localStyleDeclarations.set(element, declaration);
 
     return declaration;

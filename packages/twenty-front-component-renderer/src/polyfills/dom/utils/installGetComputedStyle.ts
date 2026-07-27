@@ -12,18 +12,20 @@ type InstallGetComputedStyleInput = {
 export const installGetComputedStyle = ({
   globalScope,
 }: InstallGetComputedStyleInput): void => {
+  const createEmptyStyleDeclaration = () => createStyleProxy(() => {});
+
   const getComputedStyle = (element: unknown, pseudoElement?: unknown) => {
-    // Pseudo-element styles cannot be computed inside the worker, so an empty
-    // declaration is returned instead of the host element's own styles.
     if (isNonEmptyString(pseudoElement)) {
-      return createStyleProxy();
+      return createEmptyStyleDeclaration();
     }
 
     const declaredStyle = isObject(element)
       ? (element as ElementWithStyle).style
       : undefined;
 
-    return isDefined(declaredStyle) ? declaredStyle : createStyleProxy();
+    return isDefined(declaredStyle)
+      ? declaredStyle
+      : createEmptyStyleDeclaration();
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {

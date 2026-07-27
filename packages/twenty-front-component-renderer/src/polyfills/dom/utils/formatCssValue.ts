@@ -3,17 +3,15 @@ import { isNumber } from '@sniptt/guards';
 import { UNITLESS_CSS_PROPERTY_NAMES } from '@/constants/UnitlessCssPropertyNames';
 import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
 
-export const formatStyleValueForCssStore = (
+export const formatCssValue = (
   value: unknown,
-  camelCasePropertyName: string,
-  shouldConvertNumbersToPixels: boolean,
+  stylePropertyName: string,
 ): string => {
   const shouldAppendPixelUnitToNumber =
-    shouldConvertNumbersToPixels &&
     isNumber(value) &&
     value !== 0 &&
-    !isCssCustomPropertyName(camelCasePropertyName) &&
-    !UNITLESS_CSS_PROPERTY_NAMES.has(camelCasePropertyName);
+    !isCssCustomPropertyName(stylePropertyName) &&
+    !UNITLESS_CSS_PROPERTY_NAMES.has(stylePropertyName);
 
   return shouldAppendPixelUnitToNumber ? `${value}px` : String(value);
 };

@@ -6,19 +6,19 @@ const CSS_PROPERTY_NAME_BY_CSSOM_ALIAS = new Map<string, string>([
   ['cssFloat', 'float'],
 ]);
 
-export const resolveStyleStoreKeyFromPropertyName = (
-  propertyName: string,
+export const resolveCssPropertyNameFromJsPropertyName = (
+  jsPropertyName: string,
 ): string => {
-  if (isCssCustomPropertyName(propertyName)) {
-    return propertyName;
+  if (isCssCustomPropertyName(jsPropertyName)) {
+    return jsPropertyName;
   }
 
   const aliasedCssPropertyName =
-    CSS_PROPERTY_NAME_BY_CSSOM_ALIAS.get(propertyName);
+    CSS_PROPERTY_NAME_BY_CSSOM_ALIAS.get(jsPropertyName);
 
   if (aliasedCssPropertyName !== undefined) {
     return aliasedCssPropertyName;
   }
 
-  return camelToKebab(propertyName);
+  return camelToKebab(jsPropertyName);
 };
