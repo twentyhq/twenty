@@ -67,7 +67,12 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
     fromAllFlatEntityMaps,
     toAllUniversalFlatEntityMaps,
   }: ApplicationScopedFlatEntityMapsOptions): AllFlatEntityMaps => {
-    const subAllFlatEntityMaps: Partial<AllFlatEntityMaps> = {};
+    // The slice is `FlatEntityMaps<T>` for the current metadataName; the
+    // outer `AllFlatEntityMaps` keys are per-metadata too, so the union is
+    // correct at runtime. The type system can't narrow a single per-key
+    // assignment to a specific T, so the map is held as `unknown` and cast
+    // once on return.
+    const subAllFlatEntityMaps = new Map<string, FlatEntityMaps<unknown>>();
 
     for (const metadataName of Object.values(ALL_METADATA_NAME)) {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
@@ -138,12 +143,13 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
 
       // The slice is `FlatEntityMaps<T>` for the current metadataName; the
       // outer `AllFlatEntityMaps` keys are per-metadata too, so the union
-      // is correct at runtime. The cast documents the type-system constraint
-      // (a single per-key assignment can't be narrowed to a specific T).
-      subAllFlatEntityMaps[flatEntityMapsKey] = slice as never;
+      // is correct at runtime. The type system can't narrow a single per-key
+      // assignment to a specific T, so the map is held as `unknown` and cast
+      // once on return.
+      subAllFlatEntityMaps.set(flatEntityMapsKey, slice);
     }
 
-    return subAllFlatEntityMaps as AllFlatEntityMaps;
+    return Object.fromEntries(subAllFlatEntityMaps) as AllFlatEntityMaps;
   };
 
 // Local helper to avoid importing `isDefined` from `twenty-shared/utils` only for one call.

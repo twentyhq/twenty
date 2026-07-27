@@ -39,18 +39,15 @@ const buildFlatEntityMaps = <
   } as unknown as FlatEntityMaps<T>;
 };
 
+type TestEntityShape = {
+  id: string;
+  workspaceId: string;
+  applicationId: string;
+  universalIdentifier: string;
+};
+
 const buildAllFlatEntityMaps = (
-  entries: Partial<
-    Record<
-      AllMetadataName,
-      {
-        id: string;
-        workspaceId: string;
-        applicationId: string;
-        universalIdentifier: string;
-      }[]
-    >
-  >,
+  entries: Partial<Record<AllMetadataName, TestEntityShape[]>>,
 ): AllFlatEntityMaps => {
   const result: Partial<AllFlatEntityMaps> = {};
 
@@ -61,7 +58,7 @@ const buildAllFlatEntityMaps = (
     // The per-key value is a single per-metadata FlatEntityMaps, but the
     // outer Partial<AllFlatEntityMaps> union of those values can't be
     // inferred automatically; cast the assignment explicitly.
-    (result as Record<string, FlatEntityMaps<unknown>>)[key] =
+    (result as Record<string, FlatEntityMaps<TestEntityShape>>)[key] =
       buildFlatEntityMaps(entities);
   }
 
