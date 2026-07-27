@@ -4,7 +4,7 @@ import { type StyleProxy } from '@/polyfills/dom/types/StyleProxy';
 import { formatCssValue } from '@/polyfills/dom/utils/formatCssValue';
 import { isImportantPriorityKeyword } from '@/polyfills/dom/utils/isImportantPriorityKeyword';
 import { isObjectPrototypeMember } from '@/polyfills/dom/utils/isObjectPrototypeMember';
-import { normalizeCssPropertyName } from '@/polyfills/dom/utils/normalizeCssPropertyName';
+import { normalizeCssPropertyName } from '@/utils/normalizeCssPropertyName';
 import { parseCssTextIntoStyleDeclarations } from '@/polyfills/dom/utils/parseCssTextIntoStyleDeclarations';
 import { resolveCssPropertyNameFromJsPropertyName } from '@/polyfills/dom/utils/resolveCssPropertyNameFromJsPropertyName';
 import { serializeStyleDeclarationsToCssText } from '@/polyfills/dom/utils/serializeStyleDeclarationsToCssText';

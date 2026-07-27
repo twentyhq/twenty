@@ -32,6 +32,19 @@ describe('parseCssDeclarations', () => {
     ).toEqual([{ cssPropertyName: 'color', cssValue: 'blue' }]);
   });
 
+  it('should share priority state between case variants of a property name', () => {
+    expect(parseCssDeclarations('COLOR: red !important; color: blue')).toEqual([
+      { cssPropertyName: 'COLOR', cssValue: 'red' },
+    ]);
+  });
+
+  it('should keep case-sensitive custom properties as separate declarations', () => {
+    expect(parseCssDeclarations('--My-Var: 1px; --my-var: 2px')).toEqual([
+      { cssPropertyName: '--My-Var', cssValue: '1px' },
+      { cssPropertyName: '--my-var', cssValue: '2px' },
+    ]);
+  });
+
   it('should skip declarations without a colon', () => {
     expect(parseCssDeclarations('color: red; invalid')).toEqual([
       { cssPropertyName: 'color', cssValue: 'red' },

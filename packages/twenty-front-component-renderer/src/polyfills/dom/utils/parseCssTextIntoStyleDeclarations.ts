@@ -1,4 +1,4 @@
-import { normalizeCssPropertyName } from '@/polyfills/dom/utils/normalizeCssPropertyName';
+import { normalizeCssPropertyName } from '@/utils/normalizeCssPropertyName';
 import { parseCssDeclarations } from '@/utils/parseCssDeclarations';
 
 export const parseCssTextIntoStyleDeclarations = (
