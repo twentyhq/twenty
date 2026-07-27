@@ -1,8 +1,10 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
+import { shouldTriggerStaleChunkReload } from '@/error-handler/utils/shouldTriggerStaleChunkReload';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
+import { reloadWindow } from '~/utils/reloadWindow';
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -16,14 +18,9 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
-export const AppErrorBoundary = ({
-  children,
-  FallbackComponent,
-  resetOnLocationChange = true,
-}: AppErrorBoundaryProps) => {
-  const handleError = async (error: Error | CustomError, info: ErrorInfo) => {
-    try {
-      const { captureException } = await import('@sentry/react');
+const captureAppError = (error: Error | CustomError, info: ErrorInfo) => {
+  import('@sentry/react')
+    .then(({ captureException }) => {
       captureException(error, (scope) => {
         scope.setExtras({ info });
 
@@ -32,21 +29,31 @@ export const AppErrorBoundary = ({
         error.name = error.message;
         return scope;
       });
-    } catch (sentryError) {
+    })
+    .catch((sentryError) => {
       // oxlint-disable-next-line no-console
       console.error('Failed to capture exception with Sentry:', sentryError);
-    }
+    });
+};
+
+export const AppErrorBoundary = ({
+  children,
+  FallbackComponent,
+  resetOnLocationChange = true,
+}: AppErrorBoundaryProps) => {
+  const handleError = (error: Error | CustomError, info: ErrorInfo) => {
+    captureAppError(error, info);
 
     const isViteStaleChunkLazyLoadingError =
       checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-    if (isViteStaleChunkLazyLoadingError) {
-      window.location.reload();
+    if (isViteStaleChunkLazyLoadingError && shouldTriggerStaleChunkReload()) {
+      reloadWindow();
     }
   };
 
   const handleReset = () => {
-    window.location.reload();
+    reloadWindow();
   };
 
   return (
