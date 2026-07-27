@@ -14,4 +14,11 @@ describe('resolveStyleStoreKeyFromPropertyName', () => {
   it('should map the cssFloat alias to the float property', () => {
     expect(resolveStyleStoreKeyFromPropertyName('cssFloat')).toBe('float');
   });
+
+  it('should not resolve Object.prototype keys to inherited values', () => {
+    expect(resolveStyleStoreKeyFromPropertyName('constructor')).toBe(
+      'constructor',
+    );
+    expect(resolveStyleStoreKeyFromPropertyName('__proto__')).toBe('__proto__');
+  });
 });
