@@ -1,5 +1,5 @@
 {
-  "name": "@twentyhq/twenty-fireflies",
+  "name": "@twentyhq/fireflies",
   "version": "0.2.0",
   "description": "Fireflies call-transcript connector for Twenty",
   "license": "MIT",
