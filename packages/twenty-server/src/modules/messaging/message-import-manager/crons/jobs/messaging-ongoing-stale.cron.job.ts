@@ -11,12 +11,12 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/message-import-manager/constants/messaging-import-ongoing-sync-timeout.constant';
+import { MESSAGING_ONGOING_STALE_SYNC_STAGES } from 'src/modules/messaging/message-import-manager/constants/messaging-ongoing-stale-sync-stages.constant';
 import {
-  MESSAGING_ONGOING_STALE_SYNC_STAGES,
   MessagingOngoingStaleJob,
   type MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
-import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/message-import-manager/constants/messaging-import-ongoing-sync-timeout.constant';
 
 export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 

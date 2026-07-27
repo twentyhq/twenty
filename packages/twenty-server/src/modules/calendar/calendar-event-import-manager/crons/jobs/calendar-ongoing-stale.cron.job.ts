@@ -12,8 +12,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-import-ongoing-sync-timeout.constant';
+import { CALENDAR_ONGOING_STALE_SYNC_STAGES } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-ongoing-stale-sync-stages.constant';
 import {
-  CALENDAR_ONGOING_STALE_SYNC_STAGES,
   CalendarOngoingStaleJob,
   type CalendarOngoingStaleJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';

@@ -11,19 +11,13 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { MESSAGING_ONGOING_STALE_SYNC_STAGES } from 'src/modules/messaging/message-import-manager/constants/messaging-ongoing-stale-sync-stages.constant';
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export type MessagingOngoingStaleJobData = {
   workspaceId: string;
 };
-
-export const MESSAGING_ONGOING_STALE_SYNC_STAGES: MessageChannelSyncStage[] = [
-  MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-  MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-  MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-  MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-];
 
 @Processor({
   queueName: MessageQueue.messagingQueue,
