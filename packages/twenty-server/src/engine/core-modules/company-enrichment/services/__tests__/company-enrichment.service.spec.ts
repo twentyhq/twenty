@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
@@ -24,6 +25,7 @@ describe('CompanyEnrichmentService', () => {
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
   let twentyConfigService: { isWorkspaceCompanyEnrichmentEnabled: jest.Mock };
+  let featureFlagService: { isFeatureEnabled: jest.Mock };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -40,6 +42,9 @@ describe('CompanyEnrichmentService', () => {
     keyValuePairService = { set: jest.fn() };
     twentyConfigService = {
       isWorkspaceCompanyEnrichmentEnabled: jest.fn().mockReturnValue(true),
+    };
+    featureFlagService = {
+      isFeatureEnabled: jest.fn().mockResolvedValue(true),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -60,6 +65,10 @@ describe('CompanyEnrichmentService', () => {
         {
           provide: TwentyConfigService,
           useValue: twentyConfigService,
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: featureFlagService,
         },
         {
           provide: KeyValuePairService,
@@ -199,6 +208,24 @@ describe('CompanyEnrichmentService', () => {
         }),
       }),
     );
+  });
+
+  it('should return unavailable without enriching when onboarding AI chat is off', async () => {
+    featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
   });
 
   it('should return unavailable without any lookup when the enrichment flag is off', async () => {

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
@@ -9,6 +10,7 @@ import { Repository } from 'typeorm';
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
 import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/company-enrichment/services/people-data-labs-company-client.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
   type CompanyEnrichmentAttemptKeyValueTypeMap,
@@ -36,6 +38,7 @@ export class CompanyEnrichmentService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
@@ -50,6 +53,17 @@ export class CompanyEnrichmentService {
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
     if (!this.twentyConfigService.isWorkspaceCompanyEnrichmentEnabled()) {
+      return { outcome: 'unavailable', enrichment: null };
+    }
+
+    // The enrichment only feeds the AI-chat workspace setup, so it is pointless without it.
+    const isOnboardingAiChatEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isOnboardingAiChatEnabled) {
       return { outcome: 'unavailable', enrichment: null };
     }
 

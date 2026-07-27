@@ -17,9 +17,14 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockOnboardingStatus = jest.fn();
+const mockIsOnboardingAiChatEnabled = jest.fn();
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus', () => ({
   useOnboardingStatus: () => mockOnboardingStatus(),
+}));
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsOnboardingAiChatEnabled(),
 }));
 
 const enrichment: WorkspaceCompanyEnrichment = {
@@ -84,6 +89,7 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     resetJotaiStore();
     localStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
+    mockIsOnboardingAiChatEnabled.mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -148,6 +154,26 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
     },
   );
+
+  it('does not fetch when onboarding AI chat is disabled', async () => {
+    mockIsOnboardingAiChatEnabled.mockReturnValue(false);
+
+    let callCount = 0;
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {
+          callCount += 1;
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(callCount).toBe(0);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
+  });
 
   it('does not fetch when an enrichment is already stored', async () => {
     jotaiStore.set(companyEnrichmentState.atom, enrichment);
