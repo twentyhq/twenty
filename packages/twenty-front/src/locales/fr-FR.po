@@ -4562,6 +4562,7 @@ msgstr "Fenêtre de contexte"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6457,6 +6458,11 @@ msgstr "Configuration du domaine"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "Les domaines doivent être inférieurs à 256 caractères, ne peuvent pas contenir d'espaces et ne peuvent contenir aucun caractère spécial."
+
+#. js-lingui-id: u/yTXi
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "Don't ask again for <0>{origin}</0>"
+msgstr ""
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -18146,6 +18152,11 @@ msgstr "Ceci est la clé de signature actuelle. La révoquer invalidera tous les
 msgid "This key should be set through body input"
 msgstr "Cette clé doit être définie via la saisie du corps"
 
+#. js-lingui-id: S9jYAG
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "This link will take you to an external site: <0>{url}</0>"
+msgstr ""
+
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
@@ -20795,6 +20806,11 @@ msgstr "Vous perdrez tous vos mappages."
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Vous êtes sur le point de changer le sous-domaine de votre espace de travail. Cette action déconnectera tous les utilisateurs."
+
+#. js-lingui-id: qgZCyy
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
+msgid "You're leaving Twenty"
+msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx

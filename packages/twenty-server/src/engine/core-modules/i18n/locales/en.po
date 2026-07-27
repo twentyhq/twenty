@@ -859,6 +859,11 @@ msgstr "Audit logs require ClickHouse to be configured."
 msgid "August"
 msgstr "August"
 
+#. js-lingui-id: X7GoTa
+#: src/engine/core-modules/auth/token/services/sso-exchange-token.service.ts
+msgid "Authentication failed, please sign in again."
+msgstr "Authentication failed, please sign in again."
+
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
@@ -9459,6 +9464,11 @@ msgstr "Workspace ID and role mismatch."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "Workspace is not ready to welcome new members"
+
+#. js-lingui-id: 8RwcFg
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "Workspace is suspended."
+msgstr "Workspace is suspended."
 
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

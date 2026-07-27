@@ -110,9 +110,8 @@ export class CommonResultGettersService {
 
     const { fieldIdByName } = fieldMaps;
 
-    const handlers = [
-      this.getObjectHandler(flatObjectMetadata.nameSingular),
-      ...Object.keys(record)
+    const fieldHandlers = new Set(
+      Object.keys(record)
         .map((recordFieldName) =>
           findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: fieldIdByName[recordFieldName],
@@ -122,6 +121,11 @@ export class CommonResultGettersService {
         .filter(isDefined)
         .map((fieldMetadata) => this.fieldHandlers.get(fieldMetadata.type))
         .filter(isDefined),
+    );
+
+    const handlers = [
+      this.getObjectHandler(flatObjectMetadata.nameSingular),
+      ...fieldHandlers,
     ];
 
     const relationFields = Object.keys(record)

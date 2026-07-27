@@ -864,6 +864,11 @@ msgstr "Els registres d'auditoria requereixen que ClickHouse estigui configurat.
 msgid "August"
 msgstr "Agost"
 
+#. js-lingui-id: X7GoTa
+#: src/engine/core-modules/auth/token/services/sso-exchange-token.service.ts
+msgid "Authentication failed, please sign in again."
+msgstr ""
+
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
@@ -9464,6 +9469,11 @@ msgstr "No coincideixen l'ID de l'espai de treball i el rol."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "L'espai de treball no està preparat per donar la benvinguda a nous membres"
+
+#. js-lingui-id: 8RwcFg
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "Workspace is suspended."
+msgstr ""
 
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

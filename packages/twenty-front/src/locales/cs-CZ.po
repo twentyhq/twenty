@@ -4562,6 +4562,7 @@ msgstr "Kontextové okno"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6457,6 +6458,11 @@ msgstr "Nastavení domény"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "Domény musí být menší než 256 znaků, nesmí obsahovat mezery a nesmí obsahovat žádné speciální znaky."
+
+#. js-lingui-id: u/yTXi
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "Don't ask again for <0>{origin}</0>"
+msgstr ""
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -18144,6 +18150,11 @@ msgstr "Toto je aktuální podpisový klíč. Jeho odvoláním zneplatníte kaž
 msgid "This key should be set through body input"
 msgstr "Tento klíč by měl být nastaven přes tělo požadavku"
 
+#. js-lingui-id: S9jYAG
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "This link will take you to an external site: <0>{url}</0>"
+msgstr ""
+
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
@@ -20793,6 +20804,11 @@ msgstr "Ztratíte všechna vaše mapování."
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Chystáte se změnit subdoménu své pracovní oblasti. Tato akce odhlásí všechny uživatele."
+
+#. js-lingui-id: qgZCyy
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
+msgid "You're leaving Twenty"
+msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx

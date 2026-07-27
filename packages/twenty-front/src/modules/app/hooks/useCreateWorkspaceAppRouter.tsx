@@ -124,13 +124,13 @@ const NotFound = lazy(() =>
 );
 
 const preloadOnboardingPages = () => {
-  void WorkspaceActivation.preload();
-  void CreateProfile.preload();
-  void SyncEmails.preload();
-  void InstallApps.preload();
-  void InviteTeam.preload();
-  void ChooseYourPlan.preload();
-  void WorkspaceSetup.preload();
+  WorkspaceActivation.preload();
+  CreateProfile.preload();
+  SyncEmails.preload();
+  InstallApps.preload();
+  InviteTeam.preload();
+  ChooseYourPlan.preload();
+  WorkspaceSetup.preload();
 
   return null;
 };
