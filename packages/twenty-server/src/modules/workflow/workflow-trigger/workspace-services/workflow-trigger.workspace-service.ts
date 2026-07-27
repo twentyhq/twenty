@@ -7,6 +7,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -61,6 +62,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -243,6 +245,28 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
+  private async mirrorVersionStatusChangeInTransaction(
+    workflowVersionId: string,
+    workspaceId: string,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    entityManager: WorkspaceEntityManager,
+  ): Promise<void> {
+    const workflowVersion = await workflowVersionRepository.findOne(
+      { where: { id: workflowVersionId } },
+      entityManager,
+    );
+
+    if (!isDefined(workflowVersion)) {
+      return;
+    }
+
+    await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
+      workspaceId,
+      entityManager,
+      workflowVersion,
+    });
+  }
+
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -286,6 +310,13 @@ export class WorkflowTriggerWorkspaceService {
             undefined,
             queryRunner.manager,
           );
+
+          await this.mirrorVersionStatusChangeInTransaction(
+            workflow.lastPublishedVersionId,
+            workspaceId,
+            workflowVersionRepository,
+            queryRunner.manager,
+          );
         }
 
         await workflowRepository.update(
@@ -323,6 +354,13 @@ export class WorkflowTriggerWorkspaceService {
         queryRunner.manager,
       );
 
+      await this.mirrorVersionStatusChangeInTransaction(
+        workflowVersion.id,
+        workspaceId,
+        workflowVersionRepository,
+        queryRunner.manager,
+      );
+
       await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
         entityManager: queryRunner.manager,
       });
@@ -337,6 +375,10 @@ export class WorkflowTriggerWorkspaceService {
     } finally {
       await queryRunner.release();
     }
+
+    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+      workspaceId,
+    );
 
     await this.emitStatusUpdateEvents(
       workflowVersion,
@@ -381,6 +423,13 @@ export class WorkflowTriggerWorkspaceService {
         queryRunner.manager,
       );
 
+      await this.mirrorVersionStatusChangeInTransaction(
+        workflowVersion.id,
+        workspaceId,
+        workflowVersionRepository,
+        queryRunner.manager,
+      );
+
       await this.disableAutomatedTrigger(workflowVersion, workspaceId, {
         entityManager: queryRunner.manager,
       });
@@ -395,6 +444,10 @@ export class WorkflowTriggerWorkspaceService {
     } finally {
       await queryRunner.release();
     }
+
+    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+      workspaceId,
+    );
 
     await this.emitStatusUpdateEvents(
       workflowVersion,
