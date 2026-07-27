@@ -8,10 +8,12 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
+import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,
@@ -34,8 +36,23 @@ export const useActivityTargetsForTargetableObjects = ({
   const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
+
+  const activityTargetObjectNameSingular =
+    getJoinObjectNameSingular(objectNameSingular);
+  const activityTargetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === activityTargetObjectNameSingular,
+  );
+
+  if (!isDefined(activityTargetObjectMetadataItem)) {
+    throw new Error(
+      `Cannot find activity target object metadata item for ${activityTargetObjectNameSingular}`,
+    );
+  }
+
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
+    activityTargetObjectMetadataItem,
   });
 
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
