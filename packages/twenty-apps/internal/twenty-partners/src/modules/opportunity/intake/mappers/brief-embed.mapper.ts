@@ -12,6 +12,8 @@ export type BriefForEmbed = {
 
 const NEED_MAX = 600;
 const REQUIREMENTS_MAX = 300;
+const INLINE_MAX = 256;
+const PARTNER_NAME_MAX = 100;
 const NO_PARTNER_LABEL = 'Marketplace listing';
 const SPACER: DiscordField = { name: '​', value: '​', inline: true };
 
@@ -33,8 +35,12 @@ const pushInlineRow = (target: DiscordField[], row: DiscordField[]): void => {
   for (let index = row.length; index < 3; index += 1) target.push(SPACER);
 };
 
+// Every inline value comes from the unbounded public brief form; Discord rejects
+// the whole payload above 1024 chars per field, which the caller then swallows.
 const inlineField = (name: string, value: string | undefined | null): DiscordField[] =>
-  isNonEmptyString(value) ? [{ name, value: value.trim(), inline: true }] : [];
+  isNonEmptyString(value)
+    ? [{ name, value: truncate(value.trim(), INLINE_MAX), inline: true }]
+    : [];
 
 export function buildBriefEmbed(
   brief: BriefForEmbed,
@@ -44,12 +50,14 @@ export function buildBriefEmbed(
   const baseUrl = isNonEmptyString(frontendUrl) ? trimTrailingSlash(frontendUrl) : null;
   const fields: DiscordField[] = [];
 
+  const partnerName =
+    referringPartner === null ? null : truncate(referringPartner.name, PARTNER_NAME_MAX);
   const referredBy =
-    referringPartner === null
+    referringPartner === null || partnerName === null
       ? NO_PARTNER_LABEL
       : baseUrl === null
-        ? referringPartner.name
-        : `[${referringPartner.name}](${baseUrl}/object/partner/${referringPartner.id})`;
+        ? partnerName
+        : `[${partnerName}](${baseUrl}/object/partner/${referringPartner.id})`;
   fields.push({ name: 'Referred by', value: referredBy });
 
   const contact = [input.firstName, input.lastName].filter(isNonEmptyString).join(' ').trim();

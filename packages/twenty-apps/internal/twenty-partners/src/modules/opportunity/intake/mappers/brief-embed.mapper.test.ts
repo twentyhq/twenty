@@ -73,6 +73,21 @@ describe('buildBriefEmbed', () => {
     expect(fieldNamed(embed, 'Requirements')?.value.length).toBe(300);
   });
 
+  it('truncates oversized inline values from the public form', () => {
+    const embed = buildBriefEmbed(
+      {
+        opportunityId: 'opp-1',
+        input: { ...input, country: 'c'.repeat(2000), companyName: 'x'.repeat(2000) },
+        referringPartner: { id: 'p-9', name: 'n'.repeat(2000) },
+      },
+      'https://partners.twenty.com',
+    );
+    const values = (embed.fields as { value: string }[]).map((f) => f.value);
+    expect(Math.max(...values.map((v) => v.length))).toBeLessThanOrEqual(1024);
+    expect(fieldNamed(embed, 'Country')?.value.length).toBe(256);
+    expect(fieldNamed(embed, 'Company')?.value.length).toBe(256);
+  });
+
   it('omits absent optional fields', () => {
     const embed = buildBriefEmbed(
       { opportunityId: 'opp-1', input, referringPartner: null },

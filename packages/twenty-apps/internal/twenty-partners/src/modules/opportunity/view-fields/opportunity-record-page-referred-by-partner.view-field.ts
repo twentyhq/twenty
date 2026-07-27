@@ -18,6 +18,6 @@ export default defineViewField({
   fieldMetadataUniversalIdentifier: REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID,
   viewFieldGroupUniversalIdentifier:
     OPPORTUNITY_RECORD_PAGE_FIELDS.viewFieldGroups.relations.universalIdentifier,
-  position: 4,
+  position: 5,
   isVisible: true,
 });

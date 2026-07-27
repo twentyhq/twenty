@@ -64,6 +64,14 @@ describe('submitClientBriefSchema partnerSlug', () => {
   });
 
   it('keeps partnerSlug out of the requirements text', () => {
-    expect(buildRequirementsText({ ...base, partnerSlug: 'acme-consulting' })).toBeNull();
+    const withoutSlug = buildRequirementsText({ ...base, requirements: 'French UI', seatCount: '~30' });
+    const withSlug = buildRequirementsText({
+      ...base,
+      requirements: 'French UI',
+      seatCount: '~30',
+      partnerSlug: 'acme-consulting',
+    });
+    expect(withSlug).toBe(withoutSlug);
+    expect(withSlug).not.toContain('acme-consulting');
   });
 });
