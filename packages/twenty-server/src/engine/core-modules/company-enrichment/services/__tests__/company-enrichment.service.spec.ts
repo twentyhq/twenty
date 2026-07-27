@@ -16,7 +16,10 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 describe('CompanyEnrichmentService', () => {
   let service: CompanyEnrichmentService;
   let userWorkspaceRepository: { findOne: jest.Mock };
-  let peopleDataLabsCompanyClientService: { enrichCompanyByDomain: jest.Mock };
+  let peopleDataLabsCompanyClientService: {
+    enrichCompanyByDomain: jest.Mock;
+    isEnabled: jest.Mock;
+  };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
 
@@ -27,7 +30,10 @@ describe('CompanyEnrichmentService', () => {
     userWorkspaceRepository = {
       findOne: jest.fn().mockResolvedValue({ userId: creatorUserId }),
     };
-    peopleDataLabsCompanyClientService = { enrichCompanyByDomain: jest.fn() };
+    peopleDataLabsCompanyClientService = {
+      enrichCompanyByDomain: jest.fn(),
+      isEnabled: jest.fn().mockReturnValue(true),
+    };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
 
@@ -160,6 +166,23 @@ describe('CompanyEnrichmentService', () => {
       expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
     },
   );
+
+  it('should not consume throttle tokens when the feature is disabled', async () => {
+    peopleDataLabsCompanyClientService.isEnabled.mockReturnValue(false);
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    expect(
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
+    ).not.toHaveBeenCalled();
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
+  });
 
   it('should not consume throttle tokens for a non creator', async () => {
     await service.enrichCompanyForWorkspaceCreator({

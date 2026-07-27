@@ -29,12 +29,14 @@ export class PeopleDataLabsCompanyClientService {
     });
   }
 
+  isEnabled(): boolean {
+    return isNonEmptyString(this.getApiKey());
+  }
+
   async enrichCompanyByDomain(
     domain: string,
   ): Promise<PeopleDataLabsCompanyEnrichResult> {
-    const apiKey = this.twentyConfigService
-      .get('PEOPLE_DATA_LABS_API_KEY')
-      ?.trim();
+    const apiKey = this.getApiKey();
 
     if (!isNonEmptyString(apiKey)) {
       return { outcome: 'skipped' };
@@ -101,6 +103,10 @@ export class PeopleDataLabsCompanyClientService {
         message: error instanceof Error ? error.message : String(error),
       };
     }
+  }
+
+  private getApiKey(): string | undefined {
+    return this.twentyConfigService.get('PEOPLE_DATA_LABS_API_KEY')?.trim();
   }
 
   private classifyError({

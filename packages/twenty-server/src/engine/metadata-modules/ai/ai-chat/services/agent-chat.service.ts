@@ -383,20 +383,6 @@ export class AgentChatService {
     });
   }
 
-  async hasNoMessages({
-    threadId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const messageCount = await this.messageRepository.count(workspaceId, {
-      where: { threadId },
-    });
-
-    return messageCount === 0;
-  }
-
   async seedCompanyContextMessage({
     threadId,
     workspaceId,
@@ -422,21 +408,31 @@ export class AgentChatService {
     // hidden messages are excluded from the user-facing "latest sent message" query below.
     const epochDate = new Date(0);
 
-    await this.addMessage({
-      threadId,
-      workspaceId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [
-          {
-            type: 'text' as const,
-            text: buildCompanyContextMessageText(companyEnrichment),
-          },
-        ],
-      },
-      isHidden,
-      processedAt: epochDate,
-    });
+    try {
+      await this.addMessage({
+        threadId,
+        workspaceId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [
+            {
+              type: 'text' as const,
+              text: buildCompanyContextMessageText(companyEnrichment),
+            },
+          ],
+        },
+        isHidden,
+        processedAt: epochDate,
+      });
+    } catch (error) {
+      // Never fail the user's message because the context could not be attached; the next
+      // message retries the seed since this stays idempotent on the hidden message's existence.
+      this.logger.warn(
+        `Failed to seed company context on thread ${threadId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   async queueMessage({

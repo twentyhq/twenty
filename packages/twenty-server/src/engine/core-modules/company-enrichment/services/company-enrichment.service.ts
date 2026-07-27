@@ -61,6 +61,11 @@ export class CompanyEnrichmentService {
       return { outcome: 'unavailable', enrichment: null };
     }
 
+    // Checked before throttling so a disabled feature never burns a throttle token.
+    if (!this.peopleDataLabsCompanyClientService.isEnabled()) {
+      return { outcome: 'unavailable', enrichment: null };
+    }
+
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `company-enrichment:throttler:${workspaceId}`,
