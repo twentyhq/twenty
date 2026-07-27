@@ -11,7 +11,6 @@ const MIDDLE_MOUSE_BUTTON = 1;
 
 type CreateAnchorNavigationClickHandlerParams = {
   href: unknown;
-  target: unknown;
   remoteOnClick: unknown;
   requestExternalNavigation: RequestExternalNavigation | null;
 };
@@ -19,7 +18,6 @@ type CreateAnchorNavigationClickHandlerParams = {
 export const createAnchorNavigationClickHandler =
   ({
     href,
-    target,
     remoteOnClick,
     requestExternalNavigation,
   }: CreateAnchorNavigationClickHandlerParams) =>
@@ -39,17 +37,8 @@ export const createAnchorNavigationClickHandler =
     ) {
       event.preventDefault();
 
-      const clickRequestsSeparateBrowsingContext =
-        event.button === MIDDLE_MOUSE_BUTTON ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey;
-
-      const anchorTarget = isNonEmptyString(target) ? target : undefined;
-
       requestExternalNavigation({
         url: new URL(href, window.location.href).href,
-        target: clickRequestsSeparateBrowsingContext ? '_blank' : anchorTarget,
       });
 
       return;

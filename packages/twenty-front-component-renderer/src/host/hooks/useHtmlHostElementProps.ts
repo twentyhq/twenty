@@ -48,7 +48,6 @@ export const useHtmlHostElementProps = (
     htmlTag === 'a' &&
     createAnchorNavigationClickHandler({
       href: reactBindableProps.href,
-      target: reactBindableProps.target,
       remoteOnClick: reactBindableProps.onClick,
       requestExternalNavigation,
     });

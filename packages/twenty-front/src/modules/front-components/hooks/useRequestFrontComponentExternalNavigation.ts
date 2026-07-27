@@ -21,7 +21,7 @@ export const useRequestFrontComponentExternalNavigation = ({
   const { openModal } = useModal();
 
   return useCallback(
-    ({ url, target }) => {
+    ({ url }) => {
       const origin = new URL(url).origin;
 
       const trustedFrontComponentExternalOrigins = jotaiStore.get(
@@ -33,7 +33,7 @@ export const useRequestFrontComponentExternalNavigation = ({
         false;
 
       if (applicationTrustsOrigin) {
-        openExternalUrl(url, target);
+        openExternalUrl(url);
         return;
       }
 
@@ -41,7 +41,6 @@ export const useRequestFrontComponentExternalNavigation = ({
         applicationId,
         url,
         origin,
-        target,
       });
       openModal(FRONT_COMPONENT_EXTERNAL_LINK_MODAL_ID);
     },

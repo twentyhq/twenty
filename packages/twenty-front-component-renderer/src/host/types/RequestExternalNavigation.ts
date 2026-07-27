@@ -1,4 +1,1 @@
-export type RequestExternalNavigation = (request: {
-  url: string;
-  target?: string;
-}) => void;
+export type RequestExternalNavigation = (request: { url: string }) => void;

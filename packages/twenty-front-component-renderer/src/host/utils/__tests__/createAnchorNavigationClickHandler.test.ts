@@ -32,7 +32,6 @@ describe('createAnchorNavigationClickHandler', () => {
 
     createAnchorNavigationClickHandler({
       href: 'https://example.com/probe',
-      target: undefined,
       remoteOnClick,
       requestExternalNavigation,
     })(event);
@@ -40,25 +39,22 @@ describe('createAnchorNavigationClickHandler', () => {
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(requestExternalNavigation).toHaveBeenCalledWith({
       url: 'https://example.com/probe',
-      target: undefined,
     });
     expect(remoteOnClick).not.toHaveBeenCalled();
   });
 
-  it('should forward the anchor target when requesting navigation', () => {
+  it('should ignore the anchor target so the host always decides how to open the url', () => {
     const requestExternalNavigation = jest.fn();
     const { event } = createMouseEvent(0);
 
     createAnchorNavigationClickHandler({
       href: 'https://example.com/probe',
-      target: '_blank',
       remoteOnClick: undefined,
       requestExternalNavigation,
     })(event);
 
     expect(requestExternalNavigation).toHaveBeenCalledWith({
       url: 'https://example.com/probe',
-      target: '_blank',
     });
   });
 
@@ -69,7 +65,6 @@ describe('createAnchorNavigationClickHandler', () => {
 
     createAnchorNavigationClickHandler({
       href: 'http://localhost/objects/people',
-      target: undefined,
       remoteOnClick,
       requestExternalNavigation,
     })(event);
@@ -85,7 +80,6 @@ describe('createAnchorNavigationClickHandler', () => {
 
     createAnchorNavigationClickHandler({
       href: 'https://example.com/probe',
-      target: undefined,
       remoteOnClick,
       requestExternalNavigation: null,
     })(event);
@@ -94,14 +88,13 @@ describe('createAnchorNavigationClickHandler', () => {
     expect(remoteOnClick).toHaveBeenCalledWith(event);
   });
 
-  it('should open an external middle click in a new tab without forwarding to the remote handler', () => {
+  it('should intercept an external middle click without forwarding to the remote handler', () => {
     const requestExternalNavigation = jest.fn();
     const remoteOnClick = jest.fn();
     const { event, preventDefault } = createMouseEvent(1);
 
     createAnchorNavigationClickHandler({
       href: 'https://example.com/probe',
-      target: undefined,
       remoteOnClick,
       requestExternalNavigation,
     })(event);
@@ -109,7 +102,6 @@ describe('createAnchorNavigationClickHandler', () => {
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(requestExternalNavigation).toHaveBeenCalledWith({
       url: 'https://example.com/probe',
-      target: '_blank',
     });
     expect(remoteOnClick).not.toHaveBeenCalled();
   });
@@ -121,7 +113,7 @@ describe('createAnchorNavigationClickHandler', () => {
   ] as Array<
     [string, { metaKey?: boolean; ctrlKey?: boolean; shiftKey?: boolean }]
   >)(
-    'should open a primary click with %s in a separate browsing context without forwarding to the remote handler',
+    'should intercept a primary click with %s without forwarding to the remote handler',
     (_label, modifierKeys) => {
       const requestExternalNavigation = jest.fn();
       const remoteOnClick = jest.fn();
@@ -129,14 +121,12 @@ describe('createAnchorNavigationClickHandler', () => {
 
       createAnchorNavigationClickHandler({
         href: 'https://example.com/probe',
-        target: undefined,
         remoteOnClick,
         requestExternalNavigation,
       })(event);
 
       expect(requestExternalNavigation).toHaveBeenCalledWith({
         url: 'https://example.com/probe',
-        target: '_blank',
       });
       expect(remoteOnClick).not.toHaveBeenCalled();
     },
@@ -149,7 +139,6 @@ describe('createAnchorNavigationClickHandler', () => {
 
     createAnchorNavigationClickHandler({
       href: 'https://example.com/probe',
-      target: undefined,
       remoteOnClick,
       requestExternalNavigation,
     })(event);

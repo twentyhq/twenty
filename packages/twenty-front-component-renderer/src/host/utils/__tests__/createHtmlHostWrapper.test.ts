@@ -326,7 +326,6 @@ describe('createHtmlHostWrapper anchor navigation', () => {
     expect(clickEvent.defaultPrevented).toBe(true);
     expect(requestExternalNavigation).toHaveBeenCalledWith({
       url: 'https://example.com/probe',
-      target: undefined,
     });
     expect(remoteOnClick).not.toHaveBeenCalled();
   });

@@ -50,7 +50,7 @@ describe('useRequestFrontComponentExternalNavigation', () => {
     const { result } = renderRequestNavigation();
 
     act(() => {
-      result.current({ url: 'https://example.com/pricing', target: undefined });
+      result.current({ url: 'https://example.com/pricing' });
     });
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
@@ -60,7 +60,6 @@ describe('useRequestFrontComponentExternalNavigation', () => {
       applicationId: APPLICATION_ID,
       url: 'https://example.com/pricing',
       origin: 'https://example.com',
-      target: undefined,
     });
     expect(window.open).not.toHaveBeenCalled();
   });
@@ -73,7 +72,7 @@ describe('useRequestFrontComponentExternalNavigation', () => {
     const { result } = renderRequestNavigation();
 
     act(() => {
-      result.current({ url: 'https://example.com/pricing', target: '_blank' });
+      result.current({ url: 'https://example.com/pricing' });
     });
 
     expect(window.open).toHaveBeenCalledWith(
@@ -92,7 +91,7 @@ describe('useRequestFrontComponentExternalNavigation', () => {
     const { result } = renderRequestNavigation();
 
     act(() => {
-      result.current({ url: 'https://example.com/pricing', target: undefined });
+      result.current({ url: 'https://example.com/pricing' });
     });
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
