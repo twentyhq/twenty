@@ -1,16 +1,25 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'src/utils/is-defined';
 
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  type CallRecordingRequestStatus,
+  type CallRecordingStatus,
+} from 'src/logic-functions/constants/call-recording-status';
+
 export type CallRecordingWriteFields = {
   title?: string;
-  status?: string;
-  recordingRequestStatus?: string;
   externalRecordingId?: string;
   startedAt?: string;
   endedAt?: string;
   transcript?: unknown;
   summary?: { markdown: string; blocknote: null };
   calendarEventId?: string;
+};
+
+export type CallRecordingCreateFields = CallRecordingWriteFields & {
+  status: CallRecordingStatus;
+  recordingRequestStatus: CallRecordingRequestStatus;
 };
 
 type UpsertCallRecordingResult = {
@@ -60,7 +69,7 @@ export const upsertCallRecording = async (
     updateFields,
   }: {
     id: string;
-    createFields: CallRecordingWriteFields;
+    createFields: CallRecordingCreateFields;
     updateFields: CallRecordingWriteFields;
   },
 ): Promise<UpsertCallRecordingResult> => {
@@ -75,7 +84,13 @@ export const upsertCallRecording = async (
   try {
     await client.mutation({
       createCallRecording: {
-        __args: { data: { id, ...createFields } },
+        __args: {
+          data: {
+            id,
+            ...createFields,
+            applicationId: APPLICATION_UNIVERSAL_IDENTIFIER,
+          },
+        },
         id: true,
       },
     });

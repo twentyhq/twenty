@@ -112,7 +112,8 @@ export const syncFirefliesCallToCallRecording = async ({
       createFields: {
         ...sharedFields,
         recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.REQUESTED,
-        status: sharedFields.status ?? CALL_RECORDING_STATUS.PROCESSING,
+        // Fireflies only surfaces calls that already ended.
+        status: CALL_RECORDING_STATUS.COMPLETED,
       },
       updateFields: sharedFields,
     });
@@ -159,10 +160,7 @@ const buildFieldUpdate = ({
 
     return {
       empty: false,
-      fields: {
-        transcript: entries,
-        status: CALL_RECORDING_STATUS.COMPLETED,
-      },
+      fields: { transcript: entries },
     };
   }
 
