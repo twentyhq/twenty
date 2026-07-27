@@ -1,18 +1,47 @@
 import * as Sentry from '@sentry/node';
+import { QueryFailedError } from 'typeorm';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
-
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import {
+  BaseGraphQLError,
+  ErrorCode,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { graphQLErrorCodesToFilter } from 'src/engine/utils/global-exception-handler.util';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    if (exception instanceof BaseGraphQLError) {
+      return graphQLErrorCodesToFilter.includes(
+        exception.extensions?.code as ErrorCode,
+      );
+    }
+
+    if (exception instanceof QueryFailedError) {
+      const postgresError = exception as QueryFailedError & {
+        code?: string;
+        driverError?: { code?: string };
+      };
+      const postgresErrorCode =
+        postgresError.code ?? postgresError.driverError?.code;
+
+      return (
+        postgresErrorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION
+      );
+    }
+
+    return false;
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -24,6 +53,8 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       if (options?.operation) {
         scope.setExtra('operation', options.operation.name);
         scope.setExtra('operationType', options.operation.type);
+        scope.setTag('operationName', options.operation.name);
+        scope.setTag('operationType', options.operation.type);
       }
 
       if (options?.document) {
@@ -32,6 +63,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
 
       if (options?.workspace) {
         scope.setExtra('workspace', options.workspace);
+
+        if (isDefined(options.workspace.id)) {
+          scope.setTag('workspaceId', options.workspace.id);
+        }
       }
 
       if (options?.additionalData) {
@@ -48,6 +83,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
@@ -95,6 +134,41 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
           }
           scope.setFingerprint(fingerPrint);
           exception.name = exception.message;
+        }
+
+        if (exception instanceof QueryFailedError) {
+          const postgresError = exception as QueryFailedError & {
+            code?: string;
+            driverError?: { code?: string; constraint?: string };
+          };
+          const postgresErrorCode =
+            postgresError.code ?? postgresError.driverError?.code;
+
+          if (isDefined(postgresErrorCode)) {
+            scope.setTag('postgresSqlErrorCode', postgresErrorCode);
+            const fingerPrint = [postgresErrorCode];
+            const genericOperationName = getGenericOperationName(
+              options?.operation?.name,
+            );
+
+            if (isDefined(genericOperationName)) {
+              fingerPrint.push(genericOperationName);
+            }
+            scope.setFingerprint(fingerPrint);
+          }
+
+          if (isDefined(postgresError.driverError?.constraint)) {
+            scope.setTag(
+              'postgresConstraint',
+              postgresError.driverError.constraint,
+            );
+          }
+
+          if (
+            postgresErrorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+          ) {
+            scope.setTag('postgresViolationType', 'unique');
+          }
         }
 
         if (exception instanceof MessageImportDriverException) {

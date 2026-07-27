@@ -8,8 +8,10 @@ import { join } from 'path';
 import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { v4 } from 'uuid';
+
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -118,53 +120,22 @@ export class ApplicationTarballService {
       }
 
       let appRegistration = await this.appRegistrationRepository.findOne({
-        where: {
-          universalIdentifier,
-          ownerWorkspaceId: params.ownerWorkspaceId,
-        },
+        where: { universalIdentifier },
       });
 
       if (isDefined(appRegistration)) {
-        if (
-          appRegistration.sourceType !==
-            ApplicationRegistrationSourceType.LOCAL &&
-          appRegistration.sourceType !==
-            ApplicationRegistrationSourceType.TARBALL
-        ) {
-          throw new ApplicationRegistrationException(
-            `This app is registered as ${appRegistration.sourceType}. Cannot upload tarball.`,
-            ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
-          );
-        }
+        this.assertRegistrationOwnership(
+          appRegistration,
+          params.ownerWorkspaceId,
+        );
 
-        if (
-          appRegistration.sourceType ===
-            ApplicationRegistrationSourceType.TARBALL &&
-          isDefined(appRegistration.latestAvailableVersion) &&
-          isDefined(packageJson?.version)
-        ) {
-          const incomingVersion = packageJson.version;
-          const currentVersion = appRegistration.latestAvailableVersion;
-
-          if (!isDefined(semver.valid(incomingVersion))) {
-            throw new ApplicationRegistrationException(
-              `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
-              ApplicationRegistrationExceptionCode.INVALID_INPUT,
-            );
-          }
-
-          if (
-            isDefined(semver.valid(currentVersion)) &&
-            semver.lte(incomingVersion, currentVersion)
-          ) {
-            throw new ApplicationRegistrationException(
-              `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${currentVersion}. Please bump the version in package.json.`,
-              ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
-            );
-          }
-        }
+        this.assertTarballCanReplaceRegistration({
+          registration: appRegistration,
+          incomingVersion: packageJson?.version,
+          universalIdentifier,
+        });
       } else {
-        appRegistration = this.appRegistrationRepository.create({
+        const registration = this.appRegistrationRepository.create({
           universalIdentifier,
           name: manifest.application?.displayName ?? 'Unknown App',
           sourceType: ApplicationRegistrationSourceType.TARBALL,
@@ -178,8 +149,35 @@ export class ApplicationTarballService {
           ownerWorkspaceId: params.ownerWorkspaceId,
         });
 
-        appRegistration =
-          await this.appRegistrationRepository.save(appRegistration);
+        try {
+          appRegistration = await this.appRegistrationRepository.save(
+            registration,
+          );
+        } catch (error) {
+          if (!this.isUniqueViolation(error)) {
+            throw error;
+          }
+
+          const existingRegistration =
+            await this.appRegistrationRepository.findOne({
+              where: { universalIdentifier },
+            });
+
+          if (!isDefined(existingRegistration)) {
+            throw error;
+          }
+
+          appRegistration = existingRegistration;
+          this.assertRegistrationOwnership(
+            appRegistration,
+            params.ownerWorkspaceId,
+          );
+          this.assertTarballCanReplaceRegistration({
+            registration: appRegistration,
+            incomingVersion: packageJson?.version,
+            universalIdentifier,
+          });
+        }
       }
 
       const { workspaceCustomFlatApplication } =
@@ -229,5 +227,79 @@ export class ApplicationTarballService {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
+  }
+
+  private assertRegistrationOwnership(
+    registration: ApplicationRegistrationEntity,
+    ownerWorkspaceId: string,
+  ): void {
+    if (registration.ownerWorkspaceId === ownerWorkspaceId) {
+      return;
+    }
+
+    throw new ApplicationRegistrationException(
+      `Universal identifier ${registration.universalIdentifier} is already claimed`,
+      ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+    );
+  }
+
+  private assertTarballCanReplaceRegistration({
+    registration,
+    incomingVersion,
+    universalIdentifier,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    incomingVersion: string | undefined;
+    universalIdentifier: string;
+  }): void {
+    if (
+      registration.sourceType !== ApplicationRegistrationSourceType.LOCAL &&
+      registration.sourceType !== ApplicationRegistrationSourceType.TARBALL
+    ) {
+      throw new ApplicationRegistrationException(
+        `This app is registered as ${registration.sourceType}. Cannot upload tarball.`,
+        ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
+      );
+    }
+
+    if (
+      registration.sourceType === ApplicationRegistrationSourceType.TARBALL &&
+      isDefined(registration.latestAvailableVersion) &&
+      isDefined(incomingVersion)
+    ) {
+      if (!isDefined(semver.valid(incomingVersion))) {
+        throw new ApplicationRegistrationException(
+          `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+          ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (
+        isDefined(semver.valid(registration.latestAvailableVersion)) &&
+        semver.lte(incomingVersion, registration.latestAvailableVersion)
+      ) {
+        throw new ApplicationRegistrationException(
+          `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${registration.latestAvailableVersion}. Please bump the version in package.json.`,
+          ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
+        );
+      }
+    }
+  }
+
+  private isUniqueViolation(error: unknown): error is QueryFailedError {
+    if (!(error instanceof QueryFailedError)) {
+      return false;
+    }
+
+    const postgresError = error as QueryFailedError & {
+      code?: string;
+      driverError?: { code?: string };
+    };
+
+    return (
+      postgresError.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION ||
+      postgresError.driverError?.code ===
+        POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+    );
   }
 }
