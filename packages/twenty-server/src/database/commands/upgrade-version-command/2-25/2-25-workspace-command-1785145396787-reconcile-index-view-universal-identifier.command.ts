@@ -28,9 +28,9 @@ type UniversalIdentifierUpdate = {
   };
 };
 
-@RegisteredWorkspaceCommand('2.24.0', 1785145396787)
+@RegisteredWorkspaceCommand('2.25.0', 1785145396787)
 @Command({
-  name: 'upgrade:2-24:reconcile-index-view-universal-identifier',
+  name: 'upgrade:2-25:reconcile-index-view-universal-identifier',
   description:
     'Reconcile every default INDEX table view ("All {objectLabelPlural}", keyed on ViewKey.INDEX) and its view fields with the engine convention, for standard and custom objects alike. The view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, keyed on the object identifier + the INDEX key), each view field gets the derived getViewFieldUniversalIdentifier, and both get isSystemSideEffect: true — as if they had been provisioned by the metadata side-effect engine. Children (view fields, filters, sorts, groups) reference the view by id, so re-owning universalIdentifier is a lossless update.',
 })
