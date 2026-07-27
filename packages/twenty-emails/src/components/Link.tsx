@@ -1,5 +1,5 @@
 import { type JSX } from 'react';
-import { Link as EmailLink } from '@react-email/components';
+import { Link as EmailLink } from 'react-email';
 
 import { emailTheme } from 'src/common-style';
 
