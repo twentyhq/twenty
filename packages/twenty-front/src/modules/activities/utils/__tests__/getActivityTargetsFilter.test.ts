@@ -45,7 +45,9 @@ describe('getActivityTargetsFilter', () => {
     });
 
     const filter = getActivityTargetsFilter({
-      targetableObjects: [{ id: 'record-1', targetObjectNameSingular: 'ligacao' }],
+      targetableObjects: [
+        { id: 'record-1', targetObjectNameSingular: 'ligacao' },
+      ],
       activityTargetObjectMetadataItem,
     });
 
