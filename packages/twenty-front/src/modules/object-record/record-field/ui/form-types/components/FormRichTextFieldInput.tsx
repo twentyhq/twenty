@@ -14,10 +14,6 @@ type FormRichTextFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
 };
 
-const RICH_TEXT_EDITOR_MIN_HEIGHT = 340;
-
-const RICH_TEXT_EDITOR_MAX_WIDTH = 600;
-
 const mapTipTapToBlockNote = (tiptapJson: string): string => {
   try {
     const json = JSON.parse(tiptapJson);
@@ -57,8 +53,7 @@ export const FormRichTextFieldInput = ({
       onChange={handleChange}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      minHeight={RICH_TEXT_EDITOR_MIN_HEIGHT}
-      maxWidth={RICH_TEXT_EDITOR_MAX_WIDTH}
+      preset="recordRichTextField"
     />
   );
 };

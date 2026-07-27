@@ -21,10 +21,7 @@ export const CampaignSentPreview = ({ campaign }: CampaignSentPreviewProps) => {
       <FormAdvancedTextFieldInput
         defaultValue={campaign.bodyTemplate}
         readonly
-        enableFullScreen={false}
-        minHeight={400}
-        maxWidth={900}
-        contentType="html"
+        preset="campaignBody"
         placeholder={t`No content`}
       />
     </StyledContainer>

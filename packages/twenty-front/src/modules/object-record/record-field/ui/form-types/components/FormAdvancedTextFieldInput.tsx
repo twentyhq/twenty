@@ -1,8 +1,9 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import {
-  type AdvancedTextEditorContentType,
-  useAdvancedTextEditor,
-} from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+  ADVANCED_TEXT_EDITOR_PRESETS,
+  type AdvancedTextEditorPresetName,
+} from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputHint } from '@/ui/input/components/InputHint';
@@ -21,8 +22,20 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledAdvancedTextFieldContainerWrapper = styled.div`
+const StyledAdvancedTextFieldContainerWrapper = styled.div<{
+  hasFieldChrome: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
+  min-height: 0;
+
+  /* FormFieldInputContainer is shared by every form field and does not carry a
+     height, so the document chrome stretches its one child here instead. */
+  & > * {
+    flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
+    min-height: 0;
+  }
 `;
 
 const StyledAdvancedTextFieldFieldContainer = styled.div`
@@ -33,10 +46,17 @@ const StyledAdvancedTextFieldFieldContainer = styled.div`
   position: relative;
 `;
 
-const StyledAdvancedTextFieldInnerContainer = styled.div`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+const StyledAdvancedTextFieldInnerContainer = styled.div<{
+  hasFieldChrome: boolean;
+}>`
+  background-color: ${({ hasFieldChrome }) =>
+    hasFieldChrome ? themeCssVariables.background.transparent.lighter : 'none'};
+  border: ${({ hasFieldChrome }) =>
+    hasFieldChrome
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${({ hasFieldChrome }) =>
+    hasFieldChrome ? themeCssVariables.border.radius.md : '0'};
   box-sizing: border-box;
 
   display: flex;
@@ -79,11 +99,11 @@ type FormAdvancedTextFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<string>;
   onImageUploadError?: (error: Error, file: File) => void;
+  preset: AdvancedTextEditorPresetName;
+  // Escape hatch for surfaces that share a preset but need their own height.
+  minHeight?: number;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
-  minHeight: number;
-  maxWidth: number;
-  contentType?: AdvancedTextEditorContentType;
 };
 
 export const FormAdvancedTextFieldInput = ({
@@ -97,12 +117,21 @@ export const FormAdvancedTextFieldInput = ({
   VariablePicker,
   onImageUpload,
   onImageUploadError,
-  enableFullScreen = true,
-  fullScreenBreadcrumbs,
+  preset,
   minHeight,
-  maxWidth,
-  contentType = 'json',
+  enableFullScreen,
+  fullScreenBreadcrumbs,
 }: FormAdvancedTextFieldInputProps) => {
+  const {
+    contentType,
+    chrome,
+    minHeight: presetMinHeight,
+    enableFullScreen: presetEnableFullScreen,
+  } = ADVANCED_TEXT_EDITOR_PRESETS[preset];
+
+  const editorMinHeight = minHeight ?? presetMinHeight;
+  const isFullScreenEnabled = enableFullScreen ?? presetEnableFullScreen;
+
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -180,15 +209,14 @@ export const FormAdvancedTextFieldInput = ({
     hasClosePageButton: !isMobile,
   });
 
-  const fullScreenOverlay = enableFullScreen
+  const fullScreenOverlay = isFullScreenEnabled
     ? renderFullScreenModal(
         <div data-globally-prevent-click-outside="true">
           <StyledFullScreenEditorContainer>
             <AdvancedTextEditor
               editor={editor}
               readonly={readonly}
-              minHeight={minHeight}
-              maxWidth={maxWidth}
+              minHeight={editorMinHeight}
             />
           </StyledFullScreenEditorContainer>
         </div>,
@@ -202,22 +230,25 @@ export const FormAdvancedTextFieldInput = ({
 
   return (
     <>
-      <StyledAdvancedTextFieldContainerWrapper>
+      <StyledAdvancedTextFieldContainerWrapper
+        hasFieldChrome={chrome === 'field'}
+      >
         <FormFieldInputContainer>
           {label ? <InputLabel>{label}</InputLabel> : null}
 
           <StyledAdvancedTextFieldFieldContainer>
-            <StyledAdvancedTextFieldInnerContainer>
+            <StyledAdvancedTextFieldInnerContainer
+              hasFieldChrome={chrome === 'field'}
+            >
               {!isFullScreen && (
                 <AdvancedTextEditor
                   editor={editor}
                   readonly={readonly}
-                  minHeight={minHeight}
-                  maxWidth={maxWidth}
+                  minHeight={editorMinHeight}
                 />
               )}
 
-              {enableFullScreen && (
+              {isFullScreenEnabled && (
                 <StyledEditorActionButtonContainer
                   hasVariablePicker={isDefined(VariablePicker) && !readonly}
                 >

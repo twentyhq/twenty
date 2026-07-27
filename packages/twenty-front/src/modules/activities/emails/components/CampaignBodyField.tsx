@@ -25,9 +25,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         defaultValue={body}
         onChange={setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        minHeight={400}
-        maxWidth={900}
-        contentType="html"
+        preset="campaignBody"
       />
     </StyledContainer>
   );
