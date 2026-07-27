@@ -32,6 +32,8 @@ describe('AgentChatStreamingService claim & reap', () => {
         .fn()
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
+      hasNoMessages: jest.fn().mockResolvedValue(false),
+      seedCompanyContextMessage: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
       hasQueuedMessages: jest

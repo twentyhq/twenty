@@ -383,6 +383,20 @@ export class AgentChatService {
     });
   }
 
+  async hasNoMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const messageCount = await this.messageRepository.count(workspaceId, {
+      where: { threadId },
+    });
+
+    return messageCount === 0;
+  }
+
   async seedCompanyContextMessage({
     threadId,
     workspaceId,
@@ -394,12 +408,13 @@ export class AgentChatService {
     companyEnrichment: WorkspaceCompanyEnrichment;
     isHidden: boolean;
   }): Promise<void> {
-    const existingMessageCount = await this.messageRepository.count(
+    // Idempotent: never create a second hidden company-context message for a thread.
+    const existingHiddenMessageCount = await this.messageRepository.count(
       workspaceId,
-      { where: { threadId } },
+      { where: { threadId, isHidden: true } },
     );
 
-    if (existingMessageCount > 0) {
+    if (existingHiddenMessageCount > 0) {
       return;
     }
 

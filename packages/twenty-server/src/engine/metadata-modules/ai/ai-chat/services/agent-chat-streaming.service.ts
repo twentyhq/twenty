@@ -228,14 +228,10 @@ export class AgentChatStreamingService {
     }
 
     try {
-      if (isDefined(companyContext)) {
-        await this.agentChatService.seedCompanyContextMessage({
-          threadId,
-          workspaceId: workspace.id,
-          companyEnrichment: companyContext,
-          isHidden: COMPANY_CONTEXT_MESSAGE_IS_HIDDEN,
-        });
-      }
+      const threadHadNoMessages = await this.agentChatService.hasNoMessages({
+        threadId,
+        workspaceId: workspace.id,
+      });
 
       const fileParts = await this.buildFilePartsFromAttachments(
         fileAttachments,
@@ -256,6 +252,18 @@ export class AgentChatStreamingService {
         },
         workspaceId: workspace.id,
       });
+
+      // Seed the company context only on a brand-new thread, and only AFTER the real user
+      // message is persisted, so a failed message insert can't leave an orphan hidden
+      // message that retry / thread-ranking (which ignore hidden messages) would trip on.
+      if (threadHadNoMessages && isDefined(companyContext)) {
+        await this.agentChatService.seedCompanyContextMessage({
+          threadId,
+          workspaceId: workspace.id,
+          companyEnrichment: companyContext,
+          isHidden: COMPANY_CONTEXT_MESSAGE_IS_HIDDEN,
+        });
+      }
 
       await this.agentChatService.notifyThreadActivityUpdated({
         threadId,
