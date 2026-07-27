@@ -1,4 +1,4 @@
-import { Column, Row } from '@react-email/components';
+import { Column, Row } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';

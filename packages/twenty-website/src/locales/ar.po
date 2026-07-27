@@ -59,7 +59,6 @@ msgstr "{count} دراسات حالة"
 
 #. js-lingui-id: NSO/FI
 #: src/partners-marketplace/PartnerRatesPanel.tsx
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/ساعة"
 
@@ -1276,11 +1275,6 @@ msgstr ""
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"
 msgstr "الكتالانية"
-
-#. js-lingui-id: NUrY9o
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "Categories"
-msgstr "الفئات"
 
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
@@ -2822,11 +2816,6 @@ msgstr "مجاني لك!"
 msgid "French"
 msgstr "الفرنسية"
 
-#. js-lingui-id: weRlb1
-#: src/partners-marketplace/PartnerMoneyRow.tsx
-msgid "from {minBudget}"
-msgstr "من {minBudget}"
-
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
@@ -3612,7 +3601,6 @@ msgstr "Labs"
 #. js-lingui-id: GAmD3h
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Languages"
 msgstr "اللغات"
@@ -4693,7 +4681,6 @@ msgstr "السعر"
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr "التسعير"
 
@@ -4897,7 +4884,6 @@ msgstr "السجلات"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
-#: src/partners-marketplace/PartnerCard.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr "المناطق"
@@ -6617,12 +6603,6 @@ msgstr "فيتنام 🇻🇳"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Vietnamese"
 msgstr "الفيتنامية"
-
-#. js-lingui-id: BRBSny
-#. placeholder {0}: partner.name
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "View {0} on LinkedIn"
-msgstr "عرض {0} على LinkedIn"
 
 #. js-lingui-id: 9nyGVq
 #: src/partners-marketplace/CaseStudyModal.tsx

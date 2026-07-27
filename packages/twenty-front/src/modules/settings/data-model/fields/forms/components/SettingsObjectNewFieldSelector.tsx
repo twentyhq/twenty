@@ -12,7 +12,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from '@react-email/components';
+import { Section } from 'twenty-ui/layout';
 import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';

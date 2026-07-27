@@ -23,9 +23,12 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
-// To avoid dynamic import issues in Jest
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (template, options) => {
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockImplementation(async (_template, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }
