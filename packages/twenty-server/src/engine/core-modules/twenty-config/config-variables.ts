@@ -1956,6 +1956,7 @@ export class ConfigVariables {
       'Enable or disable workspace company enrichment during onboarding',
     type: ConfigVariableType.BOOLEAN,
   })
+  @IsOptional()
   IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED = true;
 
   @ConfigVariablesMetadata({
