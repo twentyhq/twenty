@@ -44,25 +44,28 @@ export const SSEQuerySubscribeEffect = () => {
 
   const handleError = useCallback(
     (error: unknown) => {
-      if (CombinedGraphQLErrors.is(error)) {
-        const extensions = getGraphqlErrorExtensionsFromError(error);
+      const extensions = CombinedGraphQLErrors.is(error)
+        ? getGraphqlErrorExtensionsFromError(error)
+        : undefined;
 
-        if (
-          !isGracefullyHandledEventStreamError({
-            subCode: extensions?.subCode,
-            code: extensions?.code,
-          })
-        ) {
-          captureException(
-            new Error(`Unhandled error for event stream: ${error.message}`, {
-              cause: error,
-            }),
-          );
-        }
-
-        store.set(activeQueryListenersState.atom, []);
-        store.set(shouldDestroyEventStreamState.atom, true);
+      if (
+        !isGracefullyHandledEventStreamError({
+          subCode: extensions?.subCode,
+          code: extensions?.code,
+        })
+      ) {
+        captureException(
+          new Error(
+            `Unhandled error for event stream: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+            { cause: error instanceof Error ? error : undefined },
+          ),
+        );
       }
+
+      store.set(activeQueryListenersState.atom, []);
+      store.set(shouldDestroyEventStreamState.atom, true);
     },
     [store],
   );
