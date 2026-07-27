@@ -57,7 +57,9 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
 
   const breakdown = parts.join(', ');
 
-  return t`${preview.totalMembers} in this list (${breakdown})`;
+  // Without exclusions every member is sendable, so the count is only worth
+  // spelling out when the two differ.
+  return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
 };
 
 type CampaignDetailsFieldsProps = {
