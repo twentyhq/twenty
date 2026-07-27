@@ -5,6 +5,8 @@ import { EventStreamService } from 'src/engine/subscriptions/event-stream.servic
 
 const WORKSPACE_ID = 'workspace-id';
 const EVENT_STREAM_CHANNEL_ID = 'event-stream-channel-id';
+const EVENT_STREAM_KEY = `eventStream:${WORKSPACE_ID}:${EVENT_STREAM_CHANNEL_ID}`;
+const ACTIVE_STREAMS_KEY = `workspace:${WORKSPACE_ID}:activeStreams`;
 const ACTIVE_STREAM_EXPIRATIONS_KEY = 'activeStreamExpirations';
 const ACTIVE_STREAM_EXPIRATION_MEMBER = `${WORKSPACE_ID}:${EVENT_STREAM_CHANNEL_ID}`;
 
@@ -51,7 +53,7 @@ describe('EventStreamService', () => {
     ).toHaveBeenCalledWith(ACTIVE_STREAM_EXPIRATIONS_KEY, 0, Date.now());
   });
 
-  it('tracks a stream until its Redis TTL expires', async () => {
+  it('adds a stream to its functional and metric indexes on creation', async () => {
     cacheStorageService.get.mockResolvedValue(undefined);
 
     await service.createEventStream({
@@ -60,6 +62,21 @@ describe('EventStreamService', () => {
       authContext: { userId: 'user-id' },
     });
 
+    expect(cacheStorageService.set).toHaveBeenCalledWith(
+      EVENT_STREAM_KEY,
+      {
+        authContext: { userId: 'user-id' },
+        workspaceId: WORKSPACE_ID,
+        queries: {},
+        createdAt: Date.now(),
+      },
+      EVENT_STREAM_TTL_MS,
+    );
+    expect(cacheStorageService.setAdd).toHaveBeenCalledWith(
+      ACTIVE_STREAMS_KEY,
+      [EVENT_STREAM_CHANNEL_ID],
+      EVENT_STREAM_TTL_MS,
+    );
     expect(cacheStorageService.sortedSetAdd).toHaveBeenCalledWith(
       ACTIVE_STREAM_EXPIRATIONS_KEY,
       [
@@ -71,7 +88,7 @@ describe('EventStreamService', () => {
     );
   });
 
-  it('keeps only existing streams tracked after a refresh', async () => {
+  it('refreshes an existing stream and keeps it tracked', async () => {
     cacheStorageService.expire
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(true);
@@ -92,8 +109,10 @@ describe('EventStreamService', () => {
         },
       ],
     );
+    expect(cacheStorageService.sortedSetRemove).not.toHaveBeenCalled();
+  });
 
-    cacheStorageService.sortedSetAdd.mockClear();
+  it('untracks a stream whose key is missing during refresh', async () => {
     cacheStorageService.expire
       .mockResolvedValueOnce(false)
       .mockResolvedValueOnce(true);
@@ -144,24 +163,33 @@ describe('EventStreamService', () => {
     expect(cacheStorageService.sortedSetRemove).not.toHaveBeenCalled();
   });
 
-  it('untracks destroyed and stale streams', async () => {
+  it('removes a destroyed stream from its functional and metric indexes', async () => {
     await service.destroyEventStream({
       workspaceId: WORKSPACE_ID,
       eventStreamChannelId: EVENT_STREAM_CHANNEL_ID,
     });
 
+    expect(cacheStorageService.del).toHaveBeenCalledWith(EVENT_STREAM_KEY);
+    expect(cacheStorageService.setRemove).toHaveBeenCalledWith(
+      ACTIVE_STREAMS_KEY,
+      [EVENT_STREAM_CHANNEL_ID],
+    );
     expect(cacheStorageService.sortedSetRemove).toHaveBeenCalledWith(
       ACTIVE_STREAM_EXPIRATIONS_KEY,
       [ACTIVE_STREAM_EXPIRATION_MEMBER],
     );
+  });
 
-    cacheStorageService.sortedSetRemove.mockClear();
-
+  it('removes stale streams from the functional and metric indexes', async () => {
     await service.removeFromActiveStreams(WORKSPACE_ID, [
       EVENT_STREAM_CHANNEL_ID,
       'stale-stream-id',
     ]);
 
+    expect(cacheStorageService.setRemove).toHaveBeenCalledWith(
+      ACTIVE_STREAMS_KEY,
+      [EVENT_STREAM_CHANNEL_ID, 'stale-stream-id'],
+    );
     expect(cacheStorageService.sortedSetRemove).toHaveBeenCalledWith(
       ACTIVE_STREAM_EXPIRATIONS_KEY,
       [ACTIVE_STREAM_EXPIRATION_MEMBER, `${WORKSPACE_ID}:stale-stream-id`],
