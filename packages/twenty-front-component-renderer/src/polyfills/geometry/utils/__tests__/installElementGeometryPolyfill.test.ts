@@ -176,6 +176,15 @@ describe('installElementGeometryPolyfill', () => {
     expect(asPolyfilled(new FakeElement()).offsetParent).toBe(documentBody);
   });
 
+  it('should return null from offsetParent for the body and document element so offset parent walks terminate', () => {
+    const { documentBody, documentElement } = installOn(
+      createWorkerGeometryStoreStub(),
+    );
+
+    expect(asPolyfilled(documentBody).offsetParent).toBeNull();
+    expect(asPolyfilled(documentElement).offsetParent).toBeNull();
+  });
+
   it('should return a zero rect when snapshot resolution throws', () => {
     installOn(
       createWorkerGeometryStoreStub({

@@ -120,6 +120,10 @@ export const installElementGeometryPolyfill = ({
 
   Object.defineProperty(elementPrototype, 'offsetParent', {
     get(this: object) {
+      if (isDocumentScopedElement(this)) {
+        return null;
+      }
+
       return documentTarget.body ?? null;
     },
     configurable: true,
