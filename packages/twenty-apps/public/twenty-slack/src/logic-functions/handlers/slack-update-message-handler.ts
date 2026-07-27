@@ -19,27 +19,37 @@ export const slackUpdateMessageHandler = async (
 
   const { client } = slackClientResult;
 
-  try {
-    const bodyFields = getSlackChatMessageBodyFields(
-      parameters.newMessageText,
-      parameters.messageFormat,
-    );
+  const attemptUpdate = async (
+    messageFormat: SlackUpdateMessageInput['messageFormat'],
+  ): Promise<SlackToolResult> => {
+    try {
+      const bodyFields = getSlackChatMessageBodyFields(
+        parameters.newMessageText,
+        messageFormat,
+      );
 
-    const updatePayload = {
-      channel: parameters.slackChannelId,
-      ts: parameters.messageTimestamp,
-      ...bodyFields,
-    };
+      const data = await client.chat.update({
+        channel: parameters.slackChannelId,
+        ts: parameters.messageTimestamp,
+        ...bodyFields,
+      });
 
-    const data = await client.chat.update(updatePayload);
+      return {
+        success: true,
+        message: 'Slack message updated.',
+        slackTs: data.ts,
+        channel: parameters.slackChannelId,
+      };
+    } catch (error) {
+      return slackToolFailure('Failed to update Slack message', error);
+    }
+  };
 
-    return {
-      success: true,
-      message: 'Slack message updated.',
-      slackTs: data.ts,
-      channel: parameters.slackChannelId,
-    };
-  } catch (error) {
-    return slackToolFailure('Failed to update Slack message', error);
+  const primaryResult = await attemptUpdate(parameters.messageFormat);
+
+  if (primaryResult.success || parameters.messageFormat !== 'markdown') {
+    return primaryResult;
   }
+
+  return attemptUpdate('plain');
 };
