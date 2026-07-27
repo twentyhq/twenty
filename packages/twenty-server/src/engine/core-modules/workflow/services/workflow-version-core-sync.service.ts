@@ -265,6 +265,41 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
+  async deleteCoreVersionsByWorkflowIds(
+    workspaceId: string,
+    workflowIds: string[],
+  ): Promise<void> {
+    if (workflowIds.length === 0) {
+      return;
+    }
+
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
+      workflowId: In(workflowIds),
+    });
+
+    await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  async recreateCoreVersionsByWorkflowId(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const versions = await workflowVersionRepository.find({
+        where: { workflowId },
+      });
+
+      await this.upsertToCore(workspaceId, versions);
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   private async writeBackCoreVersionIds(
     workspaceId: string,
     coreVersionIdByWorkspaceRecordId: Map<string, string>,
