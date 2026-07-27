@@ -155,7 +155,7 @@ export class ApplicationSyncService {
       description: manifest.application.description ?? null,
       logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
       logoFileId: null,
-      version: null,
+      version: '0.0.0',
       sourceType: ApplicationRegistrationSourceType.LOCAL,
       sourcePath: manifest.application.universalIdentifier,
       packageJsonChecksum: null,
