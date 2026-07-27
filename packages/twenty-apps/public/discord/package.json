@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Discord workflow connector for Twenty",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
