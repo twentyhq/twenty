@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum RouteTriggerExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
+  WORKSPACE_SUSPENDED = 'WORKSPACE_SUSPENDED',
   ROUTE_NOT_FOUND = 'ROUTE_NOT_FOUND',
   TRIGGER_NOT_FOUND = 'TRIGGER_NOT_FOUND',
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
@@ -24,6 +25,8 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
   switch (code) {
     case RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
+    case RouteTriggerExceptionCode.WORKSPACE_SUSPENDED:
+      return msg`Workspace is suspended.`;
     case RouteTriggerExceptionCode.ROUTE_NOT_FOUND:
       return msg`Route not found.`;
     case RouteTriggerExceptionCode.TRIGGER_NOT_FOUND:

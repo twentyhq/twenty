@@ -233,7 +233,7 @@ describe('generateRecordOutputSchema', () => {
     expect(result.object.icon).toBeUndefined();
   });
 
-  it('should convert MORPH_RELATION fields to UUID id fields when MANY_TO_ONE', () => {
+  it('should expand MORPH_RELATION fields into one UUID id field per target when MANY_TO_ONE', () => {
     const objectMetadataItem = createMockObjectMetadataItem({
       fields: [
         {
@@ -247,6 +247,22 @@ describe('generateRecordOutputSchema', () => {
           settings: {
             relationType: RelationType.MANY_TO_ONE,
           },
+          morphRelations: [
+            {
+              type: RelationType.MANY_TO_ONE,
+              targetObjectMetadata: {
+                nameSingular: 'company',
+                namePlural: 'companies',
+              },
+            },
+            {
+              type: RelationType.MANY_TO_ONE,
+              targetObjectMetadata: {
+                nameSingular: 'person',
+                namePlural: 'people',
+              },
+            },
+          ],
         },
       ] as any,
     });
@@ -254,11 +270,13 @@ describe('generateRecordOutputSchema', () => {
     const result = generateRecordOutputSchema(objectMetadataItem);
 
     expect(result.fields).not.toHaveProperty('target');
-    expect(result.fields).toHaveProperty('targetId');
-    expect(result.fields.targetId).toMatchObject({
+    expect(result.fields).not.toHaveProperty('targetId');
+    expect(result.fields).toHaveProperty('targetCompanyId');
+    expect(result.fields).toHaveProperty('targetPersonId');
+    expect(result.fields.targetCompanyId).toMatchObject({
       isLeaf: true,
       type: FieldMetadataType.UUID,
-      label: 'Target Id',
+      label: 'Target Company Id',
     });
   });
 

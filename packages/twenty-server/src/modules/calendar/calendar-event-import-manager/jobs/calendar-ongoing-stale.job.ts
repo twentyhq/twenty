@@ -10,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CALENDAR_ONGOING_STALE_SYNC_STAGES } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-ongoing-stale-sync-stages.constant';
 import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/utils/is-sync-stale.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 
@@ -40,12 +41,7 @@ export class CalendarOngoingStaleJob {
       async () => {
         const calendarChannels = await this.calendarChannelRepository.find({
           where: {
-            syncStage: In([
-              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
-              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-            ]),
+            syncStage: In(CALENDAR_ONGOING_STALE_SYNC_STAGES),
             workspaceId,
           },
         });

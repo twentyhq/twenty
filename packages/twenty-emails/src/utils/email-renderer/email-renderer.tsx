@@ -1,4 +1,4 @@
-import { Body, Head, Html } from '@react-email/components';
+import { Body, Head, Html } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 
