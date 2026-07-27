@@ -51,14 +51,16 @@ describe('lazyWithPreload', () => {
     const onUnhandledRejection = jest.fn();
     process.on('unhandledRejection', onUnhandledRejection);
 
-    const { loader, rejectModule } = createDeferredLoader();
-    const Component = lazyWithPreload(loader);
+    try {
+      const { loader, rejectModule } = createDeferredLoader();
+      const Component = lazyWithPreload(loader);
 
-    Component.preload();
-    rejectModule();
-    await flushPendingPromises();
-
-    process.off('unhandledRejection', onUnhandledRejection);
+      Component.preload();
+      rejectModule();
+      await flushPendingPromises();
+    } finally {
+      process.off('unhandledRejection', onUnhandledRejection);
+    }
 
     expect(onUnhandledRejection).not.toHaveBeenCalled();
   });
@@ -73,6 +75,26 @@ describe('lazyWithPreload', () => {
     Component.preload();
 
     expect(loader).toHaveBeenCalledTimes(1);
+  });
+
+  it('should treat a synchronous loader throw as a failed load instead of throwing from preload', async () => {
+    const loader = jest.fn(() => {
+      throw new Error(PRELOAD_ERROR_MESSAGE);
+    });
+    const Component = lazyWithPreload(loader);
+
+    expect(() => Component.preload()).not.toThrow();
+    await flushPendingPromises();
+
+    render(
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Suspense fallback={<div>loading</div>}>
+          <Component />
+        </Suspense>
+      </ErrorBoundary>,
+    );
+
+    expect(screen.getByText(PRELOAD_ERROR_MESSAGE)).toBeInTheDocument();
   });
 
   it('should call the loader once across repeated preloads', () => {

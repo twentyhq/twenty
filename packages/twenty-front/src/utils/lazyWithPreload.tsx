@@ -24,18 +24,24 @@ export const lazyWithPreload = (
       return Promise.resolve();
     }
 
-    const promise = loader().then(
-      (loadedModule) => {
-        loadState = { status: 'loaded', component: loadedModule.default };
-      },
-      (error) => {
-        loadState = { status: 'failed', error };
-      },
-    );
+    try {
+      const promise = loader().then(
+        (loadedModule) => {
+          loadState = { status: 'loaded', component: loadedModule.default };
+        },
+        (error) => {
+          loadState = { status: 'failed', error };
+        },
+      );
 
-    loadState = { status: 'pending', promise };
+      loadState = { status: 'pending', promise };
 
-    return promise;
+      return promise;
+    } catch (error) {
+      loadState = { status: 'failed', error };
+
+      return Promise.resolve();
+    }
   };
 
   const preload = () => {
