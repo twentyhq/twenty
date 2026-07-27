@@ -361,9 +361,22 @@ async function main() {
     const contact = PARTNER_CONTACTS[p.slug];
     if (!contact) continue;
     partnerContactCount++;
-    const existing = nodes(await client.query({ people: { __args: { filter: { emails: { primaryEmail: { eq: contact.email } } }, first: 1 }, edges: { node: { id: true } } } } as any), 'people');
-    if (existing[0]?.id) continue;
-    await client.mutation({ createPerson: { __args: { data: { name: { firstName: contact.firstName, lastName: contact.lastName }, emails: { primaryEmail: contact.email }, companyId: companyIdByName.get(p.name), partnerId: partnerIdBySlug.get(p.slug) } }, id: true } } as any);
+    const companyId = companyIdByName.get(p.name);
+    const partnerId = partnerIdBySlug.get(p.slug);
+    const existing = nodes(await client.query({ people: { __args: { filter: { emails: { primaryEmail: { eq: contact.email } } }, first: 1 }, edges: { node: { id: true, partnerId: true, companyId: true } } } } as any), 'people');
+    const found = existing[0];
+    if (found?.id) {
+      // Rerun against a workspace where the Person exists but lost its relations would leave
+      // the onboarding match broken (no_partner_match). Backfill only the missing links.
+      const patch: Record<string, unknown> = {};
+      if (!found.partnerId && partnerId) patch.partnerId = partnerId;
+      if (!found.companyId && companyId) patch.companyId = companyId;
+      if (Object.keys(patch).length > 0) {
+        await client.mutation({ updatePerson: { __args: { id: found.id, data: patch }, id: true } } as any);
+      }
+      continue;
+    }
+    await client.mutation({ createPerson: { __args: { data: { name: { firstName: contact.firstName, lastName: contact.lastName }, emails: { primaryEmail: contact.email }, companyId, partnerId } }, id: true } } as any);
   }
   console.log(`[seed] partner contacts: ${partnerContactCount}`);
 

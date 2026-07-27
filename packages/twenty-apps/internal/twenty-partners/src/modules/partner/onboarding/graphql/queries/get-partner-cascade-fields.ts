@@ -9,7 +9,7 @@ export function getPartnerCascadeFields(client: CoreApiClient, partnerId: string
       id: true,
       companyId: true,
       partnerUserId: true,
-      persons: { edges: { node: { id: true } } },
+      persons: { edges: { node: { id: true, partnerUserId: true } } },
     },
     applications: {
       __args: {

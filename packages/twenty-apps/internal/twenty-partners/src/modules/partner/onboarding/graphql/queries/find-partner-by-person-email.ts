@@ -7,7 +7,7 @@ export function findPartnerByPersonEmail(client: CoreApiClient, email: string) {
       edges: {
         node: {
           id: true,
-          partner: { id: true, validationStage: true, partnerUserId: true },
+          partner: { id: true, validationStage: true },
         },
       },
     },
