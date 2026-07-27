@@ -17060,10 +17060,10 @@ msgstr "Underdomenet er allerede tatt"
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Underdomenet kan ikke være lengre enn 30 tegn"
 
-#. js-lingui-id: ZETwlU
+#. js-lingui-id: Zh/ANr
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Underdomenet kan ikke være kortere enn 3 tegn"
+msgid "Subdomain can not be shorter than {minLength} characters"
+msgstr ""
 
 #. js-lingui-id: DTG2nE
 #: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
