@@ -61,6 +61,17 @@ describe('getRecallBotAutomaticLeave', () => {
     expect(automaticLeave.bot_detection.using_participant_events).toBeDefined();
   });
 
+  it('enables silence detection as the fallback when neither bot detector matches', () => {
+    const automaticLeave = getRecallBotAutomaticLeave(
+      AUTOMATIC_LEAVE_ARGUMENTS,
+    );
+
+    expect(automaticLeave.silence_detection).toEqual({
+      activate_after: 1200,
+      timeout: 300,
+    });
+  });
+
   it('still emits the existing everyone_left_timeout when its env var is set', () => {
     process.env.CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS = '2';
 

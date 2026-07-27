@@ -98,6 +98,10 @@ describe('recall bot api', () => {
             timeout: 10,
           },
         },
+        silence_detection: {
+          activate_after: 1200,
+          timeout: 300,
+        },
       },
       recording_config: {
         video_mixed_mp4: {},
