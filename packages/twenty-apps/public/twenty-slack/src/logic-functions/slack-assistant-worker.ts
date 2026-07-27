@@ -15,8 +15,11 @@ import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slac
 import { SLACK_ASSISTANT_PLACEHOLDER_TEXT } from 'src/logic-functions/constants/slack-assistant-placeholder-text';
 import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
+import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
+import { slackRemoveReactionHandler } from 'src/logic-functions/handlers/slack-remove-reaction-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
@@ -30,6 +33,20 @@ import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<SlackAssistantRequestRecord>
 >;
+
+const clearThinkingReaction = async ({
+  slackChannelId,
+  slackMessageTimestamp,
+}: {
+  slackChannelId: string;
+  slackMessageTimestamp: string;
+}): Promise<void> => {
+  await slackRemoveReactionHandler({
+    slackChannelId,
+    messageTimestamp: slackMessageTimestamp,
+    emojiName: SLACK_ASSISTANT_THINKING_REACTION_EMOJI,
+  });
+};
 
 export const slackAssistantWorkerHandler = async (
   event: SlackAssistantRequestCreatedEvent,
@@ -65,6 +82,12 @@ export const slackAssistantWorkerHandler = async (
     isDirectMessage,
   });
 
+  await slackAddReactionHandler({
+    slackChannelId,
+    messageTimestamp: slackMessageTimestamp,
+    emojiName: SLACK_ASSISTANT_THINKING_REACTION_EMOJI,
+  });
+
   const placeholderResult = await slackPostMessageHandler({
     slackChannelId,
     messageText: SLACK_ASSISTANT_PLACEHOLDER_TEXT,
@@ -75,6 +98,7 @@ export const slackAssistantWorkerHandler = async (
     !placeholderResult.success ||
     !isNonEmptyString(placeholderResult.slackTs)
   ) {
+    await clearThinkingReaction({ slackChannelId, slackMessageTimestamp });
     await updateSlackAssistantRequest(client, {
       id: record.id,
       status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
@@ -92,6 +116,7 @@ export const slackAssistantWorkerHandler = async (
       messageTimestamp: placeholderTimestamp,
       newMessageText: SLACK_ASSISTANT_FAILURE_TEXT,
     });
+    await clearThinkingReaction({ slackChannelId, slackMessageTimestamp });
 
     await updateSlackAssistantRequest(client, {
       id: record.id,
@@ -153,6 +178,8 @@ export const slackAssistantWorkerHandler = async (
         `Could not update Slack message: ${updateResult.error ?? updateResult.message}`,
       );
     }
+
+    await clearThinkingReaction({ slackChannelId, slackMessageTimestamp });
 
     await updateSlackAssistantRequest(client, {
       id: record.id,
