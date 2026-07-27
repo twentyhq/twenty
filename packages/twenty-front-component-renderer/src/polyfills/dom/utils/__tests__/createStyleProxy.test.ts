@@ -18,11 +18,9 @@ describe('createStyleProxy', () => {
     style.width = 10;
     style.removeProperty('color');
 
-    expect(flush.mock.calls.map(([serializedCssText]) => serializedCssText)).toEqual([
-      'color:red',
-      'color:red;width:10px',
-      'width:10px',
-    ]);
+    expect(
+      flush.mock.calls.map(([serializedCssText]) => serializedCssText),
+    ).toEqual(['color:red', 'color:red;width:10px', 'width:10px']);
   });
 
   it('should accept an important priority and store the plain value', () => {

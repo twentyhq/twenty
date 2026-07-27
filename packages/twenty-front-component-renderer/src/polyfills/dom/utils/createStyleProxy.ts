@@ -107,7 +107,8 @@ export const createStyleProxy = (
         return true;
       }
 
-      const cssPropertyName = resolveCssPropertyNameFromJsPropertyName(property);
+      const cssPropertyName =
+        resolveCssPropertyNameFromJsPropertyName(property);
 
       if (value === null || value === undefined || value === '') {
         delete target[cssPropertyName];

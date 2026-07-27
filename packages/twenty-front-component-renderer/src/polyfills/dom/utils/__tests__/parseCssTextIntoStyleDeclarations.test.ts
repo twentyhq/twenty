@@ -8,9 +8,9 @@ describe('parseCssTextIntoStyleDeclarations', () => {
   });
 
   it('should let the last duplicate win', () => {
-    expect(parseCssTextIntoStyleDeclarations('color: red; color: blue')).toEqual(
-      { color: 'blue' },
-    );
+    expect(
+      parseCssTextIntoStyleDeclarations('color: red; color: blue'),
+    ).toEqual({ color: 'blue' });
   });
 
   it('should lowercase standard property names while preserving custom ones', () => {
