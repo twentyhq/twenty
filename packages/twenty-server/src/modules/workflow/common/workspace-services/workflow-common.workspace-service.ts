@@ -312,6 +312,11 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             });
 
+            await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
+              workspaceId,
+              [workflowId],
+            );
+
             break;
           case 'restore':
             await workflowAutomatedTriggerRepository.restore({
@@ -325,6 +330,11 @@ export class WorkflowCommonWorkspaceService {
             await workflowVersionRepository.restore({
               workflowId,
             });
+
+            await this.workflowVersionCoreSyncService.recreateCoreVersionsByWorkflowId(
+              workspaceId,
+              workflowId,
+            );
 
             break;
         }
@@ -414,15 +424,6 @@ export class WorkflowCommonWorkspaceService {
             undefined,
             queryRunner.manager,
           );
-
-          await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
-            workspaceId,
-            entityManager: queryRunner.manager,
-            workflowVersion: {
-              ...workflowVersion,
-              status: WorkflowVersionStatus.DEACTIVATED,
-            },
-          });
         }
       }
 
