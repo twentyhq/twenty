@@ -9465,6 +9465,11 @@ msgstr "Nesoulad ID pracovního prostoru a role."
 msgid "Workspace is not ready to welcome new members"
 msgstr "Pracovní prostor není připraven přivítat nové členy"
 
+#. js-lingui-id: 8RwcFg
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
+msgid "Workspace is suspended."
+msgstr ""
+
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
