@@ -145,6 +145,14 @@
               "label": "Nasıl Yapılırlar"
             }
           }
+        },
+        "legal": {
+          "label": "Yasal",
+          "groups": {
+            "legalHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         }
       }
     },

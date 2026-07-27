@@ -171,6 +171,28 @@ Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TR
 
 Üretimde, mantık işlevleri varsayılan olarak devre dışıdır. Bunları etkinleştirmek için `LOGIC_FUNCTION_TYPE` ortam değişkenini `LOCAL` veya `LAMBDA` olarak ayarlayın. Bu, ortam değişkenleri aracılığıyla veya yönetici panelindeki veritabanı değişkenleri üzerinden yapılandırılabilir. Ayrıntılar için [Mantık İşlevleri kurulum kılavuzu](/l/tr/developers/self-host/capabilities/setup#logic-functions-available-drivers) bölümüne bakın.
 
+#### AI sohbetinde bir mesaj yazdığımda hemen yanıt vermiyor ve yanıtı görmek için sayfayı yenilemem gerekiyor
+
+Aşağıdaki bloğu nginx yapılandırmasına ekleyin
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
 ### 1-tıklama ile Docker Compose
 
 #### Giriş Yapılamıyor

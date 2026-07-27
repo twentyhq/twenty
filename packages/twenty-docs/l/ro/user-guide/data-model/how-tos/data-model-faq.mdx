@@ -42,7 +42,6 @@ Toate obiectele active apar în navigare. Poți dezactiva obiectele de care nu a
 Nu, tipurile de câmp nu pot fi modificate după creare. Dacă ai nevoie de un alt tip, creează un câmp nou cu tipul corect, migrează-ți datele, apoi dezactivează câmpul vechi.
 </Accordion>
 
-
 <Accordion title="De ce am nevoie de nume diferite pentru singular și plural?">
 API-ul nostru GraphQL folosește ambele forme pentru diferite operațiuni:
 * `createPerson` (singular) pentru acțiuni cu un singur înregistrare
@@ -73,15 +72,15 @@ Anumite nume de câmpuri, precum `Type` sau `Application`, sunt rezervate pentru
 </Accordion>
 
 <Accordion title="Pot să creez câmpuri cu formule?">
-Câmpurile cu formule vor fi disponibile în **T1 2026**. Între timp, poți folosi fluxuri de lucru pentru a calcula și actualiza automat valorile câmpurilor.
+Câmpurile de formulă vin în **H2 2026**. Între timp, poți folosi fluxuri de lucru pentru a calcula și actualiza automat valorile câmpurilor.
 </Accordion>
 
 <Accordion title="Pot să am câmpuri imbricate în obiectele mele?">
-Câmpurile imbricate vor fi disponibile în **T1 2026**. În prezent, poți folosi fluxuri de lucru pentru a prelua valorile câmpurilor din obiectele înrudite. De exemplu, pentru a afișa industria unei companii pe un document despre o Persoană, creează un câmp personalizat la Persoane și folosește un flux de lucru pentru a sincroniza valoarea.
+Câmpurile imbricate vin în **H2 2026**. În prezent, poți folosi fluxuri de lucru pentru a prelua valorile câmpurilor din obiectele înrudite. De exemplu, pentru a afișa industria unei companii pe un document despre o Persoană, creează un câmp personalizat la Persoane și folosește un flux de lucru pentru a sincroniza valoarea.
 </Accordion>
 
 <Accordion title="Pot să rearanjez câmpurile din obiecte?">
-Rearanjarea câmpurilor va fi disponibilă cu machete personalizate în **T4 2025**. În prezent, câmpurile apar în ordine alfabetică.
+Da, mergi la Setări → Modelul de date → obiect la alegere → Layout şi apasă **Personalizează pagina înregistrării**. Dacă acest buton este dezactivat, trebuie să creaţi o înregistrare.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Da! Relațiile auto-referențiale sunt acceptate și recomandate pentru cazuri p
 </Accordion>
 
 <Accordion title="Pot să creez relații de tip mulți-la-mulți?">
-Relațiile de tip mulți-la-mulți vor fi disponibile în **S1 2026**. În prezent, creează un obiect intermediar cu două relații de tip unu-la-mulți ca soluție temporară.
+O mulțime de relații vin în **H2 2026**. În prezent, creează un obiect intermediar cu două relații de tip unu-la-mulți ca soluție temporară.
 
 De exemplu, pentru a lega Persoane și Proiecte (mulți-la-mulți), creează un obiect "Atribuiri de proiect" cu:
 * O relație către Persoane (multe atribuiri → o persoană)
@@ -146,6 +145,10 @@ Da, poți importa date CSV în orice obiect, inclusiv în obiectele personalizat
 
 <Accordion title="Pot să export configurația modelului de date?">
 În prezent, nu există un export integrat pentru configurația modelului de date. Contactează asistența dacă ai nevoie să migrezi modelul de date între spații de lucru.
+</Accordion>
+
+<Accordion title="Câte câmpuri poate avea un singur obiect?">
+Numărul maxim de câmpuri pe care un singur obiect poate să le aibă este de 1600 câmpuri per limite Postgres, incluzând câmpuri existente și șterse. Fii conștient de faptul că 20 de câmpuri nu îți vor repara spațiul de lucru dacă limita de 1 600 de câmpuri va fi atinsă deoarece intră sub incidența politicii noastre de utilizare echitabilă.
 </Accordion>
 </AccordionGroup>
 
