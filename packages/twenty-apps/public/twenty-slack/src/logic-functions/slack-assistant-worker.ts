@@ -23,6 +23,7 @@ import { slackRemoveReactionHandler } from 'src/logic-functions/handlers/slack-r
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
+import { buildSlackAssistantUserFacingErrorMessage } from 'src/logic-functions/utils/build-slack-assistant-user-facing-error-message';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
 import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
@@ -110,11 +111,17 @@ export const slackAssistantWorkerHandler = async (
 
   const placeholderTimestamp = placeholderResult.slackTs;
 
-  const finishWithFailure = async (errorMessage: string): Promise<object> => {
+  const finishWithFailure = async ({
+    errorMessage,
+    slackMessageText = SLACK_ASSISTANT_FAILURE_TEXT,
+  }: {
+    errorMessage: string;
+    slackMessageText?: string;
+  }): Promise<object> => {
     await slackUpdateMessageHandler({
       slackChannelId,
       messageTimestamp: placeholderTimestamp,
-      newMessageText: SLACK_ASSISTANT_FAILURE_TEXT,
+      newMessageText: slackMessageText,
     });
     await clearThinkingReaction({ slackChannelId, slackMessageTimestamp });
 
@@ -158,12 +165,22 @@ export const slackAssistantWorkerHandler = async (
       }),
     });
 
+    if (!agentResult.success) {
+      const errorMessage = agentResult.error ?? 'Agent execution failed';
+
+      return await finishWithFailure({
+        errorMessage,
+        slackMessageText:
+          buildSlackAssistantUserFacingErrorMessage(errorMessage),
+      });
+    }
+
     const responseText = extractAgentResponseText(agentResult);
 
     if (responseText === undefined) {
-      return await finishWithFailure(
-        agentResult.error ?? 'Agent returned an empty response',
-      );
+      return await finishWithFailure({
+        errorMessage: 'Agent returned an empty response',
+      });
     }
 
     const updateResult = await slackUpdateMessageHandler({
@@ -174,9 +191,9 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (!updateResult.success) {
-      return await finishWithFailure(
-        `Could not update Slack message: ${updateResult.error ?? updateResult.message}`,
-      );
+      return await finishWithFailure({
+        errorMessage: `Could not update Slack message: ${updateResult.error ?? updateResult.message}`,
+      });
     }
 
     await clearThinkingReaction({ slackChannelId, slackMessageTimestamp });
@@ -199,7 +216,10 @@ export const slackAssistantWorkerHandler = async (
     const message =
       error instanceof Error ? error.message : 'Unexpected worker error';
 
-    return await finishWithFailure(message);
+    return await finishWithFailure({
+      errorMessage: message,
+      slackMessageText: buildSlackAssistantUserFacingErrorMessage(message),
+    });
   }
 };
 
