@@ -105,13 +105,6 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
-    const toAllUniversalFlatEntityMaps =
-      computeApplicationManifestAllUniversalFlatEntityMaps({
-        manifest: preInstallOnlyManifest,
-        ownerFlatApplication,
-        now,
-      });
-
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds:
         ownerFlatApplication.universalIdentifier ===
@@ -120,6 +113,14 @@ export class ApplicationManifestMigrationService {
           : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
+
+    const toAllUniversalFlatEntityMaps =
+      computeApplicationManifestAllUniversalFlatEntityMaps({
+        manifest: preInstallOnlyManifest,
+        ownerFlatApplication,
+        now,
+        dependencyAllFlatEntityMaps,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
@@ -189,13 +190,6 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
-    const toAllUniversalFlatEntityMaps =
-      computeApplicationManifestAllUniversalFlatEntityMaps({
-        manifest,
-        ownerFlatApplication,
-        now,
-      });
-
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds:
         ownerFlatApplication.universalIdentifier ===
@@ -204,6 +198,14 @@ export class ApplicationManifestMigrationService {
           : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
+
+    const toAllUniversalFlatEntityMaps =
+      computeApplicationManifestAllUniversalFlatEntityMaps({
+        manifest,
+        ownerFlatApplication,
+        now,
+        dependencyAllFlatEntityMaps,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(

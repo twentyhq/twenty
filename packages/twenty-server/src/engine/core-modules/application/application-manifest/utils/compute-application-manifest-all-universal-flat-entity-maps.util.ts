@@ -42,10 +42,12 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   manifest,
   ownerFlatApplication,
   now,
+  dependencyAllFlatEntityMaps,
 }: {
   manifest: Manifest;
   ownerFlatApplication: FlatApplication;
   now: string;
+  dependencyAllFlatEntityMaps: AllFlatEntityMaps;
 }): AllFlatEntityMaps => {
   const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -124,6 +126,10 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       const flatObjectMetadata =
         allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
           flatFieldMetadata.objectMetadataUniversalIdentifier
+        ] ??
+        dependencyAllFlatEntityMaps.flatObjectMetadataMaps
+          .byUniversalIdentifier[
+          flatFieldMetadata.objectMetadataUniversalIdentifier
         ];
 
       if (isDefined(flatObjectMetadata)) {
@@ -168,6 +174,9 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   for (const indexManifest of manifest.indexes ?? []) {
     const flatObjectMetadata =
       allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        indexManifest.objectUniversalIdentifier
+      ] ??
+      dependencyAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
         indexManifest.objectUniversalIdentifier
       ];
 

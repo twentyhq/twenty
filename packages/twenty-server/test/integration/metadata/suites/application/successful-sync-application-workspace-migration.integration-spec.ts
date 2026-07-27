@@ -47,7 +47,9 @@ const TEST_FIELD: FieldManifest = {
 };
 
 const buildManifest = (
-  overrides?: Partial<Pick<Manifest, 'fields' | 'skills' | 'objects'>>,
+  overrides?: Partial<
+    Pick<Manifest, 'fields' | 'skills' | 'objects' | 'indexes'>
+  >,
 ) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -257,5 +259,61 @@ describe('syncApplication', () => {
     expect(syncData).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(syncData),
     );
+  }, 60000);
+
+  it('should create an index on a field extending the standard Company object', async () => {
+    const companyFieldId = uuidv4();
+    const companyIndexId = uuidv4();
+
+    const manifest = buildManifest({
+      skills: [],
+      objects: [],
+      fields: [
+        {
+          universalIdentifier: companyFieldId,
+          type: FieldMetadataType.TEXT,
+          name: 'industry',
+          label: 'Industry',
+          description: 'The industry of the company',
+          icon: 'IconBuildingFactory2',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+        },
+      ],
+      indexes: [
+        {
+          universalIdentifier: companyIndexId,
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+          fields: [{ fieldUniversalIdentifier: companyFieldId }],
+        },
+      ],
+    });
+
+    await syncApplication({
+      manifest,
+      expectToFail: false,
+    });
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+    const companyObject = objects.find(
+      (object) =>
+        object.universalIdentifier ===
+        STANDARD_OBJECTS.company.universalIdentifier,
+    );
+    const companyField = companyObject?.fieldsList.find(
+      (field) => field.universalIdentifier === companyFieldId,
+    );
+
+    expect(companyField).toBeDefined();
+    expect(
+      companyObject?.indexMetadataList.some((index) =>
+        index.indexFieldMetadataList.some(
+          (indexField) => indexField.fieldMetadataId === companyField?.id,
+        ),
+      ),
+    ).toBe(true);
   }, 60000);
 });
