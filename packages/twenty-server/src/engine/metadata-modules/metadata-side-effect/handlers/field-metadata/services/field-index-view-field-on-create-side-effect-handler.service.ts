@@ -11,6 +11,7 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-f
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
+import { computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-index-view-field-position-by-field-universal-identifier.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -105,6 +106,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
   }: {
     sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
     parentFlatObjectMetadata: {
+      applicationUniversalIdentifier: string;
       labelIdentifierFieldMetadataUniversalIdentifier: string | null;
     };
     indexViewUniversalIdentifier: string;
@@ -131,14 +133,23 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         displayableOnly: true,
       });
 
-    const position = Math.max(
-      displayableCallerFlatFieldMetadatas.findIndex(
-        (displayableFlatFieldMetadata) =>
-          displayableFlatFieldMetadata.universalIdentifier ===
-          sourceFlatFieldMetadata.universalIdentifier,
-      ),
-      0,
-    );
+    // Shared with objectSystemFieldsAndIndexViewOnCreate: keeps the label
+    // identifier view field strictly lowest, even when a caller field (this
+    // handler) coexists with a label identifier backed by a system field.
+    const positionByFieldUniversalIdentifier =
+      computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          parentFlatObjectMetadata.applicationUniversalIdentifier,
+        objectMetadataUniversalIdentifier:
+          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier,
+        displayableCallerFlatFieldMetadatas,
+      });
+
+    const position =
+      positionByFieldUniversalIdentifier.get(
+        sourceFlatFieldMetadata.universalIdentifier,
+      ) ?? 0;
 
     const [flatViewFieldToCreate] = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
@@ -185,7 +196,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       return undefined;
     }
 
-    const appendBasePosition =
+    const existingActivePositions =
       existingIndexFlatView.viewFieldUniversalIdentifiers
         .map(
           (viewFieldUniversalIdentifier) =>
@@ -195,11 +206,40 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         )
         .filter(isDefined)
         .filter((existingFlatViewField) => existingFlatViewField.isActive)
-        .reduce(
-          (maxPosition, existingFlatViewField) =>
-            Math.max(maxPosition, existingFlatViewField.position),
-          -1,
-        ) + 1;
+        .map((existingFlatViewField) => existingFlatViewField.position);
+
+    // Relabeling onto a field created in the same sync: the field is both new
+    // and the object label identifier, so its view field must be visible and
+    // strictly lowest (below every existing one). The update-path counterpart
+    // objectIndexViewLabelIdentifierOnUpdate cannot reposition it because it does
+    // not exist yet, so it is provisioned correctly here.
+    const isLabelIdentifierField =
+      sourceFlatFieldMetadata.universalIdentifier ===
+      parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier;
+
+    if (isLabelIdentifierField) {
+      const lowestExistingPosition = existingActivePositions.reduce(
+        (minPosition, position) => Math.min(minPosition, position),
+        0,
+      );
+      const [flatLabelViewFieldToCreate] = computeFlatViewFieldsToCreate({
+        objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
+        viewUniversalIdentifier: indexViewUniversalIdentifier,
+        applicationUniversalIdentifier:
+          sourceFlatFieldMetadata.applicationUniversalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        startPosition: lowestExistingPosition - 1,
+      });
+
+      return flatLabelViewFieldToCreate;
+    }
+
+    const appendBasePosition =
+      existingActivePositions.reduce(
+        (maxPosition, position) => Math.max(maxPosition, position),
+        -1,
+      ) + 1;
 
     const callerFlatFieldMetadatas = computeCallerFlatFieldMetadatasForObject({
       objectMetadataUniversalIdentifier:

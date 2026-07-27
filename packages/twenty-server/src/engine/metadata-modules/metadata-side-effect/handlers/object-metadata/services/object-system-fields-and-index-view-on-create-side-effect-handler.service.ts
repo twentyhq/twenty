@@ -4,6 +4,7 @@ import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
+import { computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-index-view-field-position-by-field-universal-identifier.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -68,14 +69,31 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
         displayableOnly: true,
       });
 
+    // Shared with fieldIndexViewFieldOnCreate: the label identifier view field
+    // must be strictly lowest whether it is backed by a caller field or by a
+    // reserved system field (id, when the object has no name field).
+    const positionByFieldUniversalIdentifier =
+      computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
+        applicationUniversalIdentifier,
+        objectMetadataUniversalIdentifier: universalIdentifier,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        displayableCallerFlatFieldMetadatas,
+      });
+
     const flatViewFieldsToCreate = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: systemFlatFieldMetadatas,
       viewUniversalIdentifier: flatIndexViewToCreate.universalIdentifier,
       applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier:
         sourceFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      startPosition: displayableCallerFlatFieldMetadatas.length,
-    });
+    }).map((flatViewFieldToCreate) => ({
+      ...flatViewFieldToCreate,
+      position:
+        positionByFieldUniversalIdentifier.get(
+          flatViewFieldToCreate.fieldMetadataUniversalIdentifier,
+        ) ?? flatViewFieldToCreate.position,
+    }));
 
     return {
       status: 'success',

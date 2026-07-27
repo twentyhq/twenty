@@ -288,4 +288,51 @@ describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () =>
       viewFields.map((viewField) => viewField.position).sort((a, b) => a - b),
     ).toEqual([1, 2, 3, 4]);
   });
+
+  // An object with no name field (e.g. a manifest object) has its label
+  // identifier backed by the id system field; its view field must still be
+  // strictly lowest, ahead of the displayable caller fields.
+  it('should place the id label-identifier system view field at the strictly lowest position', () => {
+    const idFieldUniversalIdentifier = computeFieldUniversalIdentifier('id');
+    const callerField: PendingFieldMetadata = {
+      universalIdentifier: computeFieldUniversalIdentifier('firstKey'),
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      name: 'firstKey',
+      type: FieldMetadataType.TEXT,
+    };
+
+    const result = handler.buildSideEffects(
+      buildArgs({
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          idFieldUniversalIdentifier,
+        pendingFieldMetadatas: [callerField],
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    const viewFields = Object.values(
+      result.operations.viewField?.flatEntityToCreate ?? {},
+    );
+
+    const idViewField = viewFields.find(
+      (viewField) =>
+        viewField.fieldMetadataUniversalIdentifier ===
+        idFieldUniversalIdentifier,
+    );
+
+    expect(idViewField?.position).toBe(0);
+    for (const viewField of viewFields) {
+      if (
+        viewField.fieldMetadataUniversalIdentifier !==
+        idFieldUniversalIdentifier
+      ) {
+        expect(viewField.position).toBeGreaterThan(0);
+      }
+    }
+  });
 });
