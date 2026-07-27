@@ -4562,6 +4562,7 @@ msgstr "上下文視窗"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6457,6 +6458,11 @@ msgstr "域名設置"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "網域必須小於 256 個字符，不能包含空格，也不能包含任何特殊字符。"
+
+#. js-lingui-id: u/yTXi
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "Don't ask again for <0>{origin}</0>"
+msgstr ""
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -18091,6 +18097,11 @@ msgstr "這是目前的簽署金鑰。撤銷它會使所有以其簽署的 JWT �
 msgid "This key should be set through body input"
 msgstr "此鍵應透過主體輸入設定"
 
+#. js-lingui-id: S9jYAG
+#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
+msgid "This link will take you to an external site: <0>{url}</0>"
+msgstr ""
+
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
@@ -20740,6 +20751,11 @@ msgstr "您將失去所有的映射。"
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "您即將更改工作區子域名。此操作將會使所有用戶登出。"
+
+#. js-lingui-id: qgZCyy
+#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
+msgid "You're leaving Twenty"
+msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
