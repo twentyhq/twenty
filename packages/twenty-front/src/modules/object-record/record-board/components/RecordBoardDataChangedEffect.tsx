@@ -1,7 +1,9 @@
 import { useStore } from 'jotai';
 
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
+import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useGetRecordBoardEffectsForUpdateInputs } from '@/object-record/record-board/hooks/useGetRecordBoardEffectsForUpdateInputs';
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
 import { useRepositionRecordsOnBoard } from '@/object-record/record-board/hooks/useRepositionRecordsOnBoard';
@@ -187,9 +189,18 @@ export const RecordBoardDataChangedEffect = () => {
     ],
   );
 
+  const handleSseClientReconnected = useCallback(() => {
+    triggerRecordBoardInitialQuery({ shouldResetScroll: false });
+  }, [triggerRecordBoardInitialQuery]);
+
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleObjectRecordOperation,
     objectMetadataItemId: objectMetadataItem.id,
+  });
+
+  useListenToBrowserEvent({
+    eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
+    onBrowserEvent: handleSseClientReconnected,
   });
 
   return null;
