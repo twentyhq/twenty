@@ -29,6 +29,7 @@ export enum ApplicationExceptionCode {
   INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
   INVALID_WORKSPACE_VERSION = 'INVALID_WORKSPACE_VERSION',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
+  KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -81,6 +82,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading.`;
     case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
       return msg`We couldn't install this application because some of its metadata could not be applied to your workspace.`;
+    case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
+      return msg`The application key-value entry could not be saved. Please try again.`;
     default:
       assertUnreachable(code);
   }

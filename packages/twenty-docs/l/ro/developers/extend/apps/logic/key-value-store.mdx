@@ -1,153 +1,57 @@
 ---
 title: Stocare cheie-valoare
-description: Păstrați rezultatele intermediare, puneți datele în cache și partajați starea între rulări ale funcțiilor logice cu un obiect simplu cheie-valoare.
+description: Păstrați rezultatele intermediare, puneți datele în cache și partajați starea între rulările funcțiilor logice cu spațiul de stocare cheie-valoare integrat al aplicației.
 icon: database
 ---
 
-Funcțiile logice rulează în sandbox în procese Node.js de scurtă durată — odată ce o rulare se termină, nimic din ce a fost păstrat în memorie nu supraviețuiește. Când ai nevoie să îți amintești ceva între rulări (să păstrezi în cache un răspuns API costisitor, să stochezi un cursor pentru sincronizări incrementale, să aplici debounce sau să transmiți starea de la o funcție la alta), salvează-l în baza de date a workspace-ului.
+Funcțiile logice rulează în sandbox în procese Node.js de scurtă durată — odată ce o rulare se termină, nimic din ce a fost păstrat în memorie nu supraviețuiește. Când ai nevoie să **îți amintești ceva între rulări** (să pui în cache un răspuns API costisitor, să stochezi un cursor pentru sincronizări incrementale, să aplici debounce sau să transmiți starea de la o funcție la alta), salvează-l în spațiul de stocare cheie-valoare integrat.
 
-Nu ai nevoie de o primitivă de stocare dedicată pentru asta: un mic obiect tehnic cu un câmp `key` și un câmp `value` îți oferă o stocare cheie-valoare durabilă, limitată la workspace, care poate fi interogată prin același [client API tipizat](/l/ro/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) pe care îl folosești deja pentru înregistrări.
+Fiecare aplicație primește propriul spațiu de nume izolat: intrările sunt asociate cu aplicația autentificată, astfel încât cheile tale nu pot intra niciodată în coliziune cu — sau fi citite de — o altă aplicație.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Definește obiectul de stocare
+## Get, set, delete
 
-Declară un obiect personalizat cu două câmpuri — `key` (un `TEXT` unic) și `value` (un `RAW_JSON` astfel încât să poți stoca orice payload serializabil JSON). Vezi [Objects](/l/ro/developers/extend/apps/data/objects) pentru referința completă `defineObject`.
+Importați `kv` din `twenty-sdk/logic-function`. Valorile pot fi orice payload serializabil JSON.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Domenii de aplicare
+
+Fiecare intrare are un domeniu de aplicare, transmis ca opțiune la fiecare apel. Valoarea implicită este `WORKSPACE`.
+
+* **`WORKSPACE`** (implicit) — intrarea este privată pentru instalarea curentă a workspace-ului aplicației tale. Fiecare workspace care instalează aplicația primește propriul set independent de chei. Aceasta este opțiunea potrivită pentru cache-uri, cursoare și stare specifică fiecărui workspace.
+* **`SERVER`** — intrarea este partajată între **fiecare instalare** a aplicației tale de pe server. Intrările de tip server se comportă ca niște **claim-uri**: valoarea stocată este întotdeauna workspaceId-ul care a revendicat cheia (omite `value` la `set` pentru a revendica cheia pentru workspace-ul curent), iar doar acel workspace o poate suprascrie sau șterge. Orice instalare poate citi intrarea.
+
+Revendicările de server există pentru rutare între workspace-uri. Un [server-route resolver](/l/ro/developers/extend/apps/logic/logic-functions#server-route-trigger) rulează în workspace-ul proprietar al înregistrării aplicației, dar un webhook de intrare, de obicei, conține doar un id de cont extern — nu un Twenty workspaceId. Configurați fiecare workspace să își revendice ID-ul extern la momentul conectării, apoi rezolvați-l în rută:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Aplică unicitatea cheii
-
-Adaugă un **index unic** pe `key` astfel încât aceeași cheie să nu poată avea niciodată două rânduri. Acesta este primitiva recomandată pentru unicitate — vezi [Data → Unique indexes](/l/ro/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Citește și scrie dintr-o funcție logică
-
-Înfășoară obiectul în câțiva helperi mici astfel încât restul codului tău să se comporte ca un API de tip cheie-valoare — `get`, `set` și `del`. Aceștia folosesc [`CoreApiClient`](/l/ro/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), care este generat din schema workspace-ului tău și este complet tipizat față de obiectul `kvStore`.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-Indexul unic protejează împotriva duplicatelor, dar două rulări care scriu **aceeași cheie nouă** în același moment pot totuși să intre în cursă între căutare și creare. Tratează o creare care eșuează pe constrângerea de unicitate ca pe „altcineva a câștigat” — intercepteaz-o și recitește, sau reîncearcă sub formă de actualizare.
-</Note>
+Deoarece o cheie de tip server poate fi revendicată doar pentru propriul workspace al apelantului și nu poate fi niciodată suprascrisă de un altul, un workspace nu poate deturna o mapare care aparține altcuiva. `kv.set` aruncă o eroare atunci când cheia este deja revendicată de un alt workspace.
 
 ## Folosește-l: păstrează în cache un apel costisitor
 
@@ -155,15 +59,15 @@ O utilizare tipică este păstrarea în cache a unui răspuns lent sau cu limita
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Tipare și sfaturi
 
-* **Spații de nume.** Prefixează cheile pentru a separa domeniile diferite și pentru a face ușoare căutările în masă — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Filtrează cu `key: { like: 'cache:%' }` pentru a lista sau a curăța un întreg namespace.
-* **Expiry (TTL).** Store-ul nu are expirare integrată. Stochează un timestamp în interiorul câmpului `value` (ca în exemplul de cache) și verifică-l la citire, sau adaugă un câmp `DATE_TIME` și curăță periodic rândurile vechi dintr-o [funcție declanșată de cron](/l/ro/developers/extend/apps/logic/logic-functions).
-* **Ce să stochezi.** `RAW_JSON` poate conține orice valoare serializabilă JSON — numere, stringuri, array-uri, obiecte. Păstrează intrările mici; acesta este pentru coordonare și caching, nu pentru blob-uri mari sau fișiere. Pentru fișiere, folosește un câmp `FILES` și [`uploadFile`](/l/ro/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Spații de nume.** Prefixează cheile pentru a păstra domeniile diferite separate — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expiry (TTL).** Store-ul nu are expirare integrată. Stochează un timestamp în interiorul valorii (ca în exemplul de cache) și verifică-l la citire sau curăță cheile învechite dintr-o [funcție declanșată de cron](/l/ro/developers/extend/apps/logic/logic-functions).
+* **Ce să stochezi.** Orice valoare serializabilă JSON — numere, stringuri, array-uri, obiecte. Păstrează intrările mici; acesta este pentru coordonare și caching, nu pentru blob-uri mari sau fișiere. Pentru fișiere, folosește un câmp `FILES` și [`uploadFile`](/l/ro/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Vizibilitate.** Intrările există în baza de date a instanței, nu ca înregistrări ale workspace-ului — nu apar niciodată în interfața workspace-ului, nu fac parte din modelul de date al aplicației tale și nu necesită permisiuni de rol sau de obiect.
+
+## Alternativă: un obiect de stocare interogabil
+
+Spațiul de stocare integrat este, în mod deliberat, opac: intrările nu sunt înregistrări, astfel că nu le poți răsfoi în UI, nu le poți corela cu alte obiecte și nu le poți filtra cu interogări de înregistrări. Când ai nevoie de oricare dintre acestea — de exemplu un jurnal de sincronizare vizibil sau o stare per-înregistrare — definește în schimb un mic **obiect tehnic** cu un câmp `key` unic și un câmp `RAW_JSON` `value`, și interoghează-l prin [clientul API tipizat](/l/ro/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Vezi [Objects](/l/ro/developers/extend/apps/data/objects) pentru referința `defineObject` și [Data → Unique indexes](/l/ro/developers/extend/apps/data/overview#unique-indexes) pentru aplicarea unicității cheilor.
+
+* **Limitarea la o înregistrare.** Adaugă o [relație](/l/ro/developers/extend/apps/data/relations) de la obiectul de stocare la obiectul țintă, în loc să codifici id-ul în cheie.
 * **Vizibilitate și permisiuni.** Rândurile trăiesc în baza de date a workspace-ului ca orice altă înregistrare, astfel încât pot fi interogate prin API și respectă [rolul](/l/ro/developers/extend/apps/config/roles) aplicației tale. Pentru a ține store-ul în afara UI-ului principal, nu îl include în [navigation menu](/l/ro/developers/extend/apps/layout/navigation-menu-items).
-* **Limitare la o înregistrare.** Ai nevoie de stare per înregistrare în loc de chei globale? Adaugă o [relație](/l/ro/developers/extend/apps/data/relations) de la obiectul de stocare la obiectul țintă, în loc să codifici ID-ul în cheie.
 
 <Note>
-Aceasta este o convenție, nu o funcționalitate separată — „KV Store-ul” este doar un obiect personalizat obișnuit pe care îl definești și îl interoghezi cu API-ul standard. Asta înseamnă că beneficiază de același mecanism de sincronizare, aceleași permisiuni și același tooling ca restul datelor aplicației tale.
+Spre deosebire de spațiul de stocare integrat, un obiect personalizat este întotdeauna limitat la un singur workspace — nu poate partaja intrări între instalări, așa cum fac cheile `SERVER`.
 </Note>

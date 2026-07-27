@@ -59,7 +59,6 @@ msgstr "{count} دراسات حالة"
 
 #. js-lingui-id: NSO/FI
 #: src/partners-marketplace/PartnerRatesPanel.tsx
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/ساعة"
 
@@ -276,6 +275,11 @@ msgstr ""
 #: src/case-studies/case-study-catalog.ts
 msgid "3 product lines"
 msgstr "3 خطوط منتجات"
+
+#. js-lingui-id: MW3Qpb
+#: src/partners-marketplace/PartnerProfileCtas.tsx
+msgid "30 minutes, no commitment"
+msgstr ""
 
 #. js-lingui-id: 7SJhyh
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -596,7 +600,7 @@ msgid "Advanced Settings"
 msgstr "إعدادات متقدمة"
 
 #. js-lingui-id: 2050Pj
-#: src/partners-marketplace/partner-scope-labels.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Advisory & Discovery"
 msgstr "الاستشارات والاكتشاف"
@@ -779,11 +783,13 @@ msgid "Anything else we should know?"
 msgstr "هل هناك أي شيء آخر يجب أن نعرفه؟"
 
 #. js-lingui-id: pkMjbA
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Anything that needs a developer."
 msgstr "أي شيء يحتاج إلى مطوّر."
 
 #. js-lingui-id: dYZUP3
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Anything that needs devops skills."
 msgstr "أي شيء يحتاج إلى مهارات DevOps."
@@ -1084,10 +1090,10 @@ msgstr "رسم توضيحي لمطوّر باللون الأزرق مع أسهم
 msgid "Bolivia 🇧🇴"
 msgstr "بوليفيا 🇧🇴"
 
-#. js-lingui-id: MkvsWx
+#. js-lingui-id: 4fKvqx
 #: src/partners-marketplace/PartnerProfileCtas.tsx
-msgid "Book a call"
-msgstr "احجز مكالمة"
+msgid "Book intro call"
+msgstr ""
 
 #. js-lingui-id: bOwPjT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -1255,17 +1261,20 @@ msgstr "شريط تمرير"
 msgid "Case"
 msgstr "حالة"
 
+#. js-lingui-id: ZaqvFY
+#: src/partners-marketplace/PartnerSelectedWork.tsx
+msgid "Case studies"
+msgstr ""
+
+#. js-lingui-id: QuY9hS
+#: src/partners-marketplace/CaseStudyModal.tsx
+msgid "Case study"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"
 msgstr "الكتالانية"
-
-#. js-lingui-id: NUrY9o
-#: src/partners-marketplace/PartnerFactsList.tsx
-#: src/partners-marketplace/PartnerCard.tsx
-#: src/partners-marketplace/FilterBar.tsx
-msgid "Categories"
-msgstr "الفئات"
 
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
@@ -1345,6 +1354,7 @@ msgid "Clear filters"
 msgstr "مسح عوامل التصفية"
 
 #. js-lingui-id: yz7wBu
+#: src/partners-marketplace/CaseStudyModal.tsx
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Close"
 msgstr "إغلاق"
@@ -1522,10 +1532,10 @@ msgstr "متصل عبر API"
 msgid "Consulting"
 msgstr "استشارات"
 
-#. js-lingui-id: GsUBlG
+#. js-lingui-id: jfC/xh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
-msgid "Contact {partnerName}"
-msgstr "اتصل بـ {partnerName}"
+msgid "Contact"
+msgstr ""
 
 #. js-lingui-id: Oii3vg
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1710,6 +1720,7 @@ msgid "Creation date"
 msgstr "تاريخ الإنشاء"
 
 #. js-lingui-id: NLgmM4
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "CRM audit · Requirements · Process mapping · ROI · RevOps · Vendor selection"
 msgstr "تدقيق CRM · المتطلبات · رسم العمليات · العائد على الاستثمار (ROI) · عمليات تنمية الإيرادات (RevOps) · اختيار المورّد"
@@ -1792,6 +1803,7 @@ msgid "Custom apps"
 msgstr "تطبيقات مخصّصة"
 
 #. js-lingui-id: TcUCTv
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Custom Apps · Scripts · AI/agent integrations"
 msgstr "تطبيقات مخصصة · سكربتات · تكاملات ذكاء اصطناعي/وكلاء"
@@ -1812,7 +1824,7 @@ msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your 
 msgstr "مراحل صفقات مخصّصة، ولوحات سحب وإفلات، وتتبع في الوقت الحقيقي حتى يعكس خط أنابيب المبيعات الواقع."
 
 #. js-lingui-id: DUnke3
-#: src/partners-marketplace/partner-scope-labels.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Custom Development"
 msgstr "تطوير مخصص"
@@ -1977,6 +1989,7 @@ msgid "Data Model Diagram"
 msgstr "مخطط نموذج البيانات"
 
 #. js-lingui-id: iq2WTm
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "نمذجة البيانات · عمليات الترحيل · سير عمل بدون كود · لوحات معلومات · SSO/SCIM · تكاملات"
@@ -2483,6 +2496,12 @@ msgstr "كل ما تحتاجه، *جاهز للاستخدام مباشرة*"
 msgid "ex: {example}"
 msgstr "مثال: {example}"
 
+#. js-lingui-id: Dcm8+x
+#. placeholder {0}: i18n._(scope.examples)
+#: src/partners-marketplace/PartnerCoverageSection.tsx
+msgid "ex. {0}"
+msgstr ""
+
 #. js-lingui-id: 2NGXKo
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Expanded support for 30+ languages, so users can navigate and use the software in their preferred language."
@@ -2797,11 +2816,6 @@ msgstr "مجاني لك!"
 msgid "French"
 msgstr "الفرنسية"
 
-#. js-lingui-id: weRlb1
-#: src/partners-marketplace/PartnerMoneyRow.tsx
-msgid "from {minBudget}"
-msgstr "من {minBudget}"
-
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
@@ -3044,11 +3058,6 @@ msgstr "مركز المساعدة"
 msgid "Hey team, I've been in touch with Notion and Figma about potential integrations."
 msgstr "مرحبًا فريق، كنت على تواصل مع Notion و Figma بشأن عمليات تكامل محتملة."
 
-#. js-lingui-id: LiWOgh
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-msgid "Hey, I'm interested in meeting. Here's my project:"
-msgstr "مرحبًا، أنا مهتم بعقد اجتماع. هذا هو مشروعي:"
-
 #. js-lingui-id: EB4Pk9
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
 msgid "Hi, I wanted to follow up on our conversation from last week regarding the new initiative."
@@ -3102,7 +3111,7 @@ msgid "Honduras 🇭🇳"
 msgstr "هندوراس 🇭🇳"
 
 #. js-lingui-id: mqX9AX
-#: src/partners-marketplace/partner-scope-labels.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Hosting & Infrastructure"
 msgstr "الاستضافة والبنية التحتية"
@@ -3339,11 +3348,6 @@ msgstr "التكامل"
 #: src/platform/routing/static-website-routes.ts
 msgid "Interactive halftone generator exported from Twenty."
 msgstr "مولّد Halftone تفاعلي مُصدَّر من Twenty."
-
-#. js-lingui-id: +83cJG
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-msgid "Interested in meeting {partnerName}"
-msgstr "مهتم بعقد اجتماع مع {partnerName}"
 
 #. js-lingui-id: MAqMna
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3596,8 +3600,7 @@ msgstr "Labs"
 
 #. js-lingui-id: GAmD3h
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/partners-marketplace/PartnerFactsList.tsx
-#: src/partners-marketplace/PartnerCard.tsx
+#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Languages"
 msgstr "اللغات"
@@ -3608,6 +3611,7 @@ msgid "Languages needed"
 msgstr ""
 
 #. js-lingui-id: u6jooT
+#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partner-application/partner-application-copy.ts
 msgid "Languages spoken"
 msgstr "اللغات المتحدث بها"
@@ -4175,6 +4179,11 @@ msgstr "لوحة جانبية جديدة"
 msgid "New Zealand 🇳🇿"
 msgstr "نيوزيلندا 🇳🇿"
 
+#. js-lingui-id: hXzOVo
+#: src/partners-marketplace/CaseStudyModal.tsx
+msgid "Next"
+msgstr ""
+
 #. js-lingui-id: GY6uSc
 #: src/partner-application/partner-application-copy.ts
 msgid "Next →"
@@ -4347,6 +4356,7 @@ msgid "On this page"
 msgstr "في هذه الصفحة"
 
 #. js-lingui-id: jxC7HY
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "الانضمام · التوثيق · إدارة التغيير · دعم المستوى الأول/الثاني (L1/L2) · الخدمات المُدارة"
@@ -4370,6 +4380,12 @@ msgstr "واجهة API واحدة تتحكّم في الجميع"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "فقط 5 دولارات مقابل SSO. تقريبًا برنامج خيري."
+
+#. js-lingui-id: VWC0s5
+#. placeholder {0}: caseStudy.title
+#: src/partners-marketplace/PartnerSelectedWork.tsx
+msgid "Open case study: {0}"
+msgstr ""
 
 #. js-lingui-id: GSr0rF
 #: src/sections/menu/Menu.tsx
@@ -4646,6 +4662,11 @@ msgstr "البرتغالية"
 msgid "Prepare onboarding deck"
 msgstr "تحضير عرض الإعداد"
 
+#. js-lingui-id: DHhJ7s
+#: src/partners-marketplace/CaseStudyModal.tsx
+msgid "Previous"
+msgstr ""
+
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
@@ -4660,7 +4681,6 @@ msgstr "السعر"
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
-#: src/partners-marketplace/PartnerMoneyRow.tsx
 msgid "Pricing"
 msgstr "التسعير"
 
@@ -4785,6 +4805,11 @@ msgstr "حقل تقييم"
 msgid "Reach out"
 msgstr "تواصَل"
 
+#. js-lingui-id: IUmx6x
+#: src/partners-marketplace/PartnerSelectedWork.tsx
+msgid "Read case study"
+msgstr ""
+
 #. js-lingui-id: gSQVmr
 #: src/sections/helped/HelpedCard.tsx
 msgid "Read the case"
@@ -4858,11 +4883,15 @@ msgid "Records"
 msgstr "السجلات"
 
 #. js-lingui-id: q45OlW
-#: src/partners-marketplace/PartnerFactsList.tsx
-#: src/partners-marketplace/PartnerCard.tsx
+#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Regions"
 msgstr "المناطق"
+
+#. js-lingui-id: Mjbud+
+#: src/partners-marketplace/PartnerReachFacts.tsx
+msgid "Regions served"
+msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5233,6 +5262,7 @@ msgid "Self-hosted"
 msgstr "ذاتي الاستضافة"
 
 #. js-lingui-id: QFK/45
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Self-hosted (Docker/K8s) · Cloud architecture · Scaling · Security · Monitoring"
 msgstr "الاستضافة الذاتية (Docker/K8s) · بنية سحابية · توسيع النطاق · الأمان · المراقبة"
@@ -5315,6 +5345,11 @@ msgstr "السنغال 🇸🇳"
 msgid "Serbia 🇷🇸"
 msgstr "صربيا 🇷🇸"
 
+#. js-lingui-id: MILoeL
+#: src/partners-marketplace/PartnerServices.tsx
+msgid "Services"
+msgstr ""
+
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
 msgid "Seychelles 🇸🇨"
@@ -5395,7 +5430,7 @@ msgid "Skeleton Loading"
 msgstr "تحميل هيكلي"
 
 #. js-lingui-id: PCSkw2
-#: src/partners-marketplace/PartnerProfile.tsx
+#: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "Skills"
 msgstr "المهارات"
 
@@ -5460,7 +5495,7 @@ msgid "Solomon Islands 🇸🇧"
 msgstr "جزر سليمان 🇸🇧"
 
 #. js-lingui-id: TvdMI3
-#: src/partners-marketplace/partner-scope-labels.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Solutioning"
 msgstr "تصميم الحل"
@@ -5760,6 +5795,7 @@ msgid "Technical notes"
 msgstr "ملاحظات تقنية"
 
 #. js-lingui-id: y+bLyB
+#: src/partners-marketplace/PartnerCoverageSection.tsx
 #: src/partner-application/partner-application-copy.ts
 msgid "Technical skills"
 msgstr "المهارات التقنية"
@@ -6136,12 +6172,8 @@ msgstr "تتبّع كل إصدار مع سجلات تغييرات وأبرز ا�
 msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 msgstr "تابِع العلاقات، وأدِر خطوط الأنابيب، واتخذ إجراءً بسرعة باستخدام CRM بديهي يساعد فريقك على التحرك أسرع من اليوم الأول بثقة."
 
-#. js-lingui-id: xwWQ9Q
-#: src/partners-marketplace/partner-scope-labels.ts
-msgid "Training & Adoption"
-msgstr "التدريب والتبنّي"
-
 #. js-lingui-id: MtCqjl
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Training, Adoption & Support"
 msgstr "التدريب، التبنّي والدعم"
@@ -6368,11 +6400,6 @@ msgstr "مصادقة ثنائية العوامل"
 msgid "Type of team *"
 msgstr "نوع الفريق *"
 
-#. js-lingui-id: P+R1Lc
-#: src/partners-marketplace/PartnerRatesPanel.tsx
-msgid "Typical project"
-msgstr "المشروع النموذجي"
-
 #. js-lingui-id: HqFilh
 #: src/partner-application/data/partner-country-options.ts
 msgid "UAE 🇦🇪"
@@ -6464,6 +6491,7 @@ msgid "Updated by"
 msgstr "تم التحديث بواسطة"
 
 #. js-lingui-id: SPdRRU
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Upfront consulting, scoping, strategy."
 msgstr "استشارات مسبقة، وتحديد النطاق، واستراتيجية."
@@ -6526,6 +6554,7 @@ msgid "User roles"
 msgstr "أدوار المستخدمين"
 
 #. js-lingui-id: UCUX2+
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "User-side rollout & ongoing support."
 msgstr "نشر على جانب المستخدم ودعم مستمر."
@@ -6575,21 +6604,15 @@ msgstr "فيتنام 🇻🇳"
 msgid "Vietnamese"
 msgstr "الفيتنامية"
 
-#. js-lingui-id: BRBSny
-#. placeholder {0}: partner.name
-#: src/partners-marketplace/PartnerCard.tsx
-msgid "View {0} on LinkedIn"
-msgstr "عرض {0} على LinkedIn"
+#. js-lingui-id: 9nyGVq
+#: src/partners-marketplace/CaseStudyModal.tsx
+msgid "View case study"
+msgstr ""
 
 #. js-lingui-id: V4nZs/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "View Groups"
 msgstr "مجموعات العروض"
-
-#. js-lingui-id: ITdNGt
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-msgid "View on LinkedIn"
-msgstr "عرض على LinkedIn"
 
 #. js-lingui-id: 73lp8c
 #: src/partners-marketplace/PartnerCard.tsx
@@ -6754,6 +6777,7 @@ msgid "Website or GitHub *"
 msgstr "موقع إلكتروني أو GitHub *"
 
 #. js-lingui-id: Lx0cVD
+#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "What an admin can do without writing code."
 msgstr "ما يمكن لمسؤول النظام القيام به دون كتابة كود."
@@ -6789,10 +6813,10 @@ msgstr "ما التالي"
 msgid "What is planned is significant. NetZero has a data lake, online forms, and multiple internal systems that he wants to connect to Twenty. The pipes are there; the next step is automations that tie them together."
 msgstr "ما هو مخطط له مهم للغاية. تمتلك NetZero بحيرة بيانات ونماذج عبر الإنترنت وعدة أنظمة داخلية تريد ربطها بـ Twenty. \"الأنابيب\" موجودة؛ والخطوة التالية هي الأتمتات التي تربطها ببعضها."
 
-#. js-lingui-id: kRfFDB
-#: src/partners-marketplace/PartnerProfile.tsx
-msgid "What they do"
-msgstr "ما الذي يفعلونه"
+#. js-lingui-id: w8IA3m
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "What they cover"
+msgstr ""
 
 #. js-lingui-id: aYRqmz
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -6857,11 +6881,6 @@ msgstr "عندما يكون الـ CRM هو المنتج"
 #: src/case-studies/case-study-stories.ts
 msgid "When your CRM is the product: W3Grads on Twenty | W3villa Technologies"
 msgstr "عندما يكون الـ CRM هو المنتج: W3Grads على Twenty | W3villa Technologies"
-
-#. js-lingui-id: 2O07UN
-#: src/partners-marketplace/PartnerProfile.tsx
-msgid "Where & how"
-msgstr "أين وكيف"
 
 #. js-lingui-id: bGN8u+
 #: src/case-studies/case-study-stories.ts

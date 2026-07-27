@@ -187,6 +187,10 @@ export class ImapGetMessagesService {
       participants: extractParticipantsFromParsedEmail(parsed),
       messageFolderExternalIds: [folderExternalId],
       isDraft: flags?.has('\\Draft') ?? false,
+      messageHeaders: parsed.headers.map(({ key, value }) => ({
+        name: key,
+        value,
+      })),
     };
   }
 }

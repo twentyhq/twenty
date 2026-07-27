@@ -2,7 +2,8 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { getRecordCalendarDateRangeOverlapFilter } from '@/object-record/record-calendar/month/utils/getRecordCalendarDateRangeOverlapFilter';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -12,7 +13,6 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import {
@@ -37,8 +37,6 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { userTimezone } = useUserTimezone();
 
-  const { currentView } = useGetCurrentViewOnly();
-
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarInstanceId,
@@ -54,8 +52,14 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
-  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarEndFieldMetadataIdState,
+  // Read per calendar instance (hydrated from the draft view in widget
+  // edit mode, from the persisted view elsewhere) instead of the current
+  // view store: a widget's pending view only exists after dashboard save.
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
+  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
   );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
@@ -63,10 +67,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     viewBarInstanceId,
   );
 
-  if (
-    !isDefined(currentView) ||
-    !isDefined(currentView.calendarFieldMetadataId)
-  ) {
+  if (!isDefined(recordIndexCalendarFieldMetadataId)) {
     return {
       dateRangeFilter: {},
     };
@@ -84,11 +85,11 @@ export const useRecordCalendarQueryDateRangeFilter = (
       userTimezone,
     );
 
-  const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
+  const dateRangeFilterFieldMetadataId = recordIndexCalendarFieldMetadataId;
 
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
     (fieldMetadataItem) =>
-      fieldMetadataItem.id === currentView.calendarFieldMetadataId,
+      fieldMetadataItem.id === recordIndexCalendarFieldMetadataId,
   );
 
   const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(

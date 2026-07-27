@@ -1,4 +1,4 @@
-import { Text } from '@react-email/components';
+import { Text } from 'react-email';
 import { type JSX } from 'react';
 
 import { emailTheme } from 'src/common-style';

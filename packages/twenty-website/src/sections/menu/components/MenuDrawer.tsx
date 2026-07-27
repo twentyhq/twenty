@@ -7,7 +7,8 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
 
-import { formatCompactCount, type CommunityStats } from '@/platform/community';
+import { formatCompactCount } from '@/platform/community/format-compact-count';
+import { type CommunityStats } from '@/platform/community';
 import { useLocale } from '@/platform/i18n';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {

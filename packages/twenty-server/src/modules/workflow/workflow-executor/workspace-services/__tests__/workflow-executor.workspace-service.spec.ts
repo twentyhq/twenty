@@ -429,6 +429,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           workflowRunId: mockWorkflowRunId,
           lastExecutedStepId: 'step-1',
         },
+        { id: mockWorkflowRunId, allowDuplicatedPrefixes: true },
       );
 
       // Should not execute the next step (step-2) in the same job

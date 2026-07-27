@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -31,6 +32,10 @@ import { WorkflowVersionCreateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-one.pre-query.hook';
 import { WorkflowVersionDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-many.pre-query.hook';
 import { WorkflowVersionDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.pre-query.hook';
+import { WorkflowVersionDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-many.pre-query.hook';
+import { WorkflowVersionDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-one.pre-query.hook';
+import { WorkflowVersionRestoreManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-restore-many.pre-query.hook';
+import { WorkflowVersionRestoreOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-restore-one.pre-query.hook';
 import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-many.pre-query.hook';
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -45,6 +50,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     CodeStepBuildModule,
     CommandMenuItemModule,
     FeatureFlagModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,
@@ -67,6 +73,10 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowVersionUpdateManyPreQueryHook,
     WorkflowVersionDeleteOnePreQueryHook,
     WorkflowVersionDeleteManyPreQueryHook,
+    WorkflowVersionDestroyOnePreQueryHook,
+    WorkflowVersionDestroyManyPreQueryHook,
+    WorkflowVersionRestoreOnePreQueryHook,
+    WorkflowVersionRestoreManyPreQueryHook,
     WorkflowCreateOnePostQueryHook,
     WorkflowCreateManyPostQueryHook,
     WorkflowVersionValidationWorkspaceService,

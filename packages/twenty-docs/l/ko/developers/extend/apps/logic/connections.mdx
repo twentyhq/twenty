@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ export default defineApplication({
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="연결 시 로직 함수 실행하기" description="연결이 성립되는 즉시 반응하기">
+
+일부 공급자는 연결 시점에, 연결을 실제로 사용할 수 있게 되기 전에 유지해야 하는 데이터를 제공하기도 합니다. 대표적인 예로 Slack의 경우 OAuth 응답에, 수신 이벤트를 키로 사용할 워크스페이스의 `team_id`가 포함됩니다. `onConnectLogicFunction`을 동일한 앱의 로직 함수(그 로직 함수의 `universalIdentifier`로 식별)에 연결하면, `ConnectedAccount`가 생성된 직후 해당 로직 함수가 실행됩니다.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+이 훅은 **연결 중인 워크스페이스에서 비동기적으로 실행**됩니다(대기하지 않고 큐에 넣어 처리하므로), 훅이 느리게 동작하거나 실패하더라도 OAuth 콜백을 절대 차단하거나 중단하지 않습니다. 따라서 멱등적으로 구현하고, 재시도를 스스로 처리하도록 하십시오. 핸들러는 다음을 수신합니다:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+이후에는 `getConnection(connectedAccountId)`를 사용하여 최신 액세스 토큰을 읽고, 공급자의 API(예: Slack `auth.test`)를 호출하거나 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)에 매핑을 저장합니다.
 
 </Accordion>
 

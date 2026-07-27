@@ -1,5 +1,4 @@
-import { render } from '@react-email/render';
-import { type JSONContent, reactMarkupFromJSON } from 'twenty-emails';
+import { type JSONContent, reactMarkupFromJSON, render } from 'twenty-emails';
 
 export const renderRichTextToHtml = async (
   jsonContent: JSONContent,

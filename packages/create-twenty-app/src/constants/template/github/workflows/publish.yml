@@ -1,0 +1,52 @@
+# Publishes the app to npm with provenance (npm trusted publishing).
+#
+# One-time setup:
+# 1. On npmjs.com open your package > Settings > Trusted Publisher and register
+#    this repository and this workflow file (publish.yml).
+#    See https://docs.npmjs.com/trusted-publishers
+# 2. Push a version tag (e.g. `git tag v1.0.0 && git push --tags`) or run the
+#    workflow manually from the Actions tab.
+#
+# Publishing with provenance certifies which GitHub repository the package is
+# built from. This is also how you claim ownership of your app in a Twenty
+# marketplace: the claim flow verifies you own the GitHub account or
+# organization the provenance points to.
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Required for npm trusted publishing (OIDC provenance).
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        # Trusted publishing requires npm 11.5.1 or later.
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Publish to npm
+        # Uncomment if publishing from a private source repo: npm rejects
+        # OIDC provenance for private repos
+        # env:
+        #   TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish

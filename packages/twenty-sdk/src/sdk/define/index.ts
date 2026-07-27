@@ -23,7 +23,10 @@ export type {
 } from '@/sdk/define/fields/composite-fields';
 export { defineField } from '@/sdk/define/fields/define-field';
 export { FieldType } from '@/sdk/define/fields/field-type';
-export { getFieldUniversalIdentifier } from 'twenty-shared/application';
+export {
+  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';
@@ -67,10 +70,12 @@ export {
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
+export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+export type { SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
 export type { IndexConfig } from '@/sdk/define/indexes/index-config';
@@ -82,14 +87,21 @@ export type {
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
+export { defineUninstallLogicFunction } from '@/sdk/define/logic-functions/define-uninstall-logic-function';
 export type {
   InstallHandler,
   InstallPayload,
 } from '@/sdk/define/logic-functions/install-payload-type';
 export type {
+  UninstallHandler,
+  UninstallPayload,
+} from '@/sdk/define/logic-functions/uninstall-payload-type';
+export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
+  ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
+export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,

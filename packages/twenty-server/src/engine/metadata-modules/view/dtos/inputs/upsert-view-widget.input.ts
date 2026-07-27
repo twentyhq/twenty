@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UpsertViewWidgetViewSettingsInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-settings.input';
 import { UpsertViewWidgetViewFieldInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-field.input';
 import { UpsertViewWidgetViewFilterGroupInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-filter-group.input';
 import { UpsertViewWidgetViewFilterInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget-view-filter.input';
@@ -22,6 +23,16 @@ export class UpsertViewWidgetInput {
     description: 'The id of the view widget (page layout widget).',
   })
   widgetId: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UpsertViewWidgetViewSettingsInput)
+  @Field(() => UpsertViewWidgetViewSettingsInput, {
+    nullable: true,
+    description:
+      'View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.',
+  })
+  view?: UpsertViewWidgetViewSettingsInput;
 
   @IsOptional()
   @ValidateNested({ each: true })

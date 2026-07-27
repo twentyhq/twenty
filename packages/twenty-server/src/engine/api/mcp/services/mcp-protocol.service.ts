@@ -268,11 +268,9 @@ export class McpProtocolService {
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
       } as McpAnnotatedTool,
       [LEARN_TOOLS_TOOL_NAME]: {
-        ...createLearnToolsTool(
-          this.toolRegistry,
-          toolContext,
-          MCP_EXCLUDED_TOOL_NAMES,
-        ),
+        ...createLearnToolsTool(this.toolRegistry, toolContext, {
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
+        }),
         inputSchema: zodSchema(learnToolsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
       } as McpAnnotatedTool,

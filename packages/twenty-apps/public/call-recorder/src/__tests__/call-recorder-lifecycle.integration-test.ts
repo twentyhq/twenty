@@ -411,7 +411,7 @@ describe('call recorder app lifecycle (integration)', () => {
             endsAt: inTwoHours(),
             iCalUid: `call-recorder-test-${calendarEventId}`,
             conferenceLink: {
-              primaryLinkUrl: `https://meet.example.com/${calendarEventId}`,
+              primaryLinkUrl: `https://meet.google.com/${calendarEventId}`,
             },
             callRecorderPreference: 'ON',
             ...overrides,

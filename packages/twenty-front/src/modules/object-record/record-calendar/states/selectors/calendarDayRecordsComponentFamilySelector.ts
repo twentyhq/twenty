@@ -5,8 +5,8 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { isRecordCalendarDayInDateRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateRange';
 import { isRecordCalendarDayInDateTimeRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateTimeRange';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -26,10 +26,12 @@ export const calendarDayRecordIdsComponentFamilySelector =
       ({ instanceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
         const calendarFieldMetadataId = get(
-          recordIndexCalendarFieldMetadataIdState,
+          recordIndexCalendarFieldMetadataIdComponentState,
+          { instanceId },
         );
         const calendarEndFieldMetadataId = get(
-          recordIndexCalendarEndFieldMetadataIdState,
+          recordIndexCalendarEndFieldMetadataIdComponentState,
+          { instanceId },
         );
 
         const objectMetadataItems = get(objectMetadataItemsSelector);

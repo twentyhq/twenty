@@ -72,7 +72,10 @@ const findUniversalIdentifiers = (obj: object): string[] => {
 
     if (
       key === 'postInstallLogicFunction' ||
-      key === 'preInstallLogicFunction'
+      key === 'preInstallLogicFunction' ||
+      key === 'uninstallLogicFunction' ||
+      key === 'onConnectLogicFunction' ||
+      key === 'settingsFrontComponent'
     ) {
       continue;
     }

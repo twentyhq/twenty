@@ -5,6 +5,7 @@ import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
+  ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
@@ -29,6 +30,7 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { getDefaultViewFilterOperand } from 'src/engine/metadata-modules/flat-view-filter/utils/get-default-view-filter-operand.util';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
@@ -70,6 +72,12 @@ const EMPTY_SORT_OPS = {
   sortsToRemove: [] as FlatViewSort[],
 };
 
+const ALLOWED_WIDGET_VIEW_TYPES: ViewType[] = [
+  ViewType.TABLE_WIDGET,
+  ViewType.KANBAN_WIDGET,
+  ViewType.CALENDAR_WIDGET,
+];
+
 @Injectable()
 export class ViewWidgetUpsertService {
   constructor(
@@ -102,6 +110,7 @@ export class ViewWidgetUpsertService {
       flatViewFilterGroupMaps,
       flatViewSortMaps,
       flatViewMaps,
+      flatViewGroupMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -114,6 +123,7 @@ export class ViewWidgetUpsertService {
             'flatViewFilterGroupMaps',
             'flatViewSortMaps',
             'flatViewMaps',
+            'flatViewGroupMaps',
           ],
         },
       );
@@ -181,11 +191,24 @@ export class ViewWidgetUpsertService {
       now: new Date().toISOString(),
     };
 
+    if (isDefined(input.view)) {
+      if (
+        isDefined(input.view.type) &&
+        !ALLOWED_WIDGET_VIEW_TYPES.includes(input.view.type)
+      ) {
+        throw new ViewException(
+          t`Widget views must use a widget view type`,
+          ViewExceptionCode.INVALID_VIEW_DATA,
+        );
+      }
+    }
+
     if (
       !isDefined(input.viewFields) &&
       !isDefined(input.viewFilterGroups) &&
       !isDefined(input.viewFilters) &&
-      !isDefined(input.viewSorts)
+      !isDefined(input.viewSorts) &&
+      !isDefined(input.view)
     ) {
       const view = await this.viewRepository.findOne(
         upsertContext.workspaceId,
@@ -282,6 +305,22 @@ export class ViewWidgetUpsertService {
         })
       : EMPTY_SORT_OPS;
 
+    const viewUpdateOperations = isDefined(input.view)
+      ? fromUpdateViewInputToFlatViewToUpdateOrThrow({
+          updateViewInput: {
+            id: viewId,
+            ...input.view,
+          },
+          flatViewMaps,
+          flatViewGroupMaps,
+          flatFieldMetadataMaps,
+          callerApplicationUniversalIdentifier:
+            upsertContext.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            upsertContext.applicationUniversalIdentifier,
+        })
+      : undefined;
+
     const {
       toHardDelete: filterGroupsToDelete,
       toDeactivate: filterGroupsToDeactivate,
@@ -312,6 +351,22 @@ export class ViewWidgetUpsertService {
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: isDefined(viewUpdateOperations)
+                ? [viewUpdateOperations.flatViewToUpdate]
+                : [],
+            },
+            viewGroup: {
+              flatEntityToCreate: isDefined(viewUpdateOperations)
+                ? viewUpdateOperations.flatViewGroupsToCreate
+                : [],
+              flatEntityToDelete: isDefined(viewUpdateOperations)
+                ? viewUpdateOperations.flatViewGroupsToDelete
+                : [],
+              flatEntityToUpdate: [],
+            },
             viewField: {
               flatEntityToCreate: viewFieldOperations.fieldsToCreate,
               flatEntityToDelete: [],
@@ -427,11 +482,17 @@ export class ViewWidgetUpsertService {
         const resolvedSize = isDefined(existingField.overrides?.size)
           ? existingField.overrides.size
           : existingField.size;
+        const resolvedAggregateOperation =
+          existingField.overrides?.aggregateOperation !== undefined
+            ? existingField.overrides.aggregateOperation
+            : existingField.aggregateOperation;
 
         const hasChanged =
           resolvedIsVisible !== inputField.isVisible ||
           resolvedPosition !== inputField.position ||
-          (isDefined(inputField.size) && resolvedSize !== inputField.size);
+          (isDefined(inputField.size) && resolvedSize !== inputField.size) ||
+          (inputField.aggregateOperation !== undefined &&
+            resolvedAggregateOperation !== inputField.aggregateOperation);
 
         if (!hasChanged) {
           continue;
@@ -454,6 +515,9 @@ export class ViewWidgetUpsertService {
               isVisible: inputField.isVisible,
               position: inputField.position,
               ...(isDefined(inputField.size) ? { size: inputField.size } : {}),
+              ...(inputField.aggregateOperation !== undefined
+                ? { aggregateOperation: inputField.aggregateOperation }
+                : {}),
             },
             shouldOverride,
           });
@@ -520,7 +584,7 @@ export class ViewWidgetUpsertService {
         isVisible: inputField.isVisible,
         size: inputField.size ?? DEFAULT_VIEW_FIELD_SIZE,
         position: inputField.position,
-        aggregateOperation: null,
+        aggregateOperation: inputField.aggregateOperation ?? null,
         overrides: null,
         universalOverrides: null,
         isActive: true,

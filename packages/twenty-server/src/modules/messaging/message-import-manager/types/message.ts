@@ -26,6 +26,12 @@ export type Message = Omit<
   messageFolderIds?: string[];
   messageFolderExternalIds?: string[];
   labelIds?: string[];
+  messageHeaders?: MessageHeader[];
+};
+
+export type MessageHeader = {
+  name: string;
+  value: string;
 };
 
 export type MessageAttachment = {

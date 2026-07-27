@@ -50,16 +50,19 @@ jest.mock(
 jest.mock('@/ui/utilities/pointer-event/hooks/useListenClickOutside', () => ({
   useListenClickOutside: jest.fn(),
 }));
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: jest.fn(),
-}));
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+  () => ({
+    useAtomComponentStateValue: jest.fn(),
+  }),
+);
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
 }));
 
-const useAtomStateValueMock = jest.requireMock(
-  '@/ui/utilities/state/jotai/hooks/useAtomStateValue',
-).useAtomStateValue;
+const useAtomComponentStateValueMock = jest.requireMock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+).useAtomComponentStateValue;
 const useIsFeatureEnabledMock = jest.requireMock(
   '@/workspace/hooks/useIsFeatureEnabled',
 ).useIsFeatureEnabled;
@@ -67,13 +70,13 @@ const useIsFeatureEnabledMock = jest.requireMock(
 describe('RecordCalendar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useAtomStateValueMock.mockReturnValue(ViewCalendarLayout.WEEK);
+    useAtomComponentStateValueMock.mockReturnValue(ViewCalendarLayout.WEEK);
   });
 
   it.each([ViewCalendarLayout.DAY, ViewCalendarLayout.WEEK])(
     'renders month when a persisted %s layout is disabled',
     (calendarLayout) => {
-      useAtomStateValueMock.mockReturnValue(calendarLayout);
+      useAtomComponentStateValueMock.mockReturnValue(calendarLayout);
       useIsFeatureEnabledMock.mockReturnValue(false);
 
       render(<RecordCalendar />);
@@ -88,7 +91,7 @@ describe('RecordCalendar', () => {
   );
 
   it('renders day when the day layout is enabled', () => {
-    useAtomStateValueMock.mockReturnValue(ViewCalendarLayout.DAY);
+    useAtomComponentStateValueMock.mockReturnValue(ViewCalendarLayout.DAY);
     useIsFeatureEnabledMock.mockReturnValue(true);
 
     render(<RecordCalendar />);

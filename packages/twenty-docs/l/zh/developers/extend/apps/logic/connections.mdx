@@ -42,6 +42,9 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
 });
 ```
 
@@ -84,6 +87,40 @@ export default defineApplication({
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="在连接时运行逻辑函数" description="在连接建立时立即响应">
+
+某些提供方会在连接时向你提供数据，而在连接真正可用之前，你需要先持久化这些数据——一个典型示例是 Slack，其中 OAuth 响应会标识工作区的 `team_id`，后续传入事件将会基于该值进行关联。 将 `onConnectLogicFunction` 设置为引用同一应用中的某个逻辑函数（通过其 `universalIdentifier`），该函数会在创建 `ConnectedAccount` 之后立即运行。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+该钩子**在发起连接的工作区中以异步方式运行**（它会入队执行，而不是被等待），因此缓慢或失败的钩子永远不会阻塞或破坏 OAuth 回调——请确保该钩子是幂等的，并能自行处理重试。 处理程序会接收到：
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+接下来，使用 `getConnection(connectedAccountId)` 读取最新的访问令牌，并调用提供商的 API（例如 Slack `auth.test`），或者使用[key-value store](/l/zh/developers/extend/apps/logic/key-value-store) 持久化映射。
 
 </Accordion>
 

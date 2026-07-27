@@ -102,9 +102,8 @@ export const FormSelectFieldInput = ({
     Icon: IconCircleOff,
   };
 
-  const optionsWithEmptyOption = isNullable
-    ? [emptyOption, ...options]
-    : options;
+  const optionsWithEmptyOption =
+    isNullable || options.length === 0 ? [emptyOption, ...options] : options;
 
   const selectedOption = optionsWithEmptyOption.find(
     (option) => option.value === draftValue.value,

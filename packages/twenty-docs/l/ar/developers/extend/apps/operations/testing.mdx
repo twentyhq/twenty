@@ -259,4 +259,4 @@ yarn twenty dev:typecheck
 
 تولّد أداة إنشاء الهيكل سير عمل جاهزًا للاستخدام في `.github/workflows/ci.yml`. عند كل دفع إلى الفرع `main` وكل طلب سحب، تُنشئ الأداة خادم Twenty مؤقتًا في بيئة التشغيل (عبر الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`)، ثم تشغِّل الأوامر `yarn lint` و`yarn typecheck` و`yarn test:unit` و`yarn test` مع ضبط المتغيرين `TWENTY_API_URL` و`TWENTY_API_KEY` للإشارة إلى ذلك الخادم. لا تُطلَب أي أسرار، ويمكنك تثبيت إصدار الخادم عبر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.
 
-راجع قسم [النشر → التكامل/التسليم المستمران الآليان](/l/ar/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) للاطلاع على شرح كامل لكلا سيرَي العمل المُنشأين بالهيكل (`ci.yml` وخط أنابيب النشر `cd.yml`).
+راجع قسم [النشر → التكامل/التسليم المستمران الآليان](/l/ar/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) للاطلاع على شرح كامل لثلاثة مسارات العمل التي تم إنشاؤها تلقائياً (`ci.yml`، وخط أنابيب النشر `cd.yml`، و`publish.yml` للنشر على npm).

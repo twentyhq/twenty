@@ -1,9 +1,13 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
+import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
+import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
@@ -14,7 +18,10 @@ export const SettingsApplicationDetailSettingsTab = ({
     | 'id'
     | 'universalIdentifier'
     | 'canBeUninstalled'
+    | 'autoUpgrade'
+    | 'applicationRegistration'
     | 'logicFunctions'
+    | 'settingsCustomTabFrontComponentId'
   >;
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
@@ -26,8 +33,21 @@ export const SettingsApplicationDetailSettingsTab = ({
   const hasHttpTriggeredFunctions =
     applicationHasHttpTriggeredFunctions(application);
 
+  const isUpgradable = isUpgradableApplicationSourceType(
+    application?.applicationRegistration?.sourceType,
+  );
+
+  const settingsFrontComponentId =
+    application?.settingsCustomTabFrontComponentId;
+
   return (
     <>
+      {isUpgradable && application?.id && (
+        <SettingsApplicationGeneralSection
+          applicationId={application.id}
+          autoUpgrade={application.autoUpgrade}
+        />
+      )}
       {hasHttpTriggeredFunctions && application?.id && (
         <SettingsApplicationFunctionDomainSection
           applicationId={application.id}
@@ -36,18 +56,24 @@ export const SettingsApplicationDetailSettingsTab = ({
       {application?.id && (
         <SettingsApplicationConnectionsSection applicationId={application.id} />
       )}
-      <SettingsApplicationDetailEnvironmentVariablesTable
-        envVariables={envVariables}
-        onUpdate={({ key, value }) =>
-          application?.id
-            ? updateOneApplicationVariable({
-                key,
-                value,
-                applicationId: application.id,
-              })
-            : null
-        }
-      />
+      {isDefined(settingsFrontComponentId) ? (
+        <SettingsApplicationCustomSettingsSection
+          frontComponentId={settingsFrontComponentId}
+        />
+      ) : (
+        <SettingsApplicationDetailEnvironmentVariablesTable
+          envVariables={envVariables}
+          onUpdate={({ key, value }) =>
+            application?.id
+              ? updateOneApplicationVariable({
+                  key,
+                  value,
+                  applicationId: application.id,
+                })
+              : null
+          }
+        />
+      )}
     </>
   );
 };

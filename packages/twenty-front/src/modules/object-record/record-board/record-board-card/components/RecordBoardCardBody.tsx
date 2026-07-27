@@ -21,7 +21,9 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = () => {
-  const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
+  const { recordId, isRecordReadOnly, isDragOverlay } = useContext(
+    RecordBoardCardContext,
+  );
 
   const { updateOneRecord, objectPermissions, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -97,7 +99,9 @@ export const RecordBoardCardBody = () => {
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,
                 triggerEvent: 'CLICK',
-                anchorId: `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
+                anchorId: isDragOverlay
+                  ? undefined
+                  : `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
                 onMouseEnter: () => handleMouseEnter(index),
               }}
             >

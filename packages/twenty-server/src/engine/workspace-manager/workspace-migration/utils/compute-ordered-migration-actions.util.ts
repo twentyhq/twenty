@@ -58,8 +58,17 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.role.update,
     ///
 
-    // Role targets
+    // Role targets delete before agents (roleTarget may FK to agent)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
+    ///
+
+    // Agents (must exist before roleTarget create/update that reference them)
+    ...aggregatedOrchestratorActionsReport.agent.delete,
+    ...aggregatedOrchestratorActionsReport.agent.create,
+    ...aggregatedOrchestratorActionsReport.agent.update,
+    ///
+
+    // Role targets create/update after agents exist
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
     ///
@@ -83,12 +92,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.create,
     ...aggregatedOrchestratorActionsReport.permissionFlag.update,
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.update,
-    ///
-
-    // Agents
-    ...aggregatedOrchestratorActionsReport.agent.delete,
-    ...aggregatedOrchestratorActionsReport.agent.create,
-    ...aggregatedOrchestratorActionsReport.agent.update,
     ///
 
     // Skills

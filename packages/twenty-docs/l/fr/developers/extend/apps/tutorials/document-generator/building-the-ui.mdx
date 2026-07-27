@@ -218,9 +218,7 @@ export default defineFrontComponent({
 });
 ```
 
-Montez-le avec une [mise en page de la page] (/developers/extend/apps/layout/page-layouts). Une mise en page
-`RECORD_PAGE` ajoute des onglets à la vue d'un enregistrement d'un objet ; un widget `FRONT_COMPONENT`
-dans un onglet `CANVAS` héberge le composant:
+Montez-le avec une [mise en page de la page] (/developers/extend/apps/layout/page-layouts). Une disposition `RECORD_PAGE` ajoute des onglets à la vue d’enregistrement d’un objet ; un onglet avec un seul widget `FRONT_COMPONENT` héberge le composant en pleine largeur :
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -235,7 +233,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

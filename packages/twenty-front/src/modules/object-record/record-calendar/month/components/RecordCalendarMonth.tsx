@@ -1,19 +1,11 @@
 import { RecordCalendarMonthBody } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBody';
+import { RecordCalendarMonthDragDropContext } from '@/object-record/record-calendar/month/components/RecordCalendarMonthDragDropContext';
 import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeader';
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
-import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
-import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
-import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import {
-  DragDropContext,
-  type DragStart,
-  type OnDragEndResponder,
-} from '@hello-pangea/dnd';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -32,10 +24,6 @@ export const RecordCalendarMonth = () => {
     throw new Error(`Cannot show RecordCalendarMonth without a selected date`);
   }
 
-  const { processCalendarCardDrop } = useProcessCalendarCardDrop();
-  const { startRecordDrag } = useStartRecordDrag();
-  const { endRecordDrag } = useEndRecordDrag();
-
   const {
     firstDayOfMonth,
     lastDayOfMonth,
@@ -45,26 +33,6 @@ export const RecordCalendarMonth = () => {
     weekFirstDays,
     weekStartsOnDayIndex,
   } = useRecordCalendarMonthDaysRange(recordCalendarSelectedDate);
-
-  const handleDragStart = (start: DragStart) => {
-    startRecordDrag(
-      {
-        ...start,
-        draggableId: getRecordIdFromRecordCalendarCardDraggableId(
-          start.draggableId,
-        ),
-      },
-      [],
-    );
-  };
-
-  const handleDragEnd: OnDragEndResponder = (result) => {
-    endRecordDrag();
-
-    if (!result.destination) return;
-
-    processCalendarCardDrop(result);
-  };
 
   return (
     <RecordCalendarMonthContextProvider
@@ -78,12 +46,12 @@ export const RecordCalendarMonth = () => {
         weekStartsOnDayIndex,
       }}
     >
-      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <RecordCalendarMonthDragDropContext>
         <StyledContainer>
           <RecordCalendarMonthHeader />
           <RecordCalendarMonthBody />
         </StyledContainer>
-      </DragDropContext>
+      </RecordCalendarMonthDragDropContext>
     </RecordCalendarMonthContextProvider>
   );
 };
