@@ -9,8 +9,6 @@ describe('buildSlackAssistantRequestName', () => {
   });
 
   it('should truncate on a code-point boundary when emoji would split a surrogate pair', () => {
-    // 😀 is one code point / two UTF-16 code units. Filling to the limit with
-    // ASCII then appending emoji must not leave a lone high surrogate.
     const asciiPrefix = 'a'.repeat(SLACK_ASSISTANT_REQUEST_NAME_MAX_LENGTH - 1);
     const name = buildSlackAssistantRequestName(`${asciiPrefix}😀 extra`);
 
