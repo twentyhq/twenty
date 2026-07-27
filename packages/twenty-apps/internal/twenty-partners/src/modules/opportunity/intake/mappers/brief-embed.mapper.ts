@@ -42,6 +42,15 @@ const inlineField = (name: string, value: string | undefined | null): DiscordFie
     ? [{ name, value: truncate(value.trim(), INLINE_MAX), inline: true }]
     : [];
 
+const buildReferredBy = (
+  partner: ReferringPartner | null,
+  baseUrl: string | null,
+): string => {
+  if (partner === null) return NO_PARTNER_LABEL;
+  const name = truncate(partner.name, PARTNER_NAME_MAX);
+  return baseUrl === null ? name : `[${name}](${baseUrl}/object/partner/${partner.id})`;
+};
+
 export function buildBriefEmbed(
   brief: BriefForEmbed,
   frontendUrl: string | undefined,
@@ -50,15 +59,7 @@ export function buildBriefEmbed(
   const baseUrl = isNonEmptyString(frontendUrl) ? trimTrailingSlash(frontendUrl) : null;
   const fields: DiscordField[] = [];
 
-  const partnerName =
-    referringPartner === null ? null : truncate(referringPartner.name, PARTNER_NAME_MAX);
-  const referredBy =
-    referringPartner === null || partnerName === null
-      ? NO_PARTNER_LABEL
-      : baseUrl === null
-        ? partnerName
-        : `[${partnerName}](${baseUrl}/object/partner/${referringPartner.id})`;
-  fields.push({ name: 'Referred by', value: referredBy });
+  fields.push({ name: 'Referred by', value: buildReferredBy(referringPartner, baseUrl) });
 
   const contact = [input.firstName, input.lastName].filter(isNonEmptyString).join(' ').trim();
   pushInlineRow(fields, [
