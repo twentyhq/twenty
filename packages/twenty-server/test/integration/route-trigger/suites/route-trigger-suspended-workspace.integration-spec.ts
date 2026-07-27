@@ -19,8 +19,28 @@ const ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
 
 const ROUTE_FUNCTION_RESPONSE = { greeting: 'hello from route function' };
 
-const ROUTE_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.stringify(
-  ROUTE_FUNCTION_RESPONSE,
+const UNSAFE_JS_CHAR_MAP: Record<string, string> = {
+  '<': '\\u003C',
+  '>': '\\u003E',
+  '/': '\\u002F',
+  '\\': '\\\\',
+  '\b': '\\b',
+  '\f': '\\f',
+  '\n': '\\n',
+  '\r': '\\r',
+  '\t': '\\t',
+  '\0': '\\0',
+  '\u2028': '\\u2028',
+  '\u2029': '\\u2029',
+};
+
+const escapeUnsafeChars = (value: string): string =>
+  value.replace(/[<>/\\\b\f\n\r\t\0\u2028\u2029]/g, (char) => {
+    return UNSAFE_JS_CHAR_MAP[char] ?? char;
+  });
+
+const ROUTE_BUILT_HANDLER_CODE = `export const main = async () => (${escapeUnsafeChars(
+  JSON.stringify(ROUTE_FUNCTION_RESPONSE),
 )});
 `;
 
