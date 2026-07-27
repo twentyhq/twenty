@@ -6,7 +6,7 @@ import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-min-activate-after-seconds';
 import {
   RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
-  RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
+  RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_MIN_TIMEOUT_SECONDS,
 } from 'src/logic-functions/constants/recall-bot-detection-timeouts';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getCallRecorderBotDetectionNameMatches } from 'src/logic-functions/utils/get-call-recorder-bot-detection-name-matches.util';
@@ -86,7 +86,7 @@ const getRecallBotDetection = ({
   using_participant_names: {
     matches: getCallRecorderBotDetectionNameMatches(botName),
     activate_after: botDetectionActivateAfterSeconds,
-    timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
+    timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_MIN_TIMEOUT_SECONDS,
   },
   using_participant_events: {
     activate_after: botDetectionActivateAfterSeconds,
