@@ -7,7 +7,7 @@ import {
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -394,14 +394,26 @@ export class AgentChatService {
     companyEnrichment: WorkspaceCompanyEnrichment;
     isHidden: boolean;
   }): Promise<void> {
-    // Idempotent: never create a second hidden company-context message for a thread.
-    const existingHiddenMessageCount = await this.messageRepository.count(
+    const existingHiddenMessages = await this.messageRepository.find(
       workspaceId,
-      { where: { threadId, isHidden: true } },
+      { where: { threadId, isHidden: true }, relations: ['parts'] },
     );
 
-    if (existingHiddenMessageCount > 0) {
+    // Only a message that actually carries its parts counts as seeded. The message and its parts
+    // are inserted separately, so an interrupted attempt can leave a part-less row behind; treating
+    // that row as a seed would disable the context for the thread forever.
+    const isAlreadySeeded = existingHiddenMessages.some((hiddenMessage) =>
+      isNonEmptyArray(hiddenMessage.parts),
+    );
+
+    if (isAlreadySeeded) {
       return;
+    }
+
+    if (isNonEmptyArray(existingHiddenMessages)) {
+      await this.messageRepository.delete(workspaceId, {
+        id: In(existingHiddenMessages.map((hiddenMessage) => hiddenMessage.id)),
+      });
     }
 
     // Sort before the real first message via an epoch processedAt (a plain column honored on insert);
@@ -425,8 +437,8 @@ export class AgentChatService {
         processedAt: epochDate,
       });
     } catch (error) {
-      // Never fail the user's message because the context could not be attached; the next
-      // message retries the seed since this stays idempotent on the hidden message's existence.
+      // Never fail the user's message because the context could not be attached; the next message
+      // cleans up whatever this attempt left behind and seeds again.
       this.logger.warn(
         `Failed to seed company context on thread ${threadId}: ${
           error instanceof Error ? error.message : String(error)
