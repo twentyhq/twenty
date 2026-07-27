@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -10,7 +11,7 @@ const graphql = (query: string, variables?: object) =>
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({ query, variables });
 
-describe('workflow lifecycle core mirror (e2e)', () => {
+describe('workflow lifecycle core mirror with an active version (e2e)', () => {
   let workflowId: string;
   let alreadyDestroyed = false;
 
@@ -35,6 +36,71 @@ describe('workflow lifecycle core mirror (e2e)', () => {
 
     expect(createResponse.body.errors).toBeUndefined();
     workflowId = createResponse.body.data.createWorkflow.id;
+
+    const getResponse = await graphql(
+      `
+        query GetWorkflow($id: UUID!) {
+          workflow(filter: { id: { eq: $id } }) {
+            versions {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      { id: workflowId },
+    );
+
+    const workflowVersionId =
+      getResponse.body.data.workflow.versions.edges[0].node.id;
+
+    await updateWorkflowVersionTrigger({
+      workflowVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
+
+    const stepResponse = await graphql(
+      `
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
+          createWorkflowVersionStep(input: $input) {
+            stepsDiff
+          }
+        }
+      `,
+      {
+        input: {
+          workflowVersionId,
+          stepType: 'FIND_RECORDS',
+          parentStepId: 'trigger',
+          position: { x: 200, y: 0 },
+        },
+      },
+    );
+
+    expect(stepResponse.body.errors).toBeUndefined();
+
+    const activateResponse = await graphql(
+      `
+        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+        }
+      `,
+      { workflowVersionId },
+    );
+
+    expect(activateResponse.body.errors).toBeUndefined();
+    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
   });
 
   afterAll(async () => {

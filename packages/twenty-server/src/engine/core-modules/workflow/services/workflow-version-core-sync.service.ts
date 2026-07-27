@@ -319,29 +319,15 @@ export class WorkflowVersionCoreSyncService {
     );
   }
 
-  async deleteVersionsCoreRowsByWorkflowId(
+  async deleteCoreVersionsByWorkflowId(
     workspaceId: string,
     workflowId: string,
   ): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
+      workflowId,
+    });
 
-      const versions = await workflowVersionRepository.find({
-        where: { workflowId },
-        withDeleted: true,
-      });
-
-      const coreWorkflowVersionIds = versions
-        .map((version) => version.coreWorkflowVersionId)
-        .filter(isNonEmptyString);
-
-      await this.deleteFromCore(workspaceId, coreWorkflowVersionIds);
-    }, buildSystemAuthContext(workspaceId));
+    await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
   private async runVersionLifecycleInTransaction(

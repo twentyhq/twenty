@@ -329,13 +329,6 @@ export class WorkflowCommonWorkspaceService {
             );
 
             break;
-          case 'destroy':
-            await this.workflowVersionCoreSyncService.deleteVersionsCoreRowsByWorkflowId(
-              workspaceId,
-              workflowId,
-            );
-
-            break;
         }
 
         await this.deactivateVersionOnDelete({
@@ -423,15 +416,6 @@ export class WorkflowCommonWorkspaceService {
             undefined,
             queryRunner.manager,
           );
-
-          await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
-            workspaceId,
-            entityManager: queryRunner.manager,
-            workflowVersion: {
-              ...workflowVersion,
-              status: WorkflowVersionStatus.DEACTIVATED,
-            },
-          });
         }
       }
 
