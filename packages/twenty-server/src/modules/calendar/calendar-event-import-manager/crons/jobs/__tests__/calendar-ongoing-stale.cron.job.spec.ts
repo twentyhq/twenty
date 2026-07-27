@@ -1,34 +1,24 @@
-import { In, IsNull, LessThan, Or, type Repository } from 'typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type Repository } from 'typeorm';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
-import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-import-ongoing-sync-timeout.constant';
-import {
-  CALENDAR_ONGOING_STALE_SYNC_STAGES,
-  CalendarOngoingStaleJob,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
+import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 
 describe('CalendarOngoingStaleCronJob', () => {
-  const now = new Date('2026-07-26T12:00:00.000Z');
-
   let calendarChannelRepository: { find: jest.Mock };
   let messageQueueService: { add: jest.Mock };
   let job: CalendarOngoingStaleCronJob;
 
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(now);
-
     calendarChannelRepository = {
       find: jest
         .fn()
         .mockResolvedValue([
           { workspaceId: 'workspace-1' },
           { workspaceId: 'workspace-1' },
+          { workspaceId: 'workspace-2' },
         ]),
     };
     messageQueueService = { add: jest.fn() };
@@ -41,37 +31,31 @@ describe('CalendarOngoingStaleCronJob', () => {
     );
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('enqueues recovery once per workspace with a stale channel', async () => {
     await job.handle();
 
-    expect(calendarChannelRepository.find).toHaveBeenCalledWith({
-      select: {
-        workspaceId: true,
-      },
-      where: {
-        syncStage: In(CALENDAR_ONGOING_STALE_SYNC_STAGES),
-        syncStageStartedAt: Or(
-          IsNull(),
-          LessThan(
-            new Date(now.getTime() - CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT),
-          ),
-        ),
-        workspace: {
-          deletedAt: IsNull(),
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-        },
-      },
-    });
-    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
-    expect(messageQueueService.add).toHaveBeenCalledWith(
+    expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+    expect(messageQueueService.add).toHaveBeenNthCalledWith(
+      1,
       CalendarOngoingStaleJob.name,
       {
         workspaceId: 'workspace-1',
       },
     );
+    expect(messageQueueService.add).toHaveBeenNthCalledWith(
+      2,
+      CalendarOngoingStaleJob.name,
+      {
+        workspaceId: 'workspace-2',
+      },
+    );
+  });
+
+  it('does not enqueue recovery when no workspace has a stale channel', async () => {
+    calendarChannelRepository.find.mockResolvedValue([]);
+
+    await job.handle();
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 });

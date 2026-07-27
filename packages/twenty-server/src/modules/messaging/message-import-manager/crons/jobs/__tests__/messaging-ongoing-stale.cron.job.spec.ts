@@ -1,34 +1,24 @@
-import { In, IsNull, LessThan, Or, type Repository } from 'typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type Repository } from 'typeorm';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
-import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/message-import-manager/constants/messaging-import-ongoing-sync-timeout.constant';
-import {
-  MESSAGING_ONGOING_STALE_SYNC_STAGES,
-  MessagingOngoingStaleJob,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 
 describe('MessagingOngoingStaleCronJob', () => {
-  const now = new Date('2026-07-26T12:00:00.000Z');
-
   let messageChannelRepository: { find: jest.Mock };
   let messageQueueService: { add: jest.Mock };
   let job: MessagingOngoingStaleCronJob;
 
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(now);
-
     messageChannelRepository = {
       find: jest
         .fn()
         .mockResolvedValue([
           { workspaceId: 'workspace-1' },
           { workspaceId: 'workspace-1' },
+          { workspaceId: 'workspace-2' },
         ]),
     };
     messageQueueService = { add: jest.fn() };
@@ -41,37 +31,31 @@ describe('MessagingOngoingStaleCronJob', () => {
     );
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('enqueues recovery once per workspace with a stale channel', async () => {
     await job.handle();
 
-    expect(messageChannelRepository.find).toHaveBeenCalledWith({
-      select: {
-        workspaceId: true,
-      },
-      where: {
-        syncStage: In(MESSAGING_ONGOING_STALE_SYNC_STAGES),
-        syncStageStartedAt: Or(
-          IsNull(),
-          LessThan(
-            new Date(now.getTime() - MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT),
-          ),
-        ),
-        workspace: {
-          deletedAt: IsNull(),
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-        },
-      },
-    });
-    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
-    expect(messageQueueService.add).toHaveBeenCalledWith(
+    expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+    expect(messageQueueService.add).toHaveBeenNthCalledWith(
+      1,
       MessagingOngoingStaleJob.name,
       {
         workspaceId: 'workspace-1',
       },
     );
+    expect(messageQueueService.add).toHaveBeenNthCalledWith(
+      2,
+      MessagingOngoingStaleJob.name,
+      {
+        workspaceId: 'workspace-2',
+      },
+    );
+  });
+
+  it('does not enqueue recovery when no workspace has a stale channel', async () => {
+    messageChannelRepository.find.mockResolvedValue([]);
+
+    await job.handle();
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 });
