@@ -2,6 +2,7 @@ import {
   type SelectControlProps,
   StyledControlContainer,
 } from '@/ui/input/components/SelectControl';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
 import { styled } from '@linaria/react';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,10 +13,10 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconChevronDownWrapper = styled.span<{
-  disabled?: boolean;
+  isDisabled?: boolean;
 }>`
-  color: ${({ disabled }) =>
-    disabled
+  color: ${({ isDisabled }) =>
+    isDisabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
   display: flex;
@@ -43,11 +44,16 @@ export const MultiSelectControl = ({
   hasRightElement,
 }: MultiSelectControlProps) => {
   const { theme } = useContext(ThemeContext);
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
   const firstSelectedOption = selectedOptions?.[0];
   return (
     <StyledControlContainer
       type="button"
-      disabled={isDisabled}
+      isDisabled={isDisabled}
+      aria-disabled={isDisabled === true ? true : undefined}
+      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
+      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
+      aria-controls={dropdownOptionsId}
       hasIcon={isDefined(fixedIcon) || isDefined(firstSelectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
@@ -83,7 +89,7 @@ export const MultiSelectControl = ({
         <OverflowingTextWithTooltip text={firstSelectedOption?.label ?? ''} />
       )}
 
-      <StyledIconChevronDownWrapper disabled={isDisabled}>
+      <StyledIconChevronDownWrapper isDisabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>

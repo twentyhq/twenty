@@ -16,6 +16,8 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
@@ -33,7 +35,9 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   width: 100%;
 `;
 
-const StyledIconButton = styled.div`
+const StyledIconButton = styled.button`
+  ${BUTTON_RESET_STYLE}
+  align-items: center;
   display: flex;
   padding-right: ${themeCssVariables.spacing[2]};
 `;
@@ -125,6 +129,8 @@ export const FormSingleRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-record-picker-${componentId}`;
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
@@ -240,7 +246,13 @@ export const FormSingleRecordPicker = ({
                       onRemove={handleUnlinkVariable}
                       disabled={disabled}
                     />
-                    <StyledIconButton>
+                    <StyledIconButton
+                      type="button"
+                      aria-label={t`Open record picker`}
+                      aria-haspopup="listbox"
+                      aria-expanded={isDropdownOpen}
+                      aria-controls={dropdownOptionsId}
+                    >
                       <IconChevronDown
                         size={theme.icon.size.md}
                         color={theme.font.color.light}

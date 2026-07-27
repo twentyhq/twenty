@@ -29,8 +29,12 @@ const StyledAvatarWrapper = styled.div`
 
 export const DropdownMenuHeaderLeftComponent = ({
   onClick,
+  ariaLabel,
   ...props
-}: { onClick?: (event: MouseEvent<HTMLButtonElement>) => void } & (
+}: {
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  ariaLabel?: string;
+} & (
   | { Icon: IconComponent }
   | {
       Avatar: ReactElement<AvatarProps, typeof Avatar>;
@@ -47,6 +51,7 @@ export const DropdownMenuHeaderLeftComponent = ({
             accent="tertiary"
             size="small"
             onClick={onClick}
+            aria-label={ariaLabel}
           />
         ) : (
           <StyledNonClickableStartIcon>

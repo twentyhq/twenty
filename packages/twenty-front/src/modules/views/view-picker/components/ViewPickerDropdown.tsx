@@ -3,8 +3,7 @@ import { t } from '@lingui/core/macro';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
@@ -61,8 +60,7 @@ export const ViewPickerDropdown = () => {
 
   const { formatNumber } = useNumberFormat();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
     VIEW_PICKER_DROPDOWN_ID,
   );
 
@@ -88,6 +86,9 @@ export const ViewPickerDropdown = () => {
         <StyledDropdownButtonContainer
           type="button"
           isUnfolded={isDropdownOpen}
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
         >
           <StyledIconContainer>
             {isDefined(currentView) && isDefined(CurrentViewIcon) ? (

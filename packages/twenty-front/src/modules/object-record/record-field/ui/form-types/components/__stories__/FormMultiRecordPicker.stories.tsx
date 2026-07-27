@@ -48,7 +48,9 @@ export const Default: Story = {
     const label = await canvas.findByText('Companies');
     expect(label).toBeVisible();
 
-    const dropdown = await canvas.findByRole('button');
+    const dropdown = await canvas.findByRole('button', {
+      name: 'Open records picker',
+    });
     expect(dropdown).toBeVisible();
 
     await userEvent.click(dropdown);
@@ -125,7 +127,9 @@ export const Readonly: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Companies');
-    const dropdown = canvas.queryByRole('button');
+    const dropdown = canvas.queryByRole('button', {
+      name: 'Open records picker',
+    });
     expect(dropdown).not.toBeInTheDocument();
 
     const variablePicker = canvas.queryByText('VariablePicker');

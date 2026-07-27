@@ -19,7 +19,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { HeaderDropdownButton } from '@/ui/layout/dropdown/components/HeaderDropdownButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -171,14 +171,9 @@ export const ObjectSortDropdownButton = () => {
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
       clickableComponent={
-        <StyledHeaderDropdownButton
-          isUnfolded={isDropdownOpen}
-          aria-haspopup={true}
-          aria-expanded={isDropdownOpen}
-          aria-controls={`${OBJECT_SORT_DROPDOWN_ID}-options`}
-        >
+        <HeaderDropdownButton isUnfolded={isDropdownOpen}>
           <Trans>Sort</Trans>
-        </StyledHeaderDropdownButton>
+        </HeaderDropdownButton>
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -187,6 +182,7 @@ export const ObjectSortDropdownButton = () => {
               <DropdownMenuHeaderLeftComponent
                 onClick={() => closeSortDropdown()}
                 Icon={IconX}
+                ariaLabel={t`Close`}
               />
             }
           >

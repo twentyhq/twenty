@@ -15,24 +15,25 @@ import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoSta
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+const SIDE_PANEL_FOLDER_ICON_PICKER_DROPDOWN_ID =
+  'side-panel-folder-icon-picker';
+
 const StyledClickableIconWrapper = styled.button`
-  appearance: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
+  ${BUTTON_RESET_STYLE}
   line-height: 0;
-  margin: 0;
-  padding: 0;
 `;
 
 export const SidePanelFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+    SIDE_PANEL_FOLDER_ICON_PICKER_DROPDOWN_ID,
+  );
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
   const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
     useAtomComponentState(
@@ -76,13 +77,19 @@ export const SidePanelFolderInfo = () => {
     <SidePanelPageInfoLayout
       icon={
         <IconPicker
-          dropdownId="side-panel-folder-icon-picker"
+          dropdownId={SIDE_PANEL_FOLDER_ICON_PICKER_DROPDOWN_ID}
           selectedIconKey={selectedIconKey}
           onChange={({ iconKey }) =>
             void updateItem(selectedItem.id, { icon: iconKey })
           }
           clickableComponent={
-            <StyledClickableIconWrapper type="button">
+            <StyledClickableIconWrapper
+              type="button"
+              aria-label={t`Change folder icon`}
+              aria-haspopup="listbox"
+              aria-expanded={isDropdownOpen}
+              aria-controls={dropdownOptionsId}
+            >
               <TintedIconTile
                 Icon={FolderIconComponent}
                 color={selectedItem.color}

@@ -10,11 +10,14 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -24,16 +27,9 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 
 const StyledClickableIconWrapper = styled.button`
-  appearance: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
+  ${BUTTON_RESET_STYLE}
   display: flex;
-  font: inherit;
   line-height: 0;
-  margin: 0;
-  padding: 0;
 `;
 
 const iconPickerContainerStyles = css`
@@ -89,6 +85,10 @@ export const SidePanelPageLayoutInfoContent = ({
     openTabId: pageLayoutTabSettingsOpenTabId,
     editedTitle,
   });
+
+  const iconPickerDropdownId = `page-layout-tab-icon-picker-${headerInfo?.tab?.id}`;
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(iconPickerDropdownId);
 
   if (!headerInfo) {
     return null;
@@ -153,12 +153,18 @@ export const SidePanelPageLayoutInfoContent = ({
   const iconElement =
     isIconEditable && isDefined(tab) ? (
       <IconPicker
-        dropdownId={`page-layout-tab-icon-picker-${tab.id}`}
+        dropdownId={iconPickerDropdownId}
         selectedIconKey={selectedIconKey ?? undefined}
         onChange={handleIconChange}
         className={iconPickerContainerStyles}
         clickableComponent={
-          <StyledClickableIconWrapper type="button">
+          <StyledClickableIconWrapper
+            type="button"
+            aria-label={t`Change icon`}
+            aria-haspopup="listbox"
+            aria-expanded={isDropdownOpen}
+            aria-controls={dropdownOptionsId}
+          >
             {renderedIcon}
           </StyledClickableIconWrapper>
         }

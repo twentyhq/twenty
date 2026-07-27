@@ -1,50 +1,42 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 
 const StyledDropdownTriggerButton = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
   display: flex;
-  font: inherit;
-  margin: 0;
-  padding: 0;
-  text-align: inherit;
+  min-width: 0;
   width: 100%;
 `;
 
 type DropdownTriggerButtonProps = {
   children: ReactNode;
   className?: string;
+  ariaLabel?: string;
+  disabled?: boolean;
 };
 
 export const DropdownTriggerButton = ({
   children,
   className,
+  ariaLabel,
+  disabled,
 }: DropdownTriggerButtonProps) => {
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-  );
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
 
   return (
     <StyledDropdownTriggerButton
       type="button"
       className={className}
-      aria-haspopup={true}
-      aria-expanded={isDropdownOpen}
-      aria-controls={`${dropdownId}-options`}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
+      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
+      aria-controls={dropdownOptionsId}
     >
       {children}
     </StyledDropdownTriggerButton>

@@ -20,6 +20,8 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useId, useState } from 'react';
@@ -38,7 +40,9 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   width: 100%;
 `;
 
-const StyledIconButton = styled.div`
+const StyledIconButton = styled.button`
+  ${BUTTON_RESET_STYLE}
+  align-items: center;
   display: flex;
   padding-right: ${themeCssVariables.spacing[2]};
 `;
@@ -81,6 +85,8 @@ export const FormMultiRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-multi-record-picker-${componentId}`;
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
@@ -218,7 +224,13 @@ export const FormMultiRecordPicker = ({
                     preventFocusStackUpdate={true}
                   >
                     {chips}
-                    <StyledIconButton>
+                    <StyledIconButton
+                      type="button"
+                      aria-label={t`Open records picker`}
+                      aria-haspopup="listbox"
+                      aria-expanded={isDropdownOpen}
+                      aria-controls={dropdownOptionsId}
+                    >
                       <IconChevronDown
                         size={theme.icon.size.md}
                         color={theme.font.color.light}

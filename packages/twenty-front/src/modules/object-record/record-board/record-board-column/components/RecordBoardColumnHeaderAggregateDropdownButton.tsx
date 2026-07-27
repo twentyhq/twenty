@@ -1,4 +1,4 @@
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { HeaderDropdownButton } from '@/ui/layout/dropdown/components/HeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
@@ -33,13 +33,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
 
   return (
     <StyledHeaderContainer>
-      <StyledHeaderDropdownButton
-        id={dropdownId}
-        isUnfolded={isDropdownOpen}
-        aria-haspopup={true}
-        aria-expanded={isDropdownOpen}
-        aria-controls={`${dropdownId}-options`}
-      >
+      <HeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
         <>
           <StyledTagContainer>
             <Tag
@@ -59,7 +53,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
             />
           )}
         </>
-      </StyledHeaderDropdownButton>
+      </HeaderDropdownButton>
     </StyledHeaderContainer>
   );
 };

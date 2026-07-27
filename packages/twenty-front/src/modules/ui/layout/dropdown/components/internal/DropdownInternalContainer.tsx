@@ -6,6 +6,7 @@ import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dro
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { getDropdownOptionsId } from '@/ui/layout/dropdown/utils/getDropdownOptionsId';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -159,7 +160,7 @@ export const DropdownInternalContainer = ({
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
           role="listbox"
-          id={`${dropdownId}-options`}
+          id={getDropdownOptionsId(dropdownId)}
           data-click-outside-id={excludedClickOutsideId}
           isDropdownInModal={isDropdownInModal}
         >

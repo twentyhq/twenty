@@ -6,25 +6,21 @@ import { CurrencyCode } from 'twenty-shared/constants';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledDropdownButtonContainer = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
-  cursor: pointer;
   display: flex;
-  font: inherit;
   height: 32px;
-  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
-  text-align: inherit;
   user-select: none;
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -58,6 +54,8 @@ export const CurrencyPickerDropdownButton = ({
   const dropdownId = 'currency-picker-dropdown-id';
 
   const { closeDropdown } = useCloseDropdown();
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
 
   const handleChange = (currency: Currency) => {
     onChange(currency);
@@ -74,7 +72,12 @@ export const CurrencyPickerDropdownButton = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <StyledDropdownButtonContainer type="button">
+        <StyledDropdownButtonContainer
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
+        >
           <StyledIconContainer>
             {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />

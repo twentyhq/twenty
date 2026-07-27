@@ -8,7 +8,9 @@ import { type RecordTableFooterAggregateContentId } from '@/object-record/record
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownTriggerButton } from '@/ui/layout/dropdown/components/DropdownTriggerButton';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
+import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableColumnFooterWithDropdownProps = {
   isFirstCell: boolean;
@@ -56,7 +58,13 @@ export const RecordTableColumnFooterWithDropdown = ({
       onClose={handleDropdownClose}
       dropdownId={dropdownId}
       clickableComponent={
-        <DropdownTriggerButton>
+        <DropdownTriggerButton
+          ariaLabel={
+            isDefined(fieldMetadata)
+              ? t`Calculate ${fieldMetadata.label}`
+              : t`Calculate`
+          }
+        >
           <RecordTableColumnAggregateFooterValueCell
             dropdownId={dropdownId}
             isFirstCell={isFirstCell}

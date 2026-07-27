@@ -1,5 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
@@ -16,20 +18,16 @@ import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.button<{
-  disabled?: boolean;
+  isDisabled?: boolean;
 }>`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background-color: transparent;
-  border: none;
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  font: inherit;
   justify-content: center;
-  margin: 0;
   padding: ${themeCssVariables.spacing[2]};
   user-select: none;
 `;
@@ -56,6 +54,8 @@ export const WorkflowVariablesDropdown = ({
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
     shouldDisplayRecordObjects,
@@ -93,7 +93,10 @@ export const WorkflowVariablesDropdown = ({
     return (
       <>
         <StyledDropdownVariableButtonContainer
-          disabled={true}
+          type="button"
+          isDisabled={true}
+          aria-disabled={true}
+          aria-label={t`Insert variable`}
           data-variable-picker-disabled-anchor={dropdownId}
         >
           <IconVariablePlus
@@ -119,7 +122,13 @@ export const WorkflowVariablesDropdown = ({
       isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer type="button">
+          <StyledDropdownVariableButtonContainer
+            type="button"
+            aria-label={t`Insert variable`}
+            aria-haspopup="listbox"
+            aria-expanded={isDropdownOpen}
+            aria-controls={dropdownOptionsId}
+          >
             <IconVariablePlus size={theme.icon.size.md} />
           </StyledDropdownVariableButtonContainer>
         )

@@ -43,7 +43,9 @@ export const Default: Story = {
     const label = await canvas.findByText('Company');
     expect(label).toBeVisible();
 
-    const dropdown = await canvas.findByRole('button');
+    const dropdown = await canvas.findByRole('button', {
+      name: 'Open record picker',
+    });
     expect(dropdown).toBeVisible();
 
     await userEvent.click(dropdown);
@@ -87,7 +89,9 @@ export const Disabled: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Company');
-    const dropdown = canvas.queryByRole('button');
+    const dropdown = canvas.queryByRole('button', {
+      name: 'Open record picker',
+    });
     expect(dropdown).not.toBeInTheDocument();
 
     // Variable picker should not be visible when disabled

@@ -8,8 +8,9 @@ import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSe
 
 import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
+import { useLingui } from '@lingui/react/macro';
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/icon';
@@ -20,24 +21,18 @@ type StyledDropdownButtonProps = {
 };
 
 const StyledDropdownButtonContainer = styled.button<StyledDropdownButtonProps>`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
   border-radius: ${themeCssVariables.border.radius.xs} 0 0
     ${themeCssVariables.border.radius.xs};
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
-  cursor: pointer;
 
   display: flex;
-  font: inherit;
   height: 32px;
-  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
 
-  text-align: inherit;
   user-select: none;
 
   &:hover {
@@ -79,9 +74,9 @@ export const PhoneCountryPickerDropdownButton = ({
   onChange: (countryCode: string) => void;
 }) => {
   const [selectedCountry, setSelectedCountry] = useState<Country>();
+  const { t } = useLingui();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
     PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
   );
 
@@ -109,6 +104,10 @@ export const PhoneCountryPickerDropdownButton = ({
         <StyledDropdownButtonContainer
           type="button"
           isUnfolded={isDropdownOpen}
+          aria-label={t`Select country code`}
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
         >
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}

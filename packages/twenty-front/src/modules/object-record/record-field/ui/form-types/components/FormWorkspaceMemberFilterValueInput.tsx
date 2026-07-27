@@ -31,6 +31,8 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
@@ -40,7 +42,9 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   width: 100%;
 `;
 
-const StyledIconButton = styled.div`
+const StyledIconButton = styled.button`
+  ${BUTTON_RESET_STYLE}
+  align-items: center;
   display: flex;
   padding-right: ${themeCssVariables.spacing[2]};
 `;
@@ -66,6 +70,8 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   const componentId = useId();
   const dropdownId = `form-workspace-member-filter-picker-${componentId}`;
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
   const selectableListId = `${dropdownId}-selectable-list`;
   const variablesDropdownId = `${dropdownId}-variables`;
 
@@ -262,7 +268,13 @@ export const FormWorkspaceMemberFilterValueInput = ({
                   preventFocusStackUpdate
                 >
                   {triggerContent}
-                  <StyledIconButton>
+                  <StyledIconButton
+                    type="button"
+                    aria-label={t`Open workspace member picker`}
+                    aria-haspopup="listbox"
+                    aria-expanded={isDropdownOpen}
+                    aria-controls={dropdownOptionsId}
+                  >
                     <IconChevronDown
                       size={theme.icon.size.md}
                       color={theme.font.color.light}

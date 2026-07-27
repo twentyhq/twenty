@@ -13,10 +13,13 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -47,18 +50,11 @@ const StyledPlusIconHeaderCell = styled.div<{
 `;
 
 const StyledPlusIconContainer = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
   display: flex;
-  font: inherit;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
-  margin: 0;
-  padding: 0;
   width: 100%;
 `;
 
@@ -69,6 +65,9 @@ const StyledDropdownContainer = styled.div`
 
 export const RecordTableHeaderAddColumnButton = () => {
   const { theme } = useContext(ThemeContext);
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+    HIDDEN_TABLE_COLUMN_DROPDOWN_ID,
+  );
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -119,7 +118,13 @@ export const RecordTableHeaderAddColumnButton = () => {
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
-            <StyledPlusIconContainer type="button">
+            <StyledPlusIconContainer
+              type="button"
+              aria-label={t`Add column`}
+              aria-haspopup="listbox"
+              aria-expanded={isDropdownOpen}
+              aria-controls={dropdownOptionsId}
+            >
               <IconPlus size={theme.icon.size.md} />
             </StyledPlusIconContainer>
           }

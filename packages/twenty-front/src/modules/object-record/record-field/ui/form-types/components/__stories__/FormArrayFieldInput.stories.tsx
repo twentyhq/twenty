@@ -95,7 +95,7 @@ export const EditExistingItem: Story = {
 
     const openSecondItemMenuButton = await waitFor(() => {
       const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
+        'button[aria-controls$="-1-options"]',
       );
 
       if (!isDefined(button)) {
@@ -152,7 +152,7 @@ export const DeleteExistingItem: Story = {
 
     const openSecondItemMenuButton = await waitFor(() => {
       const button = canvasElement.ownerDocument.body.querySelector(
-        '[aria-controls$="-1-options"] > button',
+        'button[aria-controls$="-1-options"]',
       );
 
       if (!isDefined(button)) {

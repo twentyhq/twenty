@@ -1,4 +1,6 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,14 +14,14 @@ export type SelectControlTextAccent = 'default' | 'placeholder';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 export const StyledControlContainer = styled.button<{
-  disabled?: boolean;
+  isDisabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
 }>`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-left-radius: ${themeCssVariables.border.radius.md};
@@ -33,15 +35,14 @@ export const StyledControlContainer = styled.button<{
   border-top-right-radius: ${({ hasRightElement }) =>
     hasRightElement ? '0' : themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  color: ${({ disabled, textAccent }) =>
-    disabled
+  color: ${({ isDisabled, textAccent }) =>
+    isDisabled
       ? themeCssVariables.font.color.tertiary
       : textAccent === 'default'
         ? themeCssVariables.font.color.primary
         : themeCssVariables.font.color.tertiary};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: grid;
-  font: inherit;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: ${({ hasIcon }) =>
     hasIcon ? 'auto 1fr auto' : '1fr auto'};
@@ -49,17 +50,16 @@ export const StyledControlContainer = styled.button<{
     selectSizeVariant === 'small'
       ? themeCssVariables.spacing[6]
       : themeCssVariables.spacing[8]};
-  margin: 0;
   max-width: 100%;
   padding: 0 ${themeCssVariables.spacing[2]};
   text-align: left;
 `;
 
 const StyledIconChevronDownWrapper = styled.span<{
-  disabled?: boolean;
+  isDisabled?: boolean;
 }>`
-  color: ${({ disabled }) =>
-    disabled
+  color: ${({ isDisabled }) =>
+    isDisabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
   display: flex;
@@ -81,10 +81,16 @@ export const SelectControl = ({
   hasRightElement,
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+
   return (
     <StyledControlContainer
       type="button"
-      disabled={isDisabled}
+      isDisabled={isDisabled}
+      aria-disabled={isDisabled === true ? true : undefined}
+      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
+      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
+      aria-controls={dropdownOptionsId}
       hasIcon={isDefined(selectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
@@ -116,7 +122,7 @@ export const SelectControl = ({
             : selectedOption.label
         }
       />
-      <StyledIconChevronDownWrapper disabled={isDisabled}>
+      <StyledIconChevronDownWrapper isDisabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>

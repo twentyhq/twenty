@@ -140,6 +140,7 @@ export const FavoritesSection = () => {
           Icon={IconPlus}
           onClick={handleAddFavorite}
           accent="tertiary"
+          aria-label={t`Add favorite`}
         />
       }
     >

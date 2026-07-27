@@ -75,6 +75,7 @@ export const EmailRecipientsFieldChip = ({
       clickableComponent={
         <BaseChip
           chipId={chipId}
+          isDropdownTrigger
           label={resolvedLabel}
           title={
             isInvalid

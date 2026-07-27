@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -8,13 +9,15 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 
 const StyledRecordLevelPermissionPickerContainer = styled.button<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
   background-color: ${({ multiline }) =>
     multiline
       ? 'transparent'
@@ -34,9 +37,7 @@ const StyledRecordLevelPermissionPickerContainer = styled.button<{
       : themeCssVariables.font.color.tertiary};
   cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
   display: flex;
-  font: inherit;
   justify-content: center;
-  margin: 0;
   padding: ${({ multiline }) =>
     multiline
       ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]}`
@@ -44,7 +45,6 @@ const StyledRecordLevelPermissionPickerContainer = styled.button<{
   position: ${({ multiline }) => (multiline ? 'absolute' : 'relative')};
   right: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[0] : 'auto'};
-  text-align: inherit;
   top: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[0] : 'auto'};
 
@@ -69,15 +69,22 @@ export const createRecordLevelPermissionVariablePicker = (
     multiline,
   }) => {
     const { theme } = useContext(ThemeContext);
+    const dropdownId = `record-level-permission-me-picker-${instanceId}-${recordFilterId}`;
+    const { dropdownOptionsId, isDropdownOpen } =
+      useDropdownTriggerAria(dropdownId);
 
     return (
       <Dropdown
-        dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
+        dropdownId={dropdownId}
         clickableComponent={
           <StyledRecordLevelPermissionPickerContainer
             type="button"
             multiline={multiline}
             readonly={disabled}
+            aria-label={t`Insert variable`}
+            aria-haspopup="listbox"
+            aria-expanded={isDropdownOpen}
+            aria-controls={dropdownOptionsId}
           >
             <IconVariablePlus size={theme.icon.size.sm} />
           </StyledRecordLevelPermissionPickerContainer>

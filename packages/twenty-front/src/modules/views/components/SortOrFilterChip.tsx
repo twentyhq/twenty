@@ -5,9 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { SortOrFilterChipDropdownTriggerLabel } from '@/views/components/SortOrFilterChipDropdownTriggerLabel';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -43,6 +42,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -62,16 +62,10 @@ const StyledChipLabelText = styled.span`
 `;
 
 const StyledChipLabelButton = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  background: none;
-  border: none;
-  color: inherit;
   column-gap: ${themeCssVariables.spacing[1]};
-  cursor: pointer;
   display: flex;
-  font: inherit;
-  margin: 0;
-  padding: 0;
 `;
 
 const StyledIcon = styled.span`
@@ -165,9 +159,7 @@ export const SortOrFilterChip = ({
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
-  const dropdownId = useAvailableComponentInstanceId(
-    DropdownComponentInstanceContext,
-  );
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -198,20 +190,24 @@ export const SortOrFilterChip = ({
     </>
   );
 
-  const label = isDefined(dropdownId) ? (
-    <SortOrFilterChipDropdownTriggerLabel onClick={onClick}>
-      {labelContent}
-    </SortOrFilterChipDropdownTriggerLabel>
-  ) : isDefined(onClick) ? (
-    <StyledChipLabelButton type="button" onClick={onClick}>
-      {labelContent}
-    </StyledChipLabelButton>
-  ) : (
-    <StyledChipLabelText>{labelContent}</StyledChipLabelText>
-  );
+  const label =
+    isDefined(dropdownOptionsId) || isDefined(onClick) ? (
+      <StyledChipLabelButton
+        type="button"
+        aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
+        aria-expanded={
+          isDefined(dropdownOptionsId) ? isDropdownOpen : undefined
+        }
+        aria-controls={dropdownOptionsId}
+      >
+        {labelContent}
+      </StyledChipLabelButton>
+    ) : (
+      <StyledChipLabelText>{labelContent}</StyledChipLabelText>
+    );
 
   return (
-    <StyledChip variant={variant}>
+    <StyledChip onClick={onClick} variant={variant}>
       {label}
       <StyledDelete
         type="button"

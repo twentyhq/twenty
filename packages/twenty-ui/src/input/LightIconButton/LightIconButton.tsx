@@ -20,10 +20,16 @@ export type LightIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
+} & Pick<
+  ComponentProps<'button'>,
+  'aria-label' | 'aria-haspopup' | 'aria-expanded' | 'aria-controls' | 'title'
+>;
 
 export const LightIconButton = ({
   'aria-label': ariaLabel,
+  'aria-haspopup': ariaHasPopup,
+  'aria-expanded': ariaExpanded,
+  'aria-controls': ariaControls,
   className,
   testId,
   Icon,
@@ -41,6 +47,9 @@ export const LightIconButton = ({
     <button
       data-testid={testId}
       aria-label={ariaLabel}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
       onClick={onClick}
       disabled={disabled}
       className={clsx(styles.button, styles[size], className)}

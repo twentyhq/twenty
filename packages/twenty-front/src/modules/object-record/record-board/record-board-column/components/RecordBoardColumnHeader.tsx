@@ -21,7 +21,6 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownTriggerButton } from '@/ui/layout/dropdown/components/DropdownTriggerButton';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -212,14 +211,12 @@ export const RecordBoardColumnHeader = () => {
                       y: 10,
                     }}
                     clickableComponent={
-                      <DropdownTriggerButton>
-                        <StyledTagContainer>
-                          <RecordGroupChip
-                            recordGroupDefinition={columnDefinition}
-                            fieldMetadataItem={selectFieldMetadataItem}
-                          />
-                        </StyledTagContainer>
-                      </DropdownTriggerButton>
+                      <StyledTagContainer>
+                        <RecordGroupChip
+                          recordGroupDefinition={columnDefinition}
+                          fieldMetadataItem={selectFieldMetadataItem}
+                        />
+                      </StyledTagContainer>
                     }
                     dropdownComponents={<RecordBoardColumnDropdownMenu />}
                   />

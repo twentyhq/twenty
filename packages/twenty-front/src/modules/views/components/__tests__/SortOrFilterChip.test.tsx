@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 
 const renderInI18n = (children: React.ReactNode) =>
@@ -48,5 +49,35 @@ describe('SortOrFilterChip', () => {
     fireEvent.click(removeButton);
 
     expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it('exposes dropdown trigger semantics when rendered inside a dropdown', () => {
+    const onClick = jest.fn();
+
+    renderInI18n(
+      <DropdownComponentInstanceContext.Provider
+        value={{ instanceId: 'filter-chip-dropdown' }}
+      >
+        <SortOrFilterChip
+          type="filter"
+          labelValue="Acme"
+          onRemove={jest.fn()}
+          onClick={onClick}
+        />
+      </DropdownComponentInstanceContext.Provider>,
+    );
+
+    const labelButton = screen.getByRole('button', { name: 'Acme' });
+
+    expect(labelButton).toHaveAttribute('aria-haspopup', 'listbox');
+    expect(labelButton).toHaveAttribute('aria-expanded', 'false');
+    expect(labelButton).toHaveAttribute(
+      'aria-controls',
+      'filter-chip-dropdown-options',
+    );
+
+    fireEvent.click(labelButton);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

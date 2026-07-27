@@ -7,7 +7,7 @@ import { type ObjectOptionsContentId } from '@/object-record/object-options-drop
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
 import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { HeaderDropdownButton } from '@/ui/layout/dropdown/components/HeaderDropdownButton';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -46,14 +46,9 @@ export const ObjectOptionsDropdown = ({
         dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
         dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
         clickableComponent={
-          <StyledHeaderDropdownButton
-            isUnfolded={isDropdownOpen}
-            aria-haspopup={true}
-            aria-expanded={isDropdownOpen}
-            aria-controls={`${OBJECT_OPTIONS_DROPDOWN_ID}-options`}
-          >
+          <HeaderDropdownButton isUnfolded={isDropdownOpen}>
             <Trans>Options</Trans>
-          </StyledHeaderDropdownButton>
+          </HeaderDropdownButton>
         }
         onClose={handleResetContent}
         dropdownComponents={

@@ -15,12 +15,12 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -53,18 +53,12 @@ const StyledDisplayModeReadonlyContainer = styled.div`
 `;
 
 const StyledDisplayModeContainer = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: transparent;
-  border: none;
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
-  font-family: inherit;
   height: 30px;
-  margin: 0;
   padding-inline: ${themeCssVariables.spacing[2]};
-  text-align: inherit;
   width: 100%;
 
   &:hover,
@@ -137,10 +131,8 @@ export const FormArrayFieldInput = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const dropdownId = `dropdown-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
 
   const preventContainerFocusStackUpdate =
     draftValue.type === 'static' && draftValue.value.length >= 1;
@@ -341,6 +333,9 @@ export const FormArrayFieldInput = ({
                   <StyledDisplayModeContainer
                     type="button"
                     data-open={isDropdownOpen}
+                    aria-haspopup="listbox"
+                    aria-expanded={isDropdownOpen}
+                    aria-controls={dropdownOptionsId}
                   >
                     <ArrayDisplay value={draftValue.value} />
                   </StyledDisplayModeContainer>

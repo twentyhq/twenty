@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { type MouseEvent, type ReactNode, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 
 const StyledChip = styled.div<{
   deletable: boolean;
@@ -73,6 +77,14 @@ const StyledLabel = styled.span<{ maxWidth?: number }>`
   text-overflow: ellipsis;
 `;
 
+const StyledChipLabelButton = styled.button`
+  ${BUTTON_RESET_STYLE}
+  align-items: center;
+  column-gap: ${themeCssVariables.spacing[1]};
+  display: flex;
+  min-width: 0;
+`;
+
 const StyledDelete = styled.button<{ danger: boolean }>`
   align-items: center;
   background: none;
@@ -110,6 +122,7 @@ type BaseChipProps = {
   onDoubleClick?: () => void;
   maxWidth?: number;
   leftIcon?: ReactNode;
+  isDropdownTrigger?: boolean;
 };
 
 export const BaseChip = ({
@@ -124,9 +137,20 @@ export const BaseChip = ({
   onDoubleClick,
   maxWidth,
   leftIcon,
+  isDropdownTrigger = false,
 }: BaseChipProps) => {
   const { theme } = useContext(ThemeContext);
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
   const isDeletable = onRemove !== undefined;
+
+  const labelContent = (
+    <>
+      {leftIcon}
+      <StyledLabel title={title ?? label} maxWidth={maxWidth}>
+        {label}
+      </StyledLabel>
+    </>
+  );
 
   return (
     <StyledChip
@@ -137,10 +161,18 @@ export const BaseChip = ({
       data-flashing={isFlashing}
       onDoubleClick={onDoubleClick}
     >
-      {leftIcon}
-      <StyledLabel title={title ?? label} maxWidth={maxWidth}>
-        {label}
-      </StyledLabel>
+      {isDropdownTrigger && isDefined(dropdownOptionsId) ? (
+        <StyledChipLabelButton
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
+        >
+          {labelContent}
+        </StyledChipLabelButton>
+      ) : (
+        labelContent
+      )}
 
       {isDeletable && (
         <StyledDelete

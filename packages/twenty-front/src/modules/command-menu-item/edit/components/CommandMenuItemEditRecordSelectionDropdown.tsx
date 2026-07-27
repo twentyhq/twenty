@@ -8,6 +8,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -19,22 +21,18 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
 const StyledClickableArea = styled.button<{ disabled?: boolean }>`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
-  color: inherit;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  font: inherit;
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
-  margin: 0;
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
-  text-align: inherit;
 `;
 
 const StyledLabel = styled.span`
@@ -59,6 +57,8 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(DROPDOWN_ID);
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
     mainContextStoreHasSelectedRecordsSelector,
@@ -94,6 +94,9 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
         <StyledClickableArea
           type="button"
           disabled={isRecordPage}
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
           data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
         >
           <TriggerIcon

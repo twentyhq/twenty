@@ -6,6 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
@@ -76,19 +78,13 @@ const StyledRow = styled.div`
 `;
 
 const StyledColorSampleContainer = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
   display: flex;
-  font: inherit;
   margin-bottom: ${themeCssVariables.spacing[1]};
   margin-left: 14px;
   margin-right: 14px;
   margin-top: ${themeCssVariables.spacing[1]};
-  padding: 0;
 `;
 
 const StyledOptionInputContainer = styled.div`
@@ -131,6 +127,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   const { closeDropdown: closeColorDropdown } = useCloseDropdown();
   const { closeDropdown: closeActionsDropdown } = useCloseDropdown();
+  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+    SELECT_COLOR_DROPDOWN_ID,
+  );
 
   const shouldForbidRemoveAsDefault = isDefault && !fieldIsNullable;
 
@@ -170,7 +169,13 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
         clickableComponent={
-          <StyledColorSampleContainer type="button">
+          <StyledColorSampleContainer
+            type="button"
+            aria-label={t`Change option color`}
+            aria-haspopup="listbox"
+            aria-expanded={isDropdownOpen}
+            aria-controls={dropdownOptionsId}
+          >
             <ColorSample colorName={option.color} />
           </StyledColorSampleContainer>
         }

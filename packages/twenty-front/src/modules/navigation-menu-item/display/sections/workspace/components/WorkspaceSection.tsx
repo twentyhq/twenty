@@ -205,6 +205,7 @@ export const WorkspaceSection = () => {
               accent="tertiary"
               size="small"
               onClick={handleAddMenuItem}
+              aria-label={t`Add menu item`}
             />
           ) : (
             hasLayoutsPermission && (
@@ -214,6 +215,7 @@ export const WorkspaceSection = () => {
                   accent="tertiary"
                   size="small"
                   onClick={handleEditClick}
+                  aria-label={t`Customize layout`}
                 />
               </div>
             )

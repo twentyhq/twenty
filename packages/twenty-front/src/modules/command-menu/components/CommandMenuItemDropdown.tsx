@@ -7,6 +7,7 @@ import {
   Dropdown,
   type DropdownProps,
 } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownTriggerButton } from '@/ui/layout/dropdown/components/DropdownTriggerButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -43,18 +44,20 @@ export const CommandMenuItemDropdown = ({
   return (
     <Dropdown
       clickableComponent={
-        <CommandMenuItem
-          id={id}
-          label={label}
-          description={description}
-          contextualTextPosition={contextualTextPosition}
-          Icon={Icon}
-          hotKeys={hotKeys}
-          RightComponent={RightComponent}
-          hasSubMenu
-          isSubMenuOpened={isDropdownOpen}
-          disabled={disabled}
-        />
+        <DropdownTriggerButton disabled={disabled}>
+          <CommandMenuItem
+            id={id}
+            label={label}
+            description={description}
+            contextualTextPosition={contextualTextPosition}
+            Icon={Icon}
+            hotKeys={hotKeys}
+            RightComponent={RightComponent}
+            hasSubMenu
+            isSubMenuOpened={isDropdownOpen}
+            disabled={disabled}
+          />
+        </DropdownTriggerButton>
       }
       dropdownComponents={dropdownComponents}
       dropdownId={dropdownId}

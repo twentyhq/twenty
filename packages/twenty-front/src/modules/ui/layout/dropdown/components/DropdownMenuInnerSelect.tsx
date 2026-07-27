@@ -2,6 +2,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
+import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
 
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -11,27 +13,21 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.button`
+  ${BUTTON_RESET_STYLE}
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
 
   display: flex;
-  font-family: inherit;
   font-size: ${themeCssVariables.font.size.sm};
 
   font-weight: ${themeCssVariables.font.weight.medium};
 
   height: ${themeCssVariables.spacing[7]};
   justify-content: space-between;
-  margin: 0;
   padding-left: ${themeCssVariables.spacing[2]};
 
   padding-right: ${themeCssVariables.spacing[2]};
-  text-align: inherit;
   width: 100%;
 `;
 
@@ -52,11 +48,18 @@ export const DropdownMenuInnerSelect = ({
 }: DropdownMenuInnerSelectProps) => {
   const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
 
   return (
     <Dropdown
       clickableComponent={
-        <StyledDropdownMenuInnerSelectDropdownButton type="button">
+        <StyledDropdownMenuInnerSelectDropdownButton
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={isDropdownOpen}
+          aria-controls={dropdownOptionsId}
+        >
           <span>{selectedOption.label}</span>
           <IconChevronDown size={theme.icon.size.sm} />
         </StyledDropdownMenuInnerSelectDropdownButton>

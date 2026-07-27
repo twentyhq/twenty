@@ -1,5 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
 import { type Placement } from '@floating-ui/react';
+import { t } from '@lingui/core/macro';
 import {
   type FunctionComponent,
   type MouseEvent,
@@ -66,6 +68,9 @@ export const MenuItemWithOptionDropdown = ({
   selected = false,
 }: MenuItemWithOptionDropdownProps) => {
   const { theme } = useContext(ThemeContext);
+  const { dropdownOptionsId, isDropdownOpen } =
+    useDropdownTriggerAria(dropdownId);
+
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -95,6 +100,10 @@ export const MenuItemWithOptionDropdown = ({
               Icon={RightIcon ?? IconDotsVertical}
               size="small"
               accent="tertiary"
+              aria-label={t`More options`}
+              aria-haspopup="listbox"
+              aria-expanded={isDropdownOpen}
+              aria-controls={dropdownOptionsId}
             />
           }
           dropdownPlacement={dropdownPlacement}
