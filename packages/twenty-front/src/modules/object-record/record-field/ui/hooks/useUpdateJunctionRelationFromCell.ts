@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -56,18 +56,47 @@ export const useUpdateJunctionRelationFromCell = ({
     junctionObjectMetadata?.nameSingular ??
     fieldDefinition.metadata.relationObjectMetadataNameSingular;
 
-  // Skip the post-optimistic effect since we handle optimistic updates manually
-  // Otherwise Apollo would also add the record, resulting in duplicates
-  const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
+  const { createManyRecords: createJunctionRecords } = useCreateManyRecords({
     objectNameSingular: junctionObjectNameSingular,
-    skipPostOptimisticEffect: true,
   });
 
   const { deleteOneRecord: deleteJunctionRecord } = useDeleteOneRecord({
     objectNameSingular: junctionObjectNameSingular,
   });
 
+  const fieldName = fieldDefinition.metadata.fieldName;
+
   const store = useStore();
+
+  const setJunctionRecordsInStore = useCallback(
+    (
+      getUpdatedJunctionRecords: (
+        junctionRecords: ObjectRecord[],
+      ) => ObjectRecord[],
+    ) => {
+      store.set(
+        recordStoreFamilyState.atomFamily(recordId),
+        (currentRecord: Record<string, unknown> | null | undefined) => {
+          if (!isDefined(currentRecord)) {
+            return currentRecord;
+          }
+
+          const currentJunctionRecords = currentRecord[fieldName];
+
+          return {
+            ...currentRecord,
+            [fieldName]: getUpdatedJunctionRecords(
+              Array.isArray(currentJunctionRecords)
+                ? currentJunctionRecords
+                : [],
+            ),
+          } as ObjectRecord;
+        },
+      );
+    },
+    [store, recordId, fieldName],
+  );
+
   const updateJunctionRelationFromCell = useCallback(
     async ({ morphItem }: { morphItem: RecordPickerPickableMorphItem }) => {
       const targetFields = junctionConfig?.targetFields;
@@ -90,7 +119,6 @@ export const useUpdateJunctionRelationFromCell = ({
         sourceObjectMetadata,
       });
 
-      const fieldName = fieldDefinition.metadata.fieldName;
       const junctionObjectName = junctionObjectMetadata.nameSingular;
 
       const targetFieldInfo = findTargetFieldInfo(
@@ -135,35 +163,10 @@ export const useUpdateJunctionRelationFromCell = ({
 
         await deleteJunctionRecord(junctionRecordToDelete.id);
 
-        const recordFromStoreForDelete = store.get(
-          recordStoreFamilyState.atomFamily(recordId),
-        );
-        const currentFieldValue = recordFromStoreForDelete?.[fieldName] as
-          | FieldRelationValue<FieldRelationFromManyValue>
-          | undefined;
-
-        if (
-          !isDefined(currentFieldValue) ||
-          !Array.isArray(currentFieldValue)
-        ) {
-          return;
-        }
-
-        const updatedJunctionRecords = currentFieldValue.filter(
-          (record) => record.id !== junctionRecordToDelete.id,
-        );
-
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
-            return {
-              ...currentRecord,
-              [fieldName]: updatedJunctionRecords,
-            } as ObjectRecord;
-          },
+        setJunctionRecordsInStore((junctionRecords) =>
+          junctionRecords.filter(
+            (junctionRecord) => junctionRecord.id !== junctionRecordToDelete.id,
+          ),
         );
       } else {
         const searchRecord = store.get(
@@ -175,52 +178,51 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         const targetRecord = searchRecord.record;
-        const newJunctionId = v4();
+        const optimisticJunctionId = v4();
         const now = new Date().toISOString();
 
-        const junctionRecordForStore = {
-          id: newJunctionId,
-          createdAt: now,
-          updatedAt: now,
-          __typename: getObjectTypename(junctionObjectName),
-          [sourceJoinColumnName]: recordId,
-          [targetJoinColumnName]: morphItem.recordId,
-          [targetFieldName]: targetRecord,
-        };
-
-        const newJunctionRecordForApi = {
-          id: newJunctionId,
-          [sourceJoinColumnName]: recordId,
-          [targetJoinColumnName]: morphItem.recordId,
-        };
-
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
-
-            const currentFieldValue = currentRecord[fieldName];
-            const updatedJunctionRecords = Array.isArray(currentFieldValue)
-              ? [...currentFieldValue, junctionRecordForStore]
-              : [junctionRecordForStore];
-
-            return {
-              ...currentRecord,
-              [fieldName]: updatedJunctionRecords,
-            } as ObjectRecord;
+        setJunctionRecordsInStore((junctionRecords) => [
+          ...junctionRecords,
+          {
+            id: optimisticJunctionId,
+            createdAt: now,
+            updatedAt: now,
+            __typename: getObjectTypename(junctionObjectName),
+            [sourceJoinColumnName]: recordId,
+            [targetJoinColumnName]: morphItem.recordId,
+            [targetFieldName]: targetRecord,
           },
-        );
+        ]);
 
-        await createJunctionRecord(newJunctionRecordForApi);
+        const [persistedJunctionRecord] = await createJunctionRecords({
+          recordsToCreate: [
+            {
+              [sourceJoinColumnName]: recordId,
+              [targetJoinColumnName]: morphItem.recordId,
+            },
+          ],
+          upsert: true,
+        });
+
+        if (!isDefined(persistedJunctionRecord)) {
+          return;
+        }
+
+        setJunctionRecordsInStore((junctionRecords) =>
+          junctionRecords.map((junctionRecord) =>
+            junctionRecord.id === optimisticJunctionId
+              ? { ...junctionRecord, id: persistedJunctionRecord.id }
+              : junctionRecord,
+          ),
+        );
       }
     },
     [
       store,
-      createJunctionRecord,
+      createJunctionRecords,
       deleteJunctionRecord,
-      fieldDefinition.metadata.fieldName,
+      setJunctionRecordsInStore,
+      fieldName,
       junctionConfig,
       junctionObjectMetadata,
       objectMetadataItems,
