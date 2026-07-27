@@ -13,6 +13,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -101,16 +102,13 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         viewUpdates.push({ id: flatView.id, update: viewUpdate });
       }
 
-      for (const flatViewField of Object.values(
-        flatViewFieldMaps.byUniversalIdentifier,
-      )) {
-        if (
-          !isDefined(flatViewField) ||
-          flatViewField.viewUniversalIdentifier !== flatView.universalIdentifier
-        ) {
-          continue;
-        }
+      const flatViewFields =
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+          flatEntityMaps: flatViewFieldMaps,
+          universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
+        });
 
+      for (const flatViewField of flatViewFields) {
         // A view field belongs to the application of the field it displays, not
         // to its object's one: a custom field on a standard object yields a
         // custom-application view field on the standard INDEX view.
