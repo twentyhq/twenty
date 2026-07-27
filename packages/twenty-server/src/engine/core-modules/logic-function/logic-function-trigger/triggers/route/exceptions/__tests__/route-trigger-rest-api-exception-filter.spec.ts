@@ -69,6 +69,17 @@ describe('RouteTriggerRestApiExceptionFilter', () => {
     expect(handleError).toHaveBeenCalledWith(exception, response, 403);
   });
 
+  it('maps a suspended workspace to 403', () => {
+    const exception = new RouteTriggerException(
+      'suspended',
+      RouteTriggerExceptionCode.WORKSPACE_SUSPENDED,
+    );
+
+    filter.catch(exception, host);
+
+    expect(handleError).toHaveBeenCalledWith(exception, response, 403);
+  });
+
   it('maps not-found codes to 404', () => {
     const exception = new RouteTriggerException(
       'missing',

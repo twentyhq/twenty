@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RouteTrigger suspended workspace (integration) GET /s/suspended-workspace-route rejects the route trigger with 403 once the workspace is suspended 1`] = `
+{
+  "body": {
+    "code": "WORKSPACE_SUSPENDED",
+    "error": "Error",
+    "messages": [
+      "Workspace is suspended",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
