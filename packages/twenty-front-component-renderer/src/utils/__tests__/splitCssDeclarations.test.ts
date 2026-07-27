@@ -50,6 +50,30 @@ describe('splitCssDeclarations', () => {
     ).toEqual(['background: url(data:image/png;base64,abc)', ' color: red']);
   });
 
+  it('should not treat a slash star inside an unquoted url as a comment', () => {
+    expect(
+      splitCssDeclarations(
+        'background: url(http://example.com/a/*/b.png); color: red',
+      ),
+    ).toEqual(['background: url(http://example.com/a/*/b.png)', ' color: red']);
+  });
+
+  it('should still strip comments inside non url functions', () => {
+    expect(splitCssDeclarations('width: calc(1px /* c */ + 2px)')[0]).toBe(
+      'width: calc(1px   + 2px)',
+    );
+  });
+
+  it('should resume comment stripping after a url value', () => {
+    const declarations = splitCssDeclarations(
+      'background: url(a/*/b.png); /* note */ color: red',
+    );
+
+    expect(declarations).toHaveLength(2);
+    expect(declarations[0]).toBe('background: url(a/*/b.png)');
+    expect(declarations[1].trim()).toBe('color: red');
+  });
+
   it('should handle nested parentheses', () => {
     expect(
       splitCssDeclarations('width: calc(min(10px; 2px)); color: red'),

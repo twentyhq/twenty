@@ -1,3 +1,8 @@
+const URL_FUNCTION_NAME_PATTERN = /url$/i;
+
+const isOpeningUrlFunction = (declarationBeforeParenthesis: string): boolean =>
+  URL_FUNCTION_NAME_PATTERN.test(declarationBeforeParenthesis);
+
 export const splitCssDeclarations = (cssText: string): string[] => {
   const declarations: string[] = [];
 
@@ -6,6 +11,7 @@ export const splitCssDeclarations = (cssText: string): string[] => {
   let isEscaped = false;
   let isInComment = false;
   let parenthesisDepth = 0;
+  let urlTokenParenthesisDepth: number | null = null;
 
   for (let index = 0; index < cssText.length; index += 1) {
     const character = cssText[index];
@@ -31,7 +37,11 @@ export const splitCssDeclarations = (cssText: string): string[] => {
       continue;
     }
 
-    if (character === '/' && cssText[index + 1] === '*') {
+    if (
+      urlTokenParenthesisDepth === null &&
+      character === '/' &&
+      cssText[index + 1] === '*'
+    ) {
       currentDeclaration += ' ';
       index += 1;
       isInComment = true;
@@ -46,11 +56,26 @@ export const splitCssDeclarations = (cssText: string): string[] => {
 
     if (character === '(') {
       parenthesisDepth += 1;
+
+      if (
+        urlTokenParenthesisDepth === null &&
+        isOpeningUrlFunction(currentDeclaration)
+      ) {
+        urlTokenParenthesisDepth = parenthesisDepth;
+      }
+
       currentDeclaration += character;
       continue;
     }
 
     if (character === ')') {
+      if (
+        urlTokenParenthesisDepth !== null &&
+        parenthesisDepth <= urlTokenParenthesisDepth
+      ) {
+        urlTokenParenthesisDepth = null;
+      }
+
       parenthesisDepth = Math.max(0, parenthesisDepth - 1);
       currentDeclaration += character;
       continue;
