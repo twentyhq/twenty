@@ -3,7 +3,6 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
@@ -11,7 +10,6 @@ import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryList
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { captureException } from '@sentry/react';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
@@ -26,29 +24,16 @@ export const SSEClientEffect = () => {
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
   const { resyncMetadataStore } = useResyncMetadataStore();
-  const apolloCoreClient = useApolloCoreClient();
 
-  const resyncAfterReconnection = useCallback(() => {
-    resyncMetadataStore();
-
-    apolloCoreClient.refetchQueries({ include: 'active' }).catch((error) => {
-      captureException(
-        new Error('Failed to resync records after SSE reconnection', {
-          cause: error,
-        }),
-      );
-    });
-  }, [apolloCoreClient, resyncMetadataStore]);
-
-  const debouncedResyncAfterReconnection = useDebouncedCallback(
-    resyncAfterReconnection,
+  const debouncedResyncMetadataStore = useDebouncedCallback(
+    resyncMetadataStore,
     SSE_RESYNC_DEBOUNCE_TIME_IN_MS,
     { leading: false },
   );
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
-    onBrowserEvent: debouncedResyncAfterReconnection,
+    onBrowserEvent: debouncedResyncMetadataStore,
   });
 
   const handleSSEClientConnected = useCallback(
