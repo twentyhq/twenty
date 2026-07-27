@@ -48,13 +48,11 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
-import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 
@@ -64,9 +62,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   CommonGroupByOutputItem[]
 > {
   constructor(
-    private readonly viewFilterService: ViewFilterService,
-    private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewService: ViewService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly groupByWithRecordsService: GroupByWithRecordsService,
   ) {
     super();
@@ -197,15 +193,42 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }): Promise<ObjectRecordFilter> {
     assertIsDefinedOrThrow(args.viewId);
 
-    const viewFilters = await this.viewFilterService.findByViewId(
-      workspaceId,
-      args.viewId,
-    );
-
-    const viewFilterGroups = await this.viewFilterGroupService.findByViewId(
-      workspaceId,
-      args.viewId,
-    );
+    const { flatViewFilterMaps, flatViewFilterGroupMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatViewFilterMaps',
+            'flatViewFilterGroupMaps',
+            'flatViewMaps',
+          ],
+        },
+      );
+    const viewFilters = Object.values(flatViewFilterMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (viewFilter) =>
+          viewFilter.viewId === args.viewId && !isDefined(viewFilter.deletedAt),
+      )
+      .sort(
+        (a, b) =>
+          (a.positionInViewFilterGroup ?? Number.MAX_SAFE_INTEGER) -
+          (b.positionInViewFilterGroup ?? Number.MAX_SAFE_INTEGER),
+      );
+    const viewFilterGroups = Object.values(
+      flatViewFilterGroupMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (viewFilterGroup) =>
+          viewFilterGroup.viewId === args.viewId &&
+          !isDefined(viewFilterGroup.deletedAt),
+      )
+      .sort(
+        (a, b) =>
+          (a.positionInViewFilterGroup ?? Number.MAX_SAFE_INTEGER) -
+          (b.positionInViewFilterGroup ?? Number.MAX_SAFE_INTEGER),
+      );
 
     const recordFilters = viewFilters.map((viewFilter) => {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -268,14 +291,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       },
     });
 
-    const viewFromFilter = viewFilters[0]?.view;
-    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
-
-    if (!isDefined(viewFromFilter)) {
-      const view = await this.viewService.findById(args.viewId, workspaceId);
-
-      viewAnyFieldFilterValue = view?.anyFieldFilterValue ?? null;
-    }
+    const viewAnyFieldFilterValue =
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: args.viewId,
+        flatEntityMaps: flatViewMaps,
+      })?.anyFieldFilterValue ?? null;
 
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({
