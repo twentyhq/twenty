@@ -109,8 +109,6 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
     closeAdvancedFilterFieldSelectDropdown();
   };
 
-  // No focus is pushed here: the workspace member record value picker is an
-  // input-style picker that owns the focus of the dropdown it opens itself.
   const handleSelectRelationRecord = () => {
     applyAdvancedFilterSourceField({
       sourceFieldMetadataItem,
