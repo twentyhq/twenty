@@ -45,12 +45,13 @@ icon: table-columns
 
 ## Kde se aplikace zobrazuje
 
-| Umístění                                | Co řídí                                                                         | Entita                                    |
-| --------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Postranní panel**                     | Vlastní položka odkazující na uložené zobrazení nebo externí adresu URL         | `defineNavigationMenuItem`                |
-| **Seznam záznamů**                      | Uložené nastavení pro objekt — viditelné sloupce, pořadí, filtry, skupiny       | `defineView`                              |
-| **Stránka s podrobnostmi záznamu**      | Karty a widgety na stránce záznamu (vašeho vlastního objektu nebo standardního) | `definePageLayout`, `definePageLayoutTab` |
-| **Uvnitř kteréhokoli z výše uvedených** | Vlastní widget Reactu — tlačítka, formuláře, přehledové panely, integrace       | `defineFrontComponent`                    |
-| **Příkazová nabídka (Cmd+K)**           | Připnutá rychlá akce nebo skrytý příkaz                                         | `defineCommandMenuItem`                   |
+| Umístění                                | Co řídí                                                                                                         | Entita                                    |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Postranní panel**                     | Vlastní položka odkazující na uložené zobrazení nebo externí adresu URL                                         | `defineNavigationMenuItem`                |
+| **Seznam záznamů**                      | Uložené nastavení pro objekt — viditelné sloupce, pořadí, filtry, skupiny                                       | `defineView`                              |
+| **Stránka s podrobnostmi záznamu**      | Karty a widgety na stránce záznamu (vašeho vlastního objektu nebo standardního)                                 | `definePageLayout`, `definePageLayoutTab` |
+| **Uvnitř kteréhokoli z výše uvedených** | Vlastní widget Reactu — tlačítka, formuláře, přehledové panely, integrace                                       | `defineFrontComponent`                    |
+| **Nastavení aplikace**                  | Vlastní konfigurační sekce na kartě Nastavení aplikace, která nahrazuje výchozí uživatelské rozhraní proměnných | `defineSettingsFrontComponent`            |
+| **Příkazová nabídka (Cmd+K)**           | Připnutá rychlá akce nebo skrytý příkaz                                                                         | `defineCommandMenuItem`                   |
 
 Frontendové komponenty běží uvnitř izolovaného Web Workeru pomocí Remote DOM — vykreslují se na stránce nativně (ne uvnitř iframe), ale nemají přímý přístup k hostitelské stránce ani DOM. Komunikace s Twenty probíhá prostřednictvím hostitelského API pro předávání zpráv.

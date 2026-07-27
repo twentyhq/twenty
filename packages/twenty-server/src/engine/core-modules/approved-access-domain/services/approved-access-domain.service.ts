@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
-import { SendApprovedAccessDomainValidation } from 'twenty-emails';
+import { SendApprovedAccessDomainValidation, renderEmail } from 'twenty-emails';
 import { FileFolder, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -116,8 +115,8 @@ export class ApprovedAccessDomainService {
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       locale: sender.locale,
     });
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
+    const html = await renderEmail(emailTemplate);
+    const text = await renderEmail(emailTemplate, {
       plainText: true,
     });
 

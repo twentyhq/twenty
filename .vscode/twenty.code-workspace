@@ -69,10 +69,6 @@
       "path": "../packages/twenty-client-sdk"
     },
     {
-      "name": "packages/twenty-companion",
-      "path": "../packages/twenty-companion"
-    },
-    {
       "name": "packages/twenty-front-component-renderer",
       "path": "../packages/twenty-front-component-renderer"
     },

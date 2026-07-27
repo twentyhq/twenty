@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull, QueryFailedError } from 'typeorm';
+import {
+  escapeForIlike,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
+import { ILike, In, IsNull, QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -17,6 +21,15 @@ import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/t
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+
+type FindSuppressionsArgs = {
+  workspaceId: string;
+  reason?: MessageSuppressionReason;
+  searchTerm?: string;
+  unsubscribeTopicId?: string;
+  limit: number;
+  offset: number;
+};
 
 type SuppressArgs = {
   workspaceId: string;
@@ -45,6 +58,38 @@ export class MessageSuppressionService {
     private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
     private readonly unsubscribeTopicService: UnsubscribeTopicService,
   ) {}
+
+  async findSuppressions({
+    workspaceId,
+    reason,
+    searchTerm,
+    unsubscribeTopicId,
+    limit,
+    offset,
+  }: FindSuppressionsArgs): Promise<{
+    records: MessageSuppressionEntity[];
+    totalCount: number;
+  }> {
+    const [records, totalCount] = await this.suppressionRepository.findAndCount(
+      workspaceId,
+      {
+        where: {
+          ...(isDefined(reason) ? { reason } : {}),
+          ...(isNonEmptyString(unsubscribeTopicId)
+            ? { unsubscribeTopicId }
+            : {}),
+          ...(isNonEmptyString(searchTerm)
+            ? { emailAddress: ILike(`%${escapeForIlike(searchTerm)}%`) }
+            : {}),
+        },
+        order: { createdAt: 'DESC' },
+        take: limit,
+        skip: offset,
+      },
+    );
+
+    return { records, totalCount };
+  }
 
   async getSuppressedAddresses(
     workspaceId: string,

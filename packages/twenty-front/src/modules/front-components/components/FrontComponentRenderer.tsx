@@ -4,13 +4,14 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { useRequestFrontComponentExternalNavigation } from '@/front-components/hooks/useRequestFrontComponentExternalNavigation';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useMemo } from 'react';
+import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -25,6 +26,7 @@ type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  loadingFallback?: ReactNode;
 };
 
 type ResolvedFrontComponent = NonNullable<
@@ -35,12 +37,14 @@ type FrontComponentRendererContentProps = {
   frontComponent: ResolvedFrontComponent;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  loadingFallback?: ReactNode;
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  loadingFallback,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
@@ -55,11 +59,13 @@ export const FrontComponentRenderer = ({
   return (
     <>
       <FrontComponentLoadErrorSnackBarEffect errorMessage={error?.message} />
+      {loading && loadingFallback}
       {!loading && isDefined(frontComponent) && (
         <FrontComponentRendererContent
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
+          loadingFallback={loadingFallback}
         />
       )}
     </>
@@ -70,6 +76,7 @@ const FrontComponentRendererContent = ({
   frontComponent,
   commandMenuItemId,
   selectedRecordIds,
+  loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -84,6 +91,10 @@ const FrontComponentRendererContent = ({
       selectedRecordIds,
       colorScheme,
     });
+
+  const requestExternalNavigation = useRequestFrontComponentExternalNavigation({
+    applicationId,
+  });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -127,6 +138,7 @@ const FrontComponentRendererContent = ({
   const applicationVariables = frontComponent.applicationVariables ?? undefined;
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
+  const isReadyToRender = isDefined(applicationTokenPair) && isSdkClientReady;
 
   return (
     <>
@@ -134,7 +146,8 @@ const FrontComponentRendererContent = ({
         frontComponentId={frontComponentId}
         applicationTokenPair={applicationTokenPair}
       />
-      {isDefined(applicationTokenPair) && isSdkClientReady && (
+      {!isReadyToRender && loadingFallback}
+      {isReadyToRender && (
         <FrontComponentRendererProvider frontComponentId={frontComponentId}>
           <SharedFrontComponentRenderer
             colorScheme={colorScheme}
@@ -149,8 +162,10 @@ const FrontComponentRendererContent = ({
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
+            onRequestExternalNavigation={requestExternalNavigation}
             applicationVariables={applicationVariables}
             onError={handleError}
+            loadingFallback={loadingFallback}
           />
         </FrontComponentRendererProvider>
       )}

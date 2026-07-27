@@ -8,15 +8,17 @@ Los componentes de frontend son componentes de React que se renderizan directame
 
 ## Dónde se pueden usar los componentes de front
 
-Los componentes de front pueden renderizarse en dos ubicaciones dentro de Twenty:
+Los componentes de front pueden renderizarse en tres ubicaciones dentro de Twenty:
 
 * **Panel lateral** — Los componentes de front no headless se abren en el panel lateral derecho. Este es el comportamiento predeterminado cuando un componente de front se activa desde el menú de comandos.
 * **Widgets (tableros y páginas de registros)** — Los componentes de front pueden incrustarse como widgets dentro de los [diseños de página](/l/es/developers/extend/apps/layout/page-layouts). Al configurar un tablero o el diseño de una página de registro, los usuarios pueden agregar un widget de componente de front.
+* **Configuración de la app** — Definido con [`defineSettingsFrontComponent()`](#custom-settings-component), el componente de front se renderiza como una sección dentro de la pestaña **Settings** de la app, en lugar de la interfaz de configuración de variables predeterminada.
 
-Un componente de front por sí solo no es accesible desde la interfaz de usuario; necesitas *exponerlo*. Las dos formas de hacerlo son:
+Un componente de front por sí solo no es accesible desde la interfaz de usuario; necesitas *exponerlo*. Las tres formas de hacerlo son:
 
 * **Emparejarlo con un [elemento del menú de comandos](/l/es/developers/extend/apps/layout/command-menu-items)**: lo registra en el menú de comandos (Cmd+K) y, de forma opcional, como una acción rápida fijada.
 * **Incrustarlo como widget en un [diseño de página](/l/es/developers/extend/apps/layout/page-layouts)**: lo coloca en la página de detalles de un registro o en un tablero.
+* **Definirlo con [`defineSettingsFrontComponent()`](#custom-settings-component)** — lo renderiza como una sección dentro de la pestaña **Settings** de la app, en lugar de la interfaz de configuración de variables predeterminada.
 
 ## Ejemplo básico
 
@@ -76,6 +78,34 @@ Haz clic para renderizar el componente en línea.
 ## Colocar un componente de frontend en una página
 
 Más allá de los comandos, puedes incrustar un componente de frontend directamente en una página de registro agregándolo como un widget en un **diseño de página**. Consulta [Diseños de página](/l/es/developers/extend/apps/layout/page-layouts) para más detalles.
+
+## Componente de configuración personalizada
+
+Para reemplazar la interfaz de configuración de variables autogenerada en la pestaña **Settings** de tu app con tu propio componente, defínelo con `defineSettingsFrontComponent` en lugar de `defineFrontComponent`. Toma los mismos [campos de configuración](#configuration-fields) (excepto `isHeadless`, que no se acepta ya que un componente de configuración siempre renderiza una interfaz de usuario visible) y, además, marca el componente como la interfaz de configuración de la aplicación.
+
+El componente se renderiza como una sección **dentro** de la pestaña Settings, no como un reemplazo de toda la pestaña. Las secciones gestionadas por el sistema de Twenty — actualización automática, App URL y conexiones — siempre se renderizan por encima de ella y no pueden ser sobrescritas por la aplicación.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Solo se permite un componente de front de configuración por aplicación; declarar más de uno hace que la compilación falle. Cuando está presente, la pestaña **Settings** de la aplicación renderiza este componente en lugar de la interfaz de usuario de configuración de variables predeterminada.
 
 ## Headless vs no headless
 

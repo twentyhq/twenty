@@ -209,7 +209,7 @@ export default defineFrontComponent({
 });
 ```
 
-用[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)挂载它。 `RECORD_PAGE` 布局会在对象的记录视图中添加选项卡；位于 `CANVAS` 选项卡中的 `FRONT_COMPONENT` 小部件则承载该组件：
+用[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)挂载它。 `RECORD_PAGE` 布局会在对象的记录视图中添加选项卡；包含单个 `FRONT_COMPONENT` 小部件的选项卡会以全宽方式承载该组件：
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -224,7 +224,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',

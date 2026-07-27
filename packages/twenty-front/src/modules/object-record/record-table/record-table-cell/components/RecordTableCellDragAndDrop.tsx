@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -6,6 +7,7 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
+import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { IconListViewGrip } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -30,19 +32,18 @@ const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
 `;
 
 export const RecordTableCellDragAndDrop = () => {
-  const { dragHandleProps, isDragging } =
-    useRecordTableRowDraggableContextOrThrow();
+  const { isDragging } = useRecordTableRowDraggableContextOrThrow();
+
+  const sortableHandleRef = useContext(DragDropItemSortableHandleRefContext);
 
   return (
     <RecordTableCellStyleWrapper
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...dragHandleProps}
       data-select-disable
       hasRightBorder={false}
       hasBottomBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}
     >
-      <StyledContainer>
+      <StyledContainer ref={sortableHandleRef}>
         <StyledIconWrapper className="icon" isDragging={isDragging}>
           <IconListViewGrip />
         </StyledIconWrapper>
