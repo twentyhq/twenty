@@ -1,3 +1,4 @@
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import {
@@ -10,7 +11,10 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutType,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const MOCK_DASHBOARD_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -24,6 +28,13 @@ const MOCK_DASHBOARD_LAYOUT: PageLayout = {
   updatedAt: '2024-01-01',
   deletedAt: null,
   defaultTabToFocusOnMobileAndSidePanelId: null,
+};
+
+const setLayoutsPermission = (store: ReturnType<typeof createStore>) => {
+  store.set(currentUserWorkspaceState.atom, {
+    permissionFlags: [PermissionFlagType.LAYOUTS],
+    objectsPermissions: [],
+  });
 };
 
 const getWrapper =
@@ -75,6 +86,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
+    setLayoutsPermission(store);
     store.set(isLayoutCustomizationModeEnabledState.atom, false);
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -101,5 +113,41 @@ describe('useSetIsPageLayoutInEditMode', () => {
         }),
       ),
     ).toBe(true);
+  });
+
+  it('should block dashboard edit mode without LAYOUTS permission', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    store.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [],
+      objectsPermissions: [],
+    });
+    store.set(isLayoutCustomizationModeEnabledState.atom, false);
+    store.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      MOCK_DASHBOARD_LAYOUT,
+    );
+
+    const { result } = renderHook(
+      () => useSetIsPageLayoutInEditMode(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      {
+        wrapper,
+      },
+    );
+
+    act(() => {
+      result.current.setIsPageLayoutInEditMode(true);
+    });
+
+    expect(
+      store.get(
+        isDashboardInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+      ),
+    ).toBe(false);
   });
 });

@@ -28,6 +28,7 @@ import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/displa
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useCanEditPageLayouts } from '@/page-layout/hooks/useCanEditPageLayouts';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -52,6 +53,7 @@ export const WorkspaceSection = () => {
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const { canEditPageLayouts } = useCanEditPageLayouts();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -201,14 +203,16 @@ export const WorkspaceSection = () => {
               onClick={handleAddMenuItem}
             />
           ) : (
-            <div onMouseEnter={preloadNavigationMenuItemDndKit}>
-              <LightIconButton
-                Icon={IconTool}
-                accent="tertiary"
-                size="small"
-                onClick={handleEditClick}
-              />
-            </div>
+            canEditPageLayouts && (
+              <div onMouseEnter={preloadNavigationMenuItemDndKit}>
+                <LightIconButton
+                  Icon={IconTool}
+                  accent="tertiary"
+                  size="small"
+                  onClick={handleEditClick}
+                />
+              </div>
+            )
           )}
         </StyledRightIconsContainer>
       }

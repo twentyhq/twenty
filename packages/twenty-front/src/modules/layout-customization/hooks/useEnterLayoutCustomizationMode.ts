@@ -13,6 +13,7 @@ import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/commo
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
+import { useCanEditPageLayouts } from '@/page-layout/hooks/useCanEditPageLayouts';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -24,8 +25,13 @@ export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueWarningSnackBar } = useSnackBar();
+  const { canEditPageLayouts } = useCanEditPageLayouts();
 
   const enterLayoutCustomizationMode = useCallback((): boolean => {
+    if (!canEditPageLayouts) {
+      return false;
+    }
+
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
@@ -86,7 +92,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [enqueueWarningSnackBar, navigateSidePanel, store]);
+  }, [canEditPageLayouts, enqueueWarningSnackBar, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

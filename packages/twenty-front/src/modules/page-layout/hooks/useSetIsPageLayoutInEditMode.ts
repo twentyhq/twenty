@@ -1,4 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useCanEditPageLayouts } from '@/page-layout/hooks/useCanEditPageLayouts';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
@@ -54,8 +55,14 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
   const store = useStore();
 
+  const { canEditPageLayouts } = useCanEditPageLayouts();
+
   const setIsPageLayoutInEditMode = useCallback(
     (value: boolean) => {
+      if (value && !canEditPageLayouts) {
+        return;
+      }
+
       const isLayoutCustomizationModeEnabled = store.get(
         isLayoutCustomizationModeEnabledState.atom,
       );
@@ -98,6 +105,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       pageLayoutEditingWidgetIdState,
       pageLayoutId,
       store,
+      canEditPageLayouts,
     ],
   );
 

@@ -5,6 +5,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
+import { useCanEditPageLayouts } from '@/page-layout/hooks/useCanEditPageLayouts';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -59,6 +60,7 @@ export const SettingsObjectDetailPage = () => {
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const { canEditPageLayouts } = useCanEditPageLayouts();
 
   const readonly =
     isObjectMetadataReadOnly({
@@ -110,7 +112,8 @@ export const SettingsObjectDetailPage = () => {
       Icon: IconLayout,
       hide:
         objectMetadataItem.isRemote ||
-        objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
+        objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard ||
+        !canEditPageLayouts,
     },
   ];
 

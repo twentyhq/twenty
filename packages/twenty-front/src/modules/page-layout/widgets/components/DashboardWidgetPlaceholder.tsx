@@ -1,4 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useCanEditPageLayouts } from '@/page-layout/hooks/useCanEditPageLayouts';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -24,6 +25,7 @@ export const DashboardWidgetPlaceholder = () => {
   );
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const { canEditPageLayouts } = useCanEditPageLayouts();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -34,7 +36,7 @@ export const DashboardWidgetPlaceholder = () => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
-    if (isLayoutCustomizationModeEnabled) {
+    if (isLayoutCustomizationModeEnabled || !canEditPageLayouts) {
       return;
     }
 
@@ -50,7 +52,7 @@ export const DashboardWidgetPlaceholder = () => {
   return (
     <WidgetCard
       variant="dashboard"
-      isEditable={true}
+      isEditable={canEditPageLayouts}
       isEditing={false}
       isDragging={false}
       isResizing={false}
