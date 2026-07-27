@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildRequirementsText } from './mappers/build-requirements-text.mapper';
+import {
+  buildRequirementsText,
+  submitClientBriefSchema,
+} from './mappers/build-requirements-text.mapper';
 
 const base = {
   firstName: 'Jane',
@@ -40,5 +43,27 @@ describe('buildRequirementsText', () => {
     const text = buildRequirementsText({ ...base, hostingType: 'SELF_HOSTING' });
     expect(text).toContain('• Hosting: Self-hosting');
     expect(text).not.toContain('• Seats:');
+  });
+});
+
+describe('submitClientBriefSchema partnerSlug', () => {
+  it('accepts a well-formed slug', () => {
+    expect(
+      submitClientBriefSchema.safeParse({ ...base, partnerSlug: 'acme-consulting' }).success,
+    ).toBe(true);
+  });
+
+  it('accepts a payload with no slug at all', () => {
+    expect(submitClientBriefSchema.safeParse(base).success).toBe(true);
+  });
+
+  it('rejects a slug with unsupported characters', () => {
+    expect(
+      submitClientBriefSchema.safeParse({ ...base, partnerSlug: 'Acme Consulting!' }).success,
+    ).toBe(false);
+  });
+
+  it('keeps partnerSlug out of the requirements text', () => {
+    expect(buildRequirementsText({ ...base, partnerSlug: 'acme-consulting' })).toBeNull();
   });
 });
