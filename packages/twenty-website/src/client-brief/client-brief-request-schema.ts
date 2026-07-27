@@ -19,6 +19,12 @@ export const clientBriefRequestSchema = z.strictObject({
   seatCount: optionalNonEmptyString,
   timeline: optionalNonEmptyString,
   budgetRange: optionalNonEmptyString,
+  partnerSlug: z
+    .string()
+    .trim()
+    .regex(/^[a-z0-9-]+$/)
+    .max(100)
+    .optional(),
 });
 
 export type ClientBriefRequest = z.infer<typeof clientBriefRequestSchema>;
