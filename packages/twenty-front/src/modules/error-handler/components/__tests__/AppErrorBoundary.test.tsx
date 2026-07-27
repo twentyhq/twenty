@@ -50,13 +50,17 @@ describe('AppErrorBoundary', () => {
     jest.clearAllMocks();
   });
 
-  it('should reload synchronously on a stale chunk error when no reload happened recently', () => {
+  it('should reload synchronously on a stale chunk error when no reload happened recently', async () => {
     renderWithBoundary(new Error(STALE_CHUNK_ERROR_MESSAGE));
 
     expect(reloadWindow).toHaveBeenCalledTimes(1);
     expect(
       window.sessionStorage.getItem(STALE_CHUNK_RELOAD_TIMESTAMP_KEY),
     ).not.toBeNull();
+
+    await waitFor(() => {
+      expect(captureException).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('should not reload on a stale chunk error within the reload cooldown', async () => {
