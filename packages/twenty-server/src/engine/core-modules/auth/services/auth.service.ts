@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto, { randomUUID } from 'node:crypto';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { PasswordUpdateNotifyEmail, renderEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -721,8 +720,8 @@ export class AuthService {
       locale: firstUserWorkspace.locale,
     });
 
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
     const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);

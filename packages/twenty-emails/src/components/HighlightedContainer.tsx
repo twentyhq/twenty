@@ -1,4 +1,4 @@
-import { Column, Container, Row } from '@react-email/components';
+import { Column, Container, Row } from 'react-email';
 import React, { type JSX } from 'react';
 
 import { emailTheme } from 'src/common-style';

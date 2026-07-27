@@ -1,5 +1,5 @@
 import { type JSX } from 'react';
-import { Button } from '@react-email/components';
+import { Button } from 'react-email';
 
 import { emailTheme } from 'src/common-style';
 

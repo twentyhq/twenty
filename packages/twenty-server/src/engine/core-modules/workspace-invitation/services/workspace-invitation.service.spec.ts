@@ -26,9 +26,12 @@ import { WorkspaceInvitationService } from './workspace-invitation.service';
 // To fix a circular dependency issue
 jest.mock('src/engine/core-modules/workspace/services/workspace.service');
 
-// To avoid dynamic import issues in Jest
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (template, options) => {
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockImplementation(async (_template, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }
