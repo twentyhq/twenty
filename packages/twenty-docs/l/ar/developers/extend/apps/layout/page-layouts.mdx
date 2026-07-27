@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### النقاط الرئيسية
 
-* `type` يكون عادة `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
+* `type` هو واحد من `'RECORD_INDEX'` أو `'RECORD_PAGE'` أو `'DASHBOARD'` أو `'STANDALONE_PAGE'`. استخدم `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
 * `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
 * يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`VERTICAL_LIST` لصفحات السجلات، و`GRID` للوحات المعلومات). تعرض علامة تبويب تحتوي على عنصر واجهة واحد هذا العنصر ممتدًا حتى الحواف تلقائيًا؛ وعند وجود عدة عناصر واجهة، فإنها تتكدس كبطاقات.
 * يمكن لكل `widget` داخل لسان أن يعرض [front component](/l/ar/developers/extend/apps/layout/front-components)، أو قائمة علاقات، أو أنواعًا أخرى من عناصر الواجهة (widgets) المدمجة.

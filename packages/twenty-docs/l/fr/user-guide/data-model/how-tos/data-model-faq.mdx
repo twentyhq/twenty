@@ -42,7 +42,6 @@ Tous les objets actifs apparaissent dans la navigation. Vous pouvez désactiver 
 Non, les types de champ ne peuvent pas être modifiés après leur création. Si vous avez besoin d'un type différent, créez un nouveau champ avec le type correct, migrez vos données, puis désactivez l'ancien champ.
 </Accordion>
 
-
 <Accordion title="Pourquoi ai-je besoin de noms singuliers et pluriels différents ?">
 Notre API GraphQL utilise les deux formes pour différentes opérations:
 * `createPerson` (singulier) pour des actions sur un seul enregistrement
@@ -73,15 +72,15 @@ Actuellement, vous ne pouvez pas rendre les champs personnalisés obligatoires. 
 </Accordion>
 
 <Accordion title="Puis-je créer des champs de formule ?">
-Les champs de formule arrivent en **T1 2026**. En attendant, vous pouvez utiliser les workflows pour calculer et mettre à jour automatiquement les valeurs des champs.
+Les champs de formule arrivent dans **H2 2026**. En attendant, vous pouvez utiliser les workflows pour calculer et mettre à jour automatiquement les valeurs des champs.
 </Accordion>
 
 <Accordion title="Puis-je avoir des champs imbriqués dans mes objets ?">
-Les champs imbriqués arrivent en **T1 2026**. Actuellement, vous pouvez utiliser des workflows pour extraire des valeurs de champs à partir d'objets connexes. Par exemple, pour afficher le secteur d'une entreprise sur une fiche Personne, créez un champ personnalisé sur Personnes et utilisez un workflow pour synchroniser la valeur.
+Les champs imbriqués arrivent dans **H2 2026**. Actuellement, vous pouvez utiliser des workflows pour extraire des valeurs de champs à partir d'objets connexes. Par exemple, pour afficher le secteur d'une entreprise sur une fiche Personne, créez un champ personnalisé sur Personnes et utilisez un workflow pour synchroniser la valeur.
 </Accordion>
 
 <Accordion title="Puis-je réorganiser les champs dans les objets ?">
-Le réagencement des champs sera disponible avec les mises en page personnalisées en **T4 2025**. Actuellement, les champs apparaissent par ordre alphabétique.
+Oui, allez dans Paramètres → Modèle de données → objet de votre choix → Mise en page et cliquez sur **Personnaliser la page d'enregistrement**. Si ce bouton est désactivé, vous devez créer un enregistrement.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Oui! Les relations auto-référencées sont prises en charge et recommandées po
 </Accordion>
 
 <Accordion title="Puis-je créer des relations plusieurs-à-plusieurs ?">
-Les relations plusieurs-à-plusieurs arrivent en **S1 2026**. Actuellement, créez un objet intermédiaire avec deux relations un-à-plusieurs comme solution de contournement.
+De nombreuses relations arrivent dans **H2 2026**. Actuellement, créez un objet intermédiaire avec deux relations un-à-plusieurs comme solution de contournement.
 
 Par exemple, pour lier Personnes et Projets (plusieurs-à-plusieurs), créez un objet "Affectations de projet" avec :
 * Une relation vers Personnes (plusieurs affectations → une personne)
@@ -146,6 +145,10 @@ Oui, vous pouvez importer des données CSV dans n'importe quel objet, y compris 
 
 <Accordion title="Puis-je exporter la configuration de mon modèle de données ?">
 Actuellement, il n'existe pas d'export intégré pour la configuration du modèle de données. Contactez le support si vous devez migrer votre modèle de données entre des espaces de travail.
+</Accordion>
+
+<Accordion title="Combien de champs un seul objet peut-il avoir ?">
+Le nombre maximum de champs qu'un seul objet peut avoir est de 1600 champs selon les limites Postgres, y compris les champs existants et supprimés. Sachez que 20 ne corrigeront pas votre espace de travail si la limite de 1 600 champs est atteinte car elle relève de notre politique d'utilisation équitable.
 </Accordion>
 </AccordionGroup>
 
