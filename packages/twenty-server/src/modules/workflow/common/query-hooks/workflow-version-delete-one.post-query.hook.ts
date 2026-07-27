@@ -13,9 +13,7 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
   key: `workflowVersion.deleteOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowVersionDeleteOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkflowVersionDeleteOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
