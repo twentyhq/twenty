@@ -1,7 +1,6 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { InstallPrebuiltLogicFunctionBundlesJob } from 'src/engine/core-modules/logic-function/jobs/install-prebuilt-logic-function-bundles.job';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
@@ -32,7 +31,6 @@ export class LogicFunctionModule {
           provide: LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN,
           useExisting: LogicFunctionDriverFactory,
         },
-        InstallPrebuiltLogicFunctionBundlesJob,
       ],
       exports: [
         LogicFunctionDriverFactory,

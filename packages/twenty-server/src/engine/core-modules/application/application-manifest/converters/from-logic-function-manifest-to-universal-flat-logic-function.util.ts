@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isPackagedApplicationSource } from 'src/engine/core-modules/application/application-registration/utils/is-packaged-application-source.util';
 import {
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
@@ -17,11 +18,10 @@ const computeExecutionModeForApplicationSource = ({
   applicationSourceType: ApplicationRegistrationSourceType;
   builtHandlerChecksum: string | undefined;
 }): LogicFunctionExecutionMode => {
-  const isPackagedSource =
-    applicationSourceType === ApplicationRegistrationSourceType.TARBALL ||
-    applicationSourceType === ApplicationRegistrationSourceType.NPM;
-
-  if (isPackagedSource && isNonEmptyString(builtHandlerChecksum)) {
+  if (
+    isPackagedApplicationSource(applicationSourceType) &&
+    isNonEmptyString(builtHandlerChecksum)
+  ) {
     return LogicFunctionExecutionMode.PREBUILT;
   }
 
