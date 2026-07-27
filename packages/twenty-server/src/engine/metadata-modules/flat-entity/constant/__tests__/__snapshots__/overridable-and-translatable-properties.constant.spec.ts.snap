@@ -127,7 +127,9 @@ exports[`registry-derived override property maps derives the translatable proper
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
   "skill": [],
-  "view": [],
+  "view": [
+    "name",
+  ],
   "viewField": [],
   "viewFieldGroup": [],
   "viewFilter": [],
