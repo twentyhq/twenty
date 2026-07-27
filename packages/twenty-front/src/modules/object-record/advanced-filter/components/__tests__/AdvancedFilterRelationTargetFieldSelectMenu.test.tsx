@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -6,6 +6,8 @@ import { AdvancedFilterRelationTargetFieldSelectMenu } from '@/object-record/adv
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -32,6 +34,18 @@ if (!workspaceMemberRelationField || !nonWorkspaceMemberRelationField) {
 }
 
 const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
+
+const CurrentRecordFiltersObserver = () => {
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  return (
+    <div data-testid="current-record-filters">
+      {JSON.stringify(currentRecordFilters)}
+    </div>
+  );
+};
 
 const renderSubMenu = (sourceFieldMetadataId: string) => {
   const Seed = ({ children }: { children: React.ReactNode }) => {
@@ -62,6 +76,7 @@ const renderSubMenu = (sourceFieldMetadataId: string) => {
               recordFilterId={FILTER_ID}
             />
           </Seed>
+          <CurrentRecordFiltersObserver />
         </ObjectFilterDropdownComponentInstanceContext.Provider>
       </RecordFiltersComponentInstanceContext.Provider>
     </BaseWrapper>,
@@ -87,5 +102,28 @@ describe('AdvancedFilterRelationTargetFieldSelectMenu', () => {
     expect(
       queryByTestId('select-filter-relation-record'),
     ).not.toBeInTheDocument();
+  });
+
+  it('creates a direct RELATION filter (relationTargetFieldMetadataId null) when the record entry is selected', async () => {
+    const { getByTestId } = renderSubMenu(workspaceMemberRelationField.id);
+
+    const recordEntry = await waitFor(() =>
+      getByTestId('select-filter-relation-record'),
+    );
+
+    fireEvent.click(recordEntry);
+
+    await waitFor(() => {
+      const currentRecordFilters = JSON.parse(
+        getByTestId('current-record-filters').textContent || '[]',
+      );
+
+      expect(currentRecordFilters).toHaveLength(1);
+      expect(currentRecordFilters[0]).toMatchObject({
+        fieldMetadataId: workspaceMemberRelationField.id,
+        type: 'RELATION',
+        relationTargetFieldMetadataId: null,
+      });
+    });
   });
 });

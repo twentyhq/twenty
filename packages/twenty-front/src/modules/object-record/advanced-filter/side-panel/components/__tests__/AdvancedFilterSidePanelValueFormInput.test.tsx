@@ -1,6 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { AdvancedFilterSidePanelValueFormInput } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormInput';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
@@ -54,14 +55,14 @@ const selectField = opportunity.fields.find(
 
 const workspaceMemberRelationField = opportunity.fields.find(
   (field) =>
-    field.type === FieldMetadataType.RELATION &&
-    field.relation?.targetObjectMetadata.nameSingular === 'workspaceMember',
+    isManyToOneRelationField(field) &&
+    field.relation.targetObjectMetadata.nameSingular === 'workspaceMember',
 );
 
 const nonWorkspaceMemberRelationField = opportunity.fields.find(
   (field) =>
-    field.type === FieldMetadataType.RELATION &&
-    field.relation?.targetObjectMetadata.nameSingular !== 'workspaceMember',
+    isManyToOneRelationField(field) &&
+    field.relation.targetObjectMetadata.nameSingular !== 'workspaceMember',
 );
 
 if (
