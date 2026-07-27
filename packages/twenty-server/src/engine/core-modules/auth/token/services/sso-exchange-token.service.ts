@@ -87,7 +87,13 @@ export class SSOExchangeTokenService {
 
     // Deleting the row is the single-use claim: under concurrent redemption
     // only the request whose delete affects the row proceeds to mint a token.
-    const { affected } = await this.appTokenRepository.delete(appToken.id);
+    // Re-checking revokedAt/deletedAt here keeps the claim atomic with
+    // revocation: a token revoked after the lookup cannot redeem.
+    const { affected } = await this.appTokenRepository.delete({
+      id: appToken.id,
+      revokedAt: IsNull(),
+      deletedAt: IsNull(),
+    });
 
     if (affected !== 1) {
       throw buildInvalidSSOExchangeTokenException();

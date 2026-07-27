@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -131,6 +131,11 @@ describe('SSOExchangeTokenService', () => {
       expect(result).toEqual({
         userId: USER_ID,
         authProvider: AuthProviderEnum.Google,
+      });
+      expect(appTokenRepository.delete).toHaveBeenCalledWith({
+        id: 'app-token-id',
+        revokedAt: IsNull(),
+        deletedAt: IsNull(),
       });
     });
 
