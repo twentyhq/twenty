@@ -8,15 +8,17 @@ icon: window-maximize
 
 ## 前端组件可用位置
 
-在 Twenty 中，前端组件可在两个位置进行渲染：
+在 Twenty 中，前端组件可以在三个位置进行渲染：
 
 * **侧边栏** — 非无头的前端组件会在右侧侧边栏中打开。 当前端组件从命令菜单触发时，这是默认行为。
 * **小部件（仪表盘和记录页面）** — 前端组件可以作为小部件嵌入到[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)中。 在配置仪表盘或记录页面布局时，用户可以添加前端组件小部件。
+* **应用设置** — 使用 [`defineSettingsFrontComponent()`](#custom-settings-component) 定义后，该前端组件将作为一个部分渲染在应用的 **Settings** 选项卡中，以替代默认的变量配置界面。
 
-单独存在的前端组件无法从界面中访问 —— 你需要将它*呈现*出来。 实现这一点有两种方式：
+单独存在的前端组件无法从界面中访问 —— 你需要将它*呈现*出来。 实现这一点有三种方式：
 
 * **将它与[命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)配对** —— 将其注册到命令菜单（Cmd+K）中，并可选地将其设为固定快速操作。
 * **将它作为小部件嵌入到[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)中** —— 将其放置在记录详情页面或仪表盘上。
+* **使用 [`defineSettingsFrontComponent()`](#custom-settings-component) 定义** — 将其渲染为应用 **Settings** 选项卡中的一个部分，以替代默认的变量配置界面。
 
 ## 基础示例
 
@@ -76,6 +78,34 @@ export default defineCommandMenuItem({
 ## 在页面上放置前端组件
 
 除了命令之外，你还可以在**页面布局**中将其添加为小部件，从而将前端组件直接嵌入记录页面。 详情请参见[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)。
+
+## 自定义设置组件
+
+要在应用的 **Settings** 选项卡中，用你自己的组件替换自动生成的变量配置界面，请使用 `defineSettingsFrontComponent` 而不是 `defineFrontComponent` 来进行定义。 它使用相同的[配置字段](#configuration-fields)（除了 `isHeadless`，由于设置组件始终会渲染可见的 UI，因此不接受该字段），并另外将该组件标记为应用的设置 UI。
+
+该组件会渲染为设置选项卡内的一个部分，而不是替换整个选项卡。 Twenty 的系统管理部分——自动升级、App URL 和连接——始终渲染在它上方，且无法被应用覆盖。
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+每个应用仅允许有一个设置前端组件；声明多个会导致构建失败。 如果存在，应用的 **Settings** 选项卡会渲染此组件来替代默认的变量配置 UI。
 
 ## 无头与非无头
 
