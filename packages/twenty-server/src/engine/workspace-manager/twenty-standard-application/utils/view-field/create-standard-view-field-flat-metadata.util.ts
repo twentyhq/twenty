@@ -81,11 +81,18 @@ export const createStandardViewFieldFlatMetadata = <
   }
 
   // A view field's lifecycle is owned by whoever owns its view: engine-owned
-  // views (INDEX, FIELDS_WIDGET) carry engine-owned view fields.
+  // views (INDEX, FIELDS_WIDGET) carry engine-owned view fields. Views are built
+  // before their view fields, so a missing parent is a config error.
   const parentView =
     dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
       viewDefinition.universalIdentifier
     ];
+
+  if (!isDefined(parentView)) {
+    throw new Error(
+      `Missing parent view ${objectName} ${viewName.toString()} for view field ${viewFieldName}`,
+    );
+  }
 
   let viewFieldGroupId: string | null = null;
   let viewFieldGroupUniversalIdentifier: string | null = null;
@@ -129,7 +136,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation,
     isActive: true,
-    isSystemSideEffect: parentView?.isSystemSideEffect ?? false,
+    isSystemSideEffect: parentView.isSystemSideEffect,
     overrides: null,
     universalOverrides: null,
     createdAt: now,
