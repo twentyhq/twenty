@@ -17,6 +17,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { CreateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input';
+import { UpdateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-email-group-channel.input';
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
@@ -174,6 +175,22 @@ export class MessageChannelResolver {
   ): Promise<CreateEmailGroupChannelOutput> {
     return this.messageChannelMetadataService.createEmailGroupChannel({
       handle: input.handle,
+      displayName: input.displayName,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => MessageChannelDTO)
+  @UseGuards(NoPermissionGuard)
+  async updateEmailGroupChannel(
+    @Args('input') input: UpdateEmailGroupChannelInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<MessageChannelDTO> {
+    return this.messageChannelMetadataService.updateEmailGroupChannel({
+      id: input.id,
+      displayName: input.displayName,
       userWorkspaceId,
       workspaceId: workspace.id,
     });

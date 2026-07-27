@@ -8,15 +8,17 @@ icon: window-maximize
 
 ## 프런트 컴포넌트를 사용할 수 있는 위치
 
-프런트 컴포넌트는 Twenty 내에서 두 위치에 렌더링될 수 있습니다:
+프런트 컴포넌트는 Twenty 내에서 세 위치에 렌더링될 수 있습니다:
 
 * **사이드 패널** — 비헤드리스 프런트 컴포넌트는 오른쪽 사이드 패널에서 열립니다. 이는 명령 메뉴에서 프런트 컴포넌트를 트리거할 때의 기본 동작입니다.
 * **위젯(대시보드 및 레코드 페이지)** — 프런트 컴포넌트를 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts) 내 위젯으로 삽입할 수 있습니다. 대시보드 또는 레코드 페이지 레이아웃을 구성할 때 사용자는 프런트 컴포넌트 위젯을 추가할 수 있습니다.
+* **App settings** — [`defineSettingsFrontComponent()`](#custom-settings-component)으로 정의되며, 이 프런트 컴포넌트는 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링됩니다.
 
-프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 두 가지 방법은 다음과 같습니다.
+프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 세 가지 방법은 다음과 같습니다.
 
 * **[명령 메뉴 항목](/l/ko/developers/extend/apps/layout/command-menu-items)과 연결** — 명령 메뉴(Cmd+K)에 등록하고, 선택적으로 고정된 빠른 작업으로 등록합니다.
 * **[페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)에 위젯으로 포함** — 레코드 상세 페이지 또는 대시보드에 배치합니다.
+* **[`defineSettingsFrontComponent()`](#custom-settings-component)로 정의** — 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링합니다.
 
 ## 기본 예제
 
@@ -76,6 +78,34 @@ export default defineCommandMenuItem({
 ## 프런트 컴포넌트를 페이지에 배치하기
 
 명령 외에도, 페이지 레이아웃에 위젯으로 추가하여 레코드 페이지에 프런트 컴포넌트를 직접 임베드할 수 있습니다. 자세한 내용은 [페이지 레이아웃](/l/ko/developers/extend/apps/layout/page-layouts)을 참조하세요.
+
+## 사용자 정의 설정 컴포넌트
+
+앱의 **Settings** 탭에서 자동 생성되는 변수 구성 UI를 사용자 정의 컴포넌트로 대체하려면, `defineFrontComponent` 대신 `defineSettingsFrontComponent`로 정의하세요. 이 설정 컴포넌트는 항상 눈에 보이는 UI를 렌더링하므로 허용되지 않는 `isHeadless`를 제외하고, 동일한 [구성 필드](#configuration-fields)를 사용하며, 추가로 이 컴포넌트를 앱의 설정 UI로 표시합니다.
+
+이 컴포넌트는 전체 탭을 대체하는 것이 아니라, Settings 탭 내부의 섹션으로 렌더링됩니다. Twenty의 시스템 관리 섹션(자동 업그레이드, App URL, 연결)은 항상 이 컴포넌트 위에 렌더링되며, 앱에서 이를 재정의할 수 없습니다.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+앱당 하나의 설정 프런트 컴포넌트만 허용되며, 둘 이상 선언하면 빌드가 실패합니다. 설정 프런트 컴포넌트가 존재하는 경우, 앱의 **Settings** 탭은 기본 변수 구성 UI 대신 이 컴포넌트를 렌더링합니다.
 
 ## 헤드리스 vs 비헤드리스
 

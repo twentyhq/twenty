@@ -214,9 +214,8 @@ export default defineFrontComponent({
 });
 ```
 
-[page layout](/l/ja/developers/extend/apps/layout/page-layouts) でマウントします。
-`RECORD_PAGE` レイアウトは、オブジェクトのレコードビューにタブを追加します。`CANVAS` タブの `FronT_COMPONENT`
-ウィジェットはコンポーネントをホストします。
+[page layout](/l/ja/developers/extend/apps/layout/page-layouts) でマウントします。 `RECORD_PAGE` レイアウトは、オブジェクトのレコードビューにタブを追加します。単一の
+`FRONT_COMPONENT` ウィジェットを含むタブは、コンポーネントをフル幅で表示します:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -231,7 +230,7 @@ export default definePageLayout({
     title: 'Preview',
     icon: 'IconEye',
     position: 50,
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: [{
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
