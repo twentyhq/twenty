@@ -1,0 +1,32 @@
+---
+title: Exporter la FAQ
+description: Foire aux questions sur l'exportation des données.
+---
+
+<AccordionGroup>
+<Accordion title="Pouvons-nous exporter toutes les données de l'espace de travail avant d'annuler, y compris les objets personnalisés, les champs personnalisés, les relations, les notes, les tâches, les opportunités, les pièces jointes, les workflows, les autorisations et l'historique d'audit ?">
+Les données de l'espace de travail peuvent être exportées avant l'annulation à certaines exceptions : les tableaux de bord, les workflows et les autorisations doivent être transférés manuellement et les journaux d'audit ne peuvent pas être transférés.
+</Accordion>
+<Accordion title="Quels éléments ne peuvent actuellement pas être exportés ou migrés ?">
+La plupart des éléments peuvent être exportés ou migrés avec quelques exceptions :
+* workflows, tableaux de bord et tous les paramètres (clés API, webhooks, journaux d'audit, paramètres de l'utilisateur, etc.) doit être migré manuellement
+* les objets et les champs créés par des applications peuvent être migrés en installant cette application dans différents espaces de travail, ils ne devraient pas être migrés manuellement
+* certains enregistrements, comme les versions de workflow et les exécutions de workflows. ne sont pas transférables du tout et devraient être perdus
+* certains objets comme les messages et les objets liés au calendrier ne devraient pas être exportés car ils sont créés lorsque le compte est connecté et synchronisé périodiquement, ils seront à nouveau synchronisés une fois que vous vous connecterez à votre compte (tant que vous aurez un accès à ce compte, si c'est un compte de membre de l'équipe qui a quitté votre entreprise, alors ces messages doivent être exportés, sinon ils seront perdus)
+</Accordion>
+<Accordion title="Existe-t-il un nuage officiel à une procédure de migration autonome ou un service de migration assistée ?">
+À l'heure actuelle, il n'existe pas de procédure officielle de migration du nuage à l'auto-hébergement. L'idée générale est de :
+* tout d'abord, installez des applications pour introduire des objets et des champs appartenant à des applications
+* répliquer les objets personnalisés et les champs ajoutés par les utilisateurs
+* utiliser le script avec des clés API ou des outils AI pour migrer toutes les données d'un espace de travail vers un autre
+* tous les objets non transférables doivent être migrés manuellement
+
+Sachez quelques choses:
+* vous pouvez envoyer jusqu'à 50 demandes par minute sur le plan Pro ou 100 demandes par minute sur le plan de l'organisation avant de toucher une limite de requête/min
+* chaque requête API peut avoir jusqu'à 200 enregistrements
+* certaines données dans les champs comme Créé par, Activités de la timeline et Mis à jour par seront perdues pendant l'importation et écrasées par le système
+</Accordion>
+<Accordion title="Les fichiers exportés sont-ils fournis dans des formats ouverts et documentés ?">
+Les fichiers exportés dans l'interface utilisateur sont au format Excel, et toutes les requêtes API peuvent être enregistrées au format JSON.
+</Accordion>
+</AccordionGroup>

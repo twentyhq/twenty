@@ -218,6 +218,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_LAYOUT_CAPABILITIES_RECORD_PAGES:
     '/user-guide/layout/capabilities/record-pages',
   USER_GUIDE_LAYOUT_OVERVIEW: '/user-guide/layout/overview',
+  USER_GUIDE_LEGAL_HOW_TOS_LEGAL_FAQ: '/user-guide/legal/how-tos/legal-faq',
+  USER_GUIDE_LEGAL_OVERVIEW: '/user-guide/legal/overview',
   USER_GUIDE_PERMISSIONS_ACCESS_CAPABILITIES_PERMISSIONS:
     '/user-guide/permissions-access/capabilities/permissions',
   USER_GUIDE_PERMISSIONS_ACCESS_CAPABILITIES_SSO_CONFIGURATION:
@@ -226,6 +228,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/permissions-access/how-tos/permissions-faq',
   USER_GUIDE_PERMISSIONS_ACCESS_OVERVIEW:
     '/user-guide/permissions-access/overview',
+  USER_GUIDE_SETTINGS_CAPABILITIES_COMMUNITY_SETTINGS:
+    '/user-guide/settings/capabilities/community-settings',
   USER_GUIDE_SETTINGS_CAPABILITIES_DOMAINS_SETTINGS:
     '/user-guide/settings/capabilities/domains-settings',
   USER_GUIDE_SETTINGS_CAPABILITIES_EXPERIENCE_SETTINGS:
@@ -234,8 +238,6 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/settings/capabilities/member-management',
   USER_GUIDE_SETTINGS_CAPABILITIES_PROFILE_SETTINGS:
     '/user-guide/settings/capabilities/profile-settings',
-  USER_GUIDE_SETTINGS_CAPABILITIES_UPDATES_SETTINGS:
-    '/user-guide/settings/capabilities/updates-settings',
   USER_GUIDE_SETTINGS_CAPABILITIES_WORKSPACE_SETTINGS:
     '/user-guide/settings/capabilities/workspace-settings',
   USER_GUIDE_SETTINGS_HOW_TOS_SETTINGS_FAQ:
