@@ -51,8 +51,6 @@ export const slackEventsResolverHandler = async (
     throw new Error('Empty request body');
   }
 
-  // Slack accepts the Request URL only when this handshake is echoed on the same
-  // response, so it cannot be answered by the queued target function.
   if (body.type === 'url_verification' && isNonEmptyString(body.challenge)) {
     return new Response({ challenge: body.challenge });
   }
