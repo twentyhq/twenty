@@ -24,7 +24,7 @@ const SUBJECT_FIELD_UNIVERSAL_IDENTIFIER =
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.views.allMessageCampaigns.viewFields.name.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.25.0', 1785097900000)
+@RegisteredWorkspaceCommand('2.25.0', 1785168130000)
 @Command({
   name: 'upgrade:2-25:add-message-campaign-name-field',
   description:

@@ -73,7 +73,7 @@ const HOME_OBSOLETE_MESSAGES_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage.tabs.home
     .widgets.messages.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.25.0', 1785096400000)
+@RegisteredWorkspaceCommand('2.25.0', 1785168100000)
 @Command({
   name: 'upgrade:2-25:add-message-campaign-composer-tab',
   description:
