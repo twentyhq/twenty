@@ -55,18 +55,33 @@ write_image() {
   mv "$tmp" "$STAGING_ENV"
 }
 
+# Use the dedicated token if present, else the host's ambient `gh auth`. The
+# token was previously required, and it has never existed here, so staging has
+# never reported a deployment status either — see production-converge.sh for the
+# same fix and the reasoning.
+gh_deploy() {
+  if [ -f "$TOKEN_FILE" ]; then
+    GH_TOKEN="$(cat "$TOKEN_FILE")" gh "$@"
+  else
+    gh "$@"
+  fi
+}
+
 report() {
   local state="$1" description="$2" deployment_id
-  [ -f "$TOKEN_FILE" ] || return 0
   deployment_id="$(
-    GH_TOKEN="$(cat "$TOKEN_FILE")" gh api \
+    gh_deploy api \
       "repos/${GITHUB_REPOSITORY:-SpeculativeTechnologies/CRM}/deployments?environment=staging&sha=${target_sha}" \
       --jq '.[0].id' 2>/dev/null || true
   )"
-  [ -n "$deployment_id" ] && [ "$deployment_id" != "null" ] || return 0
-  GH_TOKEN="$(cat "$TOKEN_FILE")" gh api --method POST \
+  if [ -z "$deployment_id" ] || [ "$deployment_id" = "null" ]; then
+    log "cannot report '${state}': no staging deployment found for ${target_sha} (is gh authenticated on this host?)"
+    return 0
+  fi
+  gh_deploy api --method POST \
     "repos/${GITHUB_REPOSITORY:-SpeculativeTechnologies/CRM}/deployments/${deployment_id}/statuses" \
-    -f state="$state" -f description="$description" >/dev/null 2>&1 || true
+    -f state="$state" -f description="$description" >/dev/null 2>&1 ||
+    log "failed to POST '${state}' status to deployment ${deployment_id}"
 }
 
 main() {

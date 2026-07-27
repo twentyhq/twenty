@@ -74,28 +74,38 @@ git merge-base --is-ancestor "$target_sha" origin/main ||
 git merge-base --is-ancestor "$current_sha" "$target_sha" ||
   fail "${target_sha} is not a descendant of the running commit; refusing"
 
-# Reporting to GitHub is best-effort, but it says so out loud. Silently
-# returning here is why the 2026-07-27 deploy sat at "in_progress" in the
-# Deployments UI long after it had actually finished and then failed.
+# Run gh with the dedicated deploy token if one exists, otherwise with whatever
+# `gh auth` the host already has. The token file was previously REQUIRED, and
+# since it has never existed on this host, neither converger has ever reported a
+# single deployment status — every record in the Deployments UI is stuck at
+# "in_progress", including the successful ones. The host's ambient gh auth works
+# fine under cron (sync-upstream.sh opens PRs with it weekly), so there is no
+# reason to stay silent just because the optional token is absent.
+gh_deploy() {
+  if [ -f "$TOKEN_FILE" ]; then
+    GH_TOKEN="$(cat "$TOKEN_FILE")" gh "$@"
+  else
+    gh "$@"
+  fi
+}
+
+# Reporting is best-effort, but it now says out loud when it cannot report,
+# rather than returning 0 and leaving the UI lying about the deploy.
 report() {
   local state="$1" description="$2" deployment_id
-  if [ ! -f "$TOKEN_FILE" ]; then
-    log "cannot report '${state}' to GitHub: no token at ${TOKEN_FILE}"
-    return 0
-  fi
   deployment_id="$(
-    GH_TOKEN="$(cat "$TOKEN_FILE")" gh api \
+    gh_deploy api \
       "repos/${REPO_SLUG}/deployments?environment=production&sha=${target_sha}" \
       --jq '.[0].id' 2>/dev/null || true
   )"
   if [ -z "$deployment_id" ] || [ "$deployment_id" = "null" ]; then
-    log "cannot report '${state}' to GitHub: no deployment found for ${target_sha}"
+    log "cannot report '${state}': no production deployment found for ${target_sha} (is gh authenticated on this host?)"
     return 0
   fi
-  GH_TOKEN="$(cat "$TOKEN_FILE")" gh api --method POST \
+  gh_deploy api --method POST \
     "repos/${REPO_SLUG}/deployments/${deployment_id}/statuses" \
     -f state="$state" -f description="$description" >/dev/null 2>&1 ||
-    log "failed to POST '${state}' status to GitHub deployment ${deployment_id}"
+    log "failed to POST '${state}' status to deployment ${deployment_id}"
 }
 
 # Compute the changed-file list ONCE, into a variable, and match against that.
