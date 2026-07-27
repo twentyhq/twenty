@@ -49,11 +49,7 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    if (
-      this.twentyConfigService.get(
-        'IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED',
-      ) !== true
-    ) {
+    if (!this.twentyConfigService.isWorkspaceCompanyEnrichmentEnabled()) {
       return { outcome: 'unavailable', enrichment: null };
     }
 

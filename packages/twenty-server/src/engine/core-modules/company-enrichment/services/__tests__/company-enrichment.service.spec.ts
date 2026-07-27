@@ -23,7 +23,7 @@ describe('CompanyEnrichmentService', () => {
   };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
-  let twentyConfigService: { get: jest.Mock };
+  let twentyConfigService: { isWorkspaceCompanyEnrichmentEnabled: jest.Mock };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -38,7 +38,9 @@ describe('CompanyEnrichmentService', () => {
     };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
-    twentyConfigService = { get: jest.fn().mockReturnValue(true) };
+    twentyConfigService = {
+      isWorkspaceCompanyEnrichmentEnabled: jest.fn().mockReturnValue(true),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -200,8 +202,8 @@ describe('CompanyEnrichmentService', () => {
   });
 
   it('should return unavailable without any lookup when the enrichment flag is off', async () => {
-    twentyConfigService.get.mockImplementation(
-      (key: string) => key !== 'IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED',
+    twentyConfigService.isWorkspaceCompanyEnrichmentEnabled.mockReturnValue(
+      false,
     );
 
     const result = await service.enrichCompanyForWorkspaceCreator({
