@@ -31,6 +31,13 @@ describe('parseCssString', () => {
     expect(parseCssString(': red; color: blue')).toEqual({ color: 'blue' });
   });
 
+  it('should skip declarations whose value is empty', () => {
+    expect(parseCssString('color: !important; width: 10px')).toEqual({
+      width: '10px',
+    });
+    expect(parseCssString('color: ; width: 10px')).toEqual({ width: '10px' });
+  });
+
   it('should only split on the first colon so values may contain colons', () => {
     expect(parseCssString('background: url(http://example.com)')).toEqual({
       background: 'url(http://example.com)',

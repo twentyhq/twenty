@@ -29,6 +29,10 @@ export const parseCssString = (
         declaration.slice(propertyNameEndIndex + 1).trim(),
       );
 
+    if (cssPropertyName === '' || cssValueWithoutImportantPriority === '') {
+      continue;
+    }
+
     const reactStylePropertyName = isCssCustomPropertyName(cssPropertyName)
       ? cssPropertyName
       : kebabToCamelCase(cssPropertyName);
