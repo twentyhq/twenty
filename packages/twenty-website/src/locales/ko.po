@@ -775,11 +775,6 @@ msgstr "Any Field 필터"
 msgid "Any Questions?"
 msgstr "질문이 있으신가요?"
 
-#. js-lingui-id: lgSvgF
-#: src/partner-application/partner-application-copy.ts
-msgid "Anything else we should know?"
-msgstr "추가로 알려주고 싶은 내용이 있나요?"
-
 #. js-lingui-id: pkMjbA
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
@@ -1797,6 +1792,7 @@ msgstr "맞춤형 AI 모델"
 
 #. js-lingui-id: OaTurC
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Custom apps"
 msgstr "맞춤형 앱"
 
@@ -1992,6 +1988,11 @@ msgstr "데이터 모델 다이어그램"
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "데이터 모델링 · 마이그레이션 · 노코드 워크플로 · 대시보드 · SSO/SCIM · 통합"
 
+#. js-lingui-id: pSXc9s
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Data models"
+msgstr ""
+
 #. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Date & Time"
@@ -2036,6 +2037,11 @@ msgstr "데모"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Denmark 🇩🇰"
 msgstr "Denmark 🇩🇰"
+
+#. js-lingui-id: 59TXqJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: tqbpyT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2142,6 +2148,7 @@ msgstr "남의 생태계에 갇히지 마세요. Twenty의 개발자 경험은 �
 
 #. js-lingui-id: DPfwMq
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#: src/partner-application/partner-application-copy.ts
 msgid "Done"
 msgstr "완료"
 
@@ -2505,6 +2512,11 @@ msgstr ""
 msgid "Expanded support for 30+ languages, so users can navigate and use the software in their preferred language."
 msgstr "30개 이상의 언어를 추가로 지원하여, 사용자가 선호하는 언어로 소프트웨어를 탐색하고 사용할 수 있습니다."
 
+#. js-lingui-id: bKBhgb
+#: src/partner-application/partner-application-copy.ts
+msgid "Experience"
+msgstr ""
+
 #. js-lingui-id: 14xdUh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Experience a more compact and intuitive settings layout, now featuring a breadcrumb navigation for easier access and better organization."
@@ -2515,10 +2527,10 @@ msgstr "더 컴팩트하고 직관적인 설정 레이아웃으로 바뀌었으�
 msgid "Experience enterprise-grade granularity, starting with an 11th permission."
 msgstr "11번째 권한부터 시작되는 엔터프라이즈급 세분화 권한을 경험해 보세요."
 
-#. js-lingui-id: uZRQi+
+#. js-lingui-id: PXKAnm
 #: src/partner-application/partner-application-copy.ts
-msgid "Expertise & experience"
-msgstr "전문성 & 경험"
+msgid "Expertise"
+msgstr ""
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -2858,6 +2870,11 @@ msgstr "단순함에서 *고급 기능*까지"
 msgid "From simple to advanced"
 msgstr "단순함에서 고도화까지"
 
+#. js-lingui-id: IvIKDS
+#: src/partner-application/data/partner-twenty-experience-options.ts
+msgid "Front components"
+msgstr ""
+
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Full communication history in one place"
@@ -2969,11 +2986,6 @@ msgstr "좋은 선택입니다!"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Google Calendar Integration"
 msgstr "Google Calendar 연동"
-
-#. js-lingui-id: Zh0acB
-#: src/partner-application/partner-application-copy.ts
-msgid "Grab 30 minutes so we can get to know your team."
-msgstr "30분 일정을 잡아 주세요. 귀하의 팀을 더 잘 이해하고 싶습니다."
 
 #. js-lingui-id: 1W3PAd
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3178,15 +3190,15 @@ msgstr "Twenty가 데이터를 수집, 사용, 보호하는 방식 — GDPR 및 
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "W3villa Technologies가 Twenty를 운영 백본으로 삼아, 기관용 AI 모의 면접 플랫폼인 W3Grads를 어떻게 출시했는지에 대한 이야기입니다."
 
+#. js-lingui-id: vXtlks
+#: src/partner-application/wizard/steps/ExperienceStep.tsx
+msgid "https://"
+msgstr ""
+
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
 msgstr "Hungary 🇭🇺"
-
-#. js-lingui-id: T6wyby
-#: src/partner-application/partner-application-copy.ts
-msgid "I'll book later →"
-msgstr "나중에 예약할게요 →"
 
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
@@ -3714,6 +3726,11 @@ msgstr "일반 객체와 마찬가지로, 작업과 회사에 사용자 지정 �
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Link 필드"
+
+#. js-lingui-id: YOe6r4
+#: src/partner-application/partner-application-copy.ts
+msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
+msgstr ""
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4439,6 +4456,11 @@ msgstr "기타 개선 사항"
 msgid "Our onboarding process has been streamlined to let you import your calendar and emails seamlessly. You can now also configure your privacy settings directly during onboarding, allowing you to choose between sharing content with your team or keeping it hidden."
 msgstr "온보딩 프로세스가 간소화되어 캘린더와 이메일을 원활하게 가져올 수 있습니다. 이제 온보딩 과정에서 바로 개인정보 보호 설정을 구성할 수 있어, 팀과 콘텐츠를 공유할지 숨길지 선택할 수 있습니다."
 
+#. js-lingui-id: V+7KMm
+#: src/partner-application/partner-application-copy.ts
+msgid "Our team reviews every application and will reach out if there's a fit."
+msgstr ""
+
 #. js-lingui-id: XR9aQ6
 #: src/client-brief/client-brief-copy.ts
 msgid "Our team will review your project and follow up by email. You won't hear from partners until we've matched you."
@@ -4624,6 +4646,11 @@ msgstr "파이프라인, 커스텀 오브젝트, AI 도우미, Postgres 위의 �
 msgid "Please complete all required fields before continuing."
 msgstr "계속 진행하기 전에 필수 입력 항목을 모두 완료하세요."
 
+#. js-lingui-id: LjJ5i7
+#: src/partner-application/partner-application-copy.ts
+msgid "Please write at least {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation."
+msgstr ""
+
 #. js-lingui-id: P04j61
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Point of Contact"
@@ -4747,6 +4774,11 @@ msgstr "예전에는 방대한 수작업 조율이 필요했던 프로그램이 
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Project minimum"
 msgstr "프로젝트 최소 금액"
+
+#. js-lingui-id: wwBgHX
+#: src/partner-application/partner-application-copy.ts
+msgid "Proof URL *"
+msgstr ""
 
 #. js-lingui-id: qcybNQ
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -5243,6 +5275,11 @@ msgstr "{0} 선택"
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Select all"
 msgstr "전체 선택"
+
+#. js-lingui-id: /a1JwJ
+#: src/partner-application/partner-application-copy.ts
+msgid "Select every area you used in a real project — not what you offer, what you actually did."
+msgstr ""
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -5798,6 +5835,11 @@ msgstr "기술 노트"
 msgid "Technical skills"
 msgstr "기술 역량"
 
+#. js-lingui-id: JOu8tZ
+#: src/partner-application/partner-application-copy.ts
+msgid "Tell us about the implementation *"
+msgstr ""
+
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
 msgid "Tell us more"
@@ -5855,14 +5897,10 @@ msgstr "Thailand 🇹🇭"
 msgid "Thanks — we received your brief."
 msgstr ""
 
-#. js-lingui-id: Pa/Y6/
+#. js-lingui-id: 0ClTlj
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Thanks, you're in.\n"
-"*Now book your intro call.*"
+msgid "Thanks for applying."
 msgstr ""
-"감사합니다, 신청이 완료되었습니다.\n"
-"*이제 소개 전화를 예약해 주세요.*"
 
 #. js-lingui-id: FjkPYg
 #: src/case-studies/case-study-stories.ts
@@ -6826,6 +6864,11 @@ msgstr "이것이 의미하는 바"
 msgid "What you cover *"
 msgstr "담당 범위 *"
 
+#. js-lingui-id: QFLt0F
+#: src/partner-application/partner-application-copy.ts
+msgid "What you've built in Twenty *"
+msgstr ""
+
 #. js-lingui-id: 1kfjxX
 #: src/case-studies/case-study-stories.ts
 msgid "Whatever came next had to be something they could own."
@@ -6884,6 +6927,11 @@ msgstr "CRM이 곧 제품일 때: W3Grads on Twenty | W3villa Technologies"
 #: src/case-studies/case-study-stories.ts
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "NetZero는 여전히 브라질 농가와의 WhatsApp 중심 운영을 위해 두 번째 CRM을 병행 사용하고 있지만, 기능과 에코시스템이 성장함에 따라 이를 모두 Twenty로 마이그레이션할 계획입니다. 이미 그들의 구조화된 다국가 파이프라인은 Twenty로 구동되고 있습니다."
+
+#. js-lingui-id: oa2Bs3
+#: src/partner-application/partner-application-copy.ts
+msgid "Who it was for, what you built, which of the four areas you used…"
+msgstr ""
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -6991,6 +7039,7 @@ msgstr "워크플로 버전"
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
+#: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Workflows"
 msgstr "워크플로"
 
@@ -7009,11 +7058,6 @@ msgstr "실제로 사용되는 워크플로"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace"
 msgstr "워크스페이스"
-
-#. js-lingui-id: bwECg/
-#: src/partner-application/partner-application-copy.ts
-msgid "Workspace URL, customer references, relevant links…"
-msgstr "워크스페이스 URL, 고객 레퍼런스, 관련 링크…"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts
