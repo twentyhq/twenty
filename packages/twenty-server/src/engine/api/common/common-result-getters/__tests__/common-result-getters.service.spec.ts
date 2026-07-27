@@ -80,6 +80,7 @@ describe('CommonResultGettersService', () => {
     const flatObjectMetadataMaps =
       createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>;
     const record: ObjectRecord = {
+      id: 'document-id',
       files: [
         {
           fileId: 'file-id',
