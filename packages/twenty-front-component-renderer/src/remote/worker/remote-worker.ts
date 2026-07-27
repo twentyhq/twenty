@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
@@ -31,6 +32,7 @@ installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
 
+installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 
