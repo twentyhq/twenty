@@ -24,7 +24,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 const RECORDS_PER_GROUP_LIMIT = 10;
@@ -86,13 +85,7 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
     });
 
-    applyRowLevelPermissionPredicates({
-      queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
-      objectMetadata: flatObjectMetadata,
-      internalContext: queryBuilderWithFiltersAndWithoutGroupBy.internalContext,
-      authContext: queryBuilderWithFiltersAndWithoutGroupBy.authContext,
-      featureFlagMap: queryBuilderWithFiltersAndWithoutGroupBy.featureFlagMap,
-    });
+    queryBuilderWithFiltersAndWithoutGroupBy.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
 
     const queryBuilderWithPartitionBy = this.addPartitionByToQueryBuilder({
       queryBuilderForSubQuery: queryBuilderWithFiltersAndWithoutGroupBy,

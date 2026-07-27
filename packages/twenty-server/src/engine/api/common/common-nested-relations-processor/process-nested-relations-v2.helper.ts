@@ -472,12 +472,15 @@ export class ProcessNestedRelationsV2Helper {
       return [];
     }
 
-    const perParentRecordIdsSql = targetObjectRepository
+    const perParentRecordIdsQueryBuilder = targetObjectRepository
       .createQueryBuilder(targetObjectNameSingular)
       .select('id', 'id')
       .where(`${column} = "lateralParents"."parentId"`)
-      .limit(perParentLimit)
-      .getQuery();
+      .limit(perParentLimit);
+
+    perParentRecordIdsQueryBuilder.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
+
+    const perParentRecordIdsSql = perParentRecordIdsQueryBuilder.getQuery();
 
     const parentValues = sanitizedIds.map((id) => `('${id}'::uuid)`).join(', ');
 
@@ -489,7 +492,8 @@ export class ProcessNestedRelationsV2Helper {
     const limitedRecordsQueryBuilder = targetObjectRepository
       .createQueryBuilder()
       .from(lateralFromSubquery, 'limited_relation_records')
-      .select('limited_relation_records.id', 'id');
+      .select('limited_relation_records.id', 'id')
+      .setParameters(perParentRecordIdsQueryBuilder.getParameters());
 
     limitedRecordsQueryBuilder.expressionMap.aliases =
       limitedRecordsQueryBuilder.expressionMap.aliases.filter((alias) =>

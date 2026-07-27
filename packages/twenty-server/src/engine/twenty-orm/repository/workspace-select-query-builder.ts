@@ -1,15 +1,20 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityTarget,
   type ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
+import { type JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -25,8 +30,21 @@ import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
+import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
+import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
+
+const joinAttributesWithRowLevelPermissionApplied = new WeakSet<object>();
+
+const andWithExistingJoinCondition = (
+  existingJoinCondition: string | undefined,
+  rowLevelPermissionCondition: string,
+): string =>
+  isNonEmptyString(existingJoinCondition)
+    ? `(${existingJoinCondition}) AND (${rowLevelPermissionCondition})`
+    : rowLevelPermissionCondition;
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -341,6 +359,7 @@ export class WorkspaceSelectQueryBuilder<
 
   private validatePermissions(): void {
     this.applyRowLevelPermissionPredicates();
+    this.applyRowLevelPermissionPredicatesToJoinedRelations();
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
@@ -349,6 +368,11 @@ export class WorkspaceSelectQueryBuilder<
       objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
     });
+  }
+
+  applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations(): void {
+    this.applyRowLevelPermissionPredicates();
+    this.applyRowLevelPermissionPredicatesToJoinedRelations();
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
@@ -391,5 +415,93 @@ export class WorkspaceSelectQueryBuilder<
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
     });
+  }
+
+  private applyRowLevelPermissionPredicatesToJoinedRelations(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const roleId = resolveRoleIdFromAuthContext({
+      authContext: this.authContext,
+      userWorkspaceRoleMap: this.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.internalContext.apiKeyRoleMap,
+    });
+
+    const workspaceMember = isUserAuthContext(this.authContext)
+      ? this.authContext.workspaceMember
+      : undefined;
+
+    for (const joinAttribute of this.expressionMap.joinAttributes) {
+      if (joinAttributesWithRowLevelPermissionApplied.has(joinAttribute)) {
+        continue;
+      }
+
+      const joinedObjectMetadata =
+        this.getJoinedObjectMetadataOrUndefined(joinAttribute);
+
+      if (!isDefined(joinedObjectMetadata)) {
+        continue;
+      }
+
+      joinAttributesWithRowLevelPermissionApplied.add(joinAttribute);
+
+      const recordFilter = buildRowLevelPermissionRecordFilter({
+        flatRowLevelPermissionPredicateMaps:
+          this.internalContext.flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps:
+          this.internalContext.flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+        objectMetadata: joinedObjectMetadata,
+        roleId,
+        workspaceMember,
+      });
+
+      if (!isDefined(recordFilter) || Object.keys(recordFilter).length === 0) {
+        continue;
+      }
+
+      const renderedCondition = renderRowLevelPermissionFilterToSql({
+        recordFilter,
+        tableAlias: joinAttribute.alias.name,
+        objectMetadata: joinedObjectMetadata,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(renderedCondition)) {
+        continue;
+      }
+
+      joinAttribute.condition = andWithExistingJoinCondition(
+        joinAttribute.condition,
+        renderedCondition.sql,
+      );
+
+      this.setParameters(renderedCondition.parameters);
+    }
+  }
+
+  private getJoinedObjectMetadataOrUndefined(
+    joinAttribute: JoinAttribute,
+  ): FlatObjectMetadata | undefined {
+    const joinedEntityMetadata = joinAttribute.metadata;
+    const isJoinOnSubQueryOrCustomTable =
+      isDefined(joinAttribute.alias?.subQuery) ||
+      !isDefined(joinedEntityMetadata);
+
+    if (isJoinOnSubQueryOrCustomTable) {
+      return undefined;
+    }
+
+    const joinedEntityTarget = joinedEntityMetadata.target;
+
+    if (typeof joinedEntityTarget !== 'string') {
+      return undefined;
+    }
+
+    return getObjectMetadataFromEntityTarget(
+      joinedEntityTarget,
+      this.internalContext,
+    );
   }
 }
