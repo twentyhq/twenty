@@ -16,6 +16,7 @@ import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recal
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
+const MEETING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
@@ -65,6 +66,7 @@ describe('recall bot api', () => {
   it('creates Recall bot requests with the Token authorization scheme', async () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -111,6 +113,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -131,6 +134,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -154,6 +158,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -176,6 +181,7 @@ describe('recall bot api', () => {
     const result = await rescheduleRecallBot({
       externalBotId: 'recall-bot-gone',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -200,6 +206,7 @@ describe('recall bot api', () => {
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -711,6 +718,7 @@ describe('recall bot api', () => {
       });
       const scheduleArguments = {
         meetingUrl: 'https://meet.google.com/abc-defg-hij',
+        meetingStartsAt: MEETING_STARTS_AT,
         joinAt: '2026-01-01T13:00:00.000Z',
         metadata: RECALL_ROUTING_METADATA,
       };

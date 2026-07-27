@@ -7,6 +7,7 @@ import {
   extractRecallBotId,
   type RecallBotResponse,
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
+import { computeRecallBotDetectionActivateAfterSeconds } from 'src/logic-functions/domain/compute-recall-bot-detection-activate-after-seconds.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 import { type ScheduleRecallBotArgs } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
@@ -19,6 +20,7 @@ type RescheduleRecallBotArgs = ScheduleRecallBotArgs & {
 export const rescheduleRecallBot = async ({
   externalBotId,
   meetingUrl,
+  meetingStartsAt,
   joinAt,
   metadata,
 }: RescheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
@@ -28,7 +30,13 @@ export const rescheduleRecallBot = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
+  const effectiveJoinAt = computeMaximumJoinAt(joinAt);
   const automaticLeave = getRecallBotAutomaticLeave({
+    botDetectionActivateAfterSeconds:
+      computeRecallBotDetectionActivateAfterSeconds({
+        botJoinsAt: effectiveJoinAt,
+        meetingStartsAt,
+      }),
     botName: configResult.config.botName,
   });
 
@@ -38,7 +46,7 @@ export const rescheduleRecallBot = async ({
     method: 'PATCH',
     body: {
       meeting_url: meetingUrl,
-      join_at: computeMaximumJoinAt(joinAt), // We can't join in the past, so we floor this date 1s in the future
+      join_at: effectiveJoinAt,
       bot_name: configResult.config.botName,
       ...(isUndefined(automaticLeave)
         ? {}

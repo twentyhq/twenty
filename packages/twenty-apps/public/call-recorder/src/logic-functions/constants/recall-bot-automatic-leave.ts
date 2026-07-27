@@ -5,9 +5,7 @@ import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-min-activate-after-seconds';
 import {
-  RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ACTIVATE_AFTER_SECONDS,
   RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
-  RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_ACTIVATE_AFTER_SECONDS,
   RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
 } from 'src/logic-functions/constants/recall-bot-detection-timeouts';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
@@ -37,8 +35,12 @@ type RecallBotAutomaticLeave = {
 };
 
 export const getRecallBotAutomaticLeave = ({
+  botDetectionActivateAfterSeconds,
   botName,
-}: { botName?: string } = {}): RecallBotAutomaticLeave | undefined => {
+}: {
+  botDetectionActivateAfterSeconds: number;
+  botName?: string;
+}): RecallBotAutomaticLeave | undefined => {
   const waitingRoomTimeoutSeconds = getOptionalPositiveIntegerVariable(
     CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME,
   );
@@ -66,22 +68,28 @@ export const getRecallBotAutomaticLeave = ({
     };
   }
 
-  // https://docs.recall.ai/docs/bot-detection
-  automaticLeave.bot_detection = getRecallBotDetection(botName);
+  automaticLeave.bot_detection = getRecallBotDetection({
+    botDetectionActivateAfterSeconds,
+    botName,
+  });
 
   return Object.keys(automaticLeave).length === 0 ? undefined : automaticLeave;
 };
 
-const getRecallBotDetection = (botName?: string): RecallBotDetection => ({
+const getRecallBotDetection = ({
+  botDetectionActivateAfterSeconds,
+  botName,
+}: {
+  botDetectionActivateAfterSeconds: number;
+  botName?: string;
+}): RecallBotDetection => ({
   using_participant_names: {
     matches: getCallRecorderBotDetectionNameMatches(botName),
-    activate_after:
-      RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_ACTIVATE_AFTER_SECONDS,
+    activate_after: botDetectionActivateAfterSeconds,
     timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
   },
   using_participant_events: {
-    activate_after:
-      RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ACTIVATE_AFTER_SECONDS,
+    activate_after: botDetectionActivateAfterSeconds,
     timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
   },
 });
