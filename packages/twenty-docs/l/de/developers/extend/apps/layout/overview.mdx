@@ -45,12 +45,13 @@ Die **Layout-Ebene** einer Twenty-App umfasst alles, was der Benutzer sieht: wo 
 
 ## Wo die App erscheint
 
-| Oberfläche                                      | Was es steuert                                                                                           | Entität                                   |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Seitenleiste**                                | Ein benutzerdefinierter Eintrag, der auf eine gespeicherte Ansicht oder eine externe URL verweist        | `defineNavigationMenuItem`                |
-| **Datensatzliste**                              | Eine gespeicherte Konfiguration für ein Objekt – sichtbare Spalten, Reihenfolge, Filter, Gruppen         | `defineView`                              |
-| **Detailseite des Datensatzes**                 | Die Registerkarten und Widgets auf einer Datensatzseite (für Ihr eigenes Objekt oder ein Standardobjekt) | `definePageLayout`, `definePageLayoutTab` |
-| **Innerhalb eines der oben genannten Bereiche** | Ein benutzerdefiniertes React-Widget – Schaltflächen, Formulare, Dashboards, Integrationen               | `defineFrontComponent`                    |
-| **Befehlsmenü (Cmd+K)**                         | Eine angeheftete Schnellaktion oder ein versteckter Befehl                                               | `defineCommandMenuItem`                   |
+| Oberfläche                                      | Was es steuert                                                                                                                            | Entität                                   |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Seitenleiste**                                | Ein benutzerdefinierter Eintrag, der auf eine gespeicherte Ansicht oder eine externe URL verweist                                         | `defineNavigationMenuItem`                |
+| **Datensatzliste**                              | Eine gespeicherte Konfiguration für ein Objekt – sichtbare Spalten, Reihenfolge, Filter, Gruppen                                          | `defineView`                              |
+| **Detailseite des Datensatzes**                 | Die Registerkarten und Widgets auf einer Datensatzseite (für Ihr eigenes Objekt oder ein Standardobjekt)                                  | `definePageLayout`, `definePageLayoutTab` |
+| **Innerhalb eines der oben genannten Bereiche** | Ein benutzerdefiniertes React-Widget – Schaltflächen, Formulare, Dashboards, Integrationen                                                | `defineFrontComponent`                    |
+| **App-Einstellungen**                           | Ein benutzerdefinierter Konfigurationsabschnitt im Tab "Einstellungen" der App, anstelle der standardmäßigen Variablen-Benutzeroberfläche | `defineSettingsFrontComponent`            |
+| **Befehlsmenü (Cmd+K)**                         | Eine angeheftete Schnellaktion oder ein versteckter Befehl                                                                                | `defineCommandMenuItem`                   |
 
 Frontend-Komponenten laufen in einem isolierten Web Worker unter Verwendung von Remote DOM – sie werden nativ auf der Seite gerendert (nicht in einem iframe), können aber die Hostseite oder das DOM nicht direkt erreichen. Die Kommunikation mit Twenty erfolgt über eine Message-Passing-Host-API.
