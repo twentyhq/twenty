@@ -128,17 +128,17 @@ export class ViewResolver {
             workspaceId: workspace.id,
             locale: context.req.locale,
           });
-          const translatedViewName = resolveEffectiveEntityProperty({
-            metadataName: 'view',
-            baseValue: view.name,
-            // view.overrides is the entity's parsed overrides (string-typed at
-            // the storage boundary); `MetadataPresentationOverrides<"view">` is
-            // the same shape with explicit string typing. The mismatch is a
-            // type-system artifact, not a runtime difference.
-            overrides: (view.overrides ?? undefined) as Parameters<
-              typeof resolveEffectiveEntityProperty<'view'>
-            >[1]['overrides'],
-            property: 'name',
+        const translatedViewName = resolveEffectiveEntityProperty({
+          metadataName: 'view',
+          baseValue: view.name,
+          // view.overrides is the entity's parsed overrides (string-typed at
+          // the storage boundary); `MetadataPresentationOverrides<"view">` is
+          // the same shape with explicit string typing. The mismatch is a
+          // type-system artifact, not a runtime difference.
+          overrides: (view.overrides ?? undefined) as Parameters<
+            typeof resolveEffectiveEntityProperty<'view'>
+          >[1]['overrides'],
+          property: 'name',
           i18nContext: {
             locale: context.req.locale,
             i18nInstance: i18n,

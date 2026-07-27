@@ -142,7 +142,6 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
     ).toBeDefined();
   });
 
-
   it('does NOT include workspace-custom-owned adoptable entities when the manifest does not declare them (#23192 follow-up)', () => {
     const all = buildAllFlatEntityMaps({
       viewField: [
