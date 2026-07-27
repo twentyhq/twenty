@@ -7,7 +7,6 @@ import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdSta
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { captureException } from '@sentry/react';
 import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -44,9 +43,7 @@ export const SSEQuerySubscribeEffect = () => {
 
   const handleError = useCallback(
     (error: unknown) => {
-      const extensions = CombinedGraphQLErrors.is(error)
-        ? getGraphqlErrorExtensionsFromError(error)
-        : undefined;
+      const extensions = getGraphqlErrorExtensionsFromError(error);
 
       if (
         !isGracefullyHandledEventStreamError({
@@ -59,7 +56,7 @@ export const SSEQuerySubscribeEffect = () => {
             `Unhandled error for event stream: ${
               error instanceof Error ? error.message : String(error)
             }`,
-            { cause: error instanceof Error ? error : undefined },
+            { cause: error },
           ),
         );
       }
