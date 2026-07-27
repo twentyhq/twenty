@@ -5,6 +5,8 @@ This directory defines the operating model for the
 
 ## Start here
 
+- [SHIPPING.md](SHIPPING.md) — **new here? read this one.** How a change gets
+  from your laptop to the live CRM, in plain language
 - [TEAM-WORKFLOW.md](TEAM-WORKFLOW.md) — branching, review, and promotion rules
 - [DEVELOPMENT.md](DEVELOPMENT.md) — isolated development on another machine
 - [LLM-LOCAL-DEV.md](LLM-LOCAL-DEV.md) — the same pipeline, written for coding
