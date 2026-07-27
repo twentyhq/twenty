@@ -40,4 +40,10 @@ describe('parseCssString', () => {
       width: '10px',
     });
   });
+
+  it('should keep an earlier important declaration over a later normal duplicate', () => {
+    expect(parseCssString('color: red !important; color: blue')).toEqual({
+      color: 'red',
+    });
+  });
 });

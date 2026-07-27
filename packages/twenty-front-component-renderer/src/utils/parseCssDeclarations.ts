@@ -3,7 +3,8 @@ import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
 import { stripImportantPriorityFromCssValue } from '@/utils/stripImportantPriorityFromCssValue';
 
 export const parseCssDeclarations = (cssText: string): CssDeclaration[] => {
-  const cssDeclarations: CssDeclaration[] = [];
+  const declarationsByCssPropertyName = new Map<string, CssDeclaration>();
+  const importantCssPropertyNames = new Set<string>();
 
   for (const declaration of splitCssDeclarations(cssText)) {
     const propertyNameEndIndex = declaration.indexOf(':');
@@ -13,16 +14,31 @@ export const parseCssDeclarations = (cssText: string): CssDeclaration[] => {
     }
 
     const cssPropertyName = declaration.slice(0, propertyNameEndIndex).trim();
-    const cssValue = stripImportantPriorityFromCssValue(
-      declaration.slice(propertyNameEndIndex + 1).trim(),
-    );
+    const rawCssValue = declaration.slice(propertyNameEndIndex + 1).trim();
+    const cssValue = stripImportantPriorityFromCssValue(rawCssValue);
 
     if (cssPropertyName === '' || cssValue === '') {
       continue;
     }
 
-    cssDeclarations.push({ cssPropertyName, cssValue });
+    const hasImportantPriority = cssValue !== rawCssValue;
+
+    if (
+      !hasImportantPriority &&
+      importantCssPropertyNames.has(cssPropertyName)
+    ) {
+      continue;
+    }
+
+    if (hasImportantPriority) {
+      importantCssPropertyNames.add(cssPropertyName);
+    }
+
+    declarationsByCssPropertyName.set(cssPropertyName, {
+      cssPropertyName,
+      cssValue,
+    });
   }
 
-  return cssDeclarations;
+  return [...declarationsByCssPropertyName.values()];
 };

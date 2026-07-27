@@ -13,6 +13,12 @@ describe('parseCssTextIntoStyleDeclarations', () => {
     ).toEqual({ color: 'blue' });
   });
 
+  it('should keep an earlier important declaration over a later normal duplicate', () => {
+    expect(
+      parseCssTextIntoStyleDeclarations('color: red !important; color: blue'),
+    ).toEqual({ color: 'red' });
+  });
+
   it('should lowercase standard property names while preserving custom ones', () => {
     expect(
       parseCssTextIntoStyleDeclarations('COLOR: red; --My-Var: 1px'),

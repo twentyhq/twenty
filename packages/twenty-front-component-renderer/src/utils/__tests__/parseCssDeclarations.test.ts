@@ -14,6 +14,24 @@ describe('parseCssDeclarations', () => {
     ]);
   });
 
+  it('should let the last duplicate win among normal declarations', () => {
+    expect(parseCssDeclarations('color: red; color: blue')).toEqual([
+      { cssPropertyName: 'color', cssValue: 'blue' },
+    ]);
+  });
+
+  it('should keep an earlier important declaration over a later normal duplicate', () => {
+    expect(parseCssDeclarations('color: red !important; color: blue')).toEqual([
+      { cssPropertyName: 'color', cssValue: 'red' },
+    ]);
+  });
+
+  it('should let a later important duplicate replace an earlier important one', () => {
+    expect(
+      parseCssDeclarations('color: red !important; color: blue !important'),
+    ).toEqual([{ cssPropertyName: 'color', cssValue: 'blue' }]);
+  });
+
   it('should skip declarations without a colon', () => {
     expect(parseCssDeclarations('color: red; invalid')).toEqual([
       { cssPropertyName: 'color', cssValue: 'red' },
