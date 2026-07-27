@@ -9,7 +9,12 @@ import {
 } from 'src/engine/core-modules/application/application-manifest/utils/get-application-scoped-all-flat-entity-maps-for-owner-and-workspace-custom.util';
 
 const buildFlatEntityMaps = <
-  T extends { id: string; applicationId: string; universalIdentifier: string },
+  T extends {
+    id: string;
+    workspaceId: string;
+    applicationId: string;
+    universalIdentifier: string;
+  },
 >(
   entities: T[],
 ): FlatEntityMaps<T> => {
@@ -38,7 +43,12 @@ const buildAllFlatEntityMaps = (
   entries: Partial<
     Record<
       AllMetadataName,
-      { id: string; applicationId: string; universalIdentifier: string }[]
+      {
+        id: string;
+        workspaceId: string;
+        applicationId: string;
+        universalIdentifier: string;
+      }[]
     >
   >,
 ): AllFlatEntityMaps => {
@@ -48,6 +58,9 @@ const buildAllFlatEntityMaps = (
     if (!isDefined(entities)) continue;
     const key = getMetadataFlatEntityMapsKey(metadataName as AllMetadataName);
 
+    // The per-key value is a single per-metadata FlatEntityMaps, but the
+    // outer Partial<AllFlatEntityMaps> union of those values can't be
+    // inferred automatically; cast the assignment explicitly.
     (result as Record<string, FlatEntityMaps<unknown>>)[key] =
       buildFlatEntityMaps(entities);
   }
@@ -128,6 +141,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
       flatViewFieldMaps?.byUniversalIdentifier['custom-vf-uid-1'],
     ).toBeDefined();
   });
+
 
   it('does NOT include workspace-custom-owned adoptable entities when the manifest does not declare them (#23192 follow-up)', () => {
     const all = buildAllFlatEntityMaps({

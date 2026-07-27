@@ -136,8 +136,11 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
         }
       }
 
-      // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
-      subAllFlatEntityMaps[flatEntityMapsKey] = slice;
+      // The slice is `FlatEntityMaps<T>` for the current metadataName; the
+      // outer `AllFlatEntityMaps` keys are per-metadata too, so the union
+      // is correct at runtime. The cast documents the type-system constraint
+      // (a single per-key assignment can't be narrowed to a specific T).
+      subAllFlatEntityMaps[flatEntityMapsKey] = slice as never;
     }
 
     return subAllFlatEntityMaps as AllFlatEntityMaps;

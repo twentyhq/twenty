@@ -192,7 +192,11 @@ export class FlatViewFieldValidatorService {
         userFriendlyMessage: msg`View field metadata already exists`,
       });
       validationResult.existingEntityConflictContext = {
-        existingEntityId: existingFlatViewField.id,
+        // `UniversalFlatViewField` does not expose the raw DB id at the
+        // type level; the flat (non-universal) form does. We cast to read
+        // it from the universal form for the conflict context payload.
+        existingEntityId: (existingFlatViewField as unknown as { id: string })
+          .id,
         existingApplicationUniversalIdentifier:
           existingFlatViewField.applicationUniversalIdentifier,
       };
