@@ -1,3 +1,5 @@
+import type * as SentryReact from '@sentry/react';
+
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { isStaleChunkReloadCooldownActive } from '@/error-handler/utils/isStaleChunkReloadCooldownActive';
@@ -7,7 +9,8 @@ import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
 import { reloadWindow } from '~/utils/reloadWindow';
 
-const SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS = 2_000;
+const SENTRY_IMPORT_TIMEOUT_BEFORE_RELOAD_MS = 2_000;
+const SENTRY_FLUSH_TIMEOUT_BEFORE_RELOAD_MS = 2_000;
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -21,8 +24,12 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
-const captureAppError = (error: Error | CustomError, info: ErrorInfo) =>
-  import('@sentry/react')
+const captureAppError = (
+  sentryImportPromise: Promise<typeof SentryReact>,
+  error: Error | CustomError,
+  info: ErrorInfo,
+) =>
+  sentryImportPromise
     .then(({ captureException, flush }) => {
       captureException(error, (scope) => {
         scope.setExtras({ info });
@@ -33,7 +40,7 @@ const captureAppError = (error: Error | CustomError, info: ErrorInfo) =>
         return scope;
       });
 
-      return flush(SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS);
+      return flush(SENTRY_FLUSH_TIMEOUT_BEFORE_RELOAD_MS);
     })
     .catch((sentryError) => {
       // oxlint-disable-next-line no-console
@@ -46,7 +53,12 @@ export const AppErrorBoundary = ({
   resetOnLocationChange = true,
 }: AppErrorBoundaryProps) => {
   const handleError = (error: Error | CustomError, info: ErrorInfo) => {
-    const captureAppErrorPromise = captureAppError(error, info);
+    const sentryImportPromise = import('@sentry/react');
+    const captureAppErrorPromise = captureAppError(
+      sentryImportPromise,
+      error,
+      info,
+    );
 
     const isViteStaleChunkLazyLoadingError =
       checkIfItsAViteStaleChunkLazyLoadingError(error);
@@ -64,13 +76,30 @@ export const AppErrorBoundary = ({
       return;
     }
 
-    const captureTimeoutPromise = new Promise((resolve) =>
-      setTimeout(resolve, SENTRY_CAPTURE_TIMEOUT_BEFORE_RELOAD_MS),
-    );
+    const reloadAfterSentryCapture = async () => {
+      const sentryImportTimeoutPromise = new Promise<boolean>((resolve) =>
+        setTimeout(
+          () => resolve(false),
+          SENTRY_IMPORT_TIMEOUT_BEFORE_RELOAD_MS,
+        ),
+      );
 
-    void Promise.race([captureAppErrorPromise, captureTimeoutPromise]).then(
-      () => reloadWindow(),
-    );
+      const isSentryImportSettled = await Promise.race([
+        sentryImportPromise.then(
+          () => true,
+          () => true,
+        ),
+        sentryImportTimeoutPromise,
+      ]);
+
+      if (isSentryImportSettled) {
+        await captureAppErrorPromise;
+      }
+
+      reloadWindow();
+    };
+
+    void reloadAfterSentryCapture();
   };
 
   const handleReset = () => {
