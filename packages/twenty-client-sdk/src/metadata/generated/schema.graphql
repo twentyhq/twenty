@@ -592,7 +592,7 @@ type Application {
   canBeUninstalled: Boolean!
   autoUpgrade: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
+  settingsCustomTabFrontComponentId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -2510,6 +2510,7 @@ type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
   handle: String!
+  displayName: String
   type: MessageChannelType!
   isContactAutoCreationEnabled: Boolean!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -2606,6 +2607,31 @@ type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
   skipped: CampaignSkippedRecipientsDTO!
+}
+
+type MessageSuppression {
+  id: UUID!
+  createdAt: DateTime!
+  emailAddress: String!
+  reason: MessageSuppressionReason!
+  source: MessageSuppressionSource!
+  unsubscribeTopicId: UUID
+}
+
+enum MessageSuppressionReason {
+  BOUNCE
+  COMPLAINT
+  UNSUBSCRIBE
+}
+
+enum MessageSuppressionSource {
+  WEBHOOK
+  SYSTEM
+}
+
+type MessageSuppressionList {
+  records: [MessageSuppression!]!
+  totalCount: Int!
 }
 
 type UnsubscribeTopic {
@@ -3168,8 +3194,8 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
-  unsubscribePagePreviewUrl: String!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3241,6 +3267,14 @@ input LogicFunctionIdInput {
 input PreviewMessageCampaignAudienceInput {
   listId: String!
   unsubscribeTopicId: String
+}
+
+input FindMessageSuppressionsInput {
+  reason: MessageSuppressionReason
+  searchTerm: String
+  unsubscribeTopicId: UUID
+  limit: Int! = 30
+  offset: Int! = 0
 }
 
 input ListAppConnectionsInput {
@@ -3460,6 +3494,7 @@ type Mutation {
   deleteUnsubscribeTopic(id: String!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
@@ -4544,6 +4579,12 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  displayName: String
+}
+
+input UpdateEmailGroupChannelInput {
+  id: UUID!
+  displayName: String
 }
 
 input CreateEmailingDomainInput {
