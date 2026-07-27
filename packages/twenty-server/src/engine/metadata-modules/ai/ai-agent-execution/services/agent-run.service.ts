@@ -60,24 +60,33 @@ export class AgentRunService {
       application,
     };
 
-    const { result, hasNoMoreAvailableCredits } =
-      await this.agentAsyncExecutorService.executeAgent({
-        agent,
-        userPrompt: input.prompt,
-        authContext,
-        workspaceId: workspace.id,
-        userWorkspaceId: requestUserWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      });
+    try {
+      const { result, hasNoMoreAvailableCredits } =
+        await this.agentAsyncExecutorService.executeAgent({
+          agent,
+          userPrompt: input.prompt,
+          authContext,
+          workspaceId: workspace.id,
+          userWorkspaceId: requestUserWorkspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        });
 
-    if (hasNoMoreAvailableCredits) {
+      if (hasNoMoreAvailableCredits) {
+        return {
+          result: null,
+          error: 'AI agent stopped: no more available credits.',
+          success: false,
+        };
+      }
+
+      return { result, error: null, success: true };
+    } catch (error) {
       return {
         result: null,
-        error: 'AI agent stopped: no more available credits.',
+        error:
+          error instanceof Error ? error.message : 'Agent execution failed',
         success: false,
       };
     }
-
-    return { result, error: null, success: true };
   }
 }
