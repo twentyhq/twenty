@@ -10,6 +10,7 @@ import {
   buildRequirementsText,
   type SubmitClientBriefInput,
 } from 'src/modules/opportunity/intake/mappers/build-requirements-text.mapper';
+import { notifyClientBrief } from 'src/modules/opportunity/intake/services/notify-client-brief.service';
 
 export type SubmitClientBriefResult =
   | { ok: true; opportunityId: string }
@@ -68,6 +69,8 @@ export async function submitClientBrief(
     if (opportunityId === undefined) {
       throw new Error('createOpportunity did not return an id');
     }
+
+    await notifyClientBrief({ opportunityId, input, referringPartner });
 
     return { ok: true, opportunityId };
   } catch (err) {
