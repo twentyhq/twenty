@@ -36,6 +36,10 @@ export class InboundEmailParserService {
       attachments: [],
       participants: extractParticipantsFromParsedEmail(parsedEmail),
       isDraft: false,
+      messageHeaders: parsedEmail.headers.map(({ key, value }) => ({
+        name: key,
+        value,
+      })),
     };
   }
 }

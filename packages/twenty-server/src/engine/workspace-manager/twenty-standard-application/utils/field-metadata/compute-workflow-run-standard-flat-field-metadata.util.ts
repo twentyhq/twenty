@@ -420,6 +420,7 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      isSystemSideEffect: true,
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
           .label,

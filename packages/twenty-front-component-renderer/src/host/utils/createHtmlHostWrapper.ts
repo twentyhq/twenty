@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
+import { useCaretPreservingElementRef } from '@/host/hooks/useCaretPreservingElementRef';
+import { useHtmlHostElementProps } from '@/host/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
-import { filterProps } from '@/host/utils/filterProps';
+import { createPlainHostElement } from '@/host/utils/createPlainHostElement';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
-import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const VOID_ELEMENTS = new Set([
   'area',
@@ -22,59 +22,64 @@ const VOID_ELEMENTS = new Set([
   'wbr',
 ]);
 
+const CARET_PRESERVING_TAGS = new Set(['input', 'textarea']);
+
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
-  const isIframe = htmlTag === 'iframe';
-  const isForm = htmlTag === 'form';
+
+  if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
+    return ({ children, ...props }: WrapperProps) => {
+      const { reactBindableProps, hostEnforcedProps, composedElementRef } =
+        useHtmlHostElementProps(props, htmlTag);
+
+      return createPlainHostElement({
+        htmlTag,
+        isVoid,
+        reactBindableProps,
+        hostEnforcedProps,
+        composedElementRef,
+        children,
+      });
+    };
+  }
+
+  const caretPreservingTag = htmlTag as 'input' | 'textarea';
 
   return ({ children, ...props }: WrapperProps) => {
-    const setEditableFocused = useContext(FrontComponentInputFocusContext);
-    const reactProps = filterProps(props, htmlTag);
+    const {
+      setEditableFocused,
+      reactBindableProps,
+      hostEnforcedProps,
+      composedElementRef,
+    } = useHtmlHostElementProps(props, htmlTag);
 
-    const forcedProps: Record<string, unknown> | undefined = isIframe
-      ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
-      : isForm
-        ? {
-            // The remote component's onSubmit is forwarded asynchronously across
-            // the remote-dom boundary, so its preventDefault lands too late to
-            // stop a native form submission (which navigates and closes the
-            // page). Guard synchronously on the host while still forwarding the
-            // event to the remote handler. (React 19 also blocks the previous
-            // `action="javascript:void(0)"` guard.)
-            onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-              event.preventDefault();
-              const remoteOnSubmit = reactProps.onSubmit;
-              // The remote prop is untrusted across the remote-dom boundary, so
-              // it may not be a function — guard before invoking.
-              if (typeof remoteOnSubmit === 'function') {
-                (
-                  remoteOnSubmit as (
-                    event: React.FormEvent<HTMLFormElement>,
-                  ) => void
-                )(event);
-              }
-            },
-          }
-        : undefined;
+    const caretPreservingElementRef = useCaretPreservingElementRef(
+      composedElementRef,
+      reactBindableProps.value,
+    );
 
     if (
-      htmlTag === 'textarea' ||
-      (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
+      caretPreservingTag === 'textarea' ||
+      isTextLikeInputType(reactBindableProps.type)
     ) {
-      return createCaretPreservingElement(
-        htmlTag,
-        reactProps,
-        forcedProps,
+      return createCaretPreservingElement({
+        htmlTag: caretPreservingTag,
+        reactBindableProps,
+        hostEnforcedProps,
         setEditableFocused,
-      );
+        caretPreservingElementRef,
+      });
     }
 
-    return React.createElement(
+    return createPlainHostElement({
       htmlTag,
-      { ...reactProps, ...forcedProps },
-      isVoid ? undefined : children,
-    );
+      isVoid,
+      reactBindableProps,
+      hostEnforcedProps,
+      composedElementRef,
+      children,
+    });
   };
 };

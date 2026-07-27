@@ -45,6 +45,7 @@ import {
   type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
+  type UninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
@@ -119,6 +120,9 @@ export const buildManifest = async (
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
+  const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
+    [];
+  const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -339,6 +343,14 @@ export const buildManifest = async (
           });
         }
 
+        if (
+          targetFunctionName === TargetFunction.DefineUninstallLogicFunction
+        ) {
+          uninstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -365,6 +377,14 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
+        if (
+          targetFunctionName === TargetFunction.DefineSettingsFrontComponent
+        ) {
+          settingsFrontComponentUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
 
         break;
       }
@@ -502,13 +522,11 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      const {
-        objectFields: objectFieldsWithDefaults,
-        fields: reverseRelationFields,
-      } = getDefaultFieldsInObjectFields({
-        objectConfig,
-        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
-      });
+      const { objectFields: objectFieldsWithDefaults } =
+        getDefaultFieldsInObjectFields({
+          objectConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        });
 
       const labelIdentifierFieldMetadataUniversalIdentifier =
         objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
@@ -529,7 +547,6 @@ export const buildManifest = async (
       };
 
       objects.push(objectManifest);
-      fields.push(...reverseRelationFields);
     }
   }
 
@@ -542,6 +559,18 @@ export const buildManifest = async (
   if (preInstallLogicFunctions.length > 1) {
     errors.push(
       'Only one pre install logic function is allowed per application',
+    );
+  }
+
+  if (uninstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one uninstall logic function is allowed per application',
+    );
+  }
+
+  if (settingsFrontComponentUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one settings front component is allowed per application',
     );
   }
 
@@ -593,6 +622,17 @@ export const buildManifest = async (
               : {}),
             ...(preInstallLogicFunctions.length >= 1
               ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+              : {}),
+            ...(uninstallLogicFunctions.length >= 1
+              ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
+              : {}),
+            ...(settingsFrontComponentUniversalIdentifiers.length >= 1
+              ? {
+                  settingsFrontComponent: {
+                    universalIdentifier:
+                      settingsFrontComponentUniversalIdentifiers[0],
+                  },
+                }
               : {}),
           };
         })()

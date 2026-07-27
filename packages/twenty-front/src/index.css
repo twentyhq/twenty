@@ -9,6 +9,7 @@ body {
 
 html {
   font-size: 13px;
+  background: var(--t-background-tertiary);
 }
 
 button {

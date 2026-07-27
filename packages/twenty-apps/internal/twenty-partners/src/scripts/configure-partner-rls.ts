@@ -2,7 +2,7 @@
 // predicates. Does three things:
 //
 // 1. Upserts row-level-permission predicates on the Partner role:
-//    - "partnerUser IS the current member" on partner/person/company
+//    - "partnerUser IS the current member" on partner/person/company/partnerLink/partnerService/partnerContent
 //    - "(partnerUser IS me) OR (lastActivityAt IS EMPTY)" on application. RLS is validated on
 //      INSERT against the row exactly as submitted, but a partner's Apply workflow creates the
 //      row with partnerUser=null (on-application-created stamps it AFTER insert, as the app).
@@ -39,7 +39,14 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-const SIMPLE_TARGET_OBJECTS = ['partner', 'person', 'company'] as const;
+const SIMPLE_TARGET_OBJECTS = [
+  'partner',
+  'person',
+  'company',
+  'partnerLink',
+  'partnerService',
+  'partnerContent',
+] as const;
 type SimpleTargetObject = (typeof SIMPLE_TARGET_OBJECTS)[number];
 
 // application + opportunity use OR groups (handled separately), but still need existence checks.
@@ -436,6 +443,41 @@ async function main() {
     }
   `;
 
+  const upsertPredicates = async (
+    input: UpsertPredicatesInput,
+    label: string,
+  ): Promise<PredicateResult[]> => {
+    try {
+      const data = await metadataFetch<{
+        upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
+      }>(metadataUrl, apiKey, MUTATION, { input });
+
+      return data.upsertRowLevelPermissionPredicates.predicates;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const canRetryWithoutGroups =
+        input.predicateGroups.length > 0 &&
+        message.includes('rowLevelPermissionPredicateGroup');
+
+      if (!canRetryWithoutGroups) {
+        throw error;
+      }
+
+      console.log(
+        `[rls:configure] ${label}: predicate group upsert failed; ` +
+          'retrying with predicates only (group already exists)',
+      );
+
+      const data = await metadataFetch<{
+        upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
+      }>(metadataUrl, apiKey, MUTATION, {
+        input: { ...input, predicateGroups: [] },
+      });
+
+      return data.upsertRowLevelPermissionPredicates.predicates;
+    }
+  };
+
   const results: PredicateResult[] = [];
 
   for (const name of SIMPLE_TARGET_OBJECTS) {
@@ -478,10 +520,8 @@ async function main() {
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
   {
-    const oppData = await metadataFetch<{
-      upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
-    }>(metadataUrl, apiKey, MUTATION, {
-      input: {
+    const oppPredicates = await upsertPredicates(
+      {
         roleId: partnerRole.id,
         objectMetadataId: opportunityObjectId,
         predicateGroups: [
@@ -509,10 +549,8 @@ async function main() {
           },
         ],
       } satisfies UpsertPredicatesInput,
-    });
-
-    const oppPredicates =
-      oppData.upsertRowLevelPermissionPredicates.predicates;
+      'opportunity',
+    );
 
     if (oppPredicates.length < 2) {
       throw new Error(
@@ -536,10 +574,8 @@ async function main() {
   // on lastActivityAt resolves to `{ is: 'NULL' }`, which is unambiguous on both the insert
   // check and the SQL read path (a relation IS_EMPTY is riskier there). See header for the leak.
   {
-    const appData = await metadataFetch<{
-      upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
-    }>(metadataUrl, apiKey, MUTATION, {
-      input: {
+    const appPredicates = await upsertPredicates(
+      {
         roleId: partnerRole.id,
         objectMetadataId: applicationObjectIdForPredicate,
         predicateGroups: [
@@ -566,10 +602,8 @@ async function main() {
           },
         ],
       } satisfies UpsertPredicatesInput,
-    });
-
-    const appPredicates =
-      appData.upsertRowLevelPermissionPredicates.predicates;
+      'application',
+    );
 
     if (appPredicates.length < 2) {
       throw new Error(

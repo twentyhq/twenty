@@ -1,7 +1,5 @@
-import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
-  type FieldManifest,
   getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
@@ -34,13 +32,7 @@ export const getDefaultFieldsInObjectFields = ({
 }: {
   objectConfig: ObjectConfig;
   applicationUniversalIdentifier: string;
-}): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
-  const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
-    getDefaultRelationObjectFields({
-      objectConfig,
-      applicationUniversalIdentifier,
-    });
-
+}): { objectFields: ObjectFieldManifest[] } => {
   const objectConfigFieldNames = (objectConfig.fields ?? []).map(
     (field) => field.name,
   );
@@ -56,11 +48,5 @@ export const getDefaultFieldsInObjectFields = ({
     objectFieldsWithDefaults.push(defaultNameObjectField);
   }
 
-  for (const defaultRelationField of defaultRelationObjectFields) {
-    if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
-      objectFieldsWithDefaults.push(defaultRelationField);
-    }
-  }
-
-  return { objectFields: objectFieldsWithDefaults, fields: reverseFields };
+  return { objectFields: objectFieldsWithDefaults };
 };

@@ -7,7 +7,6 @@ type UserAuthContextInput = {
   user: NonNullable<RawAuthContext['user']>;
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
-  workspaceMetadataVersion?: string;
 };
 
 export const buildUserAuthContext = (
@@ -20,6 +19,5 @@ export const buildUserAuthContext = (
     user: input.user,
     workspaceMemberId: input.workspaceMemberId,
     workspaceMember: input.workspaceMember,
-    workspaceMetadataVersion: input.workspaceMetadataVersion,
   };
 };

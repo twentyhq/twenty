@@ -21,6 +21,11 @@ export const seedFeatureFlags = async ({
     .orIgnore()
     .values([
       {
+        key: FeatureFlagKey.IS_APP_CLAIMING_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
         key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
         workspaceId: workspaceId,
         value: false,
@@ -42,6 +47,11 @@ export const seedFeatureFlags = async ({
       },
       {
         key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },

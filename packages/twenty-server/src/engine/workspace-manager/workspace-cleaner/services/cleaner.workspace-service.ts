@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
+  renderEmail,
 } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -130,8 +130,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     const workspaceDeletionMsg = msg`Your workspace is paused — reactivate to keep your data`;
     const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
@@ -220,8 +220,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     if (!isDefined(workspaceMember.userEmail)) {
       throw new Error('Workspace member email is missing');

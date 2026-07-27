@@ -9,6 +9,7 @@ type ConnectionProviderRow = {
   displayName: string;
   type: string;
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
+  onConnectLogicFunctionUniversalIdentifier: string | null;
 };
 
 export const findConnectionProvidersByApplication = async (
@@ -17,7 +18,7 @@ export const findConnectionProvidersByApplication = async (
   return globalThis.testDataSource.query(
     `SELECT cp.id, cp."universalIdentifier", cp."applicationId",
             cp."workspaceId", cp.name, cp."displayName", cp.type,
-            cp."oauthConfig"
+            cp."oauthConfig", cp."onConnectLogicFunctionUniversalIdentifier"
        FROM core."connectionProvider" cp
        JOIN core."application" app ON app.id = cp."applicationId"
       WHERE app."universalIdentifier" = $1

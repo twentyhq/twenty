@@ -221,7 +221,8 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
           universalIdentifier:
             STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
         },
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         objectMetadataUniversalIdentifier:
           messageThreadObjectMetadata.universalIdentifier,
       }),

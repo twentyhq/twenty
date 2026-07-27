@@ -24,6 +24,11 @@ Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattf
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## In diesem Abschnitt
@@ -36,7 +41,7 @@ Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattf
     `defineRole` – deklariert, was die Logikfunktionen Ihrer App lesen und schreiben können.
   </Card>
   <Card title="Installations-Hooks" icon="wrench" href="/l/de/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` und `definePostInstallLogicFunction` – Daten sichern, Standardwerte befüllen, Aktualisierungen validieren.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` und `defineUninstallLogicFunction` – Daten sichern, Standardwerte befüllen, Aktualisierungen validieren, beim Entfernen aufräumen.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattf
 
 * **Application** ist der Einstiegspunkt. Jede App hat genau einen `defineApplication()`-Aufruf, und dieser verweist auf eine **Rolle** als Standard.
 * Die **Rolle** steuert, was die Logikfunktionen und Frontend-Komponenten der App lesen und schreiben können. Folgen Sie dem Prinzip der geringsten Privilegien: Gewähren Sie nur die Berechtigungen, die Ihr Code tatsächlich benötigt.
-* **Install Hooks** laufen während der Installation oder Aktualisierung – Pre-Install vor der Metadatenmigration (so kann ein riskantes Upgrade abgelehnt werden), Post-Install nach der Migration (so können Standarddaten gegen das neue Schema befüllt werden).
+* **Install Hooks** laufen während der Installation oder Aktualisierung – Pre-Install vor der Metadatenmigration (so kann ein riskantes Upgrade abgelehnt werden), Post-Install nach der Migration (so können Standarddaten gegen das neue Schema befüllt werden). Der Uninstall-Hook wird direkt ausgeführt, bevor die App entfernt wird, sodass er externe Ressourcen bereinigen kann, während die Daten der App noch lesbar sind.
 
 <Note>
 Installations-Hooks nutzen die Laufzeit der [Logikfunktion](/l/de/developers/extend/apps/logic/logic-functions) – gleiche Handler-Signatur, gleiche Umgebungsvariablen, gleicher typisierter API-Client –, werden aber mit ihren eigenen Define-Funktionen deklariert und leben außerhalb des regulären Trigger-Modells (HTTP, Cron, Datenbankereignisse).

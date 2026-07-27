@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application default relation name collision should reject a manifest field named after a default relation when it carries a pinned universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "attachments" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "attachments" is not available as it is already used by another field",
+              "value": "attachments",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "attachments",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "targetDefaultRelationCollisionTarget",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_6d15112a8688389df51c6dfc321",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
+    "summary": {
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application default relation name collision should reject a manifest field named after a default relation when it carries the derived universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER",
+              "message": "Universal identifier is reserved for system-managed metadata",
+              "userFriendlyMessage": "This identifier is reserved by the system",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "attachments",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This identifier is reserved by the system",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

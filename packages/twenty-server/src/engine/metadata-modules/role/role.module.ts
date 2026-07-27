@@ -7,6 +7,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -37,6 +38,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     TypeOrmModule.forFeature([
       ApplicationEntity,
+      AgentEntity,
       RoleEntity,
       RoleTargetEntity,
       ObjectPermissionEntity,
@@ -72,6 +74,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceRolesPermissionsCacheService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(RoleTargetEntity),
+    provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(ObjectPermissionEntity),
     provideWorkspaceScopedRepository(FieldPermissionEntity),
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateEntity),

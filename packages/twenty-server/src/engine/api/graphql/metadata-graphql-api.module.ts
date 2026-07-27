@@ -16,6 +16,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
         DataloaderModule,
         MetricsModule,
         I18nModule,
+        WorkspaceCacheModule,
       ],
       inject: [
         TwentyConfigService,
@@ -36,6 +39,7 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
         MetricsService,
         I18nService,
         FeatureFlagService,
+        WorkspaceCacheService,
       ],
     }),
     MetadataEngineModule,

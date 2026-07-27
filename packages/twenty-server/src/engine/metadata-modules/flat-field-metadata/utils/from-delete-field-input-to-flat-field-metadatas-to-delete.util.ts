@@ -66,6 +66,13 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
+  if (flatFieldMetadataToDelete.isSystemSideEffect === true) {
+    throw new FieldMetadataException(
+      `Cannot delete system-managed field "${flatFieldMetadataToDelete.name}"`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: flatFieldMetadataToDelete.objectMetadataId,
     flatEntityMaps: existingFlatObjectMetadataMaps,

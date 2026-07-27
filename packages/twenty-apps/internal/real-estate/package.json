@@ -1,0 +1,30 @@
+{
+  "name": "real-estate",
+  "version": "0.7.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
+  },
+  "keywords": [
+    "twenty-app"
+  ],
+  "packageManager": "yarn@4.13.0",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.0.0",
+    "oxlint": "^0.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "twenty-client-sdk": "2.23.0-alpha.2",
+    "twenty-sdk": "2.23.0-alpha.2",
+    "typescript": "^5.9.3"
+  }
+}

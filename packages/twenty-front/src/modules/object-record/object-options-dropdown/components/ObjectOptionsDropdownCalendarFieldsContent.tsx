@@ -1,7 +1,8 @@
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -11,7 +12,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,11 +31,11 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { availableFieldsForCalendar, navigateToDateFieldSettings } =
     useGetAvailableFieldsForCalendar();
 
-  const setRecordIndexCalendarFieldMetadataId = useSetAtomState(
-    recordIndexCalendarFieldMetadataIdState,
+  const setRecordIndexCalendarFieldMetadataId = useSetAtomComponentState(
+    recordIndexCalendarFieldMetadataIdComponentState,
   );
-  const setRecordIndexCalendarEndFieldMetadataId = useSetAtomState(
-    recordIndexCalendarEndFieldMetadataIdState,
+  const setRecordIndexCalendarEndFieldMetadataId = useSetAtomComponentState(
+    recordIndexCalendarEndFieldMetadataIdComponentState,
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId

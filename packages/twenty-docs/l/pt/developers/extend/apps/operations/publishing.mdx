@@ -69,7 +69,7 @@ Para lançar uma atualização:
 
 1. Atualize o campo `version` no seu `package.json` (por exemplo, `1.2.3` → `1.2.4`, `1.3.0` ou `2.0.0`)
 2. Execute `yarn twenty app:publish --private` (ou `yarn twenty app:publish --private --remote production`)
-3. Os espaços de trabalho que têm o aplicativo instalado verão a atualização disponível em suas configurações
+3. Espaços de trabalho que têm o app instalado e ativaram a atualização automática para o app (na aba Configurações do app) são atualizados automaticamente em segundo plano; os demais verão a atualização disponível em suas configurações
 
 <Note>
 Tags de pré-lançamento funcionam como esperado: incrementar `1.0.0-rc.1` → `1.0.0-rc.2` é permitido, e uma versão final como `1.0.0` é corretamente reconhecida como superior a `1.0.0-rc.5`. A versão em `package.json` deve ser, ela própria, uma string semver válida.
@@ -112,7 +112,7 @@ O servidor realiza a verificação definitiva — ele valida `engines.twenty` ta
 
 ## CI/CD automatizado (fluxos de trabalho pré-configurados)
 
-Os apps gerados com `create-twenty-app` já vêm com dois fluxos de trabalho do GitHub Actions prontos, em `.github/workflows/`. Eles estão prontos para executar assim que você fizer push do repositório para o GitHub — nenhuma configuração extra é necessária para CI, e CD requer apenas um único segredo.
+Os apps gerados com `create-twenty-app` já vêm com três fluxos de trabalho do GitHub Actions prontos, em `.github/workflows/`. A CI é executada sem nenhuma configuração, a CD requer um único segredo e a publicação no npm exige uma configuração única de trusted-publisher do npm.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,33 @@ O `TWENTY_DEPLOY_URL` padrão de `http://localhost:3000` é um placeholder — e
 
 Adicione o rótulo `deploy` a um pull request. A condição `if:` em `cd.yml` executará o job para esse PR usando o commit HEAD do PR, permitindo que você valide uma alteração no servidor de destino antes de fazer o merge.
 
+### Publicar — `publish.yml`
+
+Publica seu app no npm com procedência quando você envia uma tag de versão (por exemplo, `v1.0.0`), ou quando executa o fluxo de trabalho manualmente na aba Actions.
+
+**O que faz:**
+
+1. Faz o checkout do seu app, configura o Node.js e atualiza o npm (a publicação confiável requer o npm 11.5.1 ou posterior).
+2. Executa `yarn twenty app:publish`, que compila o app e publica `.twenty/output` no npm. Em CI, adiciona automaticamente `--provenance` e `--access public`, portanto não são necessárias flags no fluxo de trabalho.
+
+**Configuração única:**
+
+Em npmjs.com, abra o seu pacote > **Settings → Trusted Publisher** e registre este repositório com o fluxo de trabalho `publish.yml` (consulte a [documentação de publicação confiável do npm](https://docs.npmjs.com/trusted-publishers)). Publicar com proveniência certifica qual repositório do GitHub compilou o pacote, o que também é como você reivindica a propriedade do seu app em um marketplace da Twenty.
+
+<Note>
+npm só aceita proveniência de repositórios de código-fonte **públicos**. Se você publicar a partir de um repositório privado, o npm rejeita o pacote de proveniência OIDC com um `E422 ... Erro: `Unsupported GitHub Actions source repository visibility: "private"`. Para publicar a partir de um repositório privado, desative a proveniência definindo `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'`no`env`da etapa de publicação (uma dica comentada está incluída no`publish.yml\` gerado pelo scaffold):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Fixando as ações reutilizáveis
 
-Ambos os fluxos de trabalho fazem referência a ações reutilizáveis em `@main`, portanto as atualizações de ações no repositório `twentyhq/twenty` são aplicadas automaticamente. Se você quiser builds determinísticos, substitua `@main` por um SHA de commit ou uma tag de release em cada linha `uses:`.
+Os fluxos de trabalho `ci.yml` e `cd.yml` fazem referência a ações reutilizáveis em `@main`, portanto as atualizações de ações no repositório `twentyhq/twenty` são aplicadas automaticamente. Se você quiser builds determinísticos, substitua `@main` por um SHA de commit ou uma tag de release em cada linha `uses:`.
 
 ## Publicação no npm
 
@@ -241,37 +265,12 @@ Se o seu aplicativo não definir um `aboutDescription` em `defineApplication()`,
 
 ### Publicação via CI
 
-Use este workflow do GitHub Actions para publicar automaticamente a cada release (usa [OIDC](https://docs.npmjs.com/trusted-publishers)):
+O fluxo de trabalho `publish.yml` estruturado conforme descrito acima publica automaticamente no npm em tags de versão, com proveniência. Como `yarn twenty app:publish` adiciona `--provenance` e `--access public` para você quando é executado em CI, o fluxo de trabalho não precisa de flags do npm — apenas da configuração única de trusted publisher.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Para outros sistemas de CI (GitLab CI, CircleCI etc.), aplicam-se os mesmos três comandos: `yarn install`, `yarn twenty dev:build` e, em seguida, `npm publish` a partir de `.twenty/output`.
+Para outros sistemas de CI (GitLab CI, CircleCI, etc.), execute `yarn install` e depois `yarn twenty app:publish`. A proveniência é emitida quando o ambiente pode gerar um token OIDC e é ignorada automaticamente caso contrário.
 
 <Note>
-**Proveniência do npm** é opcional, mas recomendada. Publicar com `--provenance` adiciona um selo de confiança à sua listagem no npm, permitindo que os usuários verifiquem que o pacote foi construído a partir de um commit específico em um pipeline de CI público. Consulte a [documentação de proveniência do npm](https://docs.npmjs.com/generating-provenance-statements) para instruções de configuração.
+A **proveniência do npm** adiciona um selo de confiança à sua listagem no npm, permitindo que os usuários verifiquem que o pacote foi construído a partir de um commit específico em um pipeline de CI público. É também o que permite que você reivindique a propriedade do seu app em um marketplace da Twenty. Consulte a [documentação de proveniência do npm](https://docs.npmjs.com/generating-provenance-statements) para mais detalhes.
 </Note>
 
 ## Instalando aplicativos

@@ -12,6 +12,8 @@ export type CallRecordingRecord = {
   endedAt?: string;
   calendarEventId?: string;
   externalBotId?: string;
+  botScheduleAttemptedAt?: string;
+  botScheduleIdempotencyKey?: string;
   externalRecordingId?: string;
   callRecorderFailureReason?: string;
 };

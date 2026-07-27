@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { Draggable } from '@hello-pangea/dnd';
 
-import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
+import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/month/constants/RecordCalendarCardDndType';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -34,28 +34,21 @@ export const RecordCalendarCardDraggableContainer = ({
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{ instanceId: recordId }}
     >
-      <Draggable
-        key={draggableId}
-        draggableId={draggableId}
+      <DragDropItemSortableCell
+        id={draggableId}
         index={index}
-        isDragDisabled={dragIsDisabled}
+        group={calendarDay}
+        type={RECORD_CALENDAR_CARD_DND_TYPE}
+        accept={RECORD_CALENDAR_CARD_DND_TYPE}
+        disabled={dragIsDisabled}
       >
-        {(draggableProvided) => (
-          <StyledDraggableContainer
-            id={`record-calendar-card-${recordId}-${calendarDay}`}
-            ref={draggableProvided?.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.dragHandleProps}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getCssCompatibleDraggableProps(
-              draggableProvided.draggableProps,
-            )}
-            data-selectable-id={recordId}
-          >
-            <RecordCalendarCard recordId={recordId} />
-          </StyledDraggableContainer>
-        )}
-      </Draggable>
+        <StyledDraggableContainer
+          id={`record-calendar-card-${recordId}-${calendarDay}`}
+          data-selectable-id={recordId}
+        >
+          <RecordCalendarCard recordId={recordId} />
+        </StyledDraggableContainer>
+      </DragDropItemSortableCell>
     </RecordCalendarCardComponentInstanceContext.Provider>
   );
 };

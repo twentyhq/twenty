@@ -4,6 +4,7 @@ import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
   AI_SDK_ANTHROPIC,
+  AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
@@ -37,6 +38,11 @@ export const getCallLevelProviderOptions = ({
       return {
         ...(providerOptions ?? {}),
         openai: { store: false, ...(promptCacheKey ? { promptCacheKey } : {}) },
+      };
+    case AI_SDK_AZURE:
+      return {
+        ...(providerOptions ?? {}),
+        azure: { store: false },
       };
     default:
       return providerOptions;

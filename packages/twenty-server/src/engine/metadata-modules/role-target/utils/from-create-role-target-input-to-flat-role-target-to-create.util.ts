@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
@@ -13,12 +14,16 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   workspaceId,
   flatRoleTargetMaps,
   flatRoleMaps,
+  flatAgentMaps,
   flatApplication,
 }: {
   createRoleTargetInput: CreateRoleTargetInput;
   workspaceId: string;
   flatApplication: FlatApplication;
-} & Pick<AllFlatEntityMaps, 'flatRoleTargetMaps' | 'flatRoleMaps'>): {
+} & Pick<
+  AllFlatEntityMaps,
+  'flatRoleTargetMaps' | 'flatRoleMaps' | 'flatAgentMaps'
+>): {
   flatRoleTargetToCreate: FlatRoleTarget;
   flatRoleTargetsToDelete: FlatRoleTarget[];
 } => {
@@ -34,12 +39,21 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     },
   );
 
+  const agentUniversalIdentifier =
+    targetMetadataForeignKey === 'agentId'
+      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityMaps: flatAgentMaps,
+          flatEntityId: targetId,
+        }).universalIdentifier
+      : null;
+
   const flatRoleTargetToCreate: FlatRoleTarget = {
     id: v4(),
     roleId,
     roleUniversalIdentifier,
     userWorkspaceId: null,
     agentId: null,
+    agentUniversalIdentifier,
     apiKeyId: null,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),

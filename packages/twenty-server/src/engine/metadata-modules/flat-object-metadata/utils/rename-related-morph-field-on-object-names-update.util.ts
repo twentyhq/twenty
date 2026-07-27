@@ -3,6 +3,7 @@ import {
   type FieldMetadataType,
   type FromTo,
 } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
@@ -52,9 +53,15 @@ const updateMorphFlatFieldName = ({
       })
     : undefined;
 
+  const newLabel =
+    fromMorphFlatFieldMetadata.isSystemSideEffect === true
+      ? capitalize(toRelationTargetFlatObjectMetadata.nameSingular)
+      : fromMorphFlatFieldMetadata.label;
+
   return {
     ...fromMorphFlatFieldMetadata,
     name: newMorphFieldName,
+    label: newLabel,
     universalSettings: {
       ...fromMorphFlatFieldMetadata.universalSettings,
       joinColumnName: newJoinColumnName,
@@ -69,7 +76,9 @@ type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
   Pick<
     AllFlatEntityMaps,
     'flatFieldMetadataMaps' | 'flatObjectMetadataMaps' | 'flatIndexMaps'
-  >;
+  > & {
+    systemSideEffectMorphFieldsOnly: boolean;
+  };
 
 type RenameRelatedMorphFieldOnObjectNamesUpdateReturnType = {
   morphFlatFieldMetadatasToUpdate: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
@@ -81,6 +90,7 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   flatIndexMaps,
+  systemSideEffectMorphFieldsOnly,
 }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): RenameRelatedMorphFieldOnObjectNamesUpdateReturnType => {
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -92,7 +102,11 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
     getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
       flatFieldMetadataMaps,
       objectFlatFieldMetadatas,
-    });
+    }).filter(
+      (morphFlatFieldMetadata) =>
+        (morphFlatFieldMetadata.isSystemSideEffect === true) ===
+        systemSideEffectMorphFieldsOnly,
+    );
 
   const initialAccumulator: RenameRelatedMorphFieldOnObjectNamesUpdateReturnType =
     {

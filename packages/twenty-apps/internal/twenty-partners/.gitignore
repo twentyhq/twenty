@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 *.d.ts
+
+# local graphify index (never commit — run `graphify update .` locally)
+graphify-out/

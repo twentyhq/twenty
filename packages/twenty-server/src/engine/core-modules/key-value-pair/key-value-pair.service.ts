@@ -19,11 +19,13 @@ export class KeyValuePairService<
   async get<K extends keyof KeyValueTypesMap>({
     userId,
     workspaceId,
+    applicationId,
     type,
     key,
   }: {
     userId?: string | null;
     workspaceId?: string | null;
+    applicationId?: string | null;
     type: KeyValuePairType;
     key?: Extract<K, string>;
   }): Promise<Array<KeyValueTypesMap[K]>> {
@@ -40,6 +42,9 @@ export class KeyValuePairService<
             ? { workspaceId: IsNull() }
             : { workspaceId }),
         ...(key === undefined ? {} : { key }),
+        ...(applicationId == null
+          ? { applicationId: IsNull() }
+          : { applicationId }),
         type,
       },
     })) as Array<KeyValueTypesMap[K]>;
@@ -54,12 +59,14 @@ export class KeyValuePairService<
     {
       userId,
       workspaceId,
+      applicationId,
       key,
       value,
       type,
     }: {
       userId?: string | null;
       workspaceId?: string | null;
+      applicationId?: string | null;
       key: Extract<K, string>;
       value: KeyValueTypesMap[K];
       type: KeyValuePairType;
@@ -68,8 +75,11 @@ export class KeyValuePairService<
   ) {
     const normalizedUserId = userId ?? null;
     const normalizedWorkspaceId = workspaceId ?? null;
-    const hasNullUserAndWorkspace =
-      normalizedUserId === null && normalizedWorkspaceId === null;
+    const normalizedApplicationId = applicationId ?? null;
+    const hasNullUserAndWorkspaceAndApplication =
+      normalizedUserId === null &&
+      normalizedWorkspaceId === null &&
+      normalizedApplicationId === null;
     const keyValuePairRepository = queryRunner
       ? queryRunner.manager.getRepository(KeyValuePairEntity)
       : this.keyValuePairRepository;
@@ -77,6 +87,7 @@ export class KeyValuePairService<
     const upsertData = {
       userId: normalizedUserId,
       workspaceId: normalizedWorkspaceId,
+      applicationId: normalizedApplicationId,
       key,
       value,
       type,
@@ -85,11 +96,18 @@ export class KeyValuePairService<
     const conflictPaths: string[] = ['key'];
     let indexPredicate: string | undefined;
 
-    if (hasNullUserAndWorkspace) {
-      indexPredicate = '"userId" IS NULL AND "workspaceId" IS NULL';
+    if (normalizedApplicationId !== null) {
+      conflictPaths.push('applicationId');
+      indexPredicate =
+        normalizedWorkspaceId === null
+          ? '"applicationId" IS NOT NULL AND "workspaceId" IS NULL'
+          : '"applicationId" IS NOT NULL AND "workspaceId" IS NOT NULL';
+    } else if (hasNullUserAndWorkspaceAndApplication) {
+      indexPredicate =
+        '"userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedUserId === null) {
       conflictPaths.push('workspaceId');
-      indexPredicate = '"userId" IS NULL';
+      indexPredicate = '"userId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedWorkspaceId === null) {
       conflictPaths.push('userId');
       indexPredicate = '"workspaceId" IS NULL';
@@ -107,11 +125,13 @@ export class KeyValuePairService<
     {
       userId,
       workspaceId,
+      applicationId,
       type,
       key,
     }: {
       userId?: string | null;
       workspaceId?: string | null;
+      applicationId?: string | null;
       type: KeyValuePairType;
       key: Extract<keyof KeyValueTypesMap, string>;
     },
@@ -128,6 +148,11 @@ export class KeyValuePairService<
         : workspaceId === null
           ? { workspaceId: IsNull() }
           : { workspaceId }),
+      // Application rows are isolated from core key-value pairs: without an
+      // explicit applicationId we only match rows where it is NULL.
+      ...(applicationId == null
+        ? { applicationId: IsNull() }
+        : { applicationId }),
       type,
       key,
     };

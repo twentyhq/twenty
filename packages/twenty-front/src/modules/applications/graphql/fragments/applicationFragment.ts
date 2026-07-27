@@ -22,6 +22,7 @@ export const APPLICATION_FRAGMENT = gql`
       logoUrl
     }
     canBeUninstalled
+    autoUpgrade
     defaultRoleId
     settingsCustomTabFrontComponentId
     availablePackages

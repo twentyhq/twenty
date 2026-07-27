@@ -8,15 +8,17 @@ Frontendové komponenty jsou React komponenty, které se vykreslují přímo v u
 
 ## Kde lze použít frontendové komponenty
 
-Frontendové komponenty se mohou vykreslovat na dvou místech v rámci Twenty:
+Frontendové komponenty se mohou vykreslovat na třech místech v rámci Twenty:
 
 * **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
 * **Widgety (nástěnky a stránky záznamů)** — front komponenty lze vkládat jako widgety do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts). Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
+* **Nastavení aplikace** — Definovaná pomocí [`defineSettingsFrontComponent()`](#custom-settings-component), frontendová komponenta se vykreslí jako sekce na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
-Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Dva způsoby, jak to udělat, jsou:
+Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Tři způsoby, jak to udělat, jsou:
 
 * **Spárujte ji s [položkou příkazové nabídky](/l/cs/developers/extend/apps/layout/command-menu-items)** — zaregistruje ji v příkazové nabídce (Cmd+K) a volitelně také jako připnutou rychlou akci.
 * **Vložte ji jako widget do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts)** — umístí ji na detailní stránku záznamu nebo na nástěnku.
+* **Definujte ji pomocí [`defineSettingsFrontComponent()`](#custom-settings-component)** — vykreslí ji jako sekci na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
 ## Základní příklad
 
@@ -76,6 +78,34 @@ Kliknutím na něj vykreslíte komponentu přímo ve stránce.
 ## Umístění frontendové komponenty na stránku
 
 Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz [Rozložení stránek](/l/cs/developers/extend/apps/layout/page-layouts).
+
+## Vlastní komponenta nastavení
+
+Chcete-li nahradit automaticky generované uživatelské rozhraní pro konfiguraci proměnných na kartě **Settings** (Nastavení) vaší aplikace vlastní komponentou, definujte ji pomocí `defineSettingsFrontComponent` místo `defineFrontComponent`. Používá stejná [konfigurační pole](#configuration-fields) (kromě `isHeadless`, který není podporován, protože komponenta nastavení vždy vykresluje viditelné uživatelské rozhraní) a zároveň označuje komponentu jako uživatelské rozhraní nastavení aplikace.
+
+Komponenta se vykreslí jako sekce **uvnitř** karty Settings, nikoli jako náhrada celé karty. Systémem spravované sekce Twenty — automatická aktualizace, App URL a připojení — se vždy zobrazují nad ní a aplikace je nemůže přebít.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Na jednu aplikaci je povolena pouze jedna frontová komponenta nastavení; deklarace více než jedné způsobí selhání sestavení. Je-li přítomna, karta **Settings** aplikace vykreslí tuto komponentu místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
 
 ## Headless vs. ne-headless
 

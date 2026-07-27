@@ -17,6 +17,7 @@ export enum AppPath {
   BookCall = '/book-call',
 
   // Onboarded
+  WorkspaceSetup = '/workspace-setup',
   Index = '/',
   TasksPage = '/objects/tasks',
   OpportunitiesPage = '/objects/opportunities',

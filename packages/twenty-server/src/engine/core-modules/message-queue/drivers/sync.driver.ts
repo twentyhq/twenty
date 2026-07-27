@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -23,6 +25,28 @@ export class SyncDriver implements MessageQueueDriver {
     data: T,
   ): Promise<void> {
     await this.processJob(queueName, { id: '', name: jobName, data });
+  }
+
+  async bulkAdd<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+  ): Promise<void> {
+    let firstError: unknown = undefined;
+
+    // Each payload is an independent job in BullMQ, so a failing one must not
+    // prevent the others from being processed
+    for (const data of dataItems) {
+      try {
+        await this.processJob(queueName, { id: '', name: jobName, data });
+      } catch (error) {
+        firstError = firstError ?? error;
+      }
+    }
+
+    if (isDefined(firstError)) {
+      throw firstError;
+    }
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({

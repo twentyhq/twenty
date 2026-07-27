@@ -59,6 +59,7 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'globalWorkspaceOrmManager'
   | 'recordPositionService'
   | 'workflowValidationService'
+  | 'workflowVersionCoreSyncService'
 >;
 
 type CreateCompleteWorkflowToolContext = WorkflowToolContext & {
@@ -264,40 +265,39 @@ const createWorkflowVersion = async ({
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
 }): Promise<string> => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
+  const workflowVersionId = uuidv4();
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowVersionRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'workflowVersion',
-        context.rolePermissionConfig,
+  await deps.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+    context.workspaceId,
+    async (workflowVersionRepository, entityManager) => {
+      const versionPosition =
+        await deps.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflowVersion',
+          },
+          workspaceId: context.workspaceId,
+        });
+
+      await workflowVersionRepository.insert(
+        {
+          id: workflowVersionId,
+          workflowId,
+          name: 'v1',
+          status: WorkflowVersionStatus.DRAFT,
+          trigger,
+          steps,
+          position: versionPosition,
+        },
+        entityManager,
       );
 
-    const versionPosition =
-      await deps.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: {
-          isCustom: false,
-          nameSingular: 'workflowVersion',
-        },
-        workspaceId: context.workspaceId,
-      });
+      return workflowVersionId;
+    },
+  );
 
-    const workflowVersion = {
-      id: uuidv4(),
-      workflowId,
-      name: 'v1',
-      status: WorkflowVersionStatus.DRAFT,
-      trigger,
-      steps,
-      position: versionPosition,
-    };
-
-    await workflowVersionRepository.insert(workflowVersion);
-
-    return workflowVersion.id;
-  }, authContext);
+  return workflowVersionId;
 };
 
 const updateWorkflowStatus = async ({

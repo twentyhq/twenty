@@ -1,5 +1,4 @@
-import { type DragDropProvider } from '@dnd-kit/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
@@ -11,8 +10,8 @@ import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/reco
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
-import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { resolveDragDropItemDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropItemDrop';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -20,22 +19,13 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
-  >
->[0];
-type DragMovePayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
 
 type PendingReorder = {
   fromIndex: number;
@@ -107,7 +97,7 @@ export const useRecordBoardColumnDndKit = (): {
       return null;
     }
 
-    return resolveDragDropColumnDrop({
+    return resolveDragDropItemDrop({
       pointerX,
       sourceIndex,
       scrollWrapperElement,

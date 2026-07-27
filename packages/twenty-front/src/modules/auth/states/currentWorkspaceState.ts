@@ -33,7 +33,6 @@ export type CurrentWorkspace = Pick<
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'
-  | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
   | 'eventLogRetentionDays'

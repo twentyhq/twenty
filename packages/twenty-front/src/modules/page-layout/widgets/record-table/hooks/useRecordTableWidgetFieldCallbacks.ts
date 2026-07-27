@@ -1,5 +1,6 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,31 +23,10 @@ export const useRecordTableWidgetFieldCallbacks = ({
 
   const store = useStore();
 
-  const handleFieldUpdated = (
-    viewFieldId: string,
-    update: Partial<{ position: number; isVisible: boolean }>,
-  ) => {
-    store.set(recordTableWidgetViewDraftState, (prev) => {
-      const widgetViewDraft = prev[widgetId];
-
-      if (!isDefined(widgetViewDraft)) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [widgetId]: {
-          ...widgetViewDraft,
-          viewFields: widgetViewDraft.viewFields.map((field) =>
-            field.id === viewFieldId ||
-            field.clientRecordFieldId === viewFieldId
-              ? { ...field, ...update }
-              : field,
-          ),
-        },
-      };
-    });
-  };
+  const { handleFieldUpdated } = useRecordTableWidgetFieldUpdate({
+    pageLayoutId,
+    widgetId,
+  });
 
   const handleFieldCreated = (recordField: RecordField) => {
     store.set(recordTableWidgetViewDraftState, (prev) => {

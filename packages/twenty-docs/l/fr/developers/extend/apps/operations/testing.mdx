@@ -259,4 +259,4 @@ Cela exécute `tsc --noEmit` sur le `tsconfig.json` de votre application et sign
 
 Le générateur crée un workflow prêt à l’emploi dans `.github/workflows/ci.yml`. À chaque push sur `main` et à chaque pull request, il lance un serveur Twenty éphémère dans le runner (via l’action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), puis exécute `yarn lint`, `yarn typecheck`, `yarn test:unit` et `yarn test` avec `TWENTY_API_URL` / `TWENTY_API_KEY` pointant vers ce serveur. Aucun secret n’est requis, et vous pouvez fixer la version du serveur via la variable d’environnement `TWENTY_VERSION` en haut du workflow.
 
-Voir [Publication → CI/CD automatisé](/l/fr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) pour un guide complet des deux workflows générés (`ci.yml` et le pipeline de déploiement `cd.yml`).
+Voir [Publication → CI/CD automatisé](/l/fr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) pour un guide complet des trois workflows générés (`ci.yml`, le pipeline de déploiement `cd.yml` et `publish.yml` pour la publication sur npm).
