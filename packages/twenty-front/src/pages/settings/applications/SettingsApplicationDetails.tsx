@@ -252,10 +252,14 @@ export const SettingsApplicationDetails = () => {
       const hasHttpTriggeredFunctions =
         applicationHasHttpTriggeredFunctions(application);
       const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasSettingsFrontComponent = isDefined(
+        application?.settingsCustomTabFrontComponentId,
+      );
       const hasNothingToConfigure =
         !hasVariables &&
         !hasConnectionProviders &&
         !canShowFunctionDomain &&
+        !hasSettingsFrontComponent &&
         !isUpgradableApplicationSourceType(sourceType);
 
       return {

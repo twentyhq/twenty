@@ -8,15 +8,17 @@ icon: window-maximize
 
 ## フロントコンポーネントを使用できる場所
 
-フロントコンポーネントは、Twenty 内の2つの場所でレンダリングできます:
+フロントコンポーネントは、Twenty 内の3つの場所でレンダリングできます:
 
 * **サイドパネル** — ヘッドレスでないフロントコンポーネントは、右側のサイドパネルで開きます。 フロントコンポーネントがコマンドメニューからトリガーされた場合のデフォルトの動作です。
 * **ウィジェット（ダッシュボードとレコードページ）** — フロントコンポーネントは、[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)内にウィジェットとして埋め込めます。 ダッシュボードやレコードページのレイアウトを設定する際、ユーザーはフロントコンポーネントのウィジェットを追加できます。
+* **App settings** — [`defineSettingsFrontComponent()`](#custom-settings-component) で定義されたフロントコンポーネントは、アプリの **Settings** タブ内のセクションとして、デフォルトの変数設定 UI の代わりにレンダリングされます。
 
-フロントコンポーネント単体では UI から直接アクセスできないため、それを*表示*する必要があります。 それを行う方法は次の 2 つです。
+フロントコンポーネント単体では UI から直接アクセスできないため、それを*表示*する必要があります。 それを行う方法は次の3つです。
 
 * **[コマンドメニュー項目](/l/ja/developers/extend/apps/layout/command-menu-items)とペアにする** — コマンドメニュー（Cmd+K）に登録し、必要に応じてピン留めされたクイックアクションとして登録します。
 * **[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)内のウィジェットとして埋め込む** — レコードの詳細ページまたはダッシュボード上に配置します。
+* **[`defineSettingsFrontComponent()`](#custom-settings-component) で定義する** — アプリの **Settings** タブ内のセクションとして、デフォルトの変数設定 UI の代わりにレンダリングされます。
 
 ## 基本的な例
 
@@ -76,6 +78,34 @@ export default defineCommandMenuItem({
 ## フロントコンポーネントをページに配置する
 
 コマンド以外にも、**ページレイアウト**でウィジェットとして追加することで、フロントコンポーネントをレコードページに直接埋め込めます。 詳しくは[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)を参照してください。
+
+## カスタム設定コンポーネント
+
+アプリの **Settings** タブ内の自動生成された変数設定 UI を独自のコンポーネントに置き換えるには、`defineFrontComponent` ではなく `defineSettingsFrontComponent` で定義します。 このコンポーネントは、同じ[configuration fields](#configuration-fields)（ただし、設定コンポーネントは常に可視の UI をレンダーするため、受け付けられない `isHeadless` を除く）を受け取り、さらにこのコンポーネントをアプリの設定 UI としてマークします。
+
+このコンポーネントは、Settings タブ全体を置き換えるのではなく、そのタブの内部のセクションとしてレンダリングされます。 Twenty のシステム管理セクション（自動アップグレード、App URL、接続）は常にその上にレンダーされ、アプリ側で上書きすることはできません。
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+1 つのアプリにつき許可される settings front コンポーネントは 1 つだけであり、2 つ以上を宣言するとビルドは失敗します。 存在する場合、アプリの **Settings** タブはデフォルトの変数設定 UI の代わりにこのコンポーネントをレンダーします。
 
 ## ヘッドレスと非ヘッドレス
 

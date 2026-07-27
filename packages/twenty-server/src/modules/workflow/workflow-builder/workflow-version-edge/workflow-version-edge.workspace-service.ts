@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionEdgeException,
@@ -24,6 +24,7 @@ export class WorkflowVersionEdgeWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async createWorkflowVersionEdge({
@@ -43,13 +44,6 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
         const workflowVersion =
           await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
             workflowVersionId,
@@ -78,7 +72,7 @@ export class WorkflowVersionEdgeWorkspaceService {
             steps,
             target,
             workflowVersion,
-            workflowVersionRepository,
+            workspaceId,
           });
         } else {
           return this.createStepEdge({
@@ -88,7 +82,7 @@ export class WorkflowVersionEdgeWorkspaceService {
             target,
             sourceConnectionOptions,
             workflowVersion,
-            workflowVersionRepository,
+            workspaceId,
           });
         }
       },
@@ -113,13 +107,6 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
         const workflowVersion =
           await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
             workflowVersionId,
@@ -148,7 +135,7 @@ export class WorkflowVersionEdgeWorkspaceService {
             steps,
             target,
             workflowVersion,
-            workflowVersionRepository,
+            workspaceId,
           });
         } else {
           return this.deleteStepEdge({
@@ -157,7 +144,7 @@ export class WorkflowVersionEdgeWorkspaceService {
             source,
             target,
             workflowVersion,
-            workflowVersionRepository,
+            workspaceId,
             sourceConnectionOptions,
           });
         }
@@ -171,13 +158,13 @@ export class WorkflowVersionEdgeWorkspaceService {
     steps,
     target,
     workflowVersion,
-    workflowVersionRepository,
+    workspaceId,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
     if (!isDefined(trigger)) {
       throw new WorkflowVersionEdgeException(
@@ -198,9 +185,19 @@ export class WorkflowVersionEdgeWorkspaceService {
       nextStepIds: [...(trigger.nextStepIds ?? []), target],
     };
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      trigger: updatedTrigger,
-    });
+    await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+      workspaceId,
+      async (workflowVersionRepository, entityManager) => {
+        await workflowVersionRepository.update(
+          workflowVersion.id,
+          { trigger: updatedTrigger },
+          undefined,
+          entityManager,
+        );
+
+        return workflowVersion.id;
+      },
+    );
 
     return computeWorkflowVersionStepChanges({
       existingTrigger: trigger,
@@ -215,7 +212,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     source,
     target,
     workflowVersion,
-    workflowVersionRepository,
+    workspaceId,
     sourceConnectionOptions,
   }: {
     trigger: WorkflowTrigger | null;
@@ -223,7 +220,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     source: string;
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const sourceStep = steps.find((step) => step.id === source);
@@ -264,9 +261,19 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     if (shouldPersist) {
-      await workflowVersionRepository.update(workflowVersion.id, {
-        steps: updatedSteps,
-      });
+      await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+        workspaceId,
+        async (workflowVersionRepository, entityManager) => {
+          await workflowVersionRepository.update(
+            workflowVersion.id,
+            { steps: updatedSteps },
+            undefined,
+            entityManager,
+          );
+
+          return workflowVersion.id;
+        },
+      );
     }
 
     return computeWorkflowVersionStepChanges({
@@ -372,13 +379,13 @@ export class WorkflowVersionEdgeWorkspaceService {
     steps,
     target,
     workflowVersion,
-    workflowVersionRepository,
+    workspaceId,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
     if (!isDefined(trigger)) {
       throw new WorkflowVersionEdgeException(
@@ -401,9 +408,19 @@ export class WorkflowVersionEdgeWorkspaceService {
       ),
     };
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      trigger: updatedTrigger,
-    });
+    await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+      workspaceId,
+      async (workflowVersionRepository, entityManager) => {
+        await workflowVersionRepository.update(
+          workflowVersion.id,
+          { trigger: updatedTrigger },
+          undefined,
+          entityManager,
+        );
+
+        return workflowVersion.id;
+      },
+    );
 
     return computeWorkflowVersionStepChanges({
       existingTrigger: trigger,
@@ -418,7 +435,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     source,
     target,
     workflowVersion,
-    workflowVersionRepository,
+    workspaceId,
     sourceConnectionOptions,
   }: {
     trigger: WorkflowTrigger | null;
@@ -426,7 +443,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     source: string;
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const sourceStep = steps.find((step) => step.id === source);
@@ -481,9 +498,19 @@ export class WorkflowVersionEdgeWorkspaceService {
       return step;
     });
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      steps: updatedSteps,
-    });
+    await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
+      workspaceId,
+      async (workflowVersionRepository, entityManager) => {
+        await workflowVersionRepository.update(
+          workflowVersion.id,
+          { steps: updatedSteps },
+          undefined,
+          entityManager,
+        );
+
+        return workflowVersion.id;
+      },
+    );
 
     return computeWorkflowVersionStepChanges({
       existingTrigger: trigger,
