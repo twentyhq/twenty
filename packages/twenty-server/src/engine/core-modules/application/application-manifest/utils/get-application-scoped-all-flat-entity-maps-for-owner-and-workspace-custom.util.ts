@@ -5,7 +5,6 @@ import {
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -71,9 +70,9 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
     // The slice is `FlatEntityMaps<T>` for the current metadataName; the
     // outer `AllFlatEntityMaps` keys are per-metadata too, so the union is
     // correct at runtime. The type system can't narrow a single per-key
-    // assignment to a specific T, so the map is held as `unknown` and cast
-    // once on return.
-    const subAllFlatEntityMaps = new Map<string, FlatEntityMaps<unknown>>();
+    // assignment to a specific T — we use `any` here to side-step the
+    // union; the runtime shape matches `AllFlatEntityMaps` exactly.
+    const subAllFlatEntityMaps = new Map<string, any>();
 
     for (const metadataName of Object.values(ALL_METADATA_NAME)) {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
