@@ -16,6 +16,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -135,9 +136,9 @@ export class ViewResolver {
           // the storage boundary); `MetadataPresentationOverrides<"view">` is
           // the same shape with explicit string typing. The mismatch is a
           // type-system artifact, not a runtime difference.
-          overrides: (view.overrides ?? undefined) as Parameters<
-            typeof resolveEffectiveEntityProperty<'view'>
-          >[1]['overrides'],
+          overrides: (view.overrides ?? undefined) as
+            | MetadataPresentationOverrides<'view'>
+            | undefined,
           property: 'name',
           i18nContext: {
             locale: context.req.locale,

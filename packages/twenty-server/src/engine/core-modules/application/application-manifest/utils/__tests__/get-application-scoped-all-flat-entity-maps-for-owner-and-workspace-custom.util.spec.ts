@@ -76,6 +76,7 @@ const WORKSPACE_CUSTOM_APP_ID = 'workspace-custom-app-id';
 
 const makeViewField = (overrides: {
   id: string;
+  workspaceId: string;
   applicationId: string;
   universalIdentifier: string;
 }) => ({
@@ -90,6 +91,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
       viewField: [
         makeViewField({
           id: 'owner-vf-1',
+          workspaceId: 'workspace-1',
           applicationId: OWNER_APP_ID,
           universalIdentifier: 'owner-vf-uid-1',
         }),
@@ -115,6 +117,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
       viewField: [
         makeViewField({
           id: 'custom-vf-1',
+          workspaceId: 'workspace-1',
           applicationId: WORKSPACE_CUSTOM_APP_ID,
           universalIdentifier: 'custom-vf-uid-1',
         }),
@@ -149,6 +152,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
         // label-identifier viewField the UI created.
         makeViewField({
           id: 'custom-vf-1',
+          workspaceId: 'workspace-1',
           applicationId: WORKSPACE_CUSTOM_APP_ID,
           universalIdentifier: 'undeclared-vf-uid',
         }),
@@ -183,6 +187,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
       fieldMetadata: [
         {
           id: 'custom-fm-1',
+          workspaceId: 'workspace-1',
           applicationId: WORKSPACE_CUSTOM_APP_ID,
           universalIdentifier: 'custom-fm-uid-1',
         },
@@ -219,6 +224,7 @@ describe('getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom', () =
       viewField: [
         makeViewField({
           id: 'shared-vf-1',
+          workspaceId: 'workspace-1',
           applicationId: OWNER_APP_ID,
           universalIdentifier: 'shared-vf-uid-1',
         }),
