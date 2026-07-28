@@ -9,6 +9,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewMaxCollapsedFields';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewFields } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewFields';
 import { useSidePanelSearchRecordPreviewRecord } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewRecord';
@@ -45,26 +47,13 @@ const StyledHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  height: 56px;
-  padding: ${themeCssVariables.spacing[3]};
+  height: 40px;
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  min-width: 0;
+const StyledTitleText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledCreatedAt = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
 `;
 
@@ -172,9 +161,19 @@ export const SidePanelSearchRecordPreviewCard = ({
     ? beautifyPastDateRelativeToNow(recordCreatedAt, localeCatalog)
     : '';
 
+  // Collapsed shows at most a handful of the view's visible columns; everything
+  // past that, plus the view's hidden columns, sits behind the expander
+  const collapsedFields = visibleFields.slice(
+    0,
+    SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS,
+  );
+
   const displayedFields = areAllFieldsVisible
     ? [...visibleFields, ...hiddenFields]
-    : visibleFields;
+    : collapsedFields;
+
+  const remainingFieldCount =
+    visibleFields.length + hiddenFields.length - collapsedFields.length;
 
   const renderFieldRow = (
     fieldMetadataItem: FieldMetadataItem,
@@ -238,37 +237,43 @@ export const SidePanelSearchRecordPreviewCard = ({
     >
       <StyledCard>
         <StyledHeader>
-          <Avatar
-            avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-            placeholder={recordIdentifier?.name ?? label}
-            placeholderColorSeed={recordId}
-            size="md"
-            type={recordIdentifier?.avatarType ?? 'rounded'}
+          <SidePanelPageInfoLayout
+            icon={
+              <Avatar
+                avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
+                placeholder={recordIdentifier?.name ?? label}
+                placeholderColorSeed={recordId}
+                size="md"
+                type={recordIdentifier?.avatarType ?? 'rounded'}
+              />
+            }
+            title={
+              <StyledTitleText>
+                {recordIdentifier?.name ?? label}
+              </StyledTitleText>
+            }
+            label={
+              isRecordLoaded ? (
+                beautifiedCreatedAt ? (
+                  <Trans>Created {beautifiedCreatedAt}</Trans>
+                ) : undefined
+              ) : (
+                <Skeleton width={92} height={SKELETON_HEIGHT} />
+              )
+            }
           />
-          <StyledTitle>{recordIdentifier?.name ?? label}</StyledTitle>
-          {isRecordLoaded ? (
-            beautifiedCreatedAt && (
-              <StyledCreatedAt>
-                <Trans>Created {beautifiedCreatedAt}</Trans>
-              </StyledCreatedAt>
-            )
-          ) : (
-            <StyledCreatedAt>
-              <Skeleton width={92} height={SKELETON_HEIGHT} />
-            </StyledCreatedAt>
-          )}
         </StyledHeader>
 
         <StyledFieldList>
           {displayedFields.map(renderFieldRow)}
           {!areAllFieldsVisible &&
-            hiddenFields.length > 0 && (
+            remainingFieldCount > 0 && (
               // Keeping focus on the search input so arrow keys still move through results
               <StyledShowMoreContainer
                 onMouseDown={(event) => event.preventDefault()}
               >
                 <FieldWidgetShowMoreButton
-                  remainingCount={hiddenFields.length}
+                  remainingCount={remainingFieldCount}
                   onClick={() => setAreAllFieldsVisible(true)}
                 />
               </StyledShowMoreContainer>
