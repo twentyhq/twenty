@@ -158,4 +158,17 @@ describe('renderCampaignBodyToHtml', () => {
     expect(await renderCampaignBodyToHtml(body, VARIABLES)).toBe(body);
     expect(renderRichTextToHtml).not.toHaveBeenCalled();
   });
+
+  it('should treat a document with a non-array content as a legacy body', async () => {
+    const body = '{"type":"doc","content":"not an array"}';
+
+    expect(await renderCampaignBodyToHtml(body, VARIABLES)).toBe(body);
+    expect(renderRichTextToHtml).not.toHaveBeenCalled();
+  });
+
+  it('should render a document with no content at all', async () => {
+    await renderCampaignBodyToHtml('{"type":"doc"}', VARIABLES);
+
+    expect(renderedDocument()).toEqual({ type: 'doc' });
+  });
 });

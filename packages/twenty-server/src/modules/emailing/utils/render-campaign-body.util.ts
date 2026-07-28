@@ -8,6 +8,17 @@ import {
   renderCampaignTemplate,
 } from 'src/modules/emailing/utils/render-campaign-template.util';
 
+// bodyTemplate is a plain text field, so anything can be written to it through
+// the record API. The renderer maps over content without checking it, so a
+// document carrying a non-array content would throw mid-send rather than fall
+// back. A document with no content at all renders as empty and is fine.
+const isRenderableDocument = (
+  document: JSONContent | null,
+): document is JSONContent =>
+  isDefined(document) &&
+  document.type === 'doc' &&
+  (!isDefined(document.content) || Array.isArray(document.content));
+
 const substituteVariables = (
   node: JSONContent,
   variables: Record<string, string>,
@@ -37,7 +48,7 @@ export const renderCampaignBodyToHtml = async (
 ): Promise<string> => {
   const tipTapDocument = parseJson<JSONContent>(bodyTemplate);
 
-  if (!isDefined(tipTapDocument) || tipTapDocument.type !== 'doc') {
+  if (!isRenderableDocument(tipTapDocument)) {
     return isDefined(variables)
       ? renderCampaignTemplate(bodyTemplate, variables, { escapeValues: true })
       : bodyTemplate;
