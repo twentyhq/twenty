@@ -24,6 +24,14 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import {
+  createExecuteToolTool,
+  createLearnToolsTool,
+  EXECUTE_TOOL_TOOL_NAME,
+  LEARN_TOOLS_TOOL_NAME,
+} from 'src/engine/core-modules/tool-provider/tools';
+import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
@@ -56,9 +64,14 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+// 'preload' inlines the full schemas of the agent's explicitly-granted tools
+// (workflow nodes: scoped task, skips learn_tools). 'lazy' exposes a compact
+// catalog + learn_tools/execute_tool (open-ended runAgent/Slack: broad access
+// without the full-payload latency).
+export type AgentToolLoadingStrategy = 'preload' | 'lazy';
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -111,6 +124,107 @@ export class AgentAsyncExecutorService {
     return roleTarget?.roleId;
   }
 
+  private resolveUserIdentity(authContext?: WorkspaceAuthContext): {
+    userId?: string;
+    userWorkspaceId?: string;
+  } {
+    if (isDefined(authContext) && isUserAuthContext(authContext)) {
+      return {
+        userId: authContext.user.id,
+        userWorkspaceId: authContext.userWorkspaceId,
+      };
+    }
+
+    return {};
+  }
+
+  // Workflow agent nodes run a scoped task: pre-load the full schemas of the
+  // few explicitly-granted objects so the model skips the learn_tools round trip.
+  private async buildPreloadedRegistryTools(
+    agent: AgentEntity,
+    agentRoleId: string,
+    authContext?: WorkspaceAuthContext,
+    actorContext?: ActorMetadata,
+  ): Promise<ToolSet> {
+    const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
+
+    const toolProviderContext: ToolProviderContext = {
+      workspaceId: agent.workspaceId,
+      roleId: agentRoleId,
+      rolePermissionConfig: { intersectionOf: [agentRoleId] },
+      requireExplicitObjectGrants: true,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+    };
+
+    return this.toolRegistry.getToolsByCategories(toolProviderContext, {
+      categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+      excludeTools: [...OUTPUT_NAVIGATION_TOOL_NAMES],
+      wrapWithErrorContext: false,
+    });
+  }
+
+  // Open-ended agents (runAgent / Slack) need broad object access, which would
+  // make pre-loading ship every schema. Expose a compact catalog plus the
+  // learn_tools / execute_tool meta-tools instead, using composed role
+  // permissions rather than explicit grants only.
+  private async buildLazyRegistryTools(
+    agent: AgentEntity,
+    agentRoleId: string,
+    authContext?: WorkspaceAuthContext,
+    actorContext?: ActorMetadata,
+  ): Promise<{ tools: ToolSet; catalogSection: string }> {
+    const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
+
+    const toolContext: ToolContext = {
+      workspaceId: agent.workspaceId,
+      roleId: agentRoleId,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+    };
+
+    const fullCatalog = await this.toolRegistry.buildToolIndex(
+      agent.workspaceId,
+      agentRoleId,
+      { userId, userWorkspaceId },
+    );
+
+    const allowedCategories = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
+    const excludedToolNames = new Set<string>(OUTPUT_NAVIGATION_TOOL_NAMES);
+
+    const catalog = fullCatalog.filter(
+      (entry) =>
+        allowedCategories.has(entry.category) &&
+        !excludedToolNames.has(entry.name),
+    );
+
+    // Restrict the meta-tools to the shown catalog. Enforced at call time, so a
+    // tool that appears after the catalog was built still can't be reached,
+    // preserving the recursion guard.
+    const allowedToolNames = new Set(catalog.map((entry) => entry.name));
+    const isToolAllowed = (toolName: string): boolean =>
+      allowedToolNames.has(toolName);
+
+    const tools: ToolSet = {
+      [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
+        this.toolRegistry,
+        toolContext,
+        { isToolAllowed, spillLargeOutput: true },
+      ),
+      [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
+        this.toolRegistry,
+        toolContext,
+        { isToolAllowed, compactOutput: true, spillLargeOutput: true },
+      ),
+    };
+
+    return { tools, catalogSection: buildToolCatalogSection(catalog, []) };
+  }
+
   async executeAgent({
     agent,
     userPrompt,
@@ -120,6 +234,7 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
+    toolLoadingStrategy = 'preload',
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
@@ -129,6 +244,7 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     operationType?: UsageOperationType;
+    toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
@@ -155,6 +271,7 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
+      let toolCatalogSection = '';
       let providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
@@ -175,38 +292,27 @@ export class AgentAsyncExecutorService {
 
         let registryTools: ToolSet = {};
 
-        // Workflow agent registry tools are scoped exclusively by the agent
-        // permission-tab role. No role means no registry tools.
+        // Registry tools are scoped exclusively by the agent permission-tab
+        // role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
-          const agentRolePermissionConfig: RolePermissionConfig = {
-            intersectionOf: [agentRoleId],
-          };
+          if (toolLoadingStrategy === 'lazy') {
+            const lazyToolset = await this.buildLazyRegistryTools(
+              agent,
+              agentRoleId,
+              authContext,
+              actorContext,
+            );
 
-          const toolProviderContext: ToolProviderContext = {
-            workspaceId: agent.workspaceId,
-            roleId: agentRoleId,
-            rolePermissionConfig: agentRolePermissionConfig,
-            requireExplicitObjectGrants: true,
-            authContext,
-            actorContext,
-            userId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.user.id
-                : undefined,
-            userWorkspaceId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.userWorkspaceId
-                : undefined,
-          };
-
-          registryTools = await this.toolRegistry.getToolsByCategories(
-            toolProviderContext,
-            {
-              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-              excludeTools: [...OUTPUT_NAVIGATION_TOOL_NAMES],
-              wrapWithErrorContext: false,
-            },
-          );
+            registryTools = lazyToolset.tools;
+            toolCatalogSection = lazyToolset.catalogSection;
+          } else {
+            registryTools = await this.buildPreloadedRegistryTools(
+              agent,
+              agentRoleId,
+              authContext,
+              actorContext,
+            );
+          }
         }
 
         const nativeTools = this.nativeToolBinder.bind(
@@ -234,7 +340,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}`,
+        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,

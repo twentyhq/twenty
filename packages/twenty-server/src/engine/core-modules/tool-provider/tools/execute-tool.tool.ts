@@ -46,7 +46,10 @@ export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
   options?: {
-    excludeTools?: Set<string>;
+    // Gate on which tools this meta-tool may reach. Evaluated at call time (not
+    // just when the tool set is built) so a tool that appears later still can't
+    // be reached. Callers express a denylist or an allowlist as they see fit.
+    isToolAllowed?: (toolName: string) => boolean;
     compactOutput?: boolean;
     spillLargeOutput?: boolean;
   },
@@ -57,7 +60,7 @@ export const createExecuteToolTool = (
   execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
     const { toolName, arguments: args = {} } = parameters;
 
-    if (options?.excludeTools?.has(toolName)) {
+    if (options?.isToolAllowed?.(toolName) === false) {
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,

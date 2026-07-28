@@ -44,7 +44,10 @@ export type LearnToolsResult = {
 };
 
 export type LearnToolsOptions = {
-  excludeTools?: Set<string>;
+  // Gate on which tools this meta-tool may reach. Evaluated at call time so it
+  // stays closed to the intended set even for tools that appear after the tool
+  // set was built. Callers express a denylist or an allowlist as they see fit.
+  isToolAllowed?: (toolName: string) => boolean;
   spillLargeOutput?: boolean;
 };
 
@@ -59,9 +62,9 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
-    const excludeTools = options?.excludeTools;
-    const allowedNames = excludeTools
-      ? toolNames.filter((name) => !excludeTools.has(name))
+    const { isToolAllowed } = options ?? {};
+    const allowedNames = isToolAllowed
+      ? toolNames.filter((name) => isToolAllowed(name))
       : toolNames;
 
     const toolInfos = await toolRegistry.getToolInfo(

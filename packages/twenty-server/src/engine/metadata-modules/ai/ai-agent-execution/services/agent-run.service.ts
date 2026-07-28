@@ -70,6 +70,9 @@ export class AgentRunService {
         workspaceId: workspace.id,
         userWorkspaceId: requestUserWorkspaceId,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        // runAgent is the open-ended entry point (Slack, apps): lazy tool
+        // loading keeps broad object access without inlining every schema.
+        toolLoadingStrategy: 'lazy',
       });
 
     if (hasNoMoreAvailableCredits) {

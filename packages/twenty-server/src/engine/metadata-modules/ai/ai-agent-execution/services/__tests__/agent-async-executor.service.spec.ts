@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { generateText } from 'ai';
+import { ToolCategory } from 'twenty-shared/ai';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -44,7 +45,10 @@ const generateTextMock = generateText as jest.MockedFunction<
 
 describe('AgentAsyncExecutorService — workflow agent role-scoped tool resolution', () => {
   let service: AgentAsyncExecutorService;
-  let toolRegistry: { getToolsByCategories: jest.Mock };
+  let toolRegistry: {
+    getToolsByCategories: jest.Mock;
+    buildToolIndex: jest.Mock;
+  };
   let roleTargetRepository: { findOne: jest.Mock };
   let aiBillingService: {
     decrementAndCheckAvailableCredits: jest.Mock;
@@ -79,7 +83,10 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
   };
 
   beforeEach(async () => {
-    toolRegistry = { getToolsByCategories: jest.fn().mockResolvedValue({}) };
+    toolRegistry = {
+      getToolsByCategories: jest.fn().mockResolvedValue({}),
+      buildToolIndex: jest.fn().mockResolvedValue([]),
+    };
     roleTargetRepository = { findOne: jest.fn() };
     aiBillingService = {
       decrementAndCheckAvailableCredits: jest
@@ -146,7 +153,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     service = module.get<AgentAsyncExecutorService>(AgentAsyncExecutorService);
   });
 
-  it('passes intersectionOf: [agentRoleId] when the agent has a role assigned', async () => {
+  it('preloads role-scoped tool schemas by default (workflow node)', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
 
     await service.executeAgent({
@@ -161,10 +168,49 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       expect.objectContaining({
         roleId: agentRoleId,
         rolePermissionConfig: { intersectionOf: [agentRoleId] },
+        requireExplicitObjectGrants: true,
         workspaceId,
       }),
       expect.objectContaining({ wrapWithErrorContext: false }),
     );
+    expect(toolRegistry.buildToolIndex).not.toHaveBeenCalled();
+  });
+
+  it('loads tools lazily via a category-scoped catalog when toolLoadingStrategy is "lazy" (runAgent)', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([
+      {
+        name: 'find_many_people',
+        category: ToolCategory.DATABASE_CRUD,
+        objectName: 'person',
+        operation: 'find_many',
+      },
+      { name: 'create_one_workflow', category: ToolCategory.WORKFLOW },
+    ]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.any(Object),
+    );
+
+    const { system } = generateTextMock.mock.calls[0][0];
+
+    // The catalog is injected into the system prompt, scoped to the workflow
+    // agent categories (DATABASE_CRUD/ACTION), so the WORKFLOW tool is excluded.
+    expect(system).toContain('## Available Tools');
+    expect(system).toContain('person');
+    expect(system).not.toContain('Workflow Tools');
+    expect(system).not.toContain('create_one_workflow');
   });
 
   it('does not resolve registry tools when the agent has no role (fail-closed)', async () => {
