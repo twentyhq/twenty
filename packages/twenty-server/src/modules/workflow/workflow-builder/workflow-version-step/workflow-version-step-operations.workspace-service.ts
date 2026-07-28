@@ -20,8 +20,10 @@ import { v4 } from 'uuid';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import {
@@ -77,16 +79,50 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
+
+  // Workflow agents are created with a concrete model id (the workspace's
+  // resolved default smart model) instead of the auto-select id, so the model
+  // displayed in the builder is the one actually used at run time.
+  private async resolveDefaultAgentModelId(
+    workspaceId: string,
+  ): Promise<string> {
+    try {
+      const workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
+
+      if (!isDefined(workspace)) {
+        return AUTO_SELECT_SMART_MODEL_ID;
+      }
+
+      const effectiveModelConfig =
+        this.aiModelRegistryService.getEffectiveModelConfig(
+          workspace.smartModel,
+        );
+
+      this.aiModelRegistryService.validateModelAvailability(
+        effectiveModelConfig.modelId,
+        workspace,
+      );
+
+      return effectiveModelConfig.modelId;
+    } catch {
+      return AUTO_SELECT_SMART_MODEL_ID;
+    }
+  }
 
   async runWorkflowVersionStepDeletionSideEffects({
     step,
@@ -547,7 +583,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             description: '',
             prompt:
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: AUTO_SELECT_SMART_MODEL_ID,
+            modelId: await this.resolveDefaultAgentModelId(workspaceId),
             responseFormat: { type: 'text' },
             isCustom: true,
           },
