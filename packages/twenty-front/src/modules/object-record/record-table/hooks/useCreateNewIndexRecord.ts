@@ -5,7 +5,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useGetOpenRecordIn } from '@/object-record/record-index/hooks/useGetOpenRecordIn';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
@@ -51,7 +51,7 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const { getOpenRecordIn } = useGetOpenRecordIn();
+  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -91,10 +91,7 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (
-        getOpenRecordIn(objectMetadataItem.nameSingular) ===
-        ViewOpenRecordIn.SIDE_PANEL
-      ) {
+      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -169,7 +166,7 @@ export const useCreateNewIndexRecord = ({
       navigate,
       objectMetadataItem,
       openRecordInSidePanel,
-      getOpenRecordIn,
+      openRecordIn,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
