@@ -105,7 +105,7 @@ describe('Create core view', () => {
       key: null,
       position: 0,
       isCompact: false,
-      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      openRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
     });
   });
 });

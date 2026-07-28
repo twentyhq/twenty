@@ -12,7 +12,7 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
   "mainGroupByFieldMetadataId": null,
   "name": "All Companies",
   "objectMetadataId": Any<String>,
-  "openRecordIn": "SIDE_PANEL",
+  "openRecordIn": "USER_PREFERENCE",
   "position": 0,
   "type": "TABLE",
   "updatedAt": Any<String>,
