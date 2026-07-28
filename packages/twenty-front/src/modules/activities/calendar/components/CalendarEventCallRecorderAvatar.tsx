@@ -30,10 +30,8 @@ const getCallRecordingStatusLabel = (status: CallRecordingStatus) => {
 };
 
 const StyledContainer = styled.div<{ isDisabled: boolean }>`
-  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'inherit')};
   display: flex;
   filter: ${({ isDisabled }) => (isDisabled ? 'grayscale(1)' : 'none')};
-  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
 `;
 
 type CalendarEventCallRecorderAvatarProps = {
