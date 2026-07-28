@@ -2115,6 +2115,11 @@ msgstr "alfabetik"
 msgid "Already in navbar"
 msgstr "Zaten gezinme çubuğunda"
 
+#. js-lingui-id: 35jGKh
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Always allow links to this domain"
+msgstr ""
+
 #. js-lingui-id: Fc64QW
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Amazon Q Developer CLI"
@@ -3380,6 +3385,7 @@ msgstr "Tarayamaz mısınız? Kopyalayın."
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -4562,7 +4568,6 @@ msgstr "Bağlam penceresi"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6458,11 +6463,6 @@ msgstr "Alan Adı Kurulumu"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "Alan adları 256 karakterden küçük olmalı, boşluk içermemeli ve özel karakter içermemelidir."
-
-#. js-lingui-id: u/yTXi
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "Don't ask again for <0>{origin}</0>"
-msgstr ""
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -13471,6 +13471,11 @@ msgstr "Twenty bağlayıcı adı ve MCP URL'si önceden doldurulmuş olarak Clau
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Twenty uzak sunucu yapılandırmasıyla Cursor'un MCP yükleyicisini açın."
 
+#. js-lingui-id: YIqGXO
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Open external link?"
+msgstr ""
+
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -13491,6 +13496,11 @@ msgstr "Uygulamada aç"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Roller bölümünde aç"
+
+#. js-lingui-id: x57cJf
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Open link"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18150,11 +18160,6 @@ msgstr "Bu, geçerli imzalama anahtarıdır. Bunun iptal edilmesi, onunla imzala
 msgid "This key should be set through body input"
 msgstr "Bu anahtar, gövde girişi üzerinden ayarlanmalıdır"
 
-#. js-lingui-id: S9jYAG
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "This link will take you to an external site: <0>{url}</0>"
-msgstr ""
-
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
@@ -20804,11 +20809,6 @@ msgstr "Tüm eşlemelerinizi kaybedeceksiniz."
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Çalışma alanı alt alan adınızı değiştirmek üzeresiniz. Bu işlem, tüm kullanıcıların oturumunu kapatacaktır."
-
-#. js-lingui-id: qgZCyy
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
-msgid "You're leaving Twenty"
-msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
