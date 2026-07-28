@@ -5,6 +5,7 @@ import {
   FieldMetadataType,
   RelationType,
   ViewCalendarLayout,
+  ViewKey,
   ViewType,
 } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
@@ -241,6 +242,24 @@ export class FlatViewValidatorService {
       ...flatEntityUpdate,
     };
 
+    // The INDEX key is engine-reserved and immutable: the engine sets it once
+    // at view creation and never updates it, so any transition to or from
+    // INDEX is a caller trying to promote or demote a default view.
+    const viewKeyChanges =
+      'key' in flatEntityUpdate && flatEntityUpdate.key !== existingFlatView.key;
+
+    if (
+      viewKeyChanges &&
+      (existingFlatView.key === ViewKey.INDEX ||
+        updatedFlatView.key === ViewKey.INDEX)
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`The INDEX view key is reserved for the engine-owned default view and cannot be set or unset`,
+        userFriendlyMessage: msg`The default view key cannot be changed`,
+      });
+    }
+
     const kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate =
       flatEntityUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier;
 
@@ -457,6 +476,48 @@ export class FlatViewValidatorService {
         message: t`View with same universal identifier already exists`,
         userFriendlyMessage: msg`View already exists`,
       });
+    }
+
+    // The INDEX view is the object's engine-owned default view: the metadata
+    // side-effect engine is its sole writer, and every consumer assumes it is
+    // a singleton per object. Caller inputs (API and manifest) are forced
+    // isSystemSideEffect: false at their entry points, so this rejects any
+    // caller claiming the key while letting engine emissions through.
+    if (flatViewToValidate.key === ViewKey.INDEX) {
+      if (flatViewToValidate.isSystemSideEffect !== true) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition`,
+          userFriendlyMessage: msg`The INDEX view key is reserved for the default view`,
+        });
+      }
+
+      // The object's foreign-key aggregator is maintained optimistically on
+      // create, so this covers views created earlier in the same batch too.
+      const objectAlreadyHasIndexFlatView =
+        isDefined(optimisticFlatObjectMetadata) &&
+        optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(
+          (viewUniversalIdentifier) => {
+            const flatView = findFlatEntityByUniversalIdentifier({
+              universalIdentifier: viewUniversalIdentifier,
+              flatEntityMaps: optimisticFlatViewMaps,
+            });
+
+            return (
+              isDefined(flatView) &&
+              flatView.key === ViewKey.INDEX &&
+              !isDefined(flatView.deletedAt)
+            );
+          },
+        );
+
+      if (objectAlreadyHasIndexFlatView) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Object already has an INDEX view`,
+          userFriendlyMessage: msg`This object already has a default view`,
+        });
+      }
     }
 
     if (
