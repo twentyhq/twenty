@@ -80,7 +80,7 @@ export const SettingsApplicationDetailContentTab = ({
   });
 
   const fallbackApplicationData = {
-    logo: applicationInfo?.logo,
+    logoUrl: applicationInfo?.logoUrl,
     name: applicationInfo?.name,
   };
 

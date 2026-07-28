@@ -20,7 +20,7 @@ La contraseña que establezca durante la primera instalación se almacena perman
 ⚠️ ADVERTENCIA: ¡Seguir los pasos borrará PERMANENTEMENTE todos los datos de la base de datos! ⚠️
 Prosiga solo si se trata de una instalación nueva sin datos importantes.
 
-Para actualizar el `PG_DATABASE_PASSWORD` necesita:
+Para actualizar el `PG_DATABASE_PASSWORD`, necesita:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -30,7 +30,7 @@ docker compose up -d
 
 #### Rupturas de línea de CR encontradas [Windows]
 
-Esto se debe a los caracteres de salto de línea de Windows y a la configuración de Git. Intente ejecutar:
+Esto sucede debido a los caracteres de fin de línea de Windows combinados con la configuración de Git. Intente ejecutar:
 
 ```
 git config --global core.autocrlf false
@@ -42,11 +42,11 @@ Luego elimine el repositorio y clónelo de nuevo.
 
 Durante la instalación de Twenty, debe aprovisionar su base de datos postgres con los esquemas, extensiones y usuarios correctos.
 Si ha ejecutado con éxito este aprovisionamiento, debería tener esquemas `default` y `metadata` en su base de datos.
-Si no los tiene, asegúrese de no tener más de una instancia de postgres ejecutándose en su computadora.
+Si no lo hace, asegúrese de que no tiene más de una instancia de PostgreSQL ejecutándose en su computadora.
 
 #### No se puede encontrar el módulo 'twenty-emails' o sus declaraciones de tipo correspondientes.
 
-Tienes que construir el paquete `twenty-emails` antes de ejecutar la inicialización de la base de datos con `npx nx run twenty-emails:build`
+Tienes que construir el paquete `twenty-emails` (`npx nx run twenty-emails:build`) antes de ejecutar la inicialización de la base de datos.
 
 #### Falta el paquete twenty-x
 
@@ -54,7 +54,7 @@ Asegúrese de ejecutar yarn en el directorio raíz y luego ejecute `npx nx serve
 
 #### Lint on Save no funciona
 
-Esto debería funcionar sin configuración adicional con la extensión de Oxc (`oxc.oxc-vscode`) instalada. Si esto no funciona, intente agregar esto a su configuración de vscode (en el ámbito del contenedor de desarrollo):
+Esto debería funcionar sin configuración adicional con la extensión de Oxc (`oxc.oxc-vscode`) instalada. Si esto no funciona, intenta añadir esto a tu configuración de código VS (ámbito dev container):
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@ Esto debería funcionar sin configuración adicional con la extensión de Oxc (`
 }
 ```
 
-#### Al ejecutar `npx nx start` o `npx nx start twenty-front`, se produce un error de falta de memoria
+#### Mientras se ejecuta `npx nx start` o `npx nx start twenty-front`, se produce un error fuera de memoria
 
 Ejecute solo los servicios que necesite, en lugar de `npx nx start`. Por ejemplo, si trabaja en el servidor, ejecute solo `npx nx worker twenty-server`
 
@@ -73,7 +73,7 @@ Si intentó ejecutar solo `npx nx run twenty-server:start` en WSL y falla con el
 
 `ERROR FATAL: Las marcas compactas ineficaces cercanas al límite del montón Falló la asignación - JavaScript heap out of memory`
 
-La solución es ejecutar el siguiente comando en el terminal o agregarlo en el perfil .bashrc para configurarlo automáticamente:
+Una solución temporal es ejecutar el siguiente comando en tu terminal, o añadirlo a tu perfil `.bashrc` para que se aplique automáticamente:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -81,10 +81,10 @@ La bandera --max-old-space-size=8192 establece un límite superior de 8GB para e
 Referencia: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **Si no funciona:**
-Investigue qué procesos están ocupando la mayor parte de la RAM de su máquina. En Twenty, notamos que algunas extensiones de VScode estaban ocupando mucha RAM, por lo que las desactivamos temporalmente.
+Investiga qué procesos están ocupando la mayoría de la RAM de tu máquina. En veinte, notamos que algunas extensiones de VS Code estaban ocupando un montón de RAM, por lo que las desactivamos temporalmente.
 
 **Si no funciona:**
-Reiniciar su máquina ayuda a limpiar procesos fantasma.
+Reiniciar tu máquina ayuda a limpiar los procesos fantasma.
 
 #### Mientras ejecuta `npx nx start` hay [0] y [1] extraños en los registros
 
@@ -98,19 +98,19 @@ La mayoría de las veces, se debe a que el `worker` no se está ejecutando en se
 npx nx worker twenty-server
 ```
 
-#### No se puede conectar mi cuenta de Microsoft 365
+#### No se puede conectar mi cuenta Microsoft 365 a Veinte
 
 La mayoría de las veces, se debe a que su administrador no ha habilitado la licencia de Microsoft 365 para su cuenta. Verifique [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
 Si tiene un código de error `AADSTS50020`, probablemente significa que está usando una cuenta de Microsoft personal. Esto aún no es compatible. Más información [aquí](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### Mientras ejecuta `yarn` aparecen advertencias en la consola
+#### Mientras se ejecuta `yarn`, las advertencias aparecen en la consola
 
 Las advertencias informan sobre la carga de dependencias adicionales que no están explicitadas en `package.json`, así que mientras no aparezca un error crítico, todo debería funcionar como se espera.
 
-#### Cuando el usuario accede a la página de inicio de sesión, aparece un error sobre un usuario no autorizado que intenta acceder al espacio de trabajo en los registros
+#### Cuando un usuario accede a la página de inicio de sesión, aparece un error sobre un usuario no autorizado que intenta acceder a un área de trabajo en los registros
 
-Es esperado ya que el usuario no está autorizado cuando cierra sesión porque su identidad no está verificada.
+Se espera que el usuario no esté autorizado cuando se cierre la sesión, ya que su identidad no ha sido verificada.
 
 #### ¿Cómo comprobar si su worker está funcionando?
 
@@ -137,9 +137,9 @@ Es esperado ya que el usuario no está autorizado cuando cierra sesión porque s
 
 * Si se recibe una **solicitud POST**, su worker está funcionando con éxito. De lo contrario, debe solucionar problemas de su worker.
 
-#### El front-end no comienza y devuelve el error TS5042: La opción 'project' no se puede mezclar con archivos fuente en una línea de comando
+#### Front-end falla al inicio y devuelve el error TS5042: No se puede mezclar la opción 'proyecto' con los archivos fuente en la línea de comandos
 
-Comente el plugin checker en `packages/twenty-ui/vite-config.ts` como en el ejemplo a continuación
+Comenta el plugin de checker en `packages/twenty-ui/vite-config.ts`, como se muestra en el siguiente ejemplo:
 
 ```
 plugins: [
@@ -165,7 +165,7 @@ plugins: [
 
 #### Panel de administración no accesible
 
-Ejecute `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` en el contenedor de la base de datos para obtener acceso al panel de administración.
+Ejecute `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` en el contenedor de base de datos para acceder al panel de administración.
 
 #### Al ejecutar un flujo de trabajo, la ejecución del flujo de trabajo falla con "La ejecución de la función lógica está deshabilitada. Configura LOGIC_FUNCTION_TYPE en LOCAL o LAMBDA para habilitarlas."
 
@@ -173,7 +173,7 @@ En producción, las funciones lógicas están deshabilitadas de forma predetermi
 
 #### Cuando escribo un mensaje en un chat de IA, no responde inmediatamente y debo actualizar la página para ver la respuesta
 
-Añadir bloque siguiente a la configuración de nginx
+Esto significa que a su proxy inverso le falta la configuración para las respuestas de API basadas en stream. A continuación hay un ejemplo de configuración de Nginx:
 
 ```
 location ~* ^/api/.*stream|\/graphql\/stream {
@@ -193,7 +193,7 @@ add_header X-Accel-Buffering no always;
 }
 ```
 
-### 1-clic con Docker Compose
+### Componer Docker con 1 clic
 
 #### No se puede iniciar sesión
 
@@ -210,7 +210,7 @@ Si no puedes iniciar sesión después de la configuración:
    docker compose up -d
    ```
 
-Tenga en cuenta que el comando database:reset borrará toda su base de datos y la recreará desde cero.
+Ten en cuenta que el comando `database:reset` borrará completamente tu base de datos y la recreará desde cero.
 
 #### Problemas de conexión detrás de un Proxy Reverso
 

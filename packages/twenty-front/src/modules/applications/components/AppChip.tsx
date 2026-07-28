@@ -12,7 +12,7 @@ type AppChipProps = {
   // over the logo computed from the installed application.
   logoUrl?: string | null;
   fallbackApplicationData?: {
-    logo?: string | null;
+    logoUrl?: string | null;
     name?: string | null;
   };
   className?: string;

@@ -20,7 +20,7 @@ Twenty를 처음 설치할 때, 기본 데이터베이스 비밀번호를 변경
 ⚠️ 경고: 다음 단계는 데이터베이스 데이터를 **영구적으로 삭제합니다!** ⚠️ 경고: 다음 단계는 데이터베이스 데이터를 **영구적으로 삭제합니다!** ⚠️
 중요한 데이터가 없는 새 설치인 경우에만 진행하십시오.
 
-`PG_DATABASE_PASSWORD`를 업데이트하려면 다음을 수행하십시오:
+`PG_DATABASE_PASSWORD`를 업데이트하려면 다음을 수행해야 합니다:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -30,7 +30,7 @@ docker compose up -d
 
 #### CR 줄바꿈이 발견되었습니다 [Windows]
 
-이는 Windows 줄바꿈 문자와 git 설정 때문입니다. 다음 명령을 실행해 보세요:
+이는 Windows 줄 바꿈 문자와 Git 구성의 조합으로 인해 발생합니다. 다음 명령을 실행해 보세요:
 
 ```
 git config --global core.autocrlf false
@@ -42,11 +42,11 @@ git config --global core.autocrlf false
 
 Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 postgres 데이터베이스를 프로비저닝해야 합니다.
 프로비저닝이 성공적으로 이루어지면 데이터베이스에 `기본` 및 `메타데이터` 스키마가 있어야 합니다.
-그렇지 않을 경우, 컴퓨터에서 여러 개의 postgres 인스턴스가 실행되지 않도록 하십시오.
+그렇지 않다면, 컴퓨터에서 둘 이상의 PostgreSQL 인스턴스가 실행되고 있지 않은지 확인하십시오.
 
 #### 모듈 'twenty-emails' 또는 해당 형식 선언을 찾을 수 없습니다.
 
-데이터베이스 초기화하기 전에 `twenty-emails` 패키지를 빌드해야 합니다: `npx nx run twenty-emails:build`
+데이터베이스 초기화를 실행하기 전에 `twenty-emails` 패키지(`npx nx run twenty-emails:build`)를 빌드해야 합니다.
 
 #### twenty-x 패키지가 누락됨
 
@@ -54,7 +54,7 @@ Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 post
 
 #### 저장 시 린트가 작동하지 않음
 
-Oxc 확장 프로그램(`oxc.oxc-vscode`)이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
+Oxc 확장 프로그램(`oxc.oxc-vscode`)이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 이렇게 해도 작동하지 않는 경우, VS Code 설정(개발 컨테이너 범위)에 다음을 추가해 보십시오:
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@ Oxc 확장 프로그램(`oxc.oxc-vscode`)이 설치된 상태에서는 기본 �
 }
 ```
 
-#### `npx nx start` 또는 `npx nx start twenty-front` 실행 시 메모리 부족 오류 발생
+#### `npx nx start` 또는 `npx nx start twenty-front`를 실행하는 동안 메모리 부족 오류가 발생합니다
 
 `npx nx start` 대신 필요한 서비스만 실행하십시오. 예를 들어, 서버에서 작업하는 경우, `npx nx worker twenty-server`만 실행하십시오.
 
@@ -73,7 +73,7 @@ WSL에서 `npx nx run twenty-server:start`만 실행하려고 했으나 아래�
 
 `치명적인 오류: 효과적인 마크-컴팩트 임계값 인근 할당 실패 - JavaScript 힙 메모리 부족`
 
-해결 방법은 아래 명령을 터미널에서 실행하거나 .bashrc 프로파일에 추가하여 자동 설정을 하는 것입니다:
+해결 방법으로, 터미널에서 다음 명령을 실행하거나 `.bashrc` 프로파일에 추가하여 자동으로 적용되도록 할 수 있습니다:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -81,7 +81,7 @@ WSL에서 `npx nx run twenty-server:start`만 실행하려고 했으나 아래�
 참고: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **작동하지 않는 경우:**
-어떤 프로세스가 대부분의 머신 RAM을 소모하고 있는지 조사하십시오. Twenty에서는 일부 VScode 확장이 많은 RAM을 소모하고 있음을 발견하여 임시로 비활성화했습니다.
+어떤 프로세스가 머신의 RAM 대부분을 사용하고 있는지 조사하십시오. Twenty에서는 일부 VS Code 확장이 많은 RAM을 사용하고 있음을 발견하여, 이를 일시적으로 비활성화했습니다.
 
 **작동하지 않는 경우:**
 머신을 다시 시작하면 유령 프로세스를 정리하는 데 도움이 됩니다.
@@ -98,19 +98,19 @@ WSL에서 `npx nx run twenty-server:start`만 실행하려고 했으나 아래�
 npx nx worker twenty-server
 ```
 
-#### Microsoft 365 계정에 연결할 수 없음
+#### Microsoft 365 계정을 Twenty에 연결할 수 없습니다
 
 대부분의 경우, 관리자님께서 계정에 대한 Microsoft 365 라이센스를 활성화하지 않았기 때문입니다. [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)에서 확인하십시오.
 
 `AADSTS50020` 오류 코드가 표시되는 경우, 개인 Microsoft 계정을 사용하고 있을 가능성이 높습니다. 이는 아직 지원되지 않습니다. 추가 정보는 [여기](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)에서 확인하십시오
 
-#### `yarn`을 실행하는 동안 콘솔에 경고가 나타남
+#### `yarn`을 실행하는 동안 콘솔에 경고가 나타납니다
 
 경고는 `package.json`에 명시적으로 나타나지 않는 추가 종속성을 끌어오는 것에 대한 정보입니다. 중대한 오류가 나타나지 않는 한 모든 것이 예상대로 작동해야 합니다.
 
-#### 사용자가 로그인 페이지에 접근할 때 로그에 작업 공간에 접근하려는 승인되지 않은 사용자 오류 발생
+#### 사용자가 로그인 페이지에 접근할 때, 작업 공간에 접근하려는 권한 없는 사용자에 대한 오류가 로그에 나타납니다
 
-이는 로그아웃된 상태에서 사용자 신분이 확인되지 않기 때문에 예상된 것입니다.
+로그아웃된 상태에서 사용자의 신원이 확인되지 않았기 때문에, 해당 사용자는 권한이 없으며 이는 예상된 동작입니다.
 
 #### 작업자가 작동 중인지 확인하는 방법은?
 
@@ -137,9 +137,9 @@ npx nx worker twenty-server
 
 * **POST 요청**이 수신된 경우, 작업자가 성공적으로 실행 중입니다. 그렇지 않으면, 작업자에 대한 문제 해결이 필요합니다.
 
-#### 프런트엔드 시작 실패 및 TS5042 오류: 명령줄에서 소스 파일과 함께 옵션 '프로젝트'를 사용할 수 없음
+#### 프런트엔드 시작에 실패하고 다음 오류를 반환합니다: TS5042: 명령줄에서 소스 파일과 옵션 'project'를 함께 사용할 수 없습니다
 
-`packages/twenty-ui/vite-config.ts`의 체크 플러그인을 아래 예와 같이 주석 처리하십시오
+아래 예시와 같이 `packages/twenty-ui/vite-config.ts`에서 checker 플러그인을 주석 처리하십시오:
 
 ```
 plugins: [
@@ -165,7 +165,7 @@ plugins: [
 
 #### 관리자 패널에 액세스할 수 없음
 
-데이터베이스 컨테이너에서 관리자 패널에 액세스하기 위해 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`을 실행하십시오.
+관리자 패널에 액세스하기 위해 데이터베이스 컨테이너에서 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`를 실행하십시오.
 
 #### 워크플로우를 실행하면 다음 오류로 실행이 실패합니다: "로직 함수 실행이 비활성화되었습니다. 활성화하려면 LOGIC_FUNCTION_TYPE을 LOCAL 또는 LAMBDA로 설정하세요."
 
@@ -173,7 +173,7 @@ plugins: [
 
 #### AI 채팅에 메시지를 입력하면 바로 응답하지 않고, 답변을 보려면 페이지를 새로고침해야 합니다
 
-다음 블록을 nginx 구성에 추가하세요
+이는 역방향 프록시에 스트림 기반 API 응답을 위한 구성이 누락되어 있다는 의미입니다. 아래는 예시 Nginx 구성입니다:
 
 ```
 location ~* ^/api/.*stream|\/graphql\/stream {
@@ -193,7 +193,7 @@ add_header X-Accel-Buffering no always;
 }
 ```
 
-### 1-클릭 Docker 구성
+### 1-클릭 Docker Compose
 
 #### 로그인할 수 없음
 
@@ -210,7 +210,7 @@ add_header X-Accel-Buffering no always;
    docker compose up -d
    ```
 
-database:reset 명령은 데이터베이스를 완전히 지우고 처음부터 다시 만듭니다.
+`database:reset` 명령은 데이터베이스를 완전히 삭제하고 처음부터 다시 생성한다는 점에 유의하십시오.
 
 #### 리버스 프록시 뒤에서 연결 문제
 

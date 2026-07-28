@@ -345,6 +345,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
 
+  @Field(() => Boolean)
+  isOnboardingAiChatEnabled: boolean;
+
   @Field(() => String)
   enterpriseInstanceType: string;
 
