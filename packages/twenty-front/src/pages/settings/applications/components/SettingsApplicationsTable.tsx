@@ -101,12 +101,7 @@ export const SettingsApplicationsTable = ({
             return (
               <SettingsApplicationTableRow
                 key={application.id}
-                application={{
-                  ...application,
-                  logoUrl:
-                    application.logoUrl ??
-                    application.applicationRegistration?.logoUrl,
-                }}
+                application={application}
                 hasUpdate={hasUpdate}
                 sourceType={application.applicationRegistration?.sourceType}
                 action={

@@ -25,8 +25,6 @@ export const useInstallMarketplaceApp = () => {
       const result = await installApplicationMutation({ variables });
 
       if (isDefined(result.data)) {
-        // The workspace carries the installed applications used to resolve app
-        // chips, so it has to be reloaded for the new app to be displayable.
         await loadCurrentUser();
 
         enqueueSuccessSnackBar({
