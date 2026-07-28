@@ -115,6 +115,7 @@ export const useSaveRecordTableWidgetViews = () => {
                 isVisible: field.isVisible,
                 position: field.position,
                 size: field.size,
+                aggregateOperation: field.aggregateOperation ?? null,
               })),
               viewFilters: widgetViewDraft.viewFilters.map((filter) => ({
                 id: filter.id,

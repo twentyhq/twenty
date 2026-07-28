@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull, QueryFailedError } from 'typeorm';
+import {
+  escapeForIlike,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
+import { ILike, In, IsNull, QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -21,6 +25,8 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
 type FindSuppressionsArgs = {
   workspaceId: string;
   reason?: MessageSuppressionReason;
+  searchTerm?: string;
+  unsubscribeTopicId?: string;
   limit: number;
   offset: number;
 };
@@ -56,6 +62,8 @@ export class MessageSuppressionService {
   async findSuppressions({
     workspaceId,
     reason,
+    searchTerm,
+    unsubscribeTopicId,
     limit,
     offset,
   }: FindSuppressionsArgs): Promise<{
@@ -65,7 +73,15 @@ export class MessageSuppressionService {
     const [records, totalCount] = await this.suppressionRepository.findAndCount(
       workspaceId,
       {
-        where: isDefined(reason) ? { reason } : {},
+        where: {
+          ...(isDefined(reason) ? { reason } : {}),
+          ...(isNonEmptyString(unsubscribeTopicId)
+            ? { unsubscribeTopicId }
+            : {}),
+          ...(isNonEmptyString(searchTerm)
+            ? { emailAddress: ILike(`%${escapeForIlike(searchTerm)}%`) }
+            : {}),
+        },
         order: { createdAt: 'DESC' },
         take: limit,
         skip: offset,

@@ -4,6 +4,8 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
+
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
 (
@@ -135,6 +137,46 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'fixed' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'fixed-typed';
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'text',
+          value: 'fixed',
+          className: 'rerendered',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('fixed');
+  });
+
+  it('should clear the host input when a controlled value becomes empty', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'abc' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('abc');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+  });
+
   it('should stop forwarding focusin after the handler prop is removed', () => {
     const handleFocusIn = jest.fn();
     const Wrapper = createHtmlHostWrapper('div');
@@ -217,5 +259,88 @@ describe('createHtmlHostWrapper client events', () => {
     expect(handleDrop).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'drop' }),
     );
+  });
+});
+
+describe('createHtmlHostWrapper anchor navigation', () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  const renderAnchor = (
+    props: Record<string, unknown>,
+    requestExternalNavigation: ((request: unknown) => void) | null,
+  ) => {
+    const Wrapper = createHtmlHostWrapper('a');
+
+    act(() => {
+      root.render(
+        createElement(
+          FrontComponentExternalNavigationContext.Provider,
+          { value: requestExternalNavigation },
+          createElement(Wrapper, props, 'link'),
+        ),
+      );
+    });
+
+    return container.querySelector('a') as HTMLAnchorElement;
+  };
+
+  const clickAnchor = (anchor: HTMLAnchorElement): MouseEvent => {
+    const clickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+    });
+
+    act(() => {
+      anchor.dispatchEvent(clickEvent);
+    });
+
+    return clickEvent;
+  };
+
+  it('should prevent default and request navigation for an external anchor click', () => {
+    const requestExternalNavigation = jest.fn();
+    const remoteOnClick = jest.fn();
+
+    const anchor = renderAnchor(
+      { href: 'https://example.com/probe', onClick: remoteOnClick },
+      requestExternalNavigation,
+    );
+
+    const clickEvent = clickAnchor(anchor);
+
+    expect(clickEvent.defaultPrevented).toBe(true);
+    expect(requestExternalNavigation).toHaveBeenCalledWith({
+      url: 'https://example.com/probe',
+    });
+    expect(remoteOnClick).not.toHaveBeenCalled();
+  });
+
+  it('should not request navigation for a same-origin anchor click', () => {
+    const requestExternalNavigation = jest.fn();
+
+    const anchor = renderAnchor(
+      { href: 'http://localhost/objects/people' },
+      requestExternalNavigation,
+    );
+
+    const clickEvent = clickAnchor(anchor);
+
+    expect(clickEvent.defaultPrevented).toBe(false);
+    expect(requestExternalNavigation).not.toHaveBeenCalled();
   });
 });

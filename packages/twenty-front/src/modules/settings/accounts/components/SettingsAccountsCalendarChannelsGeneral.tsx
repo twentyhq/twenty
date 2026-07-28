@@ -5,7 +5,7 @@ import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTi
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from '@react-email/components';
+import { Section } from 'twenty-ui/layout';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title } from 'twenty-ui/typography';

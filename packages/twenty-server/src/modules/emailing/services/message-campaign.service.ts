@@ -60,6 +60,7 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -297,9 +298,7 @@ export class MessageCampaignService {
     const renderedSubject = renderCampaignTemplate(subject, variables, {
       escapeValues: false,
     });
-    const renderedHtml = renderCampaignTemplate(html, variables, {
-      escapeValues: true,
-    });
+    const renderedHtml = await renderCampaignBodyToHtml(html, variables);
 
     return this.emailingDomainSenderService.sendEmail(
       workspaceId,
@@ -480,12 +479,9 @@ export class MessageCampaignService {
           escapeValues: false,
         },
       );
-      const html = renderCampaignTemplate(
+      const html = await renderCampaignBodyToHtml(
         campaign.bodyTemplate ?? '',
         variables,
-        {
-          escapeValues: true,
-        },
       );
       const text = this.htmlToText(html);
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
@@ -676,7 +672,11 @@ export class MessageCampaignService {
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     const now = new Date();
-    const text = this.htmlToText(bodyTemplate);
+    // The stored message keeps the unresolved template, so placeholders stay
+    // visible on the campaign's message records.
+    const text = this.htmlToText(
+      await renderCampaignBodyToHtml(bodyTemplate, null),
+    );
     const rows = recipients.map((recipient) => ({
       recipient,
       messageId: recipient.messageId,

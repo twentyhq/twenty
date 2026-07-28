@@ -1,0 +1,1 @@
+export const CHART_RELATION_LABEL_BATCH_SIZE = 500;

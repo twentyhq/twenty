@@ -8,6 +8,7 @@ import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -66,6 +67,13 @@ export class RouteTriggerService {
         RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
+
+    if (workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED) {
+      throw new RouteTriggerException(
+        'Workspace is suspended',
+        RouteTriggerExceptionCode.WORKSPACE_SUSPENDED,
+      );
+    }
 
     // App-scoped public domain → restrict matches to that app's logic functions.
     const applicationId = publicDomain?.applicationId ?? null;

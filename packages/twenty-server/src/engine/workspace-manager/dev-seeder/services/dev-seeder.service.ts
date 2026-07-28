@@ -30,10 +30,12 @@ import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/s
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
+import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -191,7 +193,7 @@ export class DevSeederService {
       light,
     });
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
   private async seedCoreSchema({
@@ -262,6 +264,8 @@ export class DevSeederService {
       ) {
         await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
       }
+      await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
+      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       if (seedBilling) {

@@ -49,6 +49,8 @@ export class MessageSuppressionResolver {
     return this.messageSuppressionService.findSuppressions({
       workspaceId: currentWorkspace.id,
       reason: input.reason,
+      searchTerm: input.searchTerm,
+      unsubscribeTopicId: input.unsubscribeTopicId,
       limit: input.limit,
       offset: input.offset,
     });

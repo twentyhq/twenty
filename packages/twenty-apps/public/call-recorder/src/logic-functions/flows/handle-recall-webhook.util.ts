@@ -178,7 +178,6 @@ const queueCallRecordingArtifactsImport = async ({
   };
 };
 
-// A throw bubbles to a non-2xx so Svix redelivers; the preceding status update re-applies idempotently.
 const requestCallRecordingArtifactsImportOrThrow = async ({
   callRecordingId,
 }: {

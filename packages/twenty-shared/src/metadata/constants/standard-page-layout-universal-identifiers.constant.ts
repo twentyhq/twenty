@@ -625,6 +625,9 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: {
             universalIdentifier: '886296e0-a5b6-4054-b450-ad624180c2ef',
           },
+          details: {
+            universalIdentifier: 'ce2f82cc-9340-45a2-90a0-c34207e8e3b0',
+          },
           messages: {
             universalIdentifier: 'a33b43f4-72a1-476d-9372-30e82f450377',
           },

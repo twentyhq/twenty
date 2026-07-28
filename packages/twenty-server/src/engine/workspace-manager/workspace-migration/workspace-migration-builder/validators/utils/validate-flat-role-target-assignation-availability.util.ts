@@ -18,7 +18,7 @@ export const validateFlatRoleTargetAssignationAvailability = ({
 
   const roleLabel = flatRole.label;
 
-  if (isDefined(flatRoleTarget.agentId)) {
+  if (isDefined(flatRoleTarget.agentUniversalIdentifier)) {
     if (!flatRole.canBeAssignedToAgents) {
       errors.push({
         code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,

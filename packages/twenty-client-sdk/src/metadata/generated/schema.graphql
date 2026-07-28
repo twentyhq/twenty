@@ -186,6 +186,8 @@ enum EngineComponentKey {
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
   COMPOSE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN_TEST
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -592,7 +594,7 @@ type Application {
   canBeUninstalled: Boolean!
   autoUpgrade: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
+  settingsCustomTabFrontComponentId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -869,7 +871,7 @@ type Workspace {
   viewFilterGroups: [ViewFilterGroup!]
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
-  metadataVersion: Float!
+  metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   messageCampaignDailySendLimit: Float
   databaseSchema: String
   subdomain: String!
@@ -1044,7 +1046,8 @@ enum WidgetType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
-  MESSAGE_CAMPAIGN
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1072,7 +1075,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1113,7 +1116,8 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
-  MESSAGE_CAMPAIGN
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 """Format used to display the chart value"""
@@ -1277,7 +1281,11 @@ type EmailThreadConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
-type MessageCampaignConfiguration {
+type MessageCampaignBodyConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -1396,44 +1404,6 @@ type ApplicationConnectionProvider {
   oauth: ApplicationConnectionProviderOAuthConfig
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
-}
-
-type FileWithSignedUrl {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
-  url: String!
-}
-
-type FileUploadTarget {
-  fileId: UUID!
-  uploadUrl: String!
-  contentType: String!
-  expiresAt: DateTime!
-}
-
 type BillingSubscriptionSchedulePhaseItem {
   price: String!
   quantity: Float
@@ -1525,11 +1495,6 @@ type BillingSubscriptionItem {
   billingProduct: BillingProductDTO!
 }
 
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
-}
-
 type BillingSubscription {
   id: UUID!
   status: SubscriptionStatus!
@@ -1550,6 +1515,73 @@ enum SubscriptionStatus {
   Paused
   Trialing
   Unpaid
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
+type LogicFunctionExecutionResult {
+  """Execution result in JSON format"""
+  data: JSON
+
+  """Execution Logs"""
+  logs: String!
+
+  """Execution duration in milliseconds"""
+  duration: Float!
+
+  """Execution status"""
+  status: LogicFunctionExecutionStatus!
+
+  """Execution error in JSON format"""
+  error: JSON
+}
+
+"""Status of the logic function execution"""
+enum LogicFunctionExecutionStatus {
+  IDLE
+  SUCCESS
+  ERROR
+}
+
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
+type ApprovedAccessDomain {
+  id: UUID!
+  domain: String!
+  isValidated: Boolean!
+  createdAt: DateTime!
+}
+
+type FileWithSignedUrl {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+  url: String!
+}
+
+type FileUploadTarget {
+  fileId: UUID!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
 }
 
 type BillingEndTrialPeriod {
@@ -1711,30 +1743,6 @@ type EventSubscription {
   metadataEvents: [MetadataEvent!]!
 }
 
-type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
-  data: JSON
-
-  """Execution Logs"""
-  logs: String!
-
-  """Execution duration in milliseconds"""
-  duration: Float!
-
-  """Execution status"""
-  status: LogicFunctionExecutionStatus!
-
-  """Execution error in JSON format"""
-  error: JSON
-}
-
-"""Status of the logic function execution"""
-enum LogicFunctionExecutionStatus {
-  IDLE
-  SUCCESS
-  ERROR
-}
-
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1749,6 +1757,7 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+  IS_ONBOARDING_AI_CHAT_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
 }
@@ -3107,6 +3116,7 @@ type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
@@ -3197,7 +3207,6 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
-  unsubscribePagePreviewUrl: String!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3273,6 +3282,8 @@ input PreviewMessageCampaignAudienceInput {
 
 input FindMessageSuppressionsInput {
   reason: MessageSuppressionReason
+  searchTerm: String
+  unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
 }
@@ -3494,6 +3505,7 @@ type Mutation {
   deleteUnsubscribeTopic(id: String!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
@@ -3537,6 +3549,7 @@ type Mutation {
   uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
+  getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
@@ -3786,6 +3799,7 @@ input UpsertViewWidgetViewFieldInput {
   isVisible: Boolean!
   position: Float!
   size: Float
+  aggregateOperation: AggregateOperations
 }
 
 input UpsertViewWidgetViewFilterInput {
@@ -4581,6 +4595,11 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  displayName: String
+}
+
+input UpdateEmailGroupChannelInput {
+  id: UUID!
   displayName: String
 }
 

@@ -107,6 +107,17 @@ const HelloWorld = () => {
           Render count: {renderCount}
         </span>
       </div>
+
+      <a
+        href="https://github.com/twentyhq/twenty"
+        style={{
+          color: '#0284c7',
+          fontSize: 14,
+          fontWeight: 600,
+        }}
+      >
+        Twenty on GitHub
+      </a>
     </div>
   );
 };

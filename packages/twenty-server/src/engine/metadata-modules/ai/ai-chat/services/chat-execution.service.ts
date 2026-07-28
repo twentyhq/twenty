@@ -15,6 +15,9 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
+import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
+import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -40,6 +43,7 @@ import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/res
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
+import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
@@ -217,6 +221,7 @@ export class ChatExecutionService {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
+        { spillLargeOutput: true },
       ),
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
@@ -298,10 +303,10 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const sanitizedMessages = processedMessages.map((message) => ({
-      ...message,
-      parts: finalizeDanglingToolParts(message.parts),
-    }));
+    const sanitizedMessages = this.sanitizeMessagePartsForModel(
+      processedMessages,
+      new Set(Object.keys(activeTools)),
+    );
 
     const rawModelMessages = await convertToModelMessages(sanitizedMessages);
 
@@ -430,6 +435,7 @@ export class ChatExecutionService {
         value: performance.now() - streamStartedAt,
         unit: 'ms',
         attributes: modelAttr,
+        bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
       });
     };
 
@@ -475,8 +481,21 @@ export class ChatExecutionService {
             value: performance.now() - streamStartedAt,
             unit: 'ms',
             attributes: { model: registeredModel.modelId },
+            bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
           });
         }
+      },
+      experimental_onToolCallFinish: (event) => {
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.AiChatToolExecutionDurationMs,
+          value: event.durationMs,
+          unit: 'ms',
+          attributes: {
+            model: registeredModel.modelId,
+            tool: getToolMetricName(event.toolCall.toolName),
+          },
+          bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
+        });
       },
       onStepFinish: async (step) => {
         this.metricsService.recordHistogram({
@@ -484,6 +503,7 @@ export class ChatExecutionService {
           value: performance.now() - stepStartedAt,
           unit: 'ms',
           attributes: { model: registeredModel.modelId },
+          bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
@@ -544,6 +564,7 @@ export class ChatExecutionService {
             value: outputTokens,
             unit: 'token',
             attributes: executionAttributes,
+            bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
           });
         }
       },
@@ -589,6 +610,19 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private sanitizeMessagePartsForModel(
+    messages: ExtendedUIMessage[],
+    directlyCallableToolNames: Set<string>,
+  ): ExtendedUIMessage[] {
+    return messages.map((message) => ({
+      ...message,
+      parts: guideUncallableToolCallsToMetaTool(
+        finalizeDanglingToolParts(message.parts),
+        directlyCallableToolNames,
+      ),
+    }));
   }
 
   private injectBrowsingContextIntoLastUserMessage(

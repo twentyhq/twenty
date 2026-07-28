@@ -347,6 +347,48 @@ export class MessageChannelMetadataService {
     return messageChannel;
   }
 
+  async updateEmailGroupChannel({
+    id,
+    displayName,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    displayName?: string | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyOwnership({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    // An omitted displayName leaves the current one untouched; an explicit null clears it
+    if (displayName === undefined) {
+      return messageChannel;
+    }
+
+    const trimmedDisplayName = displayName?.trim();
+
+    return this.update({
+      id,
+      workspaceId,
+      data: {
+        displayName: isNonEmptyString(trimmedDisplayName)
+          ? trimmedDisplayName
+          : null,
+      },
+    });
+  }
+
   async deleteEmailGroupChannel({
     id,
     userWorkspaceId,

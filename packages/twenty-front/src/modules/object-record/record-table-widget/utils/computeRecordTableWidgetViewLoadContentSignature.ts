@@ -11,6 +11,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
         fieldMetadataId: field.fieldMetadataId,
         isVisible: field.isVisible,
         position: field.position,
+        aggregateOperation: field.aggregateOperation,
       })),
     filters: [...view.viewFilters]
       .sort((filterA, filterB) => filterA.id.localeCompare(filterB.id))

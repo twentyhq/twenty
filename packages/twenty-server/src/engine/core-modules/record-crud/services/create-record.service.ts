@@ -24,7 +24,8 @@ export class CreateRecordService {
   ) {}
 
   async execute(params: CreateRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, authContext } = params;
+    const { objectName, objectRecord, authContext, rolePermissionConfig } =
+      params;
 
     try {
       const {
@@ -35,6 +36,7 @@ export class CreateRecordService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       if (

@@ -10,8 +10,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { type: 'text' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(element.type).toBe('input');
@@ -22,8 +23,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'hello' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('hello');
@@ -33,8 +35,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'v', defaultValue: 'd' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('d');
@@ -46,6 +49,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: {},
       hostEnforcedProps: { readOnly: true },
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).readOnly).toBe(true);
@@ -57,8 +61,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { onFocus },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     const event = {} as never;
@@ -73,8 +78,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: {},
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     (getProps(element).onBlur as (event: unknown) => void)({} as never);

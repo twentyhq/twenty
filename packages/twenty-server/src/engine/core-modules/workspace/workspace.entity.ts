@@ -246,7 +246,10 @@ export class WorkspaceEntity {
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
   viewSorts: Relation<ViewSortEntity[]>;
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'No longer used for metadata cache invalidation, will be removed',
+  })
   @Column({ default: 1 })
   metadataVersion: number;
 
