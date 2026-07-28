@@ -153,6 +153,14 @@ export type EmailThreadConfiguration = {
   configurationType: 'EMAIL_THREAD';
 };
 
+export type MessageCampaignBodyConfiguration = {
+  configurationType: 'MESSAGE_CAMPAIGN_BODY';
+};
+
+export type MessageCampaignDetailsConfiguration = {
+  configurationType: 'MESSAGE_CAMPAIGN_DETAILS';
+};
+
 export type CalendarConfiguration = {
   configurationType: 'CALENDAR';
 };
@@ -191,4 +199,6 @@ export type PageLayoutWidgetConfiguration =
   | WorkflowConfiguration
   | WorkflowVersionConfiguration
   | WorkflowRunConfiguration
-  | EmailThreadConfiguration;
+  | EmailThreadConfiguration
+  | MessageCampaignBodyConfiguration
+  | MessageCampaignDetailsConfiguration;
