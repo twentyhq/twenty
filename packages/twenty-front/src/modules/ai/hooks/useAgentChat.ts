@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
@@ -154,6 +154,7 @@ export const useAgentChat = (
       });
 
     const currentMessages = store.get(messagesAtom);
+    const isFirstMessageOfThread = !isNonEmptyArray(currentMessages);
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
@@ -181,7 +182,9 @@ export const useAgentChat = (
           text: contentToSend,
           messageId,
           browsingContext: browsingContextToSend,
-          companyContext: store.get(companyEnrichmentState.atom),
+          companyContext: isFirstMessageOfThread
+            ? store.get(companyEnrichmentState.atom)
+            : null,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
