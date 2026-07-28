@@ -3,6 +3,10 @@
 This is the authoritative workflow for changing the CRM without changing the
 live instance accidentally.
 
+New to the project? Read [SHIPPING.md](SHIPPING.md) first — it walks through the
+same process in plain language. This document is the rulebook; that one is the
+walkthrough.
+
 ## Environment boundaries
 
 | Environment | Location | Data | Purpose |
