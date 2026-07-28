@@ -16,6 +16,7 @@ describe('EmailPasswordResetLinkJob', () => {
           useValue: {
             generatePasswordResetToken: jest.fn(),
             sendEmailPasswordResetLink: jest.fn(),
+            invalidatePasswordResetToken: jest.fn(),
           },
         },
       ],
@@ -61,6 +62,39 @@ describe('EmailPasswordResetLinkJob', () => {
       workspace: mockWorkspace,
       locale: 'en',
     });
+    expect(
+      resetPasswordService.invalidatePasswordResetToken,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should invalidate the token and rethrow when sending fails', async () => {
+    (
+      resetPasswordService.generatePasswordResetToken as jest.Mock
+    ).mockResolvedValue({
+      status: 'TOKEN_GENERATED',
+      resetToken: {
+        workspaceId: 'workspace-id',
+        passwordResetToken: 'token123',
+        passwordResetTokenExpiresAt: new Date(),
+      },
+      user: { id: '1', email: 'test@example.com' },
+      workspace: { id: 'workspace-id' },
+    });
+    (
+      resetPasswordService.sendEmailPasswordResetLink as jest.Mock
+    ).mockRejectedValue(new Error('email provider down'));
+
+    await expect(
+      job.handle({
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+        locale: 'en',
+      }),
+    ).rejects.toThrow('email provider down');
+
+    expect(
+      resetPasswordService.invalidatePasswordResetToken,
+    ).toHaveBeenCalledWith('1');
   });
 
   it.each([
