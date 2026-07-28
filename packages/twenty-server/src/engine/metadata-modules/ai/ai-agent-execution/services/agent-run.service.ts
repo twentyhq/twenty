@@ -12,6 +12,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
   AiException,
@@ -44,10 +45,11 @@ export class AgentRunService {
     requestUserWorkspaceId: string | null;
     input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
-    const hasPrompt = isNonEmptyString(input.prompt);
-    const hasMessages = isNonEmptyArray(input.messages);
+    const prompt = input.prompt;
+    const messages = input.messages;
 
-    if (hasPrompt === hasMessages) {
+    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
+    if (isNonEmptyArray(messages) === isNonEmptyString(prompt)) {
       throw new AiException(
         'Provide exactly one of prompt or messages',
         AiExceptionCode.INVALID_AGENT_INPUT,
@@ -82,19 +84,34 @@ export class AgentRunService {
       application,
     };
 
-    const { result, hasNoMoreAvailableCredits } =
-      await this.agentAsyncExecutorService.executeAgent({
-        agent,
-        ...(hasMessages
-          ? { messages: input.messages }
-          : { userPrompt: input.prompt }),
-        authContext,
-        workspaceId: workspace.id,
-        userWorkspaceId: requestUserWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      });
+    const sharedExecuteAgentArgs = {
+      agent,
+      authContext,
+      workspaceId: workspace.id,
+      userWorkspaceId: requestUserWorkspaceId,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+    };
 
-    if (hasNoMoreAvailableCredits) {
+    let executionResult: AgentExecutionResult;
+
+    if (isNonEmptyArray(messages)) {
+      executionResult = await this.agentAsyncExecutorService.executeAgent({
+        ...sharedExecuteAgentArgs,
+        messages,
+      });
+    } else if (isNonEmptyString(prompt)) {
+      executionResult = await this.agentAsyncExecutorService.executeAgent({
+        ...sharedExecuteAgentArgs,
+        userPrompt: prompt,
+      });
+    } else {
+      throw new AiException(
+        'Provide exactly one of prompt or messages',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    if (executionResult.hasNoMoreAvailableCredits) {
       return {
         result: null,
         error: 'AI agent stopped: no more available credits.',
@@ -102,6 +119,10 @@ export class AgentRunService {
       };
     }
 
-    return { result, error: null, success: true };
+    return {
+      result: executionResult.result,
+      error: null,
+      success: true,
+    };
   }
 }

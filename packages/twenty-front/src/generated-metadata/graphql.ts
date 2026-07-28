@@ -5117,7 +5117,13 @@ export enum RowLevelPermissionPredicateOperand {
 
 export type RunAgentInput = {
   agentUniversalIdentifier: Scalars['String']['input'];
-  prompt: Scalars['String']['input'];
+  messages?: InputMaybe<Array<RunAgentMessageInput>>;
+  prompt?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RunAgentMessageInput = {
+  content: Scalars['String']['input'];
+  role: Scalars['String']['input'];
 };
 
 export type RunAgentResult = {

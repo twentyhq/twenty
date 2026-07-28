@@ -102,7 +102,8 @@ Schema notes:
 
 `runAgent()` lets a logic function run one of your app's agents (with its
 skills and tools). Identify the agent by the `universalIdentifier` you passed
-to `defineAgent()`:
+to `defineAgent()`. Pass either a `prompt` string or a `messages` conversation
+history — not both:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -113,7 +114,25 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+For multi-turn bots (Slack, Discord, Teams, …), pass thread history as
+`messages` instead of a single `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Key points:
+- Provide **exactly one** of `prompt` (string) or `messages` (array of
+  `{ role: 'user' | 'assistant', content: string }`).
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.

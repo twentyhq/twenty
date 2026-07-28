@@ -4582,7 +4582,13 @@ input CreateEmailingDomainInput {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String!
+  prompt: String
+  messages: [RunAgentMessageInput!]
+}
+
+input RunAgentMessageInput {
+  role: String!
+  content: String!
 }
 
 input CreateWebhookInput {

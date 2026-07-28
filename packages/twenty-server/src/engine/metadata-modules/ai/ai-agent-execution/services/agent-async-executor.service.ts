@@ -123,14 +123,15 @@ export class AgentAsyncExecutorService {
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
   }: {
     agent: AgentEntity | null;
-    userPrompt?: string;
-    messages?: RunAgentMessage[];
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
     operationType?: UsageOperationType;
-  }): Promise<AgentExecutionResult> {
+  } & (
+    | { userPrompt: string; messages?: never }
+    | { messages: RunAgentMessage[]; userPrompt?: never }
+  )): Promise<AgentExecutionResult> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
@@ -242,7 +243,7 @@ export class AgentAsyncExecutorService {
               }),
             ),
           }
-        : { prompt: userPrompt ?? '' };
+        : { prompt: userPrompt };
 
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
