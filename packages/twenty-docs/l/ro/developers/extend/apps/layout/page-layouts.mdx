@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### Puncte cheie
 
-* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `type` este unul dintre `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` sau `'STANDALONE_PAGE'`. Folosiți `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
 * Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`VERTICAL_LIST` pentru pagini ale înregistrărilor, `GRID` pentru dashboard-uri). Un tab care conține un singur widget îl afișează automat pe toată lățimea; cu mai multe widget-uri, acestea sunt aranjate în stivă, sub formă de carduri.
 * Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.

@@ -109,4 +109,90 @@ describe('CacheStorageService', () => {
       );
     });
   });
+
+  describe('sorted sets', () => {
+    const createRedisCacheMock = () => {
+      const zAdd = jest.fn().mockResolvedValue(1);
+      const zRem = jest.fn().mockResolvedValue(1);
+      const exec = jest.fn().mockResolvedValue([2, 3]);
+      const multi = {
+        zRemRangeByScore: jest.fn(),
+        zCard: jest.fn(),
+        exec,
+      };
+
+      multi.zRemRangeByScore.mockReturnValue(multi);
+      multi.zCard.mockReturnValue(multi);
+
+      const cache = {
+        store: {
+          name: 'redis',
+          client: {
+            zAdd,
+            zRem,
+            multi: jest.fn().mockReturnValue(multi),
+          },
+        },
+      } as unknown as Cache;
+
+      return { cache, exec, multi, zAdd, zRem };
+    };
+
+    it('adds members with scores', async () => {
+      const { cache, zAdd } = createRedisCacheMock();
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+      const entries = [
+        { score: 1000, value: 'stream-1' },
+        { score: 2000, value: 'stream-2' },
+      ];
+
+      await cacheStorageService.sortedSetAdd('active-streams', entries);
+
+      expect(zAdd).toHaveBeenCalledWith(prefixKey('active-streams'), entries);
+    });
+
+    it('removes members', async () => {
+      const { cache, zRem } = createRedisCacheMock();
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      await cacheStorageService.sortedSetRemove('active-streams', [
+        'stream-1',
+        'stream-2',
+      ]);
+
+      expect(zRem).toHaveBeenCalledWith(prefixKey('active-streams'), [
+        'stream-1',
+        'stream-2',
+      ]);
+    });
+
+    it('removes expired members and returns the remaining count atomically', async () => {
+      const { cache, exec, multi } = createRedisCacheMock();
+      const cacheStorageService = new CacheStorageService(
+        cache,
+        CacheStorageNamespace.EngineWorkspace,
+      );
+
+      const count = await cacheStorageService.sortedSetRemoveByScoreAndCount(
+        'active-streams',
+        0,
+        1000,
+      );
+
+      expect(multi.zRemRangeByScore).toHaveBeenCalledWith(
+        prefixKey('active-streams'),
+        0,
+        1000,
+      );
+      expect(multi.zCard).toHaveBeenCalledWith(prefixKey('active-streams'));
+      expect(exec).toHaveBeenCalledTimes(1);
+      expect(count).toBe(3);
+    });
+  });
 });
