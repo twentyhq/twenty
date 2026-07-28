@@ -1,30 +1,20 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-export const useCanAddSelectOption = ({
-  fieldName,
-  objectMetadataNameSingular,
-}: {
-  fieldName: string;
-  objectMetadataNameSingular: string | undefined;
-}) => {
-  const { objectMetadataItems } = useObjectMetadataItems();
+export const useCanAddSelectOption = (fieldMetadataId: string) => {
+  const { fieldMetadataItem, objectMetadataItem } =
+    useFieldMetadataItemById(fieldMetadataId);
 
   const userHasPermissionToEditDataModel = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
   );
 
-  const objectNamePlural = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === objectMetadataNameSingular,
-  )?.namePlural;
-
   const canAddSelectOption =
     userHasPermissionToEditDataModel &&
-    isNonEmptyString(fieldName) &&
-    isNonEmptyString(objectNamePlural);
+    isNonEmptyString(fieldMetadataItem?.name) &&
+    isNonEmptyString(objectMetadataItem?.namePlural);
 
   return { canAddSelectOption };
 };
