@@ -123,9 +123,6 @@ describe('ResetPasswordService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({} as AppTokenEntity);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.generatePasswordResetToken(
@@ -141,13 +138,6 @@ describe('ResetPasswordService', () => {
             passwordResetTokenExpiresAt: expect.any(Date),
             workspaceId: 'workspace-id',
           }),
-        }),
-      );
-      expect(appTokenRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: '1',
-          workspaceId: 'workspace-id',
-          type: AppTokenType.PasswordResetToken,
         }),
       );
       expect(workspaceRepository.findOne).toHaveBeenCalledWith(
@@ -173,9 +163,6 @@ describe('ResetPasswordService', () => {
           id: 'fallback-workspace-id',
         } as WorkspaceEntity);
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({} as AppTokenEntity);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.generatePasswordResetToken(
@@ -186,12 +173,10 @@ describe('ResetPasswordService', () => {
       expect(result).toEqual(
         expect.objectContaining({
           status: 'TOKEN_GENERATED',
+          resetToken: expect.objectContaining({
+            workspaceId: 'fallback-workspace-id',
+          }),
           workspace: expect.objectContaining({ id: 'fallback-workspace-id' }),
-        }),
-      );
-      expect(appTokenRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId: 'fallback-workspace-id',
         }),
       );
     });
@@ -207,9 +192,6 @@ describe('ResetPasswordService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as WorkspaceEntity);
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({} as AppTokenEntity);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result =
@@ -218,12 +200,10 @@ describe('ResetPasswordService', () => {
       expect(result).toEqual(
         expect.objectContaining({
           status: 'TOKEN_GENERATED',
+          resetToken: expect.objectContaining({
+            workspaceId: 'resolved-workspace-id',
+          }),
           workspace: expect.objectContaining({ id: 'resolved-workspace-id' }),
-        }),
-      );
-      expect(appTokenRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId: 'resolved-workspace-id',
         }),
       );
     });
@@ -300,24 +280,45 @@ describe('ResetPasswordService', () => {
         code: AuthExceptionCode.INTERNAL_SERVER_ERROR,
       });
     });
+  });
+
+  describe('savePasswordResetToken', () => {
+    const mockResetToken = {
+      workspaceId: 'workspace-id',
+      passwordResetToken: 'plain-token',
+      passwordResetTokenExpiresAt: addMilliseconds(new Date(), 3600000),
+    };
+
+    it('should save the hashed token', async () => {
+      const saveSpy = jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
+
+      await service.savePasswordResetToken({
+        userId: '1',
+        resetToken: mockResetToken,
+      });
+
+      expect(saveSpy).toHaveBeenCalledWith({
+        userId: '1',
+        workspaceId: 'workspace-id',
+        value: expect.any(String),
+        expiresAt: mockResetToken.passwordResetTokenExpiresAt,
+        type: AppTokenType.PasswordResetToken,
+      });
+      expect(saveSpy.mock.calls[0][0].value).not.toBe('plain-token');
+    });
 
     it('should rethrow repository errors', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-
-      jest
-        .spyOn(userService, 'findUserByEmail')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(appTokenRepository, 'save')
         .mockRejectedValue(new Error('db down'));
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       await expect(
-        service.generatePasswordResetToken('test@example.com', 'workspace-id'),
+        service.savePasswordResetToken({
+          userId: '1',
+          resetToken: mockResetToken,
+        }),
       ).rejects.toThrow('db down');
     });
   });

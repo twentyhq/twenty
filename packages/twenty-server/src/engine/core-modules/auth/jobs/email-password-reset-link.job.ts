@@ -35,25 +35,16 @@ export class EmailPasswordResetLinkJob {
       return;
     }
 
-    try {
-      await this.resetPasswordService.sendEmailPasswordResetLink({
-        resetToken: generationResult.resetToken,
-        user: generationResult.user,
-        workspace: generationResult.workspace,
-        locale: data.locale,
-      });
-    } catch (error) {
-      try {
-        await this.resetPasswordService.invalidatePasswordResetToken(
-          generationResult.user.id,
-        );
-      } catch (invalidationError) {
-        this.logger.error(
-          `Failed to invalidate password reset token after email sending failure: ${invalidationError}`,
-        );
-      }
+    await this.resetPasswordService.sendEmailPasswordResetLink({
+      resetToken: generationResult.resetToken,
+      user: generationResult.user,
+      workspace: generationResult.workspace,
+      locale: data.locale,
+    });
 
-      throw error;
-    }
+    await this.resetPasswordService.savePasswordResetToken({
+      userId: generationResult.user.id,
+      resetToken: generationResult.resetToken,
+    });
   }
 }

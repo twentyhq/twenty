@@ -16,7 +16,7 @@ describe('EmailPasswordResetLinkJob', () => {
           useValue: {
             generatePasswordResetToken: jest.fn(),
             sendEmailPasswordResetLink: jest.fn(),
-            invalidatePasswordResetToken: jest.fn(),
+            savePasswordResetToken: jest.fn(),
           },
         },
       ],
@@ -62,12 +62,13 @@ describe('EmailPasswordResetLinkJob', () => {
       workspace: mockWorkspace,
       locale: 'en',
     });
-    expect(
-      resetPasswordService.invalidatePasswordResetToken,
-    ).not.toHaveBeenCalled();
+    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalledWith({
+      userId: '1',
+      resetToken: mockResetToken,
+    });
   });
 
-  it('should invalidate the token and rethrow when sending fails', async () => {
+  it('should not persist the token when sending fails', async () => {
     (
       resetPasswordService.generatePasswordResetToken as jest.Mock
     ).mockResolvedValue({
@@ -92,12 +93,10 @@ describe('EmailPasswordResetLinkJob', () => {
       }),
     ).rejects.toThrow('email provider down');
 
-    expect(
-      resetPasswordService.invalidatePasswordResetToken,
-    ).toHaveBeenCalledWith('1');
+    expect(resetPasswordService.savePasswordResetToken).not.toHaveBeenCalled();
   });
 
-  it('should rethrow the sending error when the token invalidation also fails', async () => {
+  it('should rethrow persistence errors so the job retries', async () => {
     (
       resetPasswordService.generatePasswordResetToken as jest.Mock
     ).mockResolvedValue({
@@ -111,10 +110,7 @@ describe('EmailPasswordResetLinkJob', () => {
       workspace: { id: 'workspace-id' },
     });
     (
-      resetPasswordService.sendEmailPasswordResetLink as jest.Mock
-    ).mockRejectedValue(new Error('email provider down'));
-    (
-      resetPasswordService.invalidatePasswordResetToken as jest.Mock
+      resetPasswordService.savePasswordResetToken as jest.Mock
     ).mockRejectedValue(new Error('db down'));
 
     await expect(
@@ -123,7 +119,7 @@ describe('EmailPasswordResetLinkJob', () => {
         workspaceId: 'workspace-id',
         locale: 'en',
       }),
-    ).rejects.toThrow('email provider down');
+    ).rejects.toThrow('db down');
   });
 
   it.each([

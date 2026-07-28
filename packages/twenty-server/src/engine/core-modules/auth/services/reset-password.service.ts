@@ -93,18 +93,6 @@ export class ResetPasswordService {
     }
 
     const plainResetToken = crypto.randomBytes(32).toString('hex');
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(plainResetToken)
-      .digest('hex');
-
-    await this.appTokenRepository.save({
-      userId: user.id,
-      workspaceId: targetWorkspace.id,
-      value: hashedResetToken,
-      expiresAt,
-      type: AppTokenType.PasswordResetToken,
-    });
 
     return {
       status: 'TOKEN_GENERATED',
@@ -116,6 +104,27 @@ export class ResetPasswordService {
       user,
       workspace: targetWorkspace,
     };
+  }
+
+  async savePasswordResetToken({
+    userId,
+    resetToken,
+  }: {
+    userId: string;
+    resetToken: PasswordResetToken;
+  }): Promise<void> {
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken.passwordResetToken)
+      .digest('hex');
+
+    await this.appTokenRepository.save({
+      userId,
+      workspaceId: resetToken.workspaceId,
+      value: hashedResetToken,
+      expiresAt: resetToken.passwordResetTokenExpiresAt,
+      type: AppTokenType.PasswordResetToken,
+    });
   }
 
   private async resolveTargetWorkspace(
