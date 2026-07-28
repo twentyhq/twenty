@@ -5,7 +5,6 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
 import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
@@ -34,7 +33,6 @@ export class UpgradeApplicationCommand extends CommandRunner {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationUpgradeService: ApplicationUpgradeService,
-    private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -180,15 +178,10 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
     // Runs on the exact set shown at confirmation time, so installations
     // created or versions published while the operator answered are excluded.
-    const report = await this.workspaceIteratorService.iterate({
-      workspaceIds: impactedWorkspaceIds,
-      callback: async ({ workspaceId }) => {
-        await this.applicationUpgradeService.upgradeApplication({
-          appRegistrationId: appRegistration.id,
-          targetVersion,
-          workspaceId,
-        });
-      },
+    const report = await this.applicationUpgradeService.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
     });
 
     this.logger.log(

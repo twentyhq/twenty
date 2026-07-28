@@ -6,6 +6,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
+import {
+  WorkspaceIteratorService,
+  type WorkspaceIteratorReport,
+} from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -16,13 +20,10 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { runInBatches } from 'src/utils/run-in-batches.util';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
-
-const UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE = 5;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -36,6 +37,7 @@ export class ApplicationUpgradeService {
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {}
 
   async checkForUpdates(
@@ -169,28 +171,26 @@ export class ApplicationUpgradeService {
     appRegistration,
     targetVersion,
     applications,
-    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string;
     applications: ApplicationEntity[];
-    batchSize?: number;
-  }): Promise<void> {
-    await runInBatches({
-      items: applications,
-      batchSize,
-      handler: async (application) => {
+  }): Promise<WorkspaceIteratorReport> {
+    // An empty workspace id list makes the iterator fall back to every
+    // provisioned workspace, which would upgrade workspaces that were
+    // filtered out.
+    if (!isNonEmptyArray(applications)) {
+      return { success: [], fail: [] };
+    }
+
+    return this.workspaceIteratorService.iterate({
+      workspaceIds: applications.map((application) => application.workspaceId),
+      callback: async ({ workspaceId }) => {
         await this.upgradeApplicationToVersion({
           appRegistration,
           targetVersion,
-          workspaceId: application.workspaceId,
+          workspaceId,
         });
-      },
-      onError: (application, error) => {
-        this.logger.error(
-          `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
-          error,
-        );
       },
     });
   }
@@ -198,13 +198,11 @@ export class ApplicationUpgradeService {
   async upgradeAllApplications({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
     workspaceIds,
     workspaceCountLimit,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    batchSize?: number;
     workspaceIds?: string[];
     workspaceCountLimit?: number;
   }): Promise<void> {
@@ -224,7 +222,6 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion,
       applications: applicationsToUpgrade,
-      batchSize,
     });
   }
 
