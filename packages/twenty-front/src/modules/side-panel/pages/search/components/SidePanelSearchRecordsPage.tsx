@@ -122,8 +122,6 @@ export const SidePanelSearchRecordsPage = () => {
           className={previewTooltipClass}
           width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
         >
-          {/* Keyed so the card's own state resets with the record, while the
-              tooltip around it stays mounted and keeps its position */}
           <SidePanelSearchRecordPreviewCard
             key={previewedItem.recordId}
             objectNameSingular={previewedItem.objectNameSingular}
