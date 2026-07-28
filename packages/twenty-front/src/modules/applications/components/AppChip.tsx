@@ -18,7 +18,6 @@ type AppChipProps = {
   className?: string;
   chipOnly?: boolean;
   rounded?: boolean;
-  border?: string;
   pulsing?: boolean;
 };
 
@@ -42,7 +41,6 @@ export const AppChip = ({
   className,
   chipOnly = false,
   rounded = false,
-  border,
   pulsing = false,
 }: AppChipProps) => {
   const { applicationChipData } = useApplicationChipData({
@@ -61,7 +59,6 @@ export const AppChip = ({
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}
-        border={border}
         pulsing={pulsing}
       />
       {!chipOnly && (

@@ -24,7 +24,6 @@ export type AvatarProps = {
   color?: string;
   backgroundColor?: string;
   borderColor?: string;
-  border?: string;
   pulsing?: boolean;
   onClick?: () => void;
 };
@@ -42,7 +41,6 @@ export const Avatar = ({
   color,
   backgroundColor,
   borderColor,
-  border,
   pulsing = false,
 }: AvatarProps) => {
   const theme = useTheme();
@@ -109,11 +107,9 @@ export const Avatar = ({
       : showBackgroundColor
         ? fixedBackgroundColor
         : 'none',
-    ...(border
-      ? { '--avatar-border': border }
-      : type === 'app' && appliedBorderColor
-        ? { '--avatar-border': `1px solid ${appliedBorderColor}` }
-        : {}),
+    ...(type === 'app' && appliedBorderColor
+      ? { '--avatar-border': `1px solid ${appliedBorderColor}` }
+      : {}),
   } as React.CSSProperties;
 
   return (
