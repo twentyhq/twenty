@@ -84,6 +84,65 @@ export class WorkflowCoreSyncService {
     });
   }
 
+  async mirrorWorkflowsByIds(
+    workspaceId: string,
+    workflowIds: string[],
+  ): Promise<void> {
+    if (workflowIds.length === 0) {
+      return;
+    }
+
+    const workflows = await this.findWorkspaceWorkflowsByIds(
+      workspaceId,
+      workflowIds,
+    );
+
+    await this.upsertToCore(workspaceId, workflows);
+  }
+
+  async deleteCoreWorkflowsByWorkspaceIds(
+    workspaceId: string,
+    workflowIds: string[],
+  ): Promise<void> {
+    if (workflowIds.length === 0) {
+      return;
+    }
+
+    const workflows = await this.findWorkspaceWorkflowsByIds(
+      workspaceId,
+      workflowIds,
+    );
+
+    await this.deleteFromCore(
+      workspaceId,
+      workflows
+        .map((workflow) => workflow.coreWorkflowId)
+        .filter(isNonEmptyString),
+    );
+  }
+
+  private async findWorkspaceWorkflowsByIds(
+    workspaceId: string,
+    workflowIds: string[],
+  ): Promise<WorkflowWorkspaceEntity[]> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceWorkflowRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workspaceWorkflowRepository.find({
+          where: { id: In(workflowIds) },
+          withDeleted: true,
+        });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
   private async writeBackCoreWorkflowIds(
     workspaceId: string,
     coreWorkflowIdByWorkspaceRecordId: Map<string, string>,

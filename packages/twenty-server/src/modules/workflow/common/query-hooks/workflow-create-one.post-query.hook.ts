@@ -6,6 +6,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import {
@@ -22,6 +23,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
   constructor(
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   async execute(
@@ -34,6 +36,10 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const workflow = payload[0];
+
+    await this.workflowCoreSyncService.mirrorWorkflowsByIds(workspace.id, [
+      workflow.id,
+    ]);
 
     await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
       workspace.id,

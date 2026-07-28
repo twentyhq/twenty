@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
@@ -54,6 +55,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     CommandMenuItemModule,
     FeatureFlagModule,
     WorkflowVersionCoreModule,
+    WorkflowCoreModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,

@@ -4,6 +4,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -58,6 +59,7 @@ export class WorkflowCommonWorkspaceService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   async getWorkflowVersionOrFail({
@@ -354,6 +356,20 @@ export class WorkflowCommonWorkspaceService {
         });
       }
     }, authContext);
+
+    if (operation === 'restore') {
+      await this.workflowCoreSyncService.mirrorWorkflowsByIds(
+        workspaceId,
+        workflowIds,
+      );
+
+      return;
+    }
+
+    await this.workflowCoreSyncService.deleteCoreWorkflowsByWorkspaceIds(
+      workspaceId,
+      workflowIds,
+    );
   }
 
   private async deactivateVersionOnDelete({

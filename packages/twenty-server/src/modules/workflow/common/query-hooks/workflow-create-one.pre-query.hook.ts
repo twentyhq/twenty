@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -16,7 +18,10 @@ export class WorkflowCreateOnePreQueryHook implements WorkspacePreQueryHookInsta
 
     return {
       ...payload,
-      data: dataWithoutStatuses as WorkflowWorkspaceEntity,
+      data: {
+        ...dataWithoutStatuses,
+        coreWorkflowId: uuidv4(),
+      } as WorkflowWorkspaceEntity,
     };
   }
 }

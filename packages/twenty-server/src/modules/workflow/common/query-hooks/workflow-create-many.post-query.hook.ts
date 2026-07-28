@@ -6,6 +6,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -24,6 +25,7 @@ export class WorkflowCreateManyPostQueryHook implements WorkspacePostQueryHookIn
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   async execute(
@@ -34,6 +36,11 @@ export class WorkflowCreateManyPostQueryHook implements WorkspacePostQueryHookIn
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    await this.workflowCoreSyncService.mirrorWorkflowsByIds(
+      workspace.id,
+      payload.map((workflow) => workflow.id),
+    );
 
     const position =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
