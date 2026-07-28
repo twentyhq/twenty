@@ -100,6 +100,10 @@ describe('WorkflowCommonWorkspaceService', () => {
       expect(result.trigger).toEqual(coreTrigger);
       expect(result.steps).toEqual(coreSteps);
       expect(result.status).toBe('ACTIVE');
+
+      // identity stays from the workspace row: core has neither of these
+      expect(result.id).toBe(WORKFLOW_VERSION_ID);
+      expect(result.name).toBe('Draft');
     });
 
     it('falls back to workspace content when the flag is on but the core row is missing', async () => {
@@ -114,6 +118,7 @@ describe('WorkflowCommonWorkspaceService', () => {
       });
 
       expect(result.trigger).toEqual(workspaceTrigger);
+      expect(result.steps).toEqual(workspaceSteps);
       expect(result.status).toBe('DRAFT');
     });
 
