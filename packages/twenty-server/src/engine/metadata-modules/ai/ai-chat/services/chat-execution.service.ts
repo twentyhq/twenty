@@ -4,6 +4,7 @@ import {
   convertToModelMessages,
   hasToolCall,
   type LanguageModelUsage,
+  NoOutputGeneratedError,
   stepCountIs,
   type StepResult,
   streamText,
@@ -335,6 +336,7 @@ export class ChatExecutionService {
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
+    let lastUnderlyingStreamError: unknown;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -482,6 +484,12 @@ export class ChatExecutionService {
           });
         }
       },
+      onError: ({ error }) => {
+        lastUnderlyingStreamError = error;
+        this.logger.error(
+          `Stream ${streamId} emitted an error: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
       experimental_onToolCallFinish: (event) => {
         this.metricsService.recordHistogram({
           key: MetricsKeys.AiChatToolExecutionDurationMs,
@@ -599,6 +607,43 @@ export class ChatExecutionService {
         if (error?.name === 'AbortError') {
           return;
         }
+
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.STREAM_INTERRUPTED
+        ) {
+          return;
+        }
+
+        if (NoOutputGeneratedError.isInstance(error)) {
+          const underlying = lastUnderlyingStreamError;
+
+          this.exceptionHandlerService.captureExceptions([
+            Object.assign(
+              new Error(
+                `AI chat stream produced no output. ${JSON.stringify({
+                  modelId: registeredModel.modelId,
+                  provider: registeredModel.sdkPackage,
+                  workspaceId: workspace.id,
+                  threadId,
+                  streamId,
+                  turnId,
+                  messageCount: messages.length,
+                  conversationSizeTokens,
+                  elapsedMs: Math.round(performance.now() - streamStartedAt),
+                  underlyingError:
+                    underlying instanceof Error
+                      ? `${underlying.name}: ${underlying.message}`
+                      : String(underlying ?? 'none-recorded'),
+                })}`,
+              ),
+              { cause: underlying },
+            ),
+          ]);
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([error]);
       });
 
