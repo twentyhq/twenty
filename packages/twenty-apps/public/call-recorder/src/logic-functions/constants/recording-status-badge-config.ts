@@ -1,10 +1,3 @@
-// The label is drawn as vector outlines rather than an SVG <text> element.
-// sharp rasterizes SVG through Pango/fontconfig, which needs font files on the
-// host, and the runtimes that execute this app ship none (Alpine for the local
-// driver, Amazon Linux for Lambda). With nothing to match, Pango emits one
-// .notdef box per character, so the badge rendered "REC" as three rectangles.
-// Outlines depend on no ambient state and rasterize identically everywhere.
-
 export const RECORDING_STATUS_BADGE_HEIGHT = 48;
 export const RECORDING_STATUS_BADGE_INSET = 56;
 export const RECORDING_STATUS_BADGE_PADDING = 18;
@@ -14,36 +7,15 @@ export const RECORDING_STATUS_BADGE_BACKGROUND = '#feebec';
 export const RECORDING_STATUS_BADGE_BACKGROUND_OPACITY = 0.96;
 export const RECORDING_STATUS_BADGE_COLOR = '#ce2c31';
 export const RECORDING_STATUS_BADGE_LABEL_CAP_HEIGHT = 20;
-export const RECORDING_STATUS_BADGE_LABEL_LETTER_SPACING = 3;
 
-type RecordingStatusBadgeGlyph = {
-  advanceWidth: number;
-  outline: string;
-};
+// "REC" outlined from Inter SemiBold (20px cap height, 3px tracking); the app runtimes ship no fonts, so SVG <text> renders as boxes.
+export const RECORDING_STATUS_BADGE_LABEL_PATH =
+  'M5.60 20L1.97 20L1.97 0L9.47 0Q11.78 0 13.34 0.80Q14.91 1.60 15.72 3.04Q16.52 4.48 16.52 6.40L16.52 6.40Q16.52 8.32 15.71 9.73Q14.89 11.14 13.31 11.91Q11.73 12.68 9.42 12.68L9.42 12.68L4.08 12.68L4.08 9.67L8.94 9.67Q10.28 9.67 11.14 9.29Q12.00 8.92 12.42 8.19Q12.83 7.46 12.83 6.40L12.83 6.40Q12.83 5.33 12.41 4.58Q11.99 3.82 11.13 3.42Q10.27 3.03 8.92 3.03L8.92 3.03L5.60 3.03L5.60 20Z' +
+  'M8.35 10.94L12.30 10.94L17.26 20L13.21 20L8.35 10.94Z' +
+  'M35.95 20L22.86 20L22.86 0L35.87 0L35.87 3.04L26.49 3.04L26.49 8.47L35.20 8.47L35.20 11.50L26.49 11.50L26.49 16.96L35.95 16.96L35.95 20Z' +
+  'M59.69 6.75L59.69 6.75L56.04 6.75Q55.88 5.85 55.46 5.15Q55.04 4.45 54.42 3.96Q53.79 3.48 53.00 3.23Q52.20 2.98 51.28 2.98L51.28 2.98Q49.65 2.98 48.39 3.79Q47.13 4.61 46.42 6.18Q45.71 7.74 45.71 10L45.71 10Q45.71 12.29 46.42 13.86Q47.14 15.43 48.40 16.23Q49.65 17.02 51.27 17.02L51.27 17.02Q52.17 17.02 52.96 16.78Q53.74 16.54 54.37 16.07Q55.00 15.61 55.44 14.92Q55.87 14.24 56.04 13.36L56.04 13.36L59.69 13.38Q59.49 14.80 58.81 16.05Q58.13 17.30 57.04 18.26Q55.94 19.21 54.48 19.74Q53.01 20.27 51.22 20.27L51.22 20.27Q48.59 20.27 46.52 19.05Q44.45 17.83 43.26 15.53Q42.06 13.22 42.06 10L42.06 10Q42.06 6.77 43.27 4.47Q44.47 2.17 46.54 0.95Q48.61-0.27 51.22-0.27L51.22-0.27Q52.89-0.27 54.33 0.20Q55.77 0.66 56.89 1.57Q58.01 2.47 58.74 3.77Q59.47 5.08 59.69 6.75Z';
 
-// Authored on a 20px cap-height grid with the origin at the cap line, so a
-// glyph is placed by translating it to its baseline-independent top-left. The
-// R is a single subpath plus its counter, cut out by fill-rule="evenodd".
-export const RECORDING_STATUS_BADGE_LABEL_GLYPHS: RecordingStatusBadgeGlyph[] = [
-  {
-    // R
-    advanceWidth: 13.6,
-    outline:
-      'M0 0H8.4A5.2 5.2 0 0 1 8.4 10.4L13.4 20H9.6L6.2 10.4H3.4V20H0Z' +
-      'M3.4 3.2H8A2 2 0 0 1 8 7.2H3.4Z',
-  },
-  {
-    // E
-    advanceWidth: 12,
-    outline: 'M0 0H12V3.4H3.4V8.3H10.6V11.7H3.4V16.6H12V20H0Z',
-  },
-  {
-    // C
-    advanceWidth: 12.72,
-    outline:
-      'M12.72 3.57A7.2 10 0 1 0 12.72 16.43L10.11 14.24A3.8 6.6 0 1 1 10.11 5.76Z',
-  },
-];
+export const RECORDING_STATUS_BADGE_LABEL_WIDTH = 61.05;
 
 export const RECORDING_STATUS_BADGE_LABEL_LEFT =
   RECORDING_STATUS_BADGE_PADDING +
@@ -53,16 +25,6 @@ export const RECORDING_STATUS_BADGE_LABEL_LEFT =
 export const RECORDING_STATUS_BADGE_LABEL_TOP =
   (RECORDING_STATUS_BADGE_HEIGHT - RECORDING_STATUS_BADGE_LABEL_CAP_HEIGHT) / 2;
 
-export const RECORDING_STATUS_BADGE_LABEL_WIDTH =
-  RECORDING_STATUS_BADGE_LABEL_GLYPHS.reduce(
-    (total, glyph) => total + glyph.advanceWidth,
-    0,
-  ) +
-  RECORDING_STATUS_BADGE_LABEL_LETTER_SPACING *
-    (RECORDING_STATUS_BADGE_LABEL_GLYPHS.length - 1);
-
-// Derived from its contents so the pill stays balanced when any of the parts
-// above change; a hardcoded width silently mismatches the label it wraps.
 export const RECORDING_STATUS_BADGE_WIDTH = Math.round(
   RECORDING_STATUS_BADGE_LABEL_LEFT +
     RECORDING_STATUS_BADGE_LABEL_WIDTH +
