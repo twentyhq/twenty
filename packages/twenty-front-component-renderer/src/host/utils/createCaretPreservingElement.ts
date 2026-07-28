@@ -1,10 +1,22 @@
-import { isFunction, isNonEmptyString } from '@sniptt/guards';
+import { isFunction, isNonEmptyString, isNumber } from '@sniptt/guards';
 import React from 'react';
 
 import { type SetEditableFocused } from '@/host/contexts/FrontComponentInputFocusContext';
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
+
+const resolveInitialValue = (candidate: unknown): string | undefined => {
+  if (isNonEmptyString(candidate)) {
+    return candidate;
+  }
+
+  if (isNumber(candidate)) {
+    return String(candidate);
+  }
+
+  return undefined;
+};
 
 type CreateCaretPreservingElementParams = {
   htmlTag: 'input' | 'textarea';
@@ -28,11 +40,8 @@ export const createCaretPreservingElement = ({
     onBlur: forwardedOnBlur,
     ...rest
   } = reactBindableProps;
-  const initialValue = isNonEmptyString(defaultValue)
-    ? defaultValue
-    : isNonEmptyString(value)
-      ? value
-      : undefined;
+  const initialValue =
+    resolveInitialValue(defaultValue) ?? resolveInitialValue(value);
 
   const handleFocus = (event: React.FocusEvent<CaretPreservingElement>) => {
     setEditableFocused?.(true);
