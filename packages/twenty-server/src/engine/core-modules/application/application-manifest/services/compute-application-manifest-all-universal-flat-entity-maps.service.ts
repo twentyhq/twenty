@@ -169,7 +169,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
           indexManifest.objectUniversalIdentifier
         ] ??
-        (existingObjectCandidate?.isStandard
+        (isDefined(existingObjectCandidate) && !existingObjectCandidate.isCustom
           ? existingObjectCandidate
           : undefined);
 
@@ -200,11 +200,15 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           flatObjectMetadata.universalIdentifier,
         ) ?? [];
 
-      const existingFieldsForObject = Object.values(
-        existingAllFlatEntityMaps?.flatFieldMetadataMaps
-          ?.byUniversalIdentifier ?? {},
+      const existingFieldsForObject = (
+        Object.values(
+          existingAllFlatEntityMaps?.flatFieldMetadataMaps
+            ?.byUniversalIdentifier ?? {},
+        ) as (UniversalFlatFieldMetadata | undefined)[]
       ).filter(
-        (field): field is UniversalFlatFieldMetadata =>
+        (
+          field: UniversalFlatFieldMetadata | undefined,
+        ): field is UniversalFlatFieldMetadata =>
           isDefined(field) &&
           field.objectMetadataUniversalIdentifier ===
             flatObjectMetadata.universalIdentifier,
