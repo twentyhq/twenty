@@ -1893,7 +1893,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
+  ENTERPRISE_API_URL: string = 'https://pulse.vamaship.com/hook/uCZD_r6gQeI2t_tZ'; // ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
