@@ -85,7 +85,11 @@ export const PinnedCommandMenuItemButtons = () => {
                     item={item}
                     isPrimaryAction={
                       item.engineComponentKey ===
-                      EngineComponentKey.CREATE_NEW_RECORD
+                        EngineComponentKey.CREATE_NEW_RECORD ||
+                      item.engineComponentKey ===
+                        EngineComponentKey.COMPOSE_CAMPAIGN ||
+                      item.engineComponentKey ===
+                        EngineComponentKey.SEND_MESSAGE_CAMPAIGN
                     }
                   />
                 </StyledCommandMenuItemContainer>

@@ -442,8 +442,7 @@ export class AgentAsyncExecutorService {
       );
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +
-        (accumulatedUsage.outputTokens ?? 0) +
-        cacheCreationTokens;
+        (accumulatedUsage.outputTokens ?? 0);
 
       void this.aiBillingService.emitAiTokenUsageEvent(
         workspaceId,

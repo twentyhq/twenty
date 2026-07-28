@@ -186,6 +186,8 @@ enum EngineComponentKey {
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
   COMPOSE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN_TEST
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -1043,6 +1045,8 @@ enum WidgetType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1070,7 +1074,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1111,6 +1115,8 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 """Format used to display the chart value"""
@@ -1271,6 +1277,14 @@ type EmailsConfiguration {
 }
 
 type EmailThreadConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignBodyConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -3477,6 +3491,7 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
@@ -4531,7 +4546,11 @@ input SendEmailViaDomainInput {
 }
 
 input SendMessageCampaignInput {
-  listId: String!
+  campaignId: String!
+}
+
+input SendMessageCampaignTestInput {
+  toAddress: String!
   unsubscribeTopicId: String
   subject: String!
   body: String!
