@@ -21,11 +21,13 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-// The card brings its own surface, so the tooltip only contributes the shadow
+// The card brings its own surface, so the tooltip only contributes the shadow.
+// Tooltips render at 0.9 opacity, which would make the card translucent.
 const previewTooltipClass = css`
   background: transparent !important;
   border-radius: ${themeCssVariables.border.radius.md} !important;
   box-shadow: ${themeCssVariables.boxShadow.strong} !important;
+  opacity: 1 !important;
   padding: 0 !important;
 `;
 

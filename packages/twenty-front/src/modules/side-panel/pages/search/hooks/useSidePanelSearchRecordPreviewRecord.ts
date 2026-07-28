@@ -31,6 +31,4 @@ export const useSidePanelSearchRecordPreviewRecord = ({
       record as ObjectRecord,
     );
   }, [record, loading, recordId, store]);
-
-  return { loading };
 };

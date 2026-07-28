@@ -44,8 +44,10 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
+  flex: 1;
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -53,6 +55,7 @@ const StyledTitle = styled.div`
 
 const StyledCreatedAt = styled.div`
   color: ${themeCssVariables.font.color.light};
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
 `;
