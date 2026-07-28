@@ -3,15 +3,14 @@ import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CallRecordingStatus } from '~/generated/graphql';
 
-const CALL_RECORDER_STATUS_BORDER_COLORS: Record<CallRecordingStatus, string> =
-  {
-    [CallRecordingStatus.SCHEDULED]: themeCssVariables.tag.text.blue,
-    [CallRecordingStatus.JOINING]: themeCssVariables.tag.text.orange,
-    [CallRecordingStatus.RECORDING]: themeCssVariables.tag.text.orange,
-    [CallRecordingStatus.PROCESSING]: themeCssVariables.tag.text.orange,
-    [CallRecordingStatus.COMPLETED]: themeCssVariables.tag.text.green,
-    [CallRecordingStatus.FAILED]: themeCssVariables.tag.text.red,
-  };
+const CALL_RECORDER_STATUS_BORDERS: Record<CallRecordingStatus, string> = {
+  [CallRecordingStatus.SCHEDULED]: `2px solid ${themeCssVariables.tag.text.blue}`,
+  [CallRecordingStatus.JOINING]: `2px solid ${themeCssVariables.tag.text.orange}`,
+  [CallRecordingStatus.RECORDING]: `2px solid ${themeCssVariables.tag.text.orange}`,
+  [CallRecordingStatus.PROCESSING]: `2px solid ${themeCssVariables.tag.text.orange}`,
+  [CallRecordingStatus.COMPLETED]: `2px solid ${themeCssVariables.tag.text.green}`,
+  [CallRecordingStatus.FAILED]: `2px solid ${themeCssVariables.tag.text.red}`,
+};
 
 type CalendarEventCallRecorderAvatarProps = {
   applicationId?: string | null;
@@ -25,7 +24,7 @@ export const CalendarEventCallRecorderAvatar = ({
   <AppChip
     applicationId={applicationId}
     fallbackApplicationData={{ name: t`Call recorder` }}
-    borderColor={CALL_RECORDER_STATUS_BORDER_COLORS[status]}
+    border={CALL_RECORDER_STATUS_BORDERS[status]}
     size="md"
     rounded
     chipOnly
