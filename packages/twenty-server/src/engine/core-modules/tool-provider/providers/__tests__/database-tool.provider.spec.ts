@@ -40,7 +40,6 @@ type ExplicitPermissionRow = {
   canReadObjectRecords?: boolean;
   canUpdateObjectRecords?: boolean;
   canSoftDeleteObjectRecords?: boolean;
-  canDestroyObjectRecords?: boolean;
 };
 
 type GenerateDescriptorsTestOptions = {
@@ -70,7 +69,6 @@ describe('DatabaseToolProvider', () => {
         canReadObjectRecords: true,
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
       }));
 
     const workspaceCacheService = {
