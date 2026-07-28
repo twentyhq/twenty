@@ -44,9 +44,6 @@ export type LearnToolsResult = {
 };
 
 export type LearnToolsOptions = {
-  // Gate on which tools this meta-tool may reach. Evaluated at call time so it
-  // stays closed to the intended set even for tools that appear after the tool
-  // set was built. Callers express a denylist or an allowlist as they see fit.
   isToolAllowed?: (toolName: string) => boolean;
   spillLargeOutput?: boolean;
 };

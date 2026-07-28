@@ -46,9 +46,6 @@ export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
   options?: {
-    // Gate on which tools this meta-tool may reach. Evaluated at call time (not
-    // just when the tool set is built) so a tool that appears later still can't
-    // be reached. Callers express a denylist or an allowlist as they see fit.
     isToolAllowed?: (toolName: string) => boolean;
     compactOutput?: boolean;
     spillLargeOutput?: boolean;
