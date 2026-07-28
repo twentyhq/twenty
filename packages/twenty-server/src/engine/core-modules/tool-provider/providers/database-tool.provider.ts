@@ -30,6 +30,7 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -87,12 +88,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const requireExplicitObjectGrants =
       context.requireExplicitObjectGrants === true;
 
-    const roleId =
-      'intersectionOf' in context.rolePermissionConfig
-        ? context.rolePermissionConfig.intersectionOf[0]
-        : 'unionOf' in context.rolePermissionConfig
-          ? context.rolePermissionConfig.unionOf[0]
-          : undefined;
+    const roleId = getRoleIdsFromRolePermissionConfig(
+      context.rolePermissionConfig,
+    )[0];
 
     const explicitPermissionByObjectId = new Map<
       string,
