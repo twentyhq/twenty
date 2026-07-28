@@ -242,24 +242,6 @@ export class FlatViewValidatorService {
       ...flatEntityUpdate,
     };
 
-    // The INDEX key is engine-reserved and immutable: the engine sets it once
-    // at view creation and never updates it, so any transition to or from
-    // INDEX is a caller trying to promote or demote a default view.
-    const viewKeyChanges =
-      'key' in flatEntityUpdate && flatEntityUpdate.key !== existingFlatView.key;
-
-    if (
-      viewKeyChanges &&
-      (existingFlatView.key === ViewKey.INDEX ||
-        updatedFlatView.key === ViewKey.INDEX)
-    ) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`The INDEX view key is reserved for the engine-owned default view and cannot be set or unset`,
-        userFriendlyMessage: msg`The default view key cannot be changed`,
-      });
-    }
-
     const kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate =
       flatEntityUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier;
 

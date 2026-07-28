@@ -65,7 +65,7 @@ const buildUpdateArgs = ({
   flatEntityUpdate,
   existingFlatView,
 }: {
-  flatEntityUpdate: Partial<TestFlatView>;
+  flatEntityUpdate: Record<string, unknown>;
   existingFlatView: TestFlatView;
 }) =>
   ({
@@ -169,37 +169,13 @@ describe('FlatViewValidatorService INDEX key reservation', () => {
   });
 
   describe('update', () => {
-    it('rejects promoting a view to INDEX', () => {
+    // The key is not a comparable nor editable property, so promote/demote
+    // attempts cannot reach the update validator; unrelated updates on an
+    // INDEX view stay allowed.
+    it('accepts an update on an INDEX view', () => {
       const result = service.validateFlatViewUpdate(
         buildUpdateArgs({
-          flatEntityUpdate: { key: ViewKey.INDEX },
-          existingFlatView: buildFlatView({ key: null }),
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('reserved');
-    });
-
-    it('rejects demoting an INDEX view', () => {
-      const result = service.validateFlatViewUpdate(
-        buildUpdateArgs({
-          flatEntityUpdate: { key: null },
-          existingFlatView: buildFlatView({
-            key: ViewKey.INDEX,
-            isSystemSideEffect: true,
-          }),
-        }),
-      );
-
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].message).toContain('reserved');
-    });
-
-    it('accepts an unrelated update on an INDEX view', () => {
-      const result = service.validateFlatViewUpdate(
-        buildUpdateArgs({
-          flatEntityUpdate: { key: ViewKey.INDEX, type: ViewType.TABLE },
+          flatEntityUpdate: { name: 'Renamed default view' },
           existingFlatView: buildFlatView({
             key: ViewKey.INDEX,
             isSystemSideEffect: true,
