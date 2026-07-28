@@ -41,13 +41,6 @@ export const MultiSelectFieldInput = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
-  const handleAddSelectOption = (optionName: string) => {
-    if (!canAddSelectOption) {
-      return;
-    }
-    addSelectOption(optionName);
-  };
-
   return (
     <MultiSelectInput
       selectableListComponentInstanceId={
@@ -58,7 +51,7 @@ export const MultiSelectFieldInput = () => {
       onCancel={handleCancel}
       onOptionSelected={handleOptionSelected}
       values={draftValue}
-      onAddSelectOption={handleAddSelectOption}
+      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />
   );
 };
