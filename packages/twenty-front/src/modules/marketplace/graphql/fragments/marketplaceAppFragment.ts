@@ -7,7 +7,7 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     description
     author
     category
-    logo
+    logoUrl
     sourcePackage
     isVetted
   }
