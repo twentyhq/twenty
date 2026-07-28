@@ -15,6 +15,10 @@
 # Patch files may have mixed line endings by design
 *.patch -text
 
+# Our README replaces upstream's; keep ours on an upstream sync instead of
+# conflicting every time. Needs `git config merge.ours.driver true` per clone.
+README.md merge=ours
+
 *.png binary
 *.jpg binary
 *.jpeg binary
