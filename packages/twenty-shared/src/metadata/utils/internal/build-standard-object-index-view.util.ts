@@ -11,32 +11,19 @@ type StandardViewFieldUniversalIdentifier = { universalIdentifier: string };
 // universal identifier + the stable INDEX view key
 // (getSystemViewUniversalIdentifier), and each view field from the view + the
 // field it displays (getViewFieldUniversalIdentifier).
-//
-// `derivedViewFieldNames` are the fields the standard INDEX view builder emits.
-// `preservedViewFields` carries legacy entries that are no longer emitted
-// verbatim, so their committed universal identifiers are never mutated.
 export const buildStandardObjectIndexView = <
-  const TDerivedViewFieldName extends string,
-  const TPreservedViewFieldName extends string = never,
+  const TViewFieldName extends string,
 >({
   objectUniversalIdentifier,
   fields,
-  derivedViewFieldNames,
-  preservedViewFields,
+  viewFieldNames,
 }: {
   objectUniversalIdentifier: string;
   fields: Record<string, StandardViewFieldUniversalIdentifier>;
-  derivedViewFieldNames: readonly TDerivedViewFieldName[];
-  preservedViewFields?: Record<
-    TPreservedViewFieldName,
-    StandardViewFieldUniversalIdentifier
-  >;
+  viewFieldNames: readonly TViewFieldName[];
 }): {
   universalIdentifier: string;
-  viewFields: Record<
-    TDerivedViewFieldName | TPreservedViewFieldName,
-    StandardViewFieldUniversalIdentifier
-  >;
+  viewFields: Record<TViewFieldName, StandardViewFieldUniversalIdentifier>;
 } => {
   const viewUniversalIdentifier = getSystemViewUniversalIdentifier({
     applicationUniversalIdentifier:
@@ -45,8 +32,8 @@ export const buildStandardObjectIndexView = <
     viewKey: ViewKey.INDEX,
   });
 
-  const derivedViewFields = Object.fromEntries(
-    derivedViewFieldNames.map((viewFieldName) => {
+  const viewFields = Object.fromEntries(
+    viewFieldNames.map((viewFieldName) => {
       const field = fields[viewFieldName];
 
       if (field === undefined) {
@@ -67,17 +54,10 @@ export const buildStandardObjectIndexView = <
         },
       ];
     }),
-  ) as Record<TDerivedViewFieldName, StandardViewFieldUniversalIdentifier>;
+  ) as Record<TViewFieldName, StandardViewFieldUniversalIdentifier>;
 
   return {
     universalIdentifier: viewUniversalIdentifier,
-    viewFields: {
-      ...(preservedViewFields ??
-        ({} as Record<
-          TPreservedViewFieldName,
-          StandardViewFieldUniversalIdentifier
-        >)),
-      ...derivedViewFields,
-    },
+    viewFields,
   };
 };
