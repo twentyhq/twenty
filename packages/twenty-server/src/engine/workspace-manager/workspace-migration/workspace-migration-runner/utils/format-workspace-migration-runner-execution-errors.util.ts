@@ -9,8 +9,16 @@ const TRUNCATION_MARKER = ' [truncated]';
 
 const POSTGRES_TRANSACTION_ABORTED_CODE = '25P02';
 
+// Ordered by execution phase: transpilation runs before the metadata and
+// workspace schema writes.
+const EXECUTION_ERROR_LABELS = [
+  'actionTranspilation',
+  'metadata',
+  'workspaceSchema',
+] as const satisfies readonly (keyof WorkspaceMigrationRunnerExecutionErrors)[];
+
 type ExecutionErrorEntry = {
-  label: keyof WorkspaceMigrationRunnerExecutionErrors;
+  label: (typeof EXECUTION_ERROR_LABELS)[number];
   error: Error;
 };
 
@@ -41,11 +49,10 @@ const formatSingleExecutionError = (error: Error): string => {
 export const formatWorkspaceMigrationRunnerExecutionErrors = (
   errors: WorkspaceMigrationRunnerExecutionErrors,
 ): string | undefined => {
-  const entries = (
-    ['actionTranspilation', 'metadata', 'workspaceSchema'] as const
-  )
-    .map((label) => ({ label, error: errors[label] }))
-    .filter((entry): entry is ExecutionErrorEntry => isDefined(entry.error));
+  const entries = EXECUTION_ERROR_LABELS.map((label) => ({
+    label,
+    error: errors[label],
+  })).filter((entry): entry is ExecutionErrorEntry => isDefined(entry.error));
 
   if (entries.length === 0) {
     return undefined;
