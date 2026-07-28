@@ -6,15 +6,13 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useGetOpenRecordIn } from '@/object-record/record-index/hooks/useGetOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
@@ -25,7 +23,7 @@ export const useOpenRecordFromIndexView = () => {
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const isMobile = useIsMobile();
+  const { getOpenRecordIn } = useGetOpenRecordIn();
 
   const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
@@ -48,10 +46,6 @@ export const useOpenRecordFromIndexView = () => {
 
   const openRecordFromIndexView = useCallback(
     ({ recordId }: { recordId: string }) => {
-      const recordIndexOpenRecordIn = store.get(
-        recordIndexOpenRecordInState.atom,
-      );
-
       const parentViewFilters = store.get(currentRecordFilters);
 
       const parentViewSorts = store.get(currentRecordSorts);
@@ -71,11 +65,7 @@ export const useOpenRecordFromIndexView = () => {
         },
       );
 
-      if (
-        !isMobile &&
-        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
-        canOpenObjectInSidePanel(objectNameSingular)
-      ) {
+      if (getOpenRecordIn(objectNameSingular) === ViewOpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular,
@@ -103,7 +93,7 @@ export const useOpenRecordFromIndexView = () => {
       objectNameSingular,
       navigate,
       openRecordInSidePanel,
-      isMobile,
+      getOpenRecordIn,
       closeSidePanelMenu,
       store,
     ],
