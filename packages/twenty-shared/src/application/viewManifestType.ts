@@ -33,12 +33,19 @@ export type StandaloneViewFieldManifest = ViewFieldManifest & {
 
 export type ViewFilterManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
-  operand: ViewFilterOperand;
-  value: ViewManifestFilterValue;
   subFieldName?: string;
   viewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;
-};
+} & (
+  | {
+      operand: ViewFilterOperand.IS_RELATIVE;
+      value: string;
+    }
+  | {
+      operand: Exclude<ViewFilterOperand, ViewFilterOperand.IS_RELATIVE>;
+      value: ViewManifestFilterValue;
+    }
+);
 
 export type ViewFilterGroupManifest = SyncableEntityOptions & {
   logicalOperator: ViewFilterGroupLogicalOperator;

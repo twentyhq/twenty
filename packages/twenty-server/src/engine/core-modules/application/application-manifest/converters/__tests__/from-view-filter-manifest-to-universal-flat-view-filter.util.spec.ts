@@ -50,4 +50,41 @@ describe('fromViewFilterManifestToUniversalFlatViewFilter', () => {
     expect(result.viewFilterGroupUniversalIdentifier).toBe('vfg-uuid-1');
     expect(result.positionInViewFilterGroup).toBe(2);
   });
+
+  it('should convert IS_RELATIVE filter when value is a valid stringified relative date', () => {
+    const result = fromViewFilterManifestToUniversalFlatViewFilter({
+      viewFilterManifest: {
+        universalIdentifier: 'vfilter-uuid-3',
+        fieldMetadataUniversalIdentifier: 'field-uuid-3',
+        operand: ViewFilterOperand.IS_RELATIVE,
+        value: 'NEXT_10_DAY',
+      },
+      viewUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.operand).toBe(ViewFilterOperand.IS_RELATIVE);
+    expect(result.value).toBe('NEXT_10_DAY');
+  });
+
+  it('should throw an error when IS_RELATIVE filter value is a non-string object', () => {
+    const invalidObjectValue = { direction: 'NEXT', amount: 10, unit: 'DAY' };
+
+    expect(() =>
+      fromViewFilterManifestToUniversalFlatViewFilter({
+        viewFilterManifest: {
+          universalIdentifier: 'vfilter-uuid-4',
+          fieldMetadataUniversalIdentifier: 'field-uuid-4',
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: invalidObjectValue as unknown as string,
+        },
+        viewUniversalIdentifier,
+        applicationUniversalIdentifier,
+        now,
+      }),
+    ).toThrow(
+      'ViewFilterManifest with operand IS_RELATIVE requires a stringified relative date value (e.g., "NEXT_10_DAY"), but received a non-string value.',
+    );
+  });
 });
