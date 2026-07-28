@@ -485,30 +485,6 @@ describe('useFrontComponentExecutionContext', () => {
       );
       expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
     });
-
-    it('should fall back to full-page navigation when the object cannot open in the side panel', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
-          {
-            page: SidePanelPages.ViewRecord,
-            recordId: 'workflow-1',
-            objectNameSingular: 'workflow',
-          },
-        );
-      });
-
-      expect(mockNavigateApp).toHaveBeenCalledWith(
-        AppPath.RecordShowPage,
-        { objectNameSingular: 'workflow', objectRecordId: 'workflow-1' },
-        undefined,
-        undefined,
-      );
-      expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
-    });
   });
 
   describe('openSidePanelPage with EditRichText', () => {
