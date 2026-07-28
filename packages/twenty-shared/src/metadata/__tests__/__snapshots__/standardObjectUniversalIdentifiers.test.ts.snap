@@ -2702,14 +2702,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "happensAt": {
             "universalIdentifier": "3ccb9611-f9ec-56c5-82df-f12f7e26e694",
           },
-          "linkedRecordCachedName": {
-            "universalIdentifier": "20202020-bf01-4b01-8b01-ba5cc01aa017",
-          },
           "name": {
             "universalIdentifier": "821f0d94-72e0-5b04-ba97-50538f5a73c2",
-          },
-          "properties": {
-            "universalIdentifier": "20202020-bf01-4b01-8b01-ba5cc01aa019",
           },
           "targetCompany": {
             "universalIdentifier": "d271d5b4-86ad-513d-a042-d4f8a9c41665",
@@ -2988,23 +2982,14 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "allWorkflowRuns": {
         "universalIdentifier": "7f1e3269-5de1-56e9-b89f-4cccaf4d53d6",
         "viewFields": {
-          "createdBy": {
-            "universalIdentifier": "20202020-af11-4a11-8a11-a0bcf10abcb3",
-          },
           "name": {
             "universalIdentifier": "b1ae1446-834a-54bb-b995-04644ee4f0cf",
-          },
-          "startedAt": {
-            "universalIdentifier": "20202020-af11-4a11-8a11-a0bcf10abcb2",
           },
           "status": {
             "universalIdentifier": "f62369bb-a4cc-5d88-ac8e-7740ea318837",
           },
           "workflow": {
             "universalIdentifier": "1c323f33-aa9a-5975-8a60-095817bf6412",
-          },
-          "workflowVersion": {
-            "universalIdentifier": "20202020-af11-4a11-8a11-a0bcf10abcb4",
           },
         },
       },
@@ -3285,35 +3270,14 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "assignedTasks": {
             "universalIdentifier": "d401db50-821d-540d-852f-d5ee06d7b2ed",
           },
-          "avatarUrl": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f2",
-          },
-          "colorScheme": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f3",
-          },
           "createdAt": {
             "universalIdentifier": "03129632-0c81-576f-884f-65d366c2ca3a",
-          },
-          "dateFormat": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f6",
-          },
-          "locale": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f4",
           },
           "name": {
             "universalIdentifier": "7af9ed3a-b187-5dad-b8c6-451b50fed4d8",
           },
           "ownedOpportunities": {
             "universalIdentifier": "e15281a1-9f03-5b59-87d9-7f6a5b7a8d99",
-          },
-          "timeFormat": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f7",
-          },
-          "timeZone": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f5",
-          },
-          "userEmail": {
-            "universalIdentifier": "20202020-ef01-4e01-8e01-a0bcaeabe1f1",
           },
         },
       },
