@@ -7,7 +7,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'MOBILE' });
+    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
   });
 
   it('should return MOBILE device when isInSidePanel is true', () => {
@@ -16,7 +16,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE' });
+    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
   });
 
   it('should return MOBILE device when both isMobile and isInSidePanel are true', () => {
@@ -25,7 +25,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE' });
+    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
   });
 
   it('should return DESKTOP device when both are false', () => {
@@ -34,6 +34,19 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'DESKTOP' });
+    expect(result).toEqual({ device: 'DESKTOP', selectedRecords: [] });
+  });
+
+  it('should pass through selectedRecords', () => {
+    const result = buildWidgetVisibilityContext({
+      isMobile: false,
+      isInSidePanel: false,
+      selectedRecords: [{ id: 'a', status: 'DRAFT' }],
+    });
+
+    expect(result).toEqual({
+      device: 'DESKTOP',
+      selectedRecords: [{ id: 'a', status: 'DRAFT' }],
+    });
   });
 });

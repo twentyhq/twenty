@@ -1,0 +1,32 @@
+---
+title: Veri Dışa Aktarma SSS
+description: Veri dışa aktarmayla ilgili sıkça sorulan sorular.
+---
+
+<AccordionGroup>
+<Accordion title="İptalden önce, özel nesneler, özel alanlar, ilişkiler, notlar, görevler, fırsatlar, ekler, iş akışları, izinler ve denetim geçmişi de dahil olmak üzere tüm çalışma alanı verilerini dışa aktarabilir miyiz?">
+Çalışma alanı verileri, bazı istisnalarla birlikte iptalden önce dışa aktarılabilir: panolar, iş akışları ve izinler manuel olarak aktarılmalı ve denetim günlükleri aktarılamaz.
+</Accordion>
+<Accordion title="Hangi öğeler şu anda dışa aktarılamaz veya taşınamaz?">
+Çoğu öğe, bazı istisnalarla dışa aktarılabilir veya taşınabilir:
+* iş akışları, panolar ve tüm ayarlar (API anahtarları, webhook'lar, denetim günlükleri, kullanıcı ayarları vb.) manuel olarak taşınmalıdır
+* uygulama tarafından oluşturulan nesneler ve alanlar, söz konusu uygulama farklı bir çalışma alanına kurularak taşınabilir, manuel olarak taşınmamalıdır
+* bazı kayıtlar, iş akışı sürümleri ve iş akışı çalıştırmaları gibi. hiçbir şekilde taşınamaz ve kaybolmaları beklenir
+* mesaj ve takvimle ilgili nesneler gibi bazı nesneler dışa aktarılmamalıdır, çünkü bunlar hesap bağlandığında oluşturulur ve periyodik olarak eşitlenir, hesabınızı tekrar bağladığınızda yeniden eşitleneceklerdir (söz konusu hesaba erişiminiz olduğu sürece; bu, şirketinizden ayrılan bir ekip üyesinin hesabıysa, bu durumda bu mesajlar dışa aktarılmalıdır, aksi takdirde kaybolacaklardır)
+</Accordion>
+<Accordion title="Resmi bir buluttan kendi barındırılan ortama geçiş prosedürü veya destekli bir geçiş hizmeti var mı?">
+Şu an itibarıyla, buluttan kendi barındırılan ortama resmi bir geçiş prosedürü yoktur. Genel fikir şudur:
+* önce, uygulamaya ait nesneleri ve alanları tanıtmak için uygulamaları yükleyin
+* kullanıcılar tarafından eklenen özel nesneleri ve alanları çoğaltın
+* tüm verileri bir çalışma alanından diğerine taşımak için API anahtarları veya yapay zeka araçlarıyla bir komut dosyası kullanın
+* taşınamayan tüm nesneler manuel olarak aktarılmalıdır
+
+Lütfen birkaç noktaya dikkat edin:
+* istek/dakika sınırına ulaşmadan önce Pro planda dakikada en fazla 50, Organization planda dakikada en fazla 100 istek gönderebilirsiniz
+* her API isteğinde en fazla 200 kayıt olabilir
+* Created by, Timeline activities ve Updated by gibi alanlardaki bazı veriler içe aktarma sırasında kaybolacak ve sistem tarafından üzerine yazılacak.
+</Accordion>
+<Accordion title="Dışa aktarılan dosyalar açık ve belgelenmiş formatlarda mı sağlanıyor?">
+Arayüzde dışa aktarılan dosyalar Excel formatındadır ve tüm API istekleri JSON formatında kaydedilebilir.
+</Accordion>
+</AccordionGroup>

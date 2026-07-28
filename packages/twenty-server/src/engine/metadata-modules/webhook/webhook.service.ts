@@ -1,35 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateWebhookInputToFlatWebhookToCreate } from 'src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create.util';
 import { fromDeleteWebhookInputToFlatWebhookOrThrow } from 'src/engine/metadata-modules/flat-webhook/utils/from-delete-webhook-input-to-flat-webhook-or-throw.util';
 import { fromFlatWebhookToWebhookDto } from 'src/engine/metadata-modules/flat-webhook/utils/from-flat-webhook-to-webhook-dto.util';
 import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/metadata-modules/flat-webhook/utils/from-update-webhook-input-to-flat-webhook-to-update-or-throw.util';
-import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class WebhookService {
   constructor(
-    @InjectWorkspaceScopedRepository(WebhookEntity)
-    private readonly webhookRepository: WorkspaceScopedRepository<WebhookEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -46,54 +34,32 @@ export class WebhookService {
   }
 
   async findAll(workspaceId: string): Promise<WebhookDTO[]> {
-    const [webhooks, applications] = await Promise.all([
-      this.webhookRepository.find(workspaceId, {
-        where: { deletedAt: IsNull() },
-        order: { createdAt: 'ASC' },
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
-    ]);
+    const { flatWebhookMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWebhookMaps'] },
+      );
 
-    const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
-
-    return webhooks
-      .map((webhookEntity) =>
-        fromWebhookEntityToFlatWebhook({
-          entity: webhookEntity,
-          applicationIdToUniversalIdentifierMap,
-        }),
-      )
+    return Object.values(flatWebhookMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map(fromFlatWebhookToWebhookDto);
   }
 
   async findById(id: string, workspaceId: string): Promise<WebhookDTO | null> {
-    const [webhook, applications] = await Promise.all([
-      this.webhookRepository.findOne(workspaceId, {
-        where: { id, deletedAt: IsNull() },
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
-    ]);
+    const { flatWebhookMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWebhookMaps'] },
+      );
+    const webhook = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatWebhookMaps,
+    });
 
     if (!isDefined(webhook)) {
       return null;
     }
 
-    const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
-
-    return fromFlatWebhookToWebhookDto(
-      fromWebhookEntityToFlatWebhook({
-        entity: webhook,
-        applicationIdToUniversalIdentifierMap,
-      }),
-    );
+    return fromFlatWebhookToWebhookDto(webhook);
   }
 
   async create(

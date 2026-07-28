@@ -6,7 +6,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { ON_PARTNER_APPLICATION_CREATED_FN_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { DISCORD_WEBHOOK_ENV_VAR } from 'src/modules/partner/application-intake/connector/discord/config';
+import { DISCORD_WEBHOOK_ENV_VAR } from 'src/modules/shared/connector/discord/config';
 import { notifyPartnerApplication } from 'src/modules/partner/application-intake/services/notify-partner-application.service';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 

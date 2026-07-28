@@ -17,11 +17,15 @@ export const getWidgetCardVariant = ({
   isMobile,
   isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
+  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
+
+  if (isSideColumnContext) {
+    return 'side-column';
+  }
+
   if (presentation === 'solo') {
     return 'solo';
   }
-
-  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
 
   switch (pageLayoutType) {
     case PageLayoutType.DASHBOARD:
@@ -31,6 +35,6 @@ export const getWidgetCardVariant = ({
     case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
     case null:
-      return isSideColumnContext ? 'side-column' : 'record-page';
+      return 'record-page';
   }
 };

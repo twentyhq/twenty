@@ -171,6 +171,28 @@ Exécutez `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email =
 
 En production, les fonctions logiques sont désactivées par défaut. Définissez la variable d'environnement `LOGIC_FUNCTION_TYPE` sur `LOCAL` ou `LAMBDA` pour les activer. Cela peut être configuré via des variables d'environnement ou via les variables de base de données du panneau d'administration. Voir le [guide de configuration des fonctions logiques](/l/fr/developers/self-host/capabilities/setup#logic-functions-available-drivers) pour plus de détails.
 
+#### Quand je tape un message dans le chat IA, il ne répond pas immédiatement et je dois actualiser la page pour voir la réponse
+
+Ajouter le bloc suivant à la configuration de nginx
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
 ### Docker compose en un clic
 
 #### Impossible de se connecter

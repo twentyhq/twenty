@@ -177,6 +177,23 @@ describe('createHtmlHostWrapper client events', () => {
     expect(node.value).toBe('fixed');
   });
 
+  it('should write a numeric controlled value to the host input', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 42 }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('42');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 43 }));
+    });
+
+    expect(node.value).toBe('43');
+  });
+
   it('should clear the host input when a controlled value becomes empty', () => {
     const Wrapper = createHtmlHostWrapper('input');
 

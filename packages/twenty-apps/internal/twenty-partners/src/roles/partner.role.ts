@@ -50,6 +50,7 @@ import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/modules/partner/fi
 import { PARTNER_USER_ON_PARTNER_LINK_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-link.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 import { PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-service.field';
+import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/referred-by-partner-on-opportunity.field';
 
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
@@ -193,6 +194,12 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: PARTNER_ON_OPPORTUNITY_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {

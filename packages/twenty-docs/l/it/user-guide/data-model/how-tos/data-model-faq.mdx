@@ -42,7 +42,6 @@ Tutti gli oggetti attivi appaiono nella navigazione. Puoi disattivare gli oggett
 No, i tipi di campo non possono essere cambiati dopo la creazione. Se ti serve un tipo diverso, crea un nuovo campo con il tipo corretto, migra i tuoi dati e poi disattiva il vecchio campo.
 </Accordion>
 
-
 <Accordion title="Perché ho bisogno di nomi singolari e plurali diversi?">
 La nostra API GraphQL utilizza entrambe le forme per operazioni diverse:
 * `createPerson` (singolare) per azioni su singoli record
@@ -73,15 +72,15 @@ Attualmente non puoi rendere obbligatori i campi personalizzati. Tutti i campi a
 </Accordion>
 
 <Accordion title="Posso creare campi di formula?">
-I campi di formula arriveranno nel **Q1 2026**. Nel frattempo, puoi utilizzare i Workflows per calcolare e aggiornare automaticamente i valori dei campi.
+I campi di formula sono in arrivo in **H2 2026**. Nel frattempo, puoi utilizzare i Workflows per calcolare e aggiornare automaticamente i valori dei campi.
 </Accordion>
 
 <Accordion title="Posso avere campi nidificati nei miei oggetti?">
-I campi nidificati arriveranno nel **Q1 2026**. Attualmente, puoi utilizzare i Workflows per importare i valori dei campi da oggetti correlati. Ad esempio, per visualizzare il settore di un'azienda sul record di una Persona, crea un campo personalizzato su Persone e utilizza un Workflow per sincronizzare il valore.
+I campi annidati stanno arrivando in **H2 2026**. Attualmente, puoi utilizzare i Workflows per importare i valori dei campi da oggetti correlati. Ad esempio, per visualizzare il settore di un'azienda sul record di una Persona, crea un campo personalizzato su Persone e utilizza un Workflow per sincronizzare il valore.
 </Accordion>
 
 <Accordion title="Posso riordinare i campi negli oggetti?">
-Il riordino dei campi sarà disponibile con layout personalizzati nel **Q4 2025**. Attualmente, i campi sono visualizzati in ordine alfabetico.
+Sì, vai a Impostazioni → Modello di dati → oggetto a tua scelta → Layout e clicca su **Personalizza la pagina di record**. Se questo pulsante è disabilitato, è necessario creare un record.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Sì! Le relazioni auto-referenziali sono supportate e consigliate per casi d'uso
 </Accordion>
 
 <Accordion title="Posso creare relazioni molti-a-molti?">
-Le relazioni molti-a-molti arriveranno nell'H1 2026. Attualmente, crea un oggetto intermedio con due relazioni uno-a-molti come soluzione alternativa.
+Molte relazioni tra molti sono in arrivo nel **H2 2026**. Attualmente, crea un oggetto intermedio con due relazioni uno-a-molti come soluzione alternativa.
 
 Ad esempio, per collegare Persone e Progetti (molti-a-molti), crea un oggetto "Assegnazioni ai progetti" con:
 * Una relazione con Persone (molte assegnazioni → una persona)
@@ -146,6 +145,10 @@ Sì, puoi importare dati CSV in qualsiasi oggetto, inclusi gli oggetti personali
 
 <Accordion title="Posso esportare la configurazione del mio modello dati?">
 Attualmente non esiste un'esportazione integrata per la configurazione del modello dati. Contatta il supporto se devi migrare il tuo modello dati tra spazi di lavoro.
+</Accordion>
+
+<Accordion title="Quanti campi possono avere un singolo oggetto?">
+Il numero massimo di campi che un singolo oggetto può avere è di 1600 campi secondo i limiti di Postgres, inclusi i campi esistenti e cancellati. Siate consapevoli che Venti non risolveranno il vostro spazio di lavoro se si raggiunge il limite di 1600 campi in quanto rientra nella nostra politica di utilizzo equo.
 </Accordion>
 </AccordionGroup>
 
