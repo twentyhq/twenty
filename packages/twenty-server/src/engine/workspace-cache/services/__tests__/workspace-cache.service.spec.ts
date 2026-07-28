@@ -280,6 +280,50 @@ describe('WorkspaceCacheService', () => {
       // Total: 4 mget calls (2 per getOrRecompute)
       expect(cacheStorageService.mget).toHaveBeenCalledTimes(4);
     });
+
+    it('should revalidate every requested key when one of them is due, so a set cannot mix generations', async () => {
+      const secondMockProvider = new MockRolesPermissionsCacheProvider();
+
+      discoveryService.getProviders.mockReturnValue([
+        { instance: mockProvider },
+        { instance: secondMockProvider },
+      ] as any);
+
+      reflector.get.mockImplementation((key, target) => {
+        if (key === WORKSPACE_CACHE_KEY) {
+          if (target === MockFeatureFlagsCacheProvider) {
+            return 'featureFlagsMap';
+          }
+          if (target === MockRolesPermissionsCacheProvider) {
+            return 'rolesPermissions';
+          }
+        }
+
+        return undefined;
+      });
+
+      await service.onModuleInit();
+
+      cacheStorageService.mget.mockResolvedValue([undefined, undefined]);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']);
+
+      jest.advanceTimersByTime(50);
+      cacheStorageService.mget.mockClear();
+
+      await service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+        'rolesPermissions',
+      ]);
+
+      // featureFlagsMap is still within its local TTL but rolesPermissions is
+      // not, so both hashes must be revalidated against the same redis read
+      expect(cacheStorageService.mget).toHaveBeenNthCalledWith(1, [
+        'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+        'metadata:permissions:roles-permissions:20202020-0000-4000-8000-000000000000:hash',
+      ]);
+    });
   });
 
   describe('invalidateAndRecompute', () => {

@@ -17,6 +17,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
+import { alignQueryRunnerContextWithWorkspaceContext } from 'src/engine/api/common/common-query-runners/utils/align-query-runner-context-with-workspace-context.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -102,62 +103,71 @@ export abstract class CommonBaseQueryRunnerService<
 
   public async execute(
     args: CommonInput<Args>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    callerQueryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonQueryExecutionResult<Output, Args>> {
-    const {
-      authContext,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    } = queryRunnerContext;
+    const { authContext } = callerQueryRunnerContext;
 
     await this.throttleQueryExecution(authContext);
 
-    await this.validate(args, queryRunnerContext);
+    return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const queryRunnerContext = alignQueryRunnerContextWithWorkspaceContext(
+          callerQueryRunnerContext,
+        );
 
-    if (flatObjectMetadata.isSystem === true) {
-      await this.validateSettingsPermissionsOnObjectOrThrow(
-        authContext,
-        queryRunnerContext,
-      );
-    }
+        const {
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        } = queryRunnerContext;
 
-    const commonQueryParser = new GraphqlQueryParser(
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    );
+        await this.validate(args, queryRunnerContext);
 
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      args.selectedFields,
-    );
-
-    const processedArgs = {
-      ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
-      selectedFieldsResult,
-    } as CommonExtendedInput<Args>;
-
-    this.validateQueryComplexity(
-      selectedFieldsResult,
-      processedArgs,
-      queryRunnerContext,
-    );
-
-    const results =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.executeQueryAndEnrichResults(
-            processedArgs,
+        if (flatObjectMetadata.isSystem === true) {
+          await this.validateSettingsPermissionsOnObjectOrThrow(
+            authContext,
             queryRunnerContext,
-            commonQueryParser,
-          ),
-        authContext,
-      );
+          );
+        }
 
-    return {
-      results,
-      args: processedArgs,
-    };
+        const commonQueryParser = new GraphqlQueryParser(
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
+
+        const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+          args.selectedFields,
+        );
+
+        const processedArgs = {
+          ...(await this.processArgs(
+            args,
+            queryRunnerContext,
+            this.operationName,
+          )),
+          selectedFieldsResult,
+        } as CommonExtendedInput<Args>;
+
+        this.validateQueryComplexity(
+          selectedFieldsResult,
+          processedArgs,
+          queryRunnerContext,
+        );
+
+        const results = await this.executeQueryAndEnrichResults(
+          processedArgs,
+          queryRunnerContext,
+          commonQueryParser,
+        );
+
+        return {
+          results,
+          args: processedArgs,
+        };
+      },
+      authContext,
+    );
   }
 
   protected abstract run(

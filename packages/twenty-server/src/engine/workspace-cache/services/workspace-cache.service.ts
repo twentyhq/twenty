@@ -303,26 +303,29 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
   }
 
+  // Keys requested together are kept on the same generation: their local TTLs
+  // are refreshed at different times by callers asking for different key sets,
+  // so validating only the expired ones would mix a revalidated key with a
+  // locally fresh one from the previous generation. Callers combining several
+  // keys rely on them describing the same metadata state, so the whole set is
+  // revalidated as soon as one key is due.
   private checkLocalTTL<K extends WorkspaceCacheKeyName>(
     workspaceId: string,
     cacheKeyNames: readonly K[],
   ): { freshKeys: K[]; staleKeys: K[] } {
-    const freshKeys: K[] = [];
-    const staleKeys: K[] = [];
     const now = Date.now();
 
-    for (const keyName of cacheKeyNames) {
-      const localKey = this.buildCacheKey(workspaceId, keyName);
-      const cached = this.localCache.get(localKey);
+    const areAllKeysFresh = cacheKeyNames.every((keyName) => {
+      const cached = this.localCache.get(
+        this.buildCacheKey(workspaceId, keyName),
+      );
 
-      if (isDefined(cached) && now - cached.lastHashCheckedAt < LOCAL_TTL_MS) {
-        freshKeys.push(keyName);
-      } else {
-        staleKeys.push(keyName);
-      }
-    }
+      return isDefined(cached) && now - cached.lastHashCheckedAt < LOCAL_TTL_MS;
+    });
 
-    return { freshKeys, staleKeys };
+    return areAllKeysFresh
+      ? { freshKeys: [...cacheKeyNames], staleKeys: [] }
+      : { freshKeys: [], staleKeys: [...cacheKeyNames] };
   }
 
   private async validateLocalHashAgainstRedisHash(
