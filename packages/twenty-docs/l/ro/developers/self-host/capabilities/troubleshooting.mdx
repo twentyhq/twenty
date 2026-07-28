@@ -172,6 +172,28 @@ Rulați `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = '
 
 În producție, funcțiile logice sunt dezactivate în mod implicit. Setați variabila de mediu `LOGIC_FUNCTION_TYPE` la `LOCAL` sau `LAMBDA` pentru a le activa. Acest lucru poate fi configurat prin variabile de mediu sau prin variabilele bazei de date din panoul de administrare. Consultați [Ghidul de configurare a funcțiilor logice](/l/ro/developers/self-host/capabilities/setup#logic-functions-available-drivers) pentru detalii.
 
+#### Când tastez un mesaj în chat-ul AI, acesta nu răspunde imediat și trebuie să reîmprospătez pagina pentru a vedea răspunsul
+
+Adaugă următorul bloc la configurarea nginx
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
 ### Docker compose cu un singur click
 
 #### Nu se poate conecta
