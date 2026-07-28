@@ -171,6 +171,28 @@ plugins: [
 
 프로덕션 환경에서는 로직 함수가 기본적으로 비활성화되어 있습니다. 이를 활성화하려면 `LOGIC_FUNCTION_TYPE` 환경 변수를 `LOCAL` 또는 `LAMBDA`로 설정하세요. 이는 환경 변수를 통해서나 관리자 패널의 데이터베이스 변수를 통해 구성할 수 있습니다. 자세한 내용은 [로직 함수 설정 가이드](/l/ko/developers/self-host/capabilities/setup#logic-functions-available-drivers)를 참조하세요.
 
+#### AI 채팅에 메시지를 입력하면 바로 응답하지 않고, 답변을 보려면 페이지를 새로고침해야 합니다
+
+다음 블록을 nginx 구성에 추가하세요
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
 ### 1-클릭 Docker 구성
 
 #### 로그인할 수 없음

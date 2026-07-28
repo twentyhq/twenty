@@ -1,6 +1,6 @@
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
-import { TWENTY_BLUE } from 'src/modules/partner/application-intake/connector/discord/config';
-import { type DiscordField } from 'src/modules/partner/application-intake/connector/discord/types';
+import { TWENTY_BLUE } from 'src/modules/shared/connector/discord/config';
+import { type DiscordField } from 'src/modules/shared/connector/discord/types';
 
 export type PartnerForEmbed = {
   id: string;

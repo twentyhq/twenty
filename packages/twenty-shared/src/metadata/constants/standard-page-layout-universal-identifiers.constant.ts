@@ -611,11 +611,22 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
   messageCampaignRecordPage: {
     universalIdentifier: '8704b091-94bd-4f8f-82b1-e2f3eab92217',
     tabs: {
+      composer: {
+        universalIdentifier: '5f21c19d-6c3e-4b8a-9d47-1e8f02a63b71',
+        widgets: {
+          messageCampaign: {
+            universalIdentifier: '9c74d8e2-0b5f-4a19-8630-57d2ba14ce92',
+          },
+        },
+      },
       home: {
         universalIdentifier: 'f16785cd-a5b7-4ec1-8f20-ff8b80fb94b9',
         widgets: {
           fields: {
             universalIdentifier: '886296e0-a5b6-4054-b450-ad624180c2ef',
+          },
+          details: {
+            universalIdentifier: 'ce2f82cc-9340-45a2-90a0-c34207e8e3b0',
           },
           messages: {
             universalIdentifier: 'a33b43f4-72a1-476d-9372-30e82f450377',

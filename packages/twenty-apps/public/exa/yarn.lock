@@ -951,8 +951,8 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     exa-js: "npm:^2.12.1"
     oxlint: "npm:^0.16.0"
-    twenty-client-sdk: "npm:^2.16.0"
-    twenty-sdk: "npm:^2.16.0"
+    twenty-client-sdk: "npm:^2.23.0"
+    twenty-sdk: "npm:^2.23.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -2860,22 +2860,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.16.0, twenty-client-sdk@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "twenty-client-sdk@npm:2.16.0"
+"twenty-client-sdk@npm:2.23.0, twenty-client-sdk@npm:^2.23.0":
+  version: 2.23.0
+  resolution: "twenty-client-sdk@npm:2.23.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/f990220bec103a04ca50dc8bb38c295e94a4e51b27a3188f4a0ae515c204b76bf87f5591739eb705b97e7aa5a9aa6a215d0d4da05297e50a0392801ea64a2234
+  checksum: 10c0/47d8b769ea4908166e3c6c8463e1785987eb4e1edae2b090e9632f59cadc360e8e69d61b6e6010e3047377fc9d7cc22f3a216338b3e3e5fd0494bea93d86d05d
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "twenty-sdk@npm:2.16.0"
+"twenty-sdk@npm:^2.23.0":
+  version: 2.23.0
+  resolution: "twenty-sdk@npm:2.23.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -2894,12 +2894,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.34.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.16.0"
+    twenty-client-sdk: "npm:2.23.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/528f275f8bda022061a52c3563af514d2257f291fc5a232be90ca6011c50ff18a250984b6c68fc8e4c690644c92e1ccb0b89c511b8a19d832455c8860f2751a8
+  checksum: 10c0/0821fe9996c504068ef652a00480e32005af496a54b5d1efaee7e61a01808698724d7b8d873a01e0069595a96f236c9738b65386628e89a095662d84370b5c86
   languageName: node
   linkType: hard
 
