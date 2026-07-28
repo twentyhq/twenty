@@ -13,6 +13,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -56,11 +57,13 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatViewMaps,
       flatViewFieldMaps,
       flatSearchFieldMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'flatViewMaps',
       'flatViewFieldMaps',
       'flatSearchFieldMetadataMaps',
     ]);
@@ -115,6 +118,26 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
       fieldsToCreate.push(standardNameField);
     }
 
+    // Move the label identifier from subject to name, but never clobber a
+    // user customization pointing at another field.
+    const currentLabelIdentifier =
+      campaignObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier;
+    const isNameLabelIdentifier =
+      !isDefined(currentLabelIdentifier) ||
+      currentLabelIdentifier === SUBJECT_FIELD_UNIVERSAL_IDENTIFIER ||
+      currentLabelIdentifier === NAME_FIELD_UNIVERSAL_IDENTIFIER;
+    const flatObjectMetadataToUpdate: FlatObjectMetadata[] =
+      isNameLabelIdentifier &&
+      currentLabelIdentifier !== NAME_FIELD_UNIVERSAL_IDENTIFIER
+        ? [
+            {
+              ...campaignObjectMetadata,
+              labelIdentifierFieldMetadataUniversalIdentifier:
+                NAME_FIELD_UNIVERSAL_IDENTIFIER,
+            },
+          ]
+        : [];
+
     const viewFieldsToCreate: FlatViewField[] = [];
 
     if (
@@ -136,7 +159,15 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         );
       }
 
-      viewFieldsToCreate.push(standardNameViewField);
+      viewFieldsToCreate.push({
+        ...standardNameViewField,
+        position: this.computeNameViewFieldPosition({
+          flatViewMaps,
+          flatViewFieldMaps,
+          standardNameViewField,
+          isNameLabelIdentifier,
+        }),
+      });
     }
 
     const searchFieldMetadatasToCreate =
@@ -147,22 +178,6 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         applicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
       });
-
-    // Move the label identifier from subject to name, but never clobber a
-    // user customization pointing at another field.
-    const currentLabelIdentifier =
-      campaignObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier;
-    const flatObjectMetadataToUpdate: FlatObjectMetadata[] =
-      !isDefined(currentLabelIdentifier) ||
-      currentLabelIdentifier === SUBJECT_FIELD_UNIVERSAL_IDENTIFIER
-        ? [
-            {
-              ...campaignObjectMetadata,
-              labelIdentifierFieldMetadataUniversalIdentifier:
-                NAME_FIELD_UNIVERSAL_IDENTIFIER,
-            },
-          ]
-        : [];
 
     const totalOperationCount =
       fieldsToCreate.length +
@@ -231,6 +246,49 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
     this.logger.log(
       `Added the messageCampaign name field for workspace ${workspaceId}`,
     );
+  }
+
+  // The standard positions assume a freshly provisioned view, where name comes
+  // first and everything else is shifted by one. Existing views keep subject at
+  // position 0, so name is placed relative to the columns already there: below
+  // all of them when it becomes the label identifier (the validator requires
+  // it), above all of them otherwise (the validator forbids anything below the
+  // label identifier).
+  private computeNameViewFieldPosition({
+    flatViewMaps,
+    flatViewFieldMaps,
+    standardNameViewField,
+    isNameLabelIdentifier,
+  }: {
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
+    standardNameViewField: FlatViewField;
+    isNameLabelIdentifier: boolean;
+  }): number {
+    const flatView = findFlatEntityByUniversalIdentifier<FlatView>({
+      flatEntityMaps: flatViewMaps,
+      universalIdentifier: standardNameViewField.viewUniversalIdentifier,
+    });
+
+    if (!isDefined(flatView)) {
+      return standardNameViewField.position;
+    }
+
+    const otherViewFieldPositions = flatView.viewFieldUniversalIdentifiers
+      .map(
+        (viewFieldUniversalIdentifier) =>
+          flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
+      )
+      .filter(isDefined)
+      .map(({ position }) => position);
+
+    if (otherViewFieldPositions.length === 0) {
+      return standardNameViewField.position;
+    }
+
+    return isNameLabelIdentifier
+      ? Math.min(...otherViewFieldPositions) - 1
+      : Math.max(...otherViewFieldPositions) + 1;
   }
 
   private computeSearchFieldMetadatasToCreate({
