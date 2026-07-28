@@ -112,7 +112,6 @@ export const SidePanelSearchRecordsPage = () => {
 
       {shouldDisplayPreview && (
         <AppTooltip
-          key={previewedItem.recordId}
           anchorSelect={`#${getSidePanelSearchResultAnchorId(previewedItem.id)}`}
           place="left-start"
           offset={16}
@@ -126,6 +125,7 @@ export const SidePanelSearchRecordsPage = () => {
           <SidePanelSearchRecordPreviewCard
             objectNameSingular={previewedItem.objectNameSingular}
             recordId={previewedItem.recordId}
+            label={previewedItem.label}
           />
         </AppTooltip>
       )}

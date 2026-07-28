@@ -9,21 +9,27 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
+import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewFields } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewFields';
 import { useSidePanelSearchRecordPreviewRecord } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Avatar } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const SKELETON_HEIGHT = SKELETON_LOADER_HEIGHT_SIZES.standard.s;
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
+// Pinned width so the card keeps its shape across records of different objects
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.md};
@@ -31,14 +37,16 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 100%;
+  width: ${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px;
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  height: 56px;
   padding: ${themeCssVariables.spacing[3]};
 `;
 
@@ -69,10 +77,13 @@ const StyledFieldList = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
+// Rows keep a fixed height so the card does not resize as values arrive
 const StyledFieldRow = styled.div`
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  height: 24px;
 `;
 
 const StyledFieldLabel = styled.div`
@@ -113,21 +124,33 @@ const StyledFieldValue = styled.div`
 type SidePanelSearchRecordPreviewCardProps = {
   objectNameSingular: string;
   recordId: string;
+  label: string;
 };
 
 export const SidePanelSearchRecordPreviewCard = ({
   objectNameSingular,
   recordId,
+  label,
 }: SidePanelSearchRecordPreviewCardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { getIcon } = useIcons();
+  const { theme } = useContext(ThemeContext);
 
   const [areAllFieldsVisible, setAreAllFieldsVisible] = useState(false);
+
+  // The card is reused across records rather than remounted, so the expander
+  // has to be collapsed again when the selection moves
+  useEffect(() => {
+    setAreAllFieldsVisible(false);
+  }, [recordId]);
 
   const { visibleFields, hiddenFields } =
     useSidePanelSearchRecordPreviewFields(objectMetadataItem);
 
-  useSidePanelSearchRecordPreviewRecord({ objectNameSingular, recordId });
+  const { isRecordLoaded } = useSidePanelSearchRecordPreviewRecord({
+    objectNameSingular,
+    recordId,
+  });
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -182,58 +205,76 @@ export const SidePanelSearchRecordPreviewCard = ({
           <StyledFieldLabelText>{fieldMetadataItem.label}</StyledFieldLabelText>
         </StyledFieldLabel>
         <StyledFieldValue>
-          <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
-            <FieldContext.Provider
-              value={{
-                recordId,
-                isLabelIdentifier: false,
-                fieldDefinition,
-                isDisplayModeFixHeight: true,
-                isRecordFieldReadOnly: true,
-                disableChipClick: true,
-              }}
+          {isRecordLoaded ? (
+            <RecordFieldComponentInstanceContext.Provider
+              value={{ instanceId }}
             >
-              <FieldDisplay />
-            </FieldContext.Provider>
-          </RecordFieldComponentInstanceContext.Provider>
+              <FieldContext.Provider
+                value={{
+                  recordId,
+                  isLabelIdentifier: false,
+                  fieldDefinition,
+                  isDisplayModeFixHeight: true,
+                  isRecordFieldReadOnly: true,
+                  disableChipClick: true,
+                }}
+              >
+                <FieldDisplay />
+              </FieldContext.Provider>
+            </RecordFieldComponentInstanceContext.Provider>
+          ) : (
+            <Skeleton width={120} height={SKELETON_HEIGHT} />
+          )}
         </StyledFieldValue>
       </StyledFieldRow>
     );
   };
 
   return (
-    <StyledCard>
-      <StyledHeader>
-        <Avatar
-          avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-          placeholder={recordIdentifier?.name ?? ''}
-          placeholderColorSeed={recordId}
-          size="md"
-          type={recordIdentifier?.avatarType ?? 'rounded'}
-        />
-        <StyledTitle>{recordIdentifier?.name}</StyledTitle>
-        {beautifiedCreatedAt && (
-          <StyledCreatedAt>
-            <Trans>Created {beautifiedCreatedAt}</Trans>
-          </StyledCreatedAt>
-        )}
-      </StyledHeader>
-
-      <StyledFieldList>
-        {displayedFields.map(renderFieldRow)}
-        {!areAllFieldsVisible &&
-          hiddenFields.length > 0 && (
-            // Keeping focus on the search input so arrow keys still move through results
-            <StyledShowMoreContainer
-              onMouseDown={(event) => event.preventDefault()}
-            >
-              <FieldWidgetShowMoreButton
-                remainingCount={hiddenFields.length}
-                onClick={() => setAreAllFieldsVisible(true)}
-              />
-            </StyledShowMoreContainer>
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <StyledCard>
+        <StyledHeader>
+          <Avatar
+            avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
+            placeholder={recordIdentifier?.name ?? label}
+            placeholderColorSeed={recordId}
+            size="md"
+            type={recordIdentifier?.avatarType ?? 'rounded'}
+          />
+          <StyledTitle>{recordIdentifier?.name ?? label}</StyledTitle>
+          {isRecordLoaded ? (
+            beautifiedCreatedAt && (
+              <StyledCreatedAt>
+                <Trans>Created {beautifiedCreatedAt}</Trans>
+              </StyledCreatedAt>
+            )
+          ) : (
+            <StyledCreatedAt>
+              <Skeleton width={92} height={SKELETON_HEIGHT} />
+            </StyledCreatedAt>
           )}
-      </StyledFieldList>
-    </StyledCard>
+        </StyledHeader>
+
+        <StyledFieldList>
+          {displayedFields.map(renderFieldRow)}
+          {!areAllFieldsVisible &&
+            hiddenFields.length > 0 && (
+              // Keeping focus on the search input so arrow keys still move through results
+              <StyledShowMoreContainer
+                onMouseDown={(event) => event.preventDefault()}
+              >
+                <FieldWidgetShowMoreButton
+                  remainingCount={hiddenFields.length}
+                  onClick={() => setAreAllFieldsVisible(true)}
+                />
+              </StyledShowMoreContainer>
+            )}
+        </StyledFieldList>
+      </StyledCard>
+    </SkeletonTheme>
   );
 };
