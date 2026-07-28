@@ -186,6 +186,7 @@ export class AgentAsyncExecutorService {
             workspaceId: agent.workspaceId,
             roleId: agentRoleId,
             rolePermissionConfig: agentRolePermissionConfig,
+            requireExplicitObjectGrants: true,
             authContext,
             actorContext,
             userId:
