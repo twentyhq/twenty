@@ -9725,11 +9725,6 @@ msgstr "最後のサーバー管理者から管理パネルアクセスを取り
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "システムオブジェクトにはフィールドアクセス権を設定できません。それらはプラットフォームによって管理されています。"
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "システムオブジェクトにはアクセス権を設定できません。それらはプラットフォームによって管理されています。"
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."

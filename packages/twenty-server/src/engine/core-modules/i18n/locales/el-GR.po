@@ -9725,11 +9725,6 @@ msgstr "Δεν μπορείτε να ανακαλέσετε την πρόσβα�
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "Δεν μπορείτε να ορίσετε άδειες πεδίων σε αντικείμενα συστήματος καθώς διαχειρίζονται από την πλατφόρμα."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "Δεν μπορείτε να ορίσετε άδειες σε αντικείμενα συστήματος καθώς διαχειρίζονται από την πλατφόρμα."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
