@@ -13,7 +13,7 @@ import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedA
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { START_WORKSPACE_SETUP_CHAT } from '@/onboarding/graphql/mutations/startWorkspaceSetupChat';
+import { StartWorkspaceSetupChatDocument } from '~/generated-metadata/graphql';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { workspaceSetupChatRequestedWorkspaceIdState } from '@/onboarding/states/workspaceSetupChatRequestedWorkspaceIdState';
 import {
@@ -52,7 +52,7 @@ const buildKickoffMock = ({
   captureVariables?: (variables: Record<string, unknown>) => void;
 }) => ({
   request: {
-    query: START_WORKSPACE_SETUP_CHAT,
+    query: StartWorkspaceSetupChatDocument,
     variables: (variables: Record<string, unknown>) => {
       captureVariables?.(variables);
       return true;
@@ -278,7 +278,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
   it('should release the guard for a later retry when the mutation fails', async () => {
     renderKickoffEffect([
       {
-        request: { query: START_WORKSPACE_SETUP_CHAT },
+        request: { query: StartWorkspaceSetupChatDocument },
         error: new Error('Network error'),
       },
     ]);

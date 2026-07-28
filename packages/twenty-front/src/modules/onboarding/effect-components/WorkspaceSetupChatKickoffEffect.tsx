@@ -1,9 +1,8 @@
-import { useApolloClient } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { type WorkspaceSetupChatResult } from 'twenty-shared/workspace';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
@@ -14,12 +13,17 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
-import { START_WORKSPACE_SETUP_CHAT } from '@/onboarding/graphql/mutations/startWorkspaceSetupChat';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { workspaceSetupChatRequestedWorkspaceIdState } from '@/onboarding/states/workspaceSetupChatRequestedWorkspaceIdState';
+import {
+  StartWorkspaceSetupChatDocument,
+  WorkspaceSetupChatOutcome,
+} from '~/generated-metadata/graphql';
 
 export const WorkspaceSetupChatKickoffEffect = () => {
-  const apolloClient = useApolloClient();
+  const [startWorkspaceSetupChatMutation] = useMutation(
+    StartWorkspaceSetupChatDocument,
+  );
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
@@ -47,10 +51,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
     const startWorkspaceSetupChat = async () => {
       try {
-        const { data } = await apolloClient.mutate<{
-          startWorkspaceSetupChat: WorkspaceSetupChatResult;
-        }>({
-          mutation: START_WORKSPACE_SETUP_CHAT,
+        const { data } = await startWorkspaceSetupChatMutation({
           variables: {
             companyContext: store.get(companyEnrichmentState.atom) ?? undefined,
           },
@@ -64,11 +65,16 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           return;
         }
 
-        if (result.outcome === 'unavailable' || !isValidUuid(result.threadId)) {
+        const { threadId } = result;
+
+        if (
+          result.outcome === WorkspaceSetupChatOutcome.unavailable ||
+          !isDefined(threadId) ||
+          !isValidUuid(threadId)
+        ) {
           return;
         }
 
-        const { threadId } = result;
         const nowIsoString = new Date().toISOString();
         const workspaceSetupThread: FlatAgentChatThread = {
           id: threadId,
@@ -94,7 +100,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           WORKSPACE_SETUP_CHAT_THREAD_TITLE,
         );
 
-        if (result.outcome === 'started') {
+        if (result.outcome === WorkspaceSetupChatOutcome.started) {
           store.set(
             agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
               instanceId: AGENT_CHAT_INSTANCE_ID,
@@ -117,7 +123,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     };
 
     void startWorkspaceSetupChat();
-  }, [apolloClient, store, addToDraft, applyChanges]);
+  }, [startWorkspaceSetupChatMutation, store, addToDraft, applyChanges]);
 
   return null;
 };

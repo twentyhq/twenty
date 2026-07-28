@@ -11,5 +11,4 @@ export { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from './constants/Provision
 export { WorkspaceActivationStatus } from './types/WorkspaceActivationStatus';
 export type { WorkspaceCompanyEnrichment } from './types/WorkspaceCompanyEnrichment';
 export type { WorkspaceCompanyEnrichmentResult } from './types/WorkspaceCompanyEnrichmentResult';
-export type { WorkspaceSetupChatResult } from './types/WorkspaceSetupChatResult';
 export { isWorkspaceProvisioned } from './utils/isWorkspaceProvisioned';
