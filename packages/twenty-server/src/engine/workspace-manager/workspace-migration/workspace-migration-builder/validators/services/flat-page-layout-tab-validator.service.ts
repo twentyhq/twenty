@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -42,6 +44,19 @@ export class FlatPageLayoutTabValidatorService {
         code: PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
         message: t`Page layout not found`,
         userFriendlyMessage: msg`Page layout not found`,
+      });
+    }
+
+    if (
+      !isDefined(flatPageLayoutTab.layoutMode) ||
+      !Object.values(PageLayoutTabLayoutMode).includes(
+        flatPageLayoutTab.layoutMode,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+        message: t`Page layout tab with invalid layout mode`,
+        userFriendlyMessage: msg`Page layout tab layout mode is invalid`,
       });
     }
 
@@ -85,6 +100,7 @@ export class FlatPageLayoutTabValidatorService {
 
   public validateFlatPageLayoutTabUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
     },
@@ -112,6 +128,19 @@ export class FlatPageLayoutTabValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isDefined(flatEntityUpdate.layoutMode) &&
+      !Object.values(PageLayoutTabLayoutMode).includes(
+        flatEntityUpdate.layoutMode,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+        message: t`Page layout tab with invalid layout mode`,
+        userFriendlyMessage: msg`Page layout tab layout mode is invalid`,
+      });
     }
 
     return validationResult;

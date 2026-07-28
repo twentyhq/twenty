@@ -111,89 +111,130 @@ describe('Manifest sync - page layout tab layoutMode', () => {
     });
   }, 60000);
 
-  // Documents https://github.com/twentyhq/twenty/issues/23402: layoutMode has
-  // toCompare: false in ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
-  // so the migration builder never emits an update for it. Marked as failing:
-  // these tests assert the desired behavior and start passing once fixed.
-  it.failing(
-    'should update layoutMode when it is the only changed property on second sync',
-    async () => {
-      await syncApplication({
-        manifest: buildManifest({
-          pageLayoutTabs: [
-            buildTabManifest({
-              title: 'Insights',
-              layoutMode: PageLayoutTabLayoutMode.GRID,
-            }),
-          ],
-        }),
-        expectToFail: false,
-      });
+  // Regression tests for https://github.com/twentyhq/twenty/issues/23402:
+  // layoutMode updates were silently discarded by the migration builder
+  it('should update layoutMode when it is the only changed property on second sync', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+          }),
+        ],
+      }),
+      expectToFail: false,
+    });
 
-      const tabsAfterFirstSync = await findStandardPersonPageLayoutTabs();
+    const tabsAfterFirstSync = await findStandardPersonPageLayoutTabs();
 
-      expect(tabsAfterFirstSync).toHaveLength(1);
-      expect(tabsAfterFirstSync[0].layoutMode).toBe(
-        PageLayoutTabLayoutMode.GRID,
-      );
+    expect(tabsAfterFirstSync).toHaveLength(1);
+    expect(tabsAfterFirstSync[0].layoutMode).toBe(PageLayoutTabLayoutMode.GRID);
 
-      await syncApplication({
-        manifest: buildManifest({
-          pageLayoutTabs: [
-            buildTabManifest({
-              title: 'Insights',
-              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-            }),
-          ],
-        }),
-        expectToFail: false,
-      });
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          }),
+        ],
+      }),
+      expectToFail: false,
+    });
 
-      const tabsAfterSecondSync = await findStandardPersonPageLayoutTabs();
+    const tabsAfterSecondSync = await findStandardPersonPageLayoutTabs();
 
-      expect(tabsAfterSecondSync).toHaveLength(1);
-      expect(tabsAfterSecondSync[0].layoutMode).toBe(
-        PageLayoutTabLayoutMode.VERTICAL_LIST,
-      );
-    },
-    60000,
-  );
+    expect(tabsAfterSecondSync).toHaveLength(1);
+    expect(tabsAfterSecondSync[0].layoutMode).toBe(
+      PageLayoutTabLayoutMode.VERTICAL_LIST,
+    );
+  }, 60000);
 
-  it.failing(
-    'should update layoutMode alongside another changed property on second sync',
-    async () => {
-      await syncApplication({
-        manifest: buildManifest({
-          pageLayoutTabs: [
-            buildTabManifest({
-              title: 'Insights',
-              layoutMode: PageLayoutTabLayoutMode.GRID,
-            }),
-          ],
-        }),
-        expectToFail: false,
-      });
+  it('should update layoutMode alongside another changed property on second sync', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+          }),
+        ],
+      }),
+      expectToFail: false,
+    });
 
-      await syncApplication({
-        manifest: buildManifest({
-          pageLayoutTabs: [
-            buildTabManifest({
-              title: 'Renamed Insights',
-              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-            }),
-          ],
-        }),
-        expectToFail: false,
-      });
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Renamed Insights',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          }),
+        ],
+      }),
+      expectToFail: false,
+    });
 
-      const tabsAfterSecondSync = await findStandardPersonPageLayoutTabs();
+    const tabsAfterSecondSync = await findStandardPersonPageLayoutTabs();
 
-      expect(tabsAfterSecondSync).toHaveLength(1);
-      expect(tabsAfterSecondSync[0]).toMatchObject({
-        title: 'Renamed Insights',
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      });
-    },
-    60000,
-  );
+    expect(tabsAfterSecondSync).toHaveLength(1);
+    expect(tabsAfterSecondSync[0]).toMatchObject({
+      title: 'Renamed Insights',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    });
+  }, 60000);
+
+  it('should fail to sync when layoutMode is not a valid enum value', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: 'DIAGONAL' as PageLayoutTabLayoutMode,
+          }),
+        ],
+      }),
+      expectToFail: true,
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors?.length).toBeGreaterThan(0);
+  }, 60000);
+
+  it('should fail to sync when layoutMode is updated to an invalid enum value', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+          }),
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        pageLayoutTabs: [
+          buildTabManifest({
+            title: 'Insights',
+            layoutMode: 'DIAGONAL' as PageLayoutTabLayoutMode,
+          }),
+        ],
+      }),
+      expectToFail: true,
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors?.length).toBeGreaterThan(0);
+
+    const tabsAfterFailedSync = await findStandardPersonPageLayoutTabs();
+
+    expect(tabsAfterFailedSync).toHaveLength(1);
+    expect(tabsAfterFailedSync[0].layoutMode).toBe(
+      PageLayoutTabLayoutMode.GRID,
+    );
+  }, 60000);
 });
