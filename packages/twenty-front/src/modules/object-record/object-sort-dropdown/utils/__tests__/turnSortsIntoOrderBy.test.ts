@@ -1,7 +1,9 @@
-import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import {
+  type RecordGqlOperationOrderBy,
+  ViewOpenRecordIn,
+} from 'twenty-shared/types';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type EachTestingContext } from 'twenty-shared/testing';

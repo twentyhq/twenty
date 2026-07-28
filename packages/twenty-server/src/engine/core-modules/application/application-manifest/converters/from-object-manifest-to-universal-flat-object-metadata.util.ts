@@ -20,7 +20,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     labelSingular: objectManifest.labelSingular,
     labelPlural: objectManifest.labelPlural,
     color: null,
-    defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
+    defaultOpenRecordIn:
+      objectManifest.defaultOpenRecordIn ?? ViewOpenRecordIn.USER_PREFERENCE,
     description: objectManifest.description ?? null,
     icon: objectManifest.icon ?? null,
     overrides: null,

@@ -1,5 +1,6 @@
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type ViewOpenRecordIn } from '@/types/ViewOpenRecordIn';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -13,6 +14,9 @@ export type ObjectManifest = SyncableEntityOptions & {
   isUICreatable?: boolean;
   // When false, records of this object are not editable through the generic UI
   isUIEditable?: boolean;
+  // Where a new view on this object opens its records. Defaults to
+  // USER_PREFERENCE, which hands the choice to each workspace member.
+  defaultOpenRecordIn?: ViewOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
 };

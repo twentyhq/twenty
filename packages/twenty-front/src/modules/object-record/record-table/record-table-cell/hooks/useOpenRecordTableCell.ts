@@ -17,7 +17,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -84,8 +83,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
   const { focusRecordTableCell } = useFocusRecordTableCell();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
-
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const openRecordIn = useResolveOpenRecordIn();
 

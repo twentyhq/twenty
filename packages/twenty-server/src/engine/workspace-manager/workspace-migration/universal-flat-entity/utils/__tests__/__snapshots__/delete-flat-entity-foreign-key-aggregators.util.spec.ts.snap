@@ -45,6 +45,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "applicationUniversalIdentifier": "application-universal-identifier",
   "color": null,
   "createdAt": "2024-01-01T00:00:00.000Z",
+  "defaultOpenRecordIn": "USER_PREFERENCE",
   "description": "default flat object metadata description",
   "duplicateCriteria": null,
   "fieldPermissionUniversalIdentifiers": [],

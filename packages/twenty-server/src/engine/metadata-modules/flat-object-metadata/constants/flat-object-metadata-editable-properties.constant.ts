@@ -3,6 +3,7 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   custom: [
     'color',
+    'defaultOpenRecordIn',
     'description',
     'icon',
     'isActive',
@@ -17,6 +18,7 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   ],
   standard: [
     'color',
+    'defaultOpenRecordIn',
     'description',
     'icon',
     'isActive',
