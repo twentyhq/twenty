@@ -15,6 +15,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -187,11 +188,21 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       }
     });
 
+    const reconciledMetadataRelatedNames = [
+      'view',
+      ...getMetadataRelatedMetadataNames('view'),
+      'viewField',
+      ...getMetadataRelatedMetadataNames('viewField'),
+      'pageLayoutWidget',
+    ] as const;
+    const allFlatEntityMapsKeys = [
+      ...new Set(
+        reconciledMetadataRelatedNames.map(getMetadataFlatEntityMapsKey),
+      ),
+    ];
+
     await this.workspaceMigrationRunnerService.invalidateCache({
-      allFlatEntityMapsKeys: [
-        getMetadataFlatEntityMapsKey('view'),
-        getMetadataFlatEntityMapsKey('viewField'),
-      ],
+      allFlatEntityMapsKeys,
       workspaceId,
     });
 

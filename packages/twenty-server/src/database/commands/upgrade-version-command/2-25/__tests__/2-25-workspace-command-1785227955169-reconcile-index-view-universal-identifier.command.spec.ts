@@ -190,7 +190,18 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         isSystemSideEffect: true,
       },
     );
+    // Parents aggregate the re-owned identifiers and children resolve them as
+    // universal foreign keys, so invalidation must cover the whole closure.
     expect(invalidateCacheMock).toHaveBeenCalledTimes(1);
+    expect(invalidateCacheMock.mock.calls[0][0].allFlatEntityMapsKeys).toEqual(
+      expect.arrayContaining([
+        'flatViewMaps',
+        'flatViewFieldMaps',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatPageLayoutWidgetMaps',
+      ]),
+    );
   });
 
   it('skips a soft-deleted INDEX view coexisting with an active one on the same object', async () => {
