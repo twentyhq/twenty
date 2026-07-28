@@ -52,6 +52,15 @@ const WrapperWithContextStore = ({
 );
 
 describe('useResolveOpenRecordIn', () => {
+  afterEach(() => {
+    jotaiStore.set(
+      contextStoreCurrentViewIdComponentState.atomFamily({
+        instanceId: 'test-context-store',
+      }),
+      undefined,
+    );
+  });
+
   it('falls back to the default where no context store is mounted', () => {
     const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
       wrapper: WrapperWithoutContextStore,
