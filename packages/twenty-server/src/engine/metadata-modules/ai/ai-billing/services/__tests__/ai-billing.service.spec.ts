@@ -384,5 +384,49 @@ describe('AiBillingService', () => {
         'workspace-1',
       );
     });
+
+    it('should not add cache-creation tokens to the emitted token quantity', async () => {
+      mockAiModelRegistryService.getEffectiveModelConfig.mockReturnValue(
+        anthropicModelConfig as ReturnType<
+          AiModelRegistryService['getEffectiveModelConfig']
+        >,
+      );
+
+      await service.calculateAndBillUsage(
+        'claude-sonnet-4-5-20250929',
+        {
+          usage: {
+            // inputTokens is the full prompt: noCache(400) + cacheRead(600) +
+            // cacheCreation(200), so quantity must be 1200 + 500, not + 200 again
+            inputTokens: 1200,
+            outputTokens: 500,
+            totalTokens: 1700,
+            inputTokenDetails: {
+              noCacheTokens: 400,
+              cacheReadTokens: 600,
+              cacheWriteTokens: 200,
+            },
+            outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
+          },
+          cacheCreationTokens: 200,
+        },
+        'workspace-1',
+        UsageOperationType.AI_CHAT_TOKEN,
+        'agent-id-123',
+      );
+
+      expect(
+        mockWorkspaceEventEmitter.emitCustomBatchEvent,
+      ).toHaveBeenCalledWith(
+        USAGE_RECORDED,
+        [
+          expect.objectContaining({
+            creditsUsedMicro: 9630,
+            quantity: 1700,
+          }),
+        ],
+        'workspace-1',
+      );
+    });
   });
 });

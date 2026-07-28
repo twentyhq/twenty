@@ -118,10 +118,12 @@ export function PartnerProfileCtas({
   calendarLink,
   links,
   linkUrls,
+  slug,
 }: {
   calendarLink: string;
   links: PartnerLinks;
   linkUrls?: readonly string[];
+  slug: string;
 }) {
   const { i18n } = useLingui();
   const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
@@ -178,7 +180,7 @@ export function PartnerProfileCtas({
         )}
         <PrimaryAction>
           <Button
-            href="/partners/brief"
+            href={`/partners/brief?partner=${encodeURIComponent(slug)}`}
             label={i18n._(msg`Submit a brief`)}
             variant="outlined"
           />
