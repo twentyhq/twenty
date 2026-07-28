@@ -255,7 +255,7 @@ export const SettingsAvailableApplicationDetails = () => {
             manifestContent={manifest}
             applicationInfo={{
               name: displayName,
-              logo: detail.logo,
+              logoUrl: detail.logo,
               universalIdentifier: detail.universalIdentifier,
             }}
           />

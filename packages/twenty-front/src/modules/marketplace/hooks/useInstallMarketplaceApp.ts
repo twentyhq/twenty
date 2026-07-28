@@ -1,4 +1,5 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -12,6 +13,7 @@ export const useInstallMarketplaceApp = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
   const [installApplicationMutation] = useMutation(InstallApplicationDocument);
+  const { loadCurrentUser } = useLoadCurrentUser();
 
   const install = async (variables: {
     universalIdentifier: string;
@@ -23,6 +25,10 @@ export const useInstallMarketplaceApp = () => {
       const result = await installApplicationMutation({ variables });
 
       if (isDefined(result.data)) {
+        // The workspace carries the installed applications used to resolve app
+        // chips, so it has to be reloaded for the new app to be displayable.
+        await loadCurrentUser();
+
         enqueueSuccessSnackBar({
           message: t`Application installed successfully.`,
         });

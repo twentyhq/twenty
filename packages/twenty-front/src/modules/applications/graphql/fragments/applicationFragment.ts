@@ -12,6 +12,7 @@ export const APPLICATION_FRAGMENT = gql`
     name
     description
     logo
+    logoUrl
     version
     universalIdentifier
     applicationRegistrationId

@@ -103,7 +103,9 @@ export const SettingsApplicationsTable = ({
                 key={application.id}
                 application={{
                   ...application,
-                  logoUrl: application.applicationRegistration?.logoUrl,
+                  logoUrl:
+                    application.logoUrl ??
+                    application.applicationRegistration?.logoUrl,
                 }}
                 hasUpdate={hasUpdate}
                 sourceType={application.applicationRegistration?.sourceType}
