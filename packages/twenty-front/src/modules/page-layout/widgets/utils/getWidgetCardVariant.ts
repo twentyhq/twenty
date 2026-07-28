@@ -17,9 +17,6 @@ export const getWidgetCardVariant = ({
   isMobile,
   isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  // A column surface owns its gutter whatever the tab presentation is: solo is
-  // a main-tab-area concept, so it must not strip the chrome off a widget
-  // rendered in the pinned panel, the side panel or on mobile.
   const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
 
   if (isSideColumnContext) {
