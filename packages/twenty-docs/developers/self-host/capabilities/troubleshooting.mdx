@@ -19,6 +19,9 @@ If you have an existing Twenty instance with production data, **DO NOT** follow 
 While installing Twenty for the first time, you might want to change the default database password.
 The password you set during the first installation becomes permanently stored in the database volume. If you later try to change this password in your configuration without removing the old volume, you'll get authentication errors because the database is still using the original password.
 
+⚠️ WARNING: Following steps will PERMANENTLY DELETE all database data! ⚠️
+Only proceed if this is a fresh installation with no important data.
+
 To update the `PG_DATABASE_PASSWORD`, you need to:
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
