@@ -48,8 +48,11 @@ describe('buildWorkspaceSetupPromptText', () => {
       locale: 'en',
     });
 
-    expect(result).toContain('call no tool other than ask_questions');
-    expect(result).toContain('load_skills');
+    expect(result).toContain('required ask_questions call');
+    expect(result).toContain('needs no skill and no learn_tools step');
+    expect(result).toContain(
+      'do not call load_skills, learn_tools, execute_tool, or web search',
+    );
   });
 
   it('should require explicit approval before building and name the metadata tools when a full enrichment is provided', () => {
@@ -113,10 +116,13 @@ describe('buildWorkspaceSetupPromptText', () => {
       locale: 'en',
     });
 
+    expect(result).toContain('Never stop after presenting the proposal');
     expect(result).toContain(
-      'Always ask the user about the data model with the ask_questions tool',
+      'The turn is unfinished until you call ask_questions asking whether to go ahead and build it',
     );
-    expect(result).toContain('whether to build it');
+    expect(result).toContain(
+      'End this reply with the ask_questions call asking whether to build the proposed data model.',
+    );
   });
 
   it('should require making the created fields visible in the views', () => {

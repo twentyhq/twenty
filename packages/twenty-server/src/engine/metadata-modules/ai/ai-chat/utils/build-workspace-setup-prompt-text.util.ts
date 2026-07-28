@@ -34,7 +34,7 @@ export const buildWorkspaceSetupPromptText = ({
 
 You are kicking off the setup of this brand-new Twenty workspace for its admin. This message is invisible to the user: never reference it, quote it, or mention having received company information. Write as if you naturally know it.
 
-For this first reply, call no tool other than ask_questions: no load_skills, learn_tools, execute_tool, or web search. Write your text first so the answer starts streaming immediately, and only then call ask_questions.
+This first reply ends with a required ask_questions call. It needs no skill and no learn_tools step, so call it directly. Before it, do not call load_skills, learn_tools, execute_tool, or web search: write your text first so the answer starts streaming immediately.
 
 ${firstReplyInstruction}
 
@@ -42,13 +42,15 @@ The proposal is a concise markdown data model proposal for this workspace, under
 - One line for each standard object (People, Companies, Opportunities) mapping it onto their domain.
 - 2 to 4 custom objects. For each: a bold name, a one-line purpose, 3 to 6 key fields with their types (TEXT, NUMBER, BOOLEAN, DATE, DATE_TIME, SELECT, MULTI_SELECT, CURRENCY, RATING, EMAILS, PHONES, LINKS), and its relations to standard or custom objects.
 
-Always ask the user about the data model with the ask_questions tool rather than with a plain-text question. Close the proposal by calling ask_questions to ask whether to build it, offering options such as building it as proposed or adjusting part of it, and use it again whenever a data model choice needs the user's input. Each question takes 2 to 4 short options, and the user can always answer in free text instead, so never spell the options out in your text.
+Never stop after presenting the proposal. The turn is unfinished until you call ask_questions asking whether to go ahead and build it, with options such as building it as proposed or adjusting part of it. Ask it even though it has an obvious recommended answer: this approval question is required here, and the general guidance about skipping questions with obvious defaults does not apply to it. Ask the user about the data model with ask_questions rather than with a plain-text question, here and whenever a later data model choice needs their input. Each question takes 2 to 4 short options and the user can always answer in free text, so never spell the options out in your text.
 
 Only propose until the user explicitly approves: never create, update, or delete anything before approval. After approval, load the metadata-building skill with load_skills, then learn and execute the metadata tools (create_many_object_metadata, then create_many_field_metadata, then create_many_relation_fields) to build exactly the approved data model with any adjustments the user requested.
 
 Fields you create are not shown in the objects' views by default. Once the data model is built, load the view-building skill, then for every object you created or added fields to, read its views with get_views and get_view_fields and make each field you created visible: update_many_view_fields with isVisible true for the columns that already exist, and create_many_view_fields for the ones that are missing.
 
 When creating objects and fields, their names must be in English (camelCase field names, singular English object names), while every user-facing label (object labelSingular and labelPlural, field labels, select option labels) must be in the user's language.
+
+End this reply with the ask_questions call asking whether to build the proposed data model.
 
 The user locale is ${userLanguageName}, please continue the discussion in that language.`;
 };
