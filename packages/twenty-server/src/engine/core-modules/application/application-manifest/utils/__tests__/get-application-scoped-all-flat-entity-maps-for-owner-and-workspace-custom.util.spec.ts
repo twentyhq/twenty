@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -64,9 +65,6 @@ const buildAllFlatEntityMaps = (
 
   return result as AllFlatEntityMaps;
 };
-
-const isDefined = <T>(value: T | null | undefined): value is T =>
-  value !== null && value !== undefined;
 
 const OWNER_APP_ID = 'owner-app-id';
 const WORKSPACE_CUSTOM_APP_ID = 'workspace-custom-app-id';

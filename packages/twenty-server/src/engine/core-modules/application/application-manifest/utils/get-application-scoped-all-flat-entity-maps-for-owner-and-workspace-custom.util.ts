@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   type AllMetadataName,
   ALL_METADATA_NAME,
@@ -5,6 +6,7 @@ import {
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -86,7 +88,7 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
 
       const ownerEntities = findFlatEntitiesByApplicationId({
         applicationId: ownerApplicationId,
-        flatEntityMaps: fromFlatEntityMaps,
+        flatEntityMaps: fromFlatEntityMaps as FlatEntityMaps<any>,
       });
 
       for (const entity of ownerEntities) {
@@ -112,7 +114,7 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
 
         const workspaceCustomEntities = findFlatEntitiesByApplicationId({
           applicationId: workspaceCustomApplicationId,
-          flatEntityMaps: fromFlatEntityMaps,
+          flatEntityMaps: fromFlatEntityMaps as FlatEntityMaps<any>,
         });
 
         for (const entity of workspaceCustomEntities) {
@@ -151,7 +153,3 @@ export const getApplicationScopedAllFlatEntityMapsForOwnerAndWorkspaceCustom =
 
     return Object.fromEntries(subAllFlatEntityMaps) as AllFlatEntityMaps;
   };
-
-// Local helper to avoid importing `isDefined` from `twenty-shared/utils` only for one call.
-const isDefined = <T>(value: T | null | undefined): value is T =>
-  value !== null && value !== undefined;

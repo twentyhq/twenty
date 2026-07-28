@@ -87,7 +87,7 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
       return {
         applicationId: toAppId,
         ...diffUpdate,
-      };
+      } as UniversalFlatEntityUpdate<T>;
     }
   }
 
