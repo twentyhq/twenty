@@ -2,6 +2,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type GridPosition,
   type PageLayoutTabLayoutMode,
+  type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetUniversalConfiguration,
 } from '@/types';
@@ -26,7 +27,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
 
 export type PageLayoutManifest = SyncableEntityOptions & {
   name: string;
-  type: string;
+  type: `${PageLayoutType}`;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
   tabs?: PageLayoutTabManifest[];

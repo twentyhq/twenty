@@ -377,10 +377,7 @@ export class ChatExecutionService {
       );
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
-      const totalTokens =
-        (usage.inputTokens ?? 0) +
-        (usage.outputTokens ?? 0) +
-        cacheCreationTokens;
+      const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
       const costInDollars = this.aiBillingService.calculateCost(
         registeredModel.modelId,

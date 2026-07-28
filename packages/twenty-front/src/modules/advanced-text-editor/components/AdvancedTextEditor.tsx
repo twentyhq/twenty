@@ -9,7 +9,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
   minHeight: number;
-  maxWidth: number;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -88,21 +87,15 @@ type AdvancedTextEditorProps = {
   readonly: boolean | undefined;
   editor: Editor;
   minHeight: number;
-  maxWidth: number;
 };
 
 export const AdvancedTextEditor = ({
   readonly,
   editor,
   minHeight,
-  maxWidth,
 }: AdvancedTextEditorProps) => {
   return (
-    <StyledEditorContainer
-      readonly={readonly}
-      minHeight={minHeight}
-      maxWidth={maxWidth}
-    >
+    <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
       <EditorContent className="editor-content" editor={editor} />
       <ImageBubbleMenu editor={editor} />
       <TextBubbleMenu editor={editor} />

@@ -55,13 +55,6 @@ export const SelectFieldInput = () => {
     onCancel?.();
   };
 
-  const handleAddSelectOption = (optionName: string) => {
-    if (!canAddSelectOption) {
-      return;
-    }
-    addSelectOption(optionName);
-  };
-
   const handleSubmit = (option: SelectOption) => {
     onSubmit?.({ newValue: option.value });
 
@@ -110,7 +103,7 @@ export const SelectFieldInput = () => {
           : undefined
       }
       clearLabel={fieldDefinition.label}
-      onAddSelectOption={handleAddSelectOption}
+      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />
   );
 };

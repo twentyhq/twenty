@@ -220,6 +220,24 @@ const PARTNERS: Partner[] = [
   { slug: 'declined-co', name: 'Declined Co', validationStage: 'REJECTED', availability: 'UNAVAILABLE', introduction: 'Application rejected after review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['MENA'], languagesSpoken: ['ENGLISH', 'ARABIC'], partnerTier: 'NEW', partnerScope: ['DEVELOPMENT'], typeOfTeam: 'SOLO', country: 'UNITED_ARAB_EMIRATES', city: 'Dubai', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['MENA', 'Arabic'] },
 ];
 
+// One contact per partner. The onboarding trigger matches a new member's email to a
+// Person, then links that Person's partner — so signing up with one of these emails is
+// what auto-links a member to the partner. Each partner also gets its own Company.
+type PartnerContact = { firstName: string; lastName: string; email: string };
+const PARTNER_CONTACTS: Record<string, PartnerContact> = {
+  'nine-dots-ventures': { firstName: 'Yasmine', lastName: 'Haddad', email: 'yasmine@nine-dots-ventures.example' },
+  'elevate-consulting': { firstName: 'Diego', lastName: 'Ramirez', email: 'diego@elevate-consulting.example' },
+  'w3villa-technologies': { firstName: 'Arjun', lastName: 'Mehta', email: 'arjun@w3villa-technologies.example' },
+  'act-education': { firstName: 'Lena', lastName: 'Fischer', email: 'lena@act-education.example' },
+  'netzero-systems': { firstName: 'Beatriz', lastName: 'Costa', email: 'beatriz@netzero-systems.example' },
+  'meridian-craft': { firstName: 'Mei', lastName: 'Lim', email: 'mei@meridian-craft.example' },
+  'applicant-studio': { firstName: 'Hugo', lastName: 'Bernard', email: 'hugo@applicant-studio.example' },
+  'rising-crm': { firstName: 'Sarah', lastName: 'Johnson', email: 'sarah@rising-crm.example' },
+  'legacy-partners': { firstName: 'Oliver', lastName: 'Smith', email: 'oliver@legacy-partners.example' },
+  'declined-co': { firstName: 'Omar', lastName: 'Farouk', email: 'omar@declined-co.example' },
+};
+const partnerDomain = (slug: string): string => `https://${slug}.example`;
+
 const COMPANIES = [
   { name: 'Acme Real Estate', domain: 'https://acmerealestate.example' },
   { name: 'Helix Bio', domain: 'https://helixbio.example' },
@@ -227,9 +245,9 @@ const COMPANIES = [
 ];
 
 const PERSONS = [
-  { firstName: 'Camille', lastName: 'Durand', companyName: 'Acme Real Estate', email: 'camille@acmerealestate.example', city: 'Paris' },
-  { firstName: 'Maya', lastName: 'Patel', companyName: 'Helix Bio', email: 'maya@helixbio.example', city: 'Boston' },
-  { firstName: 'Wei', lastName: 'Chen', companyName: 'Sunrise Logistics', email: 'wei@sunriselogistics.example', city: 'Singapore' },
+  { firstName: 'Camille', lastName: 'Durand', companyName: 'Acme Real Estate', email: 'camille@acmerealestate.example' },
+  { firstName: 'Maya', lastName: 'Patel', companyName: 'Helix Bio', email: 'maya@helixbio.example' },
+  { firstName: 'Wei', lastName: 'Chen', companyName: 'Sunrise Logistics', email: 'wei@sunriselogistics.example' },
 ];
 
 type Opp = {
@@ -274,6 +292,17 @@ const withPartnerUserId = (
 ): Record<string, unknown> =>
   partnerUserId ? { ...data, partnerUserId } : data;
 
+async function upsertCompanyByName(
+  client: CoreApiClient,
+  name: string,
+  domain: string,
+): Promise<string> {
+  const existing = nodes(await client.query({ companies: { __args: { filter: { name: { eq: name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'companies');
+  if (existing[0]?.id) return existing[0].id;
+  const r: any = await client.mutation({ createCompany: { __args: { data: { name, domainName: { primaryLinkUrl: domain } } }, id: true } } as any);
+  return r.createCompany.id;
+}
+
 async function main() {
   const client = new CoreApiClient({
     url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
@@ -286,14 +315,18 @@ async function main() {
     'partners',
   );
   const partnerIdBySlug = new Map<string, string>(existingPartners.map((n: any) => [n.slug, n.id]));
+  const companyIdByName = new Map<string, string>();
   for (const p of PARTNERS) {
+    // Partner's own company — linked so the profile isn't bare and the contact has an employer.
+    const companyId = await upsertCompanyByName(client, p.name, partnerDomain(p.slug));
+    companyIdByName.set(p.name, companyId);
     const data = {
       name: p.name, slug: p.slug, validationStage: p.validationStage, availability: p.availability,
       introduction: p.introduction, calendarLink: { primaryLinkUrl: p.calendarLink },
       deploymentExpertise: p.deploymentExpertise, region: p.region, languagesSpoken: p.languagesSpoken,
       partnerTier: p.partnerTier, partnerScope: p.partnerScope, typeOfTeam: p.typeOfTeam,
       country: p.country, city: p.city,
-      skills: p.skills,
+      skills: p.skills, companyId,
       linkedin: { primaryLinkUrl: linkedin(p.slug) },
       ...(p.hourlyRateUsd != null ? { hourlyRate: usd(p.hourlyRateUsd) } : {}),
       ...(p.projectBudgetMinUsd != null ? { projectBudgetMin: usd(p.projectBudgetMinUsd) } : {}),
@@ -308,26 +341,44 @@ async function main() {
   }
   console.log(`[seed] partners: ${partnerIdBySlug.size}`);
 
-  // -- Companies (upsert by name) --
-  const companyIdByName = new Map<string, string>();
+  // -- Companies (customer accounts, upsert by name) --
   for (const c of COMPANIES) {
-    const existing = nodes(await client.query({ companies: { __args: { filter: { name: { eq: c.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'companies');
-    let id = existing[0]?.id;
-    if (!id) {
-      const r: any = await client.mutation({ createCompany: { __args: { data: { name: c.name, domainName: { primaryLinkUrl: c.domain } } }, id: true } } as any);
-      id = r.createCompany.id;
-    }
-    companyIdByName.set(c.name, id);
+    companyIdByName.set(c.name, await upsertCompanyByName(client, c.name, c.domain));
   }
 
-  // -- People (upsert by firstName+lastName) --
+  // -- People (customer contacts, upsert by firstName+lastName) --
   for (const person of PERSONS) {
     const existing = nodes(await client.query({ people: { __args: { filter: { name: { firstName: { eq: person.firstName } } }, first: 10 }, edges: { node: { id: true, name: { firstName: true, lastName: true } } } } } as any), 'people');
     const match = existing.find((n: any) => n.name?.firstName === person.firstName && n.name?.lastName === person.lastName);
     if (!match) {
-      await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, city: person.city, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
+      await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
     }
   }
+
+  // -- Partner contacts (one per partner) — email→Person→partner is the onboarding match key --
+  let partnerContactCount = 0;
+  for (const p of PARTNERS) {
+    const contact = PARTNER_CONTACTS[p.slug];
+    if (!contact) continue;
+    partnerContactCount++;
+    const companyId = companyIdByName.get(p.name);
+    const partnerId = partnerIdBySlug.get(p.slug);
+    const existing = nodes(await client.query({ people: { __args: { filter: { emails: { primaryEmail: { eq: contact.email } } }, first: 1 }, edges: { node: { id: true, partnerId: true, companyId: true } } } } as any), 'people');
+    const found = existing[0];
+    if (found?.id) {
+      // Rerun against a workspace where the Person exists but lost its relations would leave
+      // the onboarding match broken (no_partner_match). Backfill only the missing links.
+      const patch: Record<string, unknown> = {};
+      if (!found.partnerId && partnerId) patch.partnerId = partnerId;
+      if (!found.companyId && companyId) patch.companyId = companyId;
+      if (Object.keys(patch).length > 0) {
+        await client.mutation({ updatePerson: { __args: { id: found.id, data: patch }, id: true } } as any);
+      }
+      continue;
+    }
+    await client.mutation({ createPerson: { __args: { data: { name: { firstName: contact.firstName, lastName: contact.lastName }, emails: { primaryEmail: contact.email }, companyId, partnerId } }, id: true } } as any);
+  }
+  console.log(`[seed] partner contacts: ${partnerContactCount}`);
 
   // -- Opportunities (upsert by name) --
   const oppIdByName = new Map<string, string>();

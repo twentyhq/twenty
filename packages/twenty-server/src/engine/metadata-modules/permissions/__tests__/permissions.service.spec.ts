@@ -8,22 +8,50 @@ import {
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+const buildFlatEntityMaps = <T extends SyncableFlatEntity>(
+  entities: T[],
+): FlatEntityMaps<T> =>
+  entities.reduce(
+    (maps, entity) =>
+      addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: entity,
+        flatEntityMaps: maps,
+      }),
+    createEmptyFlatEntityMaps() as FlatEntityMaps<T>,
+  );
+
 describe('PermissionsService', () => {
   let service: PermissionsService;
+  let roleRepository: { find: jest.Mock };
+  let workspaceCacheService: { getOrRecompute: jest.Mock };
 
   beforeEach(async () => {
+    roleRepository = {
+      find: jest.fn(),
+    };
+    workspaceCacheService = {
+      getOrRecompute: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PermissionsService,
         {
           provide: getWorkspaceScopedRepositoryToken(RoleEntity),
-          useValue: {},
+          useValue: roleRepository,
         },
         {
           provide: ApiKeyRoleService,
@@ -35,7 +63,7 @@ describe('PermissionsService', () => {
         },
         {
           provide: WorkspaceCacheService,
-          useValue: {},
+          useValue: workspaceCacheService,
         },
         {
           provide: getRepositoryToken(ApplicationEntity),
@@ -450,4 +478,163 @@ describe('PermissionsService', () => {
       });
     });
   });
+
+  describe.each([
+    {
+      evaluator: 'checkRolesPermissions' as const,
+      permissionFlag: PermissionFlagType.DATA_MODEL,
+      basePermission: 'canUpdateAllSettings' as const,
+    },
+    {
+      evaluator: 'hasToolPermission' as const,
+      permissionFlag: PermissionFlagType.HTTP_REQUEST_TOOL,
+      basePermission: 'canAccessAllTools' as const,
+    },
+  ])(
+    '$evaluator from workspace cache',
+    ({ evaluator, permissionFlag, basePermission }) => {
+      const workspaceId = 'test-workspace-id';
+      const createFlatRole = ({
+        id,
+        hasBasePermission = false,
+        rolePermissionFlagIds = [],
+      }: {
+        id: string;
+        hasBasePermission?: boolean;
+        rolePermissionFlagIds?: string[];
+      }): FlatRole =>
+        ({
+          id,
+          universalIdentifier: `${id}-universal-identifier`,
+          canAccessAllTools: false,
+          canUpdateAllSettings: false,
+          rolePermissionFlagIds,
+          [basePermission]: hasBasePermission,
+        }) as FlatRole;
+      const createFlatRolePermissionFlag = ({
+        id,
+        permissionFlagUniversalIdentifier,
+      }: {
+        id: string;
+        permissionFlagUniversalIdentifier: string;
+      }): FlatRolePermissionFlag =>
+        ({
+          id,
+          universalIdentifier: `${id}-universal-identifier`,
+          permissionFlagUniversalIdentifier,
+        }) as FlatRolePermissionFlag;
+      const mockCachedPermissions = ({
+        roles,
+        rolePermissionFlags = [],
+      }: {
+        roles: FlatRole[];
+        rolePermissionFlags?: FlatRolePermissionFlag[];
+      }) => {
+        workspaceCacheService.getOrRecompute.mockResolvedValue({
+          flatRoleMaps: buildFlatEntityMaps(roles),
+          flatRolePermissionFlagMaps: buildFlatEntityMaps(rolePermissionFlags),
+        });
+      };
+      const evaluate = (rolePermissionConfig: RolePermissionConfig) =>
+        service[evaluator](rolePermissionConfig, workspaceId, permissionFlag);
+
+      afterEach(() => {
+        expect(roleRepository.find).not.toHaveBeenCalled();
+      });
+
+      it('preserves union and intersection semantics', async () => {
+        const grantingRole = createFlatRole({
+          id: 'granting-role-id',
+          hasBasePermission: true,
+        });
+        const denyingRole = createFlatRole({
+          id: 'denying-role-id',
+        });
+
+        mockCachedPermissions({
+          roles: [grantingRole, denyingRole],
+        });
+
+        await expect(
+          evaluate({ unionOf: [grantingRole.id, denyingRole.id] }),
+        ).resolves.toBe(true);
+        await expect(
+          evaluate({ intersectionOf: [grantingRole.id, denyingRole.id] }),
+        ).resolves.toBe(false);
+        expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+          workspaceId,
+          ['flatRoleMaps', 'flatRolePermissionFlagMaps'],
+        );
+      });
+
+      it('grants an explicitly assigned permission flag', async () => {
+        const rolePermissionFlag = createFlatRolePermissionFlag({
+          id: 'role-permission-flag-id',
+          permissionFlagUniversalIdentifier:
+            SystemPermissionFlag[permissionFlag],
+        });
+        const role = createFlatRole({
+          id: 'role-id',
+          rolePermissionFlagIds: [rolePermissionFlag.id],
+        });
+
+        mockCachedPermissions({
+          roles: [role],
+          rolePermissionFlags: [rolePermissionFlag],
+        });
+
+        await expect(evaluate({ unionOf: [role.id] })).resolves.toBe(true);
+      });
+
+      it('denies an unrelated permission flag', async () => {
+        const rolePermissionFlag = createFlatRolePermissionFlag({
+          id: 'role-permission-flag-id',
+          permissionFlagUniversalIdentifier: SystemPermissionFlag.WORKSPACE,
+        });
+        const role = createFlatRole({
+          id: 'role-id',
+          rolePermissionFlagIds: [rolePermissionFlag.id],
+        });
+
+        mockCachedPermissions({
+          roles: [role],
+          rolePermissionFlags: [rolePermissionFlag],
+        });
+
+        await expect(evaluate({ unionOf: [role.id] })).resolves.toBe(false);
+      });
+
+      it('bypasses checks without loading the cache', async () => {
+        await expect(
+          evaluate({ shouldBypassPermissionChecks: true }),
+        ).resolves.toBe(true);
+        expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
+      });
+
+      it('fails closed for invalid or missing roles', async () => {
+        const role = createFlatRole({
+          id: 'role-id',
+          hasBasePermission: true,
+        });
+
+        mockCachedPermissions({ roles: [role] });
+
+        await expect(evaluate({ unionOf: [] })).resolves.toBe(false);
+        await expect(evaluate({ unionOf: [role.id, role.id] })).resolves.toBe(
+          false,
+        );
+        await expect(
+          evaluate({ unionOf: [role.id, 'missing-role-id'] }),
+        ).resolves.toBe(false);
+      });
+
+      it('fails closed when the workspace cache is unavailable', async () => {
+        workspaceCacheService.getOrRecompute.mockRejectedValue(
+          new Error('Cache unavailable'),
+        );
+
+        await expect(evaluate({ unionOf: ['role-id'] })).resolves.toBe(false);
+      });
+    },
+  );
 });

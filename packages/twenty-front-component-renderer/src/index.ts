@@ -1,8 +1,10 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
+export { FrontComponentExternalNavigationContext } from './host/contexts/FrontComponentExternalNavigationContext';
 export {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from './host/contexts/FrontComponentInputFocusContext';
+export { type RequestExternalNavigation } from './host/types/RequestExternalNavigation';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentConfirmationModalResultEffect } from './remote/components/FrontComponentConfirmationModalResultEffect';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';

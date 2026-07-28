@@ -18,8 +18,7 @@ const DEFAULT_PROPS = {
   defaultValue: '',
   onChange: fn(),
   readonly: false,
-  minHeight: 200,
-  maxWidth: 800,
+  preset: 'workflowEmailBody' as const,
 };
 
 const RICH_CONTENT_VALUE = JSON.stringify({
@@ -254,7 +253,6 @@ export const CustomSize: Story = {
     ...DEFAULT_PROPS,
     label: 'Custom Size Field',
     minHeight: 300,
-    maxWidth: 600,
     placeholder: 'This field has custom dimensions...',
   },
 };
