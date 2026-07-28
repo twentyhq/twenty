@@ -12,6 +12,23 @@ const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.PROCESSING,
 ];
 
+const getCallRecordingStatusLabel = (status: CallRecordingStatus) => {
+  switch (status) {
+    case CallRecordingStatus.SCHEDULED:
+      return t`Scheduled`;
+    case CallRecordingStatus.JOINING:
+      return t`Joining`;
+    case CallRecordingStatus.RECORDING:
+      return t`Recording`;
+    case CallRecordingStatus.PROCESSING:
+      return t`Processing`;
+    case CallRecordingStatus.COMPLETED:
+      return t`Completed`;
+    case CallRecordingStatus.FAILED:
+      return t`Failed`;
+  }
+};
+
 const StyledContainer = styled.div<{ isDisabled: boolean }>`
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'inherit')};
   display: flex;
@@ -44,17 +61,16 @@ export const CalendarEventCallRecorderAvatar = ({
           chipOnly
         />
       </StyledContainer>
-      {hasFailed &&
-        createPortal(
-          <AppTooltip
-            anchorSelect={`#${tooltipAnchorId}`}
-            content={t`The call recording failed`}
-            delay={TooltipDelay.shortDelay}
-            place={TooltipPosition.Top}
-            positionStrategy="fixed"
-          />,
-          document.body,
-        )}
+      {createPortal(
+        <AppTooltip
+          anchorSelect={`#${tooltipAnchorId}`}
+          content={getCallRecordingStatusLabel(status)}
+          delay={TooltipDelay.shortDelay}
+          place={TooltipPosition.Top}
+          positionStrategy="fixed"
+        />,
+        document.body,
+      )}
     </>
   );
 };
