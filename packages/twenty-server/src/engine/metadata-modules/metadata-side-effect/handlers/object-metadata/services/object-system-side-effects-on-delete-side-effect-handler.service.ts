@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { filterSystemSideEffectFlatViewFieldsToDelete } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/filter-system-side-effect-flat-view-fields-to-delete.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -159,21 +160,27 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
       ),
     );
 
-    const indexOwnerFlatObjectMetadatas = [
-      flatObjectMetadata,
-      ...flatFieldMetadatasToDelete
-        .map(
-          (flatFieldMetadata) =>
-            relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-              flatFieldMetadata.objectMetadataUniversalIdentifier
-            ],
-        )
-        .filter(isDefined),
-    ];
+    const indexOwnerFlatObjectMetadataByUniversalIdentifier = new Map([
+      [flatObjectMetadata.universalIdentifier, flatObjectMetadata],
+    ]);
+
+    for (const flatFieldMetadata of flatFieldMetadatasToDelete) {
+      const ownerFlatObjectMetadata =
+        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          flatFieldMetadata.objectMetadataUniversalIdentifier
+        ];
+
+      if (isDefined(ownerFlatObjectMetadata)) {
+        indexOwnerFlatObjectMetadataByUniversalIdentifier.set(
+          ownerFlatObjectMetadata.universalIdentifier,
+          ownerFlatObjectMetadata,
+        );
+      }
+    }
 
     const indexToDelete: FlatEntityToDelete<'index'> = {};
 
-    for (const indexOwnerFlatObjectMetadata of indexOwnerFlatObjectMetadatas) {
+    for (const indexOwnerFlatObjectMetadata of indexOwnerFlatObjectMetadataByUniversalIdentifier.values()) {
       for (const indexUniversalIdentifier of indexOwnerFlatObjectMetadata.indexMetadataUniversalIdentifiers) {
         const flatIndexMetadata =
           relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
