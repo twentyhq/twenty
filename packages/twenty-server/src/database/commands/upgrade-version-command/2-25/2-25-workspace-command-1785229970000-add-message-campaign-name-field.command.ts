@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,9 +8,11 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -23,12 +26,16 @@ const SUBJECT_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.fields.subject.universalIdentifier;
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.views.allMessageCampaigns.viewFields.name.universalIdentifier;
+const SEARCHED_FIELD_UNIVERSAL_IDENTIFIERS = [
+  NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
+];
 
 @RegisteredWorkspaceCommand('2.25.0', 1785229970000)
 @Command({
   name: 'upgrade:2-25:add-message-campaign-name-field',
   description:
-    'Add the internal name field to messageCampaign, surface it in the all campaigns view and make it the label identifier (was subject) on existing workspaces',
+    'Add the internal name field to messageCampaign, surface it in the all campaigns view, index it in the search vector and make it the label identifier (was subject) on existing workspaces',
 })
 export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -46,12 +53,17 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatViewFieldMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatViewFieldMaps',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewFieldMaps,
+      flatSearchFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatViewFieldMaps',
+      'flatSearchFieldMetadataMaps',
+    ]);
 
     const campaignObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
@@ -127,6 +139,15 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
       viewFieldsToCreate.push(standardNameViewField);
     }
 
+    const searchFieldMetadatasToCreate =
+      this.computeSearchFieldMetadatasToCreate({
+        flatSearchFieldMetadataMaps,
+        standardFlatSearchFieldMetadataMaps:
+          standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
+      });
+
     // Move the label identifier from subject to name, but never clobber a
     // user customization pointing at another field.
     const currentLabelIdentifier =
@@ -146,6 +167,7 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
     const totalOperationCount =
       fieldsToCreate.length +
       viewFieldsToCreate.length +
+      searchFieldMetadatasToCreate.length +
       flatObjectMetadataToUpdate.length;
 
     if (totalOperationCount === 0) {
@@ -158,7 +180,7 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewFieldsToCreate.length} view column(s), ${flatObjectMetadataToUpdate.length} label identifier update(s)`,
+        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewFieldsToCreate.length} view column(s), ${searchFieldMetadatasToCreate.length} search field(s), ${flatObjectMetadataToUpdate.length} label identifier update(s)`,
       );
 
       return;
@@ -187,6 +209,11 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
               flatEntityToDelete: [],
               flatEntityToUpdate: flatObjectMetadataToUpdate,
             },
+            searchFieldMetadata: {
+              flatEntityToCreate: searchFieldMetadatasToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
           },
         },
       );
@@ -203,6 +230,50 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
 
     this.logger.log(
       `Added the messageCampaign name field for workspace ${workspaceId}`,
+    );
+  }
+
+  private computeSearchFieldMetadatasToCreate({
+    flatSearchFieldMetadataMaps,
+    standardFlatSearchFieldMetadataMaps,
+    applicationUniversalIdentifier,
+  }: {
+    flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
+    standardFlatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
+    applicationUniversalIdentifier: string;
+  }): FlatSearchFieldMetadata[] {
+    return SEARCHED_FIELD_UNIVERSAL_IDENTIFIERS.flatMap(
+      (fieldMetadataUniversalIdentifier) => {
+        const searchFieldUniversalIdentifier =
+          getSearchFieldUniversalIdentifier({
+            applicationUniversalIdentifier,
+            fieldMetadataUniversalIdentifier,
+          });
+
+        if (
+          isDefined(
+            flatSearchFieldMetadataMaps.byUniversalIdentifier[
+              searchFieldUniversalIdentifier
+            ],
+          )
+        ) {
+          return [];
+        }
+
+        const standardFlatSearchFieldMetadata =
+          findFlatEntityByUniversalIdentifier<FlatSearchFieldMetadata>({
+            flatEntityMaps: standardFlatSearchFieldMetadataMaps,
+            universalIdentifier: searchFieldUniversalIdentifier,
+          });
+
+        if (!isDefined(standardFlatSearchFieldMetadata)) {
+          throw new Error(
+            `Standard application is missing the messageCampaign search field for field ${fieldMetadataUniversalIdentifier}`,
+          );
+        }
+
+        return [standardFlatSearchFieldMetadata];
+      },
     );
   }
 }
