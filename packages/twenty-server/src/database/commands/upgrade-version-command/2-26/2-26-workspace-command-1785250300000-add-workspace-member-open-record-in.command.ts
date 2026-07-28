@@ -18,9 +18,9 @@ const WORKSPACE_MEMBER_OPEN_RECORD_IN_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workspaceMember.fields.openRecordIn.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.25.0', 1785250300000)
+@RegisteredWorkspaceCommand('2.26.0', 1785250300000)
 @Command({
-  name: 'upgrade:2-25:add-workspace-member-open-record-in',
+  name: 'upgrade:2-26:add-workspace-member-open-record-in',
   description:
     'Create the workspace member openRecordIn preference field in existing workspaces',
 })
