@@ -1,9 +1,20 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { IMPORT_CALL_RECORDING_ARTIFACTS_ROUTE_PATH } from 'src/constants/import-call-recording-artifacts-route-path';
+import { TWENTY_FUNCTIONS_URL_ENV_VAR_NAME } from 'src/constants/twenty-functions-url-env-var-name';
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+const FUNCTIONS_URL = 'https://functions.twenty.test';
+const APP_ACCESS_TOKEN_ENV_VAR_NAME = 'TWENTY_APP_ACCESS_TOKEN';
+const ENV_VAR_NAMES = [
+  TWENTY_FUNCTIONS_URL_ENV_VAR_NAME,
+  APP_ACCESS_TOKEN_ENV_VAR_NAME,
+] as const;
+const ORIGINAL_ENV_VALUES = ENV_VAR_NAMES.map(
+  (envVarName) => [envVarName, process.env[envVarName]] as const,
+);
 
 const buildRecordingDoneWebhookBody = () => ({
   event: 'recording.done',
@@ -20,54 +31,6 @@ const buildRecordingDoneWebhookBody = () => ({
     },
   },
 });
-
-const getRecallBotMock = vi.hoisted(() => vi.fn());
-const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
-const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
-const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
-const requestArtifactContinuationMock = vi.hoisted(() => vi.fn());
-
-vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
-  getRecallBot: getRecallBotMock,
-}));
-
-vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
-  listRecallTranscripts: listRecallTranscriptsMock,
-}));
-
-vi.mock(
-  'src/logic-functions/recall-api/create-async-recall-transcript.util',
-  () => ({
-    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
-  }),
-);
-
-vi.mock(
-  'src/logic-functions/recall-api/retrieve-recall-transcript.util',
-  () => ({
-    retrieveRecallTranscript: retrieveRecallTranscriptMock,
-  }),
-);
-
-vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
-  importCallRecordingMedia: importCallRecordingMediaMock,
-}));
-
-vi.mock(
-  'src/logic-functions/data/request-call-recording-artifacts-import.util',
-  () => ({
-    requestCallRecordingArtifactsImport: requestArtifactContinuationMock,
-  }),
-);
-
-vi.mock(
-  'src/logic-functions/flows/charge-completed-call-recording.util',
-  () => ({
-    chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
-  }),
-);
 
 type CallRecordingNode = {
   id: string;
@@ -120,68 +83,76 @@ class FakeCoreApiClient {
 
       this.mutations.push({ id, data });
 
-      return {
-        updateCallRecording: {
-          id,
-        },
-      };
+      return { updateCallRecording: { id } };
     }
 
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 
-  private filterCallRecordings(filter: any): CallRecordingNode[] {
-    if (filter.id?.eq !== undefined) {
+  private filterCallRecordings(
+    filter: Record<string, { eq: string }>,
+  ): CallRecordingNode[] {
+    if (filter.id !== undefined) {
       return this.callRecordings.filter(
         (callRecording) => callRecording.id === filter.id.eq,
       );
     }
 
-    if (filter.externalBotId?.eq !== undefined) {
+    if (filter.externalBotId !== undefined) {
       return this.callRecordings.filter(
-        (callRecording) =>
-          callRecording.externalBotId === filter.externalBotId.eq,
+        (callRecording) => callRecording.externalBotId === filter.externalBotId.eq,
       );
     }
 
-    throw new Error(
-      `Unhandled call recording filter: ${JSON.stringify(filter)}`,
-    );
+    return [];
   }
 }
 
 describe('handleRecallWebhook', () => {
+  const fetchMock = vi.fn();
+
+  // The webhook handler's only HTTP side effect is the fire-and-forget POST to
+  // the app's own artifact-import route; the stubbed fetch records it.
+  const importRequestCalls = () =>
+    fetchMock.mock.calls.filter(([url]) =>
+      String(url).includes(IMPORT_CALL_RECORDING_ARTIFACTS_ROUTE_PATH),
+    );
+
+  const importRequestBodies = () =>
+    importRequestCalls().map(([, init]) => JSON.parse(init.body));
+
+  const nonImportRequestCalls = () =>
+    fetchMock.mock.calls.filter(
+      ([url]) =>
+        !String(url).includes(IMPORT_CALL_RECORDING_ARTIFACTS_ROUTE_PATH),
+    );
+
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    getRecallBotMock.mockReset();
-    getRecallBotMock.mockResolvedValue({
-      ok: false,
-      status: null,
-      errorMessage: 'bot fetch disabled in test',
-    });
-    listRecallTranscriptsMock.mockReset();
-    listRecallTranscriptsMock.mockResolvedValue({
+    process.env[TWENTY_FUNCTIONS_URL_ENV_VAR_NAME] = FUNCTIONS_URL;
+    process.env[APP_ACCESS_TOKEN_ENV_VAR_NAME] = 'app-access-token';
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue({
       ok: true,
-      transcripts: [],
+      status: 200,
+      statusText: 'OK',
+      headers: { get: () => null },
+      json: async () => ({}),
+      text: async () => '{}',
     });
-    createAsyncRecallTranscriptMock.mockReset();
-    createAsyncRecallTranscriptMock.mockResolvedValue({
-      ok: false,
-      status: null,
-      errorMessage: 'transcript request disabled in test',
+    vi.stubGlobal('fetch', fetchMock);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    ORIGINAL_ENV_VALUES.forEach(([envVarName, originalValue]) => {
+      if (originalValue === undefined) {
+        delete process.env[envVarName];
+      } else {
+        process.env[envVarName] = originalValue;
+      }
     });
-    retrieveRecallTranscriptMock.mockReset();
-    retrieveRecallTranscriptMock.mockResolvedValue({
-      ok: false,
-      status: null,
-      errorMessage: 'transcript retrieval disabled in test',
-    });
-    importCallRecordingMediaMock.mockReset();
-    importCallRecordingMediaMock.mockResolvedValue({});
-    chargeCompletedCallRecordingMock.mockReset();
-    chargeCompletedCallRecordingMock.mockResolvedValue('charged');
-    requestArtifactContinuationMock.mockReset();
-    requestArtifactContinuationMock.mockResolvedValue(true);
   });
 
   it('updates a call recording from bot metadata on status change events', async () => {
@@ -706,6 +677,7 @@ describe('handleRecallWebhook', () => {
       reason: 'stale status event (COMPLETED -> RECORDING)',
     });
     expect(client.mutations).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('skips events whose metadata points at a missing call recording', async () => {
@@ -771,12 +743,13 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      requestedAt: expect.any(String),
-    });
+    expect(importRequestBodies()).toEqual([
+      {
+        callRecordingId: 'call-recording-1',
+        requestedAt: expect.any(String),
+      },
+    ]);
+    expect(nonImportRequestCalls()).toEqual([]);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -790,7 +763,7 @@ describe('handleRecallWebhook', () => {
   });
 
   it('throws when the artifact import request fails so Svix redelivers', async () => {
-    requestArtifactContinuationMock.mockResolvedValue(false);
+    fetchMock.mockRejectedValue(new Error('own route unreachable'));
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -810,7 +783,7 @@ describe('handleRecallWebhook', () => {
     );
   });
 
-  it('queues redelivered done events without touching transcript APIs inline', async () => {
+  it('queues redelivered done events without doing artifact work inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -830,10 +803,8 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
-    expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
+    expect(importRequestCalls()).toHaveLength(1);
+    expect(nonImportRequestCalls()).toEqual([]);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -875,12 +846,13 @@ describe('handleRecallWebhook', () => {
       },
     });
 
-    expect(getRecallBotMock).not.toHaveBeenCalled();
-    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      requestedAt: expect.any(String),
-    });
+    expect(importRequestBodies()).toEqual([
+      {
+        callRecordingId: 'call-recording-1',
+        requestedAt: expect.any(String),
+      },
+    ]);
+    expect(nonImportRequestCalls()).toEqual([]);
     expect(client.mutations).toEqual([
       expect.objectContaining({
         id: 'call-recording-1',
@@ -910,7 +882,7 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(nonImportRequestCalls()).toEqual([]);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -921,8 +893,7 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
-    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
+    expect(importRequestCalls()).toHaveLength(1);
   });
 
   it('keeps the real failure reason on recording.failed and defers media work', async () => {
@@ -957,9 +928,8 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
-    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
+    expect(nonImportRequestCalls()).toEqual([]);
+    expect(importRequestCalls()).toHaveLength(1);
     expect(result).toEqual({
       status: 'updated',
       event: 'recording.failed',
@@ -1009,11 +979,13 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.done',
       callRecordingId: 'call-recording-1',
     });
-    expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      requestedAt: expect.any(String),
-    });
+    expect(importRequestBodies()).toEqual([
+      {
+        callRecordingId: 'call-recording-1',
+        requestedAt: expect.any(String),
+      },
+    ]);
+    expect(nonImportRequestCalls()).toEqual([]);
     expect(client.mutations).toEqual([]);
   });
 
@@ -1059,10 +1031,12 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
     });
-    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-      requestedAt: expect.any(String),
-    });
+    expect(importRequestBodies()).toEqual([
+      {
+        callRecordingId: 'call-recording-1',
+        requestedAt: expect.any(String),
+      },
+    ]);
     expect(client.mutations).toEqual([]);
   });
 
@@ -1276,6 +1250,6 @@ describe('handleRecallWebhook', () => {
       reason: 'stale status event (NOT_ATTENDED -> PROCESSING)',
     });
     expect(client.mutations).toEqual([]);
-    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
+    expect(importRequestCalls()).toHaveLength(1);
   });
 });
