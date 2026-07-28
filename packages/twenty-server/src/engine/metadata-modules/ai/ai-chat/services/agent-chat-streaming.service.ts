@@ -9,7 +9,6 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -47,7 +46,6 @@ type StreamAgentChatOptions = {
   workspace: WorkspaceEntity;
   text: string;
   browsingContext: BrowsingContextType | null;
-  companyContext: WorkspaceCompanyEnrichment | null;
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
@@ -161,7 +159,6 @@ export class AgentChatStreamingService {
     workspace,
     text,
     browsingContext,
-    companyContext,
     modelId,
     messageId,
     fileAttachments,
@@ -246,18 +243,6 @@ export class AgentChatStreamingService {
         },
         workspaceId: workspace.id,
       });
-
-      // Seeded AFTER the real user message so a failed message insert never leaves an orphan
-      // hidden message that retry / thread-ranking (which ignore hidden messages) would trip on.
-      // The seed is idempotent on its own existence rather than on the thread being empty, so a
-      // failure here is retried on the next message instead of leaving the thread without context.
-      if (isDefined(companyContext)) {
-        await this.agentChatService.seedCompanyContextMessage({
-          threadId,
-          workspaceId: workspace.id,
-          companyEnrichment: companyContext,
-        });
-      }
 
       await this.agentChatService.notifyThreadActivityUpdated({
         threadId,

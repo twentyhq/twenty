@@ -7,8 +7,7 @@ import {
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -35,7 +34,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
@@ -381,99 +379,6 @@ export class AgentChatService {
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
     });
-  }
-
-  async seedCompanyContextMessage({
-    threadId,
-    workspaceId,
-    companyEnrichment,
-  }: {
-    threadId: string;
-    workspaceId: string;
-    companyEnrichment: WorkspaceCompanyEnrichment;
-  }): Promise<void> {
-    // Best-effort as a whole: never fail the user's already-persisted message because the
-    // context could not be attached; the next message retries the cleanup and the seed.
-    try {
-      const existingHiddenMessages = await this.messageRepository.find(
-        workspaceId,
-        { where: { threadId, isHidden: true }, relations: ['parts'] },
-      );
-
-      // The message and its parts are inserted separately, so an interrupted attempt can leave a
-      // part-less row behind. Drop those unconditionally: they carry no context yet still reach the
-      // model, and counting one as a seed would disable the context for the thread forever.
-      const partialMessages = existingHiddenMessages.filter(
-        (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
-      );
-
-      if (isNonEmptyArray(partialMessages)) {
-        await this.messageRepository.delete(workspaceId, {
-          id: In(partialMessages.map((partialMessage) => partialMessage.id)),
-        });
-
-        // Each seed attempt creates its own turn, so dropped partial messages leave orphan turns.
-        const partialTurnIds = [
-          ...new Set(
-            partialMessages
-              .map((partialMessage) => partialMessage.turnId)
-              .filter(isDefined),
-          ),
-        ];
-
-        if (isNonEmptyArray(partialTurnIds)) {
-          await this.turnRepository.delete(workspaceId, {
-            id: In(partialTurnIds),
-          });
-        }
-      }
-
-      const isAlreadySeeded =
-        existingHiddenMessages.length > partialMessages.length;
-
-      if (isAlreadySeeded) {
-        return;
-      }
-
-      // The turn is created explicitly so a failed message insert (e.g. losing the race on the
-      // partial unique hidden-message index) can clean it up; deleting the turn cascades to the
-      // message rows, so a failed attempt leaves nothing behind.
-      const turnInsertResult = await this.turnRepository.insert(workspaceId, {
-        threadId,
-        agentId: null,
-      });
-      const seedTurnId = turnInsertResult.identifiers[0].id as string;
-
-      try {
-        // Sort before the real first message via an epoch processedAt (a plain column honored on
-        // insert); hidden messages are excluded from the user-facing "latest sent message" query.
-        await this.addMessage({
-          threadId,
-          workspaceId,
-          turnId: seedTurnId,
-          uiMessage: {
-            role: AgentMessageRole.USER,
-            parts: [
-              {
-                type: 'text' as const,
-                text: buildCompanyContextMessageText(companyEnrichment),
-              },
-            ],
-          },
-          isHidden: true,
-          processedAt: new Date(0),
-        });
-      } catch (error) {
-        await this.turnRepository.delete(workspaceId, { id: seedTurnId });
-        throw error;
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Failed to seed company context on thread ${threadId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
   }
 
   async queueMessage({

@@ -1,25 +1,6 @@
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
-
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
-
-const companyEnrichment = {
-  domain: 'acme.com',
-  enrichedAt: '2026-07-21T10:00:00.000Z',
-  name: 'Acme Inc',
-  website: null,
-  industry: null,
-  employeeCount: null,
-  size: null,
-  founded: null,
-  headline: null,
-  summary: null,
-  tags: [],
-  locality: null,
-  region: null,
-  country: null,
-} satisfies WorkspaceCompanyEnrichment;
 
 describe('AgentChatStreamingService claim & reap', () => {
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
@@ -51,7 +32,6 @@ describe('AgentChatStreamingService claim & reap', () => {
         .fn()
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
-      seedCompanyContextMessage: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
       hasQueuedMessages: jest
@@ -103,7 +83,6 @@ describe('AgentChatStreamingService claim & reap', () => {
     workspace,
     text: 'hello',
     browsingContext: null,
-    companyContext: null,
   };
 
   describe('streamAgentChat', () => {
@@ -168,46 +147,14 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
-    it('seeds the company context after the user message and loads hidden messages for the model', async () => {
-      const { service, agentChatService } = buildService();
-
-      await service.streamAgentChat({
-        ...sendArguments,
-        companyContext: companyEnrichment,
-      });
-
-      expect(agentChatService.seedCompanyContextMessage).toHaveBeenCalledWith({
-        threadId: 'thread-id',
-        workspaceId: 'workspace-id',
-        companyEnrichment,
-      });
-      expect(
-        agentChatService.addMessage.mock.invocationCallOrder[0],
-      ).toBeLessThan(
-        agentChatService.seedCompanyContextMessage.mock.invocationCallOrder[0],
-      );
-      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
-        expect.objectContaining({ includeHidden: true }),
-      );
-    });
-
-    it('does not seed company context when none is provided', async () => {
+    it('loads hidden messages for the model', async () => {
       const { service, agentChatService } = buildService();
 
       await service.streamAgentChat(sendArguments);
 
-      expect(agentChatService.seedCompanyContextMessage).not.toHaveBeenCalled();
-    });
-
-    it('does not seed company context on the queued branch', async () => {
-      const { service, agentChatService } = buildService({ claimAffected: 0 });
-
-      await service.streamAgentChat({
-        ...sendArguments,
-        companyContext: companyEnrichment,
-      });
-
-      expect(agentChatService.seedCompanyContextMessage).not.toHaveBeenCalled();
+      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
+        expect.objectContaining({ includeHidden: true }),
+      );
     });
 
     it('releases the claim when enqueueing the job fails', async () => {

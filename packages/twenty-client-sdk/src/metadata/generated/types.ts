@@ -8780,9 +8780,6 @@ export default {
                     "browsingContext": [
                         5
                     ],
-                    "companyContext": [
-                        5
-                    ],
                     "modelId": [
                         1
                     ],

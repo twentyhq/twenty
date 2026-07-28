@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
@@ -32,7 +32,6 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -154,7 +153,6 @@ export const useAgentChat = (
       });
 
     const currentMessages = store.get(messagesAtom);
-    const isFirstMessageOfThread = !isNonEmptyArray(currentMessages);
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
@@ -182,9 +180,6 @@ export const useAgentChat = (
           text: contentToSend,
           messageId,
           browsingContext: browsingContextToSend,
-          companyContext: isFirstMessageOfThread
-            ? store.get(companyEnrichmentState.atom)
-            : null,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
