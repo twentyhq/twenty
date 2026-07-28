@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
+import { hasAiChatStreamErrorCode } from '@/ai/utils/hasAiChatStreamErrorCode';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
@@ -22,6 +24,7 @@ const StyledErrorContainer = styled.div`
 
 export const AiChatStandaloneError = () => {
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+  const { retryChatMessage } = useRetryChatMessage();
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatError = useAtomComponentFamilyStateValue(
@@ -42,7 +45,14 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer error={agentChatError} />
+      <AiChatErrorRenderer
+        error={agentChatError}
+        onRetry={
+          hasAiChatStreamErrorCode(agentChatError)
+            ? retryChatMessage
+            : undefined
+        }
+      />
     </StyledErrorContainer>
   );
 };

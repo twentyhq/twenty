@@ -7,7 +7,7 @@ import {
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -80,11 +80,17 @@ export class AgentChatService {
   async createThread({
     userWorkspaceId,
     workspaceId,
+    id,
+    title,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
+    id?: string;
+    title?: string;
   }) {
     const savedThread = await this.threadRepository.save(workspaceId, {
+      ...(isDefined(id) ? { id } : {}),
+      ...(isDefined(title) ? { title } : {}),
       userWorkspaceId,
     });
 
@@ -106,6 +112,23 @@ export class AgentChatService {
     return savedThread;
   }
 
+  async findThreadById({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }) {
+    return this.threadRepository.findOne(workspaceId, {
+      where: {
+        id: threadId,
+        userWorkspaceId,
+      },
+    });
+  }
+
   async getThreadById({
     threadId,
     userWorkspaceId,
@@ -115,11 +138,10 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: {
-        id: threadId,
-        userWorkspaceId,
-      },
+    const thread = await this.findThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
     });
 
     if (!thread) {
@@ -266,7 +288,7 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: messageValues.processedAt,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -319,16 +341,38 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<Pick<AgentMessageEntity, 'id' | 'turnId'> | null> {
+    // Hidden messages are included on purpose: the workspace-setup kickoff turn's
+    // only user message is hidden and must stay retryable. Ordering by processedAt
+    // keeps any hidden message injected before the conversation (inserted with an
+    // earlier processedAt) from outranking a real turn message.
     return this.messageRepository.findOne(workspaceId, {
       where: {
         threadId,
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
-        isHidden: false,
       },
-      order: { createdAt: 'DESC', id: 'DESC' },
+      order: {
+        processedAt: { direction: 'DESC', nulls: 'LAST' },
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
       select: ['id', 'turnId'],
     });
+  }
+
+  async hasConversationMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const visibleMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { threadId, isHidden: false },
+      select: ['id'],
+    });
+
+    return isDefined(visibleMessage);
   }
 
   async deleteAssistantMessagesForTurn({
@@ -379,6 +423,108 @@ export class AgentChatService {
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
     });
+  }
+
+  private async loadCompleteHiddenMessagesAfterCleanup({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<AgentMessageEntity[]> {
+    const existingHiddenMessages = await this.messageRepository.find(
+      workspaceId,
+      { where: { threadId, isHidden: true }, relations: ['parts'] },
+    );
+
+    // The message and its parts are inserted separately, so an interrupted attempt can leave a
+    // part-less row behind. Drop those unconditionally: they carry no content yet still reach the
+    // model, and they occupy the one-hidden-message-per-thread unique index.
+    const partialMessages = existingHiddenMessages.filter(
+      (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
+    );
+
+    if (isNonEmptyArray(partialMessages)) {
+      await this.messageRepository.delete(workspaceId, {
+        id: In(partialMessages.map((partialMessage) => partialMessage.id)),
+      });
+
+      // Each hidden-message attempt creates its own turn, so dropped partial messages leave
+      // orphan turns.
+      const partialTurnIds = [
+        ...new Set(
+          partialMessages
+            .map((partialMessage) => partialMessage.turnId)
+            .filter(isDefined),
+        ),
+      ];
+
+      if (isNonEmptyArray(partialTurnIds)) {
+        await this.turnRepository.delete(workspaceId, {
+          id: In(partialTurnIds),
+        });
+      }
+    }
+
+    return existingHiddenMessages.filter((hiddenMessage) =>
+      isNonEmptyArray(hiddenMessage.parts),
+    );
+  }
+
+  async ensureHiddenKickoffMessage({
+    threadId,
+    workspaceId,
+    text,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    text: string;
+  }): Promise<{ id: string; turnId: string }> {
+    const completeHiddenMessages =
+      await this.loadCompleteHiddenMessagesAfterCleanup({
+        threadId,
+        workspaceId,
+      });
+
+    // The kickoff only runs on threads without any visible message, where the sole possible
+    // hidden message is a previous kickoff prompt whose stream enqueue failed: reuse it.
+    const reusableKickoffMessage = completeHiddenMessages.find(
+      (hiddenMessage) => isDefined(hiddenMessage.turnId),
+    );
+
+    if (
+      isDefined(reusableKickoffMessage) &&
+      isDefined(reusableKickoffMessage.turnId)
+    ) {
+      return {
+        id: reusableKickoffMessage.id,
+        turnId: reusableKickoffMessage.turnId,
+      };
+    }
+
+    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+      threadId,
+      agentId: null,
+    });
+    const kickoffTurnId = turnInsertResult.identifiers[0].id as string;
+
+    try {
+      const savedMessage = await this.addMessage({
+        threadId,
+        workspaceId,
+        turnId: kickoffTurnId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [{ type: 'text' as const, text }],
+        },
+        isHidden: true,
+      });
+
+      return { id: savedMessage.id, turnId: kickoffTurnId };
+    } catch (error) {
+      await this.turnRepository.delete(workspaceId, { id: kickoffTurnId });
+      throw error;
+    }
   }
 
   async queueMessage({

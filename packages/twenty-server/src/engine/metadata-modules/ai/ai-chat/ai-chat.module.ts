@@ -4,8 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -31,6 +33,8 @@ import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
+import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
+import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
@@ -51,6 +55,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ]),
     AiAgentExecutionModule,
     BillingModule,
+    FeatureFlagModule,
+    KeyValuePairModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,
@@ -73,8 +79,10 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamHeartbeatService,
     AgentChatResolver,
     AgentChatSubscriptionResolver,
+    WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatStreamingService,
+    WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,

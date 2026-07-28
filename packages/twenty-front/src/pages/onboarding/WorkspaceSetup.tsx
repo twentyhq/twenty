@@ -8,6 +8,7 @@ import { AiChatTab } from '@/ai/components/AiChatTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupHeader } from '@/onboarding/components/WorkspaceSetupHeader';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -59,6 +60,7 @@ export const WorkspaceSetup = () => {
     <StyledPanel>
       <WorkspaceSetupHeader title={title} />
       <StyledContent>
+        {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
         <AiChatMessageListPreambleContext.Provider value={preamble}>
           <AiChatTab />
         </AiChatMessageListPreambleContext.Provider>
