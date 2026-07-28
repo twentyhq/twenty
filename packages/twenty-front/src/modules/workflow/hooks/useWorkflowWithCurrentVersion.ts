@@ -1,6 +1,5 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
-import { useSyncWorkflowVersionContentFromCore } from '@/workflow/workflow-version/hooks/useSyncWorkflowVersionContentFromCore';
 import {
   type Workflow,
   type WorkflowVersion,
@@ -59,10 +58,6 @@ export const useWorkflowWithCurrentVersion = (
       skip: !isDefined(currentVersionId),
     },
   );
-
-  // passing the loaded record id, not the requested one: the core content can
-  // only be written into the record cache once the record itself is there
-  useSyncWorkflowVersionContentFromCore(currentVersionWithSteps?.id);
 
   if (!isDefined(workflow) || !isDefined(currentVersionWithSteps)) {
     return undefined;

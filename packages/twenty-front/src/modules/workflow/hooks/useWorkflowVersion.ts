@@ -1,6 +1,5 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
-import { useSyncWorkflowVersionContentFromCore } from '@/workflow/workflow-version/hooks/useSyncWorkflowVersionContentFromCore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const useWorkflowVersion = (workflowVersionId?: string) => {
@@ -25,10 +24,6 @@ export const useWorkflowVersion = (workflowVersionId?: string) => {
     },
     skip: !workflowVersionId,
   });
-
-  // passing the loaded record id, not the requested one: the core content can
-  // only be written into the record cache once the record itself is there
-  useSyncWorkflowVersionContentFromCore(workflowVersion?.id);
 
   return workflowVersion;
 };
