@@ -40,16 +40,16 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('tailored to their business');
     expect(result).not.toContain('You do not know what this company does yet');
-    expect(result).not.toContain('one short question');
   });
 
-  it('should forbid tool calls on the first reply when a full enrichment is provided', () => {
+  it('should forbid every first-reply tool except ask_questions when a full enrichment is provided', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
-    expect(result).toContain('do not call any tools');
+    expect(result).toContain('call no tool other than ask_questions');
+    expect(result).toContain('load_skills');
   });
 
   it('should require explicit approval before building and name the metadata tools when a full enrichment is provided', () => {
@@ -78,14 +78,16 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).not.toContain('Domain:');
   });
 
-  it('should instruct a plain-text discovery question when the enrichment is null', () => {
+  it('should instruct an ask_questions discovery when the enrichment is null', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment: null,
       locale: 'en',
     });
 
     expect(result).toContain('You do not know what this company does yet');
-    expect(result).toContain('one short question');
+    expect(result).toContain(
+      'call ask_questions to learn what the business does',
+    );
     expect(result).not.toContain('tailored to their business');
   });
 
@@ -104,6 +106,30 @@ describe('buildWorkspaceSetupPromptText', () => {
       expect(result).not.toContain('already loaded');
     },
   );
+
+  it('should ask about the data model with the ask_questions tool', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'Always ask the user about the data model with the ask_questions tool',
+    );
+    expect(result).toContain('whether to build it');
+  });
+
+  it('should require making the created fields visible in the views', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('view-building');
+    expect(result).toContain('get_view_fields');
+    expect(result).toContain('update_many_view_fields with isVisible true');
+    expect(result).toContain('create_many_view_fields');
+  });
 
   it('should require English names with labels in the user language', () => {
     const result = buildWorkspaceSetupPromptText({
