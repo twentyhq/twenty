@@ -1,12 +1,19 @@
 import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
 import type { JSONContent } from '@tiptap/react';
 
+// Campaign bodies were stored as the editor's own HTML before they moved to
+// JSON. TipTap parses an HTML string natively, so hand it through untouched
+// rather than letting the plain-text fallback render the markup as literal
+// text. Requiring a leading tag keeps plain-text bodies, which need the
+// variable-tag conversion below, out of this branch.
+const LEADING_HTML_TAG_PATTERN = /^<[a-z][a-z0-9]*(\s[^>]*)?>/i;
+
 // Previous format of the email body was plain text,
 // but from now on we will save it as JSON.
 // So it will fail to parse the content, that's why we have this fallback.
 export const getInitialAdvancedTextEditorContent = (
   rawContent: string,
-): JSONContent => {
+): JSONContent | string => {
   // Handle empty or null content
   if (!rawContent || rawContent.trim() === '') {
     return {
@@ -33,6 +40,10 @@ export const getInitialAdvancedTextEditorContent = (
 
     return json;
   } catch {
+    if (LEADING_HTML_TAG_PATTERN.test(rawContent.trim())) {
+      return rawContent;
+    }
+
     return getInitialEditorContent(rawContent);
   }
 };

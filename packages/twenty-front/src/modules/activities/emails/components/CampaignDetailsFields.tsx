@@ -1,19 +1,22 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import {
+  CoreObjectNameSingular,
+  MessageChannelType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
-import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
+import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
+import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
-import { t } from '@lingui/core/macro';
-import { MessageChannelType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -48,25 +51,30 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
     parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
   }
 
-  const breakdown = parts.length > 0 ? ` (${parts.join(', ')})` : '';
+  if (parts.length === 0) {
+    return t`${preview.totalMembers} in this list`;
+  }
 
-  return (
-    t`${preview.totalMembers} in this list — ${preview.sendable} sendable` +
-    breakdown
-  );
+  const breakdown = parts.join(', ');
+
+  // Without exclusions every member is sendable, so the count is only worth
+  // spelling out when the two differ.
+  return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
 };
 
-type CampaignComposerFieldsProps = {
-  campaignState: ReturnType<typeof useCampaignComposerState>;
+type CampaignDetailsFieldsProps = {
+  campaign: MessageCampaign;
 };
 
-export const CampaignComposerFields = ({
-  campaignState,
-}: CampaignComposerFieldsProps) => {
+export const CampaignDetailsFields = ({
+  campaign,
+}: CampaignDetailsFieldsProps) => {
+  const detailsState = useCampaignDetailsState({ campaign });
+
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
-    objectNameSingular: 'messageList',
+    objectNameSingular: CoreObjectNameSingular.MessageList,
   });
 
   const handleCreateList = async (searchInput?: string) => {
@@ -76,13 +84,13 @@ export const CampaignComposerFields = ({
     });
 
     if (isDefined(createdList)) {
-      campaignState.setListId(createdList.id);
+      detailsState.setListId(createdList.id);
     }
   };
 
   const audiencePreview = useCampaignAudiencePreview({
-    listId: campaignState.listId,
-    unsubscribeTopicId: campaignState.unsubscribeTopicId,
+    listId: detailsState.listId,
+    unsubscribeTopicId: detailsState.unsubscribeTopicId,
   });
 
   const senderOptions: SelectOption<string>[] = channels
@@ -99,53 +107,49 @@ export const CampaignComposerFields = ({
   );
 
   return (
-    <StyledFieldsContainer>
+    <StyledFieldsContainer onBlur={() => detailsState.flush()}>
       <Select
         dropdownId="campaign-composer-from-account"
         label={t`From`}
         fullWidth
-        value={campaignState.fromAddress}
+        value={detailsState.fromAddress}
         options={senderOptions}
         emptyOption={{ label: t`Select a sender`, value: '' }}
-        onChange={campaignState.setFromAddress}
+        onChange={detailsState.setFromAddress}
       />
       <FormSingleRecordPicker
         label={t`To`}
-        objectNameSingulars={['messageList']}
-        defaultValue={campaignState.listId}
-        onChange={campaignState.setListId}
+        objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+        defaultValue={detailsState.listId}
+        onChange={detailsState.setListId}
         onCreate={handleCreateList}
       />
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
-      <Select
-        dropdownId="campaign-composer-unsubscribe-topic"
-        label={t`Unsubscribe topic`}
-        fullWidth
-        value={campaignState.unsubscribeTopicId ?? ''}
-        options={topicOptions}
-        emptyOption={{ label: t`No topic`, value: '' }}
-        onChange={(value) =>
-          campaignState.setUnsubscribeTopicId(value === '' ? null : value)
-        }
-      />
-      <StyledHint>
-        {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-      </StyledHint>
+      {topicOptions.length > 0 && (
+        <>
+          <Select
+            dropdownId="campaign-composer-unsubscribe-topic"
+            label={t`Unsubscribe topic`}
+            fullWidth
+            value={detailsState.unsubscribeTopicId ?? ''}
+            options={topicOptions}
+            emptyOption={{ label: t`No topic`, value: '' }}
+            onChange={(value) =>
+              detailsState.setUnsubscribeTopicId(value === '' ? null : value)
+            }
+          />
+          <StyledHint>
+            {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
+          </StyledHint>
+        </>
+      )}
       <FormTextFieldInput
         label={t`Subject`}
-        defaultValue={campaignState.subject}
-        onChange={campaignState.setSubject}
+        defaultValue={detailsState.subject}
+        onChange={detailsState.setSubject}
         placeholder={t`Subject`}
-      />
-      <FormAdvancedTextFieldInput
-        defaultValue=""
-        onChange={campaignState.setBody}
-        placeholder={t`Type something or press "/" to see commands`}
-        minHeight={120}
-        maxWidth={600}
-        contentType="html"
       />
     </StyledFieldsContainer>
   );

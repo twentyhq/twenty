@@ -35,10 +35,6 @@ import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const EMAIL_EDITOR_MIN_HEIGHT = 340;
-
-const EMAIL_EDITOR_MAX_WIDTH = 600;
-
 type WorkflowEditActionEmailBaseProps = {
   action: WorkflowEmailAction;
   actionOptions:
@@ -375,8 +371,7 @@ export const WorkflowEditActionEmailBase = ({
                 children: t`Email Editor`,
               },
             ]}
-            minHeight={EMAIL_EDITOR_MIN_HEIGHT}
-            maxWidth={EMAIL_EDITOR_MAX_WIDTH}
+            preset="workflowEmailBody"
           />
           <WorkflowSendEmailAttachments
             label={t`Attachments`}
