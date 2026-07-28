@@ -28,9 +28,9 @@ description: 关于 Twenty 中工作流的常见问题。
   <Accordion title="Single、Global 和 Bulk 手动触发器有什么区别？">
     | 类型 | 需要的记录 | 工作流运行 |
     | -- | ----- | ----- |
-    \| **Global** | 无 | 一次，无记录输入 |
-    \| **Single** | 选择一个或多个 | 每个选中的记录执行一次 |
-    \| **Bulk** | 选择一个或多个 | 执行一次，所有记录作为数组 |
+    \| **Global** | None | Once, no record input |
+    \| **Single** | One or more selected | Once per selected record |
+    \| **Bulk** | One or more selected | Once, with all records as an array |
 
     * **Global**：当工作流不需要任何记录上下文时使用（例如，生成报告）
     * **Single**：当您希望独立处理每个选定的记录时使用（例如，发送单独的电子邮件）
@@ -155,11 +155,9 @@ description: 关于 Twenty 中工作流的常见问题。
   </Accordion>
 
   <Accordion title="为什么我看不到我的工作流运行？">
-    工作流运行可能由于速率限制而立即失败。
+    工作流运行可能由于速率限制而立即失败。 Twenty 对每个工作区每小时的运行次数实施 5,000 次的硬性限制。
 
-    **硬性限制：每个工作区每小时 5,000 次运行。**
-
-    如果超出此限制，工作流会被立即标记为失败，并且不会如预期出现在您的运行列表中。
+    如果超出此限制，工作流会被立即标记为失败，并且不会出现在您的运行列表中。
 
     **常见的触发此限制的场景**：
     * 使用 Single 手动触发器选择超过 5,000 条记录

@@ -19,7 +19,7 @@ As ações definem o que acontece após um gatilho ser acionado. Você pode enca
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Criar um Registro
+### Criar Registro
 
 Adiciona um novo registro a um objeto selecionado.
 
@@ -112,12 +112,12 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 
 **Configuração**:
 
-* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk, de um nó de código). Quando uma etapa de código ou de função lógica retorna um array de nível superior, selecione a opção **Whole list** para iterar por toda a saída.
+* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk availability, de um Code node). Quando uma etapa de código ou de função lógica retorna um array de nível superior, selecione a opção **Whole list** para iterar por toda a saída.
 * Defina as ações a serem realizadas em cada registro no loop.
 
 <Note>
-- Você pode adicionar várias ações dentro de um iterador.
-- Ao usar ramificações dentro de um iterador, certifique-se de que a última etapa de cada ramificação se conecte de volta ao iterador para fechar o loop.
+- Você pode adicionar várias ações dentro de um Iterator.
+- Ao usar ramificações dentro de um Iterator, certifique-se de que a última etapa de cada ramificação se conecte de volta ao Iterator para fechar o loop.
 </Note>
 
 * Acesse os campos de `Current Item`: para usar campos do registro que está sendo processado no momento, clique na etapa **Iterator** e, em seguida, selecione **Current item**. A lista de campos disponíveis desse registro será exibida e poderá ser selecionada para uso em ações subsequentes. Você também pode selecionar **Use the whole item** para passar o item atual inteiro para uma etapa posterior.
@@ -213,24 +213,24 @@ Adicionar assinaturas em HTML não é possível no momento.
 Apresenta um formulário durante a execução do fluxo de trabalho para coletar a entrada do usuário. As respostas podem então ser usadas em etapas subsequentes para criar registros, enviar e-mails ou executar qualquer outra ação com base na entrada.
 
 <Warning>
-**Os formulários são projetados apenas para gatilhos manuais**. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários só são acessíveis via a interface de execução do fluxo de trabalho, o que não é a experiência esperada do usuário. Um centro de notificações será lançado em 2026 para suportar adequadamente os formulários em fluxos de trabalho automatizados.
+**Os formulários são projetados apenas para gatilhos manuais**. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários só são acessíveis via a interface de execução do fluxo de trabalho, o que não é a experiência esperada do usuário. Um notification center será lançado em 2026 para suportar adequadamente os forms em automated workflows.
 </Warning>
 
 **Configuração**:
 
 * Configure os campos que os usuários deverão preencher. Para cada campo, escolha
-  * um tipo entre texto, número, data, um determinado registro, um campo de seleção. Campos de seleção de todos os objetos estão disponíveis.
+  * um tipo entre texto, número, data, um determinado registro, um campo de seleção. Fields from all objects are available for selection.
   * um rótulo
   * um valor padrão em `Placeholder` (opcional)
 * Edite o título do formulário
 
 **Saída**: Respostas do formulário estão disponíveis para uso em etapas subsequentes.
 
-**Exemplo**: O fluxo de trabalho "Quick Lead" está disponível por padrão em todos os espaços de trabalho, disponível em qualquer lugar no Menu de Comando `Cmd + K`.
+**Exemplo**: O workflow "Quick Lead" está disponível por padrão em todos os workspaces, disponível em qualquer lugar no Command Menu `Cmd+K`.
 
 **Como preencher o formulário**:
 
-* Acione seu fluxo de trabalho manual a partir do menu de comando `Cmd K`
+* Trigger your manual workflow from the Command Menu `Cmd+K`
 * Preencha o formulário exibido no painel lateral e clique em `Submit`.
 
 <Note>

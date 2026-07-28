@@ -17,7 +17,7 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
 
 워크플로우를 설정하기 전에:
 
-1. **API 키 생성**: **Settings → APIs**로 이동하여 새 API 키를 만드세요. 이 토큰은 로직 함수에 필요합니다.
+1. **API 키 생성**: **Settings → APIs**로 이동하여 새 API 키를 만드세요. Logic Function에 이 토큰이 필요합니다.
 2. **PDF 생성 서비스 설정**(선택 사항): PDF를 동적으로 생성하려면(예: 견적서) Carbone, PDFMonkey, DocuSeal 같은 서비스를 사용해 PDF를 만들고 다운로드 URL을 받으세요.
 
 ## 단계별 설정
@@ -34,7 +34,7 @@ Twenty에서 PDF를 자동으로 생성하거나 가져와 레코드에 첨부�
 
 ### 2단계: 로직 함수 추가
 
-1. **Code** 액션(로직 함수)을 추가합니다
+1. **Code** 액션(Logic Function)을 추가합니다
 2. 아래 코드로 새 함수를 만드세요
 3. 입력 매개변수를 구성하세요
 
@@ -237,7 +237,7 @@ export const main = async (
 | 1  | 수동 트리거(Company) | 사용자가 레코드에서 시작                   |
 | 2  | 레코드 검색          | Opportunity 또는 라인 아이템 세부정보 가져오기 |
 | 3  | HTTP 요청         | 레코드 데이터를 사용해 PDF 생성 API 호출      |
-| 4  | 서버리스 함수         | 생성된 PDF를 다운로드해 첨부               |
+| 4  | 로직 함수           | 생성된 PDF를 다운로드해 첨부               |
 
 ### 널리 사용되는 PDF 생성 서비스
 
@@ -246,7 +246,7 @@ export const main = async (
 * **DocuSeal** - 문서 자동화 플랫폼
 * **Documint** - API 우선 문서 생성
 
-각 서비스는 PDF URL을 반환하는 API를 제공하며, 이 URL을 로직 함수에 전달할 수 있습니다.
+각 서비스는 PDF URL을 반환하는 API를 제공하며, 이 URL을 Logic Function에 전달할 수 있습니다.
 
 ## 문제 해결
 
