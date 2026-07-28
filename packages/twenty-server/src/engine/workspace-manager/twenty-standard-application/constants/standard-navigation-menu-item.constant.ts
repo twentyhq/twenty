@@ -45,6 +45,14 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
     position: 5,
   },
+  allMessageCampaigns: {
+    universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
+        .universalIdentifier,
+    position: 7,
+  },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,
@@ -88,6 +96,7 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allNotes: 'turquoise',
   allOpportunities: 'red',
   workflowsFolder: 'orange',
+  allMessageCampaigns: 'gray',
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',

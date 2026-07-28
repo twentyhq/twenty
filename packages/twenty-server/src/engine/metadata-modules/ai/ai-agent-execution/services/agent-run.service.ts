@@ -10,6 +10,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -67,6 +68,7 @@ export class AgentRunService {
         await this.agentAsyncExecutorService.executeAgent({
           agent,
           userPrompt: input.prompt,
+          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           authContext,
           workspaceId: workspace.id,
           userWorkspaceId: requestUserWorkspaceId,
@@ -83,7 +85,6 @@ export class AgentRunService {
 
       return { result, error: null, success: true };
     } catch (error) {
-      // Keep client-facing errors generic; log details for diagnostics only.
       this.logger.error(
         `Agent execution failed for ${input.agentUniversalIdentifier}`,
         error instanceof Error ? error.stack : error,
