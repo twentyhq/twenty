@@ -620,22 +620,25 @@ export class ChatExecutionService {
           const underlying = lastUnderlyingStreamError;
 
           this.exceptionHandlerService.captureExceptions([
-            new Error(
-              `AI chat stream produced no output. ${JSON.stringify({
-                modelId: registeredModel.modelId,
-                provider: registeredModel.sdkPackage,
-                workspaceId: workspace.id,
-                threadId,
-                streamId,
-                turnId,
-                messageCount: messages.length,
-                conversationSizeTokens,
-                elapsedMs: Math.round(performance.now() - streamStartedAt),
-                underlyingError:
-                  underlying instanceof Error
-                    ? `${underlying.name}: ${underlying.message}`
-                    : String(underlying ?? 'none-recorded'),
-              })}`,
+            Object.assign(
+              new Error(
+                `AI chat stream produced no output. ${JSON.stringify({
+                  modelId: registeredModel.modelId,
+                  provider: registeredModel.sdkPackage,
+                  workspaceId: workspace.id,
+                  threadId,
+                  streamId,
+                  turnId,
+                  messageCount: messages.length,
+                  conversationSizeTokens,
+                  elapsedMs: Math.round(performance.now() - streamStartedAt),
+                  underlyingError:
+                    underlying instanceof Error
+                      ? `${underlying.name}: ${underlying.message}`
+                      : String(underlying ?? 'none-recorded'),
+                })}`,
+              ),
+              { cause: underlying },
             ),
           ]);
 
