@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   generateText,
   jsonSchema,
@@ -234,16 +235,25 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
-      const promptOrMessages = isNonEmptyArray(messages)
-        ? {
-            messages: messages.map(
-              (message): ModelMessage => ({
-                role: message.role,
-                content: message.content,
-              }),
-            ),
-          }
-        : { prompt: userPrompt };
+      let promptOrMessages: { messages: ModelMessage[] } | { prompt: string };
+
+      if (isNonEmptyArray(messages)) {
+        promptOrMessages = {
+          messages: messages.map(
+            (message): ModelMessage => ({
+              role: message.role,
+              content: message.content,
+            }),
+          ),
+        };
+      } else if (isNonEmptyString(userPrompt)) {
+        promptOrMessages = { prompt: userPrompt };
+      } else {
+        throw new AiException(
+          'Provide exactly one of userPrompt or messages',
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
 
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
