@@ -22,11 +22,14 @@ export abstract class CustomException<
 > extends CustomError {
   code: ExceptionCode;
   userFriendlyMessage: MessageDescriptor;
+  statusCode?: number;
 
   constructor(
     message: ExceptionMessage,
     code: ExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    {
+      userFriendlyMessage,
+    }: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
   ) {
     super(message);
     this.code = code;

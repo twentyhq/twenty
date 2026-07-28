@@ -135,7 +135,7 @@ function StepRenderer({ controller }: { controller: ClientBriefController }) {
   }
 }
 
-export function ClientBriefWizard() {
+export function ClientBriefWizard({ partnerSlug }: { partnerSlug?: string }) {
   const { i18n } = useLingui();
   const controller = useClientBriefState();
   const {
@@ -176,7 +176,7 @@ export function ClientBriefWizard() {
         return;
       }
 
-      const payload = buildClientBriefRequestBody(state);
+      const payload = buildClientBriefRequestBody(state, partnerSlug);
       setSubmitting(true);
       try {
         const response = await fetch('/api/client-brief', {
@@ -199,6 +199,7 @@ export function ClientBriefWizard() {
       goNext,
       i18n,
       isLastStep,
+      partnerSlug,
       setFieldErrors,
       setSubmitError,
       setSubmitted,

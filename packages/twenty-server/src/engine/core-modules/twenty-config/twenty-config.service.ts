@@ -205,6 +205,10 @@ export class TwentyConfigService {
     return this.get('IS_BILLING_ENABLED') === true;
   }
 
+  isWorkspaceCompanyEnrichmentEnabled(): boolean {
+    return this.get('IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED') === true;
+  }
+
   private validateNotEnvOnly<T extends keyof ConfigVariables>(
     key: T,
     operation: string,
