@@ -1,2 +1,0 @@
-export const ADD_OBJECT_METADATA_DEFAULT_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME =
-  '2.25.0_AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand_1785256000000';

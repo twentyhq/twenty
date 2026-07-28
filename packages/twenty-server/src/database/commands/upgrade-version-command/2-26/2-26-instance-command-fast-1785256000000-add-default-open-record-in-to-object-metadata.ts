@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.25.0', 1785256000000)
+@RegisteredInstanceCommand('2.26.0', 1785256000000)
 export class AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand
   implements FastInstanceCommand
 {

@@ -12,7 +12,7 @@ import {
 import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
-import { ADD_OBJECT_METADATA_DEFAULT_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-25/add-object-metadata-default-open-record-in-upgrade-command-name.constant';
+import { ADD_OBJECT_METADATA_DEFAULT_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-26/add-object-metadata-default-open-record-in-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';

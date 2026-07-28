@@ -14,9 +14,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.25.0', 1785258000000)
+@RegisteredWorkspaceCommand('2.26.0', 1785258000000)
 @Command({
-  name: 'upgrade:2-25:sync-object-default-open-record-in',
+  name: 'upgrade:2-26:sync-object-default-open-record-in',
   description:
     'Give existing objects their standard defaultOpenRecordIn and pin full page objects’ views to the record page',
 })

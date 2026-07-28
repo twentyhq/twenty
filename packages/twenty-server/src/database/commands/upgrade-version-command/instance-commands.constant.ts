@@ -130,9 +130,9 @@ import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-inst
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
-import { AddUserPreferenceToViewOpenRecordInFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785250223556-add-user-preference-to-view-open-record-in';
-import { BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1785255000000-backfill-view-open-record-in-user-preference';
-import { AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785256000000-add-default-open-record-in-to-object-metadata';
+import { AddUserPreferenceToViewOpenRecordInFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785250223556-add-user-preference-to-view-open-record-in';
+import { BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-slow-1785255000000-backfill-view-open-record-in-user-preference';
+import { AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785256000000-add-default-open-record-in-to-object-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

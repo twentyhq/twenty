@@ -8,7 +8,7 @@ import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 // member preference changes nothing on the day of the upgrade, since the
 // preference itself starts at SIDE_PANEL. Rolling back is handled by the enum
 // command's down(), which has to empty the value before dropping it anyway.
-@RegisteredInstanceCommand('2.25.0', 1785255000000, { type: 'slow' })
+@RegisteredInstanceCommand('2.26.0', 1785255000000, { type: 'slow' })
 export class BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand
   implements SlowInstanceCommand
 {
