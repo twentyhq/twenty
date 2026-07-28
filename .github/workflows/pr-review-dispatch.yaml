@@ -1,24 +1,21 @@
 name: PR Review Dispatch
-run-name: "PR Review Dispatch (${{ github.event_name }})"
+run-name: "PR Review Dispatch #${{ github.event.pull_request.number }}"
 
 on:
   pull_request_target:
     types: [ready_for_review, synchronize, labeled]
-  issue_comment:
-    types: [created]
 
 permissions: {}
 
 concurrency:
-  group: pr-review-dispatch-${{ github.event.pull_request.number || github.event.issue.number }}
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   dispatch:
     if: >
-      (github.event_name == 'pull_request_target' && github.event.action != 'labeled' && github.event.pull_request.draft == false) ||
-      (github.event_name == 'pull_request_target' && github.event.action == 'labeled' && startsWith(github.event.label.name, 'pr-review-')) ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/pr-review') && contains(fromJSON('["MEMBER", "OWNER", "COLLABORATOR"]'), github.event.comment.author_association))
+      github.event.pull_request.draft == false &&
+      (github.event.action != 'labeled' || startsWith(github.event.label.name, 'pr-review-'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -35,14 +32,7 @@ jobs:
       - name: Forward to PR review
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
-          EVENT_NAME: ${{ github.event_name }}
-          LABEL_NAME: ${{ github.event.label.name }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          COMMENT_HEAD=$(printf '%s' "$COMMENT_BODY" | head -1 | cut -c1-200)
           gh workflow run pr-review.yaml --repo twentyhq/ci-privileged --ref main \
-            -f pr_number="$PR_NUMBER" \
-            -f event_name="$EVENT_NAME" \
-            -f label_name="$LABEL_NAME" \
-            -f comment_body="$COMMENT_HEAD"
+            -f pr_number="$PR_NUMBER"
