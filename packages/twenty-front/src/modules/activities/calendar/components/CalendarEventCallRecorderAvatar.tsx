@@ -25,6 +25,7 @@ export const CalendarEventCallRecorderAvatar = ({
     applicationId={applicationId}
     fallbackApplicationData={{ name: t`Call recorder` }}
     border={CALL_RECORDER_STATUS_BORDERS[status]}
+    pulsing={status === CallRecordingStatus.PROCESSING}
     size="md"
     rounded
     chipOnly

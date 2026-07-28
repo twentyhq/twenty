@@ -19,6 +19,7 @@ type AppChipProps = {
   chipOnly?: boolean;
   rounded?: boolean;
   border?: string;
+  pulsing?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -42,6 +43,7 @@ export const AppChip = ({
   chipOnly = false,
   rounded = false,
   border,
+  pulsing = false,
 }: AppChipProps) => {
   const { applicationChipData } = useApplicationChipData({
     applicationId,
@@ -60,6 +62,7 @@ export const AppChip = ({
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}
         border={border}
+        pulsing={pulsing}
       />
       {!chipOnly && (
         <OverflowingTextWithTooltip text={applicationChipData.name} />
