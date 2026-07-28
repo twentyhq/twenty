@@ -1,7 +1,7 @@
-import { ViewOpenRecordIn } from 'twenty-shared/types';
 import {
   type FieldMetadataType,
   type ObjectsPermissions,
+  ViewOpenRecordIn,
 } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';

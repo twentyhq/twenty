@@ -1,5 +1,8 @@
-import { ViewOpenRecordIn } from 'twenty-shared/types';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  ViewOpenRecordIn,
+} from 'twenty-shared/types';
 
 import {
   computeUpdatedFieldsFromDiff,

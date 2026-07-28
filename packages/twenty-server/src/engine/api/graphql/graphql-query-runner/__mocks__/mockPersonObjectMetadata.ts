@@ -1,5 +1,4 @@
-import { ViewOpenRecordIn } from 'twenty-shared/types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

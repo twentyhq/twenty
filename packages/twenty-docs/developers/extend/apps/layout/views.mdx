@@ -44,7 +44,7 @@ export default defineView({
 |----------|--------|-------------|
 | `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
-| `openRecordIn` | `ViewOpenRecordIn.USER_PREFERENCE` (default), `ViewOpenRecordIn.SIDE_PANEL`, `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. `USER_PREFERENCE` defers to each workspace member's own setting. The default is `RECORD_PAGE` for objects that need a full page to be usable (workflows, workflow versions, workflow runs, dashboards, message campaigns) and `USER_PREFERENCE` everywhere else. |
+| `openRecordIn` | `ViewOpenRecordIn.USER_PREFERENCE` (default), `ViewOpenRecordIn.SIDE_PANEL`, `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. `USER_PREFERENCE` defers to each workspace member's own setting. Omit it and the view inherits the object's [`defaultOpenRecordIn`](/developers/extend/apps/data/objects), which is `USER_PREFERENCE` unless the object declares otherwise. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
 | `isCompact` | `boolean` | Compact row display. |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
