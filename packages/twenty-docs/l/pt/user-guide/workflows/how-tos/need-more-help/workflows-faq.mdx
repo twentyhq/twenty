@@ -28,9 +28,9 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
   <Accordion title="Qual é a diferença entre gatilhos manuais Single, Global e Bulk?">
     | Tipo | Registros necessários | Execuções de Workflow |
     | ---- | --------------------- | --------------------- |
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as an array |
+    \| **Global** | Nenhum | Uma vez, sem entrada de registro |
+    \| **Single** | Um ou mais selecionados | Uma vez por registro selecionado |
+    \| **Bulk** | Um ou mais selecionados | Uma vez, com todos os registros como array |
 
     * **Global**: Use quando o fluxo de trabalho não precisa de nenhum contexto de registro (por exemplo, gerar um relatório)
     * **Single**: Use quando você quer processar cada registro selecionado de forma independente (por exemplo, enviar e-mails individuais)
@@ -166,7 +166,7 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
 
     **Soluções**:
     * Use gatilhos **Bulk** em vez de Single para processar muitos registros em uma única execução
-    * Espace operações em lotes grandes
+    * Espaçe as operações em lotes grandes
     * Use filtros para reduzir a frequência dos gatilhos
     * Agende fluxos de trabalho pesados fora do horário de pico
   </Accordion>
