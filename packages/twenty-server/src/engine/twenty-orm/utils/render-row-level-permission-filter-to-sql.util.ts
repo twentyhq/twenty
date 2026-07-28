@@ -94,13 +94,13 @@ const renderFilterEntry = (
   switch (filterKey) {
     case 'and':
       return renderLogicalGroup(
-        filterValue as RecordGqlOperationFilter[],
+        filterValue as RecordGqlOperationFilter[] | RecordGqlOperationFilter,
         'AND',
         context,
       );
     case 'or':
       return renderLogicalGroup(
-        filterValue as RecordGqlOperationFilter[],
+        filterValue as RecordGqlOperationFilter[] | RecordGqlOperationFilter,
         'OR',
         context,
       );
@@ -122,11 +122,13 @@ const renderFilterEntry = (
 };
 
 const renderLogicalGroup = (
-  filters: RecordGqlOperationFilter[],
+  filters: RecordGqlOperationFilter[] | RecordGqlOperationFilter,
   logicalOperator: 'AND' | 'OR',
   context: SqlRenderingContext,
 ): string => {
-  const conditions = filters.map((filter) => {
+  const filterList = Array.isArray(filters) ? filters : [filters];
+
+  const conditions = filterList.map((filter) => {
     const renderedCondition = renderFilterAsConjunction(filter, context);
 
     return isNonEmptyString(renderedCondition)
@@ -243,7 +245,7 @@ const assertArrayOperatorValueIsNonEmptyArray = ({
     throw new GraphqlQueryRunnerException(
       `Invalid filter value for field ${key}. Expected non-empty array`,
       GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
+      { userFriendlyMessage: msg`Invalid filter value` },
     );
   }
 };

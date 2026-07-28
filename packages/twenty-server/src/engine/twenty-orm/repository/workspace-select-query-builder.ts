@@ -463,8 +463,6 @@ export class WorkspaceSelectQueryBuilder<
         continue;
       }
 
-      markRowLevelPermissionPredicateApplied(joinAttribute);
-
       const recordFilter = buildRowLevelPermissionRecordFilter({
         flatRowLevelPermissionPredicateMaps:
           this.internalContext.flatRowLevelPermissionPredicateMaps,
@@ -477,9 +475,12 @@ export class WorkspaceSelectQueryBuilder<
       });
 
       if (!isDefined(recordFilter) || Object.keys(recordFilter).length === 0) {
+        markRowLevelPermissionPredicateApplied(joinAttribute);
         continue;
       }
 
+      // Only marked on non-throw exits: a rendering failure must not leave the
+      // join marked as enforced if the builder is retried
       const renderedCondition = renderRowLevelPermissionFilterToSql({
         recordFilter,
         tableAlias: joinAttribute.alias.name,
@@ -488,6 +489,7 @@ export class WorkspaceSelectQueryBuilder<
       });
 
       if (!isDefined(renderedCondition)) {
+        markRowLevelPermissionPredicateApplied(joinAttribute);
         continue;
       }
 
@@ -497,6 +499,7 @@ export class WorkspaceSelectQueryBuilder<
       );
 
       this.setParameters(renderedCondition.parameters);
+      markRowLevelPermissionPredicateApplied(joinAttribute);
     }
   }
 

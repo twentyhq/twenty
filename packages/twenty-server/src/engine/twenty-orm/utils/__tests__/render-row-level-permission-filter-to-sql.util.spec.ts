@@ -167,6 +167,22 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
   });
 
+  it('renders a singleton or filter that is not wrapped in an array', () => {
+    const result = renderRowLevelPermissionFilterToSql({
+      ...baseArgs,
+      recordFilter: { or: { name: { ilike: '%x%' } } },
+    });
+
+    const nameParameterKey = findParameterKeyByValue(
+      result?.parameters ?? {},
+      '%x%',
+    );
+
+    expect(result?.sql).toBe(
+      `(("company"."name"::text ILIKE :${nameParameterKey}))`,
+    );
+  });
+
   it('renders a not group over a join column condition', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
