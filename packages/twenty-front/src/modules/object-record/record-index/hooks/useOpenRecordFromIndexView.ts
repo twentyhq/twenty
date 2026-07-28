@@ -6,7 +6,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useGetOpenRecordIn } from '@/object-record/record-index/hooks/useGetOpenRecordIn';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
@@ -23,7 +23,7 @@ export const useOpenRecordFromIndexView = () => {
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const { getOpenRecordIn } = useGetOpenRecordIn();
+  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
 
   const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
@@ -65,7 +65,7 @@ export const useOpenRecordFromIndexView = () => {
         },
       );
 
-      if (getOpenRecordIn(objectNameSingular) === ViewOpenRecordIn.SIDE_PANEL) {
+      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular,
@@ -93,7 +93,7 @@ export const useOpenRecordFromIndexView = () => {
       objectNameSingular,
       navigate,
       openRecordInSidePanel,
-      getOpenRecordIn,
+      openRecordIn,
       closeSidePanelMenu,
       store,
     ],
