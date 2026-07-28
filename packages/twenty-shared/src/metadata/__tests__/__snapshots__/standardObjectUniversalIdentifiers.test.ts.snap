@@ -3204,6 +3204,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "numberFormat": {
         "universalIdentifier": "20202020-7f40-4e7f-b126-11c0eda6b141",
       },
+      "openRecordIn": {
+        "universalIdentifier": "20202020-1b16-419d-9323-6f3ea850e5d9",
+      },
       "ownedOpportunities": {
         "universalIdentifier": "20202020-9e4d-4b3a-8c1f-6d7e8f9a0b1c",
       },
