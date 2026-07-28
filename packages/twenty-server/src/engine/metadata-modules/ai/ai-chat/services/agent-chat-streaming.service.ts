@@ -8,7 +8,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -706,10 +706,15 @@ export class AgentChatStreamingService {
       threadId,
       userWorkspaceId,
       workspaceId,
+      includeHidden: true,
     });
 
+    // A hidden row without parts is an interrupted seed attempt: it carries no context and
+    // would otherwise reach the model as an empty user message.
     const filteredMessages = allMessages.filter(
-      (message) => message.status !== AgentMessageStatus.QUEUED,
+      (message) =>
+        message.status !== AgentMessageStatus.QUEUED &&
+        (!message.isHidden || isNonEmptyArray(message.parts)),
     );
 
     return Promise.all(
@@ -734,7 +739,11 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        metadata: { createdAt: message.createdAt.toISOString() },
+        // The hidden context seed gets no createdAt so injectMessageTimestamps skips it: its
+        // insert time is meaningless and later than the first real message it sorts before.
+        ...(message.isHidden
+          ? {}
+          : { metadata: { createdAt: message.createdAt.toISOString() } }),
       })),
     );
   }

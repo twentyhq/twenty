@@ -129,6 +129,7 @@ import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-i
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
+import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { AddWorkspaceMessageCampaignDailySendLimitFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785236700000-add-workspace-message-campaign-daily-send-limit';
 
 export const INSTANCE_COMMANDS = [
@@ -261,5 +262,6 @@ export const INSTANCE_COMMANDS = [
   AddAppTokenSsoExchangeIndexFastInstanceCommand,
   AddPageLayoutCascadeDeleteIndexesFastInstanceCommand,
   AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand,
+  AddIsHiddenToAgentMessageFastInstanceCommand,
   AddWorkspaceMessageCampaignDailySendLimitFastInstanceCommand,
 ];

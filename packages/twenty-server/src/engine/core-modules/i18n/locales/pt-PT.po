@@ -9725,11 +9725,6 @@ msgstr "Não pode revogar o acesso ao painel de administração do último admin
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "Não é possível definir permissões de campo em objetos do sistema, pois eles são geridos pela plataforma."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "Não é possível definir permissões em objetos do sistema, pois eles são geridos pela plataforma."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."

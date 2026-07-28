@@ -4,6 +4,7 @@ const SESSION_KEYS_TO_CLEAR = [
   'lastVisitedObjectMetadataItemIdState',
   'lastVisitedViewPerObjectMetadataItemState',
   'ai/agentChatDraftsByThreadIdState',
+  'companyEnrichmentState',
   'locale',
   'currentUserState',
   'currentWorkspaceState',

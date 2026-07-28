@@ -9725,11 +9725,6 @@ msgstr "No puedes revocar el acceso al panel de administración del último admi
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "No puedes establecer permisos de campo en objetos del sistema, ya que son gestionados por la plataforma."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "No puedes establecer permisos en objetos del sistema, ya que son gestionados por la plataforma."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."

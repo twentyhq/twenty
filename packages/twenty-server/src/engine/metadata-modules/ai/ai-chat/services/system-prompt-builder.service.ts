@@ -161,7 +161,12 @@ export class SystemPromptBuilderService {
     }
 
     parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
-    parts.push(this.buildSkillCatalogSection(skillCatalog));
+
+    const skillSection = this.buildSkillCatalogSection(skillCatalog);
+
+    if (skillSection) {
+      parts.push(skillSection);
+    }
 
     if (storedFiles && storedFiles.length > 0) {
       parts.push(this.buildUploadedFilesSection(storedFiles));
