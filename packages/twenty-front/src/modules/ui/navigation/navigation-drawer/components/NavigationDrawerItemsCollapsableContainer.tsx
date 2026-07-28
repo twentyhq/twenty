@@ -12,9 +12,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COLLAPSED_GROUP_WIDTH = 24;
 
-// The group chrome is handled in CSS rather than through the animate object:
-// framer-motion cannot animate the `border` shorthand to `none`, which would
-// leave the collapsed border painted once the drawer is expanded.
 const StyledAnimationGroupContainerBase = styled.div<{
   isCollapsedGroup: boolean;
 }>`
