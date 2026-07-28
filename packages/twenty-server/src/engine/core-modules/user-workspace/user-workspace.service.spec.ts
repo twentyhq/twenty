@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -302,6 +303,7 @@ describe('UserWorkspaceService', () => {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
         locale: 'en',

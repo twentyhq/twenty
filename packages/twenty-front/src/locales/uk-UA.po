@@ -3757,6 +3757,11 @@ msgstr "Виберіть, що станеться під час натискан
 msgid "Choose what happens when you click an email"
 msgstr "Виберіть, що станеться під час натискання на електронну адресу"
 
+#. js-lingui-id: qmSqRk
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open for views that follow your preference"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -11783,6 +11788,12 @@ msgstr "повинен бути масивом дійсних електронн
 msgid "My apps"
 msgstr "Мої додатки"
 
+#. js-lingui-id: JHUGyx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+msgid "My preference"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -11891,6 +11902,11 @@ msgstr "Перехід у застосунку"
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Navigating in the app"
 msgstr "Перехід у застосунку"
+
+#. js-lingui-id: UxKoFf
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13508,6 +13524,7 @@ msgid "Open Outlook"
 msgstr "Відкрити Outlook"
 
 #. js-lingui-id: p9J4lB
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "Відкривати записи у"
@@ -14771,6 +14788,7 @@ msgstr "Сторінка запису"
 #. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Record Page"
 msgstr "Сторінка запису"
 
@@ -16688,6 +16706,7 @@ msgstr ""
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Side Panel"
 msgstr "Бічна панель"
 

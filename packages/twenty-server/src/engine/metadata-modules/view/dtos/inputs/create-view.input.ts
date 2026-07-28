@@ -82,7 +82,6 @@ export class CreateViewInput {
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
-    defaultValue: ViewOpenRecordIn.SIDE_PANEL,
   })
   openRecordIn?: ViewOpenRecordIn;
 

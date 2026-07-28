@@ -5,6 +5,7 @@ import {
   FieldMetadataType,
   NumberDataType,
   RelationType,
+  ViewOpenRecordIn,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -157,6 +158,27 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIEditable: false,
       defaultValue: "'System'",
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  openRecordIn: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'openRecordIn',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Open Records In`),
+      description: i18nLabel(
+        msg`Where records open for views that follow the member's preference`,
+      ),
+      icon: 'IconLayoutSidebarRight',
+      isSystem: true,
+      isNullable: false,
+      isUIEditable: false,
+      defaultValue: `'${ViewOpenRecordIn.SIDE_PANEL}'`,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

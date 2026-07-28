@@ -3757,6 +3757,11 @@ msgstr "Válassza ki, mi történjen, amikor egy telefonszámra kattint!"
 msgid "Choose what happens when you click an email"
 msgstr "Válassza ki, mi történjen, amikor egy e-mail-címre kattint!"
 
+#. js-lingui-id: qmSqRk
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open for views that follow your preference"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -11783,6 +11788,12 @@ msgstr "érvényes e-maileket tartalmazó tömbnek kell lennie"
 msgid "My apps"
 msgstr "Saját alkalmazásaim"
 
+#. js-lingui-id: JHUGyx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+msgid "My preference"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -11891,6 +11902,11 @@ msgstr "Navigált az alkalmazásban"
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Navigating in the app"
 msgstr "Navigálás az alkalmazásban"
+
+#. js-lingui-id: UxKoFf
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13508,6 +13524,7 @@ msgid "Open Outlook"
 msgstr "Outlook megnyitása"
 
 #. js-lingui-id: p9J4lB
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "Rekordok megnyitása itt"
@@ -14771,6 +14788,7 @@ msgstr "Rekordoldal"
 #. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Record Page"
 msgstr "Felvételi oldal"
 
@@ -16688,6 +16706,7 @@ msgstr "Érték megjelenítése középen"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Side Panel"
 msgstr "Oldal Panel"
 

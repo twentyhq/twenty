@@ -3757,6 +3757,11 @@ msgstr "Chọn điều gì sẽ xảy ra khi bạn nhấp vào một số điệ
 msgid "Choose what happens when you click an email"
 msgstr "Chọn điều gì sẽ xảy ra khi bạn nhấp vào một địa chỉ email"
 
+#. js-lingui-id: qmSqRk
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open for views that follow your preference"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -11783,6 +11788,12 @@ msgstr "phải là một mảng email hợp lệ"
 msgid "My apps"
 msgstr "Ứng dụng của tôi"
 
+#. js-lingui-id: JHUGyx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+msgid "My preference"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -11891,6 +11902,11 @@ msgstr "Đã điều hướng trong ứng dụng"
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Navigating in the app"
 msgstr "Đang điều hướng trong ứng dụng"
+
+#. js-lingui-id: UxKoFf
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13508,6 +13524,7 @@ msgid "Open Outlook"
 msgstr "Mở Outlook"
 
 #. js-lingui-id: p9J4lB
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "Mở bản ghi trong"
@@ -14771,6 +14788,7 @@ msgstr "Trang hồ sơ"
 #. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Record Page"
 msgstr "Trang hồ sơ"
 
@@ -16688,6 +16706,7 @@ msgstr ""
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Side Panel"
 msgstr "Bảng điều khiển bên"
 

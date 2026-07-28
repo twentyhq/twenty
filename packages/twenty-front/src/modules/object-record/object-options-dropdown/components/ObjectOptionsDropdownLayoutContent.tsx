@@ -37,6 +37,7 @@ import {
   IconLayoutNavbar,
   IconLayoutSidebarRight,
   IconTable,
+  IconUserCog,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
@@ -127,6 +128,21 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       await setAndPersistViewType(ViewType.CALENDAR);
     }
   };
+
+  const openRecordInMenuItem = {
+    [ViewOpenRecordIn.USER_PREFERENCE]: {
+      Icon: IconUserCog,
+      label: t`My preference`,
+    },
+    [ViewOpenRecordIn.SIDE_PANEL]: {
+      Icon: IconLayoutSidebarRight,
+      label: t`Side Panel`,
+    },
+    [ViewOpenRecordIn.RECORD_PAGE]: {
+      Icon: IconLayoutNavbar,
+      label: t`Record Page`,
+    },
+  }[currentView?.openRecordIn ?? ViewOpenRecordIn.USER_PREFERENCE];
 
   const isDefaultView = currentView?.key === 'INDEX';
   const nbsp = '\u00A0';
@@ -299,20 +315,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             >
               <MenuItem
                 focused={selectedItemId === ViewOpenRecordIn.SIDE_PANEL}
-                LeftIcon={
-                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
-                    ? IconLayoutSidebarRight
-                    : IconLayoutNavbar
-                }
+                LeftIcon={openRecordInMenuItem.Icon}
                 text={t`Open in`}
                 onClick={() => {
                   onContentChange('layoutOpenIn');
                 }}
-                contextualText={
-                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
-                    ? t`Side Panel`
-                    : t`Record Page`
-                }
+                contextualText={openRecordInMenuItem.label}
                 contextualTextPosition="right"
                 hasSubMenu
               />

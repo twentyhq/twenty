@@ -18,6 +18,7 @@ import {
   IconChevronLeft,
   IconLayoutNavbar,
   IconLayoutSidebarRight,
+  IconUserCog,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
@@ -36,6 +37,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   );
 
   const selectableItemIdArray = [
+    ViewOpenRecordIn.USER_PREFERENCE,
     ViewOpenRecordIn.SIDE_PANEL,
     ViewOpenRecordIn.RECORD_PAGE,
   ];
@@ -58,6 +60,30 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
           focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
         >
+          <SelectableListItem
+            itemId={ViewOpenRecordIn.USER_PREFERENCE}
+            onEnter={() => {
+              setAndPersistOpenRecordIn(
+                ViewOpenRecordIn.USER_PREFERENCE,
+                currentView,
+              );
+            }}
+          >
+            <MenuItemSelect
+              LeftIcon={IconUserCog}
+              text={t`My preference`}
+              selected={
+                currentView?.openRecordIn === ViewOpenRecordIn.USER_PREFERENCE
+              }
+              focused={selectedItemId === ViewOpenRecordIn.USER_PREFERENCE}
+              onClick={() => {
+                setAndPersistOpenRecordIn(
+                  ViewOpenRecordIn.USER_PREFERENCE,
+                  currentView,
+                );
+              }}
+            />
+          </SelectableListItem>
           <SelectableListItem
             itemId={ViewOpenRecordIn.SIDE_PANEL}
             onEnter={() => {

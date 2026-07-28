@@ -3757,6 +3757,11 @@ msgstr "전화번호를 클릭할 때 수행할 작업을 선택하세요"
 msgid "Choose what happens when you click an email"
 msgstr "이메일 주소를 클릭할 때 수행할 작업을 선택하세요"
 
+#. js-lingui-id: qmSqRk
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose where records open for views that follow your preference"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -11783,6 +11788,12 @@ msgstr "유효한 이메일의 배열이어야 합니다"
 msgid "My apps"
 msgstr "내 앱"
 
+#. js-lingui-id: JHUGyx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+msgid "My preference"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -11891,6 +11902,11 @@ msgstr "앱 내에서 탐색 완료"
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Navigating in the app"
 msgstr "앱 내에서 탐색 중"
+
+#. js-lingui-id: UxKoFf
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Navigation"
+msgstr ""
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13508,6 +13524,7 @@ msgid "Open Outlook"
 msgstr "Outlook 열기"
 
 #. js-lingui-id: p9J4lB
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Open records in"
 msgstr "레코드를 다음에서 열기"
@@ -14771,6 +14788,7 @@ msgstr "레코드 페이지"
 #. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Record Page"
 msgstr "레코드 페이지"
 
@@ -16688,6 +16706,7 @@ msgstr ""
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/settings/experience/components/OpenRecordInPreferenceSelect.tsx
 msgid "Side Panel"
 msgstr "사이드 패널"
 

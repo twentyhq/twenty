@@ -7,6 +7,7 @@ import {
   ViewOpenRecordIn,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { getDefaultViewOpenRecordIn } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -53,7 +54,7 @@ export const createStandardViewFlatMetadata = <
     icon,
     isCompact = false,
     isCustom = false,
-    openRecordIn = ViewOpenRecordIn.SIDE_PANEL,
+    openRecordIn = getDefaultViewOpenRecordIn(objectName),
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,

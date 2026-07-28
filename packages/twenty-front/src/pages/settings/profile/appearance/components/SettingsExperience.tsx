@@ -1,5 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
+import { OpenRecordInPreferenceSelect } from '@/settings/experience/components/OpenRecordInPreferenceSelect';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -35,6 +36,14 @@ export const SettingsExperience = () => {
             darkLabel={t`Dark`}
             systemLabel={t`System settings`}
           />
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Navigation`}
+            description={t`Choose where records open for views that follow your preference`}
+          />
+          <OpenRecordInPreferenceSelect />
         </Section>
 
         <Section>

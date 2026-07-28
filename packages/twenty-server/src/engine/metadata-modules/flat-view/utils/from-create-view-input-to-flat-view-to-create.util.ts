@@ -1,16 +1,14 @@
 import {
+  getDefaultViewOpenRecordIn,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewType, ViewVisibility } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
@@ -41,6 +39,11 @@ export const fromCreateViewInputToFlatViewToCreate = ({
 
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
+
+  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: objectMetadataId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   const {
     objectMetadataUniversalIdentifier,
@@ -84,7 +87,9 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     key: createViewInput.key ?? null,
-    openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
+    openRecordIn:
+      createViewInput.openRecordIn ??
+      getDefaultViewOpenRecordIn(flatObjectMetadata?.nameSingular ?? ''),
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),

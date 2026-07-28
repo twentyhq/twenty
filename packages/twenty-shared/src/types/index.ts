@@ -302,6 +302,7 @@ export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
 export { ViewKey } from './ViewKey';
+export type { ResolvedOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
