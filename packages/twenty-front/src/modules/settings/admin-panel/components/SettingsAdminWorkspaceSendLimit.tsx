@@ -1,8 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';

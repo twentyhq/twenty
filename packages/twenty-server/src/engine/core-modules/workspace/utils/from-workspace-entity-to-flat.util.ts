@@ -16,6 +16,7 @@ export const fromWorkspaceEntityToFlat = (
   eventLogRetentionDays: entity.eventLogRetentionDays,
   activationStatus: entity.activationStatus,
   metadataVersion: entity.metadataVersion,
+  messageCampaignDailySendLimit: entity.messageCampaignDailySendLimit,
   databaseSchema: entity.databaseSchema,
   subdomain: entity.subdomain,
   customDomain: entity.customDomain,

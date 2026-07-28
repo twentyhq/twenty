@@ -3,13 +3,16 @@ import { t } from '@lingui/core/macro';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
+  SettingsPath,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
+import { useCampaignSendQuota } from '@/activities/emails/hooks/useCampaignSendQuota';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -17,6 +20,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -62,6 +66,18 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
   return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
 };
 
+const buildQuotaHint = (remaining: number): string => {
+  if (remaining === 0) {
+    return t`You have reached today's sending limit. Contact support@twenty.com to raise it.`;
+  }
+
+  if (remaining === 1) {
+    return t`1 email left today`;
+  }
+
+  return t`${remaining} emails left today`;
+};
+
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
 };
@@ -71,8 +87,10 @@ export const CampaignDetailsFields = ({
 }: CampaignDetailsFieldsProps) => {
   const detailsState = useCampaignDetailsState({ campaign });
 
-  const { channels } = useMyMessageChannels();
+  const navigateSettings = useNavigateSettings();
+  const { channels, loading: channelsLoading } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
+  const sendQuota = useCampaignSendQuota();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
   });
@@ -108,6 +126,18 @@ export const CampaignDetailsFields = ({
 
   return (
     <StyledFieldsContainer onBlur={() => detailsState.flush()}>
+      {!channelsLoading && senderOptions.length === 0 && (
+        <Callout
+          variant="info"
+          title={t`No sending address yet`}
+          description={t`Set up an email group channel before you can send campaigns.`}
+          action={{
+            label: t`Go to Communications`,
+            onClick: () =>
+              navigateSettings(SettingsPath.WorkspaceCommunications),
+          }}
+        />
+      )}
       <Select
         dropdownId="campaign-composer-from-account"
         label={t`From`}
@@ -126,6 +156,9 @@ export const CampaignDetailsFields = ({
       />
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
+      )}
+      {isDefined(sendQuota?.remaining) && (
+        <StyledHint>{buildQuotaHint(sendQuota.remaining)}</StyledHint>
       )}
       {topicOptions.length > 0 && (
         <>
