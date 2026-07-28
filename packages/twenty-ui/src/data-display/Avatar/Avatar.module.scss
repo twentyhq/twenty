@@ -62,6 +62,26 @@
   width: 12px;
 }
 
+.pulsing {
+  animation: avatarPulsing 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes avatarPulsing {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulsing {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 .image {
   height: 100%;
   object-fit: cover;
