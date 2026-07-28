@@ -72,5 +72,23 @@ describe('getWidgetCardVariant', () => {
         }),
       ).toBe('side-column');
     });
+
+    it.each([
+      ['isInPinnedTab', { isInPinnedTab: true }],
+      ['isMobile', { isMobile: true }],
+      ['isInSidePanel', { isInSidePanel: true }],
+    ])(
+      "returns 'side-column' over 'solo' when %s is true",
+      (_label, override) => {
+        expect(
+          getWidgetCardVariant({
+            ...baseParams,
+            ...override,
+            presentation: 'solo',
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+          }),
+        ).toBe('side-column');
+      },
+    );
   });
 });
