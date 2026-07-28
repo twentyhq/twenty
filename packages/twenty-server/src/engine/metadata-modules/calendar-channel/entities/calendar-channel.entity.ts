@@ -42,6 +42,11 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
   'isSyncEnabled',
   'syncStage',
 ])
+@Index(
+  'IDX_CALENDAR_CHANNEL_WEBHOOK_SUBSCRIPTION_EXTERNAL_ID',
+  ['webhookSubscriptionExternalId'],
+  { where: '"webhookSubscriptionExternalId" IS NOT NULL' },
+)
 export class CalendarChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

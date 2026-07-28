@@ -1,0 +1,32 @@
+---
+title: Exportovat FAQ
+description: Často kladené otázky ohledně exportu dat.
+---
+
+<AccordionGroup>
+<Accordion title="Můžeme exportovat všechna data pracovního prostoru před zrušením, včetně vlastních objektů, vlastních polí, vztahů, poznámek, úkolů, příležitostí, příloh, pracovních postupů, oprávnění a historie auditu?">
+Data pracovního prostoru lze exportovat před zrušením s několika výjimkami: řídicí panely, pracovní postupy a oprávnění musí být přeneseny ručně a protokoly auditu nemohou být přeneseny.
+</Accordion>
+<Accordion title="Které prvky nelze v současné době exportovat nebo migrovat?">
+Většina prvků může být exportována nebo migrována s některými výjimkami:
+* workflow, dashboardy a všechna nastavení (API klíče, webhooky, protokoly auditu, uživatelská nastavení atd.) musí být migrovány ručně
+* objekty a pole vytvořené aplikacemi mohou být migrovány instalací uvedené aplikace v různých pracovních prostorách, neměly by být migrovány ručně
+* některé záznamy, jako verze pracovního postupu a běh pracovního postupu. jsou vůbec nepřenosné a očekává se, že budou ztraceny
+* některé objekty jako zprávy a objekty související s kalendářem by neměly být exportovány, protože jsou vytvořeny, když je účet připojen a pravidelně synchronizován, budou znovu synchronizovány, jakmile se připojíte k vašemu účtu (pokud budete mít přístup k tomuto účtu, pokud je to účet člena týmu, který opustil vaši společnost, pak tyto zprávy musí být exportovány, jinak budou ztraceny)
+</Accordion>
+<Accordion title="Existuje oficiální mrak pro proces migrace nebo asistované služby při migraci?">
+Od nynějška neexistuje žádný oficiální postup migrace v cloudu k sobě. Obecná myšlenka zní:
+* za prvé, nainstalujte aplikace pro představení objektů a polí vlastněných aplikací
+* replikovat vlastní objekty a pole přidaná uživateli
+* použít skript s API klíči nebo nástroji AI k přenosu všech dat z jednoho pracovního prostoru do druhého
+* všechny nepřenosné objekty musí být migrovány ručně
+
+Mějte prosím na paměti několik věcí:
+* můžete poslat až 50 požadavků za minutu na Pro plán nebo 100 požadavků na plán organizace před dosažením požadovaného a minimálního limitu
+* každá žádost API může mít až 200 záznamů
+* některá data v polích, jako je "Vytvořeno", "Timele" aktivity a "Aktualizováno" budou ztracena během importu a přepsána systémem
+</Accordion>
+<Accordion title="Jsou exportované soubory poskytovány v otevřeném a zdokumentovaném formátu?">
+Exportované soubory v uživatelském rozhraní jsou ve formátu Excel a všechny API požadavky mohou být uloženy ve formátu JSON.
+</Accordion>
+</AccordionGroup>

@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### Points clés
 
-* `type` est généralement `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
+* `type` est l'un de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` ou `'STANDALONE_PAGE'`. Utilisez `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
 * `objectUniversalIdentifier` spécifie à quel objet cette mise en page s'applique.
 * Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` (`VERTICAL_LIST` pour les pages d'enregistrement, `GRID` pour les tableaux de bord). Un onglet contenant un seul widget l'affiche automatiquement en pleine largeur ; avec plusieurs widgets, ils sont empilés sous forme de cartes.
 * Chaque `widget` à l'intérieur d'un onglet peut afficher un [front component](/l/fr/developers/extend/apps/layout/front-components), une liste de relations ou d'autres types de widgets intégrés.

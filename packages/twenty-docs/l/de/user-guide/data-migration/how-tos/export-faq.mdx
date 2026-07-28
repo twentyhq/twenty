@@ -1,0 +1,32 @@
+---
+title: FAQ exportieren
+description: Häufig gestellte Fragen zum Export von Daten.
+---
+
+<AccordionGroup>
+<Accordion title="Können wir alle Arbeitsbereichsdaten exportieren, bevor wir stornieren, einschließlich benutzerdefinierter Objekte, benutzerdefinierter Felder, Beziehungen, Notizen, Aufgaben, Chancen, Anhänge, Workflows, Berechtigungen und Audit-Historie?">
+Workspace-Daten können vor dem Abbrechen mit einigen Ausnahmen exportiert werden: Dashboards, Workflows und Berechtigungen müssen manuell übertragen werden und Audit-Protokolle können nicht übertragen werden.
+</Accordion>
+<Accordion title="Welche Elemente können derzeit nicht exportiert oder migriert werden?">
+Die meisten Elemente können exportiert oder mit einigen Ausnahmen migriert werden:
+* Workflows, Dashboards und alle Einstellungen (API-Schlüssel, Webhooks, Audit-Protokolle, Benutzereinstellungen, etc.) muss manuell migriert werden
+* von app-erstellten Objekten und Feldern können durch die Installation der besagten App in einem anderen Arbeitsbereich migriert werden. Sie sollten nicht manuell migriert werden
+* einige Datensätze, wie Workflow-Versionen und Workflow-Ausführungen. sind überhaupt nicht übertragbar und werden voraussichtlich verloren gehen
+* einige Objekte wie Nachrichten und Kalenderobjekte sollten nicht exportiert werden, da sie erstellt werden, wenn das Konto verbunden ist und periodisch synchronisiert wird. sie werden erneut synchronisiert, sobald Sie Ihr Konto verbinden (solange Sie einen Zugriff auf diesen Account haben wenn es ein Konto des Teammitglieds ist, das deine Firma verlassen hat, dann müssen diese Nachrichten exportiert werden, sonst werden sie verloren)
+</Accordion>
+<Accordion title="Gibt es eine offizielle Wolke zu selbstgehosteten Migrationsprozessen oder einen unterstützten Migrationsdienst?">
+Ab sofort gibt es keine offizielle Cloud-zu-selbst gehostete Migrationsprozedur. Die Grundidee ist:
+* installiere zuerst Apps, um app-eigene Objekte und Felder einzuführen
+* von Benutzern hinzugefügte Objekte und Felder replizieren
+* verwende Skript mit API-Schlüsseln oder KI-Werkzeugen um alle Daten von einem Arbeitsbereich in einen anderen zu migrieren
+* alle nicht übertragbaren Objekte müssen manuell migriert werden
+
+Bitte beachten Sie ein paar Dinge:
+* Sie können bis zu 50 Anfragen pro Minute auf Pro Plan oder 100 Anfragen pro Minute im Organisationsplan senden, bevor Sie eine Anfrage/Min. Grenze setzen
+* jede API-Anfrage kann bis zu 200 Datensätze haben
+* einige Daten in Feldern wie Erstellt von Timeline Aktivitäten und aktualisiert von werden beim Import verloren gehen und vom System überschrieben
+</Accordion>
+<Accordion title="Werden exportierte Dateien in offenen und dokumentierten Formaten bereitgestellt?">
+Exportierte Dateien in der Oberfläche befinden sich im Excel-Format, und alle API-Anfragen können im JSON-Format gespeichert werden.
+</Accordion>
+</AccordionGroup>

@@ -37,6 +37,7 @@ export default defineApplication({
 * 설치 전, 설치 후, 제거 함수는 매니페스트 빌드 중 자동으로 감지됩니다 — `defineApplication()`에서 별도로 참조할 필요가 없습니다.
 * 하위 호환성을 위해 `defaultRoleUniversalIdentifier`를 명시적으로 전달하는 방식도 계속 지원되지만, 이제는 `defineApplicationRole()` 사용을 권장하며 이전 방식은 더 이상 권장되지 않습니다.
 * `serverVariables`는 인스턴스 범위의 구성 및 비밀(예: API 키)입니다. `applicationVariables`와 달리, 매니페스트에는 값을 선언하지 않으며, 워크스페이스 운영자가 앱 설정에서 값을 채워 넣으면 설정된 이후에만 로직 함수에 주입됩니다.
+* 앱의 **Settings** 탭에서 기본 변수 구성 섹션 대신 사용자 지정 구성 UI를 렌더링하려면, 별도의 파일에서 [`defineSettingsFrontComponent()`](/l/ko/developers/extend/apps/layout/front-components#custom-settings-component)를 사용하여 프론트 컴포넌트를 선언하세요. 앱당 하나만 허용됩니다. 시스템에서 관리하는 섹션(auto-upgrade, App URL, connections)은 항상 표시된 상태로 유지됩니다.
 
 ## 변수 유형
 

@@ -405,7 +405,6 @@ export interface Application {
     canBeUninstalled: Scalars['Boolean']
     autoUpgrade: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
-    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
@@ -2201,6 +2200,7 @@ export interface MessageChannel {
     id: Scalars['UUID']
     visibility: MessageChannelVisibility
     handle: Scalars['String']
+    displayName?: Scalars['String']
     type: MessageChannelType
     isContactAutoCreationEnabled: Scalars['Boolean']
     contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
@@ -2269,6 +2269,26 @@ export interface SendMessageCampaignOutputDTO {
     queuedCount: Scalars['Int']
     skipped: CampaignSkippedRecipientsDTO
     __typename: 'SendMessageCampaignOutputDTO'
+}
+
+export interface MessageSuppression {
+    id: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    emailAddress: Scalars['String']
+    reason: MessageSuppressionReason
+    source: MessageSuppressionSource
+    unsubscribeTopicId?: Scalars['UUID']
+    __typename: 'MessageSuppression'
+}
+
+export type MessageSuppressionReason = 'BOUNCE' | 'COMPLAINT' | 'UNSUBSCRIBE'
+
+export type MessageSuppressionSource = 'WEBHOOK' | 'SYSTEM'
+
+export interface MessageSuppressionList {
+    records: MessageSuppression[]
+    totalCount: Scalars['Int']
+    __typename: 'MessageSuppressionList'
 }
 
 export interface UnsubscribeTopic {
@@ -2793,8 +2813,8 @@ export interface Query {
     getViewGroup?: ViewGroup
     getRoles: Role[]
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
-    unsubscribePagePreviewUrl: Scalars['String']
     myMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
@@ -2992,6 +3012,7 @@ export interface Mutation {
     deleteUnsubscribeTopic: Scalars['Boolean']
     updateMessageChannel: MessageChannel
     createEmailGroupChannel: CreateEmailGroupChannelOutput
+    updateEmailGroupChannel: MessageChannel
     deleteEmailGroupChannel: MessageChannel
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
@@ -3035,6 +3056,7 @@ export interface Mutation {
     uploadNewWorkspaceLogo: FileWithSignedUrl
     generateTransientToken: TransientToken
     getAuthTokensFromLoginToken: AuthTokens
+    getAuthTokensFromSSOExchangeToken: AuthTokens
     authorizeApp: AuthorizeApp
     renewToken: AuthTokens
     generateApiKeyToken: ApiKeyToken
@@ -3509,7 +3531,6 @@ export interface ApplicationGenqlSelection{
     canBeUninstalled?: boolean | number
     autoUpgrade?: boolean | number
     defaultRoleId?: boolean | number
-    /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
@@ -5396,6 +5417,7 @@ export interface MessageChannelGenqlSelection{
     id?: boolean | number
     visibility?: boolean | number
     handle?: boolean | number
+    displayName?: boolean | number
     type?: boolean | number
     isContactAutoCreationEnabled?: boolean | number
     contactAutoCreationPolicy?: boolean | number
@@ -5454,6 +5476,24 @@ export interface SendMessageCampaignOutputDTOGenqlSelection{
     campaignId?: boolean | number
     queuedCount?: boolean | number
     skipped?: CampaignSkippedRecipientsDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageSuppressionGenqlSelection{
+    id?: boolean | number
+    createdAt?: boolean | number
+    emailAddress?: boolean | number
+    reason?: boolean | number
+    source?: boolean | number
+    unsubscribeTopicId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageSuppressionListGenqlSelection{
+    records?: MessageSuppressionGenqlSelection
+    totalCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6020,8 +6060,8 @@ export interface QueryGenqlSelection{
     getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
     getRoles?: RoleGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
-    unsubscribePagePreviewUrl?: boolean | number
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
@@ -6078,6 +6118,8 @@ export interface LogicFunctionIdInput {
 id: Scalars['ID']}
 
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
+
+export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
@@ -6246,6 +6288,7 @@ export interface MutationGenqlSelection{
     deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
+    updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
@@ -6289,6 +6332,7 @@ export interface MutationGenqlSelection{
     uploadNewWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], file: Scalars['Upload']} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
+    getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
     renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
@@ -6655,7 +6699,9 @@ export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMe
 
 export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
 
-export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
+export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
+
+export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
@@ -8409,6 +8455,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const MessageSuppression_possibleTypes: string[] = ['MessageSuppression']
+    export const isMessageSuppression = (obj?: { __typename?: any } | null): obj is MessageSuppression => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppression"')
+      return MessageSuppression_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageSuppressionList_possibleTypes: string[] = ['MessageSuppressionList']
+    export const isMessageSuppressionList = (obj?: { __typename?: any } | null): obj is MessageSuppressionList => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppressionList"')
+      return MessageSuppressionList_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
     export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
@@ -9384,6 +9446,17 @@ export const enumMessageChannelSyncStage = {
    MESSAGES_IMPORT_SCHEDULED: 'MESSAGES_IMPORT_SCHEDULED' as const,
    MESSAGES_IMPORT_ONGOING: 'MESSAGES_IMPORT_ONGOING' as const,
    FAILED: 'FAILED' as const
+}
+
+export const enumMessageSuppressionReason = {
+   BOUNCE: 'BOUNCE' as const,
+   COMPLAINT: 'COMPLAINT' as const,
+   UNSUBSCRIBE: 'UNSUBSCRIBE' as const
+}
+
+export const enumMessageSuppressionSource = {
+   WEBHOOK: 'WEBHOOK' as const,
+   SYSTEM: 'SYSTEM' as const
 }
 
 export const enumUnsubscribeTopicVisibility = {

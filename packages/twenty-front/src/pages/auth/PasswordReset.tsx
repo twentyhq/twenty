@@ -115,6 +115,7 @@ export const PasswordReset = () => {
         token: passwordResetToken ?? '',
       },
       skip: !passwordResetToken || isTokenValid,
+      context: { skipAuthToken: true },
     },
   );
 
@@ -142,6 +143,9 @@ export const PasswordReset = () => {
 
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] = useMutation(
     UpdatePasswordViaResetTokenDocument,
+    {
+      context: { skipAuthToken: true },
+    },
   );
 
   const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();

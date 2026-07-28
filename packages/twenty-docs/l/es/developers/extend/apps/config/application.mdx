@@ -37,6 +37,7 @@ Notas:
 * Las funciones de preinstalación, posinstalación y desinstalación se detectan automáticamente durante la compilación del manifiesto; no necesitas referenciarlas en `defineApplication()`.
 * Pasar `defaultRoleUniversalIdentifier` explícitamente sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
 * `serverVariables` son configuraciones y secretos con ámbito de instancia (por ejemplo, claves de API). A diferencia de `applicationVariables`, no declaran ningún valor en el manifiesto: el operador del espacio de trabajo los completa desde la configuración de la aplicación, y se inyectan en las funciones lógicas solo una vez que se han establecido.
+* Para mostrar una interfaz de configuración personalizada dentro de la pestaña **Settings** de la aplicación (en lugar de la sección predeterminada de configuración de variables), declara un componente de frontend con [`defineSettingsFrontComponent()`](/l/es/developers/extend/apps/layout/front-components#custom-settings-component) en su propio archivo. Solo se permite uno por aplicación. Las secciones gestionadas por el sistema (actualización automática, App URL, conexiones) siempre permanecen visibles.
 
 ## Tipos de variables
 

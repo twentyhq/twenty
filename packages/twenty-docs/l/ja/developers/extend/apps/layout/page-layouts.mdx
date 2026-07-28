@@ -51,7 +51,7 @@ export default definePageLayout({
 
 ### 主なポイント
 
-* `type` は通常、特定のオブジェクトの詳細ビューをカスタマイズするために `'RECORD_PAGE'` を指定します。
+* `type` は `'RECORD_INDEX'`、`'RECORD_PAGE'`、`'DASHBOARD'`、`'STANDALONE_PAGE'` のいずれかです。 特定のオブジェクトの詳細ビューをカスタマイズするには `'RECORD_PAGE'` を使用します。
 * `objectUniversalIdentifier` は、このレイアウトを適用するオブジェクトを指定します。
 * 各 `tab` は、`title`、`position`、`layoutMode`（レコードページには `VERTICAL_LIST`、ダッシュボードには `GRID`）を持つページのセクションを定義します。 1 つのウィジェットのみを含むタブでは、そのウィジェットが自動的にフルブリードで表示され、複数のウィジェットがある場合はカードとして積み重なります。
 * タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。

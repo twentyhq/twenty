@@ -13,17 +13,20 @@ Les crédits sont un solde unique qui alimente tout ce que nous faisons fonction
 
 Le coût augmente avec le volume de travail. Les automatisations quotidiennes et les messages IA rapides coûtent une infime fraction d’un crédit ; les tâches importantes d’agent IA en plusieurs étapes coûtent davantage. Voici l’ordre de grandeur approximatif :
 
-| Ce que vous faites                                                                           | Coût approximatif               | Ce que cela signifie                   |
-| -------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------- |
-| Exécuter une étape de workflow standard (recherche, création, mise à jour d’enregistrements) | ~$0.0001                        | Environ **10 000 étapes par crédit**   |
-| Appeler une API externe ou exécuter un nœud de code                                          | Une petite fraction d’un crédit | Des milliers par crédit                |
-| Envoyer un message de chat IA rapide ou une étape IA simple                                  | Une fraction de centime         | Des centaines par crédit               |
-| Exécuter une grande tâche d’agent IA (par ex. « configurer 10 objets d’espace de travail »)  | Peut atteindre **~$1 ou plus**  | Quelques-uns par crédit                |
-| Lancer une recherche web IA                                                                  | Un coût fixe par recherche      | Des centaines de recherches par crédit |
-| Déclencher la fonction logique de l’application                                              | Une petite fraction d’un crédit | Des milliers par crédit                |
+| Ce que vous faites                                                                                                                                | Coût approximatif               | Ce que cela signifie                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------- |
+| Exécuter une étape de workflow standard (recherche, création, mise à jour d’enregistrements) ou déclencher une fonction logique d’une application | $0.0001                         | **10 000 exécutions par crédit**       |
+| Appeler une API externe ou exécuter un nœud de code                                                                                               | Une petite fraction d’un crédit | Des milliers par crédit                |
+| Envoyer un message de chat IA rapide ou une étape IA simple                                                                                       | Une fraction de centime         | Des centaines par crédit               |
+| Exécuter une grande tâche d’agent IA (par ex. « configurer 10 objets d’espace de travail »)                                                       | Peut atteindre **~$1 ou plus**  | Quelques-uns par crédit                |
+| Lancer une recherche web IA                                                                                                                       | Un coût fixe par recherche      | Des centaines de recherches par crédit |
 
 <Note>
 Pour la plupart des équipes, les automatisations standard sont pratiquement gratuites — vous ne verrez une différence notable dans votre solde que lorsque vous vous appuierez sur les fonctionnalités IA ou exécuterez des nœuds de code lourds. C’est voulu : les crédits inclus sont conçus pour vous permettre de construire sans surveiller un compteur.
+</Note>
+
+<Note>
+Certaines applications ne facturent pas leurs exécutions. Call Recorder et Last contact réagissent à chaque e-mail et événement de calendrier importé dans votre espace de travail, donc les exécutions de leurs fonctions logiques sont gratuites. Vous êtes tout de même facturé pour le travail mesuré qu’elles effectuent, comme les minutes d’appel enregistrées.
 </Note>
 
 ## Comment l’utilisation de l’IA est mesurée

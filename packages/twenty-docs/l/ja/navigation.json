@@ -145,6 +145,14 @@
               "label": "ハウツー"
             }
           }
+        },
+        "legal": {
+          "label": "法務",
+          "groups": {
+            "legalHowTos": {
+              "label": "ハウツー"
+            }
+          }
         }
       }
     },
