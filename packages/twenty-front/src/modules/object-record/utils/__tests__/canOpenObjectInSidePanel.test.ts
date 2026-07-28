@@ -5,6 +5,7 @@ describe('canOpenObjectInSidePanel', () => {
     expect(canOpenObjectInSidePanel('workflow')).toBe(false);
     expect(canOpenObjectInSidePanel('workflowVersion')).toBe(false);
     expect(canOpenObjectInSidePanel('dashboard')).toBe(false);
+    expect(canOpenObjectInSidePanel('messageCampaign')).toBe(false);
   });
 
   it('should return true for other objects', () => {

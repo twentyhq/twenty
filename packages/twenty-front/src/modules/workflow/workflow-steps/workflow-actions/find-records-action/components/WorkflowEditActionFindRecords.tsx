@@ -178,8 +178,8 @@ export const WorkflowEditActionFindRecords = ({
 
     const newFormData: FindRecordsFormData = {
       objectNameSingular: value,
-      limit: 1,
-      offset: 0,
+      limit: formData.limit,
+      offset: formData.offset,
     };
 
     setFormData(newFormData);

@@ -491,7 +491,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   label={t`Instructions`}
                   readonly={isReadonlyMode}
                   defaultValue={formValues.content}
-                  contentType="markdown"
+                  preset="aiInstructions"
                   onChange={(content: string) =>
                     handleFieldChange('content', content)
                   }
@@ -506,7 +506,6 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                     },
                   ]}
                   minHeight={300}
-                  maxWidth={700}
                 />
 
                 <AdvancedSettingsWrapper hideDot>

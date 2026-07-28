@@ -2,5 +2,6 @@ export const canOpenObjectInSidePanel = (objectNameSingular: string) =>
   !(
     objectNameSingular === 'workflow' ||
     objectNameSingular === 'workflowVersion' ||
-    objectNameSingular === 'dashboard'
+    objectNameSingular === 'dashboard' ||
+    objectNameSingular === 'messageCampaign'
   );
