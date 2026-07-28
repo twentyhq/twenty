@@ -19,7 +19,7 @@ Iterator consente di scorrere un array di record ed eseguire azioni su ciascuno.
 Iterator si aspetta un **array** come input. Quindi:
 
 1. Prende il primo elemento dall'array
-2. Esegue tutte le azioni all'interno di Iterator con quell'elemento
+2. Esegue tutte le azioni all'interno dell'Iteratore con quell'oggetto
 3. Passa all'elemento successivo
 4. Ripete finché tutti gli elementi non sono stati elaborati
 
@@ -58,7 +58,7 @@ Quando uno step **Code** o **Logic Function** restituisce un *array di primo liv
 
 Le azioni posizionate sotto Iterator vengono eseguite per ciascun elemento:
 
-1. Aggiungi un'azione **Send Email** (all'interno di Iterator)
+1. Aggiungi azione **Invia email** (dentro Iterator)
 2. A: `{{iterator.currentItem.email}}`
 3. Oggetto: Ciao `{{iterator.currentItem.firstName}}`!
 4. Corpo: Messaggio personalizzato utilizzando i campi dell'elemento corrente

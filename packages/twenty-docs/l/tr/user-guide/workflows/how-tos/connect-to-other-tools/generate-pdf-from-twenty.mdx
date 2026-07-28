@@ -17,7 +17,7 @@ Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe ba
 
 İş akışını kurmadan önce:
 
-1. **Bir API Anahtarı oluşturun**: **Ayarlar → API'ler**'e gidin ve yeni bir API anahtarı oluşturun. Mantıksal işlev için bu belirtece ihtiyacınız olacak.
+1. **Bir API Anahtarı oluşturun**: **Ayarlar → API'ler**'e gidin ve yeni bir API anahtarı oluşturun. Mantıksal İşlev için bu belirtece ihtiyacınız olacak.
 2. **Bir PDF oluşturma hizmeti kurun** (isteğe bağlı): PDF'leri dinamik olarak oluşturmak istiyorsanız (ör. teklifler), PDF'yi oluşturmak ve bir indirme URL'si almak için Carbone, PDFMonkey veya DocuSeal gibi bir hizmet kullanın.
 
 ## Adım Adım Kurulum
@@ -29,12 +29,12 @@ Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe ba
 3. PDF'leri eklemek istediğiniz nesneyi seçin (ör. **Company** veya **Opportunity**)
 
 <Tip>
-Manuel Tetikleyici ile kullanıcılar, bir kayıt seçildiğinde sağ üstte görünen bir düğmeyi kullanarak bu iş akışını çalıştırıp bir PDF oluşturabilir ve ekleyebilir.
+Manuel Tetikleyici ile kullanıcılar, bir kayıt seçildiğinde sağ üstte görünen bir düğmeyi kullanarak bu iş akışını çalıştırıp bir PDF oluşturabilir ve ekleyebilir; bu, PDF oluşturmak ve eklemek için iş akışını çalıştırır.
 </Tip>
 
 ### Adım 2: Bir Mantıksal İşlev ekleyin
 
-1. Bir **Kod** eylemi (mantıksal işlev) ekleyin
+1. Bir **Code** eylemi (Logic Function) ekleyin
 2. Aşağıdaki kodla yeni bir işlev oluşturun
 3. Girdi parametrelerini yapılandırın
 
@@ -237,7 +237,7 @@ Dinamik teklifler veya faturalar oluşturmak için:
 | 1    | Manuel Tetikleyici (Company) | Kullanıcı bir kayıtta başlatır                   |
 | 2    | Kayıt Ara                    | Opportunity veya satır öğesi ayrıntılarını alın  |
 | 3    | HTTP İsteği                  | Kayıt verileriyle PDF oluşturma API'sini çağırın |
-| 4    | Sunucusuz İşlev              | Oluşturulan PDF'yi indirin ve ekleyin            |
+| 4    | Mantık İşlevi                | Oluşturulan PDF'yi indirin ve ekleyin            |
 
 ### Popüler PDF Oluşturma Hizmetleri
 
@@ -246,7 +246,7 @@ Dinamik teklifler veya faturalar oluşturmak için:
 * **DocuSeal** - Belge otomasyon platformu
 * **Documint** - API-öncelikli belge oluşturma
 
-Her hizmet, bir PDF URL'si döndüren bir API sağlar; ardından bunu mantıksal işleve iletebilirsiniz.
+Her hizmet, bir PDF URL'si döndüren bir API sağlar; ardından bunu Logic Function'a iletebilirsiniz.
 
 ## Sorun Giderme
 

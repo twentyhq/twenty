@@ -38,6 +38,7 @@ export type ClientConfig = {
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
+  isOnboardingAiChatEnabled: boolean;
   onboarding: OnboardingConfig;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;

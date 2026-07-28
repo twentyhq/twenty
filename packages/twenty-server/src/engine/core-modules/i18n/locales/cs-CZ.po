@@ -9725,11 +9725,6 @@ msgstr "Nemůžete odebrat přístup do admin panelu poslednímu administrátoro
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "Nemůžete nastavit oprávnění na systémové objekty, protože jsou spravovány platformou."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "Nemůžete nastavit oprávnění na systémové objekty, protože jsou spravovány platformou."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
