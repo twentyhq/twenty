@@ -43,9 +43,15 @@ export class EmailPasswordResetLinkJob {
         locale: data.locale,
       });
     } catch (error) {
-      await this.resetPasswordService.invalidatePasswordResetToken(
-        generationResult.user.id,
-      );
+      try {
+        await this.resetPasswordService.invalidatePasswordResetToken(
+          generationResult.user.id,
+        );
+      } catch (invalidationError) {
+        this.logger.error(
+          `Failed to invalidate password reset token after email sending failure: ${invalidationError}`,
+        );
+      }
 
       throw error;
     }
