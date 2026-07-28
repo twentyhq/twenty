@@ -17,9 +17,7 @@ import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constan
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
-import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
-import { slackRemoveReactionHandler } from 'src/logic-functions/handlers/slack-remove-reaction-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
@@ -28,6 +26,7 @@ import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-s
 import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
@@ -41,7 +40,8 @@ const clearThinkingReaction = async ({
   slackChannelId: string;
   slackMessageTimestamp: string;
 }): Promise<void> => {
-  await slackRemoveReactionHandler({
+  await runSlackReaction({
+    operation: 'remove',
     slackChannelId,
     messageTimestamp: slackMessageTimestamp,
     emojiName: SLACK_ASSISTANT_THINKING_REACTION_EMOJI,
@@ -82,7 +82,8 @@ export const slackAssistantWorkerHandler = async (
     isDirectMessage,
   });
 
-  await slackAddReactionHandler({
+  await runSlackReaction({
+    operation: 'add',
     slackChannelId,
     messageTimestamp: slackMessageTimestamp,
     emojiName: SLACK_ASSISTANT_THINKING_REACTION_EMOJI,

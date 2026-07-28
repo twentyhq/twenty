@@ -1,8 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
+import { type SlackAddReactionInput } from 'src/logic-functions/types/slack-add-reaction-input.type';
 import { jsonSchemaToInputSchema } from 'src/logic-functions/utils/json-schema-to-input-schema';
+import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { slackAddReactionInputSchema } from './schemas/slack-add-reaction-input.schema';
 
 export default defineLogicFunction({
@@ -31,5 +32,9 @@ export default defineLogicFunction({
       },
     ],
   },
-  handler: slackAddReactionHandler,
+  handler: (parameters: SlackAddReactionInput) =>
+    runSlackReaction({
+      operation: 'add',
+      ...parameters,
+    }),
 });
