@@ -10,6 +10,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlaceholderDragAndDropFooterCell = styled.div`
@@ -53,6 +54,13 @@ export const RecordTableAggregateFooter = ({
   currentRecordGroupId?: string;
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const isMobile = useIsMobile();
+
+  // The navigation island floats over the bottom of the page, so aggregates
+  // would sit underneath it and stay out of reach on mobile.
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <StyledAggregateFooterContainer>

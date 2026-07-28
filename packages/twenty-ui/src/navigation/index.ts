@@ -52,6 +52,8 @@ export type { MenuPickerProps } from './MenuPicker/MenuPicker';
 export { MenuPicker } from './MenuPicker/MenuPicker';
 export { NavigationBar } from './NavigationBar/NavigationBar';
 export { NavigationBarItem } from './NavigationBarItem/NavigationBarItem';
+export type { NavigationIslandItem } from './NavigationIsland/NavigationIsland';
+export { NavigationIsland } from './NavigationIsland/NavigationIsland';
 export { RawLink } from './RawLink/RawLink';
 export { RoundedLink } from './RoundedLink/RoundedLink';
 export { LinkType } from './SocialLink/LinkType';

@@ -1,0 +1,174 @@
+// Spring sampled as a linear() easing so the capsule morphs the way the iOS
+// Dynamic Island does: a slight overshoot, then a quick settle.
+$morph-easing: linear(
+  0,
+  0.0181,
+  0.0653,
+  0.1325,
+  0.2121,
+  0.2982,
+  0.3862,
+  0.4726,
+  0.5547,
+  0.6308,
+  0.7,
+  0.7615,
+  0.8153,
+  0.8616,
+  0.9006,
+  0.9329,
+  0.9592,
+  0.98,
+  0.9962,
+  1.0083,
+  1.0169,
+  1.0228,
+  1.0263,
+  1.028,
+  1.0283,
+  1.0276,
+  1.0261,
+  1.0241,
+  1.0218,
+  1.0193,
+  1.0168,
+  1.0144,
+  1.0121,
+  1.01,
+  1.0081,
+  1.0064,
+  1.0049,
+  1.0036,
+  1.0026,
+  1.0017,
+  1
+);
+$morph-duration: 420ms;
+
+.viewport {
+  bottom: calc(var(--t-spacing-3) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  justify-content: center;
+  left: 0;
+  // Only the capsule itself is interactive, the rest of the strip stays
+  // transparent to taps so the page underneath keeps working.
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  // Above the page and the mobile navigation drawer, but still below portalled
+  // overlays such as dropdowns, modals and the command menu.
+  z-index: 1001;
+
+  @media print {
+    display: none;
+  }
+}
+
+.island {
+  align-items: center;
+  backdrop-filter: var(--t-blur-strong);
+  // Inverted surface, like tooltips: the capsule always contrasts with the page
+  // it floats over instead of dissolving into it. The last 10% of transparency
+  // is what lets the blurred page show through.
+  background-color: color-mix(
+    in srgb,
+    var(--t-background-inverted-primary) 90%,
+    transparent
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--t-gray-scale-gray1) 12%, transparent);
+  border-radius: var(--t-border-radius-pill);
+  box-shadow: var(--t-box-shadow-strong), var(--t-box-shadow-super-heavy);
+  color: var(--t-gray-scale-gray1);
+  // A capsule reads as a capsule whether or not squircles are supported.
+  corner-shape: round;
+  display: flex;
+  gap: var(--t-spacing-1);
+  max-width: calc(100dvw - var(--t-spacing-8));
+  padding: var(--t-spacing-1);
+  pointer-events: auto;
+}
+
+.item {
+  align-items: center;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--t-border-radius-pill);
+  color: inherit;
+  corner-shape: round;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 0;
+  height: var(--t-spacing-11);
+  justify-content: center;
+  min-width: var(--t-spacing-11);
+  opacity: 0.55;
+  padding: 0 var(--t-spacing-2);
+  transition:
+    background-color duration(normal) $morph-easing,
+    gap $morph-duration $morph-easing,
+    opacity duration(fast) ease-out,
+    padding $morph-duration $morph-easing,
+    transform duration(instant) ease-out;
+
+  &[data-active] {
+    background-color: color-mix(
+      in srgb,
+      var(--t-gray-scale-gray1) 16%,
+      transparent
+    );
+    gap: var(--t-spacing-1);
+    opacity: 1;
+    padding: 0 var(--t-spacing-3) 0 var(--t-spacing-2);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  @include hover-capable {
+    &:hover:not([data-active]) {
+      opacity: 0.8;
+    }
+  }
+
+  @include focus-ring;
+}
+
+.itemIcon {
+  flex-shrink: 0;
+}
+
+.itemLabel {
+  filter: blur(4px);
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-medium);
+  // The label is what makes the capsule breathe: it unrolls from zero width and
+  // the island resizes around it, since the island's width is content-driven.
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    max-width $morph-duration $morph-easing,
+    opacity duration(fast) ease-out,
+    filter duration(normal) ease-out;
+  white-space: nowrap;
+
+  .item[data-active] & {
+    filter: blur(0);
+    max-width: var(--t-spacing-30);
+    opacity: 1;
+    // The label only fades in once the capsule has started to make room for it.
+    transition-delay: 0s, 60ms, 60ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .itemLabel {
+    transition-duration: 1ms;
+  }
+}
