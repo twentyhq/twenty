@@ -55,6 +55,7 @@ export const CalendarEventParticipantsAvatarGroup = ({
         ...callRecordings.map((callRecording) => (
           <CalendarEventCallRecorderAvatar
             key={callRecording.id}
+            applicationId={callRecording.applicationId}
             status={callRecording.status}
           />
         )),

@@ -15,4 +15,7 @@ export class TimelineCalendarEventCallRecordingDTO {
 
   @Field(() => CallRecordingStatus)
   status: CallRecordingStatus;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
 }

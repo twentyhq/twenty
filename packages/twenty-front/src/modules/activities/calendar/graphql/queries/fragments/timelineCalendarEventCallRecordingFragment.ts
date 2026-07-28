@@ -4,5 +4,6 @@ export const timelineCalendarEventCallRecordingFragment = gql`
   fragment TimelineCalendarEventCallRecordingFragment on TimelineCalendarEventCallRecording {
     id
     status
+    applicationId
   }
 `;

@@ -123,12 +123,20 @@ export class TimelineCalendarEventService {
           select: {
             id: true,
             status: true,
+            applicationId: true,
             calendarEventId: true,
           },
         });
 
         const callRecordingsByCalendarEventId = callRecordings.reduce<
-          Map<string, { id: string; status: CallRecordingStatus }[]>
+          Map<
+            string,
+            {
+              id: string;
+              status: CallRecordingStatus;
+              applicationId: string | null;
+            }[]
+          >
         >((acc, callRecording) => {
           if (!isDefined(callRecording.calendarEventId)) {
             return acc;
@@ -139,6 +147,7 @@ export class TimelineCalendarEventService {
           existing.push({
             id: callRecording.id,
             status: callRecording.status,
+            applicationId: callRecording.applicationId ?? null,
           });
           acc.set(callRecording.calendarEventId, existing);
 

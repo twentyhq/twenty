@@ -119,6 +119,7 @@ export const EventCardCalendarEvent = ({
       callRecordings: {
         id: true,
         status: true,
+        applicationId: true,
       },
     },
   });
