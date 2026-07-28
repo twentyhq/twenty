@@ -137,7 +137,7 @@ export const SettingsAiOverviewTab = () => {
             key={originalInstructions}
             readonly={false}
             defaultValue={workspaceInstructions}
-            contentType="markdown"
+            preset="aiInstructions"
             onChange={(value) => {
               setWorkspaceInstructions(value);
               autoSave(value);
@@ -149,7 +149,6 @@ export const SettingsAiOverviewTab = () => {
             ]}
             placeholder={t`E.g., "We are a B2B SaaS company. Always use formal language..."`}
             minHeight={150}
-            maxWidth={700}
           />
         </StyledInstructionsContainer>
       </Section>

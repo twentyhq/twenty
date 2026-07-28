@@ -27,8 +27,10 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -68,9 +70,10 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions } =
+    const { rolesPermissions, flatObjectPermissionMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
+        'flatObjectPermissionMaps',
       ]);
 
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
@@ -80,6 +83,34 @@ export class DatabaseToolProvider implements ToolProvider {
 
     if (Object.keys(objectPermissions).length === 0) {
       return descriptors;
+    }
+
+    const requireExplicitObjectGrants =
+      context.requireExplicitObjectGrants === true;
+
+    const roleId = getRoleIdsFromRolePermissionConfig(
+      context.rolePermissionConfig,
+    )[0];
+
+    const explicitPermissionByObjectId = new Map<
+      string,
+      FlatObjectPermission
+    >();
+
+    if (requireExplicitObjectGrants) {
+      for (const flatObjectPermission of Object.values(
+        flatObjectPermissionMaps.byUniversalIdentifier,
+      )) {
+        if (
+          isDefined(flatObjectPermission) &&
+          flatObjectPermission.roleId === roleId
+        ) {
+          explicitPermissionByObjectId.set(
+            flatObjectPermission.objectMetadataId,
+            flatObjectPermission,
+          );
+        }
+      }
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -96,10 +127,26 @@ export class DatabaseToolProvider implements ToolProvider {
 
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
+      const explicitPermission = explicitPermissionByObjectId.get(
+        flatObject.id,
+      );
 
-      if (!permission) {
+      if (
+        !permission ||
+        (requireExplicitObjectGrants && !isDefined(explicitPermission))
+      ) {
         continue;
       }
+
+      const canReadRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canReadObjectRecords === true
+        : permission.canReadObjectRecords;
+      const canUpdateRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canUpdateObjectRecords === true
+        : permission.canUpdateObjectRecords;
+      const canSoftDeleteRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canSoftDeleteObjectRecords === true
+        : permission.canSoftDeleteObjectRecords;
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
@@ -125,7 +172,7 @@ export class DatabaseToolProvider implements ToolProvider {
       const shouldIncludeSchema = (name: string) =>
         includeSchemas && (!toolNames || toolNames.has(name));
 
-      if (permission.canReadObjectRecords) {
+      if (canReadRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
           ...getCrudToolLabels(
@@ -212,7 +259,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
+      if (canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -348,7 +395,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (canSoftDeleteRecords) {
         descriptors.push({
           name: `delete_one_${snakeSingular}`,
           ...getCrudToolLabels(

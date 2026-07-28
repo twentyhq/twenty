@@ -15,6 +15,7 @@ export const submitClientBriefSchema = z.object({
   seatCount: z.string().optional(),
   timeline: z.string().optional(),
   budgetRange: z.string().optional(),
+  partnerSlug: z.string().trim().regex(/^[a-z0-9-]+$/).max(100).optional(),
 });
 
 export type SubmitClientBriefInput = z.infer<typeof submitClientBriefSchema>;

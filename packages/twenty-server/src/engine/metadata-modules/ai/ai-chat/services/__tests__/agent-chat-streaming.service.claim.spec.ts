@@ -147,6 +147,16 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
+    it('loads hidden messages for the model', async () => {
+      const { service, agentChatService } = buildService();
+
+      await service.streamAgentChat(sendArguments);
+
+      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
+        expect.objectContaining({ includeHidden: true }),
+      );
+    });
+
     it('releases the claim when enqueueing the job fails', async () => {
       const {
         service,

@@ -1,13 +1,14 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const useAddSelectOption = (fieldName: string) => {
-  const { objectNamePlural } = useParams();
+export const useAddSelectOption = (fieldMetadataId: string) => {
+  const { fieldMetadataItem, objectMetadataItem } =
+    useFieldMetadataItemById(fieldMetadataId);
   const navigateSettings = useNavigateSettings();
   const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
@@ -16,6 +17,9 @@ export const useAddSelectOption = (fieldName: string) => {
   const setShouldNavigateBackToMemorizedUrlOnSave = useSetAtomState(
     shouldNavigateBackToMemorizedUrlOnSaveState,
   );
+
+  const fieldName = fieldMetadataItem?.name;
+  const objectNamePlural = objectMetadataItem?.namePlural;
 
   const addSelectOption = useCallback(
     (optionName: string) => {
