@@ -236,7 +236,12 @@ export const useUpdateJunctionRelationFromCell = ({
         try {
           await junctionRecordCreation;
         } finally {
-          pendingJunctionCreationByLink.delete(linkKey);
+          if (
+            pendingJunctionCreationByLink.get(linkKey) ===
+            junctionRecordCreation
+          ) {
+            pendingJunctionCreationByLink.delete(linkKey);
+          }
         }
       }
     },
