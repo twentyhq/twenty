@@ -52,8 +52,6 @@ export const useWorkflowWithCurrentVersion = (
 
   const currentVersionId = effectiveDraftId ?? latestVersion?.id;
 
-  useSyncWorkflowVersionContentFromCore(currentVersionId);
-
   const { record: currentVersionWithSteps } = useFindOneRecord<WorkflowVersion>(
     {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -61,6 +59,10 @@ export const useWorkflowWithCurrentVersion = (
       skip: !isDefined(currentVersionId),
     },
   );
+
+  // passing the loaded record id, not the requested one: the core content can
+  // only be written into the record cache once the record itself is there
+  useSyncWorkflowVersionContentFromCore(currentVersionWithSteps?.id);
 
   if (!isDefined(workflow) || !isDefined(currentVersionWithSteps)) {
     return undefined;
