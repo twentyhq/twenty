@@ -205,8 +205,6 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
 
     const { system } = generateTextMock.mock.calls[0][0];
 
-    // The catalog is injected into the system prompt, scoped to the workflow
-    // agent categories (DATABASE_CRUD/ACTION), so the WORKFLOW tool is excluded.
     expect(system).toContain('## Available Tools');
     expect(system).toContain('person');
     expect(system).not.toContain('Workflow Tools');
