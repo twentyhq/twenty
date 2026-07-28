@@ -1,18 +1,21 @@
 name: PR Review Dispatch
+run-name: "PR Review Dispatch #${{ github.event.pull_request.number }}"
 
 on:
   pull_request_target:
-    types: [ready_for_review, synchronize]
+    types: [ready_for_review, synchronize, labeled]
 
 permissions: {}
 
 concurrency:
-  group: pr-review-${{ github.event.pull_request.number }}
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   dispatch:
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.pull_request.draft == false &&
+      (github.event.action != 'labeled' || startsWith(github.event.label.name, 'pr-review-'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -26,7 +29,7 @@ jobs:
           repositories: ci-privileged
           permission-actions: write
 
-      - name: Dispatch to ci-privileged
+      - name: Forward to PR review
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}

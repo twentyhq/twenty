@@ -28,9 +28,9 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
   <Accordion title="Qual é a diferença entre gatilhos manuais Single, Global e Bulk?">
     | Tipo | Registros necessários | Execuções de Workflow |
     | ---- | --------------------- | --------------------- |
-    \| **Global** | Nenhum | Uma vez, sem entrada de registro |
-    \| **Single** | Um ou mais selecionados | Uma vez por registro selecionado |
-    \| **Bulk** | Um ou mais selecionados | Uma vez, com todos os registros como array |
+    \| **Global** | None | Once, no record input |
+    \| **Single** | One or more selected | Once per selected record |
+    \| **Bulk** | One or more selected | Once, with all records as an array |
 
     * **Global**: Use quando o fluxo de trabalho não precisa de nenhum contexto de registro (por exemplo, gerar um relatório)
     * **Single**: Use quando você quer processar cada registro selecionado de forma independente (por exemplo, enviar e-mails individuais)
@@ -155,11 +155,9 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
   </Accordion>
 
   <Accordion title="Por que não vejo minhas execuções de fluxo de trabalho?">
-    As execuções de fluxo de trabalho podem estar falhando imediatamente devido a limites de taxa.
+    As execuções de fluxo de trabalho podem estar falhando imediatamente devido a limites de taxa. Twenty impõe um limite rígido de 5.000 execuções por hora por espaço de trabalho.
 
-    **Limite rígido: 5.000 execuções por hora por espaço de trabalho.**
-
-    Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções como esperado.
+    Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções.
 
     **Cenários comuns que atingem esse limite**:
     * Selecionar mais de 5.000 registros com um gatilho manual Single

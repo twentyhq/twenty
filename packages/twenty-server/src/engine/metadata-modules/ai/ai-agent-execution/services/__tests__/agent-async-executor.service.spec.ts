@@ -299,6 +299,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 
