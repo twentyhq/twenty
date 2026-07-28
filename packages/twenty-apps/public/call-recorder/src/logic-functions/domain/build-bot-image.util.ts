@@ -7,17 +7,12 @@ import {
   RECALL_BOT_IMAGE_LOGO_MAX_WIDTH,
   RECALL_BOT_IMAGE_MAX_BYTES,
   RECALL_BOT_IMAGE_MIN_JPEG_QUALITY,
-  RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_DOT_DIAMETER,
-  RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT,
-  RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_INSET,
-  RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_WIDTH,
   RECALL_BOT_IMAGE_WIDTH,
 } from 'src/logic-functions/constants/recall-bot-image-config';
+import { RECORDING_STATUS_BADGE_INSET } from 'src/logic-functions/constants/recording-status-badge-config';
+import { buildRecordingStatusBadge } from 'src/logic-functions/domain/build-recording-status-badge.util';
 
 const JPEG_QUALITY_STEP = 10;
-const RECORDING_STATUS_BADGE_BACKGROUND = '#feebec';
-const RECORDING_STATUS_BADGE_COLOR = '#ce2c31';
-const RECORDING_STATUS_BADGE_TEXT = 'REC';
 
 type SharpFactory = typeof import('sharp');
 
@@ -50,8 +45,8 @@ export const buildBotImage = async ({
     if (withRecordingStatusBadge) {
       composites.push({
         input: await buildRecordingStatusBadge(sharp),
-        top: RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_INSET,
-        left: RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_INSET,
+        top: RECORDING_STATUS_BADGE_INSET,
+        left: RECORDING_STATUS_BADGE_INSET,
       });
     }
 
@@ -106,25 +101,6 @@ const composeJpeg = ({
     .composite(composites)
     .jpeg({ quality, mozjpeg: true })
     .toBuffer();
-
-const buildRecordingStatusBadge = (sharp: SharpFactory): Promise<Buffer> => {
-  const badgeCornerRadius = RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
-  const recordingDotCenter = RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2;
-  const recordingDotRadius =
-    RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_DOT_DIAMETER / 2;
-  const recordingStatusTextBaseline =
-    RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT / 2 + 7;
-
-  const svg = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_WIDTH}" height="${RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT}">`,
-    `<rect width="${RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_WIDTH}" height="${RECALL_BOT_IMAGE_RECORDING_STATUS_BADGE_HEIGHT}" rx="${badgeCornerRadius}" fill="${RECORDING_STATUS_BADGE_BACKGROUND}" fill-opacity="0.96" />`,
-    `<circle cx="${recordingDotCenter}" cy="${recordingDotCenter}" r="${recordingDotRadius}" fill="${RECORDING_STATUS_BADGE_COLOR}" />`,
-    `<text x="44" y="${recordingStatusTextBaseline}" fill="${RECORDING_STATUS_BADGE_COLOR}" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" letter-spacing="0">${RECORDING_STATUS_BADGE_TEXT}</text>`,
-    '</svg>',
-  ].join('');
-
-  return sharp(Buffer.from(svg)).png().toBuffer();
-};
 
 const loadSharp = async (): Promise<SharpFactory> => {
   const sharpModule = await import('sharp');
