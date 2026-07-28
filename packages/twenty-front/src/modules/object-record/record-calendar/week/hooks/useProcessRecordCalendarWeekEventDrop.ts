@@ -1,10 +1,9 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { getRecordCalendarWeekEventDropDateTime } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekEventDropDateTime';
+import { getShiftedRecordCalendarWeekEventUpdateInput } from '@/object-record/record-calendar/week/utils/getShiftedRecordCalendarWeekEventUpdateInput';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { getShiftedRecordCalendarEndDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarEndDateTime';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useStore } from 'jotai';
@@ -51,10 +50,12 @@ export const useProcessRecordCalendarWeekEventDrop = () => {
         return;
       }
 
+      const primaryOriginalStart = record[calendarFieldMetadataItem.name];
+
       const shiftedDateTime = getRecordCalendarWeekEventDropDateTime({
         destinationDay,
         destinationMinutes,
-        startDateTime: record[calendarFieldMetadataItem.name],
+        startDateTime: primaryOriginalStart,
         endDateTime:
           calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
             ? record[calendarEndFieldMetadataItem.name]
@@ -88,11 +89,27 @@ export const useProcessRecordCalendarWeekEventDrop = () => {
           ? selectedRecordIds.filter((selectedId) => selectedId !== recordId)
           : [];
 
-      const primaryOriginalStart = record[calendarFieldMetadataItem.name];
+      const primaryStartInstant = Temporal.Instant.from(primaryOriginalStart);
+      const primaryStartZoned =
+        primaryStartInstant.toZonedDateTimeISO(userTimezone);
 
-      const shiftDurationNanoseconds =
-        Temporal.Instant.from(shiftedDateTime.startDateTime).epochNanoseconds -
-        Temporal.Instant.from(primaryOriginalStart).epochNanoseconds;
+      const dayOffset = primaryStartZoned
+        .toPlainDate()
+        .until(destinationDay).days;
+
+      const destinationTimeOfDayNanoseconds = BigInt(
+        Math.round(destinationMinutes * 60 * 1_000_000_000),
+      );
+      const originalTimeOfDayNanoseconds =
+        primaryStartInstant.epochNanoseconds -
+        primaryStartZoned.startOfDay().epochNanoseconds;
+      const timeOfDayDeltaNanoseconds =
+        destinationTimeOfDayNanoseconds - originalTimeOfDayNanoseconds;
+
+      const calendarEndFieldName =
+        calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
+          ? calendarEndFieldMetadataItem.name
+          : undefined;
 
       for (const idToUpdate of recordIdsToShift) {
         const recordToShift = store.get(
@@ -102,32 +119,24 @@ export const useProcessRecordCalendarWeekEventDrop = () => {
           continue;
         }
 
-        const originalStart = recordToShift[calendarFieldMetadataItem.name];
+        const updateOneRecordInput =
+          getShiftedRecordCalendarWeekEventUpdateInput({
+            record: recordToShift,
+            calendarFieldName: calendarFieldMetadataItem.name,
+            calendarEndFieldName,
+            dayOffset,
+            timeOfDayDeltaNanoseconds,
+            timeZone: userTimezone,
+          });
 
-        const originalStartInstant = Temporal.Instant.from(originalStart);
-        const shiftedStartInstant = Temporal.Instant.fromEpochNanoseconds(
-          originalStartInstant.epochNanoseconds + shiftDurationNanoseconds,
-        );
-
-        const shiftedEndDateTime =
-          calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
-            ? getShiftedRecordCalendarEndDateTime({
-                endDateTime: recordToShift[calendarEndFieldMetadataItem.name],
-                originalStartInstant,
-                shiftedStartInstant,
-              })
-            : undefined;
+        if (!isDefined(updateOneRecordInput)) {
+          continue;
+        }
 
         await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate,
-          updateOneRecordInput: {
-            [calendarFieldMetadataItem.name]: shiftedStartInstant.toString(),
-            ...(isDefined(calendarEndFieldMetadataItem) &&
-              isDefined(shiftedEndDateTime) && {
-                [calendarEndFieldMetadataItem.name]: shiftedEndDateTime,
-              }),
-          },
+          updateOneRecordInput,
         });
       }
     },

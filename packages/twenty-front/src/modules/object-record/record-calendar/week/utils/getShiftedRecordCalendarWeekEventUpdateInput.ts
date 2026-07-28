@@ -12,11 +12,6 @@ type GetShiftedRecordCalendarWeekEventUpdateInputArgs = {
   timeZone: string;
 };
 
-// Secondary records in a multi drag keep their own time and move by the same
-// displacement as the dragged record, unlike the dragged record which snaps to
-// the destination slot. The displacement is applied as a timezone-local day
-// offset plus an intra-day time offset so the displayed relative layout is
-// preserved across DST transitions, rather than as an absolute instant delta.
 export const getShiftedRecordCalendarWeekEventUpdateInput = ({
   record,
   calendarFieldName,
@@ -27,17 +22,18 @@ export const getShiftedRecordCalendarWeekEventUpdateInput = ({
 }: GetShiftedRecordCalendarWeekEventUpdateInputArgs): Partial<ObjectRecord> | null => {
   const startDateTime = record[calendarFieldName];
 
-  if (typeof startDateTime !== 'string') {
-    return null;
-  }
-
   try {
     const originalStartInstant = Temporal.Instant.from(startDateTime);
 
-    const shiftedStartInstant = Temporal.Instant.fromEpochNanoseconds(
-      originalStartInstant.toZonedDateTimeISO(timeZone).add({ days: dayOffset })
-        .epochNanoseconds + timeOfDayDeltaNanoseconds,
-    );
+    const shiftedStartInstant = originalStartInstant
+      .toZonedDateTimeISO(timeZone)
+      .toPlainDateTime()
+      .add({
+        days: dayOffset,
+        nanoseconds: Number(timeOfDayDeltaNanoseconds),
+      })
+      .toZonedDateTime(timeZone)
+      .toInstant();
 
     const endDateTime = isDefined(calendarEndFieldName)
       ? record[calendarEndFieldName]

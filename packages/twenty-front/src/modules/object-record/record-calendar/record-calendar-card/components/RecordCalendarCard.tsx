@@ -155,7 +155,10 @@ export const RecordCalendarCard = ({
                 isDragging={isDraggingThisCard}
               >
                 <RecordCalendarCardHeader recordId={recordId} />
-                <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
+                <AnimatedEaseInOut
+                  isOpen={!isCompactModeActive}
+                  initial={false}
+                >
                   <RecordCalendarCardBody
                     recordId={recordId}
                     isRecordReadOnly={false}

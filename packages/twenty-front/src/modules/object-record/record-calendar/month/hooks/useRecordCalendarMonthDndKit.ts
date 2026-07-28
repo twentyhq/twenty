@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -20,6 +21,8 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { logError } from '~/utils/logError';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
 type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
@@ -41,6 +44,8 @@ export const useRecordCalendarMonthDndKit = (): {
   const store = useStore();
 
   const { userTimezone } = useUserTimezone();
+
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
@@ -157,12 +162,15 @@ export const useRecordCalendarMonthDndKit = (): {
 
     const originalDragSelection = store.get(originalDragSelectionCallbackState);
 
-    processCalendarCardDrop({
+    void processCalendarCardDrop({
       recordId: sourceRecordId,
       sourceDate: sourceDroppableId,
       destinationDate: destinationDroppableId,
       destinationIndex,
       selectedRecordIds: originalDragSelection,
+    }).catch((error) => {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to move record` });
     });
 
     clearDragState();

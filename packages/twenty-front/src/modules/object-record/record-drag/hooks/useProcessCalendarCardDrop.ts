@@ -37,7 +37,7 @@ export const useProcessCalendarCardDrop = () => {
     );
 
   const processCalendarCardDrop = useCallback(
-    ({
+    async ({
       recordId,
       sourceDate,
       destinationDate,
@@ -160,7 +160,7 @@ export const useProcessCalendarCardDrop = () => {
             continue;
           }
 
-          updateOneRecord({
+          await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate,
             updateOneRecordInput: {
@@ -179,19 +179,20 @@ export const useProcessCalendarCardDrop = () => {
             .toInstant()
             .toString();
 
-          const updateOneRecordInput = getShiftedRecordCalendarDateTimeUpdateInput({
-            record: recordToShift,
-            calendarFieldName: calendarFieldMetadata.name,
-            calendarEndFieldName,
-            dayOffset,
-            timeZone: userTimezone,
-            fallbackStartDateTime,
-          });
+          const updateOneRecordInput =
+            getShiftedRecordCalendarDateTimeUpdateInput({
+              record: recordToShift,
+              calendarFieldName: calendarFieldMetadata.name,
+              calendarEndFieldName,
+              dayOffset,
+              timeZone: userTimezone,
+              fallbackStartDateTime,
+            });
           if (!isDefined(updateOneRecordInput)) {
             continue;
           }
 
-          updateOneRecord({
+          await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate,
             updateOneRecordInput: {
