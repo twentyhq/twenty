@@ -16,18 +16,20 @@ describe('getInitialAdvancedTextEditorContent', () => {
       ],
     };
 
-    expect(getInitialAdvancedTextEditorContent(JSON.stringify(document))).toEqual(
-      document,
-    );
+    expect(
+      getInitialAdvancedTextEditorContent(JSON.stringify(document)),
+    ).toEqual(document);
   });
 
   it('should wrap a BlockNote array in a document', () => {
     const blocks = [{ type: 'paragraph', content: [] }];
 
-    expect(getInitialAdvancedTextEditorContent(JSON.stringify(blocks))).toEqual({
-      type: 'doc',
-      content: blocks,
-    });
+    expect(getInitialAdvancedTextEditorContent(JSON.stringify(blocks))).toEqual(
+      {
+        type: 'doc',
+        content: blocks,
+      },
+    );
   });
 
   it('should hand legacy HTML back untouched so TipTap parses it', () => {
