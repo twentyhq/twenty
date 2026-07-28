@@ -4,6 +4,7 @@ import {
   convertToModelMessages,
   hasToolCall,
   type LanguageModelUsage,
+  NoOutputGeneratedError,
   stepCountIs,
   type StepResult,
   streamText,
@@ -61,8 +62,6 @@ import {
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
-import { buildAiChatZeroOutputError } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-ai-chat-zero-output-error.util';
-import { classifyStreamUsageRejection } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-stream-usage-rejection.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -606,28 +605,38 @@ export class ChatExecutionService {
         await emitTurnUsageEvent(steps);
       })
       .catch((error) => {
-        const handling = classifyStreamUsageRejection(error);
-
-        if (handling === 'skip') {
+        if (error?.name === 'AbortError') {
           return;
         }
 
-        if (handling === 'enrich') {
-          // The SDK's bare NoOutputGeneratedError carries no troubleshooting
-          // information — replace it with one enriched error per stream.
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.STREAM_INTERRUPTED
+        ) {
+          return;
+        }
+
+        if (NoOutputGeneratedError.isInstance(error)) {
+          const underlying = lastUnderlyingStreamError;
+
           this.exceptionHandlerService.captureExceptions([
-            buildAiChatZeroOutputError({
-              modelId: registeredModel.modelId,
-              sdkPackage: registeredModel.sdkPackage,
-              workspaceId: workspace.id,
-              threadId,
-              streamId,
-              turnId,
-              messageCount: messages.length,
-              conversationSizeTokens,
-              elapsedMs: performance.now() - streamStartedAt,
-              underlyingError: lastUnderlyingStreamError,
-            }),
+            new Error(
+              `AI chat stream produced no output. ${JSON.stringify({
+                modelId: registeredModel.modelId,
+                provider: registeredModel.sdkPackage,
+                workspaceId: workspace.id,
+                threadId,
+                streamId,
+                turnId,
+                messageCount: messages.length,
+                conversationSizeTokens,
+                elapsedMs: Math.round(performance.now() - streamStartedAt),
+                underlyingError:
+                  underlying instanceof Error
+                    ? `${underlying.name}: ${underlying.message}`
+                    : String(underlying ?? 'none-recorded'),
+              })}`,
+            ),
           ]);
 
           return;
