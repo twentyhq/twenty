@@ -2115,6 +2115,11 @@ msgstr "alfabetico"
 msgid "Already in navbar"
 msgstr "Già nella barra di navigazione"
 
+#. js-lingui-id: 35jGKh
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Always allow links to this domain"
+msgstr ""
+
 #. js-lingui-id: Fc64QW
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Amazon Q Developer CLI"
@@ -3380,6 +3385,7 @@ msgstr "Non puoi scansionare? Copia il"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -4562,7 +4568,6 @@ msgstr "Finestra di contesto"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6458,11 +6463,6 @@ msgstr "Configurazione dominio"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "I domini devono essere più piccoli di 256 caratteri, non possono contenere spazi e non possono contenere caratteri speciali."
-
-#. js-lingui-id: u/yTXi
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "Don't ask again for <0>{origin}</0>"
-msgstr ""
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -13471,6 +13471,11 @@ msgstr "Apri Claude con il nome del connettore Twenty e l’URL MCP precompilati
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Apri il programma di installazione MCP di Cursor con la configurazione del server remoto Twenty."
 
+#. js-lingui-id: YIqGXO
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Open external link?"
+msgstr ""
+
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -13491,6 +13496,11 @@ msgstr "Apri nell'app"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Apri in Ruoli"
+
+#. js-lingui-id: x57cJf
+#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
+msgid "Open link"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18152,11 +18162,6 @@ msgstr "Questa è l’attuale chiave di firma. La sua revoca invaliderà tutti i
 msgid "This key should be set through body input"
 msgstr "Questa chiave dovrebbe essere impostata tramite il corpo della richiesta"
 
-#. js-lingui-id: S9jYAG
-#: src/modules/front-components/components/FrontComponentExternalLinkModalSubtitle.tsx
-msgid "This link will take you to an external site: <0>{url}</0>"
-msgstr ""
-
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
@@ -20806,11 +20811,6 @@ msgstr "Perderai tutte le tue mappature."
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Stai per cambiare il sotto-dominio del tuo spazio di lavoro. Questa azione disconnetterà tutti gli utenti."
-
-#. js-lingui-id: qgZCyy
-#: src/modules/front-components/components/FrontComponentExternalLinkModalManager.tsx
-msgid "You're leaving Twenty"
-msgstr ""
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
