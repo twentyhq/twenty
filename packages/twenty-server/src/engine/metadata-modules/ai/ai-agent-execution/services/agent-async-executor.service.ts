@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   generateText,
   jsonSchema,
@@ -15,7 +14,7 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -115,13 +114,12 @@ export class AgentAsyncExecutorService {
 
   async executeAgent({
     agent,
-    userPrompt,
-    messages,
     actorContext,
     authContext,
     workspaceId,
     userWorkspaceId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
+    ...promptInput
   }: {
     agent: AgentEntity | null;
     actorContext?: ActorMetadata;
@@ -235,25 +233,17 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
-      let promptOrMessages: { messages: ModelMessage[] } | { prompt: string };
-
-      if (isNonEmptyArray(messages)) {
-        promptOrMessages = {
-          messages: messages.map(
-            (message): ModelMessage => ({
-              role: message.role,
-              content: message.content,
-            }),
-          ),
-        };
-      } else if (isNonEmptyString(userPrompt)) {
-        promptOrMessages = { prompt: userPrompt };
-      } else {
-        throw new AiException(
-          'Provide exactly one of userPrompt or messages',
-          AiExceptionCode.INVALID_AGENT_INPUT,
-        );
-      }
+      const promptOrMessages =
+        'messages' in promptInput
+          ? {
+              messages: promptInput.messages.map(
+                (message): ModelMessage => ({
+                  role: message.role,
+                  content: message.content,
+                }),
+              ),
+            }
+          : { prompt: promptInput.userPrompt };
 
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
