@@ -164,6 +164,31 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
   });
 
+  it('passes messages to generateText when messages are provided', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+
+    const messages = [
+      { role: 'user' as const, content: 'Hello' },
+      { role: 'assistant' as const, content: 'Hi' },
+      { role: 'user' as const, content: 'Status?' },
+    ];
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      messages,
+      workspaceId,
+    });
+
+    const generateTextArgs = generateTextMock.mock.calls[0][0];
+
+    expect(generateTextArgs.messages).toEqual([
+      { role: 'user', content: 'Hello' },
+      { role: 'assistant', content: 'Hi' },
+      { role: 'user', content: 'Status?' },
+    ]);
+    expect(generateTextArgs).not.toHaveProperty('prompt');
+  });
+
   describe('cost folding', () => {
     const baseUsage = {
       inputTokens: 100,

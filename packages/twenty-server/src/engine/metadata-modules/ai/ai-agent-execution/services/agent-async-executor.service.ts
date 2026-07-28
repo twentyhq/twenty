@@ -5,14 +5,16 @@ import {
   generateText,
   jsonSchema,
   type LanguageModelUsage,
+  type ModelMessage,
   Output,
   stepCountIs,
   type StepResult,
   type ToolSet,
 } from 'ai';
+import { type RunAgentMessage } from 'twenty-shared/application';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -113,6 +115,7 @@ export class AgentAsyncExecutorService {
   async executeAgent({
     agent,
     userPrompt,
+    messages,
     actorContext,
     authContext,
     workspaceId,
@@ -120,7 +123,8 @@ export class AgentAsyncExecutorService {
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
   }: {
     agent: AgentEntity | null;
-    userPrompt: string;
+    userPrompt?: string;
+    messages?: RunAgentMessage[];
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
@@ -229,11 +233,22 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
+      const promptOrMessages = isNonEmptyArray(messages)
+        ? {
+            messages: messages.map(
+              (message): ModelMessage => ({
+                role: message.role,
+                content: message.content,
+              }),
+            ),
+          }
+        : { prompt: userPrompt ?? '' };
+
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
-        prompt: userPrompt,
+        ...promptOrMessages,
         stopWhen: (step) =>
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,

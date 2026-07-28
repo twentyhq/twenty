@@ -86,6 +86,7 @@ describe('AgentRunService', () => {
 
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
+        userPrompt: input.prompt,
         authContext: {
           type: 'application',
           workspace,
@@ -93,6 +94,66 @@ describe('AgentRunService', () => {
         },
       }),
     );
+  });
+
+  it('passes messages to the executor when messages are provided instead of prompt', async () => {
+    const messages = [
+      { role: 'user' as const, content: 'Hello' },
+      { role: 'assistant' as const, content: 'Hi there' },
+      { role: 'user' as const, content: 'What is the status?' },
+    ];
+
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input: {
+        agentUniversalIdentifier: 'agent-uid',
+        messages,
+      },
+    });
+
+    const executeAgentArgs =
+      agentAsyncExecutorService.executeAgent.mock.calls[0][0];
+
+    expect(executeAgentArgs.messages).toEqual(messages);
+    expect(executeAgentArgs.userPrompt).toBeUndefined();
+    expect(executeAgentArgs.authContext).toEqual({
+      type: 'application',
+      workspace,
+      application: { id: 'app-1' },
+    });
+  });
+
+  it('throws when neither prompt nor messages are provided', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        input: {
+          agentUniversalIdentifier: 'agent-uid',
+        },
+      }),
+    ).rejects.toThrow(/exactly one of prompt or messages/);
+
+    expect(agentRepository.findOne).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('throws when both prompt and messages are provided', async () => {
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        input: {
+          agentUniversalIdentifier: 'agent-uid',
+          prompt: 'Enrich record 123',
+          messages: [{ role: 'user', content: 'Hello' }],
+        },
+      }),
+    ).rejects.toThrow(/exactly one of prompt or messages/);
+
+    expect(agentRepository.findOne).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
   it('returns an error result when the workspace ran out of credits', async () => {
