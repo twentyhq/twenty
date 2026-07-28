@@ -35,16 +35,20 @@ export class EmailPasswordResetLinkJob {
       return;
     }
 
+    await this.resetPasswordService.invalidatePasswordResetToken(
+      generationResult.user.id,
+    );
+
+    await this.resetPasswordService.savePasswordResetToken({
+      userId: generationResult.user.id,
+      resetToken: generationResult.resetToken,
+    });
+
     await this.resetPasswordService.sendEmailPasswordResetLink({
       resetToken: generationResult.resetToken,
       user: generationResult.user,
       workspace: generationResult.workspace,
       locale: data.locale,
-    });
-
-    await this.resetPasswordService.savePasswordResetToken({
-      userId: generationResult.user.id,
-      resetToken: generationResult.resetToken,
     });
   }
 }

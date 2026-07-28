@@ -10,5 +10,4 @@ export type PasswordResetTokenGenerationResult =
       workspace: WorkspaceEntity;
     }
   | { status: 'USER_NOT_FOUND' }
-  | { status: 'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND' }
-  | { status: 'TOKEN_ALREADY_GENERATED' };
+  | { status: 'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND' };

@@ -122,7 +122,6 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.generatePasswordResetToken(
@@ -162,7 +161,6 @@ describe('ResetPasswordService', () => {
         .mockResolvedValueOnce({
           id: 'fallback-workspace-id',
         } as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.generatePasswordResetToken(
@@ -191,7 +189,6 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as WorkspaceEntity);
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result =
@@ -233,34 +230,6 @@ describe('ResetPasswordService', () => {
       );
 
       expect(result).toEqual({ status: 'USER_NOT_FOUND' });
-    });
-
-    it('should return a status instead of sending when a token is already pending', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-      const mockExistingToken = {
-        userId: '1',
-        type: AppTokenType.PasswordResetToken,
-        workspaceId: 'workspace-id',
-        expiresAt: addMilliseconds(new Date(), 3600000),
-      };
-
-      jest
-        .spyOn(userService, 'findUserByEmail')
-        .mockResolvedValue(mockUser as UserEntity);
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
-      jest
-        .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(mockExistingToken as AppTokenEntity);
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-
-      const result = await service.generatePasswordResetToken(
-        'test@example.com',
-        'workspace-id',
-      );
-
-      expect(result).toEqual({ status: 'TOKEN_ALREADY_GENERATED' });
     });
 
     it('should throw when the reset token expiration config is missing', async () => {

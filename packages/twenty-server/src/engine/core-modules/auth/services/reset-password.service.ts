@@ -79,19 +79,6 @@ export class ResetPasswordService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const existingToken = await this.appTokenRepository.findOne({
-      where: {
-        userId: user.id,
-        type: AppTokenType.PasswordResetToken,
-        expiresAt: MoreThan(new Date()),
-        revokedAt: IsNull(),
-      },
-    });
-
-    if (existingToken) {
-      return { status: 'TOKEN_ALREADY_GENERATED' };
-    }
-
     const plainResetToken = crypto.randomBytes(32).toString('hex');
 
     return {

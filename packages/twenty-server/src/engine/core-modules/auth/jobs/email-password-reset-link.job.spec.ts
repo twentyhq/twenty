@@ -15,8 +15,9 @@ describe('EmailPasswordResetLinkJob', () => {
           provide: ResetPasswordService,
           useValue: {
             generatePasswordResetToken: jest.fn(),
-            sendEmailPasswordResetLink: jest.fn(),
+            invalidatePasswordResetToken: jest.fn(),
             savePasswordResetToken: jest.fn(),
+            sendEmailPasswordResetLink: jest.fn(),
           },
         },
       ],
@@ -55,6 +56,13 @@ describe('EmailPasswordResetLinkJob', () => {
       resetPasswordService.generatePasswordResetToken,
     ).toHaveBeenCalledWith('test@example.com', 'workspace-id');
     expect(
+      resetPasswordService.invalidatePasswordResetToken,
+    ).toHaveBeenCalledWith('1');
+    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalledWith({
+      userId: '1',
+      resetToken: mockResetToken,
+    });
+    expect(
       resetPasswordService.sendEmailPasswordResetLink,
     ).toHaveBeenCalledWith({
       resetToken: mockResetToken,
@@ -62,13 +70,9 @@ describe('EmailPasswordResetLinkJob', () => {
       workspace: mockWorkspace,
       locale: 'en',
     });
-    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalledWith({
-      userId: '1',
-      resetToken: mockResetToken,
-    });
   });
 
-  it('should not persist the token when sending fails', async () => {
+  it('should persist the token before sending and rethrow sending errors', async () => {
     (
       resetPasswordService.generatePasswordResetToken as jest.Mock
     ).mockResolvedValue({
@@ -93,10 +97,10 @@ describe('EmailPasswordResetLinkJob', () => {
       }),
     ).rejects.toThrow('email provider down');
 
-    expect(resetPasswordService.savePasswordResetToken).not.toHaveBeenCalled();
+    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalled();
   });
 
-  it('should rethrow persistence errors so the job retries', async () => {
+  it('should rethrow persistence errors without sending an email', async () => {
     (
       resetPasswordService.generatePasswordResetToken as jest.Mock
     ).mockResolvedValue({
@@ -120,13 +124,13 @@ describe('EmailPasswordResetLinkJob', () => {
         locale: 'en',
       }),
     ).rejects.toThrow('db down');
+
+    expect(
+      resetPasswordService.sendEmailPasswordResetLink,
+    ).not.toHaveBeenCalled();
   });
 
-  it.each([
-    'USER_NOT_FOUND',
-    'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND',
-    'TOKEN_ALREADY_GENERATED',
-  ])(
+  it.each(['USER_NOT_FOUND', 'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND'])(
     'should skip sending the email when generation status is %s',
     async (status) => {
       (
