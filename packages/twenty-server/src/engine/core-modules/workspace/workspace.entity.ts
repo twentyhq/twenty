@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -253,7 +253,7 @@ export class WorkspaceEntity {
   @Column({ default: 1 })
   metadataVersion: number;
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @Column({ type: 'int', nullable: true, default: null })
   messageCampaignDailySendLimit: number | null;
 

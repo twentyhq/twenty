@@ -6476,7 +6476,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   logoFileId?: Maybe<Scalars['UUID']['output']>;
-  messageCampaignDailySendLimit?: Maybe<Scalars['Float']['output']>;
+  messageCampaignDailySendLimit?: Maybe<Scalars['Int']['output']>;
   /** @deprecated No longer used for metadata cache invalidation, will be removed */
   metadataVersion: Scalars['Float']['output'];
   routerModel: Scalars['String']['output'];

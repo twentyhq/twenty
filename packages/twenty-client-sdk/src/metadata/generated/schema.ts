@@ -612,7 +612,7 @@ export interface Workspace {
     viewSorts?: ViewSort[]
     /** @deprecated No longer used for metadata cache invalidation, will be removed */
     metadataVersion: Scalars['Float']
-    messageCampaignDailySendLimit?: Scalars['Float']
+    messageCampaignDailySendLimit?: Scalars['Int']
     databaseSchema?: Scalars['String']
     subdomain: Scalars['String']
     customDomain?: Scalars['String']

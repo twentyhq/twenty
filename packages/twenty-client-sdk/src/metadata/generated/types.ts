@@ -1667,7 +1667,7 @@ export default {
                 16
             ],
             "messageCampaignDailySendLimit": [
-                16
+                30
             ],
             "databaseSchema": [
                 1

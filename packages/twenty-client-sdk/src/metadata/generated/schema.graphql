@@ -872,7 +872,7 @@ type Workspace {
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
   metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
-  messageCampaignDailySendLimit: Float
+  messageCampaignDailySendLimit: Int
   databaseSchema: String
   subdomain: String!
   customDomain: String
