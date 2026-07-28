@@ -1,4 +1,5 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
@@ -10,12 +11,15 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-const TEST_APP_ID = uuidv4();
-const TEST_ROLE_ID = uuidv4();
-const TEST_FIELD_ID = uuidv4();
+// Fixed identifiers keep the deterministic index name (hashed from the
+// application universal identifier) stable across runs for the snapshot.
+const TEST_APP_ID = '3d05deeb-e0b6-4b7a-abe9-cea3b81dc1a1';
+const TEST_ROLE_ID = 'e37f849e-04a1-4fbf-b463-90b3131de79f';
+const TEST_FIELD_ID = 'c2a24a3a-3960-4c4b-bd91-c22e1e1e2f31';
 
 const TEST_OBJECT = buildDefaultObjectManifest({
   applicationUniversalIdentifier: TEST_APP_ID,
+  universalIdentifier: '0e1f18ce-6273-4e83-bc9e-6cdeb2b57d81',
   nameSingular: 'duplicatedDataObject',
   namePlural: 'duplicatedDataObjects',
   labelSingular: 'Duplicated Data Object',
@@ -96,15 +100,6 @@ describe('Sync application should surface the root cause when a unique index can
       expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors).toHaveLength(1);
-
-    const errorMessage = errors?.[0]?.message;
-
-    expect(errorMessage).toContain("Migration action 'create' for 'index'");
-    expect(errorMessage).toContain('failed: [workspaceSchema]');
-    expect(errorMessage).toContain('could not create unique index');
-    expect(errorMessage).toContain('pg code: 23505');
-    expect(errorMessage).toContain('is duplicated');
+    expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
 });
