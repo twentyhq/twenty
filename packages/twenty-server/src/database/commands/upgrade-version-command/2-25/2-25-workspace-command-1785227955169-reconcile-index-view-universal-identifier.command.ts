@@ -66,7 +66,11 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     const viewFieldUpdates: UniversalIdentifierUpdate[] = [];
 
     for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
-      if (!isDefined(flatView) || flatView.key !== ViewKey.INDEX) {
+      if (
+        !isDefined(flatView) ||
+        flatView.key !== ViewKey.INDEX ||
+        isDefined(flatView.deletedAt)
+      ) {
         continue;
       }
 
@@ -109,6 +113,10 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         });
 
       for (const flatViewField of flatViewFields) {
+        if (isDefined(flatViewField.deletedAt)) {
+          continue;
+        }
+
         // A view field belongs to the application of the field it displays, not
         // to its object's one: a custom field on a standard object yields a
         // custom-application view field on the standard INDEX view.
@@ -162,12 +170,10 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     // Single transaction per workspace: a partial backfill would leave a view
     // and its view fields on mismatched universal identifiers.
     await this.viewRepository.manager.transaction(async (entityManager) => {
-      const transactionalViewRepository = entityManager.getRepository(
-        ViewEntity,
-      );
-      const transactionalViewFieldRepository = entityManager.getRepository(
-        ViewFieldEntity,
-      );
+      const transactionalViewRepository =
+        entityManager.getRepository(ViewEntity);
+      const transactionalViewFieldRepository =
+        entityManager.getRepository(ViewFieldEntity);
 
       for (const { id, update } of viewUpdates) {
         await transactionalViewRepository.update({ id, workspaceId }, update);
