@@ -3,11 +3,11 @@ import {
   getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
+import { In } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { DemoteAndBackfillApplicationIndexViewCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-workspace-command-1785255690000-demote-and-backfill-application-index-view.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
@@ -91,22 +91,8 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    const entityManagerMock = {
-      getRepository: (entity: unknown) => {
-        if (entity === ViewEntity) {
-          return { update: viewUpdateMock };
-        }
-        throw new Error('Unexpected repository');
-      },
-    };
-
     const viewRepositoryMock = {
-      manager: {
-        transaction: jest.fn(
-          async (callback: (entityManager: unknown) => Promise<void>) =>
-            callback(entityManagerMock),
-        ),
-      },
+      update: viewUpdateMock,
     };
 
     command = new DemoteAndBackfillApplicationIndexViewCommand(
@@ -139,11 +125,14 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
 
   const mockWorkspaceCache = ({
     views = [],
+    viewFields = [],
   }: {
     views?: ReturnType<typeof buildFlatView>[];
+    viewFields?: { universalIdentifier: string }[];
   }) => {
     getOrRecomputeMock.mockResolvedValue({
       flatViewMaps: buildByUniversalIdentifierMap(views),
+      flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
       flatObjectMetadataMaps: buildByUniversalIdentifierMap([OBJECT_METADATA]),
       flatFieldMetadataMaps: buildByUniversalIdentifierMap([FIELD_METADATA]),
     });
@@ -174,7 +163,7 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
     // identifier.
     expect(viewUpdateMock).toHaveBeenCalledTimes(1);
     expect(viewUpdateMock).toHaveBeenCalledWith(
-      { id: 'app-view-id', workspaceId: WORKSPACE_ID },
+      { id: In(['app-view-id']), workspaceId: WORKSPACE_ID },
       { key: null },
     );
     // Demotions are visible to the backfill pipeline validators.
@@ -242,7 +231,38 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
     expect(validateBuildAndRunWorkspaceMigrationMock).toHaveBeenCalledTimes(2);
   });
 
-  it('is idempotent: an engine-owned INDEX view is neither demoted nor re-backfilled', async () => {
+  it('is idempotent: a fully backfilled object is neither demoted nor re-backfilled', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'engine-view-id',
+          universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+        }),
+      ],
+      viewFields: [
+        {
+          universalIdentifier: getViewFieldUniversalIdentifier({
+            applicationUniversalIdentifier:
+              EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+            viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          }),
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
+  });
+
+  it('backfills the missing view fields of an already-committed engine INDEX view', async () => {
+    // Retry after a partial failure: the view migration committed, the view
+    // field one did not.
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -257,8 +277,25 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
     await runOnWorkspace();
 
     expect(viewUpdateMock).not.toHaveBeenCalled();
-    expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
-    expect(invalidateCacheMock).not.toHaveBeenCalled();
+    expect(validateBuildAndRunWorkspaceMigrationMock).toHaveBeenCalledTimes(1);
+
+    const [payload] = validateBuildAndRunWorkspaceMigrationMock.mock.calls[0];
+
+    expect(payload.allFlatEntityOperationByMetadataName.view).toBeUndefined();
+    expect(
+      payload.allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
+    ).toEqual([
+      expect.objectContaining({
+        universalIdentifier: getViewFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+          viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+        viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      }),
+    ]);
   });
 
   it('does not write in dry-run mode', async () => {

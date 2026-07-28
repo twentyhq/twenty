@@ -1,10 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getSystemViewUniversalIdentifier,
+  getViewFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -59,10 +62,12 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
 
     const {
       flatViewMaps,
+      flatViewFieldMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatViewMaps',
+      'flatViewFieldMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
     ]);
@@ -105,17 +110,29 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
 
     const backfillOperationsByApplication =
       this.computeBackfillOperationsByApplication({
+        flatViewFieldMaps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         engineOwnedApplicationUniversalIdentifiers,
         objectUniversalIdentifiersWithEngineIndexView,
       });
 
-    const backfillViewCount = [
+    const { backfillViewCount, backfillViewFieldCount } = [
       ...backfillOperationsByApplication.values(),
-    ].reduce((count, { viewsToCreate }) => count + viewsToCreate.length, 0);
+    ].reduce(
+      (counts, { viewsToCreate, viewFieldsToCreate }) => ({
+        backfillViewCount: counts.backfillViewCount + viewsToCreate.length,
+        backfillViewFieldCount:
+          counts.backfillViewFieldCount + viewFieldsToCreate.length,
+      }),
+      { backfillViewCount: 0, backfillViewFieldCount: 0 },
+    );
 
-    if (viewIdsToDemote.length === 0 && backfillViewCount === 0) {
+    if (
+      viewIdsToDemote.length === 0 &&
+      backfillViewCount === 0 &&
+      backfillViewFieldCount === 0
+    ) {
       this.logger.log(
         `No application INDEX view to demote or backfill for workspace ${workspaceId}`,
       );
@@ -124,7 +141,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Demoting ${viewIdsToDemote.length} application INDEX view(s) and backfilling ${backfillViewCount} engine INDEX view(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Demoting ${viewIdsToDemote.length} application INDEX view(s) and backfilling ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -132,17 +149,12 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     }
 
     if (viewIdsToDemote.length > 0) {
-      await this.viewRepository.manager.transaction(async (entityManager) => {
-        const transactionalViewRepository =
-          entityManager.getRepository(ViewEntity);
-
-        for (const viewId of viewIdsToDemote) {
-          await transactionalViewRepository.update(
-            { id: viewId, workspaceId },
-            { key: null },
-          );
-        }
-      });
+      // Single bulk statement, atomic on its own: every row gets the same
+      // patch.
+      await this.viewRepository.update(
+        { id: In(viewIdsToDemote), workspaceId },
+        { key: null },
+      );
 
       // The backfill pipeline validates against fresh flat maps: the singleton
       // INDEX validator must see the demotions.
@@ -158,19 +170,24 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     });
 
     this.logger.log(
-      `Demoted ${viewIdsToDemote.length} application INDEX view(s) and backfilled ${backfillViewCount} engine INDEX view(s) for workspace ${workspaceId}`,
+      `Demoted ${viewIdsToDemote.length} application INDEX view(s) and backfilled ${backfillViewCount} engine INDEX view(s) with ${backfillViewFieldCount} view field(s) for workspace ${workspaceId}`,
     );
   }
 
   // Engine INDEX views for every application object that has none, with the
   // full default layout, mirroring what objectSystemFieldsAndIndexViewOnCreate
-  // emits at object creation.
+  // emits at object creation. View creation and view-field creation are gated
+  // independently: views and view fields commit in separate migration passes,
+  // so a retry after a partial failure must still backfill the missing view
+  // fields of an already-committed view.
   private computeBackfillOperationsByApplication({
+    flatViewFieldMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     engineOwnedApplicationUniversalIdentifiers,
     objectUniversalIdentifiersWithEngineIndexView,
   }: {
+    flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     engineOwnedApplicationUniversalIdentifiers: Set<string>;
@@ -205,23 +222,34 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         !isDefined(flatObjectMetadata) ||
         engineOwnedApplicationUniversalIdentifiers.has(
           flatObjectMetadata.applicationUniversalIdentifier,
-        ) ||
-        objectUniversalIdentifiersWithEngineIndexView.has(
-          flatObjectMetadata.universalIdentifier,
         )
       ) {
         continue;
       }
 
-      const flatIndexViewToCreate = computeFlatIndexViewToCreate({
-        objectMetadata: flatObjectMetadata,
+      const indexViewUniversalIdentifier = getSystemViewUniversalIdentifier({
         applicationUniversalIdentifier:
           flatObjectMetadata.applicationUniversalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+        viewKey: ViewKey.INDEX,
       });
 
-      getApplicationBucket(
-        flatObjectMetadata.applicationUniversalIdentifier,
-      ).viewsToCreate.push(flatIndexViewToCreate);
+      if (
+        !objectUniversalIdentifiersWithEngineIndexView.has(
+          flatObjectMetadata.universalIdentifier,
+        )
+      ) {
+        // computeFlatIndexViewToCreate derives the same universal identifier.
+        getApplicationBucket(
+          flatObjectMetadata.applicationUniversalIdentifier,
+        ).viewsToCreate.push(
+          computeFlatIndexViewToCreate({
+            objectMetadata: flatObjectMetadata,
+            applicationUniversalIdentifier:
+              flatObjectMetadata.applicationUniversalIdentifier,
+          }),
+        );
+      }
 
       const { labelIdentifierFieldMetadataUniversalIdentifier } =
         flatObjectMetadata;
@@ -267,20 +295,33 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
           const fieldApplicationUniversalIdentifier =
             flatFieldMetadata.applicationUniversalIdentifier;
 
+          const viewFieldUniversalIdentifier = getViewFieldUniversalIdentifier({
+            applicationUniversalIdentifier:
+              fieldApplicationUniversalIdentifier,
+            viewUniversalIdentifier: indexViewUniversalIdentifier,
+            fieldMetadataUniversalIdentifier:
+              flatFieldMetadata.universalIdentifier,
+          });
+
+          // Already backfilled by a previous (partially failed) run.
+          if (
+            isDefined(
+              flatViewFieldMaps.byUniversalIdentifier[
+                viewFieldUniversalIdentifier
+              ],
+            )
+          ) {
+            return;
+          }
+
           getApplicationBucket(
             fieldApplicationUniversalIdentifier,
           ).viewFieldsToCreate.push({
-            universalIdentifier: getViewFieldUniversalIdentifier({
-              applicationUniversalIdentifier:
-                fieldApplicationUniversalIdentifier,
-              viewUniversalIdentifier: flatIndexViewToCreate.universalIdentifier,
-              fieldMetadataUniversalIdentifier:
-                flatFieldMetadata.universalIdentifier,
-            }),
+            universalIdentifier: viewFieldUniversalIdentifier,
             applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
             fieldMetadataUniversalIdentifier:
               flatFieldMetadata.universalIdentifier,
-            viewUniversalIdentifier: flatIndexViewToCreate.universalIdentifier,
+            viewUniversalIdentifier: indexViewUniversalIdentifier,
             viewFieldGroupUniversalIdentifier: null,
             isVisible: true,
             size: DEFAULT_VIEW_FIELD_SIZE,
