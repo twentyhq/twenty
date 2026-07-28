@@ -1,6 +1,6 @@
 import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -45,8 +45,8 @@ describe('WorkspaceSetupChatService', () => {
           ),
         ),
     };
-    const featureFlagService = {
-      isFeatureEnabled: jest.fn().mockResolvedValue(true),
+    const twentyConfigService = {
+      get: jest.fn().mockReturnValue(true),
     };
     const billingUsageService = {
       hasAvailableCredits: jest.fn().mockResolvedValue(true),
@@ -107,7 +107,7 @@ describe('WorkspaceSetupChatService', () => {
 
     const service = new WorkspaceSetupChatService(
       userWorkspaceRepository as never,
-      featureFlagService as never,
+      twentyConfigService as never,
       billingUsageService as never,
       aiModelRegistryService as never,
       keyValuePairService as never,
@@ -120,7 +120,7 @@ describe('WorkspaceSetupChatService', () => {
       keyValueState,
       userWorkspaceState,
       userWorkspaceRepository,
-      featureFlagService,
+      twentyConfigService,
       billingUsageService,
       aiModelRegistryService,
       keyValuePairService,
@@ -129,22 +129,21 @@ describe('WorkspaceSetupChatService', () => {
     };
   };
 
-  it('should return unavailable without any thread or key-value writes when the feature flag is off', async () => {
+  it('should return unavailable without any thread or key-value writes when the onboarding ai chat is disabled', async () => {
     const {
       service,
-      featureFlagService,
+      twentyConfigService,
       keyValuePairService,
       agentChatService,
     } = buildService();
 
-    featureFlagService.isFeatureEnabled.mockResolvedValue(false);
+    twentyConfigService.get.mockReturnValue(false);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({ outcome: 'unavailable', threadId: null });
-    expect(featureFlagService.isFeatureEnabled).toHaveBeenCalledWith(
-      FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
-      'workspace-id',
+    expect(twentyConfigService.get).toHaveBeenCalledWith(
+      'IS_ONBOARDING_AI_CHAT_ENABLED',
     );
     expect(agentChatService.createThread).not.toHaveBeenCalled();
     expect(keyValuePairService.get).not.toHaveBeenCalled();
@@ -188,7 +187,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
-  it('should return unavailable when the workspace has no available credits', async () => {
+  it('should return unavailable without creating a thread when the workspace has no available credits', async () => {
     const { service, billingUsageService, agentChatService } = buildService();
 
     billingUsageService.hasAvailableCredits.mockResolvedValue(false);
@@ -197,6 +196,99 @@ describe('WorkspaceSetupChatService', () => {
 
     expect(result).toEqual({ outcome: 'unavailable', threadId: null });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
+  });
+
+  it('should join the existing conversation when credits ran out after the kickoff', async () => {
+    const {
+      service,
+      keyValueState,
+      billingUsageService,
+      agentChatService,
+      agentChatStreamingService,
+    } = buildService();
+
+    keyValueState.value = { threadId: 'existing-thread-id' };
+    agentChatService.findThreadById.mockResolvedValue({
+      id: 'existing-thread-id',
+    });
+    agentChatService.hasConversationMessages.mockResolvedValue(true);
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(result).toEqual({
+      outcome: 'alreadyStarted',
+      threadId: 'existing-thread-id',
+    });
+    expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should not start a stream on an empty existing thread when credits ran out', async () => {
+    const {
+      service,
+      keyValueState,
+      billingUsageService,
+      agentChatService,
+      agentChatStreamingService,
+    } = buildService();
+
+    keyValueState.value = { threadId: 'existing-thread-id' };
+    agentChatService.findThreadById.mockResolvedValue({
+      id: 'existing-thread-id',
+    });
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should embed the company context and the proposal instructions in the hidden prompt', async () => {
+    const { service, agentChatStreamingService } = buildService();
+
+    const companyContext = {
+      domain: 'acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      name: 'Acme Inc',
+      website: 'https://acme.com',
+      industry: 'computer software',
+      employeeCount: 250,
+      size: '51-200',
+      founded: 2015,
+      headline: 'Anvils as a service',
+      summary: 'Acme sells anvils to coyotes.',
+      tags: ['saas', 'b2b'],
+      locality: 'San Francisco',
+      region: 'California',
+      country: 'United States',
+    } satisfies WorkspaceCompanyEnrichment;
+
+    await service.startWorkspaceSetupChat({
+      ...startArguments,
+      companyContext,
+    });
+
+    const kickoffText =
+      agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
+
+    expect(kickoffText).toContain('Domain: acme.com');
+    expect(kickoffText).toContain('Name: Acme Inc');
+    expect(kickoffText).toContain('Industry: computer software');
+    expect(kickoffText).toContain('tailored to their business');
+    expect(kickoffText).toContain(
+      'Only propose until the user explicitly approves',
+    );
+    expect(kickoffText).toContain('metadata-building');
+    expect(kickoffText).toContain(
+      'The user locale is French, please continue the discussion in that language.',
+    );
+    expect(kickoffText).not.toContain('No information about the company');
   });
 
   it('should create a titled thread, persist its pointer, and start the hidden kickoff stream when nothing is stored', async () => {

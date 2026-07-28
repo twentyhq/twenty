@@ -15,6 +15,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { StartWorkspaceSetupChatDocument } from '~/generated-metadata/graphql';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { workspaceSetupChatRequestedWorkspaceIdState } from '@/onboarding/states/workspaceSetupChatRequestedWorkspaceIdState';
 import {
   jotaiStore,
@@ -101,6 +102,38 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should wait for an in-flight company enrichment before starting the chat', async () => {
+    jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
+
+    const capturedVariablesList: Record<string, unknown>[] = [];
+    let callCount = 0;
+
+    renderKickoffEffect([
+      buildKickoffMock({
+        outcome: 'started',
+        countCall: () => {
+          callCount += 1;
+        },
+        captureVariables: (variables) => {
+          capturedVariablesList.push(variables);
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(callCount).toBe(0);
+
+    await act(async () => {
+      jotaiStore.set(companyEnrichmentState.atom, enrichment);
+      jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, false);
+    });
+    await flushMutation();
+
+    expect(callCount).toBe(1);
+    expect(capturedVariablesList[0].companyContext).toEqual(enrichment);
   });
 
   it('should start the workspace setup chat only once when the effect renders twice', async () => {

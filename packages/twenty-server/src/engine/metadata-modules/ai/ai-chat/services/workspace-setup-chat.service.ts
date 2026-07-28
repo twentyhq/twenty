@@ -3,16 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
@@ -42,7 +41,7 @@ export class WorkspaceSetupChatService {
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly billingUsageService: BillingUsageService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly keyValuePairService: KeyValuePairService<WorkspaceSetupChatKeyValueTypeMap>,
@@ -61,13 +60,7 @@ export class WorkspaceSetupChatService {
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
-    const isOnboardingAiChatEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
-        workspace.id,
-      );
-
-    if (!isOnboardingAiChatEnabled) {
+    if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
       return { outcome: 'unavailable', threadId: null };
     }
 
@@ -97,27 +90,36 @@ export class WorkspaceSetupChatService {
       return { outcome: 'unavailable', threadId: null };
     }
 
-    const hasAvailableCredits =
-      await this.billingUsageService.hasAvailableCredits(workspace.id);
-
-    if (!hasAvailableCredits) {
-      return { outcome: 'unavailable', threadId: null };
-    }
-
-    const threadId = await this.resolveOrCreateThread({
+    // Resolved before any credit gate so a workspace that ran out of credits after the kickoff
+    // still joins its existing setup conversation instead of falling back to an empty chat.
+    const existingThreadId = await this.resolveExistingThread({
       userId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
 
+    // Only gates creating a thread, so an exhausted workspace is not left with an empty one;
+    // ensureKickoffStream re-checks before a stream actually starts.
+    if (
+      !isDefined(existingThreadId) &&
+      !(await this.billingUsageService.hasAvailableCredits(workspace.id))
+    ) {
+      return { outcome: 'unavailable', threadId: null };
+    }
+
+    const threadId =
+      existingThreadId ??
+      (await this.createThreadWithPointer({
+        userId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      }));
+
     return this.ensureKickoffStream({
       threadId,
       userWorkspaceId,
       workspace,
-      promptText: buildWorkspaceSetupPromptText({
-        companyEnrichment: companyContext,
-        locale: await this.getUserLocale(userWorkspaceId),
-      }),
+      companyContext,
     });
   }
 
@@ -144,7 +146,54 @@ export class WorkspaceSetupChatService {
     return earliestUserWorkspace?.userId === userId;
   }
 
-  private async resolveOrCreateThread({
+  private async resolveExistingThread({
+    userId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    for (let attempt = 0; attempt < RESOLVE_THREAD_MAX_ATTEMPTS; attempt++) {
+      const storedThreadId = await this.getStoredThreadId({
+        userId,
+        workspaceId,
+      });
+
+      if (!isDefined(storedThreadId)) {
+        return null;
+      }
+
+      const storedThread = await this.agentChatService.findThreadById({
+        threadId: storedThreadId,
+        userWorkspaceId,
+        workspaceId,
+      });
+
+      if (isDefined(storedThread)) {
+        return storedThreadId;
+      }
+
+      // The thread is created before the key-value pair, so a dangling pointer can only mean
+      // the thread was deleted. The delete is conditional on the stale value so a concurrent
+      // caller's fresh pointer is never removed.
+      await this.keyValuePairService.deleteIfValueEquals({
+        userId,
+        workspaceId,
+        key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
+        value: { threadId: storedThreadId },
+        type: KeyValuePairType.USER_VARIABLE,
+      });
+    }
+
+    throw new AiException(
+      'Could not resolve a workspace setup thread',
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+  }
+
+  private async createThreadWithPointer({
     userId,
     userWorkspaceId,
     workspaceId,
@@ -153,82 +202,54 @@ export class WorkspaceSetupChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<string> {
-    for (let attempt = 0; attempt < RESOLVE_THREAD_MAX_ATTEMPTS; attempt++) {
-      const storedThreadId = await this.getStoredThreadId({
-        userId,
-        workspaceId,
-      });
+    const newThreadId = v4();
 
-      if (isDefined(storedThreadId)) {
-        const storedThread = await this.agentChatService.findThreadById({
-          threadId: storedThreadId,
-          userWorkspaceId,
-          workspaceId,
-        });
+    await this.agentChatService.createThread({
+      userWorkspaceId,
+      workspaceId,
+      id: newThreadId,
+      title: WORKSPACE_SETUP_CHAT_THREAD_TITLE,
+    });
 
-        if (isDefined(storedThread)) {
-          return storedThreadId;
-        }
+    await this.keyValuePairService.trySetIfAbsent({
+      userId,
+      workspaceId,
+      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
+      value: { threadId: newThreadId },
+      type: KeyValuePairType.USER_VARIABLE,
+    });
 
-        // The thread is created before the key-value pair, so a dangling pointer can only mean
-        // the thread was deleted. The delete is conditional on the stale value so a concurrent
-        // caller's fresh pointer is never removed.
-        await this.keyValuePairService.deleteIfValueEquals({
-          userId,
-          workspaceId,
-          key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-          value: { threadId: storedThreadId },
-          type: KeyValuePairType.USER_VARIABLE,
-        });
+    const winningThreadId = await this.getStoredThreadId({
+      userId,
+      workspaceId,
+    });
 
-        continue;
-      }
-
-      const newThreadId = v4();
-
-      await this.agentChatService.createThread({
-        userWorkspaceId,
-        workspaceId,
-        id: newThreadId,
-        title: WORKSPACE_SETUP_CHAT_THREAD_TITLE,
-      });
-
-      await this.keyValuePairService.trySetIfAbsent({
-        userId,
-        workspaceId,
-        key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-        value: { threadId: newThreadId },
-        type: KeyValuePairType.USER_VARIABLE,
-      });
-
-      const winningThreadId = await this.getStoredThreadId({
-        userId,
-        workspaceId,
-      });
-
-      if (winningThreadId === newThreadId) {
-        return newThreadId;
-      }
-
-      await this.agentChatService
-        .hardDeleteThread({
-          threadId: newThreadId,
-          userWorkspaceId,
-          workspaceId,
-        })
-        .catch((error) => {
-          this.logger.warn(
-            `Failed to delete losing workspace setup thread ${newThreadId}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        });
+    if (winningThreadId === newThreadId) {
+      return newThreadId;
     }
 
-    throw new AiException(
-      'Could not resolve a workspace setup thread',
-      AiExceptionCode.THREAD_NOT_FOUND,
-    );
+    await this.agentChatService
+      .hardDeleteThread({
+        threadId: newThreadId,
+        userWorkspaceId,
+        workspaceId,
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Failed to delete losing workspace setup thread ${newThreadId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+
+    if (!isDefined(winningThreadId)) {
+      throw new AiException(
+        'Could not resolve a workspace setup thread',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    return winningThreadId;
   }
 
   private async getStoredThreadId({
@@ -260,12 +281,12 @@ export class WorkspaceSetupChatService {
     threadId,
     userWorkspaceId,
     workspace,
-    promptText,
+    companyContext,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
-    promptText: string;
+    companyContext: WorkspaceCompanyEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     const thread = await this.agentChatService.getThreadById({
       threadId,
@@ -303,12 +324,24 @@ export class WorkspaceSetupChatService {
       return { outcome: 'alreadyStarted', threadId };
     }
 
+    // Re-checked here rather than up front so joining an existing conversation never needs
+    // credits; only actually starting a stream does.
+    const hasAvailableCredits =
+      await this.billingUsageService.hasAvailableCredits(workspace.id);
+
+    if (!hasAvailableCredits) {
+      return { outcome: 'unavailable', threadId: null };
+    }
+
     const kickoffResult =
       await this.agentChatStreamingService.startHiddenKickoffStream({
         threadId,
         userWorkspaceId,
         workspace,
-        text: promptText,
+        text: buildWorkspaceSetupPromptText({
+          companyEnrichment: companyContext,
+          locale: await this.getUserLocale(userWorkspaceId),
+        }),
       });
 
     if (!isDefined(kickoffResult)) {

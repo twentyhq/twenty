@@ -3,14 +3,16 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   EnrichWorkspaceCompanyDocument,
-  FeatureFlagKey,
   OnboardingStatus,
   WorkspaceCompanyEnrichmentOutcome,
 } from '~/generated-metadata/graphql';
@@ -25,8 +27,11 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
-  const isOnboardingAiChatEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+  const setIsCompanyEnrichmentFetchInFlight = useSetAtomState(
+    isCompanyEnrichmentFetchInFlightState,
+  );
+  const isOnboardingAiChatEnabled = useAtomStateValue(
+    isOnboardingAiChatEnabledState,
   );
 
   const isOnboardingInProgress =
@@ -45,6 +50,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     }
 
     setHasAttemptedCompanyEnrichmentFetch(true);
+    setIsCompanyEnrichmentFetchInFlight(true);
 
     const fetchCompanyEnrichment = async () => {
       try {
@@ -65,6 +71,8 @@ export const CompanyEnrichmentOnboardingEffect = () => {
         setCompanyEnrichment(enrichment);
       } catch {
         return;
+      } finally {
+        setIsCompanyEnrichmentFetchInFlight(false);
       }
     };
 
@@ -75,6 +83,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     isOnboardingInProgress,
     isOnboardingAiChatEnabled,
     setHasAttemptedCompanyEnrichmentFetch,
+    setIsCompanyEnrichmentFetchInFlight,
     setCompanyEnrichment,
     enrichWorkspaceCompany,
   ]);

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -13,8 +13,11 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { workspaceSetupChatRequestedWorkspaceIdState } from '@/onboarding/states/workspaceSetupChatRequestedWorkspaceIdState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
@@ -26,9 +29,29 @@ export const WorkspaceSetupChatKickoffEffect = () => {
   );
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
+    isCompanyEnrichmentFetchInFlightState,
+  );
+  const [hasWaitedForCompanyEnrichment, setHasWaitedForCompanyEnrichment] =
+    useState(false);
+
+  useEffect(() => {
+    const waitTimer = setTimeout(
+      () => setHasWaitedForCompanyEnrichment(true),
+      WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS,
+    );
+
+    return () => clearTimeout(waitTimer);
+  }, []);
 
   useEffect(() => {
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
+
+    // An enrichment fetch started during onboarding can still be in flight on arrival; waiting
+    // for it keeps the proposal tailored instead of falling back to the discovery question.
+    if (isCompanyEnrichmentFetchInFlight && !hasWaitedForCompanyEnrichment) {
+      return;
+    }
 
     if (
       !isDefined(workspaceId) ||
@@ -123,7 +146,14 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     };
 
     void startWorkspaceSetupChat();
-  }, [startWorkspaceSetupChatMutation, store, addToDraft, applyChanges]);
+  }, [
+    startWorkspaceSetupChatMutation,
+    store,
+    addToDraft,
+    applyChanges,
+    isCompanyEnrichmentFetchInFlight,
+    hasWaitedForCompanyEnrichment,
+  ]);
 
   return null;
 };
