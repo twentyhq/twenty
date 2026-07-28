@@ -78,13 +78,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
         return undefined;
       }
 
-      const update = compareTwoFlatEntity({
+      const comparisonResult = compareTwoFlatEntity({
         fromUniversalFlatEntity: fromFlatEntity,
         toUniversalFlatEntity: toFlatEntity,
         metadataName,
       });
 
-      return isDefined(update) ? toFlatEntity : undefined;
+      return isDefined(comparisonResult) ? toFlatEntity : undefined;
     })
     .filter(isDefined);
 

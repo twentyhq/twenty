@@ -4,8 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
-import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
-import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
+import {
+  compareTwoFlatEntity,
+  type CompareTwoUniversalFlatEntityResult,
+} from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
@@ -16,9 +18,7 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
   updatedFlatEntityMaps: {
     byUniversalIdentifier: Record<
       string,
-      {
-        update: UniversalFlatEntityUpdate<T>;
-      }
+      CompareTwoUniversalFlatEntityResult<T>
     >;
   };
 };
@@ -81,21 +81,19 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     if (!isDefined(toUniversalFlatEntity)) {
       continue;
     }
-    const update = compareTwoFlatEntity({
+    const comparisonResult = compareTwoFlatEntity({
       fromUniversalFlatEntity,
       toUniversalFlatEntity,
       metadataName,
     });
 
-    if (!isDefined(update)) {
+    if (!isDefined(comparisonResult)) {
       continue;
     }
 
     initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
       fromUniversalFlatEntity.universalIdentifier
-    ] = {
-      update,
-    };
+    ] = comparisonResult;
   }
 
   return initialDispatcher;

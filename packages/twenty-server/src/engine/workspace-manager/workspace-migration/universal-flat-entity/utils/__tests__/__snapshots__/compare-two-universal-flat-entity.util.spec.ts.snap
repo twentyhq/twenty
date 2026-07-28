@@ -1,13 +1,19 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 1`] = `
 {
-  "isActive": false,
+  "nonUpdatablePropertyDivergences": [],
+  "update": {
+    "isActive": false,
+  },
 }
 `;
 
 exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 2`] = `
 {
-  "isActive": true,
+  "nonUpdatablePropertyDivergences": [],
+  "update": {
+    "isActive": true,
+  },
 }
 `;

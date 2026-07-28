@@ -38,10 +38,17 @@ type MetadataEntityPropertyConfiguration<
               UnwrapWasRemovedInUpgrade<MetadataEntity<TMetadataName>[K]>
             >
         : boolean;
-    toCompare: boolean;
     isOverridable?: boolean;
     translatable?: boolean;
-  };
+  } & (
+    | { toCompare: true }
+    // toReportDivergence guards non-comparable properties that input surfaces
+    // (DTO editable properties, manifest shapes) still accept: instead of the
+    // builder silently stripping a changed value, the update fails validation.
+    // Non-comparable properties without it keep diverging silently, as many
+    // sync converters emit placeholder values for them by design.
+    | { toCompare: false; toReportDivergence?: true }
+  );
 };
 
 export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
@@ -1112,11 +1119,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     pageLayoutId: {
       toCompare: false,
+      toReportDivergence: true,
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
     layoutMode: {
       toCompare: false,
+      toReportDivergence: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -1263,6 +1272,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     pageLayoutId: {
       toCompare: false,
+      toReportDivergence: true,
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
       isOverridable: true,
@@ -1335,6 +1345,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     pageLayoutId: {
       toCompare: false,
+      toReportDivergence: true,
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
@@ -1888,3 +1899,18 @@ export type MetadataEntityTranslatablePropertyName<T extends AllMetadataName> =
   FilterTranslatableKeys<
     (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;
+
+type FilterDivergenceReportedKeys<TConfig> = {
+  [P in keyof TConfig]: TConfig[P] extends {
+    toCompare: false;
+    toReportDivergence: true;
+  }
+    ? P
+    : never;
+}[keyof TConfig];
+
+export type MetadataEntityDivergenceReportedPropertyName<
+  T extends AllMetadataName,
+> = FilterDivergenceReportedKeys<
+  (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
+>;
