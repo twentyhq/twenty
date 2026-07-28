@@ -16,6 +16,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { runInBatches } from 'src/utils/run-in-batches.util';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
@@ -175,35 +176,23 @@ export class ApplicationUpgradeService {
     applications: ApplicationEntity[];
     batchSize?: number;
   }): Promise<void> {
-    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
-
-    for (
-      let batchStart = 0;
-      batchStart < applications.length;
-      batchStart += sanitizedBatchSize
-    ) {
-      const batch = applications.slice(
-        batchStart,
-        batchStart + sanitizedBatchSize,
-      );
-
-      await Promise.all(
-        batch.map(async (application) => {
-          try {
-            await this.upgradeApplicationToVersion({
-              appRegistration,
-              targetVersion,
-              workspaceId: application.workspaceId,
-            });
-          } catch (error) {
-            this.logger.error(
-              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
-              error,
-            );
-          }
-        }),
-      );
-    }
+    await runInBatches({
+      items: applications,
+      batchSize,
+      handler: async (application) => {
+        await this.upgradeApplicationToVersion({
+          appRegistration,
+          targetVersion,
+          workspaceId: application.workspaceId,
+        });
+      },
+      onError: (application, error) => {
+        this.logger.error(
+          `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
+          error,
+        );
+      },
+    });
   }
 
   async upgradeAllApplications({

@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
 import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
+import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 
@@ -21,26 +22,6 @@ type UpgradeApplicationCommandOptions = {
 
 const MAX_BATCH_SIZE = 50;
 const MAX_WORKSPACE_COUNT_LIMIT = 50;
-
-const parseBoundedPositiveInteger = (
-  value: string,
-  optionName: string,
-  maximum: number,
-): number => {
-  const parsedValue = Number(value);
-
-  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
-    throw new Error(
-      `Invalid ${optionName} "${value}". Expected a positive integer`,
-    );
-  }
-
-  if (parsedValue > maximum) {
-    throw new Error(`Invalid ${optionName} "${value}". Maximum is ${maximum}`);
-  }
-
-  return parsedValue;
-};
 
 @Command({
   name: 'application:upgrade',

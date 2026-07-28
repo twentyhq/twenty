@@ -9,11 +9,13 @@ import { In, Repository } from 'typeorm';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { CommandLogger } from 'src/database/commands/logger';
 import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
+import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { runInBatches } from 'src/utils/run-in-batches.util';
 
 type InstallApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
@@ -22,37 +24,15 @@ type InstallApplicationCommandOptions = {
   workspaceCountLimit?: number;
   dryRun?: boolean;
   yes?: boolean;
-  upgrade?: boolean;
 };
 
-const DEFAULT_BATCH_SIZE = 5;
 const MAX_BATCH_SIZE = 50;
 const MAX_WORKSPACE_COUNT_LIMIT = 50;
-
-const parseBoundedPositiveInteger = (
-  value: string,
-  optionName: string,
-  maximum: number,
-): number => {
-  const parsedValue = Number(value);
-
-  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
-    throw new Error(
-      `Invalid ${optionName} "${value}". Expected a positive integer`,
-    );
-  }
-
-  if (parsedValue > maximum) {
-    throw new Error(`Invalid ${optionName} "${value}". Maximum is ${maximum}`);
-  }
-
-  return parsedValue;
-};
 
 @Command({
   name: 'application:install',
   description:
-    'Install an application on existing workspaces, upgrading the workspaces where it is already installed unless --no-upgrade is passed',
+    'Install an application on every workspace that does not have it yet. Workspaces where it is already installed are left untouched, use application:upgrade for those',
 })
 export class InstallApplicationCommand extends CommandRunner {
   protected logger: CommandLogger;
@@ -85,7 +65,7 @@ export class InstallApplicationCommand extends CommandRunner {
 
   @Option({
     flags: '-b, --batch-size <batch_size>',
-    description: `Number of workspaces processed in parallel (defaults to ${DEFAULT_BATCH_SIZE}, max ${MAX_BATCH_SIZE})`,
+    description: `Number of workspaces installed in parallel (defaults to 5, max ${MAX_BATCH_SIZE})`,
     required: false,
   })
   parseBatchSize(value: string): number {
@@ -95,7 +75,7 @@ export class InstallApplicationCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-id <workspace_id>',
     description:
-      'Only target the given workspace id. Can be repeated to target several workspaces. Targets all provisioned workspaces if not provided.',
+      'Only install on the given workspace id. Can be repeated to target several workspaces. Targets all provisioned workspaces if not provided.',
     required: false,
   })
   parseWorkspaceId(value: string, previous?: Set<string>): Set<string> {
@@ -108,7 +88,7 @@ export class InstallApplicationCommand extends CommandRunner {
 
   @Option({
     flags: '--workspace-count-limit <count>',
-    description: `Limit the number of workspaces to target (max ${MAX_WORKSPACE_COUNT_LIMIT})`,
+    description: `Limit the number of workspaces to install on (max ${MAX_WORKSPACE_COUNT_LIMIT})`,
     required: false,
   })
   parseWorkspaceCountLimit(value: string): number {
@@ -120,19 +100,9 @@ export class InstallApplicationCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '--no-upgrade',
-    description:
-      'Leave workspaces where the application is already installed untouched (upgrade is enabled by default)',
-    required: false,
-  })
-  parseNoUpgrade(): boolean {
-    return false;
-  }
-
-  @Option({
     flags: '-d, --dry-run',
     description:
-      'List the workspaces that would be installed or upgraded without touching them',
+      'List the workspaces that would be installed without installing',
     required: false,
   })
   parseDryRun(): boolean {
@@ -174,6 +144,7 @@ export class InstallApplicationCommand extends CommandRunner {
     }
 
     const targetVersion = registration.latestAvailableVersion;
+    const versionLabel = targetVersion ?? 'latest available';
 
     const targetWorkspaceIds = await this.findTargetWorkspaceIds(options);
 
@@ -183,43 +154,21 @@ export class InstallApplicationCommand extends CommandRunner {
       return;
     }
 
-    const existingApplications = await this.applicationRepository.find({
-      where: {
-        applicationRegistrationId: registration.id,
-        workspaceId: In(targetWorkspaceIds),
-      },
-    });
-
-    const existingApplicationByWorkspaceId = new Map(
-      existingApplications.map((application) => [
-        application.workspaceId,
-        application,
-      ]),
-    );
+    const alreadyInstalledWorkspaceIds =
+      await this.findAlreadyInstalledWorkspaceIds({
+        universalIdentifier: registration.universalIdentifier,
+        workspaceIds: targetWorkspaceIds,
+      });
 
     const workspaceIdsToInstall = targetWorkspaceIds.filter(
-      (workspaceId) => !existingApplicationByWorkspaceId.has(workspaceId),
+      (workspaceId) => !alreadyInstalledWorkspaceIds.has(workspaceId),
     );
 
-    const shouldUpgrade = options.upgrade ?? true;
-
-    const workspaceIdsToUpgrade = shouldUpgrade
-      ? targetWorkspaceIds.filter((workspaceId) => {
-          const existingApplication =
-            existingApplicationByWorkspaceId.get(workspaceId);
-
-          if (!isDefined(existingApplication)) {
-            return false;
-          }
-
-          return (
-            !isDefined(targetVersion) ||
-            existingApplication.version !== targetVersion
-          );
-        })
-      : [];
-
-    const versionLabel = targetVersion ?? 'latest available';
+    if (alreadyInstalledWorkspaceIds.size > 0) {
+      this.logger.log(
+        `Skipping ${alreadyInstalledWorkspaceIds.size} workspace(s) where "${registration.name}" is already installed, run application:upgrade to update them`,
+      );
+    }
 
     if (options.dryRun ?? false) {
       this.logger.log(
@@ -229,23 +178,13 @@ export class InstallApplicationCommand extends CommandRunner {
             : ''
         }`,
       );
-      this.logger.log(
-        `[DRY RUN] Would then upgrade ${workspaceIdsToUpgrade.length} workspace(s) where it is already installed${
-          workspaceIdsToUpgrade.length > 0
-            ? `: ${workspaceIdsToUpgrade.join(', ')}`
-            : ''
-        }`,
-      );
 
       return;
     }
 
-    if (
-      workspaceIdsToInstall.length === 0 &&
-      workspaceIdsToUpgrade.length === 0
-    ) {
+    if (workspaceIdsToInstall.length === 0) {
       this.logger.log(
-        `Nothing to do, every targeted workspace already runs "${registration.name}" version ${versionLabel}`,
+        `No workspace to install, every targeted workspace already has "${registration.name}" installed`,
       );
 
       return;
@@ -253,7 +192,7 @@ export class InstallApplicationCommand extends CommandRunner {
 
     if (!(options.yes ?? false)) {
       const isConfirmed = await askCommandConfirmation(
-        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s) and upgrading ${workspaceIdsToUpgrade.length} workspace(s)`,
+        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)`,
       );
 
       if (!isConfirmed) {
@@ -263,35 +202,29 @@ export class InstallApplicationCommand extends CommandRunner {
       }
     }
 
+    this.logger.log(
+      `Installing "${registration.name}" (${registration.universalIdentifier}) version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)...`,
+    );
+
     // Runs on the exact set shown at confirmation time, so installations
-    // created or versions published while the operator answered are excluded.
-    // Workspaces that already have the application are handled last so a
-    // failing upgrade never delays the fresh installs.
-    if (workspaceIdsToInstall.length > 0) {
-      this.logger.log(
-        `Installing "${registration.name}" (${registration.universalIdentifier}) version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)...`,
-      );
-
-      await this.installOnWorkspaces({
-        registration,
-        targetVersion,
-        workspaceIds: workspaceIdsToInstall,
-        batchSize: options.batchSize,
-      });
-    }
-
-    if (workspaceIdsToUpgrade.length > 0) {
-      this.logger.log(
-        `Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${versionLabel} on ${workspaceIdsToUpgrade.length} already installed workspace(s)...`,
-      );
-
-      await this.installOnWorkspaces({
-        registration,
-        targetVersion,
-        workspaceIds: workspaceIdsToUpgrade,
-        batchSize: options.batchSize,
-      });
-    }
+    // created while the operator answered are excluded.
+    await runInBatches({
+      items: workspaceIdsToInstall,
+      batchSize: options.batchSize,
+      handler: (workspaceId) =>
+        this.applicationInstallService.installApplication({
+          appRegistrationId: registration.id,
+          version: targetVersion ?? undefined,
+          workspaceId,
+        }),
+      onError: (workspaceId, error) => {
+        this.logger.error(
+          `Failed to install application ${registration.universalIdentifier} in workspace ${workspaceId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      },
+    });
 
     this.logger.log(chalk.blue('Command completed!'));
   }
@@ -321,46 +254,27 @@ export class InstallApplicationCommand extends CommandRunner {
     return workspaces.map((workspace) => workspace.id);
   }
 
-  private async installOnWorkspaces({
-    registration,
-    targetVersion,
+  // Matches on the universal identifier, the same identity
+  // ApplicationInstallService uses to decide between a fresh install and a
+  // version upgrade, so a row with a stale registration id is not mistaken
+  // for a missing installation.
+  private async findAlreadyInstalledWorkspaceIds({
+    universalIdentifier,
     workspaceIds,
-    batchSize = DEFAULT_BATCH_SIZE,
   }: {
-    registration: ApplicationRegistrationEntity;
-    targetVersion: string | null;
+    universalIdentifier: string;
     workspaceIds: string[];
-    batchSize?: number;
-  }): Promise<void> {
-    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+  }): Promise<Set<string>> {
+    const existingApplications = await this.applicationRepository.find({
+      select: ['workspaceId'],
+      where: {
+        universalIdentifier,
+        workspaceId: In(workspaceIds),
+      },
+    });
 
-    for (
-      let batchStart = 0;
-      batchStart < workspaceIds.length;
-      batchStart += sanitizedBatchSize
-    ) {
-      const batch = workspaceIds.slice(
-        batchStart,
-        batchStart + sanitizedBatchSize,
-      );
-
-      await Promise.all(
-        batch.map(async (workspaceId) => {
-          try {
-            await this.applicationInstallService.installApplication({
-              appRegistrationId: registration.id,
-              version: targetVersion ?? undefined,
-              workspaceId,
-            });
-          } catch (error) {
-            this.logger.error(
-              `Failed to install application ${registration.universalIdentifier} in workspace ${workspaceId}: ${
-                error instanceof Error ? error.message : String(error)
-              }`,
-            );
-          }
-        }),
-      );
-    }
+    return new Set(
+      existingApplications.map((application) => application.workspaceId),
+    );
   }
 }
