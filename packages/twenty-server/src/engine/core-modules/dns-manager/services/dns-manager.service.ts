@@ -112,6 +112,10 @@ export class DnsManagerService {
             `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
         },
       ],
+      // Derived from the statuses computed above instead of issuing a
+      // second, redundant "customHostnames.list" call via isHostnameWorking().
+      isWorking:
+        statuses.redirection === 'success' && statuses.ssl === 'success',
     };
   }
 

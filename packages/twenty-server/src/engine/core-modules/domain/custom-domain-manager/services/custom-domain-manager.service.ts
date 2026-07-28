@@ -104,8 +104,13 @@ export class CustomDomainManagerService {
 
     assertIsDefinedOrThrow(customDomainWithRecords);
 
-    const isCustomDomainWorking =
-      await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
+    // When domainValidRecord is passed in, it comes from refreshHostname(),
+    // whose snapshot is taken *before* its Cloudflare `edit()` call. Reusing
+    // its isWorking here would report stale, pre-refresh status. Only reuse
+    // isWorking when we fetched customDomainWithRecords ourselves above.
+    const isCustomDomainWorking = domainValidRecord
+      ? await this.dnsManagerService.isHostnameWorking(workspace.customDomain)
+      : customDomainWithRecords.isWorking;
 
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;

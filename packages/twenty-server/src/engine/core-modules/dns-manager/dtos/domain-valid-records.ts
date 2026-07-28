@@ -33,4 +33,7 @@ export class DomainValidRecords {
 
   @Field(() => Boolean, { nullable: true })
   isCustomDomainEnabled?: boolean;
+
+  @Field(() => Boolean)
+  isWorking: boolean;
 }

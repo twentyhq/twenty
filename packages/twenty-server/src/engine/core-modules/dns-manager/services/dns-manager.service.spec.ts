@@ -218,6 +218,7 @@ describe('DnsManagerService', () => {
         id: 'custom-id',
         domain: customDomain,
         records: expect.any(Array),
+        isWorking: false,
       });
 
       expect(result?.records[0].value === 'https://front.domain');
@@ -264,9 +265,52 @@ describe('DnsManagerService', () => {
         id: 'custom-id',
         domain: customDomain,
         records: expect.any(Array),
+        isWorking: false,
       });
 
       expect(result?.records[0].value === 'https://front.public-domain');
+    });
+
+    it('should mark isWorking as true when redirection and ssl are both successful, and false otherwise', async () => {
+      const customDomain = 'example.com';
+      const buildMockResult = (sslStatus?: string) => ({
+        id: 'custom-id',
+        hostname: customDomain,
+        created_at: undefined,
+        verification_errors: [],
+        ssl: { status: sslStatus, dcv_delegation_records: [] },
+      });
+      const cloudflareMock = {
+        customHostnames: {
+          list: jest
+            .fn()
+            .mockResolvedValueOnce({ result: [buildMockResult('active')] })
+            .mockResolvedValueOnce({ result: [buildMockResult('pending')] }),
+        },
+      };
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
+      jest
+        .spyOn(domainServerConfigService, 'getBaseUrl')
+        .mockReturnValue(new URL('https://front.domain'));
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
+
+      const workingResult = await dnsManagerService.getHostnameWithRecords(
+        customDomain,
+        { isPublicDomain: false },
+      );
+
+      expect(workingResult?.isWorking).toBe(true);
+
+      const pendingResult = await dnsManagerService.getHostnameWithRecords(
+        customDomain,
+        { isPublicDomain: false },
+      );
+
+      expect(pendingResult?.isWorking).toBe(false);
+      // A single Cloudflare call per getHostnameWithRecords invocation -
+      // isWorking must be derived, not fetched via a second call.
+      expect(cloudflareMock.customHostnames.list).toHaveBeenCalledTimes(2);
     });
 
     it('should throw an error if multiple results are found', async () => {

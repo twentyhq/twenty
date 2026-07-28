@@ -143,10 +143,14 @@ export class PublicDomainService {
 
     if (!publicDomainWithRecords) return;
 
-    const isCustomDomainWorking =
-      await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {
-        isPublicDomain: true,
-      });
+    // Same reasoning as CustomDomainManagerService: a passed-in
+    // domainValidRecords comes from refreshHostname()'s pre-edit snapshot,
+    // so it must not be trusted for the working status after a refresh.
+    const isCustomDomainWorking = domainValidRecords
+      ? await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {
+          isPublicDomain: true,
+        })
+      : publicDomainWithRecords.isWorking;
 
     if (publicDomain.isValidated !== isCustomDomainWorking) {
       publicDomain.isValidated = isCustomDomainWorking;
