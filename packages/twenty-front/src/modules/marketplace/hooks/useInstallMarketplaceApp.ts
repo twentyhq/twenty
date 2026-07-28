@@ -1,5 +1,6 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -13,7 +14,7 @@ export const useInstallMarketplaceApp = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
   const [installApplicationMutation] = useMutation(InstallApplicationDocument);
-  const { loadCurrentUser } = useLoadCurrentUser();
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const install = async (variables: {
     universalIdentifier: string;
@@ -25,7 +26,23 @@ export const useInstallMarketplaceApp = () => {
       const result = await installApplicationMutation({ variables });
 
       if (isDefined(result.data)) {
-        await loadCurrentUser();
+        const installedApplication = result.data.installApplication;
+
+        // the workspace carries the applications app chips resolve their logo
+        // from, so the freshly installed one has to be added to it
+        setCurrentWorkspace((currentWorkspace) =>
+          isDefined(currentWorkspace)
+            ? {
+                ...currentWorkspace,
+                installedApplications: [
+                  ...currentWorkspace.installedApplications.filter(
+                    (application) => application.id !== installedApplication.id,
+                  ),
+                  installedApplication,
+                ],
+              }
+            : currentWorkspace,
+        );
 
         enqueueSuccessSnackBar({
           message: t`Application installed successfully.`,
