@@ -23,7 +23,6 @@ import { slackRemoveReactionHandler } from 'src/logic-functions/handlers/slack-r
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
-import { buildSlackAssistantUserFacingErrorMessage } from 'src/logic-functions/utils/build-slack-assistant-user-facing-error-message';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
 import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
@@ -166,12 +165,8 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (!agentResult.success) {
-      const errorMessage = agentResult.error ?? 'Agent execution failed';
-
       return await finishWithFailure({
-        errorMessage,
-        slackMessageText:
-          buildSlackAssistantUserFacingErrorMessage(errorMessage),
+        errorMessage: agentResult.error ?? 'Agent execution failed',
       });
     }
 
@@ -213,12 +208,9 @@ export const slackAssistantWorkerHandler = async (
 
     return { done: true };
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Unexpected worker error';
-
     return await finishWithFailure({
-      errorMessage: message,
-      slackMessageText: buildSlackAssistantUserFacingErrorMessage(message),
+      errorMessage:
+        error instanceof Error ? error.message : 'Unexpected worker error',
     });
   }
 };
