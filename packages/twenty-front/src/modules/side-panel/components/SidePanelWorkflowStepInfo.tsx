@@ -4,7 +4,6 @@ import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePane
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,13 +14,14 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
@@ -60,7 +60,7 @@ export const SidePanelWorkflowStepInfo = ({
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const { updateOneRecord: updateOneWorkflowVersion } = useUpdateOneRecord();
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger(instanceId);
 
   const {
     trigger,
@@ -153,31 +153,27 @@ export const SidePanelWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
+    if (stepDefinition.type === 'trigger') {
+      await updateTrigger({
+        ...stepDefinition.definition,
+        name: title,
+      } as typeof stepDefinition.definition);
+
+      return;
+    }
+
     const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
 
-    if (isTrigger) {
-      await updateOneWorkflowVersion({
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        idToUpdate: targetWorkflowVersionId,
-        updateOneRecordInput: {
-          trigger: {
-            ...stepDefinition.definition,
-            name: title,
-          } as typeof stepDefinition.definition,
-        },
-      });
-    } else {
-      await updateWorkflowVersionStep({
-        workflowVersionId: targetWorkflowVersionId,
-        step: {
-          ...stepDefinition.definition,
-          name: title,
-        },
-      });
+    await updateWorkflowVersionStep({
+      workflowVersionId: targetWorkflowVersionId,
+      step: {
+        ...stepDefinition.definition,
+        name: title,
+      },
+    });
 
-      if (isDefined(agentId)) {
-        await updateAgentLabel(title);
-      }
+    if (isDefined(agentId)) {
+      await updateAgentLabel(title);
     }
   };
 
