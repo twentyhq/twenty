@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { computeLabelIdentifierViewFieldPosition } from 'src/database/commands/upgrade-version-command/2-25/utils/compute-label-identifier-view-field-position.util';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -23,6 +24,8 @@ const SUBJECT_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.fields.subject.universalIdentifier;
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.views.allMessageCampaigns.viewFields.name.universalIdentifier;
+const ALL_CAMPAIGNS_VIEW_UNIVERSAL_IDENTIFIER =
+  CAMPAIGN.views.allMessageCampaigns.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.25.0', 1785229970000)
 @Command({
@@ -124,7 +127,24 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         );
       }
 
-      viewFieldsToCreate.push(standardNameViewField);
+      const otherViewFieldPositions = Object.values(
+        flatViewFieldMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (viewField) =>
+            viewField.viewUniversalIdentifier ===
+            ALL_CAMPAIGNS_VIEW_UNIVERSAL_IDENTIFIER,
+        )
+        .map(({ position }) => position);
+
+      viewFieldsToCreate.push({
+        ...standardNameViewField,
+        position: computeLabelIdentifierViewFieldPosition({
+          otherViewFieldPositions,
+          standardPosition: standardNameViewField.position,
+        }),
+      });
     }
 
     // Move the label identifier from subject to name, but never clobber a
