@@ -956,6 +956,7 @@ export type ClientConfig = {
   isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
   isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
+  isOnboardingAiChatEnabled: Scalars['Boolean']['output'];
   isWorkspaceSchemaDDLLocked: Scalars['Boolean']['output'];
   maintenance?: Maybe<ClientConfigMaintenanceMode>;
   publicFeatureFlags: Array<PublicFeatureFlag>;
@@ -1772,7 +1773,6 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
-  IS_ONBOARDING_AI_CHAT_ENABLED = 'IS_ONBOARDING_AI_CHAT_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_SETTINGS_DISCOVERY_HERO_ENABLED = 'IS_SETTINGS_DISCOVERY_HERO_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',

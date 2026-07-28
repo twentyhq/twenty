@@ -1953,11 +1953,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Enable or disable workspace company enrichment during onboarding',
+      'Enable or disable the AI chat that helps set up the workspace at the end of onboarding',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_WORKSPACE_COMPANY_ENRICHMENT_ENABLED = false;
+  IS_ONBOARDING_AI_CHAT_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
