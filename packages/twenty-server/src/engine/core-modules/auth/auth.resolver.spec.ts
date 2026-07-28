@@ -230,7 +230,7 @@ describe('AuthResolver', () => {
       );
     });
 
-    it('should throttle by normalized email address', async () => {
+    it('should throttle and enqueue with a normalized email address', async () => {
       await resolver.emailPasswordResetLink(
         {
           email: 'TeSt@Example.com',
@@ -243,6 +243,11 @@ describe('AuthResolver', () => {
         1,
         expect.any(Number),
         expect.any(Number),
+      );
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        EmailPasswordResetLinkJob.name,
+        expect.objectContaining({ email: 'test@example.com' }),
+        { retryLimit: 3 },
       );
     });
 

@@ -967,7 +967,7 @@ export class AuthResolver {
     await this.messageQueueService.add<EmailPasswordResetLinkJobData>(
       EmailPasswordResetLinkJob.name,
       {
-        email: emailPasswordResetInput.email,
+        email: normalizedEmail,
         workspaceId: emailPasswordResetInput.workspaceId,
         locale: context.req.locale,
       },
