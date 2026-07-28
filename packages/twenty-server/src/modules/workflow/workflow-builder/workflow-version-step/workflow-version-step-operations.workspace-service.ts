@@ -93,9 +93,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
-  // Workflow agents are created with a concrete model id (the workspace's
-  // resolved default smart model) instead of the auto-select id, so the model
-  // displayed in the builder is the one actually used at run time.
   private async resolveDefaultAgentModelId(
     workspaceId: string,
   ): Promise<string> {
