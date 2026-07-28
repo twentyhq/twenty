@@ -167,8 +167,9 @@ describe('renderCampaignBodyToHtml', () => {
   });
 
   it('should render a document with no content at all', async () => {
-    await renderCampaignBodyToHtml('{"type":"doc"}', VARIABLES);
+    const html = await renderCampaignBodyToHtml('{"type":"doc"}', VARIABLES);
 
+    expect(html).toBe('<p>rendered html</p>');
     expect(renderedDocument()).toEqual({ type: 'doc' });
   });
 });
