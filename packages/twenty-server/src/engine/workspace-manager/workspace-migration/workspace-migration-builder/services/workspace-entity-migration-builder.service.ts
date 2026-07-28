@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +35,12 @@ import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/work
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { topologicallySortUniversalFlatEntitiesForSelfReferentialFks } from 'src/engine/workspace-manager/workspace-migration/utils/topologically-sort-universal-flat-entities-for-self-referential-fks.util';
-import { FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { UniversalFlatEntityPropertyDivergence } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-property-divergence.type';
+import {
+  FailedFlatEntityValidation,
+  FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/failed-flat-entity-validate-and-build.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
 import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
@@ -329,6 +335,17 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         );
       }
 
+      if (flatEntityUpdate.nonUpdatablePropertyDivergences.length > 0) {
+        allValidationResult.push(
+          this.buildNonUpdatablePropertyDivergenceValidationError({
+            universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+            nonUpdatablePropertyDivergences:
+              flatEntityUpdate.nonUpdatablePropertyDivergences,
+          }),
+        );
+        continue;
+      }
+
       const validationResult = await this.validateFlatEntityUpdate({
         finalFlatEntityMaps,
         flatEntityUpdate: flatEntityUpdate.update,
@@ -471,6 +488,33 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       attributes: { metadataName: this.metadataName, phase },
       bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
     });
+  }
+
+  private buildNonUpdatablePropertyDivergenceValidationError({
+    universalIdentifier,
+    nonUpdatablePropertyDivergences,
+  }: {
+    universalIdentifier: string;
+    nonUpdatablePropertyDivergences: UniversalFlatEntityPropertyDivergence<T>[];
+  }): FailedFlatEntityValidation<T, 'update'> {
+    const validationError = getEmptyFlatEntityValidationError({
+      metadataName: this.metadataName,
+      flatEntityMinimalInformation: {
+        universalIdentifier,
+      } as Partial<MetadataFlatEntity<T>>,
+      type: 'update',
+    });
+
+    validationError.errors = nonUpdatablePropertyDivergences.map(
+      ({ property, fromValue, toValue }) => ({
+        code: 'NON_UPDATABLE_PROPERTY_DIVERGENCE',
+        message: `Property "${String(property)}" of ${this.metadataName} "${universalIdentifier}" cannot be updated`,
+        userFriendlyMessage: msg`Property "${String(property)}" cannot be updated`,
+        value: { fromValue, toValue },
+      }),
+    );
+
+    return validationError;
   }
 
   private validateUniversalIdentifier({

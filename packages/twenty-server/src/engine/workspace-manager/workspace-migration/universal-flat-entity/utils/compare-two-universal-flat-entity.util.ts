@@ -5,7 +5,9 @@ import { parseJson } from 'twenty-shared/utils';
 
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
 import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
+import { type UniversalFlatEntityPropertyDivergence } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-property-divergence.type';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { transformUniversalFlatEntityForComparison } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/transform-universal-flat-entity-for-comparison.util';
 
@@ -14,14 +16,28 @@ type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
   'universalFlatEntity'
 > & { metadataName: T };
 
+export type CompareTwoUniversalFlatEntityResult<T extends AllMetadataName> = {
+  update: UniversalFlatEntityUpdate<T>;
+  nonUpdatablePropertyDivergences: UniversalFlatEntityPropertyDivergence<T>[];
+};
+
+const normalizeValueForComparison = (value: unknown): unknown =>
+  typeof value === 'object' && value !== null
+    ? JSON.stringify(orderObjectProperties(value))
+    : value;
+
 export const compareTwoFlatEntity = <T extends AllMetadataName>({
   fromUniversalFlatEntity,
   toUniversalFlatEntity,
   metadataName,
 }: CompareTwoUniversalFlatEntityArgs<T>):
-  | UniversalFlatEntityUpdate<T>
+  | CompareTwoUniversalFlatEntityResult<T>
   | undefined => {
-  const { propertiesToStringify, propertiesToCompare } =
+  const {
+    propertiesToStringify,
+    propertiesToCompare,
+    propertiesToReportDivergence,
+  } =
     ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
 
   const [transformedFromUniversalFlatEntity, transformedToUniversalFlatEntity] =
@@ -40,13 +56,32 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
     transformedToUniversalFlatEntity,
   );
 
-  if (flatEntityDifferences.length === 0) {
+  const nonUpdatablePropertyDivergences = propertiesToReportDivergence.flatMap<
+    UniversalFlatEntityPropertyDivergence<T>
+  >((property) => {
+    const fromValue = fromUniversalFlatEntity[property];
+    const toValue = toUniversalFlatEntity[property];
+
+    if (
+      normalizeValueForComparison(fromValue) ===
+      normalizeValueForComparison(toValue)
+    ) {
+      return [];
+    }
+
+    return [{ property, fromValue, toValue }];
+  });
+
+  if (
+    flatEntityDifferences.length === 0 &&
+    nonUpdatablePropertyDivergences.length === 0
+  ) {
     return undefined;
   }
 
   const initialAccumulator: UniversalFlatEntityUpdate<T> = {};
 
-  return flatEntityDifferences.reduce((accumulator, difference) => {
+  const update = flatEntityDifferences.reduce((accumulator, difference) => {
     switch (difference.type) {
       case 'CHANGE': {
         const { path, value } = difference;
@@ -75,4 +110,6 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
       }
     }
   }, initialAccumulator);
+
+  return { update, nonUpdatablePropertyDivergences };
 };
