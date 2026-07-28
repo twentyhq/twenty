@@ -3,42 +3,30 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { SidePanelSearchRecordPreview } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreview';
+import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
+import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledSearchRecordsPage = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-`;
-
-const StyledResultsContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-`;
-
-const StyledPreviewContainer = styled.div`
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  height: 50%;
-  min-height: 0;
+// The card brings its own surface, so the tooltip only contributes the shadow
+const previewTooltipClass = css`
+  background: transparent !important;
+  border-radius: ${themeCssVariables.border.radius.md} !important;
+  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
+  padding: 0 !important;
 `;
 
 export const SidePanelSearchRecordsPage = () => {
@@ -59,45 +47,45 @@ export const SidePanelSearchRecordsPage = () => {
   const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
 
   return (
-    <StyledSearchRecordsPage>
-      <StyledResultsContainer>
-        <SidePanelList
-          selectableItemIds={selectableItemIds}
-          loading={loading}
-          noResults={noResults}
-        >
-          {searchResultItems.length > 0 && (
-            <SidePanelGroup heading={t`Results`}>
-              {searchResultItems.map((item) => {
-                const isTaskOrNote = [
-                  CoreObjectNameSingular.Task,
-                  CoreObjectNameSingular.Note,
-                ].includes(item.objectNameSingular as CoreObjectNameSingular);
+    <>
+      <SidePanelList
+        selectableItemIds={selectableItemIds}
+        loading={loading}
+        noResults={noResults}
+      >
+        {searchResultItems.length > 0 && (
+          <SidePanelGroup heading={t`Results`}>
+            {searchResultItems.map((item) => {
+              const isTaskOrNote = [
+                CoreObjectNameSingular.Task,
+                CoreObjectNameSingular.Note,
+              ].includes(item.objectNameSingular as CoreObjectNameSingular);
 
-                const handleClick = () => {
-                  if (isTaskOrNote) {
-                    openRecordInSidePanel({
-                      recordId: item.recordId,
-                      objectNameSingular:
-                        item.objectNameSingular as CoreObjectNameSingular,
-                    });
-                  } else {
-                    closeCommandMenu();
-                    navigate(
-                      getAppPath(AppPath.RecordShowPage, {
-                        objectNameSingular: item.objectNameSingular,
-                        objectRecordId: item.recordId,
-                      }),
-                    );
-                  }
-                };
+              const handleClick = () => {
+                if (isTaskOrNote) {
+                  openRecordInSidePanel({
+                    recordId: item.recordId,
+                    objectNameSingular:
+                      item.objectNameSingular as CoreObjectNameSingular,
+                  });
+                } else {
+                  closeCommandMenu();
+                  navigate(
+                    getAppPath(AppPath.RecordShowPage, {
+                      objectNameSingular: item.objectNameSingular,
+                      objectRecordId: item.recordId,
+                    }),
+                  );
+                }
+              };
 
-                return (
-                  <SelectableListItem
-                    key={item.id}
-                    itemId={item.id}
-                    onEnter={handleClick}
-                  >
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleClick}
+                >
+                  <div id={getSidePanelSearchResultAnchorId(item.id)}>
                     <CommandMenuItem
                       id={item.id}
                       label={item.label}
@@ -112,23 +100,33 @@ export const SidePanelSearchRecordsPage = () => {
                         />
                       }
                     />
-                  </SelectableListItem>
-                );
-              })}
-            </SidePanelGroup>
-          )}
-        </SidePanelList>
-      </StyledResultsContainer>
+                  </div>
+                </SelectableListItem>
+              );
+            })}
+          </SidePanelGroup>
+        )}
+      </SidePanelList>
 
       {shouldDisplayPreview && (
-        <StyledPreviewContainer>
-          <SidePanelSearchRecordPreview
-            key={previewedItem.recordId}
+        <AppTooltip
+          key={previewedItem.recordId}
+          anchorSelect={`#${getSidePanelSearchResultAnchorId(previewedItem.id)}`}
+          place="left-start"
+          offset={16}
+          noArrow
+          clickable
+          isOpen
+          delay={TooltipDelay.noDelay}
+          className={previewTooltipClass}
+          width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
+        >
+          <SidePanelSearchRecordPreviewCard
             objectNameSingular={previewedItem.objectNameSingular}
             recordId={previewedItem.recordId}
           />
-        </StyledPreviewContainer>
+        </AppTooltip>
       )}
-    </StyledSearchRecordsPage>
+    </>
   );
 };
