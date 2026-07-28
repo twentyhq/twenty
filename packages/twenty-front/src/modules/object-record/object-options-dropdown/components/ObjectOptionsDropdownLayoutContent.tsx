@@ -4,7 +4,6 @@ import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-opti
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -26,7 +25,6 @@ import {
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -69,9 +67,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     [updateCurrentView],
   );
 
-  const recordIndexOpenRecordIn = useAtomStateValue(
-    recordIndexOpenRecordInState,
-  );
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
@@ -305,7 +300,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               <MenuItem
                 focused={selectedItemId === ViewOpenRecordIn.SIDE_PANEL}
                 LeftIcon={
-                  recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL
+                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
                     ? IconLayoutSidebarRight
                     : IconLayoutNavbar
                 }
@@ -314,7 +309,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   onContentChange('layoutOpenIn');
                 }}
                 contextualText={
-                  recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL
+                  currentView?.openRecordIn === ViewOpenRecordIn.SIDE_PANEL
                     ? t`Side Panel`
                     : t`Record Page`
                 }

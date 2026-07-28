@@ -18,7 +18,7 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useGetOpenRecordIn } from '@/object-record/record-index/hooks/useGetOpenRecordIn';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -85,9 +85,9 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const { getOpenRecordIn } = useGetOpenRecordIn();
-
   const { objectNameSingular } = useRecordIndexContextOrThrow();
+
+  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
 
   const openTableCell = useCallback(
     ({
@@ -122,9 +122,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       if ((isFirstColumnCell && !isEmpty) || isNavigating) {
         leaveTableFocus();
 
-        if (
-          getOpenRecordIn(objectNameSingular) === ViewOpenRecordIn.SIDE_PANEL
-        ) {
+        if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
           activateRecordTableRow(cellPosition.row);
           unfocusRecordTableRow();
         }
@@ -199,8 +197,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       scopeInstanceId,
       leaveTableFocus,
       openRecordFromIndexView,
-      getOpenRecordIn,
-      objectNameSingular,
+      openRecordIn,
       activateRecordTableRow,
       unfocusRecordTableRow,
       store,
