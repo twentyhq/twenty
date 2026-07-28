@@ -23,6 +23,11 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
+const pendingJunctionCreationByLink = new Map<string, Promise<void>>();
+
+const getLinkKey = (sourceRecordId: string, targetRecordId: string) =>
+  `${sourceRecordId}:${targetRecordId}`;
+
 type UseUpdateJunctionRelationFromCellArgs = {
   fieldMetadataItem: FieldMetadataItem;
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
@@ -67,6 +72,18 @@ export const useUpdateJunctionRelationFromCell = ({
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const store = useStore();
+
+  const getJunctionRecordsFromStore = useCallback(() => {
+    const recordFromStore = store.get(
+      recordStoreFamilyState.atomFamily(recordId),
+    );
+
+    return (
+      (recordFromStore?.[fieldName] as
+        | FieldRelationValue<FieldRelationFromManyValue>
+        | undefined) ?? []
+    );
+  }, [store, recordId, fieldName]);
 
   const setJunctionRecordsInStore = useCallback(
     (
@@ -141,18 +158,14 @@ export const useUpdateJunctionRelationFromCell = ({
         return;
       }
 
-      const recordFromStore = store.get(
-        recordStoreFamilyState.atomFamily(recordId),
-      );
-      const currentJunctionRecords =
-        (recordFromStore?.[fieldName] as
-          | FieldRelationValue<FieldRelationFromManyValue>
-          | undefined) ?? [];
-
       // morphItem.isSelected represents the NEW state (what the user wants)
       if (!morphItem.isSelected) {
+        await pendingJunctionCreationByLink
+          .get(getLinkKey(recordId, morphItem.recordId))
+          ?.catch(() => undefined);
+
         const junctionRecordToDelete = findJunctionRecordByTargetId({
-          junctionRecords: currentJunctionRecords,
+          junctionRecords: getJunctionRecordsFromStore(),
           targetRecordId: morphItem.recordId,
           targetFieldName,
         });
@@ -194,7 +207,7 @@ export const useUpdateJunctionRelationFromCell = ({
           },
         ]);
 
-        const [persistedJunctionRecord] = await createJunctionRecords({
+        const junctionRecordCreation = createJunctionRecords({
           recordsToCreate: [
             {
               [sourceJoinColumnName]: recordId,
@@ -202,27 +215,37 @@ export const useUpdateJunctionRelationFromCell = ({
             },
           ],
           upsert: true,
+        }).then(([persistedJunctionRecord]) => {
+          if (!isDefined(persistedJunctionRecord)) {
+            return;
+          }
+
+          setJunctionRecordsInStore((junctionRecords) =>
+            junctionRecords.map((junctionRecord) =>
+              junctionRecord.id === optimisticJunctionId
+                ? { ...junctionRecord, id: persistedJunctionRecord.id }
+                : junctionRecord,
+            ),
+          );
         });
 
-        if (!isDefined(persistedJunctionRecord)) {
-          return;
-        }
+        const linkKey = getLinkKey(recordId, morphItem.recordId);
 
-        setJunctionRecordsInStore((junctionRecords) =>
-          junctionRecords.map((junctionRecord) =>
-            junctionRecord.id === optimisticJunctionId
-              ? { ...junctionRecord, id: persistedJunctionRecord.id }
-              : junctionRecord,
-          ),
-        );
+        pendingJunctionCreationByLink.set(linkKey, junctionRecordCreation);
+
+        try {
+          await junctionRecordCreation;
+        } finally {
+          pendingJunctionCreationByLink.delete(linkKey);
+        }
       }
     },
     [
       store,
       createJunctionRecords,
       deleteJunctionRecord,
+      getJunctionRecordsFromStore,
       setJunctionRecordsInStore,
-      fieldName,
       junctionConfig,
       junctionObjectMetadata,
       objectMetadataItems,
