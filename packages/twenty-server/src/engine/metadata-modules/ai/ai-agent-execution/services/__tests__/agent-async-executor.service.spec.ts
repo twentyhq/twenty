@@ -42,7 +42,7 @@ const generateTextMock = generateText as jest.MockedFunction<
 
 describe('AgentAsyncExecutorService — workflow agent role-scoped tool resolution', () => {
   let service: AgentAsyncExecutorService;
-  let toolRegistry: { getToolsByCategories: jest.Mock };
+  let toolRegistry: { buildToolIndex: jest.Mock };
   let roleTargetRepository: { findOne: jest.Mock };
   let aiBillingService: {
     decrementAndCheckAvailableCredits: jest.Mock;
@@ -65,7 +65,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     }) as AgentEntity;
 
   beforeEach(async () => {
-    toolRegistry = { getToolsByCategories: jest.fn().mockResolvedValue({}) };
+    toolRegistry = { buildToolIndex: jest.fn().mockResolvedValue([]) };
     roleTargetRepository = { findOne: jest.fn() };
     aiBillingService = {
       decrementAndCheckAvailableCredits: jest
@@ -132,7 +132,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     service = module.get<AgentAsyncExecutorService>(AgentAsyncExecutorService);
   });
 
-  it('passes intersectionOf: [agentRoleId] when the agent has a role assigned', async () => {
+  it('builds the lazy tool catalog scoped to the agent role when one is assigned', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
 
     await service.executeAgent({
@@ -141,14 +141,11 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       workspaceId,
     });
 
-    expect(toolRegistry.getToolsByCategories).toHaveBeenCalledTimes(1);
-    expect(toolRegistry.getToolsByCategories).toHaveBeenCalledWith(
-      expect.objectContaining({
-        roleId: agentRoleId,
-        rolePermissionConfig: { intersectionOf: [agentRoleId] },
-        workspaceId,
-      }),
-      expect.objectContaining({ wrapWithErrorContext: false }),
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.any(Object),
     );
   });
 
@@ -161,7 +158,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       workspaceId,
     });
 
-    expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+    expect(toolRegistry.buildToolIndex).not.toHaveBeenCalled();
   });
 
   describe('cost folding', () => {
