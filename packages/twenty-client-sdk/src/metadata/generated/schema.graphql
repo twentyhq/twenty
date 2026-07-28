@@ -2071,7 +2071,7 @@ type MarketplaceApp {
   description: String!
   author: String!
   category: String!
-  logo: String
+  logoUrl: String
   sourcePackage: String
   isVetted: Boolean!
 }
@@ -2121,7 +2121,7 @@ type MarketplaceAppDetail {
   description: String
   author: String
   category: String
-  logo: String
+  logoUrl: String
   websiteUrl: String
   aboutDescription: String
   termsUrl: String
