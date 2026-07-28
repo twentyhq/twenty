@@ -200,7 +200,7 @@ const buildArgs = ({
     context: {},
   }) as unknown as BuildSideEffectsArgs<'fieldMetadata'>;
 
-// Synced INDEX view: the 2-25 reconcile command re-owns every INDEX view to the
+// Synced INDEX view: the 2-26 reconcile command re-owns every INDEX view to the
 // derived identifier, so the handler resolves it by that identifier alone.
 const SYNCED_INDEX_VIEW: WorkspaceView = {
   id: 'view-db-id-1',

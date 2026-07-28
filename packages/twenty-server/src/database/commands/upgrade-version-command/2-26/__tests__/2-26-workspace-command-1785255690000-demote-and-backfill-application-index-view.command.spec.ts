@@ -5,7 +5,7 @@ import {
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { DemoteAndBackfillApplicationIndexViewCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785227955171-demote-and-backfill-application-index-view.command';
+import { DemoteAndBackfillApplicationIndexViewCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-workspace-command-1785255690000-demote-and-backfill-application-index-view.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

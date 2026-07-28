@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { invalidateIndexViewReconcileCache } from 'src/database/commands/upgrade-version-command/2-25/utils/invalidate-index-view-reconcile-cache.util';
+import { invalidateIndexViewReconcileCache } from 'src/database/commands/upgrade-version-command/2-26/utils/invalidate-index-view-reconcile-cache.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -31,9 +31,9 @@ type BackfillOperationsByApplication = Map<
   }
 >;
 
-@RegisteredWorkspaceCommand('2.25.0', 1785227955171)
+@RegisteredWorkspaceCommand('2.26.0', 1785255690000)
 @Command({
-  name: 'upgrade:2-25:demote-and-backfill-application-index-view',
+  name: 'upgrade:2-26:demote-and-backfill-application-index-view',
   description:
     'Manifest-installed applications never had their INDEX view auto-provisioned: the ones that declared a view with ViewKey.INDEX authored it themselves under a manifest identifier. The engine is now the sole owner of the INDEX key, so every caller-authored (isSystemSideEffect: false) INDEX view owned by an application other than twenty-standard and workspace-custom is demoted to key: null — it becomes a plain additional view under its manifest identifier, and the flat view validator rejects caller-provided INDEX keys so a later app sync cannot promote it back. Every application object left without an engine-owned INDEX view then gets one backfilled through the workspace migration pipeline with its full view-field layout, converging upgraded installs with fresh installs. Views are committed before view fields across all applications because a view field belongs to the application owning its field, which can differ from the application owning the object (fields can be created on another application object).',
 })

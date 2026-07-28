@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { invalidateIndexViewReconcileCache } from 'src/database/commands/upgrade-version-command/2-25/utils/invalidate-index-view-reconcile-cache.util';
+import { invalidateIndexViewReconcileCache } from 'src/database/commands/upgrade-version-command/2-26/utils/invalidate-index-view-reconcile-cache.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -30,9 +30,9 @@ type ReownUpdate = {
   };
 };
 
-@RegisteredWorkspaceCommand('2.25.0', 1785227955169)
+@RegisteredWorkspaceCommand('2.26.0', 1785255689000)
 @Command({
-  name: 'upgrade:2-25:reconcile-index-view-universal-identifier',
+  name: 'upgrade:2-26:reconcile-index-view-universal-identifier',
   description:
     'Re-own the INDEX table views ("All {objectLabelPlural}", keyed on ViewKey.INDEX) of the twenty-standard and workspace-custom applications, and all their view fields, onto the engine convention: the view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, object identifier + INDEX key), each view field gets the derived getViewFieldUniversalIdentifier — whatever application owns it, so an app column on a standard INDEX view converges too — and both get isSystemSideEffect: true, as if provisioned by the metadata side-effect engine. INDEX views of other applications are handled by the demote-and-backfill command. Children reference the view by primary key, so the re-own is a lossless update.',
 })
