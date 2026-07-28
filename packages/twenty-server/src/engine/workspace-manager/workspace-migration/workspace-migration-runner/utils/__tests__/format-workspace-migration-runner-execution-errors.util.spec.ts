@@ -95,12 +95,20 @@ describe('formatWorkspaceMigrationRunnerExecutionErrors', () => {
     ).toBe('[metadata] current transaction is aborted (pg code: 25P02)');
   });
 
-  it('truncates an oversized summary', () => {
+  it('truncates an oversized summary to the cap, marker included', () => {
     const summary = formatWorkspaceMigrationRunnerExecutionErrors({
       metadata: new Error('x'.repeat(5_000)),
     });
 
-    expect(summary).toHaveLength(1_500 + ' [truncated]'.length);
+    expect(summary).toHaveLength(1_500);
     expect(summary?.endsWith(' [truncated]')).toBe(true);
+  });
+
+  it('stringifies a non-Error rejection value', () => {
+    expect(
+      formatWorkspaceMigrationRunnerExecutionErrors({
+        metadata: 'plain string rejection' as unknown as Error,
+      }),
+    ).toBe('[metadata] plain string rejection');
   });
 });

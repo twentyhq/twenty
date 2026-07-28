@@ -5,6 +5,8 @@ import { type WorkspaceMigrationRunnerExecutionErrors } from 'src/engine/workspa
 
 const MAX_EXECUTION_ERRORS_SUMMARY_LENGTH = 1_500;
 
+const TRUNCATION_MARKER = ' [truncated]';
+
 const POSTGRES_TRANSACTION_ABORTED_CODE = '25P02';
 
 type ExecutionErrorEntry = {
@@ -23,6 +25,8 @@ const isTransactionAbortedError = (error: Error): boolean =>
   getPostgresDriverError(error)?.code === POSTGRES_TRANSACTION_ABORTED_CODE;
 
 const formatSingleExecutionError = (error: Error): string => {
+  // Rejection reasons are typed as Error but nothing guarantees it at runtime.
+  const baseMessage = error instanceof Error ? error.message : String(error);
   const driverError = getPostgresDriverError(error);
   const driverErrorParts = [
     isDefined(driverError?.code) ? `pg code: ${driverError.code}` : null,
@@ -30,8 +34,8 @@ const formatSingleExecutionError = (error: Error): string => {
   ].filter(isDefined);
 
   return driverErrorParts.length > 0
-    ? `${error.message} (${driverErrorParts.join(', ')})`
-    : error.message;
+    ? `${baseMessage} (${driverErrorParts.join(', ')})`
+    : baseMessage;
 };
 
 export const formatWorkspaceMigrationRunnerExecutionErrors = (
@@ -63,5 +67,8 @@ export const formatWorkspaceMigrationRunnerExecutionErrors = (
 
   return summary.length <= MAX_EXECUTION_ERRORS_SUMMARY_LENGTH
     ? summary
-    : `${summary.slice(0, MAX_EXECUTION_ERRORS_SUMMARY_LENGTH)} [truncated]`;
+    : `${summary.slice(
+        0,
+        MAX_EXECUTION_ERRORS_SUMMARY_LENGTH - TRUNCATION_MARKER.length,
+      )}${TRUNCATION_MARKER}`;
 };
