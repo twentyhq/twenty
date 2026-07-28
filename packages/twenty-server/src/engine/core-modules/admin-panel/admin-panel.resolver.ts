@@ -217,7 +217,7 @@ export class AdminPanelResolver {
       { messageCampaignDailySendLimit: input.dailySendLimit ?? null },
     );
 
-    if (affected === 0) {
+    if (!isDefined(affected) || affected === 0) {
       throw new UserInputError(`Workspace ${input.workspaceId} not found`);
     }
 
