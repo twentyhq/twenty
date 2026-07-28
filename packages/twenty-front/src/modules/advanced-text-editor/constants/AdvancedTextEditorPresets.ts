@@ -5,9 +5,10 @@ import { type AdvancedTextEditorPreset } from '@/advanced-text-editor/types/Adva
 // the editor's shape per context stays reviewable in one place.
 export const ADVANCED_TEXT_EDITOR_PRESETS = {
   // The campaign body owns its whole tab, so it fills the widget instead of
-  // sitting in a bordered box.
+  // sitting in a bordered box. Stored as TipTap JSON so the server can render
+  // it to email-safe HTML at send time, like the workflow email node.
   campaignBody: {
-    contentType: 'html',
+    contentType: 'json',
     chrome: 'document',
     minHeight: 0,
     enableFullScreen: false,
