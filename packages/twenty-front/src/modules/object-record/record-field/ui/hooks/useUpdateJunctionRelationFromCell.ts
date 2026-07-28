@@ -23,11 +23,6 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-const pendingJunctionCreationByLink = new Map<string, Promise<void>>();
-
-const getLinkKey = (sourceRecordId: string, targetRecordId: string) =>
-  `${sourceRecordId}:${targetRecordId}`;
-
 type UseUpdateJunctionRelationFromCellArgs = {
   fieldMetadataItem: FieldMetadataItem;
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
@@ -115,20 +110,16 @@ export const useUpdateJunctionRelationFromCell = ({
         return;
       }
 
+      const recordFromStore = store.get(
+        recordStoreFamilyState.atomFamily(recordId),
+      );
+      const currentJunctionRecords =
+        (recordFromStore?.[fieldName] as
+          | FieldRelationValue<FieldRelationFromManyValue>
+          | undefined) ?? [];
+
       // morphItem.isSelected represents the NEW state (what the user wants)
       if (!morphItem.isSelected) {
-        await pendingJunctionCreationByLink
-          .get(getLinkKey(recordId, morphItem.recordId))
-          ?.catch(() => undefined);
-
-        const recordFromStore = store.get(
-          recordStoreFamilyState.atomFamily(recordId),
-        );
-        const currentJunctionRecords =
-          (recordFromStore?.[fieldName] as
-            | FieldRelationValue<FieldRelationFromManyValue>
-            | undefined) ?? [];
-
         const junctionRecordToDelete = findJunctionRecordByTargetId({
           junctionRecords: currentJunctionRecords,
           targetRecordId: morphItem.recordId,
@@ -213,7 +204,7 @@ export const useUpdateJunctionRelationFromCell = ({
           },
         );
 
-        const junctionRecordCreation = createJunctionRecords({
+        const [persistedJunctionRecord] = await createJunctionRecords({
           recordsToCreate: [
             {
               [sourceJoinColumnName]: recordId,
@@ -221,49 +212,34 @@ export const useUpdateJunctionRelationFromCell = ({
             },
           ],
           upsert: true,
-        }).then(([persistedJunctionRecord]) => {
-          if (!isDefined(persistedJunctionRecord)) {
-            return;
-          }
-
-          store.set(
-            recordStoreFamilyState.atomFamily(recordId),
-            (currentRecord: Record<string, unknown> | null | undefined) => {
-              if (!isDefined(currentRecord)) {
-                return currentRecord;
-              }
-
-              const currentFieldValue = currentRecord[fieldName];
-              const updatedJunctionRecords = Array.isArray(currentFieldValue)
-                ? currentFieldValue.map((junctionRecord) =>
-                    junctionRecord.id === optimisticJunctionId
-                      ? { ...junctionRecord, id: persistedJunctionRecord.id }
-                      : junctionRecord,
-                  )
-                : currentFieldValue;
-
-              return {
-                ...currentRecord,
-                [fieldName]: updatedJunctionRecords,
-              } as ObjectRecord;
-            },
-          );
         });
 
-        const linkKey = getLinkKey(recordId, morphItem.recordId);
-
-        pendingJunctionCreationByLink.set(linkKey, junctionRecordCreation);
-
-        try {
-          await junctionRecordCreation;
-        } finally {
-          if (
-            pendingJunctionCreationByLink.get(linkKey) ===
-            junctionRecordCreation
-          ) {
-            pendingJunctionCreationByLink.delete(linkKey);
-          }
+        if (!isDefined(persistedJunctionRecord)) {
+          return;
         }
+
+        store.set(
+          recordStoreFamilyState.atomFamily(recordId),
+          (currentRecord: Record<string, unknown> | null | undefined) => {
+            if (!isDefined(currentRecord)) {
+              return currentRecord;
+            }
+
+            const currentFieldValue = currentRecord[fieldName];
+            const updatedJunctionRecords = Array.isArray(currentFieldValue)
+              ? currentFieldValue.map((junctionRecord) =>
+                  junctionRecord.id === optimisticJunctionId
+                    ? { ...junctionRecord, id: persistedJunctionRecord.id }
+                    : junctionRecord,
+                )
+              : currentFieldValue;
+
+            return {
+              ...currentRecord,
+              [fieldName]: updatedJunctionRecords,
+            } as ObjectRecord;
+          },
+        );
       }
     },
     [
