@@ -3,6 +3,7 @@ import {
   InteractionRequiredAuthError,
   ServerError,
 } from '@azure/msal-node';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -34,8 +35,10 @@ export const parseMsalError = (
   error: unknown,
 ): ConnectedAccountRefreshAccessTokenException => {
   if (error instanceof InteractionRequiredAuthError) {
+    // The AADSTS code carried by errorMessage/subError is what tells apart a
+    // revoked consent from an expired token or a conditional access policy.
     return new ConnectedAccountRefreshAccessTokenException(
-      `Microsoft token refresh requires re-authentication: ${error.errorCode}`,
+      `Microsoft token refresh requires re-authentication: ${error.errorCode}${isNonEmptyString(error.subError) ? ` (${error.subError})` : ''} - ${error.errorMessage}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
     );
   }

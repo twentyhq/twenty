@@ -6,7 +6,13 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type FindManyOptions, In, LessThanOrEqual, Repository } from 'typeorm';
+import {
+  type FindManyOptions,
+  In,
+  IsNull,
+  LessThanOrEqual,
+  Repository,
+} from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -94,10 +100,16 @@ export class WebhookSubscriptionRenewalCronJob {
     repository: Repository<TChannel>,
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
-    const workspaceScope = { workspaceId: In(activeWorkspaceIds) };
     const renewalThreshold = new Date(
       Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS,
     );
+
+    // Accounts whose credentials are dead can only be recovered by the user
+    // reconnecting them, so renewing their subscriptions can never succeed.
+    const workspaceScope = {
+      workspaceId: In(activeWorkspaceIds),
+      connectedAccount: { authFailedAt: IsNull() },
+    };
 
     const options: FindManyOptions<WebhookSubscribableChannel> = {
       where: [

@@ -12,6 +12,8 @@ import { v4 } from 'uuid';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountAuthFailureService } from 'src/modules/connected-account/services/connected-account-auth-failure.service';
+import { isConnectedAccountReauthenticationRequiredException } from 'src/modules/connected-account/utils/is-connected-account-reauthentication-required-exception.util';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
@@ -24,6 +26,7 @@ export class CalendarWebhookSubscriptionService {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly connectedAccountAuthFailureService: ConnectedAccountAuthFailureService,
   ) {}
 
   async createSubscription(
@@ -89,11 +92,14 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
+      await this.handleSubscriptionError({
+        error,
+        connectedAccountId: calendarChannel.connectedAccountId,
+        calendarChannelId: calendarChannel.id,
+        workspaceId,
       });
 
-      throw error;
+      return;
     }
 
     if (isDefined(previousSubscription)) {
@@ -154,11 +160,12 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: calendarChannel.workspaceId },
+      await this.handleSubscriptionError({
+        error,
+        connectedAccountId: calendarChannel.connectedAccountId,
+        calendarChannelId: calendarChannel.id,
+        workspaceId: calendarChannel.workspaceId,
       });
-
-      throw error;
     }
   }
 
@@ -192,10 +199,48 @@ export class CalendarWebhookSubscriptionService {
     try {
       await driver.deleteSubscription(this.toContext(calendarChannel));
     } catch (error) {
+      if (isConnectedAccountReauthenticationRequiredException(error)) {
+        return;
+      }
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },
+        additionalData: {
+          connectedAccountId: calendarChannel.connectedAccountId,
+          calendarChannelId: calendarChannel.id,
+        },
       });
     }
+  }
+
+  // A dead refresh token cannot be recovered by retrying: flag the account for
+  // reconnection and swallow the error so the renewal cron stops looping on it.
+  private async handleSubscriptionError({
+    error,
+    connectedAccountId,
+    calendarChannelId,
+    workspaceId,
+  }: {
+    error: unknown;
+    connectedAccountId: string;
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    if (isConnectedAccountReauthenticationRequiredException(error)) {
+      await this.connectedAccountAuthFailureService.markAuthFailed({
+        connectedAccountId,
+        workspaceId,
+      });
+
+      return;
+    }
+
+    this.exceptionHandlerService.captureExceptions([error], {
+      workspace: { id: workspaceId },
+      additionalData: { connectedAccountId, calendarChannelId },
+    });
+
+    throw error;
   }
 
   private toContext(
