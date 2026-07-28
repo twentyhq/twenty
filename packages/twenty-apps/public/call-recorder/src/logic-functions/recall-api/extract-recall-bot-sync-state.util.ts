@@ -45,8 +45,7 @@ export const extractRecallBotSyncState = (
       recording?.startedAt ??
         findStatusChangeTimestamp(statusChanges, 'in_call_recording'),
     ),
-    // A bot that left an unattended meeting never recorded anything, so its
-    // leave time is not a recording end.
+    // An unattended meeting never recorded, so the bot's leave time is not a recording end.
     endedAt: normalizeRecallTimestamp(
       recording?.completedAt ??
         (isNotAttended

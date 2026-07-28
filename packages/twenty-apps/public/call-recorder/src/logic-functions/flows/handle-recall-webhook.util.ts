@@ -116,9 +116,8 @@ const handleRecallStatusEvent = async ({
     });
   }
 
-  // A done signal must trigger the artifact import even when its status update
-  // is stale: the record can already sit in a terminal status while artifacts
-  // remain to pull, and the import is idempotent.
+  // Artifacts can remain to pull after a terminal status, so even a stale
+  // done signal triggers the idempotent import.
   if (
     isRecallRecordingDoneSignal({
       event,
@@ -254,8 +253,7 @@ const buildRecordingTimestampsUpdate = ({
   const { event, statusCode, statusTimestamp } = webhookEvent;
 
   const impliesRecordingStarted = statusCode === 'in_call_recording';
-  // A bot leaving an unattended meeting never recorded, so its leave time is
-  // not a recording end.
+  // An unattended meeting never recorded, so the bot's leave time is not a recording end.
   const impliesRecordingEnded =
     (event === 'recording.done' ||
       statusCode === 'call_ended' ||
@@ -286,7 +284,6 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
-// Statuses that record why the recording could not be produced.
 type TerminalEndCallRecordingStatus =
   | CallRecordingStatus.FAILED
   | CallRecordingStatus.NOT_ATTENDED;

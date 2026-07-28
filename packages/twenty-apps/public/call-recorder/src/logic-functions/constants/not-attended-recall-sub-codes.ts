@@ -1,6 +1,4 @@
-// Recall end-of-call sub_codes meaning no human ever attended the meeting.
-// Recall treats sub_codes as an open set, so anything not listed here keeps
-// the regular FAILED classification.
+// Recall sub_codes are an open set; anything not listed keeps the FAILED classification.
 export const NOT_ATTENDED_RECALL_SUB_CODES: string[] = [
   // The bot was never let into the call.
   'timeout_exceeded_waiting_room',

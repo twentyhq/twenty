@@ -22,7 +22,7 @@ const CALL_RECORDING_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.universalIdentifier;
 
-// Mirrors the NOT_ATTENDED option added to compute-call-recording-standard-flat-field-metadata.util.ts
+// Same option id as the standard definition so provisioned and upgraded workspaces match.
 const NOT_ATTENDED_STATUS_OPTION: FieldMetadataComplexOption = {
   id: 'cbd14df8-9cc2-4399-92f5-31fc41f3768b',
   value: CallRecordingStatus.NOT_ATTENDED,

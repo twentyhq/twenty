@@ -178,7 +178,6 @@ const buildSyncStateFieldUpdates = ({
 };
 
 // The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
-// An unattended meeting is not a failure, so an already-classified NOT_ATTENDED stands.
 const buildMissingArtifactsFailureUpdate = ({
   currentStatus,
   pendingStatus,
