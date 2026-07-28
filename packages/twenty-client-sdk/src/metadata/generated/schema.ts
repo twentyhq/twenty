@@ -1821,6 +1821,14 @@ export interface MarketplaceAppDetail {
     __typename: 'MarketplaceAppDetail'
 }
 
+export interface WorkspaceCompanyEnrichmentResult {
+    outcome: WorkspaceCompanyEnrichmentOutcome
+    enrichment?: Scalars['JSON']
+    __typename: 'WorkspaceCompanyEnrichmentResult'
+}
+
+export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
+
 export interface Relation {
     type: RelationType
     sourceObjectMetadata: Object
@@ -2979,6 +2987,7 @@ export interface Mutation {
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
     checkCustomDomainValidRecords?: DomainValidRecords
+    enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
     upgradeApplication: Scalars['Boolean']
     createApplicationRegistration: CreateApplicationRegistration
     updateApplicationRegistration: ApplicationRegistration
@@ -5012,6 +5021,13 @@ export interface MarketplaceAppDetailGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
+    outcome?: boolean | number
+    enrichment?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface RelationGenqlSelection{
     type?: boolean | number
     sourceObjectMetadata?: ObjectGenqlSelection
@@ -6270,6 +6286,7 @@ export interface MutationGenqlSelection{
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
     updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
@@ -8043,6 +8060,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
+    export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
+      return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Relation_possibleTypes: string[] = ['Relation']
     export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
@@ -9423,6 +9448,12 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumWorkspaceCompanyEnrichmentOutcome = {
+   matched: 'matched' as const,
+   unavailable: 'unavailable' as const,
+   transientError: 'transientError' as const
 }
 
 export const enumRelationType = {

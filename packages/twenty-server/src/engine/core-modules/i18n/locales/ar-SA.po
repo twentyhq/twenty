@@ -9725,11 +9725,6 @@ msgstr "لا يمكنك إلغاء صلاحية الوصول إلى لوحة ا�
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "لا يمكنك تعيين أذونات الحقل على الكائنات النظامية لأنها تُدار بواسطة المنصة."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "لا يمكنك تعيين أذونات على الكائنات النظامية لأنها تُدار بواسطة المنصة."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."

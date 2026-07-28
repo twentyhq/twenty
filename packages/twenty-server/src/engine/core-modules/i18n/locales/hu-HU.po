@@ -9725,11 +9725,6 @@ msgstr "Nem vonhatja vissza az adminisztrációs felülethez való hozzáférés
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "Nem állíthat be mező engedélyeket rendszerobjektumokra, mivel azokat a platform kezeli."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "Nem állíthat be engedélyeket rendszerobjektumokra, mivel azokat a platform kezeli."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."

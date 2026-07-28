@@ -81,7 +81,7 @@ export class AdminPanelChatService {
     const messages = await this.agentMessageRepository.find(
       thread.workspaceId,
       {
-        where: { threadId },
+        where: { threadId, isHidden: false },
         relations: { parts: true },
         order: { createdAt: 'ASC' },
       },

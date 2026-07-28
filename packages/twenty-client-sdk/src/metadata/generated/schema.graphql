@@ -2149,6 +2149,17 @@ type MarketplaceAppDetail {
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
+type WorkspaceCompanyEnrichmentResult {
+  outcome: WorkspaceCompanyEnrichmentOutcome!
+  enrichment: JSON
+}
+
+enum WorkspaceCompanyEnrichmentOutcome {
+  matched
+  unavailable
+  transientError
+}
+
 type Relation {
   type: RelationType!
   sourceObjectMetadata: Object!
@@ -3454,6 +3465,7 @@ type Mutation {
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
+  enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
