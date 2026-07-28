@@ -1,7 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
-import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
 import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellHoveredPortal';
@@ -24,17 +23,10 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
-// A solo widget owns its tab full-bleed, so the card chrome contributes no
-// padding: the field list has to carry its own horizontal gutter, the way
-// full-bleed activity widgets already do.
-const StyledContainer = styled.div<{ hasOwnGutter: boolean }>`
+const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-left: ${({ hasOwnGutter }) =>
-    hasOwnGutter ? themeCssVariables.spacing[3] : '0'};
-  padding-right: ${({ hasOwnGutter }) =>
-    hasOwnGutter ? themeCssVariables.spacing[3] : '0'};
   width: 100%;
 `;
 
@@ -68,9 +60,6 @@ type FieldsWidgetProps = {
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const { presentation } = usePageLayoutContentContext();
-
-  const hasOwnGutter = presentation === 'solo';
 
   const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
@@ -117,7 +106,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   if (!hasFieldsToDisplay) {
     return (
       <SidePanelProvider value={{ isInSidePanel }}>
-        <StyledContainer hasOwnGutter={hasOwnGutter}>
+        <StyledContainer>
           <AnimatedPlaceholderEmptyContainer>
             <AnimatedPlaceholder type="noRecord" />
             <AnimatedPlaceholderEmptyTextContainer>
@@ -136,7 +125,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <StyledContainer hasOwnGutter={hasOwnGutter}>
+      <StyledContainer>
         <RecordFieldListComponentInstanceContext.Provider
           value={{
             instanceId,
