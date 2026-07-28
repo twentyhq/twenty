@@ -7,6 +7,7 @@ import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_INSTANCE_ID } from '@/side-panel/pages
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { styled } from '@linaria/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -42,7 +43,10 @@ export const SidePanelSearchRecordPreview = ({
             id: recordId,
             targetObjectNameSingular: objectNameSingular,
           },
-          layoutType: PageLayoutType.RECORD_PAGE,
+          layoutType:
+            objectNameSingular === CoreObjectNameSingular.Dashboard
+              ? PageLayoutType.DASHBOARD
+              : PageLayoutType.RECORD_PAGE,
           isInSidePanel: true,
         }}
       >
