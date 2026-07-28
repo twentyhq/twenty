@@ -419,6 +419,72 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(viewFields[0].position).toBe(1);
     });
 
+    it('should place the label identifier view field strictly below every existing one', () => {
+      // Relabeling onto a field created in the same sync: existing positions
+      // start above zero, the label lands one below the lowest.
+      const result = handler.buildSideEffects(
+        buildArgs({
+          triggerFieldMetadata: NAME_FIELD,
+          pendingFieldMetadatas: [NAME_FIELD],
+          objectMetadataInWorkspace: true,
+          viewsInWorkspace: [SYNCED_INDEX_VIEW],
+          viewFieldsInWorkspace: [
+            {
+              universalIdentifier: 'existing-vf-1',
+              viewId: SYNCED_INDEX_VIEW.id,
+              position: 2,
+              isActive: true,
+            },
+            {
+              universalIdentifier: 'existing-vf-2',
+              viewId: SYNCED_INDEX_VIEW.id,
+              position: 5,
+              isActive: true,
+            },
+          ],
+        }),
+      );
+
+      expect(result.status).toBe('success');
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      const viewFields = Object.values(
+        result.operations.viewField?.flatEntityToCreate ?? {},
+      );
+
+      expect(viewFields).toHaveLength(1);
+      expect(viewFields[0].isVisible).toBe(true);
+      expect(viewFields[0].position).toBe(1);
+    });
+
+    it('should place the label identifier view field at position 0 on an empty INDEX view', () => {
+      const result = handler.buildSideEffects(
+        buildArgs({
+          triggerFieldMetadata: NAME_FIELD,
+          pendingFieldMetadatas: [NAME_FIELD],
+          objectMetadataInWorkspace: true,
+          viewsInWorkspace: [SYNCED_INDEX_VIEW],
+        }),
+      );
+
+      expect(result.status).toBe('success');
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      const viewFields = Object.values(
+        result.operations.viewField?.flatEntityToCreate ?? {},
+      );
+
+      expect(viewFields).toHaveLength(1);
+      expect(viewFields[0].isVisible).toBe(true);
+      expect(viewFields[0].position).toBe(0);
+    });
+
     it('should emit a hidden view field for a relation field', () => {
       const relationField = buildPendingFieldMetadata(
         'assignee',

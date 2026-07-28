@@ -2,7 +2,7 @@ import {
   getSystemViewUniversalIdentifier,
   getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
-import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
+import { ViewKey } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileIndexViewUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785227955169-reconcile-index-view-universal-identifier.command';
@@ -10,37 +10,44 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
-const APPLICATION_UNIVERSAL_IDENTIFIER =
-  '20202020-0000-4000-8000-0000000000aa';
 const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-0000-4000-8000-0000000000ad';
+const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000aa';
 const EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-0000-4000-8000-0000000000ae';
-const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
+const STANDARD_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000bb';
+const CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000bc';
 const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cc';
 
-const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
-});
-const DERIVED_VIEW_FIELD_UNIVERSAL_IDENTIFIER = getViewFieldUniversalIdentifier(
-  {
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+const DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER =
+  getSystemViewUniversalIdentifier({
+    applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
+    viewKey: ViewKey.INDEX,
+  });
+const DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  getViewFieldUniversalIdentifier({
+    applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    viewUniversalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
     fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-  },
-);
+  });
 
-const OBJECT_METADATA = {
-  universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  labelIdentifierFieldMetadataUniversalIdentifier: null as string | null,
-  fieldUniversalIdentifiers: [] as string[],
+const STANDARD_OBJECT_METADATA = {
+  universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+// A custom object: its INDEX view was historically created with a random v4
+// universal identifier by ObjectMetadataService.createOneObject.
+const CUSTOM_OBJECT_METADATA = {
+  universalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
 };
 
 type WorkspaceView = {
@@ -64,20 +71,29 @@ type WorkspaceViewField = {
 };
 
 const buildFlatView = (view: WorkspaceView) => ({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   deletedAt: null,
   isSystemSideEffect: false,
-  objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  objectMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
   viewFieldUniversalIdentifiers: [],
   ...view,
 });
 
 const buildFlatViewField = (viewField: WorkspaceViewField) => ({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
   deletedAt: null,
   isSystemSideEffect: false,
   ...viewField,
+});
+
+const buildFlatFieldMetadata = ({
+  applicationUniversalIdentifier = STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+}: {
+  applicationUniversalIdentifier?: string;
+} = {}) => ({
+  universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier,
 });
 
 const buildByUniversalIdentifierMap = <
@@ -99,7 +115,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   let invalidateCacheMock: jest.Mock;
   let viewUpdateMock: jest.Mock;
   let viewFieldUpdateMock: jest.Mock;
-  let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -108,9 +123,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     invalidateCacheMock = jest.fn().mockResolvedValue(undefined);
     viewUpdateMock = jest.fn().mockResolvedValue(undefined);
     viewFieldUpdateMock = jest.fn().mockResolvedValue(undefined);
-    validateBuildAndRunWorkspaceMigrationMock = jest
-      .fn()
-      .mockResolvedValue({ status: 'success' });
 
     const entityManagerMock = {
       getRepository: (entity: unknown) => {
@@ -149,39 +161,30 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
               universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
             },
             workspaceCustomFlatApplication: {
-              universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
             },
           }),
       } as unknown as ApplicationService,
-      {
-        validateBuildAndRunWorkspaceMigration:
-          validateBuildAndRunWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
       viewRepositoryMock as never,
-      {} as never,
     );
   });
 
   const mockWorkspaceCache = ({
     views,
     viewFields = [],
-    objects = [OBJECT_METADATA],
-    fieldMetadatas = [],
+    fieldMetadatas = [buildFlatFieldMetadata()],
   }: {
     views: ReturnType<typeof buildFlatView>[];
     viewFields?: ReturnType<typeof buildFlatViewField>[];
-    objects?: (typeof OBJECT_METADATA)[];
-    fieldMetadatas?: {
-      universalIdentifier: string;
-      applicationUniversalIdentifier: string;
-      name: string;
-      type: FieldMetadataType;
-    }[];
+    fieldMetadatas?: ReturnType<typeof buildFlatFieldMetadata>[];
   }) => {
     getOrRecomputeMock.mockResolvedValue({
       flatViewMaps: buildByUniversalIdentifierMap(views),
       flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
-      flatObjectMetadataMaps: buildByUniversalIdentifierMap(objects),
+      flatObjectMetadataMaps: buildByUniversalIdentifierMap([
+        STANDARD_OBJECT_METADATA,
+        CUSTOM_OBJECT_METADATA,
+      ]),
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(fieldMetadatas),
     });
   };
@@ -194,7 +197,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       total: 1,
     });
 
-  it('re-owns an underived INDEX view and its view fields', async () => {
+  it('re-owns an underived standard INDEX view and its view fields', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -218,7 +221,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     expect(viewUpdateMock).toHaveBeenCalledWith(
       { id: 'view-id', workspaceId: WORKSPACE_ID },
       {
-        universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: true,
       },
     );
@@ -226,7 +229,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     expect(viewFieldUpdateMock).toHaveBeenCalledWith(
       { id: 'view-field-id', workspaceId: WORKSPACE_ID },
       {
-        universalIdentifier: DERIVED_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: true,
       },
     );
@@ -242,6 +245,56 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         'flatPageLayoutWidgetMaps',
       ]),
     );
+  });
+
+  it('re-owns a custom object INDEX view onto the workspace-custom derivation', async () => {
+    const derivedCustomViewUniversalIdentifier =
+      getSystemViewUniversalIdentifier({
+        applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
+        viewKey: ViewKey.INDEX,
+      });
+
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'custom-view-id',
+          universalIdentifier: 'legacy-v4-view-uid',
+          key: ViewKey.INDEX,
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectMetadataUniversalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
+          isSystemSideEffect: true,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'custom-view-id', workspaceId: WORKSPACE_ID },
+      { universalIdentifier: derivedCustomViewUniversalIdentifier },
+    );
+  });
+
+  it('ignores INDEX views owned by other applications', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'external-view-id',
+          universalIdentifier: 'external-view-uid',
+          key: ViewKey.INDEX,
+          applicationUniversalIdentifier:
+            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
   });
 
   it('skips a soft-deleted INDEX view coexisting with an active one on the same object', async () => {
@@ -269,7 +322,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     expect(viewUpdateMock).toHaveBeenCalledWith(
       { id: 'active-view-id', workspaceId: WORKSPACE_ID },
       {
-        universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: true,
       },
     );
@@ -310,112 +363,13 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     expect(viewFieldUpdateMock).toHaveBeenCalledWith(
       { id: 'active-view-field-id', workspaceId: WORKSPACE_ID },
       {
-        universalIdentifier: DERIVED_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: true,
       },
     );
   });
 
-  it('demotes an external application INDEX view and backfills the engine-owned one', async () => {
-    const externalObjectMetadata = {
-      ...OBJECT_METADATA,
-      applicationUniversalIdentifier:
-        EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        FIELD_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifiers: [FIELD_UNIVERSAL_IDENTIFIER],
-    };
-
-    mockWorkspaceCache({
-      views: [
-        buildFlatView({
-          id: 'external-app-view-id',
-          universalIdentifier: 'external-app-view-uid',
-          key: ViewKey.INDEX,
-          applicationUniversalIdentifier:
-            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-          viewFieldUniversalIdentifiers: ['external-app-view-field-uid'],
-        }),
-      ],
-      viewFields: [
-        buildFlatViewField({
-          id: 'external-app-view-field-id',
-          universalIdentifier: 'external-app-view-field-uid',
-          applicationUniversalIdentifier:
-            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-        }),
-      ],
-      objects: [externalObjectMetadata],
-      fieldMetadatas: [
-        {
-          universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-          applicationUniversalIdentifier:
-            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-          name: 'name',
-          type: FieldMetadataType.TEXT,
-        },
-      ],
-    });
-
-    await runOnWorkspace();
-
-    // The app view becomes a plain additional view under its manifest
-    // identifier; its view fields are not re-owned.
-    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
-    expect(viewUpdateMock).toHaveBeenCalledWith(
-      { id: 'external-app-view-id', workspaceId: WORKSPACE_ID },
-      { key: null },
-    );
-    expect(viewFieldUpdateMock).not.toHaveBeenCalled();
-
-    // The engine-owned INDEX view is backfilled through the migration
-    // pipeline with the full default layout.
-    const derivedExternalViewUniversalIdentifier =
-      getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier:
-          EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-        viewKey: ViewKey.INDEX,
-      });
-
-    expect(validateBuildAndRunWorkspaceMigrationMock).toHaveBeenCalledTimes(1);
-
-    const backfillPayload =
-      validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0];
-
-    expect(backfillPayload.applicationUniversalIdentifier).toBe(
-      EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-    expect(
-      backfillPayload.allFlatEntityOperationByMetadataName.view
-        .flatEntityToCreate,
-    ).toEqual([
-      expect.objectContaining({
-        universalIdentifier: derivedExternalViewUniversalIdentifier,
-        key: ViewKey.INDEX,
-        isSystemSideEffect: true,
-      }),
-    ]);
-    expect(
-      backfillPayload.allFlatEntityOperationByMetadataName.viewField
-        .flatEntityToCreate,
-    ).toEqual([
-      expect.objectContaining({
-        universalIdentifier: getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
-            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-          viewUniversalIdentifier: derivedExternalViewUniversalIdentifier,
-          fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-        }),
-        fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-        isVisible: true,
-        position: 0,
-        isSystemSideEffect: true,
-      }),
-    ]);
-  });
-
-  it('re-owns an external application view field living on a standard-owned INDEX view', async () => {
+  it('re-owns an external application view field living on a standard INDEX view', async () => {
     // e.g. an app that declared explicit columns on a standard INDEX view:
     // those must converge on the derived scheme so manifest deletion inference
     // never drops them once the app stops declaring them.
@@ -423,7 +377,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       getViewFieldUniversalIdentifier({
         applicationUniversalIdentifier:
           EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
-        viewUniversalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+        viewUniversalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
         fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
       });
 
@@ -433,8 +387,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
           id: 'view-id',
           universalIdentifier: 'legacy-view-uid',
           key: ViewKey.INDEX,
-          applicationUniversalIdentifier:
-            STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           viewFieldUniversalIdentifiers: ['external-app-view-field-uid'],
         }),
       ],
@@ -442,6 +394,12 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         buildFlatViewField({
           id: 'external-app-view-field-id',
           universalIdentifier: 'external-app-view-field-uid',
+          applicationUniversalIdentifier:
+            EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+      fieldMetadatas: [
+        buildFlatFieldMetadata({
           applicationUniversalIdentifier:
             EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
@@ -459,23 +417,57 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     );
   });
 
+  it('derives a view field from the displayed field application, not the row attribution', async () => {
+    // Showing a hidden standard column mints a workspace-custom view field
+    // displaying a standard field: the derivation must be keyed on the
+    // standard application, like every engine emission.
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'view-id',
+          universalIdentifier: 'legacy-view-uid',
+          key: ViewKey.INDEX,
+          viewFieldUniversalIdentifiers: ['user-shown-view-field-uid'],
+        }),
+      ],
+      viewFields: [
+        buildFlatViewField({
+          id: 'user-shown-view-field-id',
+          universalIdentifier: 'user-shown-view-field-uid',
+          applicationUniversalIdentifier:
+            CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewFieldUpdateMock).toHaveBeenCalledWith(
+      { id: 'user-shown-view-field-id', workspaceId: WORKSPACE_ID },
+      {
+        universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      },
+    );
+  });
+
   it('does nothing when the INDEX view and its view fields are already derived and system-owned', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
           id: 'view-id',
-          universalIdentifier: DERIVED_VIEW_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
           key: ViewKey.INDEX,
           isSystemSideEffect: true,
           viewFieldUniversalIdentifiers: [
-            DERIVED_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+            DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
           ],
         }),
       ],
       viewFields: [
         buildFlatViewField({
           id: 'view-field-id',
-          universalIdentifier: DERIVED_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
           isSystemSideEffect: true,
         }),
       ],
