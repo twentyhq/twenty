@@ -11,7 +11,7 @@ permissions: {}
 
 concurrency:
   group: pr-review-dispatch-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   dispatch:
@@ -22,46 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Resolve target + checks
-        id: resolve
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          ACTION: ${{ github.event.action }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          LABEL_NAME: ${{ github.event.label.name }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
-        run: |
-          set -euo pipefail
-          allowed="security triage standard"
-          is_valid() { printf '%s\n' $allowed | grep -qx "$1"; }
-
-          if [ "$EVENT_NAME" = "issue_comment" ]; then
-            NUM="$ISSUE_NUMBER"
-            CHECK=$(printf '%s' "$COMMENT_BODY" | sed -nE 's#^/pr-review[[:space:]]+([a-z]+).*#\1#p' | head -1)
-            CHECKS="${CHECK:-standard}"
-          elif [ "$ACTION" = "labeled" ]; then
-            NUM="$PR_NUMBER"
-            CHECKS="${LABEL_NAME#pr-review-}"
-          else
-            NUM="$PR_NUMBER"
-            CHECKS="security,triage"
-          fi
-
-          ok=true
-          IFS=',' read -ra parts <<< "$CHECKS"
-          for p in "${parts[@]}"; do is_valid "$p" || ok=false; done
-
-          if [ "$ok" = true ] && [ -n "$NUM" ]; then
-            echo "pr_number=$NUM" >> "$GITHUB_OUTPUT"
-            echo "checks=$CHECKS" >> "$GITHUB_OUTPUT"
-            echo "dispatch=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "dispatch=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Mint ci-privileged dispatch token
-        if: steps.resolve.outputs.dispatch == 'true'
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -71,12 +32,17 @@ jobs:
           repositories: ci-privileged
           permission-actions: write
 
-      - name: Dispatch to ci-privileged
-        if: steps.resolve.outputs.dispatch == 'true'
+      - name: Forward to PR review
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          PR_NUMBER: ${{ steps.resolve.outputs.pr_number }}
-          CHECKS: ${{ steps.resolve.outputs.checks }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+          EVENT_NAME: ${{ github.event_name }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
+          COMMENT_HEAD=$(printf '%s' "$COMMENT_BODY" | head -1 | cut -c1-200)
           gh workflow run pr-review.yaml --repo twentyhq/ci-privileged --ref main \
-            -f pr_number="$PR_NUMBER" -f checks="$CHECKS"
+            -f pr_number="$PR_NUMBER" \
+            -f event_name="$EVENT_NAME" \
+            -f label_name="$LABEL_NAME" \
+            -f comment_body="$COMMENT_HEAD"
