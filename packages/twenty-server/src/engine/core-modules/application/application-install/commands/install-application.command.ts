@@ -3,10 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
 import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
@@ -14,19 +13,15 @@ import { ApplicationInstallService } from 'src/engine/core-modules/application/a
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { runInBatches } from 'src/utils/run-in-batches.util';
 
 type InstallApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
-  batchSize?: number;
   workspaceId?: Set<string>;
   workspaceCountLimit?: number;
   dryRun?: boolean;
   yes?: boolean;
 };
 
-const MAX_BATCH_SIZE = 50;
 const MAX_WORKSPACE_COUNT_LIMIT = 50;
 
 @Command({
@@ -42,9 +37,8 @@ export class InstallApplicationCommand extends CommandRunner {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -61,15 +55,6 @@ export class InstallApplicationCommand extends CommandRunner {
   })
   parseApplicationRegistrationUniversalIdentifier(value: string): string {
     return value;
-  }
-
-  @Option({
-    flags: '-b, --batch-size <batch_size>',
-    description: `Number of workspaces installed in parallel (defaults to 5, max ${MAX_BATCH_SIZE})`,
-    required: false,
-  })
-  parseBatchSize(value: string): number {
-    return parseBoundedPositiveInteger(value, 'batch size', MAX_BATCH_SIZE);
   }
 
   @Option({
@@ -146,53 +131,19 @@ export class InstallApplicationCommand extends CommandRunner {
     const targetVersion = registration.latestAvailableVersion;
     const versionLabel = targetVersion ?? 'latest available';
 
-    const targetWorkspaceIds = await this.findTargetWorkspaceIds(options);
+    const workspaceIds = isDefined(options.workspaceId)
+      ? Array.from(options.workspaceId)
+      : undefined;
 
-    if (targetWorkspaceIds.length === 0) {
-      this.logger.warn('No workspace matches the given options, nothing to do');
+    const isDryRun = options.dryRun ?? false;
 
-      return;
-    }
+    if (!isDryRun && !(options.yes ?? false)) {
+      const confirmationTarget = isDefined(workspaceIds)
+        ? `workspace(s) ${workspaceIds.join(', ')}`
+        : 'every provisioned workspace that does not have it yet';
 
-    const alreadyInstalledWorkspaceIds =
-      await this.findAlreadyInstalledWorkspaceIds({
-        universalIdentifier: registration.universalIdentifier,
-        workspaceIds: targetWorkspaceIds,
-      });
-
-    const workspaceIdsToInstall = targetWorkspaceIds.filter(
-      (workspaceId) => !alreadyInstalledWorkspaceIds.has(workspaceId),
-    );
-
-    if (alreadyInstalledWorkspaceIds.size > 0) {
-      this.logger.log(
-        `Skipping ${alreadyInstalledWorkspaceIds.size} workspace(s) where "${registration.name}" is already installed, run application:upgrade to update them`,
-      );
-    }
-
-    if (options.dryRun ?? false) {
-      this.logger.log(
-        `[DRY RUN] Would install "${registration.name}" (${registration.universalIdentifier}) version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)${
-          workspaceIdsToInstall.length > 0
-            ? `: ${workspaceIdsToInstall.join(', ')}`
-            : ''
-        }`,
-      );
-
-      return;
-    }
-
-    if (workspaceIdsToInstall.length === 0) {
-      this.logger.log(
-        `No workspace to install, every targeted workspace already has "${registration.name}" installed`,
-      );
-
-      return;
-    }
-
-    if (!(options.yes ?? false)) {
       const isConfirmed = await askCommandConfirmation(
-        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)`,
+        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${confirmationTarget}`,
       );
 
       if (!isConfirmed) {
@@ -202,75 +153,61 @@ export class InstallApplicationCommand extends CommandRunner {
       }
     }
 
-    this.logger.log(
-      `Installing "${registration.name}" (${registration.universalIdentifier}) version ${versionLabel} on ${workspaceIdsToInstall.length} workspace(s)...`,
-    );
+    const alreadyInstalledWorkspaceIds =
+      await this.findAlreadyInstalledWorkspaceIds(
+        registration.universalIdentifier,
+      );
 
-    // Runs on the exact set shown at confirmation time, so installations
-    // created while the operator answered are excluded.
-    await runInBatches({
-      items: workspaceIdsToInstall,
-      batchSize: options.batchSize,
-      handler: (workspaceId) =>
-        this.applicationInstallService.installApplication({
+    let skippedWorkspaceCount = 0;
+
+    const report = await this.workspaceIteratorService.iterate({
+      workspaceIds,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun: isDryRun,
+      callback: async ({ workspaceId }) => {
+        if (alreadyInstalledWorkspaceIds.has(workspaceId)) {
+          skippedWorkspaceCount += 1;
+
+          this.logger.log(
+            `Skipping workspace ${workspaceId}: "${registration.name}" is already installed, run application:upgrade to update it`,
+          );
+
+          return;
+        }
+
+        if (isDryRun) {
+          this.logger.log(
+            `[DRY RUN] Would install "${registration.name}" (${registration.universalIdentifier}) version ${versionLabel} on workspace ${workspaceId}`,
+          );
+
+          return;
+        }
+
+        await this.applicationInstallService.installApplication({
           appRegistrationId: registration.id,
           version: targetVersion ?? undefined,
           workspaceId,
-        }),
-      onError: (workspaceId, error) => {
-        this.logger.error(
-          `Failed to install application ${registration.universalIdentifier} in workspace ${workspaceId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
+        });
       },
     });
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Installed on ${report.success.length - skippedWorkspaceCount} workspace(s), skipped ${skippedWorkspaceCount} already installed, ${report.fail.length} failed`,
+    );
 
     this.logger.log(chalk.blue('Command completed!'));
-  }
-
-  private async findTargetWorkspaceIds(
-    options: InstallApplicationCommandOptions,
-  ): Promise<string[]> {
-    if (isDefined(options.workspaceId)) {
-      const workspaceIds = Array.from(options.workspaceId);
-
-      return isDefined(options.workspaceCountLimit)
-        ? workspaceIds.slice(0, options.workspaceCountLimit)
-        : workspaceIds;
-    }
-
-    const workspaces = await this.workspaceRepository.find({
-      select: ['id'],
-      where: {
-        activationStatus: activationStatusIn(
-          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
-        ),
-      },
-      order: { id: 'ASC' },
-      take: options.workspaceCountLimit,
-    });
-
-    return workspaces.map((workspace) => workspace.id);
   }
 
   // Matches on the universal identifier, the same identity
   // ApplicationInstallService uses to decide between a fresh install and a
   // version upgrade, so a row with a stale registration id is not mistaken
   // for a missing installation.
-  private async findAlreadyInstalledWorkspaceIds({
-    universalIdentifier,
-    workspaceIds,
-  }: {
-    universalIdentifier: string;
-    workspaceIds: string[];
-  }): Promise<Set<string>> {
+  private async findAlreadyInstalledWorkspaceIds(
+    universalIdentifier: string,
+  ): Promise<Set<string>> {
     const existingApplications = await this.applicationRepository.find({
       select: ['workspaceId'],
-      where: {
-        universalIdentifier,
-        workspaceId: In(workspaceIds),
-      },
+      where: { universalIdentifier },
     });
 
     return new Set(

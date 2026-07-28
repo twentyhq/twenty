@@ -13,7 +13,7 @@ describe('runInBatches', () => {
       onError: () => {},
     });
 
-    expect(processedItems.sort()).toEqual([1, 2, 3, 4, 5]);
+    expect(processedItems.sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
   });
 
   it('should not start a batch before the previous one is done', async () => {

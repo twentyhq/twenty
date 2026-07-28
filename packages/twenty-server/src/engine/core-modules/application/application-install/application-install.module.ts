@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -13,7 +14,6 @@ import { ApplicationInstallResolver } from 'src/engine/core-modules/application/
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -26,7 +26,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([
       ApplicationEntity,
       ApplicationRegistrationEntity,
-      WorkspaceEntity,
     ]),
     ApplicationModule,
     ApplicationRegistrationModule,
@@ -41,6 +40,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     FileStorageModule,
     WorkspaceCacheModule,
+    WorkspaceIteratorModule,
   ],
   providers: [
     ApplicationInstallResolver,

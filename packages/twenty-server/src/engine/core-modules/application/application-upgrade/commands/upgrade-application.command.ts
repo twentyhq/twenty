@@ -5,6 +5,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-confirmation.util';
 import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
@@ -13,14 +14,12 @@ import { ApplicationUpgradeService } from 'src/engine/core-modules/application/a
 
 type UpgradeApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
-  batchSize?: number;
   workspaceId?: Set<string>;
   workspaceCountLimit?: number;
   dryRun?: boolean;
   yes?: boolean;
 };
 
-const MAX_BATCH_SIZE = 50;
 const MAX_WORKSPACE_COUNT_LIMIT = 50;
 
 @Command({
@@ -35,6 +34,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationUpgradeService: ApplicationUpgradeService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -51,15 +51,6 @@ export class UpgradeApplicationCommand extends CommandRunner {
   })
   parseApplicationRegistrationUniversalIdentifier(value: string): string {
     return value;
-  }
-
-  @Option({
-    flags: '-b, --batch-size <batch_size>',
-    description: `Number of workspaces upgraded in parallel (defaults to 5, max ${MAX_BATCH_SIZE})`,
-    required: false,
-  })
-  parseBatchSize(value: string): number {
-    return parseBoundedPositiveInteger(value, 'batch size', MAX_BATCH_SIZE);
   }
 
   @Option({
@@ -189,12 +180,20 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
     // Runs on the exact set shown at confirmation time, so installations
     // created or versions published while the operator answered are excluded.
-    await this.applicationUpgradeService.upgradeApplications({
-      appRegistration,
-      targetVersion,
-      applications: applicationsToUpgrade,
-      batchSize: options.batchSize,
+    const report = await this.workspaceIteratorService.iterate({
+      workspaceIds: impactedWorkspaceIds,
+      callback: async ({ workspaceId }) => {
+        await this.applicationUpgradeService.upgradeApplication({
+          appRegistrationId: appRegistration.id,
+          targetVersion,
+          workspaceId,
+        });
+      },
     });
+
+    this.logger.log(
+      `Upgraded ${report.success.length} workspace(s), ${report.fail.length} failed`,
+    );
 
     this.logger.log(chalk.blue('Command completed!'));
   }
