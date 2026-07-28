@@ -10,9 +10,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// the box-shadow extends the header background 1px upwards: on fractional
-// device pixel ratios the composited sticky header can land half a device pixel
-// below the scroll container edge, letting the scrolled rows show through above it
 const StyledHeaderContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
   box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};
