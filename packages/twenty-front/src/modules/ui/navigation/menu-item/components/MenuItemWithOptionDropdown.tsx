@@ -68,7 +68,7 @@ export const MenuItemWithOptionDropdown = ({
   selected = false,
 }: MenuItemWithOptionDropdownProps) => {
   const { theme } = useContext(ThemeContext);
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -101,9 +101,9 @@ export const MenuItemWithOptionDropdown = ({
               size="small"
               accent="tertiary"
               aria-label={t`More options`}
-              aria-haspopup="listbox"
-              aria-expanded={isDropdownOpen}
-              aria-controls={dropdownOptionsId}
+              aria-haspopup={ariaHasPopup}
+              aria-expanded={ariaExpanded}
+              aria-controls={ariaControls}
             />
           }
           dropdownPlacement={dropdownPlacement}

@@ -43,7 +43,7 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
     currentRecordFiltersComponentState,
   );
 
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
 
   const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
 
@@ -77,9 +77,9 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
   return isDateTimeType ? (
     <StyledControlContainer
       type="button"
-      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
-      aria-controls={dropdownOptionsId}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       {advancedFilterInputText}
     </StyledControlContainer>

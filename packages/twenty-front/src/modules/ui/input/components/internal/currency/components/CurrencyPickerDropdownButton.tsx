@@ -54,7 +54,7 @@ export const CurrencyPickerDropdownButton = ({
   const dropdownId = 'currency-picker-dropdown-id';
 
   const { closeDropdown } = useCloseDropdown();
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
 
   const handleChange = (currency: Currency) => {
@@ -74,9 +74,9 @@ export const CurrencyPickerDropdownButton = ({
       clickableComponent={
         <StyledDropdownButtonContainer
           type="button"
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
         >
           <StyledIconContainer>
             {currencyCode}

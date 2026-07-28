@@ -12,7 +12,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -29,16 +28,16 @@ export const MultiWorkspaceDropdownClickableComponent = ({
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
   return (
     <StyledContainer
       type="button"
       data-testid="workspace-dropdown"
       isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       disabled={disabled}
-      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
-      aria-controls={dropdownOptionsId}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       <Avatar
         placeholder={currentWorkspace?.displayName || ''}

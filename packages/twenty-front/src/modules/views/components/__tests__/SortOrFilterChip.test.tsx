@@ -51,6 +51,24 @@ describe('SortOrFilterChip', () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
+  it('does not propagate remove clicks to ancestors', () => {
+    const onAncestorClick = jest.fn();
+
+    renderInI18n(
+      <div onClick={onAncestorClick}>
+        <SortOrFilterChip
+          type="filter"
+          labelValue="Acme"
+          onRemove={jest.fn()}
+        />
+      </div>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove filter' }));
+
+    expect(onAncestorClick).not.toHaveBeenCalled();
+  });
+
   it('exposes dropdown trigger semantics when rendered inside a dropdown', () => {
     const onClick = jest.fn();
 

@@ -76,9 +76,8 @@ export const PhoneCountryPickerDropdownButton = ({
   const [selectedCountry, setSelectedCountry] = useState<Country>();
   const { t } = useLingui();
 
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
-    PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
-  );
+  const { ariaHasPopup, ariaExpanded, ariaControls, isDropdownOpen } =
+    useDropdownTriggerAria(PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID);
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -105,9 +104,9 @@ export const PhoneCountryPickerDropdownButton = ({
           type="button"
           isUnfolded={isDropdownOpen}
           aria-label={t`Select country code`}
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
         >
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}

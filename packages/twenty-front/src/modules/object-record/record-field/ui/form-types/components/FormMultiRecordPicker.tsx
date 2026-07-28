@@ -85,7 +85,7 @@ export const FormMultiRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-multi-record-picker-${componentId}`;
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
@@ -227,9 +227,9 @@ export const FormMultiRecordPicker = ({
                     <StyledIconButton
                       type="button"
                       aria-label={t`Open records picker`}
-                      aria-haspopup="listbox"
-                      aria-expanded={isDropdownOpen}
-                      aria-controls={dropdownOptionsId}
+                      aria-haspopup={ariaHasPopup}
+                      aria-expanded={ariaExpanded}
+                      aria-controls={ariaControls}
                     >
                       <IconChevronDown
                         size={theme.icon.size.md}

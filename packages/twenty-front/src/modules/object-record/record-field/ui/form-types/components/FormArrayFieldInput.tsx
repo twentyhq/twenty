@@ -131,7 +131,7 @@ export const FormArrayFieldInput = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const dropdownId = `dropdown-${instanceId}`;
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls, isDropdownOpen } =
     useDropdownTriggerAria(dropdownId);
 
   const preventContainerFocusStackUpdate =
@@ -333,9 +333,9 @@ export const FormArrayFieldInput = ({
                   <StyledDisplayModeContainer
                     type="button"
                     data-open={isDropdownOpen}
-                    aria-haspopup="listbox"
-                    aria-expanded={isDropdownOpen}
-                    aria-controls={dropdownOptionsId}
+                    aria-haspopup={ariaHasPopup}
+                    aria-expanded={ariaExpanded}
+                    aria-controls={ariaControls}
                   >
                     <ArrayDisplay value={draftValue.value} />
                   </StyledDisplayModeContainer>

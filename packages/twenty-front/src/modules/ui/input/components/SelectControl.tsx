@@ -81,16 +81,16 @@ export const SelectControl = ({
   hasRightElement,
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
 
   return (
     <StyledControlContainer
       type="button"
       isDisabled={isDisabled}
       aria-disabled={isDisabled === true ? true : undefined}
-      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
-      aria-controls={dropdownOptionsId}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
       hasIcon={isDefined(selectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}

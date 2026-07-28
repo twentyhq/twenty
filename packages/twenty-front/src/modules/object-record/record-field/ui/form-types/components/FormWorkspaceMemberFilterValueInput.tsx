@@ -70,7 +70,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   const componentId = useId();
   const dropdownId = `form-workspace-member-filter-picker-${componentId}`;
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
   const selectableListId = `${dropdownId}-selectable-list`;
   const variablesDropdownId = `${dropdownId}-variables`;
@@ -271,9 +271,9 @@ export const FormWorkspaceMemberFilterValueInput = ({
                   <StyledIconButton
                     type="button"
                     aria-label={t`Open workspace member picker`}
-                    aria-haspopup="listbox"
-                    aria-expanded={isDropdownOpen}
-                    aria-controls={dropdownOptionsId}
+                    aria-haspopup={ariaHasPopup}
+                    aria-expanded={ariaExpanded}
+                    aria-controls={ariaControls}
                   >
                     <IconChevronDown
                       size={theme.icon.size.md}

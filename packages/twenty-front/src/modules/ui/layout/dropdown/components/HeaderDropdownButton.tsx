@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
@@ -40,6 +39,7 @@ const StyledHeaderDropdownButton = styled.button<{
 
 type HeaderDropdownButtonProps = {
   children: ReactNode;
+  dropdownId?: string;
   id?: string;
   isUnfolded?: boolean;
   isActive?: boolean;
@@ -47,11 +47,13 @@ type HeaderDropdownButtonProps = {
 
 export const HeaderDropdownButton = ({
   children,
+  dropdownId,
   id,
   isUnfolded,
   isActive,
 }: HeaderDropdownButtonProps) => {
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
+    useDropdownTriggerAria(dropdownId);
 
   return (
     <StyledHeaderDropdownButton
@@ -59,9 +61,9 @@ export const HeaderDropdownButton = ({
       id={id}
       isUnfolded={isUnfolded}
       isActive={isActive}
-      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
-      aria-controls={dropdownOptionsId}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       {children}
     </StyledHeaderDropdownButton>

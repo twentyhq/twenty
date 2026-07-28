@@ -33,7 +33,11 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
 
   return (
     <StyledHeaderContainer>
-      <HeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
+      <HeaderDropdownButton
+        dropdownId={dropdownId}
+        id={dropdownId}
+        isUnfolded={isDropdownOpen}
+      >
         <>
           <StyledTagContainer>
             <Tag

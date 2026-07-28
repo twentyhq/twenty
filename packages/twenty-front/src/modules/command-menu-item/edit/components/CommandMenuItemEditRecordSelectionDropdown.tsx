@@ -57,7 +57,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(DROPDOWN_ID);
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
@@ -94,9 +94,9 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
         <StyledClickableArea
           type="button"
           disabled={isRecordPage}
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
           data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
         >
           <TriggerIcon

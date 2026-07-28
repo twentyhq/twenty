@@ -140,7 +140,7 @@ export const BaseChip = ({
   isDropdownTrigger = false,
 }: BaseChipProps) => {
   const { theme } = useContext(ThemeContext);
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
   const isDeletable = onRemove !== undefined;
 
   const labelContent = (
@@ -161,12 +161,12 @@ export const BaseChip = ({
       data-flashing={isFlashing}
       onDoubleClick={onDoubleClick}
     >
-      {isDropdownTrigger && isDefined(dropdownOptionsId) ? (
+      {isDropdownTrigger && isDefined(ariaControls) ? (
         <StyledChipLabelButton
           type="button"
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
         >
           {labelContent}
         </StyledChipLabelButton>

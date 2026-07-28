@@ -31,7 +31,7 @@ const StyledClickableIconWrapper = styled.button`
 export const SidePanelFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria(
     SIDE_PANEL_FOLDER_ICON_PICKER_DROPDOWN_ID,
   );
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
@@ -86,9 +86,9 @@ export const SidePanelFolderInfo = () => {
             <StyledClickableIconWrapper
               type="button"
               aria-label={t`Change folder icon`}
-              aria-haspopup="listbox"
-              aria-expanded={isDropdownOpen}
-              aria-controls={dropdownOptionsId}
+              aria-haspopup={ariaHasPopup}
+              aria-expanded={ariaExpanded}
+              aria-controls={ariaControls}
             >
               <TintedIconTile
                 Icon={FolderIconComponent}

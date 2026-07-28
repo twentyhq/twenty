@@ -11,7 +11,10 @@ export const ViewBarFilterButton = () => {
   );
 
   return (
-    <HeaderDropdownButton isUnfolded={isDropdownOpen}>
+    <HeaderDropdownButton
+      dropdownId={ViewBarFilterDropdownIds.MAIN}
+      isUnfolded={isDropdownOpen}
+    >
       <Trans>Filter</Trans>
     </HeaderDropdownButton>
   );

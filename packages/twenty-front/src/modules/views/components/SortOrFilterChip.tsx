@@ -51,6 +51,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   height: 24px;
   padding: ${themeCssVariables.spacing[0.5]};
   padding-left: ${themeCssVariables.spacing[1]};
+  position: relative;
   user-select: none;
   white-space: nowrap;
 `;
@@ -66,6 +67,12 @@ const StyledChipLabelButton = styled.button`
   align-items: center;
   column-gap: ${themeCssVariables.spacing[1]};
   display: flex;
+
+  &::after {
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
 `;
 
 const StyledIcon = styled.span`
@@ -86,8 +93,10 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   justify-content: center;
   margin: 0;
   padding: 0;
+  position: relative;
   user-select: none;
   width: 20px;
+  z-index: 1;
 
   &:hover {
     background-color: ${({ variant }) => {
@@ -159,7 +168,7 @@ export const SortOrFilterChip = ({
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -191,14 +200,13 @@ export const SortOrFilterChip = ({
   );
 
   const label =
-    isDefined(dropdownOptionsId) || isDefined(onClick) ? (
+    isDefined(ariaControls) || isDefined(onClick) ? (
       <StyledChipLabelButton
         type="button"
-        aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-        aria-expanded={
-          isDefined(dropdownOptionsId) ? isDropdownOpen : undefined
-        }
-        aria-controls={dropdownOptionsId}
+        onClick={onClick}
+        aria-haspopup={ariaHasPopup}
+        aria-expanded={ariaExpanded}
+        aria-controls={ariaControls}
       >
         {labelContent}
       </StyledChipLabelButton>
@@ -207,7 +215,7 @@ export const SortOrFilterChip = ({
     );
 
   return (
-    <StyledChip onClick={onClick} variant={variant}>
+    <StyledChip variant={variant}>
       {label}
       <StyledDelete
         type="button"

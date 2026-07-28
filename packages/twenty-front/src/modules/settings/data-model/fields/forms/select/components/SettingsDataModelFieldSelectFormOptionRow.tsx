@@ -127,7 +127,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   const { closeDropdown: closeColorDropdown } = useCloseDropdown();
   const { closeDropdown: closeActionsDropdown } = useCloseDropdown();
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria(
     SELECT_COLOR_DROPDOWN_ID,
   );
 
@@ -172,9 +172,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           <StyledColorSampleContainer
             type="button"
             aria-label={t`Change option color`}
-            aria-haspopup="listbox"
-            aria-expanded={isDropdownOpen}
-            aria-controls={dropdownOptionsId}
+            aria-haspopup={ariaHasPopup}
+            aria-expanded={ariaExpanded}
+            aria-controls={ariaControls}
           >
             <ColorSample colorName={option.color} />
           </StyledColorSampleContainer>

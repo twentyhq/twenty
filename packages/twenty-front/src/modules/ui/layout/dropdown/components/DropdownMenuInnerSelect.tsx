@@ -48,7 +48,7 @@ export const DropdownMenuInnerSelect = ({
 }: DropdownMenuInnerSelectProps) => {
   const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
 
   return (
@@ -56,9 +56,9 @@ export const DropdownMenuInnerSelect = ({
       clickableComponent={
         <StyledDropdownMenuInnerSelectDropdownButton
           type="button"
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
         >
           <span>{selectedOption.label}</span>
           <IconChevronDown size={theme.icon.size.sm} />

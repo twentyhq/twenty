@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { useDropdownTriggerAria } from '@/ui/layout/dropdown/hooks/useDropdownTriggerAria';
 import { BUTTON_RESET_STYLE } from '@/ui/theme/constants/ButtonResetStyle';
@@ -26,7 +25,7 @@ export const DropdownTriggerButton = ({
   ariaLabel,
   disabled,
 }: DropdownTriggerButtonProps) => {
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria();
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria();
 
   return (
     <StyledDropdownTriggerButton
@@ -34,9 +33,9 @@ export const DropdownTriggerButton = ({
       className={className}
       disabled={disabled}
       aria-label={ariaLabel}
-      aria-haspopup={isDefined(dropdownOptionsId) ? 'listbox' : undefined}
-      aria-expanded={isDefined(dropdownOptionsId) ? isDropdownOpen : undefined}
-      aria-controls={dropdownOptionsId}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       {children}
     </StyledDropdownTriggerButton>

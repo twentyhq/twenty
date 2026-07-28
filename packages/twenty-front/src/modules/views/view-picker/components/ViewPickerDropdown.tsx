@@ -60,9 +60,8 @@ export const ViewPickerDropdown = () => {
 
   const { formatNumber } = useNumberFormat();
 
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
-    VIEW_PICKER_DROPDOWN_ID,
-  );
+  const { ariaHasPopup, ariaExpanded, ariaControls, isDropdownOpen } =
+    useDropdownTriggerAria(VIEW_PICKER_DROPDOWN_ID);
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
 
@@ -86,9 +85,9 @@ export const ViewPickerDropdown = () => {
         <StyledDropdownButtonContainer
           type="button"
           isUnfolded={isDropdownOpen}
-          aria-haspopup="listbox"
-          aria-expanded={isDropdownOpen}
-          aria-controls={dropdownOptionsId}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
         >
           <StyledIconContainer>
             {isDefined(currentView) && isDefined(CurrentViewIcon) ? (

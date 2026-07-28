@@ -54,7 +54,7 @@ export const WorkflowVariablesDropdown = ({
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(dropdownId);
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -125,9 +125,9 @@ export const WorkflowVariablesDropdown = ({
           <StyledDropdownVariableButtonContainer
             type="button"
             aria-label={t`Insert variable`}
-            aria-haspopup="listbox"
-            aria-expanded={isDropdownOpen}
-            aria-controls={dropdownOptionsId}
+            aria-haspopup={ariaHasPopup}
+            aria-expanded={ariaExpanded}
+            aria-controls={ariaControls}
           >
             <IconVariablePlus size={theme.icon.size.md} />
           </StyledDropdownVariableButtonContainer>

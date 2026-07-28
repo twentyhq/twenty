@@ -20,8 +20,12 @@ export const useDropdownTriggerAria = (dropdownIdFromProps?: string) => {
     dropdownId ?? OUTSIDE_DROPDOWN_FALLBACK_INSTANCE_ID,
   );
 
+  const isInsideDropdown = isNonEmptyString(dropdownId);
+
   return {
-    dropdownOptionsId: isNonEmptyString(dropdownId)
+    ariaHasPopup: isInsideDropdown ? ('listbox' as const) : undefined,
+    ariaExpanded: isInsideDropdown ? isDropdownOpen : undefined,
+    ariaControls: isInsideDropdown
       ? getDropdownOptionsId(dropdownId)
       : undefined,
     isDropdownOpen,

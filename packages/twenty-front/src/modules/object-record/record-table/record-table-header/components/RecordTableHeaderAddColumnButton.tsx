@@ -65,7 +65,7 @@ const StyledDropdownContainer = styled.div`
 
 export const RecordTableHeaderAddColumnButton = () => {
   const { theme } = useContext(ThemeContext);
-  const { dropdownOptionsId, isDropdownOpen } = useDropdownTriggerAria(
+  const { ariaHasPopup, ariaExpanded, ariaControls } = useDropdownTriggerAria(
     HIDDEN_TABLE_COLUMN_DROPDOWN_ID,
   );
 
@@ -121,9 +121,9 @@ export const RecordTableHeaderAddColumnButton = () => {
             <StyledPlusIconContainer
               type="button"
               aria-label={t`Add column`}
-              aria-haspopup="listbox"
-              aria-expanded={isDropdownOpen}
-              aria-controls={dropdownOptionsId}
+              aria-haspopup={ariaHasPopup}
+              aria-expanded={ariaExpanded}
+              aria-controls={ariaControls}
             >
               <IconPlus size={theme.icon.size.md} />
             </StyledPlusIconContainer>

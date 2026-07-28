@@ -70,7 +70,7 @@ export const createRecordLevelPermissionVariablePicker = (
   }) => {
     const { theme } = useContext(ThemeContext);
     const dropdownId = `record-level-permission-me-picker-${instanceId}-${recordFilterId}`;
-    const { dropdownOptionsId, isDropdownOpen } =
+    const { ariaHasPopup, ariaExpanded, ariaControls } =
       useDropdownTriggerAria(dropdownId);
 
     return (
@@ -82,9 +82,9 @@ export const createRecordLevelPermissionVariablePicker = (
             multiline={multiline}
             readonly={disabled}
             aria-label={t`Insert variable`}
-            aria-haspopup="listbox"
-            aria-expanded={isDropdownOpen}
-            aria-controls={dropdownOptionsId}
+            aria-haspopup={ariaHasPopup}
+            aria-expanded={ariaExpanded}
+            aria-controls={ariaControls}
           >
             <IconVariablePlus size={theme.icon.size.sm} />
           </StyledRecordLevelPermissionPickerContainer>

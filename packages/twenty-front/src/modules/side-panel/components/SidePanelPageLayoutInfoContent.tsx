@@ -87,7 +87,7 @@ export const SidePanelPageLayoutInfoContent = ({
   });
 
   const iconPickerDropdownId = `page-layout-tab-icon-picker-${headerInfo?.tab?.id}`;
-  const { dropdownOptionsId, isDropdownOpen } =
+  const { ariaHasPopup, ariaExpanded, ariaControls } =
     useDropdownTriggerAria(iconPickerDropdownId);
 
   if (!headerInfo) {
@@ -161,9 +161,9 @@ export const SidePanelPageLayoutInfoContent = ({
           <StyledClickableIconWrapper
             type="button"
             aria-label={t`Change icon`}
-            aria-haspopup="listbox"
-            aria-expanded={isDropdownOpen}
-            aria-controls={dropdownOptionsId}
+            aria-haspopup={ariaHasPopup}
+            aria-expanded={ariaExpanded}
+            aria-controls={ariaControls}
           >
             {renderedIcon}
           </StyledClickableIconWrapper>
