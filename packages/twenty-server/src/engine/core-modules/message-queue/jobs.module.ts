@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { EmailPasswordResetLinkJob } from 'src/engine/core-modules/auth/jobs/email-password-reset-link.job';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -103,6 +104,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
+    EmailPasswordResetLinkJob,
     SendCampaignEmailJob,
     MaterializeCampaignJob,
     RefreshCampaignStatsJob,

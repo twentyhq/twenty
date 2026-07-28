@@ -1,4 +1,4 @@
-import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -42,6 +42,13 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import {
+  EmailPasswordResetLinkJob,
+  type EmailPasswordResetLinkJobData,
+} from 'src/engine/core-modules/auth/jobs/email-password-reset-link.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -121,9 +128,9 @@ import { AuthService } from './services/auth.service';
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
-  private readonly logger = new Logger(AuthResolver.name);
-
   constructor(
+    @InjectMessageQueue(MessageQueue.emailQueue)
+    private readonly messageQueueService: MessageQueueService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
@@ -928,26 +935,17 @@ export class AuthResolver {
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
-    const generationResult =
-      await this.resetPasswordService.generatePasswordResetToken(
-        emailPasswordResetInput.email,
-        emailPasswordResetInput.workspaceId,
-      );
+    await this.messageQueueService.add<EmailPasswordResetLinkJobData>(
+      EmailPasswordResetLinkJob.name,
+      {
+        email: emailPasswordResetInput.email,
+        workspaceId: emailPasswordResetInput.workspaceId,
+        locale: context.req.locale,
+      },
+      { retryLimit: 3 },
+    );
 
-    if (generationResult.status !== 'TOKEN_GENERATED') {
-      this.logger.warn(
-        `Password reset request silently ignored: ${generationResult.status}`,
-      );
-
-      return { success: true };
-    }
-
-    return await this.resetPasswordService.sendEmailPasswordResetLink({
-      resetToken: generationResult.resetToken,
-      user: generationResult.user,
-      workspace: generationResult.workspace,
-      locale: context.req.locale,
-    });
+    return { success: true };
   }
 
   @Mutation(() => InvalidatePasswordDTO)

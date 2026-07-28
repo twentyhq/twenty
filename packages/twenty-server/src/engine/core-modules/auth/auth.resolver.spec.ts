@@ -13,7 +13,11 @@ import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/serv
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
+import { EmailPasswordResetLinkJob } from 'src/engine/core-modules/auth/jobs/email-password-reset-link.job';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
@@ -39,7 +43,7 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
-  let resetPasswordService: ResetPasswordService;
+  let messageQueueService: MessageQueueService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -108,9 +112,12 @@ describe('AuthResolver', () => {
         },
         {
           provide: ResetPasswordService,
+          useValue: {},
+        },
+        {
+          provide: getQueueToken(MessageQueue.emailQueue),
           useValue: {
-            generatePasswordResetToken: jest.fn(),
-            sendEmailPasswordResetLink: jest.fn(),
+            add: jest.fn(),
           },
         },
         {
@@ -176,8 +183,9 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
-    resetPasswordService =
-      module.get<ResetPasswordService>(ResetPasswordService);
+    messageQueueService = module.get<MessageQueueService>(
+      getQueueToken(MessageQueue.emailQueue),
+    );
   });
 
   it('should be defined', () => {
@@ -185,73 +193,25 @@ describe('AuthResolver', () => {
   });
 
   describe('emailPasswordResetLink', () => {
-    const emailPasswordResetInput = {
-      email: 'test@example.com',
-      workspaceId: 'workspace-id',
-    } as EmailPasswordResetLinkInput;
-    const context = { req: { locale: 'en' } } as I18nContext;
-
-    it('should send the email when a token is generated', async () => {
-      const mockUser = { id: '1', email: 'test@example.com' };
-      const mockWorkspace = { id: 'workspace-id' };
-      const mockResetToken = {
-        workspaceId: 'workspace-id',
-        passwordResetToken: 'token123',
-        passwordResetTokenExpiresAt: new Date(),
-      };
-
-      (
-        resetPasswordService.generatePasswordResetToken as jest.Mock
-      ).mockResolvedValue({
-        status: 'TOKEN_GENERATED',
-        resetToken: mockResetToken,
-        user: mockUser,
-        workspace: mockWorkspace,
-      });
-      (
-        resetPasswordService.sendEmailPasswordResetLink as jest.Mock
-      ).mockResolvedValue({ success: true });
-
+    it('should enqueue the password reset link job and return success', async () => {
       const result = await resolver.emailPasswordResetLink(
-        emailPasswordResetInput,
-        context,
+        {
+          email: 'test@example.com',
+          workspaceId: 'workspace-id',
+        } as EmailPasswordResetLinkInput,
+        { req: { locale: 'en' } } as I18nContext,
       );
 
       expect(result).toEqual({ success: true });
-      expect(
-        resetPasswordService.generatePasswordResetToken,
-      ).toHaveBeenCalledWith('test@example.com', 'workspace-id');
-      expect(
-        resetPasswordService.sendEmailPasswordResetLink,
-      ).toHaveBeenCalledWith({
-        resetToken: mockResetToken,
-        user: mockUser,
-        workspace: mockWorkspace,
-        locale: 'en',
-      });
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        EmailPasswordResetLinkJob.name,
+        {
+          email: 'test@example.com',
+          workspaceId: 'workspace-id',
+          locale: 'en',
+        },
+        { retryLimit: 3 },
+      );
     });
-
-    it.each([
-      'USER_NOT_FOUND',
-      'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND',
-      'TOKEN_ALREADY_GENERATED',
-    ])(
-      'should return success without sending an email when generation status is %s',
-      async (status) => {
-        (
-          resetPasswordService.generatePasswordResetToken as jest.Mock
-        ).mockResolvedValue({ status });
-
-        const result = await resolver.emailPasswordResetLink(
-          emailPasswordResetInput,
-          context,
-        );
-
-        expect(result).toEqual({ success: true });
-        expect(
-          resetPasswordService.sendEmailPasswordResetLink,
-        ).not.toHaveBeenCalled();
-      },
-    );
   });
 });
