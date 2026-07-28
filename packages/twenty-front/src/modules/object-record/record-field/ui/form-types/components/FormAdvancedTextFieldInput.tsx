@@ -141,11 +141,16 @@ export const FormAdvancedTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  // The editor instance is recreated when isFullScreen changes (it is passed as
+  // a dependency to useAdvancedTextEditor). Recreated instances are seeded from
+  // the value captured right before the toggle so typed content is not lost.
+  const [editorSeedValue, setEditorSeedValue] = useState(defaultValue);
+
   const editor = useAdvancedTextEditor(
     {
       placeholder: placeholder,
       readonly,
-      defaultValue,
+      defaultValue: editorSeedValue,
       contentType,
       onUpdate: (editor) => {
         if (contentType === 'markdown' || contentType === 'html') {
@@ -177,11 +182,25 @@ export const FormAdvancedTextFieldInput = ({
     [isFullScreen],
   );
 
+  const captureEditorValue = () => {
+    if (!isDefined(editor)) {
+      return;
+    }
+
+    setEditorSeedValue(
+      contentType === 'markdown' || contentType === 'html'
+        ? editor.getHTML()
+        : JSON.stringify(editor.getJSON()),
+    );
+  };
+
   const handleEnterFullScreen = () => {
+    captureEditorValue();
     setIsFullScreen(true);
   };
 
   const handleExitFullScreen = () => {
+    captureEditorValue();
     setIsFullScreen(false);
   };
 
