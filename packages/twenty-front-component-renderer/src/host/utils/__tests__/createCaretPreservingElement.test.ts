@@ -1,6 +1,13 @@
-import { type ReactElement } from 'react';
+import './setupServerRenderingGlobals';
+
+import { act, type ReactElement } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import { createCaretPreservingElement } from '../createCaretPreservingElement';
+
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const getProps = (element: ReactElement): Record<string, unknown> =>
   element.props as Record<string, unknown>;
@@ -86,5 +93,33 @@ describe('createCaretPreservingElement', () => {
     (getProps(element).onBlur as (event: unknown) => void)({} as never);
 
     expect(setEditableFocused).toHaveBeenCalledWith(false);
+  });
+
+  it('should forward the caret preserving ref to the rendered element', () => {
+    const caretPreservingElementRef = jest.fn();
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: {},
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef,
+    });
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(element);
+    });
+
+    expect(caretPreservingElementRef).toHaveBeenCalledWith(
+      container.firstElementChild,
+    );
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
   });
 });
