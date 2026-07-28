@@ -18,6 +18,11 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
@@ -44,6 +49,7 @@ import { TransientTokenService } from './token/services/transient-token.service'
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
   let messageQueueService: MessageQueueService;
+  let throttlerService: ThrottlerService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -121,6 +127,12 @@ describe('AuthResolver', () => {
           },
         },
         {
+          provide: ThrottlerService,
+          useValue: {
+            tokenBucketThrottleOrThrow: jest.fn(),
+          },
+        },
+        {
           provide: LoginTokenService,
           useValue: {},
         },
@@ -186,6 +198,7 @@ describe('AuthResolver', () => {
     messageQueueService = module.get<MessageQueueService>(
       getQueueToken(MessageQueue.emailQueue),
     );
+    throttlerService = module.get<ThrottlerService>(ThrottlerService);
   });
 
   it('should be defined', () => {
@@ -193,13 +206,16 @@ describe('AuthResolver', () => {
   });
 
   describe('emailPasswordResetLink', () => {
+    const emailPasswordResetInput = {
+      email: 'test@example.com',
+      workspaceId: 'workspace-id',
+    } as EmailPasswordResetLinkInput;
+    const context = { req: { locale: 'en' } } as I18nContext;
+
     it('should enqueue the password reset link job and return success', async () => {
       const result = await resolver.emailPasswordResetLink(
-        {
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-        } as EmailPasswordResetLinkInput,
-        { req: { locale: 'en' } } as I18nContext,
+        emailPasswordResetInput,
+        context,
       );
 
       expect(result).toEqual({ success: true });
@@ -212,6 +228,52 @@ describe('AuthResolver', () => {
         },
         { retryLimit: 3 },
       );
+    });
+
+    it('should throttle by normalized email address', async () => {
+      await resolver.emailPasswordResetLink(
+        {
+          email: 'TeSt@Example.com',
+        } as EmailPasswordResetLinkInput,
+        context,
+      );
+
+      expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
+        'password-reset-email:test@example.com',
+        1,
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it('should return success without enqueuing the job when throttled', async () => {
+      (
+        throttlerService.tokenBucketThrottleOrThrow as jest.Mock
+      ).mockRejectedValue(
+        new ThrottlerException(
+          'Limit reached',
+          ThrottlerExceptionCode.LIMIT_REACHED,
+        ),
+      );
+
+      const result = await resolver.emailPasswordResetLink(
+        emailPasswordResetInput,
+        context,
+      );
+
+      expect(result).toEqual({ success: true });
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should rethrow non throttling errors', async () => {
+      (
+        throttlerService.tokenBucketThrottleOrThrow as jest.Mock
+      ).mockRejectedValue(new Error('cache down'));
+
+      await expect(
+        resolver.emailPasswordResetLink(emailPasswordResetInput, context),
+      ).rejects.toThrow('cache down');
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });
 });

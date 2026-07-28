@@ -49,6 +49,11 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -116,6 +121,9 @@ import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.d
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(
@@ -131,6 +139,7 @@ export class AuthResolver {
   constructor(
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly throttlerService: ThrottlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
@@ -935,6 +944,26 @@ export class AuthResolver {
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
+    const normalizedEmail = emailPasswordResetInput.email.toLowerCase();
+
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `password-reset-email:${normalizedEmail}`,
+        1,
+        PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX,
+        PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
+      );
+    } catch (error) {
+      if (
+        error instanceof ThrottlerException &&
+        error.code === ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        return { success: true };
+      }
+
+      throw error;
+    }
+
     await this.messageQueueService.add<EmailPasswordResetLinkJobData>(
       EmailPasswordResetLinkJob.name,
       {
