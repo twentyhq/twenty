@@ -20,7 +20,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Avatar } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
@@ -126,12 +126,6 @@ export const SidePanelSearchRecordPreviewCard = ({
   const { theme } = useContext(ThemeContext);
 
   const [areAllFieldsVisible, setAreAllFieldsVisible] = useState(false);
-
-  // The card is reused across records rather than remounted, so the expander
-  // has to be collapsed again when the selection moves
-  useEffect(() => {
-    setAreAllFieldsVisible(false);
-  }, [recordId]);
 
   const { visibleFields, hiddenFields } =
     useSidePanelSearchRecordPreviewFields(objectMetadataItem);
