@@ -38,6 +38,30 @@ describe('createCaretPreservingElement', () => {
     expect(getProps(element).defaultValue).toBe('hello');
   });
 
+  it('should seed the initial value from a numeric defaultValue', () => {
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: { type: 'number', defaultValue: 42 },
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef: () => {},
+    });
+
+    expect(getProps(element).defaultValue).toBe('42');
+  });
+
+  it('should seed the initial value from a numeric value', () => {
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: { type: 'number', value: 42 },
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef: () => {},
+    });
+
+    expect(getProps(element).defaultValue).toBe('42');
+  });
+
   it('should prefer defaultValue over value for the initial value', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
