@@ -461,7 +461,6 @@ export type Mutation = {
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
   updateWorkspaceMessageCampaignDailySendLimit: Scalars['Boolean']['output'];
-  upgradeRegistrationApplications: Scalars['Boolean']['output'];
 };
 
 
@@ -588,13 +587,6 @@ export type MutationUpdateWorkspaceMessageCampaignDailySendLimitArgs = {
   dailySendLimit?: InputMaybe<Scalars['Int']['input']>;
   workspaceId: Scalars['UUID']['input'];
 };
-
-
-export type MutationUpgradeRegistrationApplicationsArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
-  batchSize?: InputMaybe<Scalars['Int']['input']>;
-};
-
 
 export type PaginatedApplicationRegistrations = {
   __typename?: 'PaginatedApplicationRegistrations';
