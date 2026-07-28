@@ -18,7 +18,7 @@ export const FrontComponentExternalLinkModalManager = () => {
   const setTrustedFrontComponentExternalOrigins = useSetAtomState(
     trustedFrontComponentExternalOriginsState,
   );
-  const [shouldTrustOrigin, setShouldTrustOrigin] = useState(false);
+  const [shouldTrustOrigin, setShouldTrustOrigin] = useState(true);
 
   if (!isDefined(frontComponentExternalLinkModalConfig)) {
     return null;
@@ -39,12 +39,12 @@ export const FrontComponentExternalLinkModalManager = () => {
 
     openExternalUrl(url);
     setFrontComponentExternalLinkModalConfig(null);
-    setShouldTrustOrigin(false);
+    setShouldTrustOrigin(true);
   };
 
   const handleClose = () => {
     setFrontComponentExternalLinkModalConfig(null);
-    setShouldTrustOrigin(false);
+    setShouldTrustOrigin(true);
   };
 
   return (

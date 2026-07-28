@@ -47,7 +47,7 @@ const meta: Meta<typeof FrontComponentExternalLinkModal> = {
   },
   args: {
     url: 'https://nvidia.com',
-    shouldTrustOrigin: false,
+    shouldTrustOrigin: true,
     onShouldTrustOriginChange: fn(),
     onConfirm: fn(),
     onClose: fn(),
@@ -59,9 +59,9 @@ type Story = StoryObj<typeof FrontComponentExternalLinkModal>;
 
 export const Default: Story = {};
 
-export const WithTrustedOriginChecked: Story = {
+export const WithTrustedOriginUnchecked: Story = {
   args: {
-    shouldTrustOrigin: true,
+    shouldTrustOrigin: false,
   },
 };
 
