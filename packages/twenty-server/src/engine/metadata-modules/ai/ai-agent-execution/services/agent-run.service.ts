@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import {
   type RunAgentInput,
@@ -10,12 +10,15 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class AgentRunService {
+  private readonly logger = new Logger(AgentRunService.name);
+
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
@@ -60,24 +63,38 @@ export class AgentRunService {
       application,
     };
 
-    const { result, hasNoMoreAvailableCredits } =
-      await this.agentAsyncExecutorService.executeAgent({
-        agent,
-        userPrompt: input.prompt,
-        authContext,
-        workspaceId: workspace.id,
-        userWorkspaceId: requestUserWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      });
+    try {
+      const { result, hasNoMoreAvailableCredits } =
+        await this.agentAsyncExecutorService.executeAgent({
+          agent,
+          userPrompt: input.prompt,
+          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          authContext,
+          workspaceId: workspace.id,
+          userWorkspaceId: requestUserWorkspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        });
 
-    if (hasNoMoreAvailableCredits) {
+      if (hasNoMoreAvailableCredits) {
+        return {
+          result: null,
+          error: 'AI agent stopped: no more available credits.',
+          success: false,
+        };
+      }
+
+      return { result, error: null, success: true };
+    } catch (error) {
+      this.logger.error(
+        `Agent execution failed for ${input.agentUniversalIdentifier}`,
+        error instanceof Error ? error.stack : error,
+      );
+
       return {
         result: null,
-        error: 'AI agent stopped: no more available credits.',
+        error: 'Agent execution failed.',
         success: false,
       };
     }
-
-    return { result, error: null, success: true };
   }
 }

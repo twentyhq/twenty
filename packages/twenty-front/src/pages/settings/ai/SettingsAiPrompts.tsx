@@ -135,7 +135,7 @@ export const SettingsAiPrompts = () => {
                   label={section.title}
                   readonly={true}
                   defaultValue={section.content}
-                  contentType="markdown"
+                  preset="aiInstructions"
                   onChange={() => {}}
                   enableFullScreen={true}
                   fullScreenBreadcrumbs={[
@@ -148,7 +148,6 @@ export const SettingsAiPrompts = () => {
                     },
                   ]}
                   minHeight={120}
-                  maxWidth={700}
                 />
               </StyledFormContainer>
             </Section>
@@ -165,11 +164,10 @@ export const SettingsAiPrompts = () => {
               label={t`User Information`}
               readonly={true}
               defaultValue={userContextPreview}
-              contentType="markdown"
+              preset="aiInstructions"
               onChange={() => {}}
               enableFullScreen={false}
               minHeight={80}
-              maxWidth={700}
             />
           </StyledFormContainer>
         </Section>

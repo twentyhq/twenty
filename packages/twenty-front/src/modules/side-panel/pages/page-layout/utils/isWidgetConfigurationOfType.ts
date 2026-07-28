@@ -11,6 +11,8 @@ import {
   type FrontComponentConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
+  type MessageCampaignBodyConfiguration,
+  type MessageCampaignDetailsConfiguration,
   type NotesConfiguration,
   type PieChartConfiguration,
   type RecordTableConfiguration,
@@ -49,6 +51,18 @@ type WidgetConfigurationTypenameMap = {
     'configurationType'
   > & {
     configurationType: WidgetConfigurationType.EMAIL_THREAD;
+  };
+  MessageCampaignBodyConfiguration: Omit<
+    MessageCampaignBodyConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY;
+  };
+  MessageCampaignDetailsConfiguration: Omit<
+    MessageCampaignDetailsConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS;
   };
   EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.EMAILS;

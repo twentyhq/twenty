@@ -5,24 +5,24 @@ description: Întrebări frecvente despre exportul datelor.
 
 <AccordionGroup>
 <Accordion title="Putem exporta toate datele din spațiul de lucru înainte de anulare, inclusiv obiecte personalizate, câmpuri personalizate, relații, note, sarcini, oportunități, atașamente, fluxuri de lucru, permisiuni și istoricul auditului?">
-Datele spațiului de lucru pot fi exportate înainte de anulare cu unele excepții: tablourile de bord, fluxurile de lucru și permisiunile trebuie transferate manual, iar jurnalele de audit nu pot fi transferate.
+Datele privind spațiul de lucru pot fi exportate înainte de anulare, cu unele excepții: tablourile de bord, fluxurile de lucru și permisiunile trebuie transferate manual; jurnalele de audit nu pot fi transferate.
 </Accordion>
 <Accordion title="Ce elemente nu pot fi exportate sau migrate în prezent?">
 Majoritatea elementelor pot fi exportate sau migrate cu unele excepții:
 * fluxuri de lucru, tablouri de bord și toate setările (chei API, webhooks, jurnale de audit, setări de utilizator etc.) trebuie să fie migrat manual
-* obiectele și câmpurile create de aplicație pot fi migrate prin instalarea aplicației respective în diferite locuri de muncă, nu ar trebui să fie migrate manual
-* unele înregistrări, cum ar fi versiunile fluxului de lucru și rulările fluxului de lucru. nu sunt deloc transferabile și se preconizează că vor fi pierdute
-* unele obiecte cum ar fi mesaje și obiecte legate de calendar nu ar trebui exportate deoarece sunt create atunci când contul este conectat și sincronizat periodic, vor fi sincronizate din nou odată ce conectați contul (atâta timp cât aveți acces la contul menționat, dacă este un cont de membru al echipei care a părăsit compania ta, atunci acele mesaje trebuie să fie exportate, altfel vor fi pierdute)
+* Obiectele și câmpurile create de aplicații pot fi migrate prin instalarea aplicației respective într-un spațiu de lucru diferit. Nu ar trebui să fie migrate manual
+* unele înregistrări, cum ar fi versiunile fluxului de lucru și rulările fluxului de lucru, nu sunt deloc transferabile și se preconizează că vor fi pierdute
+* unele obiecte precum mesaje și obiecte legate de calendar nu ar trebui exportate deoarece sunt create atunci când un cont este conectat și sincronizat periodic. Vor fi sincronizate din nou odată ce vă conectați contul (atâta timp cât aveți acces la contul menționat, dacă este un cont al unui membru al echipei care a părăsit compania ta, atunci acele mesaje trebuie să fie exportate, altfel vor fi pierdute)
 </Accordion>
 <Accordion title="Există un cloud oficial pentru o procedură de migrație auto-găzduită sau un serviciu de migrație asistată?">
 Până în prezent, nu există o procedură oficială de migrare „cloud-to-held”. Ideea generală este următoarea:
 * în primul rând, instalați aplicații pentru a introduce obiecte și câmpuri deținute de aplicație
 * reproduce obiecte și câmpuri personalizate adăugate de utilizatori
-* folosește script cu chei API sau instrumente AI pentru a migra toate datele dintr-un spațiu de lucru în altul
+* utilizați un script cu chei API sau instrumente AI pentru a migra toate datele dintr-un spațiu de lucru în altul
 * toate obiectele netransferabile trebuie să fie migrate manual
 
 Vă rugăm să fiţi conştienţi de câteva lucruri:
-* poți trimite până la 50 de cereri pe minut la planul Pro sau 100 de cereri pe minut la planul organizației înainte de a atinge o limită solicitare/min
+* poți trimite până la 50 de cereri pe minut în planul Pro sau 100 de cereri pe minut în planul organizației înainte de a atinge o limită solicitare/min
 * fiecare cerere API poate avea până la 200 de înregistrări
 * unele date din câmpuri cum ar fi Create, Activități Cronologie și Actualizate de vor fi pierdute în timpul importului și suprascrise de sistem
 </Accordion>

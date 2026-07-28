@@ -138,9 +138,7 @@ export const EmailComposerFields = ({
         defaultValue={composerState.initialBody}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
-        minHeight={120}
-        maxWidth={600}
-        contentType="html"
+        preset="inlineEmailBody"
       />
       <EmailAttachmentsField
         label={t`Attachments`}

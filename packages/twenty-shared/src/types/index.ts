@@ -146,6 +146,7 @@ export {
   LOGIC_FUNCTION_HTTP_RESPONSE_MARKER,
   isLogicFunctionHttpResponse,
 } from './LogicFunctionResponse';
+export { MessageCampaignStatus } from './MessageCampaignStatus';
 export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
 export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
 export { MessageChannelSyncStage } from './MessageChannelSyncStage';
@@ -205,6 +206,8 @@ export type {
   FilesConfiguration,
   EmailsConfiguration,
   EmailThreadConfiguration,
+  MessageCampaignBodyConfiguration,
+  MessageCampaignDetailsConfiguration,
   CalendarConfiguration,
   WorkflowConfiguration,
   WorkflowVersionConfiguration,

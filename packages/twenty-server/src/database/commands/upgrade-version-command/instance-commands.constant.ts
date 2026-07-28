@@ -119,6 +119,7 @@ import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
 import { AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand } from './2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration';
 import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030252-add-message-channel-display-name';
+import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
@@ -128,6 +129,7 @@ import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-i
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
+import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { AddUserPreferenceToViewOpenRecordInFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785250223556-add-user-preference-to-view-open-record-in';
 import { BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1785255000000-backfill-view-open-record-in-user-preference';
 import { AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785256000000-add-default-open-record-in-to-object-metadata';
@@ -254,6 +256,7 @@ export const INSTANCE_COMMANDS = [
   AddSdkClientCoreChecksumToApplicationFastInstanceCommand,
   AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand,
   AddMessageChannelDisplayNameFastInstanceCommand,
+  AddMessageCampaignWidgetTypeFastInstanceCommand,
   AddStatusesToBillingSubscriptionIndexSlowInstanceCommand,
   AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand,
   RepairKeyValuePairApplicationIdFastInstanceCommand,
@@ -261,6 +264,7 @@ export const INSTANCE_COMMANDS = [
   AddAppTokenSsoExchangeIndexFastInstanceCommand,
   AddPageLayoutCascadeDeleteIndexesFastInstanceCommand,
   AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand,
+  AddIsHiddenToAgentMessageFastInstanceCommand,
   AddUserPreferenceToViewOpenRecordInFastInstanceCommand,
   BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand,
   AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand,

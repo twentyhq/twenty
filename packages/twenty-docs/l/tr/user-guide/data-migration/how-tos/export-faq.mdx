@@ -5,14 +5,14 @@ description: Veri dışa aktarmayla ilgili sıkça sorulan sorular.
 
 <AccordionGroup>
 <Accordion title="İptalden önce, özel nesneler, özel alanlar, ilişkiler, notlar, görevler, fırsatlar, ekler, iş akışları, izinler ve denetim geçmişi de dahil olmak üzere tüm çalışma alanı verilerini dışa aktarabilir miyiz?">
-Çalışma alanı verileri, bazı istisnalarla birlikte iptalden önce dışa aktarılabilir: panolar, iş akışları ve izinler manuel olarak aktarılmalı ve denetim günlükleri aktarılamaz.
+Çalışma alanı verileri, bazı istisnalarla birlikte iptalden önce dışa aktarılabilir: panolar, iş akışları ve izinler manuel olarak aktarılmalıdır; denetim günlükleri aktarılamaz.
 </Accordion>
 <Accordion title="Hangi öğeler şu anda dışa aktarılamaz veya taşınamaz?">
 Çoğu öğe, bazı istisnalarla dışa aktarılabilir veya taşınabilir:
 * iş akışları, panolar ve tüm ayarlar (API anahtarları, webhook'lar, denetim günlükleri, kullanıcı ayarları vb.) manuel olarak taşınmalıdır
-* uygulama tarafından oluşturulan nesneler ve alanlar, söz konusu uygulama farklı bir çalışma alanına kurularak taşınabilir, manuel olarak taşınmamalıdır
-* bazı kayıtlar, iş akışı sürümleri ve iş akışı çalıştırmaları gibi. hiçbir şekilde taşınamaz ve kaybolmaları beklenir
-* mesaj ve takvimle ilgili nesneler gibi bazı nesneler dışa aktarılmamalıdır, çünkü bunlar hesap bağlandığında oluşturulur ve periyodik olarak eşitlenir, hesabınızı tekrar bağladığınızda yeniden eşitleneceklerdir (söz konusu hesaba erişiminiz olduğu sürece; bu, şirketinizden ayrılan bir ekip üyesinin hesabıysa, bu durumda bu mesajlar dışa aktarılmalıdır, aksi takdirde kaybolacaklardır)
+* uygulama tarafından oluşturulan nesneler ve alanlar, söz konusu uygulama farklı bir çalışma alanına kurularak taşınabilir. Manuel olarak taşınmamalıdır
+* iş akışı sürümleri ve iş akışı çalıştırmaları gibi bazı kayıtlar hiç aktarılamaz ve kaybolmaları beklenir
+* bazı nesneler, örneğin mesaj ve takvimle ilgili nesneler, bir hesabın bağlanmasıyla oluşturuldukları ve periyodik olarak eşitlendiikleri için dışa aktarılmamalıdır. Hesabınızı bağladığınızda tekrar eşitleneceklerdir (ilgili hesaba erişiminiz olduğu sürece; eğer bu, şirketinizden ayrılan bir ekip üyesinin hesabıysa, bu durumda bu mesajlar dışa aktarılmalıdır, aksi takdirde kaybolacaklardır)
 </Accordion>
 <Accordion title="Resmi bir buluttan kendi barındırılan ortama geçiş prosedürü veya destekli bir geçiş hizmeti var mı?">
 Şu an itibarıyla, buluttan kendi barındırılan ortama resmi bir geçiş prosedürü yoktur. Genel fikir şudur:
