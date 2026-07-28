@@ -96,6 +96,7 @@ type WorkspaceViewField = {
   fieldMetadataUniversalIdentifier?: string;
   position: number;
   isActive: boolean;
+  deletedAt?: string | null;
 };
 
 const buildArgs = ({
@@ -199,7 +200,7 @@ const buildArgs = ({
     context: {},
   }) as unknown as BuildSideEffectsArgs<'fieldMetadata'>;
 
-// Synced INDEX view: the 2-24 reconcile command re-owns every INDEX view to the
+// Synced INDEX view: the 2-25 reconcile command re-owns every INDEX view to the
 // derived identifier, so the handler resolves it by that identifier alone.
 const SYNCED_INDEX_VIEW: WorkspaceView = {
   id: 'view-db-id-1',
@@ -375,6 +376,47 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(viewFields[0].position).toBe(5);
       expect(viewFields[0].isVisible).toBe(false);
       expect(viewFields[0].isSystemSideEffect).toBe(true);
+    });
+
+    it('should ignore soft-deleted view fields when computing the append position', () => {
+      const result = handler.buildSideEffects(
+        buildArgs({
+          triggerFieldMetadata: PRIORITY_FIELD,
+          pendingFieldMetadatas: [PRIORITY_FIELD],
+          objectMetadataInWorkspace: true,
+          viewsInWorkspace: [SYNCED_INDEX_VIEW],
+          viewFieldsInWorkspace: [
+            {
+              universalIdentifier: 'existing-vf-1',
+              viewId: SYNCED_INDEX_VIEW.id,
+              position: 0,
+              isActive: true,
+            },
+            // A removed column: still in the flat maps but soft-deleted, its
+            // position must not inflate the append position.
+            {
+              universalIdentifier: 'soft-deleted-vf',
+              viewId: SYNCED_INDEX_VIEW.id,
+              position: 9,
+              isActive: true,
+              deletedAt: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+        }),
+      );
+
+      expect(result.status).toBe('success');
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      const viewFields = Object.values(
+        result.operations.viewField?.flatEntityToCreate ?? {},
+      );
+
+      expect(viewFields).toHaveLength(1);
+      expect(viewFields[0].position).toBe(1);
     });
 
     it('should emit a hidden view field for a relation field', () => {

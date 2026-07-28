@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
+import { filterSystemSideEffectFlatViewFieldsToDelete } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/filter-system-side-effect-flat-view-fields-to-delete.util';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 
 @Injectable()
@@ -23,26 +21,11 @@ export class FieldSystemViewFieldsOnDeleteSideEffectHandlerService extends Metad
     flatEntity: flatFieldMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const viewFieldToDelete: Record<
-      string,
-      MetadataUniversalFlatEntity<'viewField'>
-    > = {};
-
-    for (const viewFieldUniversalIdentifier of flatFieldMetadata.viewFieldUniversalIdentifiers) {
-      const flatViewField =
-        relatedFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
-          viewFieldUniversalIdentifier
-        ];
-
-      if (
-        !isDefined(flatViewField) ||
-        flatViewField.isSystemSideEffect !== true
-      ) {
-        continue;
-      }
-
-      viewFieldToDelete[flatViewField.universalIdentifier] = flatViewField;
-    }
+    const viewFieldToDelete = filterSystemSideEffectFlatViewFieldsToDelete({
+      viewFieldUniversalIdentifiers:
+        flatFieldMetadata.viewFieldUniversalIdentifiers,
+      flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
+    });
 
     if (Object.keys(viewFieldToDelete).length === 0) {
       return { status: 'noop' };

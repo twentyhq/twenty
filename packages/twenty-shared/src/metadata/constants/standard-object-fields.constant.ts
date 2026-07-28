@@ -238,14 +238,18 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   blocklist: {
-    ...buildStandardObjectSystemFields('20202020-0408-4f38-b8a8-4d5e3e26e24d'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
+    ),
     handle: { universalIdentifier: '20202020-eef3-44ed-aa32-4641d7fd4a3e' },
     workspaceMember: {
       universalIdentifier: '20202020-548d-4084-a947-fa20a39f7c06',
     },
   },
   calendarChannelEventAssociation: {
-    ...buildStandardObjectSystemFields('20202020-491b-4aaa-9825-afd1bae6ae00'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation,
+    ),
     calendarChannelId: {
       universalIdentifier: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
     },
@@ -260,7 +264,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   calendarEventParticipant: {
-    ...buildStandardObjectSystemFields('20202020-a1c3-47a6-9732-27e5b1e8436d'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
+    ),
     calendarEvent: {
       universalIdentifier: '20202020-fe3a-401c-b889-af4f4657a861',
     },
@@ -284,7 +290,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   calendarEvent: {
-    ...buildStandardObjectSystemFields('20202020-8f1d-4eef-9f85-0d1965e27221'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
+    ),
     title: { universalIdentifier: '20202020-080e-49d1-b21d-9702a7e2525c' },
     isCanceled: {
       universalIdentifier: '20202020-335b-4e04-b470-43b84b64863c',
@@ -328,7 +336,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   callRecording: {
-    ...buildStandardObjectSystemFields('ce19efb9-710f-45b2-b141-473abbeea60b'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
+    ),
     title: {
       universalIdentifier: '4cff8863-a1d1-45fd-a370-4eb6aa1f2a5b',
     },
@@ -529,14 +539,18 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   messageListMember: {
-    ...buildStandardObjectSystemFields('27773d24-8ce3-40f8-aa6c-1f590f2c08d2'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageListMember,
+    ),
     person: { universalIdentifier: '34288425-8805-42fb-8b98-ee13d09be3d3' },
     list: {
       universalIdentifier: 'd5402005-e8f9-4fbe-8696-b6723cd85018',
     },
   },
   messageChannelMessageAssociation: {
-    ...buildStandardObjectSystemFields('20202020-ad1e-4127-bccb-d83ae04d2ccb'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation,
+    ),
     messageChannelId: {
       universalIdentifier: '20202020-b658-408f-bd46-3bd2d15d7e52',
     },
@@ -560,7 +574,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   messageChannelMessageAssociationMessageFolder: {
-    ...buildStandardObjectSystemFields('20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociationMessageFolder,
+    ),
     messageChannelMessageAssociation: {
       universalIdentifier: '7411cfa3-4fd9-4b90-a636-940015fd7243',
     },
@@ -569,7 +585,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   messageParticipant: {
-    ...buildStandardObjectSystemFields('20202020-a433-4456-aa2d-fd9cb26b774a'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
+    ),
     message: {
       universalIdentifier: '20202020-985b-429a-9db9-9e55f4898a2a',
     },
@@ -593,7 +611,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   messageThread: {
-    ...buildStandardObjectSystemFields('20202020-849a-4c3e-84f5-a25a7d802271'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
+    ),
     messages: {
       universalIdentifier: '20202020-3115-404f-aade-e1154b28e35a',
     },
@@ -605,7 +625,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   message: {
-    ...buildStandardObjectSystemFields('20202020-3f6b-4425-80ab-e468899ab4b2'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
+    ),
     headerMessageId: {
       universalIdentifier: '20202020-72b5-416d-aed8-b55609067d01',
     },
@@ -926,7 +948,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   workflowAutomatedTrigger: {
-    ...buildStandardObjectSystemFields('20202020-3319-4234-a34c-7f3b9d2e4d1f'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
+    ),
     type: {
       universalIdentifier: '20202020-3319-4234-a34c-3f92c1ab56e7',
     },
@@ -1002,7 +1026,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
   },
   workspaceMember: {
-    ...buildStandardObjectSystemFields('20202020-3319-4234-a34c-82d5c0e881a6'),
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
+    ),
     name: { universalIdentifier: '20202020-e914-43a6-9c26-3603c59065f4' },
     colorScheme: {
       universalIdentifier: '20202020-66bc-47f2-adac-f2ef7c598b63',

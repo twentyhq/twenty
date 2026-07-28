@@ -65,7 +65,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   blocklist: {
-    universalIdentifier: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
     fields: STANDARD_OBJECT_FIELDS.blocklist,
     indexes: {
       workspaceMemberIdIndex: {
@@ -74,7 +74,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allBlocklists: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
         fields: STANDARD_OBJECT_FIELDS.blocklist,
         derivedViewFieldNames: ['handle', 'workspaceMember', 'createdAt'],
       }),
@@ -103,7 +104,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarChannelEventAssociation: {
-    universalIdentifier: '20202020-491b-4aaa-9825-afd1bae6ae00',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation,
     fields: STANDARD_OBJECT_FIELDS.calendarChannelEventAssociation,
     indexes: {
       calendarChannelIdIndex: {
@@ -115,7 +117,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-491b-4aaa-9825-afd1bae6ae00',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation,
         fields: STANDARD_OBJECT_FIELDS.calendarChannelEventAssociation,
         derivedViewFieldNames: [
           'calendarChannelId',
@@ -155,7 +158,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarEventParticipant: {
-    universalIdentifier: '20202020-a1c3-47a6-9732-27e5b1e8436d',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
     fields: STANDARD_OBJECT_FIELDS.calendarEventParticipant,
     indexes: {
       calendarEventIdIndex: {
@@ -170,7 +174,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allCalendarEventParticipants: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-a1c3-47a6-9732-27e5b1e8436d',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
         fields: STANDARD_OBJECT_FIELDS.calendarEventParticipant,
         derivedViewFieldNames: [
           'calendarEvent',
@@ -226,12 +231,13 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarEvent: {
-    universalIdentifier: '20202020-8f1d-4eef-9f85-0d1965e27221',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
     fields: STANDARD_OBJECT_FIELDS.calendarEvent,
     indexes: {},
     views: {
       allCalendarEvents: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-8f1d-4eef-9f85-0d1965e27221',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
         fields: STANDARD_OBJECT_FIELDS.calendarEvent,
         derivedViewFieldNames: [
           'title',
@@ -296,7 +302,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   callRecording: {
-    universalIdentifier: 'ce19efb9-710f-45b2-b141-473abbeea60b',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
     fields: STANDARD_OBJECT_FIELDS.callRecording,
     indexes: {
       calendarEventIdIndex: {
@@ -305,7 +311,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allCallRecordings: buildStandardObjectIndexView({
-        objectUniversalIdentifier: 'ce19efb9-710f-45b2-b141-473abbeea60b',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
         fields: STANDARD_OBJECT_FIELDS.callRecording,
         derivedViewFieldNames: [
           'status',
@@ -547,7 +554,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageListMember: {
-    universalIdentifier: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageListMember,
     fields: STANDARD_OBJECT_FIELDS.messageListMember,
     indexes: {
       listIdIndex: {
@@ -559,7 +567,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageChannelMessageAssociation: {
-    universalIdentifier: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation,
     fields: STANDARD_OBJECT_FIELDS.messageChannelMessageAssociation,
     indexes: {
       messageChannelIdIndex: {
@@ -574,7 +583,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allMessageChannelMessageAssociations: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation,
         fields: STANDARD_OBJECT_FIELDS.messageChannelMessageAssociation,
         derivedViewFieldNames: [
           'messageChannelId',
@@ -618,7 +628,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageChannelMessageAssociationMessageFolder: {
-    universalIdentifier: '20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociationMessageFolder,
     fields:
       STANDARD_OBJECT_FIELDS.messageChannelMessageAssociationMessageFolder,
     indexes: {
@@ -635,7 +646,8 @@ export const STANDARD_OBJECTS = {
     views: {
       allMessageChannelMessageAssociationMessageFolders:
         buildStandardObjectIndexView({
-          objectUniversalIdentifier: '20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a',
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociationMessageFolder,
           fields:
             STANDARD_OBJECT_FIELDS.messageChannelMessageAssociationMessageFolder,
           derivedViewFieldNames: [
@@ -672,7 +684,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageParticipant: {
-    universalIdentifier: '20202020-a433-4456-aa2d-fd9cb26b774a',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
     fields: STANDARD_OBJECT_FIELDS.messageParticipant,
     indexes: {
       messageIdIndex: {
@@ -690,7 +703,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allMessageParticipants: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-a433-4456-aa2d-fd9cb26b774a',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
         fields: STANDARD_OBJECT_FIELDS.messageParticipant,
         derivedViewFieldNames: [
           'message',
@@ -739,12 +753,13 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageThread: {
-    universalIdentifier: '20202020-849a-4c3e-84f5-a25a7d802271',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
     fields: STANDARD_OBJECT_FIELDS.messageThread,
     indexes: {},
     views: {
       allMessageThreads: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-849a-4c3e-84f5-a25a7d802271',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
         fields: STANDARD_OBJECT_FIELDS.messageThread,
         derivedViewFieldNames: [
           'subject',
@@ -756,7 +771,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   message: {
-    universalIdentifier: '20202020-3f6b-4425-80ab-e468899ab4b2',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
     fields: STANDARD_OBJECT_FIELDS.message,
     indexes: {
       messageThreadIdIndex: {
@@ -768,7 +783,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allMessages: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-3f6b-4425-80ab-e468899ab4b2',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
         fields: STANDARD_OBJECT_FIELDS.message,
         derivedViewFieldNames: [
           'subject',
@@ -1389,7 +1405,8 @@ export const STANDARD_OBJECTS = {
     },
   },
   workflowAutomatedTrigger: {
-    universalIdentifier: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
     fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
     indexes: {
       workflowIdIndex: {
@@ -1398,7 +1415,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allWorkflowAutomatedTriggers: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
         fields: STANDARD_OBJECT_FIELDS.workflowAutomatedTrigger,
         derivedViewFieldNames: ['type', 'workflow', 'createdAt'],
       }),
@@ -1582,7 +1600,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workspaceMember: {
-    universalIdentifier: '20202020-3319-4234-a34c-82d5c0e881a6',
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
     fields: STANDARD_OBJECT_FIELDS.workspaceMember,
     indexes: {
       userEmailUniqueIndex: {
@@ -1594,7 +1612,8 @@ export const STANDARD_OBJECTS = {
     },
     views: {
       allWorkspaceMembers: buildStandardObjectIndexView({
-        objectUniversalIdentifier: '20202020-3319-4234-a34c-82d5c0e881a6',
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
         fields: STANDARD_OBJECT_FIELDS.workspaceMember,
         derivedViewFieldNames: [
           'name',

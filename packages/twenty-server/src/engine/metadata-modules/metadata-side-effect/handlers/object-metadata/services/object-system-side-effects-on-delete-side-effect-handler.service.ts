@@ -283,24 +283,9 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
       ),
     ];
 
-    const viewFieldToDelete: FlatEntityToDelete<'viewField'> = {};
-
-    for (const viewFieldUniversalIdentifier of viewFieldUniversalIdentifiers) {
-      const flatViewField =
-        relatedFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
-          viewFieldUniversalIdentifier
-        ];
-
-      if (
-        !isDefined(flatViewField) ||
-        flatViewField.isSystemSideEffect !== true
-      ) {
-        continue;
-      }
-
-      viewFieldToDelete[flatViewField.universalIdentifier] = flatViewField;
-    }
-
-    return viewFieldToDelete;
+    return filterSystemSideEffectFlatViewFieldsToDelete({
+      viewFieldUniversalIdentifiers,
+      flatViewFieldMaps: relatedFlatEntityMaps.flatViewFieldMaps,
+    });
   }
 }
