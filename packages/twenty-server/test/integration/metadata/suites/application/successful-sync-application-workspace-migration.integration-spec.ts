@@ -20,7 +20,10 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-const TEST_APP_ID = uuidv4();
+// Fixed so the portable viewFieldUniversalIdentifiers aggregator carried by the
+// field-delete migration action (derived from app + object + field) stays
+// deterministic across runs.
+const TEST_APP_ID = '0c17e907-f32a-4526-98e4-9addd4302b1a';
 const TEST_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
@@ -317,11 +320,12 @@ describe('syncApplication', () => {
   }, 60000);
 
   it('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
-    const originalFieldId = uuidv4();
-    const updatedFieldId = uuidv4();
+    const originalFieldId = '8abbef24-f8c3-41d5-826b-73a02825e712';
+    const updatedFieldId = 'a4262080-673d-430a-883b-c5d04610abf1';
 
     const testObject = buildDefaultObjectManifest({
       applicationUniversalIdentifier: TEST_APP_ID,
+      universalIdentifier: '8fc4bfec-01d8-4404-bd1a-dc90fe8e7699',
       nameSingular: 'ticket',
       namePlural: 'tickets',
       labelSingular: 'Ticket',
