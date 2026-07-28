@@ -153,27 +153,25 @@ export const SidePanelWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
-    if (stepDefinition.type === 'trigger') {
+    const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
+
+    if (isTrigger) {
       await updateTrigger({
         ...stepDefinition.definition,
         name: title,
       } as typeof stepDefinition.definition);
+    } else {
+      await updateWorkflowVersionStep({
+        workflowVersionId: targetWorkflowVersionId,
+        step: {
+          ...stepDefinition.definition,
+          name: title,
+        },
+      });
 
-      return;
-    }
-
-    const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
-
-    await updateWorkflowVersionStep({
-      workflowVersionId: targetWorkflowVersionId,
-      step: {
-        ...stepDefinition.definition,
-        name: title,
-      },
-    });
-
-    if (isDefined(agentId)) {
-      await updateAgentLabel(title);
+      if (isDefined(agentId)) {
+        await updateAgentLabel(title);
+      }
     }
   };
 
