@@ -139,14 +139,22 @@ export class InstallApplicationCommand extends CommandRunner {
 
     // Explicit ids bypass the iterator's own workspace selection, so the count
     // limit and the already-installed filter are applied here instead.
+    const alreadyInstalledRequestedWorkspaceIds = isDefined(
+      requestedWorkspaceIds,
+    )
+      ? await this.findAlreadyInstalledWorkspaceIds({
+          universalIdentifier: registration.universalIdentifier,
+          workspaceIds: requestedWorkspaceIds,
+        })
+      : undefined;
+
     const workspaceIdsToIterate = isDefined(requestedWorkspaceIds)
-      ? (
-          await this.excludeAlreadyInstalledWorkspaceIds({
-            universalIdentifier: registration.universalIdentifier,
-            workspaceIds: requestedWorkspaceIds,
-            applicationName: registration.name,
-          })
-        ).slice(0, options.workspaceCountLimit)
+      ? requestedWorkspaceIds
+          .filter(
+            (workspaceId) =>
+              !alreadyInstalledRequestedWorkspaceIds?.has(workspaceId),
+          )
+          .slice(0, options.workspaceCountLimit)
       : undefined;
 
     if (
@@ -173,6 +181,9 @@ export class InstallApplicationCommand extends CommandRunner {
     }
 
     let skippedWorkspaceCount = 0;
+
+    const prefilteredWorkspaceCount =
+      alreadyInstalledRequestedWorkspaceIds?.size ?? 0;
 
     const report = await this.workspaceIteratorService.iterate({
       workspaceIds: workspaceIdsToIterate,
@@ -213,7 +224,7 @@ export class InstallApplicationCommand extends CommandRunner {
     });
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Installed on ${report.success.length - skippedWorkspaceCount} workspace(s), skipped ${skippedWorkspaceCount} already installed, ${report.fail.length} failed`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Installed on ${report.success.length - skippedWorkspaceCount} workspace(s), skipped ${skippedWorkspaceCount + prefilteredWorkspaceCount} already installed, ${report.fail.length} failed`,
     );
 
     this.logger.log(chalk.blue('Command completed!'));
@@ -235,32 +246,20 @@ export class InstallApplicationCommand extends CommandRunner {
       : 'every provisioned workspace that does not have it yet';
   }
 
-  private async excludeAlreadyInstalledWorkspaceIds({
+  private async findAlreadyInstalledWorkspaceIds({
     universalIdentifier,
     workspaceIds,
-    applicationName,
   }: {
     universalIdentifier: string;
     workspaceIds: string[];
-    applicationName: string;
-  }): Promise<string[]> {
+  }): Promise<Set<string>> {
     const existingApplications = await this.applicationRepository.find({
       select: ['workspaceId'],
       where: { universalIdentifier, workspaceId: In(workspaceIds) },
     });
 
-    const alreadyInstalledWorkspaceIds = new Set(
+    return new Set(
       existingApplications.map((application) => application.workspaceId),
-    );
-
-    if (alreadyInstalledWorkspaceIds.size > 0) {
-      this.logger.log(
-        `Skipping ${alreadyInstalledWorkspaceIds.size} requested workspace(s) where "${applicationName}" is already installed, run application:upgrade to update them`,
-      );
-    }
-
-    return workspaceIds.filter(
-      (workspaceId) => !alreadyInstalledWorkspaceIds.has(workspaceId),
     );
   }
 
