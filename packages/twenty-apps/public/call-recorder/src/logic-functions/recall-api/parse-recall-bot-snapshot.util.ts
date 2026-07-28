@@ -23,13 +23,20 @@ const parseStatusChanges = (value: unknown): RecallBotStatusChange[] => {
   }
 
   return value.flatMap((statusChange: unknown) => {
-    const code = getString(asRecord(statusChange)?.code);
+    const statusChangeRecord = asRecord(statusChange);
+    const code = getString(statusChangeRecord?.code);
 
     if (isUndefined(code)) {
       return [];
     }
 
-    return [{ code, createdAt: getString(asRecord(statusChange)?.created_at) }];
+    return [
+      {
+        code,
+        subCode: getString(statusChangeRecord?.sub_code),
+        createdAt: getString(statusChangeRecord?.created_at),
+      },
+    ];
   });
 };
 

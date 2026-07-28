@@ -130,4 +130,36 @@ describe('shouldCompleteCallRecordingImport', () => {
       }),
     ).toBe(false);
   });
+
+  it('does not complete a not-attended recording even with full artifacts', () => {
+    expect(
+      shouldCompleteCallRecordingImport({
+        current: {
+          status: CallRecordingStatus.NOT_ATTENDED,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+          video: filledVideo,
+        },
+        updateData: {},
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldCompleteCallRecordingImport({
+        current: {
+          status: CallRecordingStatus.PROCESSING,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+          video: filledVideo,
+        },
+        updateData: {
+          status: CallRecordingStatus.NOT_ATTENDED,
+        },
+      }),
+    ).toBe(false);
+  });
 });

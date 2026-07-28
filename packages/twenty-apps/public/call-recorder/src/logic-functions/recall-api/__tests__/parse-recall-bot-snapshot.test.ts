@@ -35,6 +35,26 @@ describe('parseRecallBotSnapshot', () => {
     });
   });
 
+  it('parses the sub code carried by end-of-call status changes', () => {
+    expect(
+      parseRecallBotSnapshot({
+        status_changes: [
+          {
+            code: 'call_ended',
+            sub_code: 'timeout_exceeded_noone_joined',
+            created_at: '2026-01-01T14:00:00.000Z',
+          },
+        ],
+      }).statusChanges,
+    ).toEqual([
+      {
+        code: 'call_ended',
+        subCode: 'timeout_exceeded_noone_joined',
+        createdAt: '2026-01-01T14:00:00.000Z',
+      },
+    ]);
+  });
+
   it('returns an empty snapshot shell from an empty payload', () => {
     expect(parseRecallBotSnapshot({})).toEqual({
       id: undefined,

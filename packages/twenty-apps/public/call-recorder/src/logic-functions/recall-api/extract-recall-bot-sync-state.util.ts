@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { isNotAttendedRecallEnd } from 'src/logic-functions/domain/is-not-attended-recall-end.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
 import {
@@ -23,24 +24,34 @@ export const extractRecallBotSyncState = (
 ): RecallBotSyncState => {
   const { statusChanges } = bot;
   const latestStatusChange = getLatestStatusChange(statusChanges);
-  const status = mapRecallStatusCodeToCallRecordingStatus(
-    latestStatusChange?.code,
-  );
+  const endStatusChange = findEndStatusChange(statusChanges);
+  const isNotAttended = isNotAttendedRecallEnd({
+    statusCode: endStatusChange?.code,
+    statusSubCode: endStatusChange?.subCode,
+  });
+  const status = isNotAttended
+    ? CallRecordingStatus.NOT_ATTENDED
+    : mapRecallStatusCodeToCallRecordingStatus(latestStatusChange?.code);
   const recording = bot.recordings[0];
 
   return {
     status,
-    failureReason:
-      status === CallRecordingStatus.FAILED
-        ? latestStatusChange?.code
-        : undefined,
+    failureReason: resolveFailureReason({
+      status,
+      latestStatusChange,
+      endStatusChange,
+    }),
     startedAt: normalizeRecallTimestamp(
       recording?.startedAt ??
         findStatusChangeTimestamp(statusChanges, 'in_call_recording'),
     ),
+    // A bot that left an unattended meeting never recorded anything, so its
+    // leave time is not a recording end.
     endedAt: normalizeRecallTimestamp(
       recording?.completedAt ??
-        findStatusChangeTimestamp(statusChanges, 'call_ended'),
+        (isNotAttended
+          ? undefined
+          : findStatusChangeTimestamp(statusChanges, 'call_ended')),
     ),
     externalRecordingId: recording?.id,
     isRecallRecordingDone:
@@ -48,6 +59,34 @@ export const extractRecallBotSyncState = (
       statusChanges.some((statusChange) => statusChange.code === 'done'),
   };
 };
+
+const resolveFailureReason = ({
+  status,
+  latestStatusChange,
+  endStatusChange,
+}: {
+  status: CallRecordingStatus | undefined;
+  latestStatusChange: RecallBotStatusChange | undefined;
+  endStatusChange: RecallBotStatusChange | undefined;
+}): string | undefined => {
+  if (status === CallRecordingStatus.NOT_ATTENDED) {
+    return endStatusChange?.subCode;
+  }
+
+  if (status === CallRecordingStatus.FAILED) {
+    return latestStatusChange?.subCode ?? latestStatusChange?.code;
+  }
+
+  return undefined;
+};
+
+const findEndStatusChange = (
+  statusChanges: RecallBotStatusChange[],
+): RecallBotStatusChange | undefined =>
+  statusChanges.find(
+    (statusChange) =>
+      statusChange.code === 'call_ended' || statusChange.code === 'fatal',
+  );
 
 const getLatestStatusChange = (
   statusChanges: RecallBotStatusChange[],

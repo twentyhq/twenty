@@ -3,12 +3,15 @@ import { isUndefined } from '@sniptt/guards';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 // Deliveries are unordered; a late event must never move status backwards.
+// FAILED and NOT_ATTENDED share a rank: both are terminal end states derived
+// from the same end-of-call signal, so either may correct the other.
 const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
   [CallRecordingStatus.SCHEDULED]: 0,
   [CallRecordingStatus.JOINING]: 1,
   [CallRecordingStatus.RECORDING]: 2,
   [CallRecordingStatus.PROCESSING]: 3,
   [CallRecordingStatus.FAILED]: 4,
+  [CallRecordingStatus.NOT_ATTENDED]: 4,
   [CallRecordingStatus.COMPLETED]: 5,
 };
 

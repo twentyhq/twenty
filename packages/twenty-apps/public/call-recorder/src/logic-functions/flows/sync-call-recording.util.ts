@@ -147,7 +147,10 @@ const buildSyncStateFieldUpdates = ({
   ) {
     updateData.status = syncState.status;
 
-    if (syncState.status === CallRecordingStatus.FAILED) {
+    if (
+      syncState.status === CallRecordingStatus.FAILED ||
+      syncState.status === CallRecordingStatus.NOT_ATTENDED
+    ) {
       updateData.callRecorderFailureReason =
         syncState.failureReason ?? 'recall_bot_failed';
     }
@@ -175,6 +178,7 @@ const buildSyncStateFieldUpdates = ({
 };
 
 // The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
+// An unattended meeting is not a failure, so an already-classified NOT_ATTENDED stands.
 const buildMissingArtifactsFailureUpdate = ({
   currentStatus,
   pendingStatus,
@@ -186,6 +190,8 @@ const buildMissingArtifactsFailureUpdate = ({
 }): CallRecordingUpdateFields => {
   if (
     pendingStatus === CallRecordingStatus.FAILED ||
+    pendingStatus === CallRecordingStatus.NOT_ATTENDED ||
+    currentStatus === CallRecordingStatus.NOT_ATTENDED ||
     isCallRecordingStatusDowngrade({
       fromStatus: currentStatus,
       toStatus: CallRecordingStatus.FAILED,
@@ -222,7 +228,7 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
   return isUndefined(transcriptMarker) || transcriptMarker.status === 'PENDING';
 };
 
-// A media size marker must not overwrite the failure reason of a FAILED recording.
+// A media size marker must not overwrite the end reason of a FAILED or NOT_ATTENDED recording.
 const resolveMediaImportUpdate = ({
   mediaImportUpdate,
   currentStatus,
@@ -232,11 +238,13 @@ const resolveMediaImportUpdate = ({
   currentStatus: string | undefined;
   pendingStatus: string | undefined;
 }): CallRecordingUpdateFields => {
-  const isRecordingFailed =
-    currentStatus === CallRecordingStatus.FAILED ||
-    pendingStatus === CallRecordingStatus.FAILED;
+  const hasProtectedEndReason = [currentStatus, pendingStatus].some(
+    (status) =>
+      status === CallRecordingStatus.FAILED ||
+      status === CallRecordingStatus.NOT_ATTENDED,
+  );
 
-  if (!isRecordingFailed) {
+  if (!hasProtectedEndReason) {
     return mediaImportUpdate;
   }
 

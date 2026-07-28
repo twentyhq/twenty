@@ -2,8 +2,10 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -34,6 +36,23 @@ describe('CallRecording standard metadata build', () => {
       ];
 
     expect(callRecording?.isSystem).toBe(true);
+  });
+
+  it('offers the full recording lifecycle as status options', () => {
+    const statusField = allFlatEntityMaps.flatFieldMetadataMaps
+      .byUniversalIdentifier[
+      STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier
+    ] as FlatFieldMetadata<FieldMetadataType.SELECT> | undefined;
+
+    expect(statusField?.options?.map((option) => option.value)).toEqual([
+      'SCHEDULED',
+      'JOINING',
+      'RECORDING',
+      'PROCESSING',
+      'COMPLETED',
+      'FAILED',
+      'NOT_ATTENDED',
+    ]);
   });
 
   it('links callRecording to a calendarEvent through a direct relation', () => {

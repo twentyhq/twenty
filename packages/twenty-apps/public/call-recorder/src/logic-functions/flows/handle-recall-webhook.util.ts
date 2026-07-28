@@ -5,6 +5,7 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
+import { isNotAttendedRecallEnd } from 'src/logic-functions/domain/is-not-attended-recall-end.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
 import {
@@ -68,10 +69,7 @@ const handleRecallStatusEvent = async ({
   webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
   const { event, statusCode } = webhookEvent;
-  const callRecordingStatus = mapRecallEventToCallRecordingStatus({
-    event,
-    statusCode,
-  });
+  const callRecordingStatus = mapRecallEventToCallRecordingStatus(webhookEvent);
 
   if (isUndefined(callRecordingStatus)) {
     return {
@@ -94,18 +92,10 @@ const handleRecallStatusEvent = async ({
     };
   }
 
-  if (
-    isCallRecordingStatusDowngrade({
-      fromStatus: callRecording.status,
-      toStatus: callRecordingStatus,
-    })
-  ) {
-    return {
-      status: 'skipped',
-      event,
-      reason: `stale status event (${callRecording.status} -> ${callRecordingStatus})`,
-    };
-  }
+  const isStaleStatusEvent = isCallRecordingStatusDowngrade({
+    fromStatus: callRecording.status,
+    toStatus: callRecordingStatus,
+  });
 
   const updateData: CallRecordingUpdateFields = {
     ...(isUndefined(webhookEvent.externalBotId)
@@ -119,11 +109,16 @@ const handleRecallStatusEvent = async ({
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
   };
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: updateData,
-  });
+  if (!isStaleStatusEvent) {
+    await updateCallRecording(client, {
+      id: callRecording.id,
+      data: updateData,
+    });
+  }
 
+  // A done signal must trigger the artifact import even when its status update
+  // is stale: the record can already sit in a terminal status while artifacts
+  // remain to pull, and the import is idempotent.
   if (
     isRecallRecordingDoneSignal({
       event,
@@ -133,6 +128,14 @@ const handleRecallStatusEvent = async ({
     await requestCallRecordingArtifactsImportOrThrow({
       callRecordingId: callRecording.id,
     });
+  }
+
+  if (isStaleStatusEvent) {
+    return {
+      status: 'skipped',
+      event,
+      reason: `stale status event (${callRecording.status} -> ${callRecordingStatus})`,
+    };
   }
 
   return {
@@ -221,19 +224,21 @@ const findMatchingCallRecording = async ({
   )[0];
 };
 
-const mapRecallEventToCallRecordingStatus = ({
-  event,
-  statusCode,
-}: {
-  event: string;
-  statusCode: string | undefined;
-}): CallRecordingStatus | undefined => {
+const mapRecallEventToCallRecordingStatus = (
+  webhookEvent: RecallWebhookEvent,
+): CallRecordingStatus | undefined => {
+  const { event, statusCode } = webhookEvent;
+
   if (event === 'recording.done') {
     return CallRecordingStatus.PROCESSING;
   }
 
   if (event === 'recording.failed') {
     return CallRecordingStatus.FAILED;
+  }
+
+  if (isNotAttendedRecallEnd(webhookEvent)) {
+    return CallRecordingStatus.NOT_ATTENDED;
   }
 
   return mapRecallStatusCodeToCallRecordingStatus(statusCode);
@@ -249,10 +254,13 @@ const buildRecordingTimestampsUpdate = ({
   const { event, statusCode, statusTimestamp } = webhookEvent;
 
   const impliesRecordingStarted = statusCode === 'in_call_recording';
+  // A bot leaving an unattended meeting never recorded, so its leave time is
+  // not a recording end.
   const impliesRecordingEnded =
-    event === 'recording.done' ||
-    statusCode === 'call_ended' ||
-    statusCode === 'done';
+    (event === 'recording.done' ||
+      statusCode === 'call_ended' ||
+      statusCode === 'done') &&
+    !isNotAttendedRecallEnd(webhookEvent);
 
   const startedAt =
     webhookEvent.recordingStartedAt ??
@@ -278,17 +286,17 @@ const buildExternalRecordingIdUpdate = (
     ? {}
     : { externalRecordingId: webhookEvent.externalRecordingId };
 
-type NonFailedCallRecordingStatus = Exclude<
-  CallRecordingStatus,
-  CallRecordingStatus.FAILED
->;
+// Statuses that record why the recording could not be produced.
+type TerminalEndCallRecordingStatus =
+  | CallRecordingStatus.FAILED
+  | CallRecordingStatus.NOT_ATTENDED;
 
 type CallRecordingStatusUpdate =
   | {
-      status: NonFailedCallRecordingStatus;
+      status: Exclude<CallRecordingStatus, TerminalEndCallRecordingStatus>;
     }
   | {
-      status: CallRecordingStatus.FAILED;
+      status: TerminalEndCallRecordingStatus;
       callRecorderFailureReason: string;
     };
 
@@ -299,7 +307,10 @@ const buildCallRecordingStatusUpdate = ({
   reason: string;
   status: CallRecordingStatus;
 }): CallRecordingStatusUpdate => {
-  if (status === CallRecordingStatus.FAILED) {
+  if (
+    status === CallRecordingStatus.FAILED ||
+    status === CallRecordingStatus.NOT_ATTENDED
+  ) {
     return { status, callRecorderFailureReason: reason };
   }
 
@@ -309,4 +320,5 @@ const buildCallRecordingStatusUpdate = ({
 const getRecallWebhookFailureReason = ({
   event,
   statusCode,
-}: RecallWebhookEvent): string => statusCode ?? event;
+  statusSubCode,
+}: RecallWebhookEvent): string => statusSubCode ?? statusCode ?? event;

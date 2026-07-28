@@ -178,6 +178,13 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
           position: 5,
           color: 'gray',
         },
+        {
+          id: 'cbd14df8-9cc2-4399-92f5-31fc41f3768b',
+          value: CallRecordingStatus.NOT_ATTENDED,
+          label: i18nLabel(msg`Not attended`),
+          position: 6,
+          color: 'yellow',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

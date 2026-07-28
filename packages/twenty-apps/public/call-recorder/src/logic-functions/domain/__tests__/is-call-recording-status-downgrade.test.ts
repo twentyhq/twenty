@@ -14,6 +14,12 @@ describe('isCallRecordingStatusDowngrade', () => {
     ['PROCESSING', 'JOINING', true],
     ['FAILED', 'RECORDING', true],
     ['JOINING', 'SCHEDULED', true],
+    ['PROCESSING', 'NOT_ATTENDED', false],
+    ['NOT_ATTENDED', 'COMPLETED', false],
+    ['NOT_ATTENDED', 'FAILED', false],
+    ['FAILED', 'NOT_ATTENDED', false],
+    ['NOT_ATTENDED', 'PROCESSING', true],
+    ['COMPLETED', 'NOT_ATTENDED', true],
   ])('from %s to %s -> %s', (fromStatus, toStatus, expected) => {
     expect(isCallRecordingStatusDowngrade({ fromStatus, toStatus })).toBe(
       expected,

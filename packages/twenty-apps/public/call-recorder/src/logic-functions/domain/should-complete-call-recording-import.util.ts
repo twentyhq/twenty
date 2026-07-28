@@ -21,7 +21,9 @@ export const shouldCompleteCallRecordingImport = ({
 }): boolean =>
   current.status !== CallRecordingStatus.COMPLETED &&
   current.status !== CallRecordingStatus.FAILED &&
+  current.status !== CallRecordingStatus.NOT_ATTENDED &&
   updateData.status !== CallRecordingStatus.FAILED &&
+  updateData.status !== CallRecordingStatus.NOT_ATTENDED &&
   computeCallRecordingCharge({
     startedAt: updateData.startedAt ?? current.startedAt,
     endedAt: updateData.endedAt ?? current.endedAt,

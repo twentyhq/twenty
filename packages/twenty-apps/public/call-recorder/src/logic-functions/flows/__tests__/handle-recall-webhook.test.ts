@@ -1065,4 +1065,217 @@ describe('handleRecallWebhook', () => {
     });
     expect(client.mutations).toEqual([]);
   });
+
+  it('classifies a call nobody attended as NOT_ATTENDED without a recording end', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+            sub_code: 'timeout_exceeded_waiting_room',
+            created_at: '2026-01-01T13:19:00.000Z',
+          },
+        },
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'NOT_ATTENDED',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'timeout_exceeded_waiting_room',
+        },
+      },
+    ]);
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'NOT_ATTENDED',
+    });
+  });
+
+  it('classifies a fatal meeting_not_started end as NOT_ATTENDED', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'fatal',
+            sub_code: 'meeting_not_started',
+            created_at: '2026-01-01T13:02:00.000Z',
+          },
+        },
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'NOT_ATTENDED',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'meeting_not_started',
+        },
+      },
+    ]);
+  });
+
+  it('keeps PROCESSING with the recording end when the call ended after attendance', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'RECORDING',
+        externalBotId: 'recall-bot-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+            sub_code: 'timeout_exceeded_everyone_left',
+            created_at: '2026-01-01T14:00:00.000Z',
+          },
+        },
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          endedAt: '2026-01-01T14:00:00.000Z',
+        },
+      },
+    ]);
+  });
+
+  it('keeps the fatal sub code as the failure reason for real failures', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'fatal',
+            sub_code: 'meeting_link_invalid',
+            created_at: '2026-01-01T13:02:00.000Z',
+          },
+        },
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'meeting_link_invalid',
+        },
+      },
+    ]);
+  });
+
+  it('still queues the artifact import when a done event arrives after NOT_ATTENDED', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'NOT_ATTENDED',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'done',
+            created_at: '2026-01-01T13:20:00.000Z',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      event: 'bot.status_change',
+      reason: 'stale status event (NOT_ATTENDED -> PROCESSING)',
+    });
+    expect(client.mutations).toEqual([]);
+    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
+  });
 });
