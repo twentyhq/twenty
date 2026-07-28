@@ -112,25 +112,25 @@ export class AgentAsyncExecutorService {
     return roleTarget?.roleId;
   }
 
-  async executeAgent({
-    agent,
-    actorContext,
-    authContext,
-    workspaceId,
-    userWorkspaceId,
-    operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
-    ...promptInput
-  }: {
-    agent: AgentEntity | null;
-    actorContext?: ActorMetadata;
-    authContext?: WorkspaceAuthContext;
-    workspaceId: string;
-    userWorkspaceId?: string | null;
-    operationType?: UsageOperationType;
-  } & (
-    | { userPrompt: string; messages?: never }
-    | { messages: RunAgentMessage[]; userPrompt?: never }
-  )): Promise<AgentExecutionResult> {
+  async executeAgent(
+    args: {
+      agent: AgentEntity | null;
+      actorContext?: ActorMetadata;
+      authContext?: WorkspaceAuthContext;
+      workspaceId: string;
+      userWorkspaceId?: string | null;
+      operationType?: UsageOperationType;
+    } & ({ userPrompt: string } | { messages: RunAgentMessage[] }),
+  ): Promise<AgentExecutionResult> {
+    const {
+      agent,
+      actorContext,
+      authContext,
+      workspaceId,
+      userWorkspaceId,
+      operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
+    } = args;
+
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
@@ -234,16 +234,16 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const promptOrMessages =
-        'messages' in promptInput
+        'messages' in args
           ? {
-              messages: promptInput.messages.map(
+              messages: args.messages.map(
                 (message): ModelMessage => ({
                   role: message.role,
                   content: message.content,
                 }),
               ),
             }
-          : { prompt: promptInput.userPrompt };
+          : { prompt: args.userPrompt };
 
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
