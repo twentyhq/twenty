@@ -1,8 +1,11 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
+import { useSyncWorkflowVersionContentFromCore } from '@/workflow/workflow-version/hooks/useSyncWorkflowVersionContentFromCore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const useWorkflowVersion = (workflowVersionId?: string) => {
+  useSyncWorkflowVersionContentFromCore(workflowVersionId);
+
   const { record: workflowVersion } = useFindOneRecord<
     WorkflowVersion & { workflow: Pick<Workflow, 'id' | 'name'> }
   >({

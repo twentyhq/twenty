@@ -1,5 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
+import { useSyncWorkflowVersionContentFromCore } from '@/workflow/workflow-version/hooks/useSyncWorkflowVersionContentFromCore';
 import {
   type Workflow,
   type WorkflowVersion,
@@ -50,6 +51,8 @@ export const useWorkflowWithCurrentVersion = (
   const latestVersion = workflowVersions[0];
 
   const currentVersionId = effectiveDraftId ?? latestVersion?.id;
+
+  useSyncWorkflowVersionContentFromCore(currentVersionId);
 
   const { record: currentVersionWithSteps } = useFindOneRecord<WorkflowVersion>(
     {
