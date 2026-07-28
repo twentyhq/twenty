@@ -17,14 +17,14 @@ export default {
         38,
         39,
         40,
-        43,
-        45,
-        53,
-        55,
-        57,
-        59,
-        62,
-        65,
+        41,
+        44,
+        46,
+        54,
+        56,
+        58,
+        60,
+        63,
         66,
         67,
         68,
@@ -171,7 +171,7 @@ export default {
                 6
             ],
             "role": [
-                49
+                50
             ],
             "__typename": [
                 1
@@ -871,6 +871,9 @@ export default {
             "colorScheme": [
                 1
             ],
+            "openRecordIn": [
+                38
+            ],
             "avatarUrl": [
                 1
             ],
@@ -884,24 +887,25 @@ export default {
                 1
             ],
             "dateFormat": [
-                38
-            ],
-            "timeFormat": [
                 39
             ],
+            "timeFormat": [
+                40
+            ],
             "roles": [
-                49
+                50
             ],
             "userWorkspaceId": [
                 4
             ],
             "numberFormat": [
-                40
+                41
             ],
             "__typename": [
                 1
             ]
         },
+        "ViewOpenRecordIn": {},
         "WorkspaceMemberDateFormatEnum": {},
         "WorkspaceMemberTimeFormatEnum": {},
         "WorkspaceMemberNumberFormatEnum": {},
@@ -936,7 +940,7 @@ export default {
                 1
             ],
             "logicalOperator": [
-                43
+                44
             ],
             "positionInRowLevelPermissionPredicateGroup": [
                 16
@@ -963,7 +967,7 @@ export default {
                 1
             ],
             "operand": [
-                45
+                46
             ],
             "subFieldName": [
                 1
@@ -1011,10 +1015,10 @@ export default {
                 5
             ],
             "rowLevelPermissionPredicates": [
-                44
+                45
             ],
             "rowLevelPermissionPredicateGroups": [
-                42
+                43
             ],
             "__typename": [
                 1
@@ -1086,7 +1090,7 @@ export default {
                 11
             ],
             "apiKeys": [
-                48
+                49
             ],
             "canUpdateAllSettings": [
                 3
@@ -1107,19 +1111,19 @@ export default {
                 3
             ],
             "permissionFlags": [
-                47
+                48
             ],
             "objectPermissions": [
-                46
+                47
             ],
             "fieldPermissions": [
-                41
+                42
             ],
             "rowLevelPermissionPredicates": [
-                44
+                45
             ],
             "rowLevelPermissionPredicateGroups": [
-                42
+                43
             ],
             "__typename": [
                 1
@@ -1178,7 +1182,7 @@ export default {
                 4
             ],
             "defaultLogicFunctionRole": [
-                49
+                50
             ],
             "agents": [
                 11
@@ -1245,16 +1249,16 @@ export default {
                 6
             ],
             "permissionFlags": [
-                53
+                54
             ],
             "objectPermissions": [
-                46
+                47
             ],
             "objectsPermissions": [
-                46
+                47
             ],
             "twoFactorAuthenticationMethodSummary": [
-                51
+                52
             ],
             "__typename": [
                 1
@@ -1278,7 +1282,7 @@ export default {
                 16
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "viewId": [
                 4
@@ -1317,7 +1321,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                57
+                58
             ],
             "positionInViewFilterGroup": [
                 16
@@ -1350,7 +1354,7 @@ export default {
                 4
             ],
             "operand": [
-                59
+                60
             ],
             "value": [
                 5
@@ -1427,7 +1431,7 @@ export default {
                 4
             ],
             "direction": [
-                62
+                63
             ],
             "subFieldName": [
                 1
@@ -1484,7 +1488,7 @@ export default {
                 6
             ],
             "viewFields": [
-                54
+                55
             ],
             "isOverridden": [
                 3
@@ -1504,10 +1508,10 @@ export default {
                 4
             ],
             "type": [
-                65
+                66
             ],
             "key": [
-                66
+                67
             ],
             "icon": [
                 1
@@ -1522,10 +1526,10 @@ export default {
                 3
             ],
             "openRecordIn": [
-                67
+                38
             ],
             "kanbanAggregateOperation": [
-                55
+                56
             ],
             "kanbanAggregateOperationFieldMetadataId": [
                 4
@@ -1564,22 +1568,22 @@ export default {
                 6
             ],
             "viewFields": [
-                54
+                55
             ],
             "viewFilters": [
-                58
+                59
             ],
             "viewFilterGroups": [
-                56
+                57
             ],
             "viewSorts": [
-                61
+                62
             ],
             "viewGroups": [
-                60
+                61
             ],
             "viewFieldGroups": [
-                63
+                64
             ],
             "visibility": [
                 69
@@ -1596,7 +1600,6 @@ export default {
         },
         "ViewType": {},
         "ViewKey": {},
-        "ViewOpenRecordIn": {},
         "ViewCalendarLayout": {},
         "ViewVisibility": {},
         "Workspace": {
@@ -1646,22 +1649,22 @@ export default {
                 72
             ],
             "views": [
-                64
+                65
             ],
             "viewFields": [
-                54
+                55
             ],
             "viewFilters": [
-                58
+                59
             ],
             "viewFilterGroups": [
-                56
+                57
             ],
             "viewGroups": [
-                60
+                61
             ],
             "viewSorts": [
-                61
+                62
             ],
             "metadataVersion": [
                 16
@@ -1706,7 +1709,7 @@ export default {
                 1
             ],
             "defaultRole": [
-                49
+                50
             ],
             "fastModel": [
                 1
@@ -1727,7 +1730,7 @@ export default {
                 1
             ],
             "workspaceCustomApplication": [
-                50
+                51
             ],
             "featureFlags": [
                 168
@@ -1736,7 +1739,7 @@ export default {
                 138
             ],
             "installedApplications": [
-                50
+                51
             ],
             "currentBillingSubscription": [
                 138
@@ -1806,7 +1809,7 @@ export default {
                 37
             ],
             "userWorkspaces": [
-                52
+                53
             ],
             "onboardingStatus": [
                 74
@@ -1815,7 +1818,7 @@ export default {
                 70
             ],
             "currentUserWorkspace": [
-                52
+                53
             ],
             "userVars": [
                 75
@@ -1833,7 +1836,7 @@ export default {
                 1
             ],
             "workspaces": [
-                52
+                53
             ],
             "availableWorkspaces": [
                 211
@@ -2140,7 +2143,7 @@ export default {
                 4
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "label": [
                 1
@@ -2197,7 +2200,7 @@ export default {
                 4
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "groupByFieldMetadataId": [
                 4
@@ -2258,7 +2261,7 @@ export default {
                 4
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "primaryAxisGroupByFieldMetadataId": [
                 4
@@ -2356,7 +2359,7 @@ export default {
                 4
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "primaryAxisGroupByFieldMetadataId": [
                 4
@@ -4484,10 +4487,10 @@ export default {
         },
         "UpsertRowLevelPermissionPredicatesResult": {
             "predicates": [
-                44
+                45
             ],
             "predicateGroups": [
-                42
+                43
             ],
             "__typename": [
                 1
@@ -6098,10 +6101,10 @@ export default {
                 4
             ],
             "type": [
-                65
+                66
             ],
             "key": [
-                66
+                67
             ],
             "objectMetadataId": [
                 4
@@ -6175,7 +6178,7 @@ export default {
                 144
             ],
             "getViewFilterGroups": [
-                56,
+                57,
                 {
                     "viewId": [
                         1
@@ -6183,7 +6186,7 @@ export default {
                 }
             ],
             "getViewFilterGroup": [
-                56,
+                57,
                 {
                     "id": [
                         1,
@@ -6192,7 +6195,7 @@ export default {
                 }
             ],
             "getViewFilters": [
-                58,
+                59,
                 {
                     "viewId": [
                         1
@@ -6200,7 +6203,7 @@ export default {
                 }
             ],
             "getViewFilter": [
-                58,
+                59,
                 {
                     "id": [
                         1,
@@ -6209,19 +6212,19 @@ export default {
                 }
             ],
             "getViews": [
-                64,
+                65,
                 {
                     "objectMetadataId": [
                         1
                     ],
                     "viewTypes": [
-                        65,
+                        66,
                         "[ViewType!]"
                     ]
                 }
             ],
             "getView": [
-                64,
+                65,
                 {
                     "id": [
                         1,
@@ -6230,7 +6233,7 @@ export default {
                 }
             ],
             "getViewSorts": [
-                61,
+                62,
                 {
                     "viewId": [
                         1
@@ -6238,7 +6241,7 @@ export default {
                 }
             ],
             "getViewSort": [
-                61,
+                62,
                 {
                     "id": [
                         1,
@@ -6247,7 +6250,7 @@ export default {
                 }
             ],
             "getViewFields": [
-                54,
+                55,
                 {
                     "viewId": [
                         1,
@@ -6256,7 +6259,7 @@ export default {
                 }
             ],
             "getViewField": [
-                54,
+                55,
                 {
                     "id": [
                         1,
@@ -6265,7 +6268,7 @@ export default {
                 }
             ],
             "getViewFieldGroups": [
-                63,
+                64,
                 {
                     "viewId": [
                         1,
@@ -6274,7 +6277,7 @@ export default {
                 }
             ],
             "getViewFieldGroup": [
-                63,
+                64,
                 {
                     "id": [
                         1,
@@ -6286,7 +6289,7 @@ export default {
                 7
             ],
             "getApiKeyRoles": [
-                49
+                50
             ],
             "apiKey": [
                 7,
@@ -6586,10 +6589,10 @@ export default {
                 }
             ],
             "findManyApplications": [
-                50
+                51
             ],
             "findOneApplication": [
-                50,
+                51,
                 {
                     "id": [
                         4
@@ -6658,7 +6661,7 @@ export default {
                 }
             ],
             "getViewGroups": [
-                60,
+                61,
                 {
                     "viewId": [
                         1
@@ -6666,7 +6669,7 @@ export default {
                 }
             ],
             "getViewGroup": [
-                60,
+                61,
                 {
                     "id": [
                         1,
@@ -6675,7 +6678,7 @@ export default {
                 }
             ],
             "getRoles": [
-                49
+                50
             ],
             "previewMessageCampaignAudience": [
                 282,
@@ -7386,7 +7389,7 @@ export default {
                 }
             ],
             "createViewFilterGroup": [
-                56,
+                57,
                 {
                     "input": [
                         369,
@@ -7395,7 +7398,7 @@ export default {
                 }
             ],
             "updateViewFilterGroup": [
-                56,
+                57,
                 {
                     "id": [
                         1,
@@ -7426,7 +7429,7 @@ export default {
                 }
             ],
             "createViewFilter": [
-                58,
+                59,
                 {
                     "input": [
                         371,
@@ -7435,7 +7438,7 @@ export default {
                 }
             ],
             "updateViewFilter": [
-                58,
+                59,
                 {
                     "input": [
                         372,
@@ -7444,7 +7447,7 @@ export default {
                 }
             ],
             "deleteViewFilter": [
-                58,
+                59,
                 {
                     "input": [
                         374,
@@ -7453,7 +7456,7 @@ export default {
                 }
             ],
             "destroyViewFilter": [
-                58,
+                59,
                 {
                     "input": [
                         375,
@@ -7462,7 +7465,7 @@ export default {
                 }
             ],
             "createView": [
-                64,
+                65,
                 {
                     "input": [
                         376,
@@ -7471,7 +7474,7 @@ export default {
                 }
             ],
             "updateView": [
-                64,
+                65,
                 {
                     "id": [
                         1,
@@ -7502,7 +7505,7 @@ export default {
                 }
             ],
             "upsertViewWidget": [
-                64,
+                65,
                 {
                     "input": [
                         378,
@@ -7511,7 +7514,7 @@ export default {
                 }
             ],
             "createViewSort": [
-                61,
+                62,
                 {
                     "input": [
                         384,
@@ -7520,7 +7523,7 @@ export default {
                 }
             ],
             "updateViewSort": [
-                61,
+                62,
                 {
                     "input": [
                         385,
@@ -7547,7 +7550,7 @@ export default {
                 }
             ],
             "updateViewField": [
-                54,
+                55,
                 {
                     "input": [
                         389,
@@ -7556,7 +7559,7 @@ export default {
                 }
             ],
             "createViewField": [
-                54,
+                55,
                 {
                     "input": [
                         391,
@@ -7565,7 +7568,7 @@ export default {
                 }
             ],
             "createManyViewFields": [
-                54,
+                55,
                 {
                     "inputs": [
                         391,
@@ -7574,7 +7577,7 @@ export default {
                 }
             ],
             "deleteViewField": [
-                54,
+                55,
                 {
                     "input": [
                         392,
@@ -7583,7 +7586,7 @@ export default {
                 }
             ],
             "destroyViewField": [
-                54,
+                55,
                 {
                     "input": [
                         393,
@@ -7592,7 +7595,7 @@ export default {
                 }
             ],
             "updateViewFieldGroup": [
-                63,
+                64,
                 {
                     "input": [
                         394,
@@ -7601,7 +7604,7 @@ export default {
                 }
             ],
             "createViewFieldGroup": [
-                63,
+                64,
                 {
                     "input": [
                         396,
@@ -7610,7 +7613,7 @@ export default {
                 }
             ],
             "createManyViewFieldGroups": [
-                63,
+                64,
                 {
                     "inputs": [
                         396,
@@ -7619,7 +7622,7 @@ export default {
                 }
             ],
             "deleteViewFieldGroup": [
-                63,
+                64,
                 {
                     "input": [
                         397,
@@ -7628,7 +7631,7 @@ export default {
                 }
             ],
             "destroyViewFieldGroup": [
-                63,
+                64,
                 {
                     "input": [
                         398,
@@ -7637,7 +7640,7 @@ export default {
                 }
             ],
             "upsertFieldsWidget": [
-                64,
+                65,
                 {
                     "input": [
                         399,
@@ -8296,7 +8299,7 @@ export default {
                 }
             ],
             "installApplication": [
-                50,
+                51,
                 {
                     "universalIdentifier": [
                         1,
@@ -8308,7 +8311,7 @@ export default {
                 }
             ],
             "updateApplication": [
-                50,
+                51,
                 {
                     "id": [
                         4,
@@ -8360,7 +8363,7 @@ export default {
                 }
             ],
             "createViewGroup": [
-                60,
+                61,
                 {
                     "input": [
                         452,
@@ -8369,7 +8372,7 @@ export default {
                 }
             ],
             "createManyViewGroups": [
-                60,
+                61,
                 {
                     "inputs": [
                         452,
@@ -8378,7 +8381,7 @@ export default {
                 }
             ],
             "updateViewGroup": [
-                60,
+                61,
                 {
                     "input": [
                         453,
@@ -8387,7 +8390,7 @@ export default {
                 }
             ],
             "updateManyViewGroups": [
-                60,
+                61,
                 {
                     "inputs": [
                         453,
@@ -8396,7 +8399,7 @@ export default {
                 }
             ],
             "deleteViewGroup": [
-                60,
+                61,
                 {
                     "input": [
                         455,
@@ -8405,7 +8408,7 @@ export default {
                 }
             ],
             "destroyViewGroup": [
-                60,
+                61,
                 {
                     "input": [
                         456,
@@ -8427,7 +8430,7 @@ export default {
                 }
             ],
             "createOneRole": [
-                49,
+                50,
                 {
                     "createRoleInput": [
                         457,
@@ -8436,7 +8439,7 @@ export default {
                 }
             ],
             "updateOneRole": [
-                49,
+                50,
                 {
                     "updateRoleInput": [
                         458,
@@ -8454,7 +8457,7 @@ export default {
                 }
             ],
             "upsertObjectPermissions": [
-                46,
+                47,
                 {
                     "upsertObjectPermissionsInput": [
                         460,
@@ -8463,7 +8466,7 @@ export default {
                 }
             ],
             "upsertPermissionFlags": [
-                47,
+                48,
                 {
                     "upsertPermissionFlagsInput": [
                         462,
@@ -8472,7 +8475,7 @@ export default {
                 }
             ],
             "upsertFieldPermissions": [
-                41,
+                42,
                 {
                     "upsertFieldPermissionsInput": [
                         463,
@@ -9221,7 +9224,7 @@ export default {
                 73
             ],
             "deleteUserFromWorkspace": [
-                52,
+                53,
                 {
                     "workspaceMemberIdToDelete": [
                         1,
@@ -9626,7 +9629,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                57
+                58
             ],
             "positionInViewFilterGroup": [
                 16
@@ -9646,7 +9649,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                57
+                58
             ],
             "positionInViewFilterGroup": [
                 16
@@ -9666,7 +9669,7 @@ export default {
                 4
             ],
             "operand": [
-                59
+                60
             ],
             "value": [
                 5
@@ -9706,7 +9709,7 @@ export default {
                 4
             ],
             "operand": [
-                59
+                60
             ],
             "value": [
                 5
@@ -9754,10 +9757,10 @@ export default {
                 4
             ],
             "type": [
-                65
+                66
             ],
             "key": [
-                66
+                67
             ],
             "icon": [
                 1
@@ -9775,10 +9778,10 @@ export default {
                 30
             ],
             "openRecordIn": [
-                67
+                38
             ],
             "kanbanAggregateOperation": [
-                55
+                56
             ],
             "kanbanAggregateOperationFieldMetadataId": [
                 4
@@ -9813,7 +9816,7 @@ export default {
                 1
             ],
             "type": [
-                65
+                66
             ],
             "icon": [
                 1
@@ -9825,10 +9828,10 @@ export default {
                 3
             ],
             "openRecordIn": [
-                67
+                38
             ],
             "kanbanAggregateOperation": [
-                55
+                56
             ],
             "kanbanAggregateOperationFieldMetadataId": [
                 4
@@ -9886,7 +9889,7 @@ export default {
         },
         "UpsertViewWidgetViewSettingsInput": {
             "type": [
-                65
+                66
             ],
             "mainGroupByFieldMetadataId": [
                 4
@@ -9895,10 +9898,10 @@ export default {
                 3
             ],
             "openRecordIn": [
-                67
+                38
             ],
             "kanbanAggregateOperation": [
-                55
+                56
             ],
             "kanbanAggregateOperationFieldMetadataId": [
                 4
@@ -9936,7 +9939,7 @@ export default {
                 16
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "__typename": [
                 1
@@ -9950,7 +9953,7 @@ export default {
                 4
             ],
             "operand": [
-                59
+                60
             ],
             "value": [
                 5
@@ -9979,7 +9982,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                57
+                58
             ],
             "positionInViewFilterGroup": [
                 16
@@ -9996,7 +9999,7 @@ export default {
                 4
             ],
             "direction": [
-                62
+                63
             ],
             "__typename": [
                 1
@@ -10010,7 +10013,7 @@ export default {
                 4
             ],
             "direction": [
-                62
+                63
             ],
             "subFieldName": [
                 1
@@ -10035,7 +10038,7 @@ export default {
         },
         "UpdateViewSortInputUpdates": {
             "direction": [
-                62
+                63
             ],
             "subFieldName": [
                 1
@@ -10082,7 +10085,7 @@ export default {
                 16
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "viewFieldGroupId": [
                 4
@@ -10111,7 +10114,7 @@ export default {
                 16
             ],
             "aggregateOperation": [
-                55
+                56
             ],
             "viewFieldGroupId": [
                 4
@@ -11590,7 +11593,7 @@ export default {
                 4
             ],
             "operand": [
-                45
+                46
             ],
             "value": [
                 5
@@ -11625,7 +11628,7 @@ export default {
                 4
             ],
             "logicalOperator": [
-                43
+                44
             ],
             "positionInRowLevelPermissionPredicateGroup": [
                 16

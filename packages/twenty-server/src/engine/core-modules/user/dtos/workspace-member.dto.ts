@@ -1,10 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Max, Min } from 'class-validator';
 
-import {
-  type ResolvedOpenRecordIn,
-  ViewOpenRecordIn,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -38,7 +35,7 @@ export class WorkspaceMemberDTO {
   colorScheme: string;
 
   @Field(() => ViewOpenRecordIn, { nullable: false })
-  openRecordIn: ResolvedOpenRecordIn;
+  openRecordIn: ViewOpenRecordIn;
 
   @Field({ nullable: true })
   avatarUrl: string;

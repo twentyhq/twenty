@@ -16,7 +16,7 @@ import {
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FileFolder, type ResolvedOpenRecordIn } from 'twenty-shared/types';
+import { FileFolder, type ViewOpenRecordIn } from 'twenty-shared/types';
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
@@ -99,7 +99,7 @@ export class WorkspaceMemberTranspiler {
       avatarUrl,
       userWorkspaceId: userWorkspace.id,
       colorScheme,
-      openRecordIn: openRecordIn as ResolvedOpenRecordIn,
+      openRecordIn: openRecordIn as ViewOpenRecordIn,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

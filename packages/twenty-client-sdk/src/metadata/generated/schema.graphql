@@ -434,6 +434,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
+  openRecordIn: ViewOpenRecordIn!
   avatarUrl: String
   locale: String
   calendarStartDay: Int
@@ -443,6 +444,12 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
+}
+
+enum ViewOpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
+  USER_PREFERENCE
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
@@ -829,11 +836,6 @@ enum ViewType {
 
 enum ViewKey {
   INDEX
-}
-
-enum ViewOpenRecordIn {
-  SIDE_PANEL
-  RECORD_PAGE
 }
 
 enum ViewCalendarLayout {
@@ -3696,7 +3698,7 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
-  openRecordIn: ViewOpenRecordIn = SIDE_PANEL
+  openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   anyFieldFilterValue: String

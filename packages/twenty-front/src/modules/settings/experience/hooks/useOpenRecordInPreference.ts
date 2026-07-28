@@ -1,14 +1,12 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DEFAULT_OPEN_RECORD_IN_PREFERENCE } from '@/object-record/record-index/constants/DefaultOpenRecordInPreference';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback } from 'react';
 import { type ResolvedOpenRecordIn } from 'twenty-shared/types';
 
 export const useOpenRecordInPreference = () => {
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
@@ -21,10 +19,6 @@ export const useOpenRecordInPreference = () => {
         return;
       }
 
-      setCurrentWorkspaceMember((current) =>
-        current ? { ...current, openRecordIn: value } : current,
-      );
-
       await updateWorkspaceMemberSettings({
         workspaceMemberId: currentWorkspaceMember.id,
         update: {
@@ -32,11 +26,7 @@ export const useOpenRecordInPreference = () => {
         },
       });
     },
-    [
-      currentWorkspaceMember,
-      setCurrentWorkspaceMember,
-      updateWorkspaceMemberSettings,
-    ],
+    [currentWorkspaceMember, updateWorkspaceMemberSettings],
   );
 
   return {

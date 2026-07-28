@@ -95,20 +95,35 @@ export class AddWorkspaceMemberOpenRecordInCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-      {
-        isSystemBuild: true,
-        applicationUniversalIdentifier:
-          twentyStandardFlatApplication.universalIdentifier,
-        workspaceId,
-        allFlatEntityOperationByMetadataName: {
-          fieldMetadata: {
-            flatEntityToCreate: fieldsToCreate,
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [],
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          workspaceId,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: fieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
           },
         },
-      },
+      );
+
+    if (result.status === 'fail') {
+      this.logger.error(
+        `Failed to create the workspaceMember openRecordIn field:\n${JSON.stringify(result, null, 2)}`,
+      );
+
+      throw new Error(
+        `Failed to create the workspaceMember openRecordIn field for workspace ${workspaceId}`,
+      );
+    }
+
+    this.logger.log(
+      `Created the workspaceMember openRecordIn field for workspace ${workspaceId}`,
     );
   }
 }

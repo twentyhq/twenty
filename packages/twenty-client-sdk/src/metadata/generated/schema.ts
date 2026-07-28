@@ -271,6 +271,7 @@ export interface WorkspaceMember {
     name: FullName
     userEmail: Scalars['String']
     colorScheme: Scalars['String']
+    openRecordIn: ViewOpenRecordIn
     avatarUrl?: Scalars['String']
     locale?: Scalars['String']
     calendarStartDay?: Scalars['Int']
@@ -282,6 +283,8 @@ export interface WorkspaceMember {
     numberFormat?: WorkspaceMemberNumberFormatEnum
     __typename: 'WorkspaceMember'
 }
+
+export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_PREFERENCE'
 
 
 /** Date format as Month first, Day first, Year first or system as default */
@@ -581,8 +584,6 @@ export interface View {
 export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'CALENDAR_WIDGET'
 
 export type ViewKey = 'INDEX'
-
-export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE'
 
 export type ViewCalendarLayout = 'DAY' | 'WEEK' | 'MONTH'
 
@@ -3405,6 +3406,7 @@ export interface WorkspaceMemberGenqlSelection{
     name?: FullNameGenqlSelection
     userEmail?: boolean | number
     colorScheme?: boolean | number
+    openRecordIn?: boolean | number
     avatarUrl?: boolean | number
     locale?: boolean | number
     calendarStartDay?: boolean | number
@@ -8985,6 +8987,12 @@ export const enumIndexType = {
    GIN: 'GIN' as const
 }
 
+export const enumViewOpenRecordIn = {
+   SIDE_PANEL: 'SIDE_PANEL' as const,
+   RECORD_PAGE: 'RECORD_PAGE' as const,
+   USER_PREFERENCE: 'USER_PREFERENCE' as const
+}
+
 export const enumWorkspaceMemberDateFormatEnum = {
    SYSTEM: 'SYSTEM' as const,
    MONTH_FIRST: 'MONTH_FIRST' as const,
@@ -9116,11 +9124,6 @@ export const enumViewType = {
 
 export const enumViewKey = {
    INDEX: 'INDEX' as const
-}
-
-export const enumViewOpenRecordIn = {
-   SIDE_PANEL: 'SIDE_PANEL' as const,
-   RECORD_PAGE: 'RECORD_PAGE' as const
 }
 
 export const enumViewCalendarLayout = {

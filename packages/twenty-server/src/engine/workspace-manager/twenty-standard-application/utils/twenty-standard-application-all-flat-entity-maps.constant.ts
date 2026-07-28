@@ -1,6 +1,9 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
@@ -30,12 +33,34 @@ export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
+  canViewsDeferToUserPreference?: boolean;
 };
+
+// core.view_openrecordin_enum only gained USER_PREFERENCE in 2.25, while
+// upgrade commands replay these definitions against the schema as it stood at
+// their own version. They get the value their column accepted back then.
+const withoutUserPreferenceOpenRecordIn = (
+  flatViewMaps: FlatEntityMaps<FlatView>,
+): FlatEntityMaps<FlatView> => ({
+  ...flatViewMaps,
+  byUniversalIdentifier: Object.fromEntries(
+    Object.entries(flatViewMaps.byUniversalIdentifier).map(
+      ([universalIdentifier, flatView]) => [
+        universalIdentifier,
+        isDefined(flatView) &&
+        flatView.openRecordIn === ViewOpenRecordIn.USER_PREFERENCE
+          ? { ...flatView, openRecordIn: ViewOpenRecordIn.SIDE_PANEL }
+          : flatView,
+      ],
+    ),
+  ),
+});
 
 export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
+  canViewsDeferToUserPreference = false,
 }: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): {
   allFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
   // TODO remove once all metadatas has fully been universal migrated
@@ -86,7 +111,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
   });
 
-  const flatViewMaps = buildStandardFlatViewMetadataMaps({
+  const standardFlatViewMaps = buildStandardFlatViewMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
@@ -96,6 +121,10 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
     workspaceId,
   });
+
+  const flatViewMaps = canViewsDeferToUserPreference
+    ? standardFlatViewMaps
+    : withoutUserPreferenceOpenRecordIn(standardFlatViewMaps);
 
   const flatViewGroupMaps = buildStandardFlatViewGroupMetadataMaps({
     dependencyFlatEntityMaps: {
