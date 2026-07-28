@@ -341,6 +341,7 @@ type Object {
   isUICreatable: Boolean!
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
+  defaultOpenRecordIn: ViewOpenRecordIn!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -365,6 +366,12 @@ type Object {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
+}
+
+enum ViewOpenRecordIn {
+  SIDE_PANEL
+  RECORD_PAGE
+  USER_PREFERENCE
 }
 
 input CursorPaging {
@@ -444,12 +451,6 @@ type WorkspaceMember {
   roles: [Role!]
   userWorkspaceId: UUID
   numberFormat: WorkspaceMemberNumberFormatEnum
-}
-
-enum ViewOpenRecordIn {
-  SIDE_PANEL
-  RECORD_PAGE
-  USER_PREFERENCE
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
@@ -4131,6 +4132,7 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
+  defaultOpenRecordIn: ViewOpenRecordIn
 }
 
 input CreateOneIndexInput {

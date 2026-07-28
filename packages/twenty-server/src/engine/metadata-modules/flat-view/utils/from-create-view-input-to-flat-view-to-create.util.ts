@@ -1,10 +1,13 @@
 import {
-  getDefaultViewOpenRecordIn,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import {
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -89,7 +92,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     key: createViewInput.key ?? null,
     openRecordIn:
       createViewInput.openRecordIn ??
-      getDefaultViewOpenRecordIn(flatObjectMetadata?.nameSingular ?? ''),
+      flatObjectMetadata?.defaultOpenRecordIn ??
+      ViewOpenRecordIn.USER_PREFERENCE,
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),

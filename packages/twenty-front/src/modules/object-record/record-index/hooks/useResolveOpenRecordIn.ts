@@ -11,7 +11,7 @@ import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromV
 import { useAtomValue } from 'jotai';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-export const useResolveOpenRecordIn = (objectNameSingular: string) => {
+export const useResolveOpenRecordIn = () => {
   // Record chips also render where no context store is mounted at all, such as
   // a mention inside a note, and those have no view to take a setting from.
   const contextStoreInstanceId = useAvailableComponentInstanceId(
@@ -37,7 +37,6 @@ export const useResolveOpenRecordIn = (objectNameSingular: string) => {
       currentView?.openRecordIn ?? DEFAULT_VIEW_OPEN_RECORD_IN,
     openRecordInUserPreference:
       currentWorkspaceMember?.openRecordIn ?? DEFAULT_OPEN_RECORD_IN_PREFERENCE,
-    objectNameSingular,
     canDisplaySidePanel: !isMobile,
   });
 };

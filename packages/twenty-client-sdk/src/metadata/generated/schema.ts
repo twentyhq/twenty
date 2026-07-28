@@ -245,6 +245,7 @@ export interface Object {
     /** @deprecated Use isUIEditable */
     isUIReadOnly: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
+    defaultOpenRecordIn: ViewOpenRecordIn
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -259,6 +260,8 @@ export interface Object {
     indexMetadatas: ObjectIndexMetadatasConnection
     __typename: 'Object'
 }
+
+export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_PREFERENCE'
 
 export interface FullName {
     firstName: Scalars['String']
@@ -283,8 +286,6 @@ export interface WorkspaceMember {
     numberFormat?: WorkspaceMemberNumberFormatEnum
     __typename: 'WorkspaceMember'
 }
-
-export type ViewOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_PREFERENCE'
 
 
 /** Date format as Month first, Day first, Year first or system as default */
@@ -3352,6 +3353,7 @@ export interface ObjectGenqlSelection{
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
     isSearchable?: boolean | number
+    defaultOpenRecordIn?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -6565,7 +6567,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),defaultOpenRecordIn?: (ViewOpenRecordIn | null)}
 
 export interface CreateOneIndexInput {
 /** The custom index to create */

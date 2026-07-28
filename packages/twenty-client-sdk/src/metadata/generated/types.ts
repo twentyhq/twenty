@@ -12,9 +12,9 @@ export default {
         23,
         25,
         27,
-        30,
+        29,
         31,
-        38,
+        32,
         39,
         40,
         41,
@@ -664,6 +664,9 @@ export default {
             "isSearchable": [
                 3
             ],
+            "defaultOpenRecordIn": [
+                29
+            ],
             "applicationId": [
                 4
             ],
@@ -698,11 +701,11 @@ export default {
                 229,
                 {
                     "paging": [
-                        29,
+                        30,
                         "CursorPaging!"
                     ],
                     "filter": [
-                        32,
+                        33,
                         "FieldFilter!"
                     ]
                 }
@@ -711,11 +714,11 @@ export default {
                 227,
                 {
                     "paging": [
-                        29,
+                        30,
                         "CursorPaging!"
                     ],
                     "filter": [
-                        35,
+                        36,
                         "IndexFilter!"
                     ]
                 }
@@ -724,18 +727,19 @@ export default {
                 1
             ]
         },
+        "ViewOpenRecordIn": {},
         "CursorPaging": {
             "before": [
-                31
+                32
             ],
             "after": [
-                31
+                32
             ],
             "first": [
-                30
+                31
             ],
             "last": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -745,28 +749,28 @@ export default {
         "ConnectionCursor": {},
         "FieldFilter": {
             "and": [
-                32
+                33
             ],
             "or": [
-                32
+                33
             ],
             "id": [
-                33
+                34
             ],
             "isActive": [
-                34
+                35
             ],
             "isSystem": [
-                34
+                35
             ],
             "isUIEditable": [
-                34
+                35
             ],
             "isUIReadOnly": [
-                34
+                35
             ],
             "objectMetadataId": [
-                33
+                34
             ],
             "__typename": [
                 1
@@ -832,16 +836,16 @@ export default {
         },
         "IndexFilter": {
             "and": [
-                35
+                36
             ],
             "or": [
-                35
+                36
             ],
             "id": [
-                33
+                34
             ],
             "isCustom": [
-                34
+                35
             ],
             "__typename": [
                 1
@@ -863,7 +867,7 @@ export default {
                 4
             ],
             "name": [
-                36
+                37
             ],
             "userEmail": [
                 1
@@ -872,7 +876,7 @@ export default {
                 1
             ],
             "openRecordIn": [
-                38
+                29
             ],
             "avatarUrl": [
                 1
@@ -881,7 +885,7 @@ export default {
                 1
             ],
             "calendarStartDay": [
-                30
+                31
             ],
             "timeZone": [
                 1
@@ -905,7 +909,6 @@ export default {
                 1
             ]
         },
-        "ViewOpenRecordIn": {},
         "WorkspaceMemberDateFormatEnum": {},
         "WorkspaceMemberTimeFormatEnum": {},
         "WorkspaceMemberNumberFormatEnum": {},
@@ -1084,7 +1087,7 @@ export default {
                 3
             ],
             "workspaceMembers": [
-                37
+                38
             ],
             "agents": [
                 11
@@ -1526,7 +1529,7 @@ export default {
                 3
             ],
             "openRecordIn": [
-                38
+                29
             ],
             "kanbanAggregateOperation": [
                 56
@@ -1541,7 +1544,7 @@ export default {
                 3
             ],
             "kanbanColumnWidth": [
-                30
+                31
             ],
             "calendarFieldMetadataId": [
                 4
@@ -1806,7 +1809,7 @@ export default {
                 1
             ],
             "workspaceMember": [
-                37
+                38
             ],
             "userWorkspaces": [
                 53
@@ -1824,7 +1827,7 @@ export default {
                 75
             ],
             "workspaceMembers": [
-                37
+                38
             ],
             "deletedWorkspaceMembers": [
                 212
@@ -2029,16 +2032,16 @@ export default {
                 85
             ],
             "row": [
-                30
+                31
             ],
             "column": [
-                30
+                31
             ],
             "rowSpan": [
-                30
+                31
             ],
             "columnSpan": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -2050,7 +2053,7 @@ export default {
                 85
             ],
             "index": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -2164,7 +2167,7 @@ export default {
                 1
             ],
             "firstDayOfTheWeek": [
-                30
+                31
             ],
             "prefix": [
                 1
@@ -2245,7 +2248,7 @@ export default {
                 1
             ],
             "firstDayOfTheWeek": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -2333,7 +2336,7 @@ export default {
                 1
             ],
             "firstDayOfTheWeek": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -2434,7 +2437,7 @@ export default {
                 1
             ],
             "firstDayOfTheWeek": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -2568,7 +2571,7 @@ export default {
                 1
             ],
             "recordLimit": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -3403,7 +3406,7 @@ export default {
                 1
             ],
             "count": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -3411,7 +3414,7 @@ export default {
         },
         "ApplicationRegistrationStats": {
             "activeInstalls": [
-                30
+                31
             ],
             "mostInstalledVersion": [
                 1
@@ -4062,7 +4065,7 @@ export default {
                 4
             ],
             "name": [
-                36
+                37
             ],
             "userEmail": [
                 1
@@ -4313,7 +4316,7 @@ export default {
                 1
             ],
             "totalCount": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -4347,7 +4350,7 @@ export default {
                 28
             ],
             "cursor": [
-                31
+                32
             ],
             "__typename": [
                 1
@@ -4361,10 +4364,10 @@ export default {
                 3
             ],
             "startCursor": [
-                31
+                32
             ],
             "endCursor": [
-                31
+                32
             ],
             "__typename": [
                 1
@@ -4386,7 +4389,7 @@ export default {
                 26
             ],
             "cursor": [
-                31
+                32
             ],
             "__typename": [
                 1
@@ -4408,7 +4411,7 @@ export default {
                 24
             ],
             "cursor": [
-                31
+                32
             ],
             "__typename": [
                 1
@@ -5061,22 +5064,22 @@ export default {
         },
         "CampaignAudiencePreviewDTO": {
             "totalMembers": [
-                30
+                31
             ],
             "withoutEmail": [
-                30
+                31
             ],
             "duplicateEmails": [
-                30
+                31
             ],
             "globallyUnsubscribed": [
-                30
+                31
             ],
             "topicUnsubscribed": [
-                30
+                31
             ],
             "sendable": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -5092,13 +5095,13 @@ export default {
         },
         "CampaignSkippedRecipientsDTO": {
             "noEmail": [
-                30
+                31
             ],
             "deduped": [
-                30
+                31
             ],
             "overCap": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -5109,7 +5112,7 @@ export default {
                 1
             ],
             "queuedCount": [
-                30
+                31
             ],
             "skipped": [
                 284
@@ -5148,7 +5151,7 @@ export default {
                 286
             ],
             "totalCount": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -5354,7 +5357,7 @@ export default {
                 4
             ],
             "orderIndex": [
-                30
+                31
             ],
             "type": [
                 1
@@ -5695,7 +5698,7 @@ export default {
                 315
             ],
             "totalCount": [
-                30
+                31
             ],
             "pageInfo": [
                 316
@@ -5782,16 +5785,16 @@ export default {
                 1
             ],
             "totalInputTokens": [
-                30
+                31
             ],
             "totalOutputTokens": [
-                30
+                31
             ],
             "contextWindowTokens": [
-                30
+                31
             ],
             "conversationSize": [
-                30
+                31
             ],
             "totalInputCredits": [
                 16
@@ -5823,7 +5826,7 @@ export default {
                 1
             ],
             "estimatedTokenCount": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -5834,7 +5837,7 @@ export default {
                 321
             ],
             "estimatedTokenCount": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -5856,7 +5859,7 @@ export default {
                 5
             ],
             "maxSeq": [
-                30
+                31
             ],
             "error": [
                 323
@@ -5898,7 +5901,7 @@ export default {
                 4
             ],
             "score": [
-                30
+                31
             ],
             "comment": [
                 1
@@ -5935,13 +5938,13 @@ export default {
         },
         "WorkspaceAiStats": {
             "conversationsCount": [
-                30
+                31
             ],
             "skillsCount": [
-                30
+                31
             ],
             "toolsCount": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -6428,7 +6431,7 @@ export default {
                 225,
                 {
                     "paging": [
-                        29,
+                        30,
                         "CursorPaging!"
                     ],
                     "filter": [
@@ -6651,11 +6654,11 @@ export default {
                 230,
                 {
                     "paging": [
-                        29,
+                        30,
                         "CursorPaging!"
                     ],
                     "filter": [
-                        32,
+                        33,
                         "FieldFilter!"
                     ]
                 }
@@ -7017,28 +7020,28 @@ export default {
                 347
             ],
             "id": [
-                33
+                34
             ],
             "isRemote": [
-                34
+                35
             ],
             "isActive": [
-                34
+                35
             ],
             "isSystem": [
-                34
+                35
             ],
             "isUIEditable": [
-                34
+                35
             ],
             "isUICreatable": [
-                34
+                35
             ],
             "isUIReadOnly": [
-                34
+                35
             ],
             "isSearchable": [
-                34
+                35
             ],
             "__typename": [
                 1
@@ -7074,10 +7077,10 @@ export default {
                 4
             ],
             "limit": [
-                30
+                31
             ],
             "offset": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -7105,7 +7108,7 @@ export default {
                 354
             ],
             "first": [
-                30
+                31
             ],
             "after": [
                 1
@@ -8417,7 +8420,7 @@ export default {
                 }
             ],
             "updateWorkspaceMemberRole": [
-                37,
+                38,
                 {
                     "workspaceMemberId": [
                         4,
@@ -9775,10 +9778,10 @@ export default {
                 3
             ],
             "kanbanColumnWidth": [
-                30
+                31
             ],
             "openRecordIn": [
-                38
+                29
             ],
             "kanbanAggregateOperation": [
                 56
@@ -9828,7 +9831,7 @@ export default {
                 3
             ],
             "openRecordIn": [
-                38
+                29
             ],
             "kanbanAggregateOperation": [
                 56
@@ -9858,7 +9861,7 @@ export default {
                 3
             ],
             "kanbanColumnWidth": [
-                30
+                31
             ],
             "__typename": [
                 1
@@ -9898,7 +9901,7 @@ export default {
                 3
             ],
             "openRecordIn": [
-                38
+                29
             ],
             "kanbanAggregateOperation": [
                 56
@@ -9907,7 +9910,7 @@ export default {
                 4
             ],
             "kanbanColumnWidth": [
-                30
+                31
             ],
             "calendarLayout": [
                 68
@@ -10721,6 +10724,9 @@ export default {
             ],
             "isSearchable": [
                 3
+            ],
+            "defaultOpenRecordIn": [
+                29
             ],
             "__typename": [
                 1
@@ -11931,10 +11937,10 @@ export default {
         },
         "AgentChatQuestionAnswerInput": {
             "questionIndex": [
-                30
+                31
             ],
             "selectedOptionIndices": [
-                30
+                31
             ],
             "freeText": [
                 1

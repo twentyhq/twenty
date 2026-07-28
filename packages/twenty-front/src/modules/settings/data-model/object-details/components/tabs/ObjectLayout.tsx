@@ -12,6 +12,7 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { ObjectDefaultOpenRecordInSelect } from '@/settings/data-model/object-details/components/tabs/ObjectDefaultOpenRecordInSelect';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
@@ -99,6 +100,15 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
           onClick={handleCustomizeRecordPage}
           disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
+        />
+      </Section>
+      <Section>
+        <H2Title
+          title={t`Open records in`}
+          description={t`Where a new view on this object opens its records. Views can override it, and My preference hands the choice to each member.`}
+        />
+        <ObjectDefaultOpenRecordInSelect
+          objectMetadataItem={objectMetadataItem}
         />
       </Section>
       <Section>

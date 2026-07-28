@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import {
@@ -39,6 +40,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   overrides: null,
   isUIEditable: true,
   isUICreatable: true,
+  defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
   labelIdentifierFieldMetadataId: null,
   imageIdentifierFieldMetadataId: null,
   duplicateCriteria: null,

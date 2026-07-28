@@ -56,7 +56,7 @@ export const RecordChip = ({
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const handleCustomClick = isDefined(onClick)
     ? onClick

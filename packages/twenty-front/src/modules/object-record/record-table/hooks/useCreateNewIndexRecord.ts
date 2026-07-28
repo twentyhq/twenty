@@ -51,7 +51,7 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 

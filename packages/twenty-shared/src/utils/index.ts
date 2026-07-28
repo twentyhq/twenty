@@ -162,7 +162,6 @@ export {
 export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
-export { getDefaultViewOpenRecordIn } from './getDefaultViewOpenRecordIn';
 export { getURLSafely } from './getURLSafely';
 export {
   getNodeTypename,

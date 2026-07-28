@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
@@ -40,6 +41,7 @@ const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
+  defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
   isRemote: false,
   isSearchable: false,
   labelPlural: 'object1s',
@@ -203,6 +205,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'Companies',
@@ -254,6 +257,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'People',

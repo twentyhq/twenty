@@ -1,5 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
+import { ViewOpenRecordIn } from 'twenty-shared/types';
+
 import {
   Authorize,
   CursorConnection,
@@ -86,6 +88,9 @@ export class ObjectMetadataDTO {
 
   @FilterableField()
   isSearchable: boolean;
+
+  @Field(() => ViewOpenRecordIn)
+  defaultOpenRecordIn: ViewOpenRecordIn;
 
   @HideField()
   workspaceId: string;

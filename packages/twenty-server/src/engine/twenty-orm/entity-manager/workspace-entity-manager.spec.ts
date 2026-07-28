@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import {
   type FieldMetadataType,
   type ObjectsPermissions,
@@ -124,6 +125,7 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIEditable: true,
       isUICreatable: true,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

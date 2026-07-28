@@ -23,7 +23,7 @@ export const useOpenRecordFromIndexView = () => {
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,

@@ -21,7 +21,6 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
@@ -133,7 +132,7 @@ export const useFrontComponentExecutionContext = ({
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;
 
-        if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+        if (isMobile) {
           if (isDefined(tab)) {
             setRecordPageActiveTabId({
               recordId,

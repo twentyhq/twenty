@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 
@@ -25,6 +26,7 @@ describe('generateAggregateQuery', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
     };
 
     const mockRecordGqlFields = {
@@ -69,6 +71,7 @@ describe('generateAggregateQuery', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
     };
 
     const mockRecordGqlFields = {

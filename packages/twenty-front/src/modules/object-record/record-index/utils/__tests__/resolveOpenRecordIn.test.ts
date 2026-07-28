@@ -7,7 +7,6 @@ const resolve = (
   resolveOpenRecordIn({
     openRecordInViewSetting: ViewOpenRecordIn.SIDE_PANEL,
     openRecordInUserPreference: ViewOpenRecordIn.SIDE_PANEL,
-    objectNameSingular: 'company',
     canDisplaySidePanel: true,
     ...overrides,
   });
@@ -62,15 +61,6 @@ describe('resolveOpenRecordIn', () => {
       (openRecordInViewSetting) => {
         expect(
           resolve({ openRecordInViewSetting, canDisplaySidePanel: false }),
-        ).toBe(ViewOpenRecordIn.RECORD_PAGE);
-      },
-    );
-
-    it.each([ViewOpenRecordIn.SIDE_PANEL, ViewOpenRecordIn.USER_PREFERENCE])(
-      'falls back to the record page for objects without one (%s)',
-      (openRecordInViewSetting) => {
-        expect(
-          resolve({ openRecordInViewSetting, objectNameSingular: 'workflow' }),
         ).toBe(ViewOpenRecordIn.RECORD_PAGE);
       },
     );

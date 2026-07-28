@@ -130,6 +130,8 @@ import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-2
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
 import { AddUserPreferenceToViewOpenRecordInFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785250223556-add-user-preference-to-view-open-record-in';
 import { BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1785255000000-backfill-view-open-record-in-user-preference';
+import { AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785256000000-add-default-open-record-in-to-object-metadata';
+import { PinFullPageObjectViewsToRecordPageSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-slow-1785257000000-pin-full-page-object-views-to-record-page';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -262,4 +264,6 @@ export const INSTANCE_COMMANDS = [
   AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand,
   AddUserPreferenceToViewOpenRecordInFastInstanceCommand,
   BackfillViewOpenRecordInUserPreferenceSlowInstanceCommand,
+  AddDefaultOpenRecordInToObjectMetadataFastInstanceCommand,
+  PinFullPageObjectViewsToRecordPageSlowInstanceCommand,
 ];

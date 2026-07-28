@@ -1,4 +1,5 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import {
   capitalize,
   isDefined,
@@ -60,6 +61,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       updatedAt: createdAt,
       duplicateCriteria: null,
       color: createObjectInput.color ?? null,
+      defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
       description: createObjectInput.description ?? null,
       icon: createObjectInput.icon ?? null,
       isActive: true,

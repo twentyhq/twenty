@@ -28,6 +28,7 @@ type Assertions = [
       keyof UniversalFlatEntityUpdate<'objectMetadata'>,
       | 'icon'
       | 'color'
+      | 'defaultOpenRecordIn'
       | 'description'
       | 'isActive'
       | 'overrides'

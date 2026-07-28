@@ -1,8 +1,6 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -26,10 +24,6 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useObjectOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-  const canOpenInSidePanel = canOpenObjectInSidePanel(
-    objectMetadataItem.nameSingular,
-  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
@@ -87,9 +81,6 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
           <SelectableListItem
             itemId={ViewOpenRecordIn.SIDE_PANEL}
             onEnter={() => {
-              if (!canOpenInSidePanel) {
-                return;
-              }
               setAndPersistOpenRecordIn(
                 ViewOpenRecordIn.SIDE_PANEL,
                 currentView,
@@ -104,16 +95,11 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
               }
               focused={selectedItemId === ViewOpenRecordIn.SIDE_PANEL}
               onClick={() => {
-                if (!canOpenInSidePanel) {
-                  return;
-                }
-
                 setAndPersistOpenRecordIn(
                   ViewOpenRecordIn.SIDE_PANEL,
                   currentView,
                 );
               }}
-              disabled={!canOpenInSidePanel}
             />
           </SelectableListItem>
           <SelectableListItem

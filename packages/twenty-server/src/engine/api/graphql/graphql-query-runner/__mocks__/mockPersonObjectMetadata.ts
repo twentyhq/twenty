@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -166,6 +167,7 @@ export const mockPersonFlatObjectMetadata = (
   overrides: null,
   isUIEditable: true,
   isUICreatable: true,
+  defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(
     (field) => field.universalIdentifier,

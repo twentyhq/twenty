@@ -41,6 +41,7 @@ type Assertions = [
       keyof FlatEntityUpdate<'objectMetadata'>,
       | 'icon'
       | 'color'
+      | 'defaultOpenRecordIn'
       | 'description'
       | 'isActive'
       | 'overrides'

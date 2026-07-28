@@ -59,7 +59,7 @@ export const RecordTableContextProvider = ({
     [objectNameSingular, updateOneRecord],
   );
 
-  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const isTouchDevice = useIsTouchDevice();
 

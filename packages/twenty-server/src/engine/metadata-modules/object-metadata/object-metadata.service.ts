@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { ViewKey, ViewType, ViewVisibility } from 'twenty-shared/types';
-import {
-  fromArrayToUniqueKeyRecord,
-  getDefaultViewOpenRecordIn,
-  isDefined,
-} from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
@@ -708,7 +704,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       kanbanAggregateOperation: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
-      openRecordIn: getDefaultViewOpenRecordIn(objectMetadata.nameSingular),
+      openRecordIn: objectMetadata.defaultOpenRecordIn,
       position: 0,
       universalIdentifier: v4(),
       visibility: ViewVisibility.WORKSPACE,

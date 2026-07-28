@@ -69,7 +69,7 @@ export const RecordBoardCardHeader = () => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const isTouchDevice = useIsTouchDevice();
 

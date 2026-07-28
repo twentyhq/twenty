@@ -7,7 +7,6 @@ import {
   ViewOpenRecordIn,
   ViewVisibility,
 } from 'twenty-shared/types';
-import { getDefaultViewOpenRecordIn } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -54,7 +53,7 @@ export const createStandardViewFlatMetadata = <
     icon,
     isCompact = false,
     isCustom = false,
-    openRecordIn = getDefaultViewOpenRecordIn(objectName),
+    openRecordIn,
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,
@@ -63,6 +62,7 @@ export const createStandardViewFlatMetadata = <
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
+  dependencyFlatEntityMaps,
   now,
 }: CreateStandardViewArgs<O>): FlatView => {
   // @ts-expect-error ignore
@@ -78,6 +78,11 @@ export const createStandardViewFlatMetadata = <
     standardObjectMetadataRelatedEntityIds[objectName].id;
   const objectMetadataUniversalIdentifier =
     STANDARD_OBJECTS[objectName].universalIdentifier;
+
+  const objectDefaultOpenRecordIn =
+    dependencyFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      objectMetadataUniversalIdentifier
+    ]?.defaultOpenRecordIn ?? ViewOpenRecordIn.USER_PREFERENCE;
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName
@@ -148,7 +153,7 @@ export const createStandardViewFlatMetadata = <
     position,
     isCompact,
     isCustom,
-    openRecordIn,
+    openRecordIn: openRecordIn ?? objectDefaultOpenRecordIn,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
     mainGroupByFieldMetadataId,

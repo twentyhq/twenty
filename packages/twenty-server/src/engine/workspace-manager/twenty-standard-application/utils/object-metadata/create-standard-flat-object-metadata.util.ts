@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -232,6 +233,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier: STANDARD_OBJECTS.dashboard.universalIdentifier,
         nameSingular: 'dashboard',
+        defaultOpenRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         namePlural: 'dashboards',
         labelSingular: i18nLabel(msg`Dashboard`),
         labelPlural: i18nLabel(msg`Dashboards`),
@@ -263,6 +265,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         universalIdentifier:
           STANDARD_OBJECTS.messageCampaign.universalIdentifier,
         nameSingular: 'messageCampaign',
+        defaultOpenRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         namePlural: 'messageCampaigns',
         labelSingular: i18nLabel(msg`Campaign`),
         labelPlural: i18nLabel(msg`Campaigns`),
@@ -713,6 +716,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
         nameSingular: 'workflow',
+        defaultOpenRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         namePlural: 'workflows',
         labelSingular: i18nLabel(msg`Workflow`),
         labelPlural: i18nLabel(msg`Workflows`),
@@ -771,6 +775,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
         nameSingular: 'workflowRun',
+        defaultOpenRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         namePlural: 'workflowRuns',
         labelSingular: i18nLabel(msg`Workflow Run`),
         labelPlural: i18nLabel(msg`Workflow Runs`),
@@ -803,6 +808,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         universalIdentifier:
           STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         nameSingular: 'workflowVersion',
+        defaultOpenRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         namePlural: 'workflowVersions',
         labelSingular: i18nLabel(msg`Workflow Version`),
         labelPlural: i18nLabel(msg`Workflow Versions`),

@@ -1,8 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import {
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -81,6 +83,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   isSearchable?: boolean;
+
+  @IsEnum(ViewOpenRecordIn)
+  @IsOptional()
+  @Field(() => ViewOpenRecordIn, { nullable: true })
+  defaultOpenRecordIn?: ViewOpenRecordIn;
 }
 
 @InputType()

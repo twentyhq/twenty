@@ -1,4 +1,5 @@
 import { type ObjectManifest } from 'twenty-shared/application';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -19,6 +20,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     labelSingular: objectManifest.labelSingular,
     labelPlural: objectManifest.labelPlural,
     color: null,
+    defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
     description: objectManifest.description ?? null,
     icon: objectManifest.icon ?? null,
     overrides: null,

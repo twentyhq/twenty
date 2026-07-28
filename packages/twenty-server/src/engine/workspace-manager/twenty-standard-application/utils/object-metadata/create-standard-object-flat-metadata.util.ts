@@ -1,5 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -19,6 +20,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isAuditLogged?: boolean;
   isUIEditable?: boolean;
   isUICreatable?: boolean;
+  defaultOpenRecordIn?: ViewOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
   labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
@@ -48,6 +50,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged = true,
     isUIEditable = true,
     isUICreatable = true,
+    defaultOpenRecordIn = ViewOpenRecordIn.USER_PREFERENCE,
     shortcut = null,
     duplicateCriteria = null,
     labelIdentifierFieldMetadataName,
@@ -90,6 +93,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged,
     isUIEditable,
     isUICreatable,
+    defaultOpenRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,
     duplicateCriteria,

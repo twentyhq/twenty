@@ -87,7 +87,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
-  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+  const openRecordIn = useResolveOpenRecordIn();
 
   const openTableCell = useCallback(
     ({

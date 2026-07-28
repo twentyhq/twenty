@@ -1,3 +1,4 @@
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -39,6 +40,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
+    defaultOpenRecordIn: ViewOpenRecordIn.USER_PREFERENCE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
     duplicateCriteria: null,

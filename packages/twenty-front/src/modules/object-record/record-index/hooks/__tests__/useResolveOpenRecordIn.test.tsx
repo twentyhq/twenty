@@ -91,7 +91,7 @@ describe('useResolveOpenRecordIn', () => {
   });
 
   it('falls back to the default where no context store is mounted', () => {
-    const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
+    const { result } = renderHook(() => useResolveOpenRecordIn(), {
       wrapper: WrapperWithoutContextStore,
     });
 
@@ -101,7 +101,7 @@ describe('useResolveOpenRecordIn', () => {
   it('follows the current view of the surrounding context store', () => {
     setCurrentView('record-page-view-id');
 
-    const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
+    const { result } = renderHook(() => useResolveOpenRecordIn(), {
       wrapper: WrapperWithContextStore,
     });
 
@@ -112,7 +112,7 @@ describe('useResolveOpenRecordIn', () => {
     setCurrentView('user-preference-view-id');
     setOpenRecordInPreference(ViewOpenRecordIn.RECORD_PAGE);
 
-    const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
+    const { result } = renderHook(() => useResolveOpenRecordIn(), {
       wrapper: WrapperWithContextStore,
     });
 
@@ -123,7 +123,7 @@ describe('useResolveOpenRecordIn', () => {
     setCurrentView('user-preference-view-id');
     setOpenRecordInPreference(ViewOpenRecordIn.SIDE_PANEL);
 
-    const { result } = renderHook(() => useResolveOpenRecordIn('company'), {
+    const { result } = renderHook(() => useResolveOpenRecordIn(), {
       wrapper: WrapperWithContextStore,
     });
 
