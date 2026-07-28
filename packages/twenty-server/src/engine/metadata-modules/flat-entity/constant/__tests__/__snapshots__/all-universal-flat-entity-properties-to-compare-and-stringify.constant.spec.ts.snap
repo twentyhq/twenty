@@ -374,7 +374,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "viewFieldGroup": {
     "propertiesToCompare": [
-      "applicationUniversalIdentifier",
       "name",
       "position",
       "isVisible",
@@ -389,7 +388,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "viewFilter": {
     "propertiesToCompare": [
-      "applicationUniversalIdentifier",
       "viewUniversalIdentifier",
       "deletedAt",
       "fieldMetadataUniversalIdentifier",
@@ -426,7 +424,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "viewSort": {
     "propertiesToCompare": [
-      "applicationUniversalIdentifier",
       "direction",
       "subFieldName",
       "fieldMetadataUniversalIdentifier",
