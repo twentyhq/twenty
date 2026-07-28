@@ -93,7 +93,11 @@ export const AppErrorBoundary = ({
       ]);
 
       if (isSentryImportSettled) {
-        await captureAppErrorPromise;
+        const sentryFlushTimeoutPromise = new Promise<void>((resolve) =>
+          setTimeout(resolve, SENTRY_FLUSH_TIMEOUT_BEFORE_RELOAD_MS),
+        );
+
+        await Promise.race([captureAppErrorPromise, sentryFlushTimeoutPromise]);
       }
 
       reloadWindow();
