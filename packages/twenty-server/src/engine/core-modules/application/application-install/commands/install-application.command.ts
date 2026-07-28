@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
@@ -73,7 +73,7 @@ export class InstallApplicationCommand extends CommandRunner {
 
   @Option({
     flags: '--workspace-count-limit <count>',
-    description: `Limit the number of workspaces to install on (max ${MAX_WORKSPACE_COUNT_LIMIT})`,
+    description: `Limit the number of workspaces to iterate over (max ${MAX_WORKSPACE_COUNT_LIMIT})`,
     required: false,
   })
   parseWorkspaceCountLimit(value: string): number {
@@ -131,19 +131,38 @@ export class InstallApplicationCommand extends CommandRunner {
     const targetVersion = registration.latestAvailableVersion;
     const versionLabel = targetVersion ?? 'latest available';
 
-    const workspaceIds = isDefined(options.workspaceId)
+    const isDryRun = options.dryRun ?? false;
+
+    const requestedWorkspaceIds = isDefined(options.workspaceId)
       ? Array.from(options.workspaceId)
       : undefined;
 
-    const isDryRun = options.dryRun ?? false;
+    // Explicit ids bypass the iterator's own workspace selection, so the count
+    // limit and the already-installed filter are applied here instead.
+    const workspaceIdsToIterate = isDefined(requestedWorkspaceIds)
+      ? (
+          await this.excludeAlreadyInstalledWorkspaceIds({
+            universalIdentifier: registration.universalIdentifier,
+            workspaceIds: requestedWorkspaceIds,
+            applicationName: registration.name,
+          })
+        ).slice(0, options.workspaceCountLimit)
+      : undefined;
+
+    if (
+      isDefined(workspaceIdsToIterate) &&
+      workspaceIdsToIterate.length === 0
+    ) {
+      this.logger.log(
+        `No workspace to install, every targeted workspace already has "${registration.name}" installed`,
+      );
+
+      return;
+    }
 
     if (!isDryRun && !(options.yes ?? false)) {
-      const confirmationTarget = isDefined(workspaceIds)
-        ? `workspace(s) ${workspaceIds.join(', ')}`
-        : 'every provisioned workspace that does not have it yet';
-
       const isConfirmed = await askCommandConfirmation(
-        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${confirmationTarget}`,
+        `Confirm installing application ${registration.universalIdentifier} version ${versionLabel} on ${this.describeConfirmationTarget({ workspaceIdsToIterate, workspaceCountLimit: options.workspaceCountLimit })}`,
       );
 
       if (!isConfirmed) {
@@ -153,19 +172,21 @@ export class InstallApplicationCommand extends CommandRunner {
       }
     }
 
-    const alreadyInstalledWorkspaceIds =
-      await this.findAlreadyInstalledWorkspaceIds(
-        registration.universalIdentifier,
-      );
-
     let skippedWorkspaceCount = 0;
 
     const report = await this.workspaceIteratorService.iterate({
-      workspaceIds,
-      workspaceCountLimit: options.workspaceCountLimit,
+      workspaceIds: workspaceIdsToIterate,
+      workspaceCountLimit: isDefined(workspaceIdsToIterate)
+        ? undefined
+        : options.workspaceCountLimit,
       dryRun: isDryRun,
       callback: async ({ workspaceId }) => {
-        if (alreadyInstalledWorkspaceIds.has(workspaceId)) {
+        if (
+          await this.isApplicationInstalled({
+            universalIdentifier: registration.universalIdentifier,
+            workspaceId,
+          })
+        ) {
           skippedWorkspaceCount += 1;
 
           this.logger.log(
@@ -198,20 +219,64 @@ export class InstallApplicationCommand extends CommandRunner {
     this.logger.log(chalk.blue('Command completed!'));
   }
 
+  private describeConfirmationTarget({
+    workspaceIdsToIterate,
+    workspaceCountLimit,
+  }: {
+    workspaceIdsToIterate?: string[];
+    workspaceCountLimit?: number;
+  }): string {
+    if (isDefined(workspaceIdsToIterate)) {
+      return `workspace(s) ${workspaceIdsToIterate.join(', ')}`;
+    }
+
+    return isDefined(workspaceCountLimit)
+      ? `up to ${workspaceCountLimit} provisioned workspace(s) that do not have it yet`
+      : 'every provisioned workspace that does not have it yet';
+  }
+
+  private async excludeAlreadyInstalledWorkspaceIds({
+    universalIdentifier,
+    workspaceIds,
+    applicationName,
+  }: {
+    universalIdentifier: string;
+    workspaceIds: string[];
+    applicationName: string;
+  }): Promise<string[]> {
+    const existingApplications = await this.applicationRepository.find({
+      select: ['workspaceId'],
+      where: { universalIdentifier, workspaceId: In(workspaceIds) },
+    });
+
+    const alreadyInstalledWorkspaceIds = new Set(
+      existingApplications.map((application) => application.workspaceId),
+    );
+
+    if (alreadyInstalledWorkspaceIds.size > 0) {
+      this.logger.log(
+        `Skipping ${alreadyInstalledWorkspaceIds.size} requested workspace(s) where "${applicationName}" is already installed, run application:upgrade to update them`,
+      );
+    }
+
+    return workspaceIds.filter(
+      (workspaceId) => !alreadyInstalledWorkspaceIds.has(workspaceId),
+    );
+  }
+
   // Matches on the universal identifier, the same identity
   // ApplicationInstallService uses to decide between a fresh install and a
   // version upgrade, so a row with a stale registration id is not mistaken
   // for a missing installation.
-  private async findAlreadyInstalledWorkspaceIds(
-    universalIdentifier: string,
-  ): Promise<Set<string>> {
-    const existingApplications = await this.applicationRepository.find({
-      select: ['workspaceId'],
-      where: { universalIdentifier },
+  private async isApplicationInstalled({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.applicationRepository.exists({
+      where: { universalIdentifier, workspaceId },
     });
-
-    return new Set(
-      existingApplications.map((application) => application.workspaceId),
-    );
   }
 }
