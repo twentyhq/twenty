@@ -5098,6 +5098,7 @@ msgstr "Oprettet"
 
 #. js-lingui-id: 4fBuqE
 #: src/modules/side-panel/components/SidePanelRecordInfo.tsx
+#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard.tsx
 msgid "Created {beautifiedCreatedAt}"
 msgstr "Oprettet {beautifiedCreatedAt}"
 
