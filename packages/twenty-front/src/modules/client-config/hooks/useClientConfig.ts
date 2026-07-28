@@ -24,6 +24,7 @@ import { maintenanceModeState } from '@/client-config/states/maintenanceModeStat
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -126,6 +127,10 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setIsDDLLocked = useSetAtomState(isDDLLockedState);
 
+  const setIsOnboardingAiChatEnabled = useSetAtomState(
+    isOnboardingAiChatEnabledState,
+  );
+
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const setEnterpriseInstanceType = useSetAtomState(
@@ -215,6 +220,9 @@ export const useClientConfig = (): UseClientConfigResult => {
       );
       setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
       setIsDDLLocked(clientConfig?.isWorkspaceSchemaDDLLocked ?? false);
+      setIsOnboardingAiChatEnabled(
+        clientConfig?.isOnboardingAiChatEnabled ?? false,
+      );
       setMaintenanceMode(clientConfig?.maintenance ?? null);
       setEnterpriseInstanceType(
         clientConfig?.enterpriseInstanceType ??
@@ -256,6 +264,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setIsDDLLocked,
+    setIsOnboardingAiChatEnabled,
     setLabPublicFeatureFlags,
     setMaintenanceMode,
     setEnterpriseInstanceType,

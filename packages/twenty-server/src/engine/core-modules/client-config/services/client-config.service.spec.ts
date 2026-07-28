@@ -110,6 +110,7 @@ describe('ClientConfigService', () => {
             CLOUDFLARE_ZONE_ID: undefined,
             ALLOW_REQUESTS_TO_TWENTY_ICONS: false,
             CLICKHOUSE_URL: undefined,
+            IS_ONBOARDING_AI_CHAT_ENABLED: false,
           };
 
           return mockValues[key];
@@ -191,6 +192,7 @@ describe('ClientConfigService', () => {
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
+        isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       });
     });
