@@ -1,9 +1,9 @@
 import { parseCssString } from '../parseCssString';
 
 describe('parseCssString', () => {
-  it('should return the input unchanged when it is not a non-empty string', () => {
+  it('should return undefined when the input is not a non-empty string', () => {
     expect(parseCssString(undefined)).toBeUndefined();
-    expect(parseCssString('')).toBe('');
+    expect(parseCssString('')).toBeUndefined();
   });
 
   it('should convert kebab-case properties to camelCase', () => {
@@ -23,13 +23,27 @@ describe('parseCssString', () => {
     });
   });
 
-  it('should skip declarations without a colon', () => {
-    expect(parseCssString('color: red; invalid')).toEqual({ color: 'red' });
+  it('should keep semicolons inside url() values', () => {
+    expect(
+      parseCssString(
+        'background-image: url(data:image/png;base64,abc); color: red',
+      ),
+    ).toEqual({
+      backgroundImage: 'url(data:image/png;base64,abc)',
+      color: 'red',
+    });
   });
 
-  it('should only split on the first colon so values may contain colons', () => {
-    expect(parseCssString('background: url(http://example.com)')).toEqual({
-      background: 'url(http://example.com)',
+  it('should strip an important priority from values', () => {
+    expect(parseCssString('color: red !important; width: 10px')).toEqual({
+      color: 'red',
+      width: '10px',
+    });
+  });
+
+  it('should keep an earlier important declaration over a later normal duplicate', () => {
+    expect(parseCssString('color: red !important; color: blue')).toEqual({
+      color: 'red',
     });
   });
 });

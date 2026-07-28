@@ -18,7 +18,10 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   ],
   dashboard: [{ name: 'title', type: FieldMetadataType.TEXT }],
   message: [{ name: 'subject', type: FieldMetadataType.TEXT }],
-  messageCampaign: [{ name: 'subject', type: FieldMetadataType.TEXT }],
+  messageCampaign: [
+    { name: 'name', type: FieldMetadataType.TEXT },
+    { name: 'subject', type: FieldMetadataType.TEXT },
+  ],
   messageChannelMessageAssociation: [
     { name: 'messageExternalId', type: FieldMetadataType.TEXT },
   ],

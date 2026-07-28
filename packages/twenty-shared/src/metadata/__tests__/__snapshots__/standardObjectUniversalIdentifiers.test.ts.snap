@@ -1085,6 +1085,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "messages": {
         "universalIdentifier": "e5a177a7-512b-4778-928e-69777a528f7c",
       },
+      "name": {
+        "universalIdentifier": "dc8bca0e-37c4-4b78-814d-2e91124274e3",
+      },
       "position": {
         "universalIdentifier": "e43f6c94-602c-54af-a398-559510beb43b",
       },
@@ -1153,6 +1156,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "list": {
             "universalIdentifier": "c0bf6a48-8695-4520-81e6-7462d35033b5",
           },
+          "name": {
+            "universalIdentifier": "4d40646c-853d-48e6-8ddb-81e6dedabc99",
+          },
           "recipients": {
             "universalIdentifier": "2f99f444-4af3-44fd-b08d-46955c4ac2a2",
           },
@@ -1167,6 +1173,34 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "subject": {
             "universalIdentifier": "b017c851-e38d-4a81-ab38-0fb10e9f239e",
+          },
+        },
+      },
+      "messageCampaignRecordPageFields": {
+        "universalIdentifier": "20202020-a009-4a09-8a09-fa9de11ca901",
+        "viewFieldGroups": {
+          "stats": {
+            "universalIdentifier": "20202020-a009-4a09-8a09-fa9de11ca902",
+          },
+        },
+        "viewFields": {
+          "bouncedCount": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca907",
+          },
+          "complainedCount": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca908",
+          },
+          "failedCount": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca906",
+          },
+          "sentAt": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca904",
+          },
+          "sentCount": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca905",
+          },
+          "status": {
+            "universalIdentifier": "20202020-af09-4a09-8a09-fa9de11ca903",
           },
         },
       },

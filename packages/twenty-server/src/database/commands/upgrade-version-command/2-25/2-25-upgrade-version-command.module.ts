@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1784567000000-backfill-message-list-members-junction-target.command';
+import { AddMessageCampaignComposerTabCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229940000-add-message-campaign-composer-tab.command';
+import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
+import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
 import { AddWorkspaceMemberOpenRecordInCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785250300000-add-workspace-member-open-record-in.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -14,12 +17,17 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     ApplicationModule,
     TypeOrmModule.forFeature([FieldMetadataEntity]),
+    ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceIteratorModule,
   ],
   providers: [
+    BackfillMessageListMembersJunctionTargetCommand,
+    AddMessageCampaignComposerTabCommand,
+    ConfigureMessageCampaignCommandMenuCommand,
+    AddMessageCampaignNameFieldCommand,
     AddWorkspaceMemberOpenRecordInCommand,
     BackfillMessageListMembersJunctionTargetCommand,
   ],
