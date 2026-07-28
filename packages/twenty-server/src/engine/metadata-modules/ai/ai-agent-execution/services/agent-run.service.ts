@@ -13,6 +13,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
   AiException,
@@ -86,6 +87,7 @@ export class AgentRunService {
 
     const sharedExecuteAgentArgs = {
       agent,
+      baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
       authContext,
       workspaceId: workspace.id,
       userWorkspaceId: requestUserWorkspaceId,
