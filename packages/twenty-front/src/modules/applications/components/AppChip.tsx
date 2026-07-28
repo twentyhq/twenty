@@ -1,11 +1,7 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import {
-  Avatar,
-  type AvatarSize,
-  type AvatarType,
-} from 'twenty-ui/data-display';
+import { Avatar, type AvatarSize } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -21,7 +17,8 @@ type AppChipProps = {
   };
   className?: string;
   chipOnly?: boolean;
-  type?: AvatarType;
+  rounded?: boolean;
+  borderColor?: string;
 };
 
 const StyledContainer = styled.div`
@@ -43,7 +40,8 @@ export const AppChip = ({
   fallbackApplicationData,
   className,
   chipOnly = false,
-  type = 'app',
+  rounded = false,
+  borderColor,
 }: AppChipProps) => {
   const { applicationChipData } = useApplicationChipData({
     applicationId,
@@ -53,14 +51,14 @@ export const AppChip = ({
   return (
     <StyledContainer className={className}>
       <Avatar
-        type={type}
+        type={rounded ? 'rounded' : 'app'}
         size={size}
         avatarUrl={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
-        borderColor={applicationChipData.colors?.borderColor}
+        borderColor={borderColor ?? applicationChipData.colors?.borderColor}
       />
       {!chipOnly && (
         <OverflowingTextWithTooltip text={applicationChipData.name} />

@@ -1,35 +1,17 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CallRecordingStatus } from '~/generated/graphql';
 
-type CallRecorderStatusColor = 'blue' | 'orange' | 'green' | 'red';
-
-const CALL_RECORDER_STATUS_COLORS: Record<
-  CallRecordingStatus,
-  CallRecorderStatusColor
-> = {
-  [CallRecordingStatus.SCHEDULED]: 'blue',
-  [CallRecordingStatus.JOINING]: 'orange',
-  [CallRecordingStatus.RECORDING]: 'orange',
-  [CallRecordingStatus.PROCESSING]: 'orange',
-  [CallRecordingStatus.COMPLETED]: 'green',
-  [CallRecordingStatus.FAILED]: 'red',
-};
-
-const StyledStatusRing = styled.div<{ status: CallRecordingStatus }>`
-  align-items: center;
-  border: 1px solid
-    ${({ status }) =>
-      themeCssVariables.tag.text[CALL_RECORDER_STATUS_COLORS[status]]};
-  border-radius: 50%;
-  box-sizing: border-box;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[4]};
-`;
+const CALL_RECORDER_STATUS_BORDER_COLORS: Record<CallRecordingStatus, string> =
+  {
+    [CallRecordingStatus.SCHEDULED]: themeCssVariables.tag.text.blue,
+    [CallRecordingStatus.JOINING]: themeCssVariables.tag.text.orange,
+    [CallRecordingStatus.RECORDING]: themeCssVariables.tag.text.orange,
+    [CallRecordingStatus.PROCESSING]: themeCssVariables.tag.text.orange,
+    [CallRecordingStatus.COMPLETED]: themeCssVariables.tag.text.green,
+    [CallRecordingStatus.FAILED]: themeCssVariables.tag.text.red,
+  };
 
 type CalendarEventCallRecorderAvatarProps = {
   applicationId?: string | null;
@@ -40,7 +22,12 @@ export const CalendarEventCallRecorderAvatar = ({
   applicationId,
   status,
 }: CalendarEventCallRecorderAvatarProps) => (
-  <StyledStatusRing status={status}>
-    <AppChip applicationId={applicationId} size="sm" type="rounded" chipOnly />
-  </StyledStatusRing>
+  <AppChip
+    applicationId={applicationId}
+    fallbackApplicationData={{ name: t`Call recorder` }}
+    borderColor={CALL_RECORDER_STATUS_BORDER_COLORS[status]}
+    size="md"
+    rounded
+    chipOnly
+  />
 );

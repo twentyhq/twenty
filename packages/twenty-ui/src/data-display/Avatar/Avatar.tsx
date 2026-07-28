@@ -94,9 +94,12 @@ export const Avatar = ({
 
   const showBackgroundColor = showPlaceholder;
 
-  const showBorderColor = showPlaceholder;
-
-  const appliedBorderColor = showBorderColor ? fixedBorderColor : undefined;
+  const appliedBorderColor =
+    type === 'app'
+      ? showPlaceholder
+        ? fixedBorderColor
+        : undefined
+      : borderColor;
 
   const avatarStyle = {
     '--avatar-color': fixedColor,
@@ -105,7 +108,7 @@ export const Avatar = ({
       : showBackgroundColor
         ? fixedBackgroundColor
         : 'none',
-    ...(type === 'app' && appliedBorderColor
+    ...(appliedBorderColor
       ? { '--avatar-border': `1px solid ${appliedBorderColor}` }
       : {}),
   } as React.CSSProperties;
