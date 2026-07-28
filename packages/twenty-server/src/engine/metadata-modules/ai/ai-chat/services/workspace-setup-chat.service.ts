@@ -14,6 +14,7 @@ import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import {
@@ -30,9 +31,14 @@ import {
 const RESOLVE_THREAD_MAX_ATTEMPTS = 3;
 
 type StartWorkspaceSetupChatServiceResult =
-  | { outcome: 'started'; threadId: string; streamId: string; turnId: string }
-  | { outcome: 'alreadyStarted'; threadId: string }
-  | { outcome: 'unavailable'; threadId: null };
+  | {
+      outcome: WorkspaceSetupChatOutcome.STARTED;
+      threadId: string;
+      streamId: string;
+      turnId: string;
+    }
+  | { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED; threadId: string }
+  | { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE; threadId: null };
 
 @Injectable()
 export class WorkspaceSetupChatService {
@@ -61,7 +67,7 @@ export class WorkspaceSetupChatService {
     companyContext: WorkspaceCompanyEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
-      return { outcome: 'unavailable', threadId: null };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
     const isWorkspaceCreator = await this.isWorkspaceCreator({
@@ -70,11 +76,11 @@ export class WorkspaceSetupChatService {
     });
 
     if (!isWorkspaceCreator) {
-      return { outcome: 'unavailable', threadId: null };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      return { outcome: 'unavailable', threadId: null };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
     try {
@@ -87,24 +93,22 @@ export class WorkspaceSetupChatService {
         `Workspace setup chat unavailable for workspace ${workspace.id}: model ${workspace.smartModel} is not available`,
       );
 
-      return { outcome: 'unavailable', threadId: null };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
-    // Resolved before any credit gate so a workspace that ran out of credits after the kickoff
-    // still joins its existing setup conversation instead of falling back to an empty chat.
     const existingThreadId = await this.resolveExistingThread({
       userId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
 
-    // Only gates creating a thread, so an exhausted workspace is not left with an empty one;
-    // ensureKickoffStream re-checks before a stream actually starts.
+    const mustCreateThread = !isDefined(existingThreadId);
+
     if (
-      !isDefined(existingThreadId) &&
-      !(await this.billingUsageService.hasAvailableCredits(workspace.id))
+      mustCreateThread &&
+      !(await this.hasCreditsToStartKickoffStream(workspace.id))
     ) {
-      return { outcome: 'unavailable', threadId: null };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
     const threadId =
@@ -120,6 +124,30 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
       workspace,
       companyContext,
+    });
+  }
+
+  private async hasCreditsToStartKickoffStream(
+    workspaceId: string,
+  ): Promise<boolean> {
+    return this.billingUsageService.hasAvailableCredits(workspaceId);
+  }
+
+  private async deletePointerToDeletedThread({
+    userId,
+    workspaceId,
+    deletedThreadId,
+  }: {
+    userId: string;
+    workspaceId: string;
+    deletedThreadId: string;
+  }): Promise<void> {
+    await this.keyValuePairService.deleteIfValueEquals({
+      userId,
+      workspaceId,
+      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
+      value: { threadId: deletedThreadId },
+      type: KeyValuePairType.USER_VARIABLE,
     });
   }
 
@@ -175,15 +203,10 @@ export class WorkspaceSetupChatService {
         return storedThreadId;
       }
 
-      // The thread is created before the key-value pair, so a dangling pointer can only mean
-      // the thread was deleted. The delete is conditional on the stale value so a concurrent
-      // caller's fresh pointer is never removed.
-      await this.keyValuePairService.deleteIfValueEquals({
+      await this.deletePointerToDeletedThread({
         userId,
         workspaceId,
-        key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-        value: { threadId: storedThreadId },
-        type: KeyValuePairType.USER_VARIABLE,
+        deletedThreadId: storedThreadId,
       });
     }
 
@@ -310,7 +333,7 @@ export class WorkspaceSetupChatService {
         });
 
       if (!isDefined(interruptedError)) {
-        return { outcome: 'alreadyStarted', threadId };
+        return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
       }
     }
 
@@ -321,16 +344,11 @@ export class WorkspaceSetupChatService {
       });
 
     if (hasConversationMessages) {
-      return { outcome: 'alreadyStarted', threadId };
+      return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
     }
 
-    // Re-checked here rather than up front so joining an existing conversation never needs
-    // credits; only actually starting a stream does.
-    const hasAvailableCredits =
-      await this.billingUsageService.hasAvailableCredits(workspace.id);
-
-    if (!hasAvailableCredits) {
-      return { outcome: 'unavailable', threadId: null };
+    if (!(await this.hasCreditsToStartKickoffStream(workspace.id))) {
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
     const kickoffResult =
@@ -345,11 +363,11 @@ export class WorkspaceSetupChatService {
       });
 
     if (!isDefined(kickoffResult)) {
-      return { outcome: 'alreadyStarted', threadId };
+      return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
     }
 
     return {
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId,
       streamId: kickoffResult.streamId,
       turnId: kickoffResult.turnId,

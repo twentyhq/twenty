@@ -4,6 +4,7 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
 import { WORKSPACE_SETUP_CHAT_THREAD_KEY } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-chat-key-value.type';
 import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -141,7 +142,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(twentyConfigService.get).toHaveBeenCalledWith(
       'IS_ONBOARDING_AI_CHAT_ENABLED',
     );
@@ -157,7 +161,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
@@ -169,7 +176,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
@@ -183,7 +193,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
@@ -194,7 +207,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
@@ -217,7 +233,7 @@ describe('WorkspaceSetupChatService', () => {
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({
-      outcome: 'alreadyStarted',
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
     });
     expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
@@ -243,7 +259,10 @@ describe('WorkspaceSetupChatService', () => {
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    expect(result).toEqual({ outcome: 'unavailable', threadId: null });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      threadId: null,
+    });
     expect(
       agentChatStreamingService.startHiddenKickoffStream,
     ).not.toHaveBeenCalled();
@@ -328,7 +347,7 @@ describe('WorkspaceSetupChatService', () => {
       ),
     });
     expect(result).toEqual({
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: createdThreadId,
       streamId: 'stream-id',
       turnId: 'turn-id',
@@ -411,7 +430,7 @@ describe('WorkspaceSetupChatService', () => {
       expect.objectContaining({ threadId: 'winner-thread-id' }),
     );
     expect(result).toEqual({
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: 'winner-thread-id',
       streamId: 'stream-id',
       turnId: 'turn-id',
@@ -439,7 +458,7 @@ describe('WorkspaceSetupChatService', () => {
 
     expect(freshThreadId).not.toBe('stale-thread-id');
     expect(result).toEqual({
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: freshThreadId,
       streamId: 'stream-id',
       turnId: 'turn-id',
@@ -463,7 +482,7 @@ describe('WorkspaceSetupChatService', () => {
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({
-      outcome: 'alreadyStarted',
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
     });
     expect(
@@ -496,7 +515,7 @@ describe('WorkspaceSetupChatService', () => {
       workspaceId: 'workspace-id',
     });
     expect(result).toEqual({
-      outcome: 'alreadyStarted',
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
     });
     expect(agentChatService.hasConversationMessages).not.toHaveBeenCalled();
@@ -516,7 +535,7 @@ describe('WorkspaceSetupChatService', () => {
     const createdThreadId = agentChatService.createThread.mock.calls[0][0].id;
 
     expect(result).toEqual({
-      outcome: 'alreadyStarted',
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: createdThreadId,
     });
   });
@@ -553,7 +572,7 @@ describe('WorkspaceSetupChatService', () => {
         .invocationCallOrder[0],
     );
     expect(result).toEqual({
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: 'archived-thread-id',
       streamId: 'stream-id',
       turnId: 'turn-id',

@@ -48,7 +48,7 @@ const buildKickoffMock = ({
   countCall,
   captureVariables,
 }: {
-  outcome: 'started' | 'alreadyStarted' | 'unavailable';
+  outcome: 'STARTED' | 'ALREADY_STARTED' | 'UNAVAILABLE';
   countCall?: () => void;
   captureVariables?: (variables: Record<string, unknown>) => void;
 }) => ({
@@ -68,7 +68,7 @@ const buildKickoffMock = ({
         startWorkspaceSetupChat: {
           __typename: 'StartWorkspaceSetupChatResult',
           outcome,
-          threadId: outcome === 'unavailable' ? null : threadId,
+          threadId: outcome === 'UNAVAILABLE' ? null : threadId,
         },
       },
     };
@@ -112,7 +112,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         countCall: () => {
           callCount += 1;
         },
@@ -140,7 +140,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     let callCount = 0;
     const { rerender } = renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         countCall: () => {
           callCount += 1;
         },
@@ -167,7 +167,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
   });
 
   it('should select the thread and mark it awaiting the first chunk when the chat is started', async () => {
-    renderKickoffEffect([buildKickoffMock({ outcome: 'started' })]);
+    renderKickoffEffect([buildKickoffMock({ outcome: 'STARTED' })]);
 
     await flushMutation();
 
@@ -195,7 +195,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
   });
 
   it('should select the thread without awaiting a first chunk when the chat was already started', async () => {
-    renderKickoffEffect([buildKickoffMock({ outcome: 'alreadyStarted' })]);
+    renderKickoffEffect([buildKickoffMock({ outcome: 'ALREADY_STARTED' })]);
 
     await flushMutation();
 
@@ -219,7 +219,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     let callCount = 0;
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         countCall: () => {
           callCount += 1;
         },
@@ -241,7 +241,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     let callCount = 0;
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         countCall: () => {
           callCount += 1;
         },
@@ -262,7 +262,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     const capturedVariablesList: Record<string, unknown>[] = [];
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         captureVariables: (variables) => {
           capturedVariablesList.push(variables);
         },
@@ -278,7 +278,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     const capturedVariablesList: Record<string, unknown>[] = [];
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         captureVariables: (variables) => {
           capturedVariablesList.push(variables);
         },
@@ -292,7 +292,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
   });
 
   it('should keep the guard consumed when the chat is unavailable', async () => {
-    renderKickoffEffect([buildKickoffMock({ outcome: 'unavailable' })]);
+    renderKickoffEffect([buildKickoffMock({ outcome: 'UNAVAILABLE' })]);
 
     await flushMutation();
 
@@ -333,7 +333,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     let callCount = 0;
     renderKickoffEffect([
       buildKickoffMock({
-        outcome: 'started',
+        outcome: 'STARTED',
         countCall: () => {
           callCount += 1;
         },

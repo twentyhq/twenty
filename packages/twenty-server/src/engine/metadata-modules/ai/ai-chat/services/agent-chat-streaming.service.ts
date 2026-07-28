@@ -297,6 +297,28 @@ export class AgentChatStreamingService {
     }
   }
 
+  private async abandonKickoffAndFlushQueue({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+    streamId,
+    hasTitle,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+    streamId: string;
+    hasTitle: boolean;
+  }): Promise<void> {
+    await this.releaseStreamClaim(threadId, workspaceId, streamId);
+    await this.flushNextQueuedMessage(
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+      hasTitle,
+    );
+  }
+
   async startHiddenKickoffStream({
     threadId,
     userWorkspaceId,
@@ -321,16 +343,14 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
-    const claimed = await this.tryClaimStream({
+    const hasClaimedStreamForKickoff = await this.tryClaimStream({
       threadId,
       workspaceId: workspace.id,
       streamId,
       where: { pendingQuestionMessageId: IsNull() },
     });
 
-    // The kickoff is never queued: a queued copy would later be promoted as a VISIBLE user
-    // message exposing the whole prompt. Losing the claim means another caller already started.
-    if (!claimed) {
+    if (!hasClaimedStreamForKickoff) {
       return null;
     }
 
@@ -342,15 +362,13 @@ export class AgentChatStreamingService {
         });
 
       if (hasConversationMessages) {
-        await this.releaseStreamClaim(threadId, workspace.id, streamId);
-        // A message queued while this kickoff held the claim has no stream job whose
-        // completion would flush it, so drain the queue before giving up.
-        await this.flushNextQueuedMessage(
+        await this.abandonKickoffAndFlushQueue({
           threadId,
           userWorkspaceId,
-          workspace.id,
-          !!thread.title,
-        );
+          workspaceId: workspace.id,
+          streamId,
+          hasTitle: !!thread.title,
+        });
 
         return null;
       }
@@ -463,10 +481,12 @@ export class AgentChatStreamingService {
 
     try {
       const lastUserMessage =
-        await this.agentChatService.findLatestSentUserMessage({
-          threadId,
-          workspaceId: workspace.id,
-        });
+        await this.agentChatService.findLatestProcessedSentUserMessageIncludingHidden(
+          {
+            threadId,
+            workspaceId: workspace.id,
+          },
+        );
 
       if (!isDefined(lastUserMessage) || !isDefined(lastUserMessage.turnId)) {
         throw new AiException(

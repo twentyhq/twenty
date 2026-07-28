@@ -334,17 +334,13 @@ export class AgentChatService {
     }
   }
 
-  async findLatestSentUserMessage({
+  async findLatestProcessedSentUserMessageIncludingHidden({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
   }): Promise<Pick<AgentMessageEntity, 'id' | 'turnId'> | null> {
-    // Hidden messages are included on purpose: the workspace-setup kickoff turn's
-    // only user message is hidden and must stay retryable. Ordering by processedAt
-    // keeps any hidden message injected before the conversation (inserted with an
-    // earlier processedAt) from outranking a real turn message.
     return this.messageRepository.findOne(workspaceId, {
       where: {
         threadId,
@@ -425,48 +421,56 @@ export class AgentChatService {
     });
   }
 
-  private async loadCompleteHiddenMessagesAfterCleanup({
+  private async deletePartLessHiddenMessagesWithTheirTurns({
+    partLessHiddenMessages,
+    workspaceId,
+  }: {
+    partLessHiddenMessages: AgentMessageEntity[];
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, {
+      id: In(partLessHiddenMessages.map((message) => message.id)),
+    });
+
+    const orphanedTurnIds = [
+      ...new Set(
+        partLessHiddenMessages
+          .map((message) => message.turnId)
+          .filter(isDefined),
+      ),
+    ];
+
+    if (isNonEmptyArray(orphanedTurnIds)) {
+      await this.turnRepository.delete(workspaceId, {
+        id: In(orphanedTurnIds),
+      });
+    }
+  }
+
+  private async loadHiddenMessagesWithPartsAfterDeletingPartLessOnes({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
   }): Promise<AgentMessageEntity[]> {
-    const existingHiddenMessages = await this.messageRepository.find(
-      workspaceId,
-      { where: { threadId, isHidden: true }, relations: ['parts'] },
-    );
+    const hiddenMessages = await this.messageRepository.find(workspaceId, {
+      where: { threadId, isHidden: true },
+      relations: ['parts'],
+    });
 
-    // The message and its parts are inserted separately, so an interrupted attempt can leave a
-    // part-less row behind. Drop those unconditionally: they carry no content yet still reach the
-    // model, and they occupy the one-hidden-message-per-thread unique index.
-    const partialMessages = existingHiddenMessages.filter(
+    const partLessHiddenMessages = hiddenMessages.filter(
       (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
     );
 
-    if (isNonEmptyArray(partialMessages)) {
-      await this.messageRepository.delete(workspaceId, {
-        id: In(partialMessages.map((partialMessage) => partialMessage.id)),
+    if (isNonEmptyArray(partLessHiddenMessages)) {
+      await this.deletePartLessHiddenMessagesWithTheirTurns({
+        partLessHiddenMessages,
+        workspaceId,
       });
-
-      // Each hidden-message attempt creates its own turn, so dropped partial messages leave
-      // orphan turns.
-      const partialTurnIds = [
-        ...new Set(
-          partialMessages
-            .map((partialMessage) => partialMessage.turnId)
-            .filter(isDefined),
-        ),
-      ];
-
-      if (isNonEmptyArray(partialTurnIds)) {
-        await this.turnRepository.delete(workspaceId, {
-          id: In(partialTurnIds),
-        });
-      }
     }
 
-    return existingHiddenMessages.filter((hiddenMessage) =>
+    return hiddenMessages.filter((hiddenMessage) =>
       isNonEmptyArray(hiddenMessage.parts),
     );
   }
@@ -480,15 +484,13 @@ export class AgentChatService {
     workspaceId: string;
     text: string;
   }): Promise<{ id: string; turnId: string }> {
-    const completeHiddenMessages =
-      await this.loadCompleteHiddenMessagesAfterCleanup({
+    const previouslyPersistedKickoffMessages =
+      await this.loadHiddenMessagesWithPartsAfterDeletingPartLessOnes({
         threadId,
         workspaceId,
       });
 
-    // The kickoff only runs on threads without any visible message, where the sole possible
-    // hidden message is a previous kickoff prompt whose stream enqueue failed: reuse it.
-    const reusableKickoffMessage = completeHiddenMessages.find(
+    const reusableKickoffMessage = previouslyPersistedKickoffMessages.find(
       (hiddenMessage) => isDefined(hiddenMessage.turnId),
     );
 

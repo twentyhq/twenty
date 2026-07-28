@@ -50,7 +50,7 @@ export class WorkspaceSetupChatResolver {
       },
     );
 
-    if (result.outcome === 'started') {
+    if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
       tagAiChatStreamScope({
         streamId: result.streamId,
         turnId: result.turnId,
@@ -59,14 +59,14 @@ export class WorkspaceSetupChatResolver {
       });
 
       return {
-        outcome: WorkspaceSetupChatOutcome.started,
+        outcome: result.outcome,
         threadId: result.threadId,
         streamId: result.streamId,
       };
     }
 
     return {
-      outcome: WorkspaceSetupChatOutcome[result.outcome],
+      outcome: result.outcome,
       threadId: result.threadId,
       streamId: null,
     };

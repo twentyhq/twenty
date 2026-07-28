@@ -2649,7 +2649,7 @@ export interface StartWorkspaceSetupChatResult {
     __typename: 'StartWorkspaceSetupChatResult'
 }
 
-export type WorkspaceSetupChatOutcome = 'started' | 'alreadyStarted' | 'unavailable'
+export type WorkspaceSetupChatOutcome = 'STARTED' | 'ALREADY_STARTED' | 'UNAVAILABLE'
 
 export interface AgentTurnEvaluation {
     id: Scalars['UUID']
@@ -9574,9 +9574,9 @@ export const enumUnsubscribeTopicVisibility = {
 }
 
 export const enumWorkspaceSetupChatOutcome = {
-   started: 'started' as const,
-   alreadyStarted: 'alreadyStarted' as const,
-   unavailable: 'unavailable' as const
+   STARTED: 'STARTED' as const,
+   ALREADY_STARTED: 'ALREADY_STARTED' as const,
+   UNAVAILABLE: 'UNAVAILABLE' as const
 }
 
 export const enumAppKeyValueScope = {

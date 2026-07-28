@@ -2954,9 +2954,9 @@ type StartWorkspaceSetupChatResult {
 }
 
 enum WorkspaceSetupChatOutcome {
-  started
-  alreadyStarted
-  unavailable
+  STARTED
+  ALREADY_STARTED
+  UNAVAILABLE
 }
 
 type AgentTurnEvaluation {

@@ -6610,9 +6610,9 @@ export type WorkspaceNameAndId = {
 };
 
 export enum WorkspaceSetupChatOutcome {
-  alreadyStarted = 'alreadyStarted',
-  started = 'started',
-  unavailable = 'unavailable'
+  ALREADY_STARTED = 'ALREADY_STARTED',
+  STARTED = 'STARTED',
+  UNAVAILABLE = 'UNAVAILABLE'
 }
 
 export type WorkspaceUrls = {

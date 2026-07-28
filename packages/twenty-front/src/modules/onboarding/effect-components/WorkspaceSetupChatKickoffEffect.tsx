@@ -47,9 +47,10 @@ export const WorkspaceSetupChatKickoffEffect = () => {
   useEffect(() => {
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
 
-    // An enrichment fetch started during onboarding can still be in flight on arrival; waiting
-    // for it keeps the proposal tailored instead of falling back to the discovery question.
-    if (isCompanyEnrichmentFetchInFlight && !hasWaitedForCompanyEnrichment) {
+    const shouldWaitForCompanyEnrichment =
+      isCompanyEnrichmentFetchInFlight && !hasWaitedForCompanyEnrichment;
+
+    if (shouldWaitForCompanyEnrichment) {
       return;
     }
 
@@ -91,7 +92,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         const { threadId } = result;
 
         if (
-          result.outcome === WorkspaceSetupChatOutcome.unavailable ||
+          result.outcome === WorkspaceSetupChatOutcome.UNAVAILABLE ||
           !isDefined(threadId) ||
           !isValidUuid(threadId)
         ) {
@@ -123,7 +124,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           WORKSPACE_SETUP_CHAT_THREAD_TITLE,
         );
 
-        if (result.outcome === WorkspaceSetupChatOutcome.started) {
+        if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
           store.set(
             agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
               instanceId: AGENT_CHAT_INSTANCE_ID,
@@ -137,8 +138,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(currentAiChatThreadState.atom, threadId);
       } catch {
-        // A transient failure must not permanently consume the guard: the server
-        // side is idempotent, so a reload can retry the kickoff.
         releaseKickoffGuardForRetry();
 
         return;

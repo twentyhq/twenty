@@ -19,7 +19,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
   const user = { id: 'user-id' } as AuthContextUser;
 
   const buildResolver = (serviceResult: {
-    outcome: 'started' | 'alreadyStarted' | 'unavailable';
+    outcome: WorkspaceSetupChatOutcome;
     threadId: string | null;
     streamId?: string;
     turnId?: string;
@@ -52,7 +52,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   it('should pass a null company context to the service when the client-supplied object is malformed', async () => {
     const { resolver, workspaceSetupChatService } = buildResolver({
-      outcome: 'unavailable',
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
     });
 
@@ -74,7 +74,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   it('should pass the sanitized enrichment to the service when the company context is valid', async () => {
     const { resolver, workspaceSetupChatService } = buildResolver({
-      outcome: 'unavailable',
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
     });
 
@@ -101,7 +101,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   it('should return the stream identifiers and tag the stream scope when the chat is started', async () => {
     const { resolver } = buildResolver({
-      outcome: 'started',
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: 'thread-id',
       streamId: 'stream-id',
       turnId: 'turn-id',
@@ -110,7 +110,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
     const result = await start(resolver, null);
 
     expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.started,
+      outcome: WorkspaceSetupChatOutcome.STARTED,
       threadId: 'thread-id',
       streamId: 'stream-id',
     });
@@ -124,14 +124,14 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   it('should return a null stream id without tagging when the chat was already started', async () => {
     const { resolver } = buildResolver({
-      outcome: 'alreadyStarted',
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'thread-id',
     });
 
     const result = await start(resolver, null);
 
     expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.alreadyStarted,
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'thread-id',
       streamId: null,
     });
@@ -140,14 +140,14 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
 
   it('should return null identifiers without tagging when the chat is unavailable', async () => {
     const { resolver } = buildResolver({
-      outcome: 'unavailable',
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
     });
 
     const result = await start(resolver, null);
 
     expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.unavailable,
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
       streamId: null,
     });

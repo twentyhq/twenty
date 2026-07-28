@@ -143,7 +143,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
   });
 });
 
-describe('AgentChatService findLatestSentUserMessage', () => {
+describe('AgentChatService findLatestProcessedSentUserMessageIncludingHidden', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -151,7 +151,7 @@ describe('AgentChatService findLatestSentUserMessage', () => {
   it('should look up sent user messages without an isHidden predicate and order by processedAt then createdAt then id when finding the latest sent message', async () => {
     const { service, messageRepository } = buildService();
 
-    await service.findLatestSentUserMessage({
+    await service.findLatestProcessedSentUserMessageIncludingHidden({
       threadId: THREAD_ID,
       workspaceId: WORKSPACE_ID,
     });

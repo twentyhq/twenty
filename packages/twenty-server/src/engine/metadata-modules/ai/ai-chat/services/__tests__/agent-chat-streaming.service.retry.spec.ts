@@ -46,7 +46,9 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
-      findLatestSentUserMessage: jest.fn().mockResolvedValue(lastUserMessage),
+      findLatestProcessedSentUserMessageIncludingHidden: jest
+        .fn()
+        .mockResolvedValue(lastUserMessage),
       deleteAssistantMessagesForTurn: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
     };
