@@ -161,13 +161,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     for (const indexManifest of manifest.indexes ?? []) {
+      const existingObjectCandidate =
+        existingAllFlatEntityMaps?.flatObjectMetadataMaps
+          ?.byUniversalIdentifier[indexManifest.objectUniversalIdentifier];
+
       const flatObjectMetadata =
         allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
           indexManifest.objectUniversalIdentifier
         ] ??
-        existingAllFlatEntityMaps?.flatObjectMetadataMaps?.byUniversalIdentifier[
-          indexManifest.objectUniversalIdentifier
-        ];
+        (existingObjectCandidate?.isStandard
+          ? existingObjectCandidate
+          : undefined);
 
       if (!isDefined(flatObjectMetadata)) {
         throw new Error(
@@ -207,8 +211,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       );
 
       const objectFlatFieldMetadatas = [
-        ...existingFieldsForObject,
         ...appDefinedFields,
+        ...existingFieldsForObject,
       ];
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
