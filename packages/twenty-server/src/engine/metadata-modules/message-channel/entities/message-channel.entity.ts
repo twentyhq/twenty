@@ -54,6 +54,11 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
   'isSyncEnabled',
   'syncStage',
 ])
+@Index(
+  'IDX_MESSAGE_CHANNEL_WEBHOOK_SUBSCRIPTION_EXTERNAL_ID',
+  ['webhookSubscriptionExternalId'],
+  { where: '"webhookSubscriptionExternalId" IS NOT NULL' },
+)
 export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

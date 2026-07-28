@@ -172,6 +172,28 @@ Spusťte `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 
 
 V produkčním prostředí jsou logické funkce ve výchozím nastavení zakázané. Nastavte proměnnou prostředí `LOGIC_FUNCTION_TYPE` na `LOCAL` nebo `LAMBDA`, abyste je povolili. Toto lze nakonfigurovat pomocí proměnných prostředí nebo prostřednictvím proměnných databáze v administračním panelu. Podrobnosti najdete v [průvodci nastavením Logic Functions](/l/cs/developers/self-host/capabilities/setup#logic-functions-available-drivers).
 
+#### Když napíšu zprávu v AI chatu, neodpoví okamžitě a musím aktualizovat stránku, abych viděl odpověď
+
+Přidat následující blok do nginx konfigurace
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
 ### Docker Compose jedním kliknutím
 
 #### Nelze se přihlásit
