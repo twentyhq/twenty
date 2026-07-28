@@ -29,8 +29,21 @@ describe('WorkspaceSetupChatService', () => {
       value: null,
     };
 
+    const userWorkspaceState = {
+      creatorUserId: 'creator-user-id',
+      locale: 'fr-FR',
+    };
+
     const userWorkspaceRepository = {
-      findOne: jest.fn().mockResolvedValue({ userId: 'creator-user-id' }),
+      findOne: jest
+        .fn()
+        .mockImplementation(({ where }) =>
+          Promise.resolve(
+            isDefined(where?.id)
+              ? { id: where.id, locale: userWorkspaceState.locale }
+              : { userId: userWorkspaceState.creatorUserId },
+          ),
+        ),
     };
     const featureFlagService = {
       isFeatureEnabled: jest.fn().mockResolvedValue(true),
@@ -105,6 +118,7 @@ describe('WorkspaceSetupChatService', () => {
     return {
       service,
       keyValueState,
+      userWorkspaceState,
       userWorkspaceRepository,
       featureFlagService,
       billingUsageService,
@@ -138,12 +152,9 @@ describe('WorkspaceSetupChatService', () => {
   });
 
   it('should return unavailable when the caller is not the workspace creator', async () => {
-    const { service, userWorkspaceRepository, agentChatService } =
-      buildService();
+    const { service, userWorkspaceState, agentChatService } = buildService();
 
-    userWorkspaceRepository.findOne.mockResolvedValue({
-      userId: 'another-user-id',
-    });
+    userWorkspaceState.creatorUserId = 'another-user-id';
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
@@ -230,6 +241,47 @@ describe('WorkspaceSetupChatService', () => {
       streamId: 'stream-id',
       turnId: 'turn-id',
     });
+  });
+
+  it('should build the kickoff prompt with the language of the calling user workspace', async () => {
+    const { service, userWorkspaceRepository, agentChatStreamingService } =
+      buildService();
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+      where: { id: 'user-workspace-id' },
+    });
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: expect.stringContaining(
+          'The user locale is French, please continue the discussion in that language.',
+        ),
+      }),
+    );
+  });
+
+  it('should build the kickoff prompt in English when the user workspace has no locale', async () => {
+    const { service, userWorkspaceRepository, agentChatStreamingService } =
+      buildService();
+
+    userWorkspaceRepository.findOne.mockImplementation(({ where }) =>
+      Promise.resolve(
+        isDefined(where?.id) ? null : { userId: 'creator-user-id' },
+      ),
+    );
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: expect.stringContaining('The user locale is English'),
+      }),
+    );
   });
 
   it('should hard delete its own thread and use the winner thread when losing the key-value race', async () => {

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
@@ -113,8 +114,19 @@ export class WorkspaceSetupChatService {
       threadId,
       userWorkspaceId,
       workspace,
-      promptText: buildWorkspaceSetupPromptText(companyContext),
+      promptText: buildWorkspaceSetupPromptText({
+        companyEnrichment: companyContext,
+        locale: await this.getUserLocale(userWorkspaceId),
+      }),
     });
+  }
+
+  private async getUserLocale(userWorkspaceId: string): Promise<string> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: userWorkspaceId },
+    });
+
+    return userWorkspace?.locale ?? SOURCE_LOCALE;
   }
 
   private async isWorkspaceCreator({

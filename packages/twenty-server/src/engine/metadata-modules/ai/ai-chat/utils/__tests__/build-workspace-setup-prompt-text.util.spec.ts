@@ -22,7 +22,10 @@ const companyEnrichment: WorkspaceCompanyEnrichment = {
 
 describe('buildWorkspaceSetupPromptText', () => {
   it('should embed the company context message text when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText(companyEnrichment);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
 
     expect(result).toContain(buildCompanyContextMessageText(companyEnrichment));
     expect(result).toContain('Domain: acme.com');
@@ -30,7 +33,10 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should instruct a tailored greeting without a discovery question when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText(companyEnrichment);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
 
     expect(result).toContain('tailored to their business');
     expect(result).not.toContain('You do not know what this company does yet');
@@ -38,13 +44,19 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should forbid tool calls on the first reply when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText(companyEnrichment);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
 
     expect(result).toContain('do not call any tools');
   });
 
   it('should require explicit approval before building and name the metadata tools when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText(companyEnrichment);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
 
     expect(result).toContain('Only propose until the user explicitly approves');
     expect(result).toContain(
@@ -57,14 +69,20 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should state that no company information is available when the enrichment is null', () => {
-    const result = buildWorkspaceSetupPromptText(null);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment: null,
+      locale: 'en',
+    });
 
     expect(result).toContain('No information about the company');
     expect(result).not.toContain('Domain:');
   });
 
   it('should instruct a plain-text discovery question when the enrichment is null', () => {
-    const result = buildWorkspaceSetupPromptText(null);
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment: null,
+      locale: 'en',
+    });
 
     expect(result).toContain('You do not know what this company does yet');
     expect(result).toContain('one short question');
@@ -77,10 +95,55 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should stay invisible and never claim tools are already loaded when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText(enrichment);
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
 
       expect(result).toContain('invisible');
       expect(result).not.toContain('already loaded');
     },
   );
+
+  it('should require English names with labels in the user language', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'fr-FR',
+    });
+
+    expect(result).toContain('names must be in English');
+    expect(result).toContain("must be in the user's language");
+  });
+
+  it.each([
+    ['fr-FR', 'French'],
+    ['de-DE', 'German'],
+    ['pt-BR', 'Portuguese'],
+    ['en', 'English'],
+  ])(
+    'should end with the locale instruction when the locale is %s',
+    (locale, languageName) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment,
+        locale,
+      });
+
+      expect(
+        result.endsWith(
+          `The user locale is ${languageName}, please continue the discussion in that language.`,
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it('should fall back to the raw locale when it is not a structurally valid language tag', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: '!',
+    });
+
+    expect(result).toContain(
+      'The user locale is !, please continue the discussion in that language.',
+    );
+  });
 });
