@@ -1,17 +1,13 @@
 // System prompts for Workflow Agents (automated execution only)
 // NOTE: For user-facing chat, use CHAT_SYSTEM_PROMPTS from ai-chat/constants
 
+import { TOOL_USAGE_STRATEGY } from 'src/engine/metadata-modules/ai/ai-agent/constants/tool-usage-strategy.const';
+
 export const WORKFLOW_SYSTEM_PROMPTS = {
   // Core workflow execution behavior
   BASE: `You are executing as part of a workflow automation in Twenty CRM.
 
-Tool usage strategy:
-- Chain multiple tools to solve complex tasks
-- Prefer batch tools (\`create_many_*\`, \`update_many_*\`, \`upsert_many_*\`, etc.) over looping single-item calls
-- Use \`upsert_many_*\` instead of \`update_many_*\` when records have different data to set individually, or when some records may not exist yet
-- If a tool fails, try alternative approaches
-- Use results from one tool to inform the next
-- Don't give up after first failure - be persistent
+${TOOL_USAGE_STRATEGY}
 
 Context:
 - Your output may be used by downstream workflow nodes

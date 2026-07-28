@@ -138,6 +138,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     await service.executeAgent({
       agent: buildAgent(),
       userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
 
@@ -158,10 +159,28 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     await service.executeAgent({
       agent: buildAgent(),
       userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
       workspaceId,
     });
 
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
+  });
+
+  it('prefixes the system prompt with the caller-supplied base prompt', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce(null);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'caller base prompt',
+      workspaceId,
+    });
+
+    expect(generateTextMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: 'caller base prompt\n\ntest prompt',
+      }),
+    );
   });
 
   describe('cost folding', () => {
@@ -191,6 +210,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       const result = await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 
@@ -223,6 +243,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       const result = await service.executeAgent({
         agent: buildAgent(),
         userPrompt: 'test',
+        baseSystemPrompt: 'base system prompt',
         workspaceId,
       });
 
