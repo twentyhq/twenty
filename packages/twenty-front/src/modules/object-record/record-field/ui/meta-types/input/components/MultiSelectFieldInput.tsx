@@ -12,12 +12,16 @@ import { useContext } from 'react';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
-  const { addSelectOption } = useAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
-  );
-  const { canAddSelectOption } = useCanAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
-  );
+  const { addSelectOption } = useAddSelectOption({
+    fieldName: fieldDefinition?.metadata?.fieldName,
+    objectMetadataNameSingular:
+      fieldDefinition.metadata.objectMetadataNameSingular,
+  });
+  const { canAddSelectOption } = useCanAddSelectOption({
+    fieldName: fieldDefinition?.metadata?.fieldName,
+    objectMetadataNameSingular:
+      fieldDefinition.metadata.objectMetadataNameSingular,
+  });
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
