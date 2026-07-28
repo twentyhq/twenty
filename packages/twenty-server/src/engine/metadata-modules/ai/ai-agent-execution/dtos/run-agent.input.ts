@@ -18,7 +18,6 @@ export class RunAgentInputDTO {
   @Field()
   agentUniversalIdentifier: string;
 
-  // Exactly one of prompt or messages is enforced in AgentRunService
   @IsOptional()
   @IsString()
   @IsNotEmpty()

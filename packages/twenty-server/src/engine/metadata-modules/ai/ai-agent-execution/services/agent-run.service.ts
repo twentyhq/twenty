@@ -49,7 +49,6 @@ export class AgentRunService {
     const prompt = input.prompt;
     const messages = input.messages;
 
-    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
     if (isNonEmptyArray(messages) === isNonEmptyString(prompt)) {
       throw new AiException(
         'Provide exactly one of prompt or messages',
