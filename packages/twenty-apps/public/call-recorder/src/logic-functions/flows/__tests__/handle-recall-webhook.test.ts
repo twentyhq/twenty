@@ -100,7 +100,8 @@ class FakeCoreApiClient {
 
     if (filter.externalBotId !== undefined) {
       return this.callRecordings.filter(
-        (callRecording) => callRecording.externalBotId === filter.externalBotId.eq,
+        (callRecording) =>
+          callRecording.externalBotId === filter.externalBotId.eq,
       );
     }
 
@@ -1040,12 +1041,14 @@ describe('handleRecallWebhook', () => {
     expect(client.mutations).toEqual([]);
   });
 
-  it('classifies a call nobody attended as NOT_ATTENDED without a recording end', async () => {
+  it('classifies a call with no attendees as NOT_RECORDED without a recording end', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
         status: 'JOINING',
         externalBotId: 'recall-bot-1',
+        startedAt: '2026-01-01T13:00:00.000Z',
+        endedAt: '2026-01-01T13:15:00.000Z',
       },
     ]);
 
@@ -1074,9 +1077,11 @@ describe('handleRecallWebhook', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'NOT_ATTENDED',
+          status: 'NOT_RECORDED',
           externalBotId: 'recall-bot-1',
           callRecorderFailureReason: 'timeout_exceeded_waiting_room',
+          startedAt: null,
+          endedAt: null,
         },
       },
     ]);
@@ -1084,11 +1089,11 @@ describe('handleRecallWebhook', () => {
       status: 'updated',
       event: 'bot.status_change',
       callRecordingId: 'call-recording-1',
-      callRecordingStatus: 'NOT_ATTENDED',
+      callRecordingStatus: 'NOT_RECORDED',
     });
   });
 
-  it('classifies a fatal meeting_not_started end as NOT_ATTENDED', async () => {
+  it('classifies a fatal meeting_not_started end as NOT_RECORDED', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1122,7 +1127,7 @@ describe('handleRecallWebhook', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'NOT_ATTENDED',
+          status: 'NOT_RECORDED',
           externalBotId: 'recall-bot-1',
           callRecorderFailureReason: 'meeting_not_started',
         },
@@ -1215,11 +1220,11 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('still queues the artifact import when a done event arrives after NOT_ATTENDED', async () => {
+  it('still queues the artifact import when a done event arrives after NOT_RECORDED', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
-        status: 'NOT_ATTENDED',
+        status: 'NOT_RECORDED',
         externalBotId: 'recall-bot-1',
       },
     ]);
@@ -1247,7 +1252,7 @@ describe('handleRecallWebhook', () => {
     expect(result).toEqual({
       status: 'skipped',
       event: 'bot.status_change',
-      reason: 'stale status event (NOT_ATTENDED -> PROCESSING)',
+      reason: 'stale status event (NOT_RECORDED -> PROCESSING)',
     });
     expect(client.mutations).toEqual([]);
     expect(importRequestCalls()).toHaveLength(1);

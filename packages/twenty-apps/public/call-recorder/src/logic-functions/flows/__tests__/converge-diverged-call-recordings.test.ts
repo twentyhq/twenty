@@ -163,7 +163,10 @@ describe('convergeDivergedCallRecordings', () => {
   const fetchMock = vi.fn();
   let recall: RecallFetchState;
 
-  const respondToFetch = (url: string, init?: { method?: string }): FakeResponse => {
+  const respondToFetch = (
+    url: string,
+    init?: { method?: string },
+  ): FakeResponse => {
     if (url.startsWith(RECALL_BASE_URL)) {
       return respondToRecallRequest(url.slice(RECALL_BASE_URL.length), init);
     }
@@ -177,9 +180,13 @@ describe('convergeDivergedCallRecordings', () => {
     const downloadContentLength = recall.downloadContentLengthsByUrl[url];
 
     if (downloadContentLength !== undefined) {
-      return buildJsonResponse(200, {}, {
-        'content-length': String(downloadContentLength),
-      });
+      return buildJsonResponse(
+        200,
+        {},
+        {
+          'content-length': String(downloadContentLength),
+        },
+      );
     }
 
     throw new Error(`unexpected fetch: ${url}`);
@@ -273,8 +280,9 @@ describe('convergeDivergedCallRecordings', () => {
     chargeCreditsMock.mockReset();
     chargeCreditsMock.mockResolvedValue(undefined);
     fetchMock.mockReset();
-    fetchMock.mockImplementation(async (url: string, init?: { method?: string }) =>
-      respondToFetch(String(url), init),
+    fetchMock.mockImplementation(
+      async (url: string, init?: { method?: string }) =>
+        respondToFetch(String(url), init),
     );
     vi.stubGlobal('fetch', fetchMock);
   });
@@ -471,7 +479,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
-  it('marks NOT_ATTENDED instead of FAILED when the bot left an unattended meeting', async () => {
+  it('marks NOT_RECORDED instead of FAILED when nobody joined the call', async () => {
     recall.botPayloadsById['recall-bot-1'] = {
       id: 'recall-bot-1',
       status_changes: [
@@ -486,7 +494,13 @@ describe('convergeDivergedCallRecordings', () => {
       ],
       recordings: [],
     };
-    const client = buildClient([buildStuckRecordingNode({ status: 'JOINING' })]);
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'JOINING',
+        startedAt: '2026-06-09T13:00:00.000Z',
+        endedAt: '2026-06-09T13:15:00.000Z',
+      }),
+    ]);
 
     const result = await convergeDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
@@ -497,8 +511,10 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'NOT_ATTENDED',
+          status: 'NOT_RECORDED',
           callRecorderFailureReason: 'timeout_exceeded_waiting_room',
+          startedAt: null,
+          endedAt: null,
         },
       },
     ]);
@@ -954,7 +970,9 @@ describe('convergeDivergedCallRecordings', () => {
     });
 
     expect(
-      recallRequestPaths().filter((path) => path.endsWith('/create_transcript/')),
+      recallRequestPaths().filter((path) =>
+        path.endsWith('/create_transcript/'),
+      ),
     ).toEqual([]);
     expect(recallRequestPaths()).toContain('/transcript/recall-transcript-1/');
     expect(client.mutations).toEqual([

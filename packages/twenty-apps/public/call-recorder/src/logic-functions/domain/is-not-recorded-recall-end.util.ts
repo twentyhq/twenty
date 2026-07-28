@@ -1,8 +1,8 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { NOT_ATTENDED_RECALL_SUB_CODES } from 'src/logic-functions/constants/not-attended-recall-sub-codes';
+import { NOT_RECORDED_RECALL_SUB_CODES } from 'src/logic-functions/constants/not-recorded-recall-sub-codes';
 
-export const isNotAttendedRecallEnd = ({
+export const isNotRecordedRecallEnd = ({
   statusCode,
   statusSubCode,
 }: {
@@ -11,4 +11,4 @@ export const isNotAttendedRecallEnd = ({
 }): boolean =>
   (statusCode === 'call_ended' || statusCode === 'fatal') &&
   !isUndefined(statusSubCode) &&
-  NOT_ATTENDED_RECALL_SUB_CODES.includes(statusSubCode);
+  NOT_RECORDED_RECALL_SUB_CODES.includes(statusSubCode);

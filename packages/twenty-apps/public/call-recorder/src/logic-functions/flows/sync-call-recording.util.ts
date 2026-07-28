@@ -149,22 +149,32 @@ const buildSyncStateFieldUpdates = ({
 
     if (
       syncState.status === CallRecordingStatus.FAILED ||
-      syncState.status === CallRecordingStatus.NOT_ATTENDED
+      syncState.status === CallRecordingStatus.NOT_RECORDED
     ) {
       updateData.callRecorderFailureReason =
         syncState.failureReason ?? 'recall_bot_failed';
     }
   }
 
-  if (
-    isUndefined(callRecording.startedAt) &&
-    !isUndefined(syncState.startedAt)
-  ) {
-    updateData.startedAt = syncState.startedAt;
-  }
+  if (syncState.status === CallRecordingStatus.NOT_RECORDED) {
+    if (!isUndefined(callRecording.startedAt)) {
+      updateData.startedAt = null;
+    }
 
-  if (isUndefined(callRecording.endedAt) && !isUndefined(syncState.endedAt)) {
-    updateData.endedAt = syncState.endedAt;
+    if (!isUndefined(callRecording.endedAt)) {
+      updateData.endedAt = null;
+    }
+  } else {
+    if (
+      isUndefined(callRecording.startedAt) &&
+      !isUndefined(syncState.startedAt)
+    ) {
+      updateData.startedAt = syncState.startedAt;
+    }
+
+    if (isUndefined(callRecording.endedAt) && !isUndefined(syncState.endedAt)) {
+      updateData.endedAt = syncState.endedAt;
+    }
   }
 
   if (
@@ -189,8 +199,8 @@ const buildMissingArtifactsFailureUpdate = ({
 }): CallRecordingUpdateFields => {
   if (
     pendingStatus === CallRecordingStatus.FAILED ||
-    pendingStatus === CallRecordingStatus.NOT_ATTENDED ||
-    currentStatus === CallRecordingStatus.NOT_ATTENDED ||
+    pendingStatus === CallRecordingStatus.NOT_RECORDED ||
+    currentStatus === CallRecordingStatus.NOT_RECORDED ||
     isCallRecordingStatusDowngrade({
       fromStatus: currentStatus,
       toStatus: CallRecordingStatus.FAILED,
@@ -227,7 +237,7 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
   return isUndefined(transcriptMarker) || transcriptMarker.status === 'PENDING';
 };
 
-// A media size marker must not overwrite the end reason of a FAILED or NOT_ATTENDED recording.
+// A media size marker must not overwrite the end reason of a FAILED or NOT_RECORDED recording.
 const resolveMediaImportUpdate = ({
   mediaImportUpdate,
   currentStatus,
@@ -240,7 +250,7 @@ const resolveMediaImportUpdate = ({
   const hasProtectedEndReason = [currentStatus, pendingStatus].some(
     (status) =>
       status === CallRecordingStatus.FAILED ||
-      status === CallRecordingStatus.NOT_ATTENDED,
+      status === CallRecordingStatus.NOT_RECORDED,
   );
 
   if (!hasProtectedEndReason) {

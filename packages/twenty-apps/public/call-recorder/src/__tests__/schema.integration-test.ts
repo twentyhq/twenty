@@ -5,6 +5,10 @@ import { describe, expect, it } from 'vitest';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import {
+  executeCurrentSchemaMutation,
+  type CurrentSchemaUpdateCallRecordingMutation,
+} from 'src/logic-functions/data/execute-current-schema-mutation.util';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -54,16 +58,22 @@ describe('CallRecording status contract', () => {
     }
 
     expect(serverCallRecordingStatuses).toEqual(
-      expect.arrayContaining(Object.values(CallRecordingStatus)),
+      expect.arrayContaining(
+        Object.values(CallRecordingStatus).filter(
+          (status) => status !== CallRecordingStatus.NOT_RECORDED,
+        ),
+      ),
     );
 
     for (const status of Object.values(CallRecordingStatus)) {
-      const updated = await client.mutation({
+      const mutation = {
         updateCallRecording: {
           __args: { id: callRecordingId, data: { status } },
           status: true,
         },
-      });
+      } satisfies CurrentSchemaUpdateCallRecordingMutation;
+
+      const updated = await executeCurrentSchemaMutation(client, mutation);
 
       expect(updated.updateCallRecording?.status).toBe(status);
     }

@@ -8,8 +8,8 @@ export type CallRecordingUpdateFields = Partial<{
   title: string | null;
   status: CallRecordingStatus;
   recordingRequestStatus: CallRecordingRequestStatus;
-  startedAt: string;
-  endedAt: string;
+  startedAt: string | null;
+  endedAt: string | null;
   calendarEventId: string;
   // null clears stale app-owned state on cancel/eject or reschedule.
   externalBotId: string | null;

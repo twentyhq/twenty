@@ -23,21 +23,21 @@ const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.universalIdentifier;
 
 // Same option id as the standard definition so provisioned and upgraded workspaces match.
-const NOT_ATTENDED_STATUS_OPTION: FieldMetadataComplexOption = {
+const NOT_RECORDED_STATUS_OPTION: FieldMetadataComplexOption = {
   id: 'cbd14df8-9cc2-4399-92f5-31fc41f3768b',
-  value: CallRecordingStatus.NOT_ATTENDED,
-  label: 'Not attended',
+  value: CallRecordingStatus.NOT_RECORDED,
+  label: 'Not recorded',
   position: 6,
   color: 'yellow',
 };
 
 @RegisteredWorkspaceCommand('2.25.0', 1785239640000)
 @Command({
-  name: 'upgrade:2-25:add-not-attended-call-recording-status',
+  name: 'upgrade:2-25:add-not-recorded-call-recording-status',
   description:
-    'Add the NOT_ATTENDED option to the CallRecording status select in existing workspaces',
+    'Add the NOT_RECORDED option to the CallRecording status select in existing workspaces',
 })
-export class AddNotAttendedCallRecordingStatusCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddNotRecordedCallRecordingStatusCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -94,20 +94,20 @@ export class AddNotAttendedCallRecordingStatusCommand extends ProvisionedWorkspa
     const selectStatusField =
       statusField as FlatFieldMetadata<FieldMetadataType.SELECT>;
     const currentOptions = selectStatusField.options ?? [];
-    const hasNotAttendedStatus = currentOptions.some(
-      (option) => option.value === CallRecordingStatus.NOT_ATTENDED,
+    const hasNotRecordedStatus = currentOptions.some(
+      (option) => option.value === CallRecordingStatus.NOT_RECORDED,
     );
 
-    if (hasNotAttendedStatus) {
+    if (hasNotRecordedStatus) {
       this.logger.log(
-        `CallRecording status metadata already has NOT_ATTENDED for workspace ${workspaceId}, skipping`,
+        `CallRecording status metadata already has NOT_RECORDED for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Adding NOT_ATTENDED to CallRecording status metadata for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Adding NOT_RECORDED to CallRecording status metadata for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -129,7 +129,7 @@ export class AddNotAttendedCallRecordingStatusCommand extends ProvisionedWorkspa
       ...selectStatusField,
       options: [
         ...currentOptions,
-        { ...NOT_ATTENDED_STATUS_OPTION, position: nextOptionPosition },
+        { ...NOT_RECORDED_STATUS_OPTION, position: nextOptionPosition },
       ],
       updatedAt: new Date().toISOString(),
     };
@@ -153,7 +153,7 @@ export class AddNotAttendedCallRecordingStatusCommand extends ProvisionedWorkspa
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to add NOT_ATTENDED to CallRecording status metadata for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to add NOT_RECORDED to CallRecording status metadata for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -162,7 +162,7 @@ export class AddNotAttendedCallRecordingStatusCommand extends ProvisionedWorkspa
     }
 
     this.logger.log(
-      `Added NOT_ATTENDED to CallRecording status metadata for workspace ${workspaceId}`,
+      `Added NOT_RECORDED to CallRecording status metadata for workspace ${workspaceId}`,
     );
   }
 }

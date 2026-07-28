@@ -220,7 +220,29 @@ describe('extractRecallBotSyncState', () => {
     expect(syncState.failureReason).toBe('meeting_link_invalid');
   });
 
-  it('classifies a bot that timed out of the waiting room as NOT_ATTENDED without recording timestamps', () => {
+  it('preserves a fatal status and reason when Recall later emits done', () => {
+    const syncState = extractRecallBotSyncState(
+      buildRecallBotSnapshot({
+        statusChanges: [
+          buildStatusChange({
+            code: 'fatal',
+            subCode: 'meeting_link_invalid',
+            createdAt: '2026-01-01T13:02:00.000Z',
+          }),
+          buildStatusChange({
+            code: 'done',
+            createdAt: '2026-01-01T13:03:00.000Z',
+          }),
+        ],
+      }),
+    );
+
+    expect(syncState.status).toBe('FAILED');
+    expect(syncState.failureReason).toBe('meeting_link_invalid');
+    expect(syncState.isRecallRecordingDone).toBe(true);
+  });
+
+  it('classifies a bot that timed out of the waiting room as NOT_RECORDED without recording timestamps', () => {
     const syncState = extractRecallBotSyncState(
       buildRecallBotSnapshot({
         statusChanges: [
@@ -246,7 +268,7 @@ describe('extractRecallBotSyncState', () => {
     );
 
     expect(syncState).toEqual({
-      status: 'NOT_ATTENDED',
+      status: 'NOT_RECORDED',
       failureReason: 'timeout_exceeded_waiting_room',
       startedAt: undefined,
       endedAt: undefined,
@@ -255,7 +277,63 @@ describe('extractRecallBotSyncState', () => {
     });
   });
 
-  it('classifies a fatal meeting_not_started end as NOT_ATTENDED', () => {
+  it('omits recording-object timestamps when the call was not recorded', () => {
+    const syncState = extractRecallBotSyncState(
+      buildRecallBotSnapshot({
+        statusChanges: [
+          buildStatusChange({
+            code: 'call_ended',
+            subCode: 'timeout_exceeded_noone_joined',
+            createdAt: '2026-01-01T13:19:00.000Z',
+          }),
+          buildStatusChange({
+            code: 'done',
+            createdAt: '2026-01-01T13:20:00.000Z',
+          }),
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            startedAt: '2026-01-01T13:00:00.000Z',
+            completedAt: '2026-01-01T13:19:00.000Z',
+          },
+        ],
+      }),
+    );
+
+    expect(syncState).toEqual({
+      status: 'NOT_RECORDED',
+      failureReason: 'timeout_exceeded_noone_joined',
+      startedAt: undefined,
+      endedAt: undefined,
+      externalRecordingId: 'recall-recording-1',
+      isRecallRecordingDone: true,
+    });
+  });
+
+  it('keeps a recorded call processing after a silence-detection exit', () => {
+    const syncState = extractRecallBotSyncState(
+      buildRecallBotSnapshot({
+        statusChanges: [
+          buildStatusChange({
+            code: 'in_call_recording',
+            createdAt: '2026-01-01T13:02:00.000Z',
+          }),
+          buildStatusChange({
+            code: 'call_ended',
+            subCode: 'timeout_exceeded_silence_detected',
+            createdAt: '2026-01-01T14:00:00.000Z',
+          }),
+        ],
+      }),
+    );
+
+    expect(syncState.status).toBe('PROCESSING');
+    expect(syncState.startedAt).toBe('2026-01-01T13:02:00.000Z');
+    expect(syncState.endedAt).toBe('2026-01-01T14:00:00.000Z');
+  });
+
+  it('classifies a fatal meeting_not_started end as NOT_RECORDED', () => {
     const syncState = extractRecallBotSyncState(
       buildRecallBotSnapshot({
         statusChanges: [
@@ -272,7 +350,7 @@ describe('extractRecallBotSyncState', () => {
       }),
     );
 
-    expect(syncState.status).toBe('NOT_ATTENDED');
+    expect(syncState.status).toBe('NOT_RECORDED');
     expect(syncState.failureReason).toBe('meeting_not_started');
   });
 

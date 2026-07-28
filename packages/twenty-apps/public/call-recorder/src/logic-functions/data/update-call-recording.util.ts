@@ -1,5 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import {
+  executeCurrentSchemaMutation,
+  type CurrentSchemaUpdateCallRecordingMutation,
+} from 'src/logic-functions/data/execute-current-schema-mutation.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 export const updateCallRecording = async (
@@ -12,7 +16,7 @@ export const updateCallRecording = async (
     data: CallRecordingUpdateFields;
   },
 ): Promise<void> => {
-  await client.mutation({
+  const mutation = {
     updateCallRecording: {
       __args: {
         id,
@@ -20,5 +24,7 @@ export const updateCallRecording = async (
       },
       id: true,
     },
-  });
+  } satisfies CurrentSchemaUpdateCallRecordingMutation;
+
+  await executeCurrentSchemaMutation(client, mutation);
 };

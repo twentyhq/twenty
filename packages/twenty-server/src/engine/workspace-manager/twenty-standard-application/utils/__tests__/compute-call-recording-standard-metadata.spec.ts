@@ -51,7 +51,7 @@ describe('CallRecording standard metadata build', () => {
       'PROCESSING',
       'COMPLETED',
       'FAILED',
-      'NOT_ATTENDED',
+      'NOT_RECORDED',
     ]);
   });
 
