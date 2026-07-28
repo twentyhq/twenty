@@ -1,6 +1,23 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useId } from 'react';
+import { createPortal } from 'react-dom';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { CallRecordingStatus } from '~/generated/graphql';
+
+const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
+  CallRecordingStatus.JOINING,
+  CallRecordingStatus.RECORDING,
+  CallRecordingStatus.PROCESSING,
+];
+
+const StyledContainer = styled.div<{ isDisabled: boolean }>`
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'inherit')};
+  display: flex;
+  filter: ${({ isDisabled }) => (isDisabled ? 'grayscale(1)' : 'none')};
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+`;
 
 type CalendarEventCallRecorderAvatarProps = {
   applicationId?: string | null;
@@ -10,13 +27,34 @@ type CalendarEventCallRecorderAvatarProps = {
 export const CalendarEventCallRecorderAvatar = ({
   applicationId,
   status,
-}: CalendarEventCallRecorderAvatarProps) => (
-  <AppChip
-    applicationId={applicationId}
-    fallbackApplicationData={{ name: t`Call recorder` }}
-    pulsing={status === CallRecordingStatus.PROCESSING}
-    size="md"
-    rounded
-    chipOnly
-  />
-);
+}: CalendarEventCallRecorderAvatarProps) => {
+  const instanceId = useId();
+  const hasFailed = status === CallRecordingStatus.FAILED;
+  const tooltipAnchorId = `call-recorder-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
+
+  return (
+    <>
+      <StyledContainer id={tooltipAnchorId} isDisabled={hasFailed}>
+        <AppChip
+          applicationId={applicationId}
+          fallbackApplicationData={{ name: t`Call recorder` }}
+          pulsing={IN_PROGRESS_CALL_RECORDING_STATUSES.includes(status)}
+          size="md"
+          rounded
+          chipOnly
+        />
+      </StyledContainer>
+      {hasFailed &&
+        createPortal(
+          <AppTooltip
+            anchorSelect={`#${tooltipAnchorId}`}
+            content={t`The call recording failed`}
+            delay={TooltipDelay.shortDelay}
+            place={TooltipPosition.Top}
+            positionStrategy="fixed"
+          />,
+          document.body,
+        )}
+    </>
+  );
+};
