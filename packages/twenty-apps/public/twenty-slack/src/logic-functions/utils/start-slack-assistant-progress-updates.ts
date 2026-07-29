@@ -25,8 +25,6 @@ export const startSlackAssistantProgressUpdates = ({
     }, step.afterSeconds * 1000),
   );
 
-  // awaiting the in-flight update keeps a late progress edit from landing on
-  // top of the final answer
   return async () => {
     isStopped = true;
     timers.forEach(clearTimeout);
