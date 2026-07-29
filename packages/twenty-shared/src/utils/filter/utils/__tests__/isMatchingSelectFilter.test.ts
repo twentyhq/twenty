@@ -72,6 +72,27 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('comparison operators', () => {
+    it.each([
+      { selectFilter: { gt: 'ACTIVE' }, value: 'PENDING', expected: true },
+      { selectFilter: { gt: 'PENDING' }, value: 'ACTIVE', expected: false },
+      { selectFilter: { gte: 'ACTIVE' }, value: 'ACTIVE', expected: true },
+      { selectFilter: { lt: 'PENDING' }, value: 'ACTIVE', expected: true },
+      { selectFilter: { lt: 'ACTIVE' }, value: 'PENDING', expected: false },
+      { selectFilter: { lte: 'ACTIVE' }, value: 'ACTIVE', expected: true },
+    ])(
+      'should return $expected for $selectFilter and $value',
+      ({ selectFilter, value, expected }) => {
+        expect(
+          isMatchingSelectFilter({
+            selectFilter,
+            value,
+          }),
+        ).toBe(expected);
+      },
+    );
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
