@@ -6,7 +6,8 @@ import { v4 } from 'uuid';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -56,11 +57,8 @@ export const useUpdateJunctionRelationFromCell = ({
     junctionObjectMetadata?.nameSingular ??
     fieldDefinition.metadata.relationObjectMetadataNameSingular;
 
-  // Skip the post-optimistic effect since we handle optimistic updates manually
-  // Otherwise Apollo would also add the record, resulting in duplicates
-  const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
+  const { createManyRecords: createJunctionRecords } = useCreateManyRecords({
     objectNameSingular: junctionObjectNameSingular,
-    skipPostOptimisticEffect: true,
   });
 
   const { deleteOneRecord: deleteJunctionRecord } = useDeleteOneRecord({
@@ -175,23 +173,17 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         const targetRecord = searchRecord.record;
-        const newJunctionId = v4();
+        const optimisticJunctionId = v4();
         const now = new Date().toISOString();
 
         const junctionRecordForStore = {
-          id: newJunctionId,
+          id: optimisticJunctionId,
           createdAt: now,
           updatedAt: now,
           __typename: getObjectTypename(junctionObjectName),
           [sourceJoinColumnName]: recordId,
           [targetJoinColumnName]: morphItem.recordId,
           [targetFieldName]: targetRecord,
-        };
-
-        const newJunctionRecordForApi = {
-          id: newJunctionId,
-          [sourceJoinColumnName]: recordId,
-          [targetJoinColumnName]: morphItem.recordId,
         };
 
         store.set(
@@ -213,12 +205,93 @@ export const useUpdateJunctionRelationFromCell = ({
           },
         );
 
-        await createJunctionRecord(newJunctionRecordForApi);
+        const removeOptimisticJunctionRecord = () =>
+          store.set(
+            recordStoreFamilyState.atomFamily(recordId),
+            (currentRecord: Record<string, unknown> | null | undefined) => {
+              if (!isDefined(currentRecord)) {
+                return currentRecord;
+              }
+
+              const currentFieldValue = currentRecord[fieldName];
+
+              return {
+                ...currentRecord,
+                [fieldName]: Array.isArray(currentFieldValue)
+                  ? currentFieldValue.filter(
+                      (junctionRecord) =>
+                        junctionRecord.id !== optimisticJunctionId,
+                    )
+                  : currentFieldValue,
+              } as ObjectRecord;
+            },
+          );
+
+        const persistedJunctionRecordNode = await createJunctionRecords({
+          recordsToCreate: [
+            {
+              [sourceJoinColumnName]: recordId,
+              [targetJoinColumnName]: morphItem.recordId,
+            },
+          ],
+          upsert: true,
+        })
+          .then(([createdJunctionRecordNode]) => createdJunctionRecordNode)
+          .catch((error: Error) => {
+            removeOptimisticJunctionRecord();
+
+            throw error;
+          });
+
+        if (!isDefined(persistedJunctionRecordNode)) {
+          removeOptimisticJunctionRecord();
+
+          return;
+        }
+
+        const persistedJunctionRecord = getRecordFromRecordNode({
+          recordNode: persistedJunctionRecordNode,
+        });
+
+        store.set(
+          recordStoreFamilyState.atomFamily(recordId),
+          (currentRecord: Record<string, unknown> | null | undefined) => {
+            if (!isDefined(currentRecord)) {
+              return currentRecord;
+            }
+
+            const currentFieldValue = currentRecord[fieldName];
+
+            if (!Array.isArray(currentFieldValue)) {
+              return currentRecord as ObjectRecord;
+            }
+
+            const junctionRecordsWithoutOptimistic = currentFieldValue.filter(
+              (junctionRecord) => junctionRecord.id !== optimisticJunctionId,
+            );
+
+            const isPersistedJunctionRecordAlreadyInStore =
+              junctionRecordsWithoutOptimistic.some(
+                (junctionRecord) =>
+                  junctionRecord.id === persistedJunctionRecord.id,
+              );
+
+            return {
+              ...currentRecord,
+              [fieldName]: isPersistedJunctionRecordAlreadyInStore
+                ? junctionRecordsWithoutOptimistic
+                : [
+                    ...junctionRecordsWithoutOptimistic,
+                    { ...junctionRecordForStore, ...persistedJunctionRecord },
+                  ],
+            } as ObjectRecord;
+          },
+        );
       }
     },
     [
       store,
-      createJunctionRecord,
+      createJunctionRecords,
       deleteJunctionRecord,
       fieldDefinition.metadata.fieldName,
       junctionConfig,
