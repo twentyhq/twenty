@@ -153,6 +153,8 @@ export const GraphWidgetLineChartRenderer = () => {
         groupMode={groupMode}
         colorMode={colorMode}
         displayType={getChartValueDisplayType(configuration.numberFormat)}
+        axisDisplayType="shortNumber"
+        tooltipDisplayType="number"
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

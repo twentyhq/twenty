@@ -12,11 +12,8 @@ describe('getChartValueDisplayType', () => {
     );
   });
 
-  it('should fall back to the default format when the format is null', () => {
+  it('should fall back to the default format when the format is unset', () => {
     expect(getChartValueDisplayType(null)).toBe('shortNumber');
-  });
-
-  it('should fall back to the default format when the format is undefined', () => {
     expect(getChartValueDisplayType(undefined)).toBe('shortNumber');
   });
 });

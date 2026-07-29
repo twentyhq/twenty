@@ -145,6 +145,8 @@ export const GraphWidgetBarChartRenderer = () => {
         colorMode={colorMode}
         id={widget.id}
         displayType={getChartValueDisplayType(configuration.numberFormat)}
+        axisDisplayType="shortNumber"
+        tooltipDisplayType="number"
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}

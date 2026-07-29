@@ -113,6 +113,7 @@ export const GraphWidgetPieChartRenderer = () => {
         displayType={getChartValueDisplayType(
           widget.configuration.numberFormat,
         )}
+        tooltipDisplayType="number"
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined
