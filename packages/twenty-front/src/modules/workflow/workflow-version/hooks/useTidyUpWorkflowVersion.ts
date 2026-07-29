@@ -19,7 +19,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
-export const useTidyUpWorkflowVersion = () => {
+export const useTidyUpWorkflowVersion = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -32,7 +32,7 @@ export const useTidyUpWorkflowVersion = () => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
-  const setFlow = useSetAtomComponentState(flowComponentState);
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
   const [mutate] = useMutation<
     UpdateWorkflowVersionPositionsMutation,

@@ -12,10 +12,10 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
-  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
   const instanceId = getWorkflowVisualizerComponentInstanceId({
     recordId: recordId ?? '',
   });
+  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion(instanceId);
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 

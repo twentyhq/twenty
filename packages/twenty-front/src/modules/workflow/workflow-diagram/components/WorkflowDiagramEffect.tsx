@@ -117,9 +117,11 @@ export const WorkflowDiagramEffect = () => {
 
     setShouldWorkflowRefetchRequest(false);
 
-    void refetchContent().finally(() => {
-      setSeededVersionId(undefined);
-    });
+    void refetchContent()
+      .then(() => {
+        setSeededVersionId(undefined);
+      })
+      .catch(() => {});
   }, [
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
