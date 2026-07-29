@@ -6,7 +6,7 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Twenty Slack',
   description:
-    'Connect Slack to Twenty. Each workspace member (or a shared workspace connection) can authenticate Slack; workflow steps then post messages, ephemerals, updates, deletes, and reactions on behalf of that connection.',
+    'Your CRM, in the conversation. Mention the bot or DM it to ask about your records and create, update or soft-delete them without leaving Slack, and use the Slack steps to post messages, ephemerals, updates, deletes and reactions from your workflows.',
   logoUrl: 'public/twenty-slack.svg',
   author: 'Twenty',
   category: 'Communication',

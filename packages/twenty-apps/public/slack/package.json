@@ -1,7 +1,7 @@
 {
   "name": "@twentyhq/slack",
   "version": "0.1.0",
-  "description": "Slack workflow connector for Twenty",
+  "description": "Slack assistant and workflow steps for Twenty",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
