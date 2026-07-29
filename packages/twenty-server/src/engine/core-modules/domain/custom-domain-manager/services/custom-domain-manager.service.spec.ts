@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -74,13 +74,9 @@ describe('CustomDomainManagerService', () => {
 
       const result = await service.checkCustomDomainValidRecords(workspace);
 
-      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(1);
-      // Regression guard for the fix: this used to trigger a second,
-      // redundant Cloudflare API call via isHostnameWorking().
-      expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
+      expect(result.isCustomDomainEnabled).toBe(true);
       expect(workspace.isCustomDomainEnabled).toBe(true);
       expect(workspaceRepository.save).toHaveBeenCalledWith(workspace);
-      expect(result.isCustomDomainEnabled).toBe(true);
     });
 
     it('should not persist the workspace when the working status is unchanged', async () => {
@@ -102,19 +98,47 @@ describe('CustomDomainManagerService', () => {
       await service.checkCustomDomainValidRecords(workspace);
 
       expect(workspaceRepository.save).not.toHaveBeenCalled();
-      expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
     });
 
-    it('should re-check freshly (not reuse the snapshot) when a pre-fetched domainValidRecord is passed, since it comes from refreshHostname()\u2019s pre-edit state', async () => {
+    // This PR's fix is specifically about reducing Cloudflare API calls, so
+    // asserting call counts here isn't testing incidental implementation —
+    // it's the observable behavior this change delivers (one Cloudflare
+    // lookup per check instead of two).
+    it('should only make a single Cloudflare lookup when no pre-fetched record is passed in', async () => {
       const workspace = {
         id: 'workspace-id',
         customDomain: 'example.com',
         isCustomDomainEnabled: false,
       } as WorkspaceEntity;
 
-      // Stale snapshot: captured by refreshHostname() before its Cloudflare
-      // edit() call, so its isWorking must NOT be trusted directly.
-      const staleSnapshot = {
+      jest
+        .spyOn(dnsManagerService, 'getHostnameWithRecords')
+        .mockResolvedValueOnce({
+          id: 'custom-id',
+          domain: 'example.com',
+          records: [],
+          isWorking: true,
+        });
+
+      await service.checkCustomDomainValidRecords(workspace);
+
+      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
+    });
+
+    it('should reflect the working status returned after a refreshHostname() call, not the pre-refresh snapshot', async () => {
+      const workspace = {
+        id: 'workspace-id',
+        customDomain: 'example.com',
+        isCustomDomainEnabled: false,
+      } as WorkspaceEntity;
+
+      // refreshHostname() returns this snapshot from *before* it triggers its
+      // Cloudflare edit() call, so its isWorking value is stale by the time
+      // it reaches us and must not be trusted directly.
+      const staleSnapshotFromRefresh = {
         id: 'custom-id',
         domain: 'example.com',
         records: [],
@@ -127,15 +151,11 @@ describe('CustomDomainManagerService', () => {
 
       const result = await service.checkCustomDomainValidRecords(
         workspace,
-        staleSnapshot,
+        staleSnapshotFromRefresh,
       );
 
-      expect(dnsManagerService.getHostnameWithRecords).not.toHaveBeenCalled();
-      expect(dnsManagerService.isHostnameWorking).toHaveBeenCalledWith(
-        'example.com',
-      );
-      expect(workspace.isCustomDomainEnabled).toBe(true);
       expect(result.isCustomDomainEnabled).toBe(true);
+      expect(workspace.isCustomDomainEnabled).toBe(true);
     });
   });
 });

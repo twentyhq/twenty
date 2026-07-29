@@ -7,7 +7,6 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import {
   PermissionsException,
   PermissionsExceptionCode,
-  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
