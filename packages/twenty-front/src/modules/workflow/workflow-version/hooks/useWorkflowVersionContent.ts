@@ -15,8 +15,6 @@ export type WorkflowVersionContent = {
   steps: WorkflowVersion['steps'];
 };
 
-// The single place deciding where workflow version content (trigger/steps)
-// is read from: the workspace record today, core when the flag is on.
 export const useWorkflowVersionContent = (workflowVersionId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isWorkflowVersionInCoreEnabled = useIsFeatureEnabled(

@@ -1,8 +1,7 @@
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
@@ -49,14 +48,11 @@ export const WorkflowDiagramEffect = () => {
     currentVersion?.id,
   );
 
-  const shouldWorkflowRefetchRequest = useAtomFamilyStateValue(
-    shouldWorkflowRefetchRequestFamilyState,
-    workflowVisualizerWorkflowId ?? '',
-  );
-  const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
-    shouldWorkflowRefetchRequestFamilyState,
-    workflowVisualizerWorkflowId ?? '',
-  );
+  const [shouldWorkflowRefetchRequest, setShouldWorkflowRefetchRequest] =
+    useAtomFamilyState(
+      shouldWorkflowRefetchRequestFamilyState,
+      workflowVisualizerWorkflowId ?? '',
+    );
 
   const [seededVersionId, setSeededVersionId] = useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
@@ -108,8 +104,6 @@ export const WorkflowDiagramEffect = () => {
     [workflowDiagram, workflowLastCreatedStepId, store],
   );
 
-  // external refresh (SSE reconnect, other-tab create): refetch the content
-  // then allow a reseed with the fresh data
   useEffect(() => {
     if (!shouldWorkflowRefetchRequest) {
       return;
@@ -128,9 +122,6 @@ export const WorkflowDiagramEffect = () => {
     refetchContent,
   ]);
 
-  // seed the flow once per version; mutations keep it up to date afterwards
-  // (re-seeding on every content change would overwrite optimistic edits once
-  // content can come from a source the mutations do not write, i.e. core)
   useEffect(() => {
     if (!isDefined(currentVersion) || !isDefined(content)) {
       return;
@@ -153,8 +144,6 @@ export const WorkflowDiagramEffect = () => {
     });
   }, [content, currentVersion, seededVersionId, setFlow]);
 
-  // the diagram is derived from the flow atom, so both seeding and optimistic
-  // mutation writes reach the canvas through the same path
   useEffect(() => {
     if (!isDefined(flow)) {
       return;

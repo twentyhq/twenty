@@ -31,8 +31,6 @@ export const WorkflowVersionVisualizerEffect = ({
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  // the viewer is read-only, so unlike the builder it can reseed on every
-  // content change without racing optimistic edits
   useEffect(() => {
     if (
       !isDefined(workflowVersion) ||

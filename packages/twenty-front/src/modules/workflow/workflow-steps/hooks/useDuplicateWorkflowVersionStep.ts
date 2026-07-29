@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
-import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
+import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import {
@@ -12,7 +12,7 @@ import {
 export const useDuplicateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -36,7 +36,7 @@ export const useDuplicateWorkflowVersionStep = () => {
     const workflowVersionStepChanges =
       result?.data?.duplicateWorkflowVersionStep;
 
-    updateWorkflowVersionCache({
+    applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

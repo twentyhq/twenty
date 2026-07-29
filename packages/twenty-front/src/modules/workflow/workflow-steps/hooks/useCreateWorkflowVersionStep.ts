@@ -7,12 +7,12 @@ import {
   type CreateWorkflowVersionStepMutation,
   type CreateWorkflowVersionStepMutationVariables,
 } from '~/generated/graphql';
-import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
+import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 
 export const useCreateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -35,7 +35,7 @@ export const useCreateWorkflowVersionStep = () => {
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;
 
-    updateWorkflowVersionCache({
+    applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

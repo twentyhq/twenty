@@ -11,7 +11,7 @@ import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { applyDiff, isDefined } from 'twenty-shared/utils';
 import { type WorkflowVersionStepChanges } from '~/generated/graphql';
 
-export const useUpdateWorkflowVersionCache = (instanceId?: string) => {
+export const useApplyWorkflowVersionStepChanges = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionCache = (instanceId?: string) => {
 
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
-  const updateWorkflowVersionCache = ({
+  const applyWorkflowVersionStepChanges = ({
     workflowVersionStepChanges,
     workflowVersionId,
   }: {
@@ -41,8 +41,6 @@ export const useUpdateWorkflowVersionCache = (instanceId?: string) => {
 
     const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
 
-    // the flow atom is the builder's source of truth; apply the diff to it
-    // directly so it does not depend on the record being cached
     setFlow((currentFlow) => {
       if (
         !isDefined(currentFlow) ||
@@ -59,7 +57,6 @@ export const useUpdateWorkflowVersionCache = (instanceId?: string) => {
       };
     });
 
-    // record-cache write kept while trigger/steps still live on the record
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 
     if (!isDefined(cachedRecord)) {
@@ -90,5 +87,5 @@ export const useUpdateWorkflowVersionCache = (instanceId?: string) => {
     return newCachedRecord;
   };
 
-  return { updateWorkflowVersionCache };
+  return { applyWorkflowVersionStepChanges };
 };
