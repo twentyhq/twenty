@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
-import { Repository } from 'typeorm';
+import { type EntityManager, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -107,6 +107,25 @@ describe('ResetPasswordService', () => {
       WorkspaceDomainsService,
     );
   });
+
+  const mockAppTokenTransaction = () => {
+    const updateSpy = jest.fn().mockResolvedValue({ affected: 1 });
+    const saveSpy = jest.fn().mockResolvedValue({} as AppTokenEntity);
+
+    Object.defineProperty(appTokenRepository, 'manager', {
+      configurable: true,
+      value: {
+        transaction: (
+          runInTransaction: (entityManager: EntityManager) => Promise<unknown>,
+        ) =>
+          runInTransaction({
+            getRepository: () => ({ update: updateSpy, save: saveSpy }),
+          } as unknown as EntityManager),
+      },
+    });
+
+    return { updateSpy, saveSpy };
+  };
 
   it('should be defined', () => {
     expect(service).toBeDefined();
@@ -251,23 +270,25 @@ describe('ResetPasswordService', () => {
     });
   });
 
-  describe('savePasswordResetToken', () => {
+  describe('rotatePasswordResetToken', () => {
     const mockResetToken = {
       workspaceId: 'workspace-id',
       passwordResetToken: 'plain-token',
       passwordResetTokenExpiresAt: addMilliseconds(new Date(), 3600000),
     };
 
-    it('should save the hashed token', async () => {
-      const saveSpy = jest
-        .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({} as AppTokenEntity);
+    it('should revoke the previous tokens and save the hashed one in a single transaction', async () => {
+      const { updateSpy, saveSpy } = mockAppTokenTransaction();
 
-      await service.savePasswordResetToken({
+      await service.rotatePasswordResetToken({
         userId: '1',
         resetToken: mockResetToken,
       });
 
+      expect(updateSpy).toHaveBeenCalledWith(
+        { userId: '1', type: AppTokenType.PasswordResetToken },
+        { revokedAt: expect.any(Date) },
+      );
       expect(saveSpy).toHaveBeenCalledWith({
         userId: '1',
         workspaceId: 'workspace-id',
@@ -279,12 +300,12 @@ describe('ResetPasswordService', () => {
     });
 
     it('should rethrow repository errors', async () => {
-      jest
-        .spyOn(appTokenRepository, 'save')
-        .mockRejectedValue(new Error('db down'));
+      const { saveSpy } = mockAppTokenTransaction();
+
+      saveSpy.mockRejectedValue(new Error('db down'));
 
       await expect(
-        service.savePasswordResetToken({
+        service.rotatePasswordResetToken({
           userId: '1',
           resetToken: mockResetToken,
         }),

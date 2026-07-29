@@ -15,8 +15,7 @@ describe('EmailPasswordResetLinkJob', () => {
           provide: ResetPasswordService,
           useValue: {
             generatePasswordResetToken: jest.fn(),
-            invalidatePasswordResetToken: jest.fn(),
-            savePasswordResetToken: jest.fn(),
+            rotatePasswordResetToken: jest.fn(),
             sendEmailPasswordResetLink: jest.fn(),
           },
         },
@@ -55,10 +54,7 @@ describe('EmailPasswordResetLinkJob', () => {
     expect(
       resetPasswordService.generatePasswordResetToken,
     ).toHaveBeenCalledWith('test@example.com', 'workspace-id');
-    expect(
-      resetPasswordService.invalidatePasswordResetToken,
-    ).toHaveBeenCalledWith('1');
-    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalledWith({
+    expect(resetPasswordService.rotatePasswordResetToken).toHaveBeenCalledWith({
       userId: '1',
       resetToken: mockResetToken,
     });
@@ -97,7 +93,7 @@ describe('EmailPasswordResetLinkJob', () => {
       }),
     ).rejects.toThrow('email provider down');
 
-    expect(resetPasswordService.savePasswordResetToken).toHaveBeenCalled();
+    expect(resetPasswordService.rotatePasswordResetToken).toHaveBeenCalled();
   });
 
   it('should rethrow persistence errors without sending an email', async () => {
@@ -114,7 +110,7 @@ describe('EmailPasswordResetLinkJob', () => {
       workspace: { id: 'workspace-id' },
     });
     (
-      resetPasswordService.savePasswordResetToken as jest.Mock
+      resetPasswordService.rotatePasswordResetToken as jest.Mock
     ).mockRejectedValue(new Error('db down'));
 
     await expect(

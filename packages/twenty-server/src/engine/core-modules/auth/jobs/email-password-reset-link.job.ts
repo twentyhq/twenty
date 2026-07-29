@@ -35,11 +35,7 @@ export class EmailPasswordResetLinkJob {
       return;
     }
 
-    await this.resetPasswordService.invalidatePasswordResetToken(
-      generationResult.user.id,
-    );
-
-    await this.resetPasswordService.savePasswordResetToken({
+    await this.resetPasswordService.rotatePasswordResetToken({
       userId: generationResult.user.id,
       resetToken: generationResult.resetToken,
     });

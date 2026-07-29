@@ -93,7 +93,7 @@ export class ResetPasswordService {
     };
   }
 
-  async savePasswordResetToken({
+  async rotatePasswordResetToken({
     userId,
     resetToken,
   }: {
@@ -105,12 +105,26 @@ export class ResetPasswordService {
       .update(resetToken.passwordResetToken)
       .digest('hex');
 
-    await this.appTokenRepository.save({
-      userId,
-      workspaceId: resetToken.workspaceId,
-      value: hashedResetToken,
-      expiresAt: resetToken.passwordResetTokenExpiresAt,
-      type: AppTokenType.PasswordResetToken,
+    await this.appTokenRepository.manager.transaction(async (entityManager) => {
+      const appTokenRepository = entityManager.getRepository(AppTokenEntity);
+
+      await appTokenRepository.update(
+        {
+          userId,
+          type: AppTokenType.PasswordResetToken,
+        },
+        {
+          revokedAt: new Date(),
+        },
+      );
+
+      await appTokenRepository.save({
+        userId,
+        workspaceId: resetToken.workspaceId,
+        value: hashedResetToken,
+        expiresAt: resetToken.passwordResetTokenExpiresAt,
+        type: AppTokenType.PasswordResetToken,
+      });
     });
   }
 
