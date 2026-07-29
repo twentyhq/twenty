@@ -133,7 +133,7 @@ not add a second connection or bot identity. To enable it:
    (in addition to the outbound scopes). Add them under **Bot Token Scopes** on
    your Slack app, then **reconnect** (disconnect and **Add connection** again)
    so the token picks them up.
-2. **Set `SLACK_WEBHOOK_SIGNATURE`.** In **Application registration** (admin-only),
+2. **Set `SLACK_WEBHOOK_SECRET`.** In **Application registration** (admin-only),
    set the signing secret from your Slack app (**Basic Information → App
    Credentials**). The Twenty server uses it to verify Slack Events API
    requests. This is only needed for the assistant.
@@ -145,7 +145,7 @@ not add a second connection or bot identity. To enable it:
    ```
 
    The ID is the **slack-events-resolver** logic function. Slack signs this
-   handshake, so `SLACK_WEBHOOK_SIGNATURE` (step 2) must be set first or
+   handshake, so `SLACK_WEBHOOK_SECRET` (step 2) must be set first or
    verification fails and Slack reports *"didn't respond with the value of the
    challenge parameter."* Under **Subscribe to bot events**, add:
    - `app_mention` — mentions of the bot in a channel.

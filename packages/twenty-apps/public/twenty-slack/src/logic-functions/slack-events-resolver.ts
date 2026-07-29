@@ -7,7 +7,7 @@ import {
   SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { getSlackSigningSecret } from 'src/logic-functions/utils/get-slack-signing-secret';
+import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
 
@@ -22,7 +22,7 @@ type SlackEventsResolverResult =
 export const slackEventsResolverHandler = async (
   routePayload: RoutePayload<SlackEventsRequestBody>,
 ): Promise<SlackEventsResolverResult> => {
-  const secretResult = getSlackSigningSecret();
+  const secretResult = getSlackWebhookSecret();
 
   if (!secretResult.success) {
     throw new Error(secretResult.error);

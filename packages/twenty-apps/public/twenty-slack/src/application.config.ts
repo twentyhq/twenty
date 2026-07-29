@@ -27,7 +27,7 @@ export default defineApplication({
       isSecret: true,
       isRequired: true,
     },
-    SLACK_WEBHOOK_SIGNATURE: {
+    SLACK_WEBHOOK_SECRET: {
       description:
         'Signing secret from your Slack app (Basic Information → App Credentials). Used to verify Slack Events API requests for the assistant. Only required if you enable the conversational assistant.',
       isSecret: true,
