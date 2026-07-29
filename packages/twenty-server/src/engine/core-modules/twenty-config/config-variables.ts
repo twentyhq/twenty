@@ -1943,6 +1943,25 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
+    description:
+      'API key for People Data Labs company enrichment. When unset, workspace company enrichment is skipped.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  PEOPLE_DATA_LABS_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Enable or disable the AI chat that helps set up the workspace at the end of onboarding',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_ONBOARDING_AI_CHAT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    isSensitive: true,
     description: 'Mintlify API key for documentation search',
     isEnvOnly: true,
     isHiddenInAdminPanel: true,

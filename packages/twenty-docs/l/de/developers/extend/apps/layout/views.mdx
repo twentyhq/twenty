@@ -4,10 +4,12 @@ description: Stellen Sie vorkonfigurierte gespeicherte Ansichten bereit – Spal
 icon: list
 ---
 
-Eine **Ansicht** ist eine gespeicherte Konfiguration dafür, wie Datensätze eines Objekts angezeigt werden: welche Felder erscheinen, in welcher Reihenfolge, ob sie sichtbar sind und welche Filter oder Gruppen angewendet werden. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern – typischerweise eine Standard-Indexansicht für jedes benutzerdefinierte Objekt, das Sie erstellen.
+Eine **Ansicht** ist eine gespeicherte Konfiguration dafür, wie Datensätze eines Objekts angezeigt werden: welche Felder erscheinen, in welcher Reihenfolge, ob sie sichtbar sind und welche Filter oder Gruppen angewendet werden. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern.
+
+Jedes Objekt erhält automatisch seine Hauptlistenansicht (die "Alle ..."-Tabelle, die ein `OBJECT`-Navigationselement öffnet), die vom Server bereitgestellt wird – einschließlich der Objekte, die Ihre App erstellt, mit einer Spalte pro Feld, das Ihre App definiert. Ansichten, die Sie mit `defineView()` definieren, sind stets **zusätzliche** Ansichten neben der Standardansicht.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,8 +34,8 @@ export default defineView({
 ## Hauptpunkte
 
 * `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird. Es kann sich um ein von Ihnen definiertes benutzerdefiniertes Objekt oder ein Standardobjekt von Twenty handeln.
-* `key: ViewKey.INDEX` markiert die Ansicht als die Hauptlistenansicht des Objekts (diejenige, die von einem `OBJECT`-Navigationselement geöffnet wird).
-* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`. Informationen zum Verweisen auf ein automatisch erstelltes Systemfeld wie `createdAt` finden Sie unter [Systemfelder ansteuern](/l/de/developers/extend/apps/data/system-fields).
+* Die Hauptlistenansicht des Objekts gehört dem Server: `key` ist veraltet und wird ignoriert, daher kann eine Manifest-Ansicht sie niemals beanspruchen. Liefern Sie ein `VIEW`-Navigationselement aus, wenn Ihre Ansicht nur einen Klick entfernt in der Seitenleiste sein soll.
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`. Informationen zum Verweisen auf ein automatisch erstelltes Systemfeld wie `createdAt` finden Sie unter [Systemmetadaten ansteuern](/l/de/developers/extend/apps/data/system-fields).
 * Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `sorts`, `groups` und `fieldGroups` deklarieren.
 * `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
 

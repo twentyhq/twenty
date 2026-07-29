@@ -42,4 +42,26 @@ describe('WorkspaceMigrationRunnerException', () => {
       "Migration action 'delete' for 'pageLayout' (universalIdentifier: uid-page-layout) failed",
     );
   });
+
+  it('includes the underlying execution errors in the message', () => {
+    const action = {
+      type: 'create',
+      metadataName: 'index',
+      flatEntity: {
+        universalIdentifier: '9e20a0f6-7a18-51c5-a422-5dc4dbd1d972',
+      },
+    } as unknown as AllUniversalWorkspaceMigrationAction;
+
+    const exception = new WorkspaceMigrationRunnerException({
+      code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
+      action,
+      errors: {
+        workspaceSchema: new Error('relation "IDX_abc" already exists'),
+      },
+    });
+
+    expect(exception.message).toBe(
+      "Migration action 'create' for 'index' (universalIdentifier: 9e20a0f6-7a18-51c5-a422-5dc4dbd1d972) failed: [workspaceSchema] relation \"IDX_abc\" already exists",
+    );
+  });
 });

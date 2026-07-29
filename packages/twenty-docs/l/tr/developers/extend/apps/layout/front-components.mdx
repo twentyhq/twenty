@@ -8,15 +8,17 @@ icon: window-maximize
 
 ## Ön uç bileşenlerinin kullanılabileceği yerler
 
-Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
+Ön uç bileşenler, Twenty içinde üç konumda işlenebilir:
 
 * **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
 * **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, [sayfa düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
+* **Uygulama ayarları** — [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlandığında, ön uç bileşeni, varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
-Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın iki yolu vardır:
+Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın üç yolu vardır:
 
 * **Onu bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirin** — komut menüsüne (Cmd+K) ve isteğe bağlı olarak sabitlenmiş hızlı işlem olarak kaydeder.
 * **Onu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömün** — bir kaydın ayrıntı sayfasına veya panosuna yerleştirir.
+* **Bunu [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlayın** — varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
 ## Basit örnek
 
@@ -76,6 +78,34 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 ## Bir ön uç bileşenini bir sayfaya yerleştirme
 
 Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) bölümüne bakın.
+
+## Özel ayarlar bileşeni
+
+Uygulamanızın **Settings** sekmesindeki otomatik oluşturulan değişken yapılandırma kullanıcı arayüzünü kendi bileşeninizle değiştirmek için, `defineFrontComponent` yerine `defineSettingsFrontComponent` ile tanımlayın. Ayarlar bileşeni her zaman görünür bir kullanıcı arayüzü oluşturduğundan, kabul edilmeyen `isHeadless` dışında, aynı [yapılandırma alanlarını](#configuration-fields) alır ve ek olarak bileşeni uygulamanın ayarlar arayüzü olarak işaretler.
+
+Bileşen, tüm sekmenin yerine geçmek yerine, Settings sekmesi içinde bir bölüm olarak görüntülenir. Twenty'nin sistem tarafından yönetilen bölümleri — otomatik yükseltme, App URL ve bağlantılar — her zaman bunun üstünde görüntülenir ve uygulama tarafından geçersiz kılınamaz.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Uygulama başına yalnızca bir ayarlar ön uç bileşenine izin verilir; birden fazla tanımlanması derlemenin başarısız olmasına neden olur. Mevcut olduğunda, uygulamanın **Settings** sekmesi, varsayılan değişken yapılandırma kullanıcı arayüzü yerine bu bileşeni görüntüler.
 
 ## Headless ve headless olmayan
 

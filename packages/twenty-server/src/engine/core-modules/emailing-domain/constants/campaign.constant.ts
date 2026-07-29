@@ -7,14 +7,6 @@ export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
   SKIPPED: 'SKIPPED',
 } as const;
 
-export const CAMPAIGN_STATUS = {
-  DRAFT: 'DRAFT',
-  SCHEDULED: 'SCHEDULED',
-  SENDING: 'SENDING',
-  SENT: 'SENT',
-  SENT_WITH_ERRORS: 'SENT_WITH_ERRORS',
-} as const;
-
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';

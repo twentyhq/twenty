@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -65,7 +66,12 @@ const CreateObjectMetadataInputSchema = z.object({
   labelSingular: z.string().describe('Singular label (e.g. "Company")'),
   labelPlural: z.string().describe('Plural label (e.g. "Companies")'),
   description: z.string().optional().describe('Description'),
-  icon: z.string().optional().describe('Icon name'),
+  icon: z
+    .string()
+    .optional()
+    .describe(
+      'Tabler icon name, PascalCase with "Icon" prefix (e.g. IconBuildingSkyscraper, IconPaw, IconTargetArrow). Always set one matching what the object represents.',
+    ),
   shortcut: z.string().optional().describe('Keyboard shortcut'),
   isRemote: z.boolean().optional().describe('Remote object'),
   isLabelSyncedWithName: z
@@ -81,7 +87,10 @@ const UpdateObjectMetadataInputSchema = z.object({
   nameSingular: z.string().optional().describe('Singular name'),
   namePlural: z.string().optional().describe('Plural name'),
   description: z.string().optional().describe('Description'),
-  icon: z.string().optional().describe('Icon name'),
+  icon: z
+    .string()
+    .optional()
+    .describe('Tabler icon name (e.g. IconBuildingSkyscraper)'),
   shortcut: z.string().optional().describe('Keyboard shortcut'),
   isActive: z.boolean().optional().describe('Active state'),
   labelIdentifierFieldMetadataId: z
@@ -240,9 +249,14 @@ export class ObjectMetadataToolsFactory {
           isLabelSyncedWithName?: boolean;
         }) => {
           try {
+            const { icon, ...createObjectInput } = parameters;
+
             const flatObjectMetadata =
               await this.objectMetadataService.createOneObject({
-                createObjectInput: parameters as Parameters<
+                createObjectInput: {
+                  ...createObjectInput,
+                  icon: normalizeIconName(icon),
+                } as Parameters<
                   typeof this.objectMetadataService.createOneObject
                 >[0]['createObjectInput'],
                 workspaceId,
@@ -280,11 +294,20 @@ export class ObjectMetadataToolsFactory {
           isLabelSyncedWithName?: boolean;
         }) => {
           try {
-            const { id, ...update } = parameters;
+            const { id, icon, ...update } = parameters;
+            const normalizedIcon = normalizeIconName(icon);
 
             const flatObjectMetadata =
               await this.objectMetadataService.updateOneObject({
-                updateObjectInput: { id, update },
+                updateObjectInput: {
+                  id,
+                  update: {
+                    ...update,
+                    ...(isDefined(normalizedIcon)
+                      ? { icon: normalizedIcon }
+                      : {}),
+                  },
+                },
                 workspaceId,
               });
 
@@ -340,9 +363,12 @@ export class ObjectMetadataToolsFactory {
         }) => {
           try {
             await Promise.all(
-              parameters.objects.map(async (createObjectInput) => {
+              parameters.objects.map(async ({ icon, ...createObjectInput }) => {
                 await this.objectMetadataService.createOneObject({
-                  createObjectInput: createObjectInput as Parameters<
+                  createObjectInput: {
+                    ...createObjectInput,
+                    icon: normalizeIconName(icon),
+                  } as Parameters<
                     typeof this.objectMetadataService.createOneObject
                   >[0]['createObjectInput'],
                   workspaceId,
@@ -381,9 +407,19 @@ export class ObjectMetadataToolsFactory {
         }) => {
           try {
             await Promise.all(
-              parameters.objects.map(async ({ id, ...update }) => {
+              parameters.objects.map(async ({ id, icon, ...update }) => {
+                const normalizedIcon = normalizeIconName(icon);
+
                 await this.objectMetadataService.updateOneObject({
-                  updateObjectInput: { id, update },
+                  updateObjectInput: {
+                    id,
+                    update: {
+                      ...update,
+                      ...(isDefined(normalizedIcon)
+                        ? { icon: normalizedIcon }
+                        : {}),
+                    },
+                  },
                   workspaceId,
                 });
               }),

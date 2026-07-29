@@ -252,10 +252,14 @@ export const SettingsApplicationDetails = () => {
       const hasHttpTriggeredFunctions =
         applicationHasHttpTriggeredFunctions(application);
       const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasSettingsFrontComponent = isDefined(
+        application?.settingsCustomTabFrontComponentId,
+      );
       const hasNothingToConfigure =
         !hasVariables &&
         !hasConnectionProviders &&
         !canShowFunctionDomain &&
+        !hasSettingsFrontComponent &&
         !isUpgradableApplicationSourceType(sourceType);
 
       return {
@@ -317,7 +321,7 @@ export const SettingsApplicationDetails = () => {
             applicationInfo={{
               id: application.id,
               name: displayName,
-              logo: application.logo,
+              logoUrl: application.logoUrl,
               universalIdentifier: application.universalIdentifier,
             }}
           />
@@ -345,8 +349,8 @@ export const SettingsApplicationDetails = () => {
           isDefined(application) ? (
             <AppChip
               applicationId={application.id}
+              logoUrl={application.logoUrl}
               fallbackApplicationData={{
-                logo: application.logo,
                 name: displayName,
               }}
               size="md"

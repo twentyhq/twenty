@@ -23,6 +23,7 @@ import { UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-foreign-key-aggregators.util';
 import { deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
+import { deleteFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-flat-entity-foreign-key-aggregators.util';
 import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/replace-universal-flat-entity-in-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
@@ -171,13 +172,19 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         },
       );
 
+      const universalFlatEntityToDeletePayload =
+        deleteFlatEntityForeignKeyAggregators({
+          metadataName: this.metadataName,
+          universalFlatEntity: universalFlatEntityToDelete,
+        });
+
       actionsResult.delete.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]
         ).map((action) => ({
           ...action,
-          flatEntity: universalFlatEntityToDelete,
+          flatEntity: universalFlatEntityToDeletePayload,
         })),
       );
     }

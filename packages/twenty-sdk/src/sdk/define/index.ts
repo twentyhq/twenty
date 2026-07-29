@@ -70,10 +70,12 @@ export {
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
+export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+export type { SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
 export type { IndexConfig } from '@/sdk/define/indexes/index-config';
@@ -163,6 +165,10 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
+export {
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {

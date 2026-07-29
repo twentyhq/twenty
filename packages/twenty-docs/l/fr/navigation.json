@@ -145,6 +145,14 @@
               "label": "Guides pratiques"
             }
           }
+        },
+        "legal": {
+          "label": "Juridique",
+          "groups": {
+            "legalHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         }
       }
     },

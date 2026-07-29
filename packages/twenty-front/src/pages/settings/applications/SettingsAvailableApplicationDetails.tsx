@@ -255,7 +255,7 @@ export const SettingsAvailableApplicationDetails = () => {
             manifestContent={manifest}
             applicationInfo={{
               name: displayName,
-              logo: detail.logo,
+              logoUrl: detail.logoUrl,
               universalIdentifier: detail.universalIdentifier,
             }}
           />
@@ -295,7 +295,7 @@ export const SettingsAvailableApplicationDetails = () => {
         icon={
           <AppChip
             applicationId={application?.id}
-            logoUrl={detail?.logo}
+            logoUrl={detail?.logoUrl}
             fallbackApplicationData={{
               name: displayName,
             }}
@@ -321,7 +321,7 @@ export const SettingsAvailableApplicationDetails = () => {
       <SettingsApplicationInstallPermissionValidationModal
         modalInstanceId={modalInstanceId}
         appDisplayName={displayName}
-        appLogoUrl={detail?.logo ?? undefined}
+        appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
         onAuthorize={handleInstall}
         isInstalling={isInstalling}

@@ -2,11 +2,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { groupCalendarFieldMetadataItemsByType } from '@/object-record/record-calendar/utils/groupCalendarFieldMetadataItemsByType';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
@@ -14,7 +16,7 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { getAvailableCalendarEndFieldMetadataItems } from '@/views/view-picker/utils/getAvailableCalendarEndFieldMetadataItems';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -28,7 +30,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
 
-  const { resetContent, closeDropdown } = useObjectOptionsDropdown();
+  const { onContentChange, closeDropdown } = useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
@@ -48,6 +50,10 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
     availableCalendarEndFieldMetadataItems.filter((field) =>
       field.label.toLowerCase().includes(searchInput.toLowerCase()),
     );
+
+  const calendarEndFieldGroups = groupCalendarFieldMetadataItemsByType(
+    filteredCalendarEndFields,
+  );
 
   const handleCalendarEndFieldChange = async (
     fieldMetadataItem: FieldMetadataItem | null,
@@ -72,7 +78,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={() => resetContent()}
+            onClick={() => onContentChange('calendarDateFields')}
             Icon={IconChevronLeft}
           />
         }
@@ -92,16 +98,22 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
           onClick={() => handleCalendarEndFieldChange(null)}
           text={t`None`}
         />
-        {filteredCalendarEndFields.map((fieldMetadataItem) => (
-          <MenuItemSelect
-            key={fieldMetadataItem.id}
-            selected={
-              fieldMetadataItem.id === currentView?.calendarEndFieldMetadataId
-            }
-            onClick={() => handleCalendarEndFieldChange(fieldMetadataItem)}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
+        {calendarEndFieldGroups.map((group) => (
+          <Fragment key={group.label}>
+            <DropdownMenuSectionLabel label={group.label} />
+            {group.fields.map((fieldMetadataItem) => (
+              <MenuItemSelect
+                key={fieldMetadataItem.id}
+                selected={
+                  fieldMetadataItem.id ===
+                  currentView?.calendarEndFieldMetadataId
+                }
+                onClick={() => handleCalendarEndFieldChange(fieldMetadataItem)}
+                LeftIcon={getIcon(fieldMetadataItem.icon)}
+                text={fieldMetadataItem.label}
+              />
+            ))}
+          </Fragment>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>
