@@ -13,6 +13,8 @@
 
 Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context.
 
+Every record it names is a link straight to that record in Twenty, and the reply ends with a footer listing the records it touched.
+
 Anyone who can message the bot acts with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
 
 One Slack workspace answers into one Twenty workspace.
