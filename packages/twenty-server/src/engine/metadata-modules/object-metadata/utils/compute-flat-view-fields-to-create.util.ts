@@ -1,74 +1,61 @@
-import { v4 } from 'uuid';
+import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
+import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata-modules/object-metadata/utils/is-flat-field-metadata-displayable-in-default-view.util';
+import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-modules/object-metadata/utils/order-flat-field-metadatas-for-system-index-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const computeFlatViewFieldsToCreate = ({
   objectFlatFieldMetadatas,
   viewUniversalIdentifier,
-  flatApplication,
+  applicationUniversalIdentifier,
   labelIdentifierFieldMetadataUniversalIdentifier,
   excludeLabelIdentifier = false,
+  startPosition = 0,
 }: {
-  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   viewUniversalIdentifier: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
   excludeLabelIdentifier?: boolean;
+  startPosition?: number;
 }): UniversalFlatViewField[] => {
   const createdAt = new Date().toISOString();
-  const defaultViewFields = objectFlatFieldMetadatas
-    .filter(
+  const defaultViewFields = orderFlatFieldMetadatasForSystemIndexView({
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    flatFieldMetadatas: objectFlatFieldMetadatas.filter(
       (field) =>
-        field.name !== 'deletedAt' &&
-        field.type !== FieldMetadataType.TS_VECTOR &&
-        field.type !== FieldMetadataType.POSITION &&
-        field.type !== FieldMetadataType.MORPH_RELATION &&
-        field.type !== FieldMetadataType.RELATION &&
-        // Include 'id' only if it's the label identifier (e.g., for junction tables)
-        (field.name !== 'id' ||
-          field.universalIdentifier ===
-            labelIdentifierFieldMetadataUniversalIdentifier) &&
+        isFlatFieldMetadataDisplayableInDefaultView({
+          flatFieldMetadata: field,
+          labelIdentifierFieldMetadataUniversalIdentifier,
+        }) &&
         // Exclude label identifier field when requested (e.g., for FIELDS_WIDGET views)
         (!excludeLabelIdentifier ||
           field.universalIdentifier !==
             labelIdentifierFieldMetadataUniversalIdentifier),
-    )
-    .sort((a, b) => {
-      const aIsLabelIdentifierFieldMetadata =
-        a.universalIdentifier ===
-        labelIdentifierFieldMetadataUniversalIdentifier;
-      const bIsLabelIdentifierFieldMetadata =
-        b.universalIdentifier ===
-        labelIdentifierFieldMetadataUniversalIdentifier;
-
-      if (aIsLabelIdentifierFieldMetadata && !bIsLabelIdentifierFieldMetadata)
-        return -1;
-      if (!aIsLabelIdentifierFieldMetadata && bIsLabelIdentifierFieldMetadata)
-        return 1;
-
-      return 0;
-    })
-    .map<UniversalFlatViewField>((field, index) => ({
-      fieldMetadataUniversalIdentifier: field.universalIdentifier,
+    ),
+  }).map<UniversalFlatViewField>((field, index) => ({
+    fieldMetadataUniversalIdentifier: field.universalIdentifier,
+    viewUniversalIdentifier,
+    viewFieldGroupUniversalIdentifier: null,
+    createdAt,
+    updatedAt: createdAt,
+    deletedAt: null,
+    universalIdentifier: getViewFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       viewUniversalIdentifier,
-      viewFieldGroupUniversalIdentifier: null,
-      createdAt,
-      updatedAt: createdAt,
-      deletedAt: null,
-      universalIdentifier: v4(),
-      isVisible: true,
-      size: DEFAULT_VIEW_FIELD_SIZE,
-      position: index,
-      aggregateOperation: null,
-      isActive: true,
-      isSystemSideEffect: true,
-      universalOverrides: null,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    }));
+      fieldMetadataUniversalIdentifier: field.universalIdentifier,
+    }),
+    isVisible: true,
+    size: DEFAULT_VIEW_FIELD_SIZE,
+    position: startPosition + index,
+    aggregateOperation: null,
+    isActive: true,
+    isSystemSideEffect: true,
+    universalOverrides: null,
+    applicationUniversalIdentifier,
+  }));
 
   return defaultViewFields;
 };

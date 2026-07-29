@@ -1136,9 +1136,6 @@ export default {
             "description": [
                 1
             ],
-            "logo": [
-                1
-            ],
             "logoFileId": [
                 4
             ],
@@ -3805,6 +3802,9 @@ export default {
             "isWorkspaceSchemaDDLLocked": [
                 3
             ],
+            "isOnboardingAiChatEnabled": [
+                3
+            ],
             "enterpriseInstanceType": [
                 1
             ],
@@ -4116,7 +4116,7 @@ export default {
             "category": [
                 1
             ],
-            "logo": [
+            "logoUrl": [
                 1
             ],
             "sourcePackage": [
@@ -4250,7 +4250,7 @@ export default {
             "category": [
                 1
             ],
-            "logo": [
+            "logoUrl": [
                 1
             ],
             "websiteUrl": [

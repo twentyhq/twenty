@@ -581,7 +581,6 @@ type Application {
   id: UUID!
   name: String!
   description: String
-  logo: String
   logoFileId: UUID
   version: String
   universalIdentifier: String!
@@ -1757,7 +1756,6 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-  IS_ONBOARDING_AI_CHAT_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
 }
@@ -1961,6 +1959,7 @@ type ClientConfig {
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
+  isOnboardingAiChatEnabled: Boolean!
   enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
 }
@@ -2087,7 +2086,7 @@ type MarketplaceApp {
   description: String!
   author: String!
   category: String!
-  logo: String
+  logoUrl: String
   sourcePackage: String
   isVetted: Boolean!
 }
@@ -2137,7 +2136,7 @@ type MarketplaceAppDetail {
   description: String
   author: String
   category: String
-  logo: String
+  logoUrl: String
   websiteUrl: String
   aboutDescription: String
   termsUrl: String

@@ -109,7 +109,7 @@ export class MarketplaceQueryService {
         registration.category ??
         registration.manifest?.application?.category ??
         undefined,
-      logo:
+      logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(
           registration,
         ) ?? undefined,

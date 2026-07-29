@@ -10,7 +10,6 @@ import { type TableCellPosition } from '@/object-record/record-table/types/Table
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
@@ -18,6 +17,8 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -84,6 +85,10 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
+
+  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+
   const openTableCell = useCallback(
     ({
       initialValue,
@@ -116,8 +121,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
       if ((isFirstColumnCell && !isEmpty) || isNavigating) {
         leaveTableFocus();
-
-        const openRecordIn = store.get(recordIndexOpenRecordInState.atom);
 
         if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
           activateRecordTableRow(cellPosition.row);
@@ -194,6 +197,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       scopeInstanceId,
       leaveTableFocus,
       openRecordFromIndexView,
+      openRecordIn,
       activateRecordTableRow,
       unfocusRecordTableRow,
       store,

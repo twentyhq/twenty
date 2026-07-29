@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql';
 import { Provider as JotaiProvider } from 'jotai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
@@ -17,14 +18,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockOnboardingStatus = jest.fn();
-const mockIsOnboardingAiChatEnabled = jest.fn();
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus', () => ({
   useOnboardingStatus: () => mockOnboardingStatus(),
-}));
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsOnboardingAiChatEnabled(),
 }));
 
 const enrichment: WorkspaceCompanyEnrichment = {
@@ -89,7 +85,7 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     resetJotaiStore();
     localStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
-    mockIsOnboardingAiChatEnabled.mockReturnValue(true);
+    jotaiStore.set(isOnboardingAiChatEnabledState.atom, true);
   });
 
   afterEach(() => {
@@ -156,7 +152,7 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
   );
 
   it('does not fetch when onboarding AI chat is disabled', async () => {
-    mockIsOnboardingAiChatEnabled.mockReturnValue(false);
+    jotaiStore.set(isOnboardingAiChatEnabledState.atom, false);
 
     let callCount = 0;
     renderEffect([
