@@ -5,10 +5,10 @@ import Cloudflare from 'cloudflare';
 import { type CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { DnsManagerException } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -179,6 +179,7 @@ describe('DnsManagerService', () => {
         id: 'custom-id',
         domain: customDomain,
         records: expect.any(Array),
+        isWorking: false,
       });
     });
 
