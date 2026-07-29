@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
@@ -37,7 +36,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     private readonly instanceUpgradeService: InstanceCommandRunnerService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeStatusService: UpgradeStatusService,
-    private readonly commandShutdownService: CommandShutdownService,
   ) {
     super();
   }
@@ -64,8 +62,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     _passedParams: string[],
     options: RunInstanceCommandsOptions,
   ): Promise<void> {
-    this.commandShutdownService.listenToShutdownSignals();
-
     try {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
@@ -76,16 +72,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
       for (const step of sequence) {
-        if (this.commandShutdownService.isShutdownRequested()) {
-          this.logger.warn(
-            chalk.yellow(
-              `Shutdown requested, stopping before "${step.name}". Rerun the command to resume.`,
-            ),
-          );
-
-          return;
-        }
-
         if (step.kind === 'fast-instance') {
           const result =
             await this.instanceUpgradeService.runFastInstanceCommand({
