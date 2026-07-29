@@ -6,11 +6,27 @@ import {
 } from 'twenty-shared/utils';
 
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
+
+const filteredGraphQLErrorCodes = new Set<string>([
+  ErrorCode.GRAPHQL_PARSE_FAILED,
+  ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+  ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+  ErrorCode.UNAUTHENTICATED,
+  ErrorCode.FORBIDDEN,
+  ErrorCode.NOT_FOUND,
+  ErrorCode.METHOD_NOT_ALLOWED,
+  ErrorCode.TIMEOUT,
+  ErrorCode.CONFLICT,
+  ErrorCode.BAD_USER_INPUT,
+  ErrorCode.METADATA_VALIDATION_FAILED,
+]);
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
@@ -48,6 +64,15 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        const graphQLErrorCode = exception?.extensions?.code;
+
+        if (
+          graphQLErrorCode &&
+          filteredGraphQLErrorCodes.has(graphQLErrorCode)
+        ) {
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
