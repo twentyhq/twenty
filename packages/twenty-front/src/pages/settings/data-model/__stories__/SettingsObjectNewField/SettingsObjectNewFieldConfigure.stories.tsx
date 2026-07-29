@@ -12,6 +12,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldConfigure',
   component: SettingsObjectNewFieldConfigure,
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural/new-field/configure',
     routeParams: { ':objectNamePlural': 'companies' },

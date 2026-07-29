@@ -32,6 +32,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 export const Default: Story = {
   // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
+  decorators: [LoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

@@ -81,6 +81,7 @@ export const Default: Story = {
   parameters: userMetadataLoaderMocks,
   // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
+  decorators: [PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

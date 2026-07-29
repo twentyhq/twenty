@@ -11,6 +11,7 @@ import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',
   component: RecordIndexPage,
+  decorators: [PageDecorator],
   args: {
     routePath: '/objects/:objectNamePlural',
     routeParams: {

@@ -13,6 +13,7 @@ import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsOb
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectDetail',
   component: SettingsObjectDetailPage,
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural',
     routeParams: { ':objectNamePlural': 'companies' },

@@ -11,6 +11,7 @@ import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObj
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectFieldEdit',
   component: SettingsObjectFieldEdit,
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural/:fieldName',
     routeParams: { ':objectNamePlural': 'companies', ':fieldName': 'name' },
