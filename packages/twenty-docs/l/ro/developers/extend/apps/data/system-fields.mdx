@@ -1,6 +1,6 @@
 ---
-title: Metadate de sistem pentru țintire
-description: Rezolvă identificatorii universali determinați ai metadatelor Twenty pentru provizionări în mod automat pe fiecare obiect, astfel încât aplicația ta să le poată referenția fără hardcodare.
+title: Țintirea metadatelor de sistem
+description: Rezolvă identificatorii universali determinați ai metadatelor pe care Twenty le provizionează automat pe fiecare obiect, astfel încât aplicația ta să le poată referenția fără hardcodare.
 icon: gears
 ---
 
@@ -10,7 +10,7 @@ Deoarece nu îl declari, nu există nicio constantă `universalIdentifier` pe ca
 
 ## Câmpuri de sistem
 
-Câmpurile scalare prezente pe fiecare obiect, niciunul dintre ele declarat de tine cu [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects):
+Câmpurile scalare prezente pe fiecare obiect, niciunul dintre ele nu este declarat de tine cu [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects):
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
@@ -200,7 +200,7 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-Apelează la helper-ele de mai sus atunci când obiectul este unul pe care **aplicația ta** îl definește cu [`defineObject()`](/l/ro/developers/extend/apps/data/objects), unde nu există o astfel de constantă.
+Apelează la utilitarele de mai sus atunci când obiectul este unul pe care aplicația ta îl definește cu [`defineObject()`](/l/ro/developers/extend/apps/data/objects), unde nu există o astfel de constantă.
 
 <Note>
   `name` este un câmp **implicit**, nu un câmp de sistem. Acesta își păstrează propriul identificator universal

@@ -1,6 +1,6 @@
 ---
 title: 시스템 메타데이터 대상 지정
-description: 모든 객체에서 Twenty 메타데이터의 결정론적 범용 식별자를 자동으로 해석하므로, 앱이 하드코딩 없이 이를 참조할 수 있습니다.
+description: Twenty가 모든 객체에 자동으로 프로비저닝하는 메타데이터의 결정론적 범용 식별자를 해석하여, 앱이 하드코딩 없이 이를 참조할 수 있도록 합니다.
 icon: gears
 ---
 
@@ -142,7 +142,7 @@ const attachmentTargetRocketFieldId =
   `getSystemViewUniversalIdentifier`와 `getSystemViewFieldUniversalIdentifier`는 `twenty-sdk` 2.26부터 사용 가능하며, Twenty 서버 버전 2.26 이상이 필요합니다.
 </Note>
 
-서버는 또한 모든 객체에 대해 **시스템 뷰**를 프로비저닝합니다. 즉, 표시 가능한 각 필드마다 하나의 열을 가진 기본 목록 보기(`All {objectLabelPlural}`, `ViewKey.INDEX`를 키로 사용)을 제공합니다. 시스템 관계 필드와 마찬가지로, 이들의 식별자는 **이름에 의존하지 않고** 도출되므로, 객체나 필드의 이름을 변경해도 식별자는 절대 바뀌지 않습니다.
+서버는 또한 모든 객체에 대해 **시스템 뷰**를 프로비저닝합니다. 즉, 표시 가능한 각 필드마다 하나의 열이 있는 기본 목록 보기(`All {objectLabelPlural}`, `ViewKey.INDEX`를 키로 사용)를 제공합니다. 시스템 관계 필드와 마찬가지로, 이들의 식별자는 **이름에 의존하지 않고** 도출되므로, 객체나 필드의 이름을 변경해도 식별자는 절대 바뀌지 않습니다.
 
 뷰를 해석하려면 `getSystemViewUniversalIdentifier`를 사용하세요:
 
