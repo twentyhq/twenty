@@ -136,17 +136,11 @@ Workspace commands are executed sequentially across all active/suspended workspa
 
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
-`upgrade` and any command extending `WorkspaceCommandRunner` install cooperative shutdown handlers for `SIGINT` and `SIGTERM`. Handlers are opt-in per command (`CommandShutdownService.listenToShutdownSignals()`), because registering one removes the default kill-on-signal behavior: a command that installs a handler without honoring the flag would ignore the first Ctrl+C entirely. Every other CLI command, `run-instance-commands` included, keeps the default behavior and dies on the first signal.
+Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.
 
-- **First signal** — the runner finishes what it started, then stops at the next boundary instead of starting new work. Only the two iteration runners check for a shutdown: `UpgradeSequenceRunnerService` before each sequence step, and `WorkspaceIteratorService` before each workspace. Individual commands know nothing about shutdown, so a workspace that has started runs its whole pending segment before the run stops. The process exits with `130` (SIGINT) or `143` (SIGTERM) so orchestrators can tell an interruption apart from a failure.
-- **Second signal** — the process exits immediately, leaving the command in progress unfinished.
-- **`SIGKILL`** — cannot be trapped, same outcome as a second signal.
+Rerun the command to resume. Nothing is rolled back, and the run picks up from the last command recorded in `upgradeMigration`.
 
-Nothing is rolled back on stop: the run resumes from the last command recorded in `upgradeMigration`. A graceful stop leaves each workspace either fully done with the segment or untouched, so resuming is a plain rerun. A forced kill can interrupt a command mid-flight; its own transaction rolls back, but a command that writes across several transactions may leave partial work, which is why upgrade commands must be idempotent.
-
-Expect the first signal to look like it did nothing while a step is running. `upgrade` runs instance steps through the same loop, and a slow instance command can spend a long time in `runDataMigration` before the next boundary is reached. The run stops when the step ends; send the signal again to give up on it instead.
-
-Under Kubernetes, `terminationGracePeriodSeconds` must be long enough for the workspace in progress to finish its segment, otherwise the pod is `SIGKILL`ed before the graceful stop completes.
+Expect the first Ctrl+C to look like it did nothing while a long step is running: it takes effect once the step ends.
 
 ## Shipping a command for a future version (deferred drops)
 
