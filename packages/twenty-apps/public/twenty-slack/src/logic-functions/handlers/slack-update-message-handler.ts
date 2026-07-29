@@ -2,7 +2,7 @@ import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-resul
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error.util';
+import { isSlackMarkdownFormatError } from 'src/logic-functions/utils/is-slack-markdown-format-error';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 export const slackUpdateMessageHandler = async (
@@ -20,62 +20,42 @@ export const slackUpdateMessageHandler = async (
 
   const { client } = slackClientResult;
 
-  const attemptUpdate = async (
+  const updateWithFormat = async (
     messageFormat: SlackUpdateMessageInput['messageFormat'],
-  ): Promise<
-    | { success: true; result: SlackToolResult }
-    | { success: false; error: unknown }
-  > => {
-    try {
-      const bodyFields = getSlackChatMessageBodyFields(
-        parameters.newMessageText,
-        messageFormat,
-      );
+  ): Promise<SlackToolResult> => {
+    const bodyFields = getSlackChatMessageBodyFields(
+      parameters.newMessageText,
+      messageFormat,
+    );
 
-      const data = await client.chat.update({
-        channel: parameters.slackChannelId,
-        ts: parameters.messageTimestamp,
-        ...bodyFields,
-      });
+    const data = await client.chat.update({
+      channel: parameters.slackChannelId,
+      ts: parameters.messageTimestamp,
+      ...bodyFields,
+    });
 
-      return {
-        success: true,
-        result: {
-          success: true,
-          message: 'Slack message updated.',
-          slackTs: data.ts,
-          channel: parameters.slackChannelId,
-        },
-      };
-    } catch (error) {
-      return { success: false, error };
-    }
+    return {
+      success: true,
+      message: 'Slack message updated.',
+      slackTs: data.ts,
+      channel: parameters.slackChannelId,
+    };
   };
 
-  const primaryAttempt = await attemptUpdate(parameters.messageFormat);
-
-  if (primaryAttempt.success) {
-    return primaryAttempt.result;
-  }
-
-  if (
-    parameters.messageFormat === 'markdown' &&
-    isSlackMarkdownFormatError(primaryAttempt.error)
-  ) {
-    const plainAttempt = await attemptUpdate('plain');
-
-    if (plainAttempt.success) {
-      return plainAttempt.result;
+  try {
+    return await updateWithFormat(parameters.messageFormat);
+  } catch (error) {
+    if (
+      parameters.messageFormat !== 'markdown' ||
+      !isSlackMarkdownFormatError(error)
+    ) {
+      return slackToolFailure('Failed to update Slack message', error);
     }
-
-    return slackToolFailure(
-      'Failed to update Slack message',
-      plainAttempt.error,
-    );
   }
 
-  return slackToolFailure(
-    'Failed to update Slack message',
-    primaryAttempt.error,
-  );
+  try {
+    return await updateWithFormat('plain');
+  } catch (error) {
+    return slackToolFailure('Failed to update Slack message', error);
+  }
 };
