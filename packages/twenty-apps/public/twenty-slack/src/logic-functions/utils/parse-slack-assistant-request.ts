@@ -59,7 +59,7 @@ export const parseSlackAssistantRequest = (
     ? stripLeadingBotMention(rawText)
     : rawText.replace(/\s+/g, ' ').trim();
 
-  if (requestText.length === 0) {
+  if (!isNonEmptyString(requestText)) {
     return { request: null, skipReason: 'Empty request text' };
   }
 
