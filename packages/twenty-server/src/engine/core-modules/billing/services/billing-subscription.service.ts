@@ -85,6 +85,31 @@ export class BillingSubscriptionService {
     return await this.billingCustomerRepository.findOneBy(workspaceId, {});
   }
 
+  // The hasPaymentMethod column is normally maintained by the
+  // payment_method.attached/detached webhooks; checking against Stripe and
+  // persisting the result heals the column when a webhook was missed
+  async refreshHasPaymentMethod(workspaceId: string): Promise<boolean | null> {
+    const billingCustomer = await this.getBillingCustomer(workspaceId);
+
+    if (!isDefined(billingCustomer)) {
+      return null;
+    }
+
+    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
+      billingCustomer.stripeCustomerId,
+    );
+
+    if (billingCustomer.hasPaymentMethod !== hasPaymentMethod) {
+      await this.billingCustomerRepository.update(
+        workspaceId,
+        { stripeCustomerId: billingCustomer.stripeCustomerId },
+        { hasPaymentMethod },
+      );
+    }
+
+    return hasPaymentMethod;
+  }
+
   async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
@@ -265,6 +290,12 @@ export class BillingSubscriptionService {
 
     const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
       billingSubscription.stripeCustomerId,
+    );
+
+    await this.billingCustomerRepository.update(
+      workspace.id,
+      { stripeCustomerId: billingSubscription.stripeCustomerId },
+      { hasPaymentMethod },
     );
 
     if (!hasPaymentMethod) {

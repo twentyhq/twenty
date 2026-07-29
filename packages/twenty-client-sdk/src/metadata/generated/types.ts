@@ -6358,6 +6358,9 @@ export default {
             "listPlans": [
                 152
             ],
+            "billingHasPaymentMethod": [
+                3
+            ],
             "getResourceCreditUsage": [
                 151
             ],

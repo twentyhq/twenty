@@ -2,6 +2,7 @@ import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
+import { BillingHasPaymentMethodRefreshEffect } from '@/settings/billing/effect-components/BillingHasPaymentMethodRefreshEffect';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -77,6 +78,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   return (
     <>
+      <BillingHasPaymentMethodRefreshEffect />
       <AiChatBanner
         message={message}
         variant="warning"

@@ -1,6 +1,7 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
+import { BillingHasPaymentMethodRefreshEffect } from '@/settings/billing/effect-components/BillingHasPaymentMethodRefreshEffect';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
@@ -26,6 +27,9 @@ export const InformationBannerEndTrialPeriod = () => {
 
   return (
     <>
+      {hasPermissionToEndTrialPeriod && (
+        <BillingHasPaymentMethodRefreshEffect />
+      )}
       <InformationBanner
         componentInstanceId="information-banner-end-trial-period"
         color="danger"

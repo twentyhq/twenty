@@ -343,6 +343,23 @@ export class BillingResolver {
     };
   }
 
+  @Query(() => Boolean, {
+    nullable: true,
+    description:
+      'Checks against Stripe whether the workspace has a payment method and persists the result',
+  })
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async billingHasPaymentMethod(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<boolean | null> {
+    return await this.billingSubscriptionService.refreshHasPaymentMethod(
+      workspace.id,
+    );
+  }
+
   @Query(() => [BillingResourceCreditUsageDTO])
   @UseGuards(
     WorkspaceAuthGuard,

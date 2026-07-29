@@ -3142,6 +3142,11 @@ type Query {
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
+
+  """
+  Checks against Stripe whether the workspace has a payment method and persists the result
+  """
+  billingHasPaymentMethod: Boolean
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!

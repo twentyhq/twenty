@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
+import { BillingHasPaymentMethodRefreshEffect } from '@/settings/billing/effect-components/BillingHasPaymentMethodRefreshEffect';
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
@@ -51,6 +52,7 @@ export const SettingsBillingContent = () => {
 
   return (
     <SettingsPageContainer>
+      <BillingHasPaymentMethodRefreshEffect />
       {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
         <SettingsBillingTrialNoPaymentMethodBanner
           currentBillingSubscription={currentBillingSubscription}
