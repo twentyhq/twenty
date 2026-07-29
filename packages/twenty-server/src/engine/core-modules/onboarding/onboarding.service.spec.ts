@@ -307,6 +307,41 @@ describe('OnboardingService', () => {
         );
     };
 
+    it('should not re-flag the step once it has already been evaluated', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+      jest.spyOn(userVarsService, 'get').mockResolvedValue(false);
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 320,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should keep a false record when the step is completed so it cannot reopen', async () => {
+      await service.setOnboardingBookCallPending({
+        userId,
+        workspaceId,
+        value: false,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+          value: false,
+        },
+        undefined,
+      );
+      expect(userVarsService.delete).not.toHaveBeenCalled();
+    });
+
     it.each([50, 51])(
       'should flag the step when the employee count is %s',
       async (employeeCount) => {

@@ -416,25 +416,15 @@ export class OnboardingService {
     },
     queryRunner?: QueryRunner,
   ) {
-    if (!value) {
-      await this.userVarsService.delete(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        },
-        queryRunner,
-      );
-
-      return;
-    }
-
+    // Unlike the other steps this one keeps a `false` row instead of deleting it:
+    // the row's presence is what stops a later enrichment from re-opening a step
+    // the user already booked or skipped.
     await this.userVarsService.set(
       {
         userId,
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        value: true,
+        value,
       },
       queryRunner,
     );
@@ -449,6 +439,18 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
+    const hasAlreadyBeenEvaluated = isDefined(
+      await this.userVarsService.get({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+      }),
+    );
+
+    if (hasAlreadyBeenEvaluated) {
+      return;
+    }
+
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
     );
