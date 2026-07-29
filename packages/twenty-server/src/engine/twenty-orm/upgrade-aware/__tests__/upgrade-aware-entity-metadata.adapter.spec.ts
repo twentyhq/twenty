@@ -12,11 +12,16 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 const RENAME_STEP = '2.6.0_Rename_1700000000000';
 const INTRODUCE_STEP = '2.7.0_AddColumn_1800000000000';
 const REMOVE_STEP = '2.7.0_DropColumn_1800000000001';
+
+const EARLY_STEP = '2.6.0_Early_1700000000001';
+const SLOW_STEP = '2.6.0_Backfill_1700000000002';
+const WORKSPACE_STEP = '2.6.0_WorkspaceThing_1700000000003';
 
 @WasRenamedInUpgrade([
   { previousName: 'oldEntity', upgradeCommandName: RENAME_STEP },
@@ -33,6 +38,13 @@ class EntityWithHideableColumns {
   visibleColumn!: string;
 }
 
+class EntityWithIntroducedColumn {
+  @WasIntroducedInUpgrade({ upgradeCommandName: INTRODUCE_STEP })
+  introducedColumn!: string;
+
+  visibleColumn!: string;
+}
+
 const buildColumn = (propertyName: string): ColumnMetadata =>
   ({
     propertyName,
@@ -41,6 +53,50 @@ const buildColumn = (propertyName: string): ColumnMetadata =>
     isInsert: true,
     isUpdate: true,
   }) as unknown as ColumnMetadata;
+
+const buildAdapter = async ({
+  metadata,
+  sequence,
+  statuses,
+  databaseColumns = [],
+}: {
+  metadata: EntityMetadata;
+  sequence: { name: string; kind?: string }[];
+  statuses: [string, UpgradeMigrationStatus][];
+  databaseColumns?: {
+    table_schema: string;
+    table_name: string;
+    column_name: string;
+  }[];
+}): Promise<UpgradeAwareEntityMetadataAdapter> => {
+  const dataSource = {
+    entityMetadatas: [metadata],
+    query: jest.fn().mockResolvedValue(databaseColumns),
+  } as unknown as DataSource;
+
+  const moduleRef = await Test.createTestingModule({
+    providers: [
+      UpgradeAwareEntityMetadataAdapter,
+      {
+        provide: UpgradeMigrationService,
+        useValue: {
+          getLatestInstanceCommandStatuses: jest
+            .fn()
+            .mockResolvedValue(new Map(statuses)),
+        },
+      },
+      {
+        provide: UpgradeSequenceReaderService,
+        useValue: {
+          getUpgradeSequence: jest.fn().mockReturnValue(sequence),
+        },
+      },
+      { provide: getDataSourceToken(), useValue: dataSource },
+    ],
+  }).compile();
+
+  return moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+};
 
 describe('UpgradeAwareEntityMetadataAdapter', () => {
   it('rewrites tableName / tablePath / givenTableName when the rename step is not yet applied', async () => {
@@ -53,32 +109,11 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       columns: [],
     } as unknown as EntityMetadata;
 
-    const dataSource = {
-      entityMetadatas: [metadata],
-    } as unknown as DataSource;
-
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        UpgradeAwareEntityMetadataAdapter,
-        {
-          provide: UpgradeMigrationService,
-          useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue(null),
-          },
-        },
-        {
-          provide: UpgradeSequenceReaderService,
-          useValue: {
-            getUpgradeSequence: jest
-              .fn()
-              .mockReturnValue([{ name: RENAME_STEP }]),
-          },
-        },
-        { provide: getDataSourceToken(), useValue: dataSource },
-      ],
-    }).compile();
-
-    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: RENAME_STEP }],
+      statuses: [],
+    });
 
     await adapter.onModuleInit();
 
@@ -103,38 +138,11 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
       columns: [introducedColumn, removedColumn, visibleColumn],
     } as unknown as EntityMetadata;
 
-    const dataSource = {
-      entityMetadatas: [metadata],
-    } as unknown as DataSource;
-
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        UpgradeAwareEntityMetadataAdapter,
-        {
-          provide: UpgradeMigrationService,
-          useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue({
-              name: REMOVE_STEP,
-              status: 'completed',
-            }),
-          },
-        },
-        {
-          provide: UpgradeSequenceReaderService,
-          useValue: {
-            getUpgradeSequence: jest
-              .fn()
-              .mockReturnValue([
-                { name: REMOVE_STEP },
-                { name: INTRODUCE_STEP },
-              ]),
-          },
-        },
-        { provide: getDataSourceToken(), useValue: dataSource },
-      ],
-    }).compile();
-
-    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: REMOVE_STEP }, { name: INTRODUCE_STEP }],
+      statuses: [[REMOVE_STEP, 'completed']],
+    });
 
     await adapter.onModuleInit();
 
@@ -153,5 +161,143 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     expect(visibleColumn.isUpdate).toBe(true);
 
     expect(metadata.columns).toEqual([visibleColumn]);
+  });
+
+  // Regression: a slow instance command running long after the fast commands
+  // that follow it in the sequence used to drag the cursor backwards, hiding
+  // columns whose introduction had already been applied.
+  it('keeps every completed instance step applied regardless of the order the commands ran in', async () => {
+    const introducedColumn = buildColumn('introducedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithIntroducedColumn,
+      tableName: 'entityWithIntroducedColumn',
+      tablePath: 'core.entityWithIntroducedColumn',
+      givenTableName: 'entityWithIntroducedColumn',
+      schema: 'core',
+      columns: [introducedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [
+        { name: EARLY_STEP },
+        { name: INTRODUCE_STEP },
+        { name: SLOW_STEP },
+      ],
+      statuses: [
+        [EARLY_STEP, 'completed'],
+        [INTRODUCE_STEP, 'completed'],
+        [SLOW_STEP, 'completed'],
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(introducedColumn.isSelect).toBe(true);
+    expect(metadata.columns).toEqual([introducedColumn, visibleColumn]);
+  });
+
+  it('stops the cursor at the first instance step that has not completed', async () => {
+    const introducedColumn = buildColumn('introducedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithIntroducedColumn,
+      tableName: 'entityWithIntroducedColumn',
+      tablePath: 'core.entityWithIntroducedColumn',
+      givenTableName: 'entityWithIntroducedColumn',
+      schema: 'core',
+      columns: [introducedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: INTRODUCE_STEP }],
+      statuses: [
+        [EARLY_STEP, 'failed'],
+        [INTRODUCE_STEP, 'completed'],
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(introducedColumn.isSelect).toBe(false);
+    expect(metadata.columns).toEqual([visibleColumn]);
+  });
+
+  it('does not let workspace steps hold the cursor back', async () => {
+    const introducedColumn = buildColumn('introducedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithIntroducedColumn,
+      tableName: 'entityWithIntroducedColumn',
+      tablePath: 'core.entityWithIntroducedColumn',
+      givenTableName: 'entityWithIntroducedColumn',
+      schema: 'core',
+      columns: [introducedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [
+        { name: EARLY_STEP },
+        { name: WORKSPACE_STEP, kind: 'workspace' },
+        { name: INTRODUCE_STEP },
+      ],
+      statuses: [
+        [EARLY_STEP, 'completed'],
+        [INTRODUCE_STEP, 'completed'],
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(introducedColumn.isSelect).toBe(true);
+    expect(metadata.columns).toEqual([introducedColumn, visibleColumn]);
+  });
+
+  // Safety net: whatever the cursor believes, a column that is physically in
+  // the database must stay visible, otherwise every query naming it fails.
+  it('never hides a column that exists in the database', async () => {
+    const introducedColumn = buildColumn('introducedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithIntroducedColumn,
+      tableName: 'entityWithIntroducedColumn',
+      tablePath: 'core.entityWithIntroducedColumn',
+      givenTableName: 'entityWithIntroducedColumn',
+      schema: 'core',
+      columns: [introducedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: INTRODUCE_STEP }],
+      statuses: [[EARLY_STEP, 'failed']],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'entityWithIntroducedColumn',
+          column_name: 'introducedColumn',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(introducedColumn.isSelect).toBe(true);
+    expect(metadata.columns).toEqual([introducedColumn, visibleColumn]);
   });
 });

@@ -33,6 +33,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
     const dataSource = {
       entityMetadatas: [metadata],
+      query: jest.fn().mockResolvedValue([]),
     } as unknown as DataSource;
 
     const moduleRef = await Test.createTestingModule({
@@ -41,7 +42,9 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue(null),
+            getLatestInstanceCommandStatuses: jest
+              .fn()
+              .mockResolvedValue(new Map()),
           },
         },
         {
