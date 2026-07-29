@@ -52,10 +52,8 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   private stepNameToIndex: Map<string, number> = new Map();
   private sequence: UpgradeStep[] = [];
   private currentCursor = Number.MAX_SAFE_INTEGER;
-  private databaseColumnsByTablePath: ReadonlyMap<
-    string,
-    ReadonlySet<string>
-  > = new Map();
+  private databaseColumnsByTablePath: ReadonlyMap<string, ReadonlySet<string>> =
+    new Map();
 
   constructor(
     @InjectDataSource()
@@ -155,13 +153,16 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       return new Map();
     }
 
-    const rows: { table_schema: string; table_name: string; column_name: string }[] =
-      await this.coreDataSource.query(
-        `SELECT table_schema, table_name, column_name
+    const rows: {
+      table_schema: string;
+      table_name: string;
+      column_name: string;
+    }[] = await this.coreDataSource.query(
+      `SELECT table_schema, table_name, column_name
          FROM information_schema.columns
          WHERE table_schema = ANY($1)`,
-        [schemas],
-      );
+      [schemas],
+    );
 
     const columnsByTablePath = new Map<string, Set<string>>();
 
