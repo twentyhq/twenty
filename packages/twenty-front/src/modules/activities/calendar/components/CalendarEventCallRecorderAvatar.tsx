@@ -13,7 +13,7 @@ const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.PROCESSING,
 ];
 
-const NO_RECORD_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
+const UNAVAILABLE_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.FAILED,
   CallRecordingStatus.NOT_RECORDED,
 ];
@@ -54,12 +54,12 @@ export const CalendarEventCallRecorderAvatar = ({
   status,
 }: CalendarEventCallRecorderAvatarProps) => {
   const instanceId = useId();
-  const hasNoRecord = NO_RECORD_CALL_RECORDING_STATUSES.includes(status);
+  const hasNoRecording = UNAVAILABLE_CALL_RECORDING_STATUSES.includes(status);
   const tooltipAnchorId = `call-recorder-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
   return (
     <>
-      <StyledContainer id={tooltipAnchorId} isDisabled={hasNoRecord}>
+      <StyledContainer id={tooltipAnchorId} isDisabled={hasNoRecording}>
         <AppChip
           applicationId={applicationId}
           fallbackApplicationData={{ name: t`Call recorder` }}
