@@ -9,9 +9,11 @@ import { runAgent } from 'twenty-sdk/logic-function';
 
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_READ_ONLY_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_CHANNEL_MODE } from 'src/logic-functions/constants/slack-channel-mode';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
@@ -19,6 +21,9 @@ import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { isSlackUserMappingRequired } from 'src/logic-functions/utils/is-slack-user-mapping-required';
+import { resolveSlackChannelMode } from 'src/logic-functions/utils/resolve-slack-channel-mode';
+import { resolveSlackUserLink } from 'src/logic-functions/utils/resolve-slack-user-link';
 import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
@@ -78,6 +83,33 @@ export const slackAssistantWorkerHandler = async (
   }
 
   const client = new CoreApiClient();
+
+  // Re-checked here rather than trusted from the enqueue step, because any
+  // created slackAssistantRequest triggers this worker.
+  const [channelMode, userLink] = await Promise.all([
+    resolveSlackChannelMode(client, { slackChannelId }),
+    resolveSlackUserLink(client, { slackUserId: record.slackUserId }),
+  ]);
+
+  const finishWithSkip = async (reason: string): Promise<object> => {
+    await updateSlackAssistantRequest(client, {
+      id: record.id,
+      status: SLACK_ASSISTANT_REQUEST_STATUS.SKIPPED,
+      errorMessage: reason,
+    });
+
+    return { skipped: true, reason };
+  };
+
+  if (channelMode === SLACK_CHANNEL_MODE.SILENT) {
+    return await finishWithSkip('Channel rule is silent');
+  }
+
+  if (userLink === undefined && isSlackUserMappingRequired()) {
+    return await finishWithSkip(
+      'Slack user is not linked to a workspace member',
+    );
+  }
 
   await updateSlackAssistantRequest(client, {
     id: record.id,
@@ -155,12 +187,17 @@ export const slackAssistantWorkerHandler = async (
       });
 
     const agentResult = await runAgent({
-      agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      agentUniversalIdentifier:
+        channelMode === SLACK_CHANNEL_MODE.READ_ONLY
+          ? SLACK_ASSISTANT_READ_ONLY_AGENT_UNIVERSAL_IDENTIFIER
+          : SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       prompt: buildSlackAssistantPrompt({
         requestText,
         requesterName,
         conversationContext,
       }),
+      // Omitted for unlinked users, which leaves the run on the agent role.
+      runAsWorkspaceMemberId: userLink?.workspaceMemberId,
     });
 
     if (!agentResult.success) {

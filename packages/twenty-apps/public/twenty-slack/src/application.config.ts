@@ -33,5 +33,11 @@ export default defineApplication({
       isSecret: true,
       isRequired: false,
     },
+    SLACK_REQUIRE_USER_MAPPING: {
+      description:
+        'Set to "true" to make the assistant answer only Slack users linked to a workspace member. Unlinked users get a prompt asking them to link their account instead of an answer. Left unset, the assistant answers everyone in the connected team using the agent role.',
+      isSecret: false,
+      isRequired: false,
+    },
   },
 });

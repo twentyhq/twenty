@@ -29,7 +29,9 @@ below):
   Direct-message threads never expire. Replies include the thread's recent
   history as context, so the assistant follows up coherently across turns. It
   requires the extra setup below (signing secret + event subscriptions); the
-  agent's CRM role is bound automatically via the app manifest on install.
+  agent's CRM role is bound automatically via the app manifest on install. To
+  answer as the person who tagged the bot, or to restrict it per channel, see
+  [Who the assistant acts as](#who-the-assistant-acts-as).
 
 ## Tools
 
@@ -129,10 +131,12 @@ The assistant reuses the **same Slack connection** as the tools above — it doe
 not add a second connection or bot identity. To enable it:
 
 1. **Add the assistant scopes.** This app now requests the inbound scopes
-   `app_mentions:read`, `channels:history`, `groups:history`, and `im:history`
-   (in addition to the outbound scopes). Add them under **Bot Token Scopes** on
-   your Slack app, then **reconnect** (disconnect and **Add connection** again)
-   so the token picks them up.
+   `app_mentions:read`, `channels:history`, `groups:history`, and `im:history`,
+   plus `users:read` and `users:read.email` (used to read the requester's
+   display name and to match their Slack email to a workspace member), in
+   addition to the outbound scopes. Add them under **Bot Token Scopes** on your
+   Slack app, then **reconnect** (disconnect and **Add connection** again) so
+   the token picks them up.
 2. **Set `SLACK_WEBHOOK_SECRET`.** In **Application registration** (admin-only),
    set the signing secret from your Slack app (**Basic Information → App
    Credentials**). The Twenty server uses it to verify Slack Events API
@@ -160,12 +164,46 @@ not add a second connection or bot identity. To enable it:
    declares `roleUniversalIdentifier` pointing at the app's **Slack Assistant**
    role (read/create/update/soft-delete on core CRM objects). Manifest sync
    creates that roleTarget on install/upgrade. Tighten the role in Settings if
-   you want a narrower bot.
+   you want a narrower bot. The app also ships
+   **`slack-assistant-read-only`**, bound to a read-only variant of that role
+   and used only for channels whose rule is set to read only.
 
-The permission boundary is the agent's role: anyone who can message the bot
-acts with that role's permissions (Slack users are not yet mapped to individual
-Twenty members). Keep the role scoped to what you're comfortable exposing.
-User-mapping and per-channel rules are follow-ups.
+### Who the assistant acts as
+
+Out of the box the assistant answers everyone in the connected Slack team, and
+the **Slack Assistant** role is the ceiling on what it can do. Two optional
+layers narrow that, and they stack:
+
+```text
+effective permissions = agent role ∩ channel rule (if any) ∩ member role (if linked)
+```
+
+**Slack user links.** A **Slack User Link** record maps a Slack user to a
+workspace member. The first time someone messages the bot, the app reads their
+Slack email and creates the link if it matches exactly one member; admins can
+also create or correct links by hand. When a link exists, the run is scoped to
+the intersection of the agent role and that member's role, records the
+assistant creates are attributed to them, and their row-level permissions
+apply.
+
+Set the `SLACK_REQUIRE_USER_MAPPING` application variable to `true` to make the
+link mandatory: unlinked users get a private message asking them to link their
+account instead of an answer. Left unset, unlinked users are still answered
+using the agent role alone.
+
+**Channel rules.** A **Slack Channel Rule** record scopes one channel:
+
+| Mode | Behaviour |
+|------|-----------|
+| `Open` | Same as no rule — the full agent role applies. |
+| `Read only` | The run uses the **Slack Assistant Read Only** role, so the assistant can answer questions but not change CRM data. |
+| `Silent` | The bot does not respond in that channel at all. |
+
+Channels with no rule stay open, so adding rules is opt-in and only narrows.
+
+Autonomous runs (no human sender) have no member to act as, so the agent's own
+role governs them — which is why the agent role stays the base layer rather
+than being replaced by the member's.
 
 **One Slack workspace answers into one Twenty workspace.** Connecting Slack
 claims that Slack team for the connecting Twenty workspace, and inbound events

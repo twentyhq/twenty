@@ -28,6 +28,8 @@ export default defineConnectionProvider({
       'channels:history',
       'groups:history',
       'im:history',
+      'users:read',
+      'users:read.email',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

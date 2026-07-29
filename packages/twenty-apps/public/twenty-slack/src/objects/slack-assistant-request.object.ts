@@ -143,6 +143,13 @@ export default defineObject({
           position: 3,
           color: 'red',
         },
+        {
+          id: 'f0c665c6-1501-4cde-b716-7df1e9b6a3e8',
+          value: SLACK_ASSISTANT_REQUEST_STATUS.SKIPPED,
+          label: 'Skipped',
+          position: 4,
+          color: 'gray',
+        },
       ],
       name: 'status',
     },
@@ -151,7 +158,8 @@ export default defineObject({
         SLACK_ASSISTANT_REQUEST_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Error',
-      description: 'Failure reason when the assistant could not answer',
+      description:
+        'Why the assistant could not answer, or why the request was skipped',
       icon: 'IconAlertTriangle',
       name: 'errorMessage',
     },
