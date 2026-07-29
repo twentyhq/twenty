@@ -14,9 +14,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const ALL_MESSAGE_CAMPAIGNS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
   STANDARD_NAVIGATION_MENU_ITEMS.allMessageCampaigns.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.25.0', 1785324390000)
+@RegisteredWorkspaceCommand('2.26.0', 1785324390000)
 @Command({
-  name: 'upgrade:2-25:remove-message-campaign-navigation-menu-item',
+  name: 'upgrade:2-26:remove-message-campaign-navigation-menu-item',
   description:
     'Remove the Campaigns navigation menu item from workspaces provisioned while it was built unconditionally, since navigation items cannot be gated behind IS_EMAIL_GROUP_ENABLED yet',
 })

@@ -6,7 +6,6 @@ import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/co
 import { AddMessageCampaignComposerTabCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229940000-add-message-campaign-composer-tab.command';
 import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
-import { RemoveMessageCampaignNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785324390000-remove-message-campaign-navigation-menu-item.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -27,7 +26,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMessageCampaignComposerTabCommand,
     ConfigureMessageCampaignCommandMenuCommand,
     AddMessageCampaignNameFieldCommand,
-    RemoveMessageCampaignNavigationMenuItemCommand,
   ],
 })
 export class V2_25_UpgradeVersionCommandModule {}
