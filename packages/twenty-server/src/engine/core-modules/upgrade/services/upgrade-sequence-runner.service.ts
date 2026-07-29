@@ -192,17 +192,18 @@ export class UpgradeSequenceRunnerService {
         return { totalSuccesses, totalFailures };
       }
 
-      // The workspace segment is only partially applied, advancing the cursor
-      // would run an instance step on workspaces that are not aligned yet.
+      // Some workspaces have not run the segment, advancing the cursor would
+      // run an instance step on workspaces that are not aligned yet.
       if (report.interrupted) {
         this.logger.warn(
           formatUpgradeLog({
             humanMessage:
               'Stopped during workspace steps: shutdown requested. ' +
-              'Rerun the upgrade to resume from the last recorded command.',
+              'Rerun the upgrade to process the remaining workspaces.',
             event: 'sequence.stopped',
             logFields: {
               reason: 'shutdown-requested',
+              processedWorkspaces: report.success.length,
             },
           }),
         );

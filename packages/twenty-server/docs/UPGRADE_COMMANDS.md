@@ -138,13 +138,13 @@ Workspace commands are executed sequentially across all active/suspended workspa
 
 CLI commands install cooperative shutdown handlers for `SIGINT` and `SIGTERM`.
 
-- **First signal** — the runner finishes the step in progress, then stops at the next boundary instead of starting new work. Boundaries are checked before each sequence step, before each workspace, and before each workspace command. The process exits with `130` (SIGINT) or `143` (SIGTERM) so orchestrators can tell an interruption apart from a failure.
-- **Second signal** — the process exits immediately, leaving the step in progress unfinished.
+- **First signal** — the runner finishes what it started, then stops at the next boundary instead of starting new work. Only the two iteration runners check for a shutdown: `UpgradeSequenceRunnerService` before each sequence step, and `WorkspaceIteratorService` before each workspace. Individual commands know nothing about shutdown, so a workspace that has started runs its whole pending segment before the run stops. The process exits with `130` (SIGINT) or `143` (SIGTERM) so orchestrators can tell an interruption apart from a failure.
+- **Second signal** — the process exits immediately, leaving the command in progress unfinished.
 - **`SIGKILL`** — cannot be trapped, same outcome as a second signal.
 
-Nothing is rolled back on stop: the run resumes from the last command recorded in `upgradeMigration`. A graceful stop leaves every workspace on a completed command, so resuming is a plain rerun of the same command. A forced kill can interrupt a command mid-flight; its own transaction rolls back, but a command that writes across several transactions may leave partial work, which is why upgrade commands must be idempotent.
+Nothing is rolled back on stop: the run resumes from the last command recorded in `upgradeMigration`. A graceful stop leaves each workspace either fully done with the segment or untouched, so resuming is a plain rerun. A forced kill can interrupt a command mid-flight; its own transaction rolls back, but a command that writes across several transactions may leave partial work, which is why upgrade commands must be idempotent.
 
-Under Kubernetes, `terminationGracePeriodSeconds` must be long enough for the step in progress to finish, otherwise the pod is `SIGKILL`ed before the graceful stop completes.
+Under Kubernetes, `terminationGracePeriodSeconds` must be long enough for the workspace in progress to finish its segment, otherwise the pod is `SIGKILL`ed before the graceful stop completes.
 
 ## Shipping a command for a future version (deferred drops)
 
