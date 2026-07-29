@@ -70,6 +70,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         await this.workspaceVersionService.getProvisionedWorkspaceIds();
 
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+      const pendingSlowCommandNames: string[] = [];
 
       for (const step of sequence) {
         if (step.kind === 'fast-instance') {
@@ -84,19 +85,30 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           }
         }
 
-        if (step.kind === 'slow-instance' && options.includeSlow) {
-          const result =
-            await this.instanceUpgradeService.runSlowInstanceCommand({
-              command: step.command,
-              name: step.name,
-              skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
-            });
+        if (step.kind === 'slow-instance') {
+          if (options.includeSlow) {
+            const result =
+              await this.instanceUpgradeService.runSlowInstanceCommand({
+                command: step.command,
+                name: step.name,
+                skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
+              });
 
-          if (result.status === 'failed') {
-            throw result.error;
+            if (result.status === 'failed') {
+              throw result.error;
+            }
+          } else if (
+            !(await this.upgradeMigrationService.isLastAttemptCompleted({
+              name: step.name,
+              workspaceId: null,
+            }))
+          ) {
+            pendingSlowCommandNames.push(step.name);
           }
         }
       }
+
+      this.reportPendingSlowCommands(pendingSlowCommandNames);
 
       this.logger.log(chalk.green('Instance commands completed'));
     } catch (error) {
@@ -119,6 +131,36 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         }`,
       );
     }
+  }
+
+  // Skipping slow commands is a choice, not a no-op: an unrun one holds the
+  // upgrade cursor at its position, which is what decides new-workspace
+  // baselines and the version upgrade:status reports. Production sat on nine
+  // of these for months precisely because skipping them said nothing.
+  //
+  // Deliberately worded to avoid "FAILED" and "reported an error":
+  // deploy/production-converge.sh greps the post-merge output for those and
+  // aborts the deploy. This is a warning, not a failure.
+  private reportPendingSlowCommands(pendingSlowCommandNames: string[]): void {
+    if (pendingSlowCommandNames.length === 0) {
+      return;
+    }
+
+    this.logger.warn(
+      chalk.yellow(
+        `${pendingSlowCommandNames.length} slow instance command(s) pending — not run without --include-slow:`,
+      ),
+    );
+
+    for (const name of pendingSlowCommandNames) {
+      this.logger.warn(chalk.yellow(`  - ${name}`));
+    }
+
+    this.logger.warn(
+      chalk.yellow(
+        'Run them with: run-instance-commands --include-slow (they may be long-running and take exclusive table locks)',
+      ),
+    );
   }
 
   private async checkWorkspaceVersionSafety(
