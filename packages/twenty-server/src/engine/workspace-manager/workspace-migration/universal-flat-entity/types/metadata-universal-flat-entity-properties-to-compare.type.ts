@@ -54,7 +54,6 @@ type Assertions = [
       | 'deletedAt'
       | 'type'
       | 'position'
-      | 'key'
       | 'isCompact'
       | 'openRecordIn'
       | 'kanbanAggregateOperation'
