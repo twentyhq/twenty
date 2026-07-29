@@ -36,6 +36,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { getWorkflowStepMonitoringContext } from 'src/modules/workflow/workflow-executor/utils/get-workflow-step-monitoring-context.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
@@ -138,6 +139,7 @@ export class WorkflowExecutorWorkspaceService {
         step: stepToExecute,
         steps,
         stepInfos,
+        workflowId: workflowRun.workflowId,
         workflowRunId,
         workspaceId,
       });
@@ -470,12 +472,14 @@ export class WorkflowExecutorWorkspaceService {
     step,
     steps,
     stepInfos,
+    workflowId,
     workflowRunId,
     workspaceId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
+    workflowId: string;
     workflowRunId: string;
     workspaceId: string;
   }) {
@@ -517,6 +521,11 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: getWorkflowStepMonitoringContext({
+            step,
+            workflowId,
+            workflowRunId,
+          }),
         });
 
         await this.metricsService.incrementCounterForEvent({
