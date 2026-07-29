@@ -112,12 +112,12 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 **구성**:
 
-* 이전 단계의 레코드 배열을 선택합니다(예: Search Records 결과, 대량 사용이 가능한 Manual trigger, Code node). Code 또는 Logic Function 단계가 최상위 배열을 반환하는 경우, **Whole list** 옵션을 선택하여 전체 출력에 대해 루프를 실행합니다.
+* 이전 단계의 레코드 배열을 선택합니다(예: Search Records 결과, 대량 사용이 가능한 수동 트리거, 코드 노드). Code 또는 Logic Function 단계가 최상위 배열을 반환하는 경우, **Whole list** 옵션을 선택하여 전체 출력에 대해 루프를 실행합니다.
 * 반복 내에서 각 레코드에 대해 수행할 액션 정의.
 
 <Note>
-- Iterator 내에 여러 작업을 추가할 수 있습니다.
-- Iterator 내부에 분기를 사용할 때, 각 분기의 마지막 단계가 루프를 닫도록 Iterator로 다시 연결되는지 확인하세요.
+- 이터레이터 내에 여러 작업을 추가할 수 있습니다.
+- 이터레이터 내부에 분기를 사용할 때, 각 분기의 마지막 단계가 루프를 닫도록 이터레이터로 다시 연결되는지 확인하세요.
 </Note>
 
 * `Current Item` 필드에 접근: 현재 처리 중인 레코드의 필드를 사용하려면 **Iterator** 단계에서 **Current item**을 선택하세요. 해당 레코드에서 사용 가능한 필드 목록이 표시되며, 이후 작업에서 사용하도록 선택할 수 있습니다. **Use the whole item**을 선택하여 현재 항목 전체를 다운스트림 단계로 전달할 수도 있습니다.

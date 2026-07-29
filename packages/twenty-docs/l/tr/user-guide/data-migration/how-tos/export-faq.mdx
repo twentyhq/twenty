@@ -10,19 +10,19 @@ description: Veri dışa aktarmayla ilgili sıkça sorulan sorular.
 <Accordion title="Hangi öğeler şu anda dışa aktarılamaz veya taşınamaz?">
 Çoğu öğe, bazı istisnalarla dışa aktarılabilir veya taşınabilir:
 * iş akışları, panolar ve tüm ayarlar (API anahtarları, webhook'lar, denetim günlükleri, kullanıcı ayarları vb.) manuel olarak taşınmalıdır
-* uygulama tarafından oluşturulan nesneler ve alanlar, söz konusu uygulama farklı bir çalışma alanına kurularak taşınabilir. Manuel olarak taşınmamalıdır
-* iş akışı sürümleri ve iş akışı çalıştırmaları gibi bazı kayıtlar hiç aktarılamaz ve kaybolmaları beklenir
-* bazı nesneler, örneğin mesaj ve takvimle ilgili nesneler, bir hesabın bağlanmasıyla oluşturuldukları ve periyodik olarak eşitlendiikleri için dışa aktarılmamalıdır. Hesabınızı bağladığınızda tekrar eşitleneceklerdir (ilgili hesaba erişiminiz olduğu sürece; eğer bu, şirketinizden ayrılan bir ekip üyesinin hesabıysa, bu durumda bu mesajlar dışa aktarılmalıdır, aksi takdirde kaybolacaklardır)
+* Uygulama tarafından oluşturulan nesneler ve alanlar, söz konusu uygulama farklı bir çalışma alanına kurularak taşınabilir. Manuel olarak taşınmamalıdır
+* İş akışı sürümleri ve iş akışı çalıştırmaları gibi bazı kayıtlar hiç aktarılamaz ve kaybolmaları beklenir
+* Bazı nesneler, örneğin mesaj ve takvimle ilgili nesneler, bir hesap bağlandığında oluşturuldukları ve periyodik olarak eşitlendikleri için dışa aktarılmamalıdır. Hesabınızı bağladığınızda tekrar eşitleneceklerdir (ilgili hesaba erişiminiz olduğu sürece; eğer bu, şirketinizden ayrılan bir ekip üyesinin hesabıysa, bu durumda bu mesajlar dışa aktarılmalıdır, aksi takdirde kaybolacaklardır)
 </Accordion>
 <Accordion title="Resmi bir buluttan kendi barındırılan ortama geçiş prosedürü veya destekli bir geçiş hizmeti var mı?">
 Şu an itibarıyla, buluttan kendi barındırılan ortama resmi bir geçiş prosedürü yoktur. Genel fikir şudur:
 * önce, uygulamaya ait nesneleri ve alanları tanıtmak için uygulamaları yükleyin
 * kullanıcılar tarafından eklenen özel nesneleri ve alanları çoğaltın
-* tüm verileri bir çalışma alanından diğerine taşımak için API anahtarları veya yapay zeka araçlarıyla bir komut dosyası kullanın
+* Tüm verileri bir çalışma alanından diğerine taşımak için API anahtarları veya yapay zeka araçlarıyla bir komut dosyası kullanın
 * taşınamayan tüm nesneler manuel olarak aktarılmalıdır
 
 Lütfen birkaç noktaya dikkat edin:
-* istek/dakika sınırına ulaşmadan önce Pro planda dakikada en fazla 50, Organization planda dakikada en fazla 100 istek gönderebilirsiniz
+* İstek/dakika sınırına ulaşmadan önce Pro planda dakikada en fazla 50, Organization planda dakikada en fazla 100 istek gönderebilirsiniz
 * her API isteğinde en fazla 200 kayıt olabilir
 * Created by, Timeline activities ve Updated by gibi alanlardaki bazı veriler içe aktarma sırasında kaybolacak ve sistem tarafından üzerine yazılacak.
 </Accordion>
