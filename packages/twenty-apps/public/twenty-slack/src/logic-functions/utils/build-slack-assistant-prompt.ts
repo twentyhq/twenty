@@ -4,15 +4,15 @@ export const buildSlackAssistantPrompt = ({
   requestText,
   requesterName,
   conversationContext,
-  budgetSeconds,
+  timeoutSeconds,
 }: {
   requestText: string;
   requesterName: string | undefined;
   conversationContext: string | undefined;
-  budgetSeconds: number;
+  timeoutSeconds: number;
 }): string => {
   const sections: string[] = [
-    `You have about ${budgetSeconds} seconds to answer before the Slack reply times out. Keep tool calls focused and answer as soon as you have enough to be useful.`,
+    `This run is killed after ${timeoutSeconds} seconds and the member gets an error instead of an answer. Keep tool calls focused and reply as soon as you have enough to be useful.`,
   ];
 
   if (isNonEmptyString(conversationContext)) {

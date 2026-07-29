@@ -13,10 +13,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
-import {
-  SLACK_ASSISTANT_AGENT_BUDGET_SECONDS,
-  SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
-} from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
+import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
@@ -129,7 +126,7 @@ export const slackAssistantWorkerHandler = async (
         requestText,
         requesterName,
         conversationContext,
-        budgetSeconds: SLACK_ASSISTANT_AGENT_BUDGET_SECONDS,
+        timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
       }),
     });
 
