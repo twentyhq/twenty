@@ -1,9 +1,10 @@
 import { Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -22,8 +23,7 @@ export class CleanSuspendedWorkspacesJob {
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   @Process(CleanSuspendedWorkspacesJob.name)
@@ -32,60 +32,27 @@ export class CleanSuspendedWorkspacesJob {
     cleanSuspendedWorkspaceCronPattern,
   )
   async handle(): Promise<void> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const result = await this.postgresAdvisoryLockService.tryWithLock(
+      CLEAN_SUSPENDED_WORKSPACES_LOCK_NAME,
+      async () => {
+        const suspendedWorkspaceIds = await this.workspaceRepository.find({
+          select: ['id'],
+          where: {
+            activationStatus: WorkspaceActivationStatus.SUSPENDED,
+          },
+          withDeleted: true,
+        });
 
-    await queryRunner.connect();
-
-    let isLockAcquired = false;
-
-    try {
-      isLockAcquired = await this.tryAcquireCleanupLock(queryRunner);
-
-      if (!isLockAcquired) {
-        this.logger.log(
-          'Skipping suspended workspace cleanup because another execution is running',
-        );
-
-        return;
-      }
-
-      const suspendedWorkspaceIds = await this.workspaceRepository.find({
-        select: ['id'],
-        where: {
-          activationStatus: WorkspaceActivationStatus.SUSPENDED,
-        },
-        withDeleted: true,
-      });
-
-      await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
-        workspaceIds: suspendedWorkspaceIds.map((workspace) => workspace.id),
-      });
-    } finally {
-      try {
-        if (isLockAcquired) {
-          await this.releaseCleanupLock(queryRunner);
-        }
-      } finally {
-        await queryRunner.release();
-      }
-    }
-  }
-
-  private async tryAcquireCleanupLock(
-    queryRunner: QueryRunner,
-  ): Promise<boolean> {
-    const [result] = (await queryRunner.query(
-      `SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS "acquired"`,
-      [CLEAN_SUSPENDED_WORKSPACES_LOCK_NAME],
-    )) as { acquired: boolean }[];
-
-    return result?.acquired === true;
-  }
-
-  private async releaseCleanupLock(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `SELECT pg_advisory_unlock(hashtextextended($1, 0))`,
-      [CLEAN_SUSPENDED_WORKSPACES_LOCK_NAME],
+        await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
+          workspaceIds: suspendedWorkspaceIds.map((workspace) => workspace.id),
+        });
+      },
     );
+
+    if (!result.acquired) {
+      this.logger.log(
+        'Skipping suspended workspace cleanup because another execution is running',
+      );
+    }
   }
 }
