@@ -1,3 +1,4 @@
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
 
@@ -18,9 +19,20 @@ const makeFlatVariable = (
   ...overrides,
 });
 
+const decryptVersioned = jest.fn();
+const secretEncryptionService = {
+  decryptVersioned,
+} as unknown as SecretEncryptionService;
+
 describe('stripSecretFromApplicationVariables', () => {
+  beforeEach(() => {
+    decryptVersioned.mockReset();
+  });
+
   it('should return empty object for empty array', () => {
-    expect(stripSecretFromApplicationVariables([])).toEqual({});
+    expect(
+      stripSecretFromApplicationVariables([], secretEncryptionService),
+    ).toEqual({});
   });
 
   it('should include non-secret variables', () => {
@@ -29,9 +41,32 @@ describe('stripSecretFromApplicationVariables', () => {
       makeFlatVariable({ id: '2', key: 'DEBUG', value: 'true' }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({
       PUBLIC_URL: 'https://example.com',
       DEBUG: 'true',
+    });
+  });
+
+  it('should decrypt encrypted non-secret variables', () => {
+    const encryptedValue = 'enc:v2:deadbeef:encrypted-value';
+    decryptVersioned.mockReturnValue('https://example.com');
+
+    const variables = [
+      makeFlatVariable({
+        key: 'PUBLIC_URL',
+        value: encryptedValue,
+      }),
+    ];
+
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({
+      PUBLIC_URL: 'https://example.com',
+    });
+    expect(decryptVersioned).toHaveBeenCalledWith(encryptedValue, {
+      workspaceId: variables[0].workspaceId,
     });
   });
 
@@ -47,13 +82,17 @@ describe('stripSecretFromApplicationVariables', () => {
       makeFlatVariable({ id: '3', key: 'DEBUG', value: 'true' }),
     ];
 
-    const result = stripSecretFromApplicationVariables(variables);
+    const result = stripSecretFromApplicationVariables(
+      variables,
+      secretEncryptionService,
+    );
 
     expect(result).toEqual({
       PUBLIC_URL: 'https://example.com',
       DEBUG: 'true',
     });
     expect(result).not.toHaveProperty('API_SECRET');
+    expect(decryptVersioned).not.toHaveBeenCalled();
   });
 
   it('should handle null and undefined values', () => {
@@ -69,7 +108,9 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({
       NULL_VALUE: '',
       UNDEFINED_VALUE: '',
     });
@@ -83,7 +124,9 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({
       NUMBER_VALUE: '123',
     });
   });
@@ -99,6 +142,8 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({});
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({});
   });
 });
