@@ -169,6 +169,20 @@ describe('WorkspaceSetupChatService', () => {
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
+  it('should keep the original creator when their membership was soft deleted', async () => {
+    const { service, userWorkspaceRepository } = buildService();
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { workspaceId: 'workspace-id' },
+        order: { createdAt: 'ASC' },
+        withDeleted: true,
+      }),
+    );
+  });
+
   it('should return unavailable when no ai models are available', async () => {
     const { service, aiModelRegistryService, agentChatService } =
       buildService();

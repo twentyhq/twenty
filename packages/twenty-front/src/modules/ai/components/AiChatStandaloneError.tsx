@@ -7,7 +7,7 @@ import { isRetryableAiChatStreamError } from '@/ai/utils/isRetryableAiChatStream
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,10 +26,12 @@ export const AiChatStandaloneError = () => {
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
   const { retryChatMessage } = useRetryChatMessage();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId: agentChatDisplayedThread },
   );
 
   const hasMessages = useAtomComponentSelectorValue(

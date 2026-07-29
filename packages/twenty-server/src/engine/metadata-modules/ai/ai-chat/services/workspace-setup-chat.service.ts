@@ -190,6 +190,7 @@ export class WorkspaceSetupChatService {
     const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
       where: { workspaceId },
       order: { createdAt: 'ASC' },
+      withDeleted: true,
     });
 
     return earliestUserWorkspace?.userId === userId;
