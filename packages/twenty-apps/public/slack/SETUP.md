@@ -32,7 +32,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 ## 2. Twenty
 
-1. Install this app (`twenty-slack`) on your Twenty server.
+1. Install this app (`slack`) on your Twenty server.
 2. **Settings → Applications → Twenty Slack → Application registration** (admin only), set `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET`.
 3. **Connections → Add connection**, choose **Just for me** or **Workspace shared**, complete the Slack sign-in.
 
