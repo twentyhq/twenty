@@ -7,13 +7,11 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldConfigure',
   component: SettingsObjectNewFieldConfigure,
-  decorators: [MemoryRouterDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural/new-field/configure',
     routeParams: { ':objectNamePlural': 'companies' },

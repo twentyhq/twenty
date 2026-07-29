@@ -7,12 +7,10 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectFieldEdit',
   component: SettingsObjectFieldEdit,
-  decorators: [MemoryRouterDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural/:fieldName',
     routeParams: { ':objectNamePlural': 'companies', ':fieldName': 'name' },

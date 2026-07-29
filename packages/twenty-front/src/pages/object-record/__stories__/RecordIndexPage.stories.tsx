@@ -7,12 +7,10 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',
   component: RecordIndexPage,
-  decorators: [MemoryRouterDecorator, PageDecorator],
   args: {
     routePath: '/objects/:objectNamePlural',
     routeParams: {
