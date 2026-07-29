@@ -102,8 +102,8 @@ export class FlatNavigationMenuItemValidatorService {
         if (!hasPageLayoutId) {
           errors.push({
             code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-            message: t`pageLayoutId is required for PAGE_LAYOUT type`,
-            userFriendlyMessage: msg`pageLayoutId is required for PAGE_LAYOUT type`,
+            message: t`pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
+            userFriendlyMessage: msg`pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
           });
         }
         break;
