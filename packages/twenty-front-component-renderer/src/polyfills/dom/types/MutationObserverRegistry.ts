@@ -11,6 +11,11 @@ export type MutationObserverRegistry = {
     targets: Iterable<Node>;
     sink: MutationRecordSink;
   }) => void;
+  registerTransientObservations: (input: {
+    detachedNode: Node;
+    formerParent: Node;
+  }) => void;
+  clearTransientObservations: (input: { sink: MutationRecordSink }) => void;
   broadcastMutationRecord: (input: {
     record: WorkerMutationRecord;
     oldValue: string | null;

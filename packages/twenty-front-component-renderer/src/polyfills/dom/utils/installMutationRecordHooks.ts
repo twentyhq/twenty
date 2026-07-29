@@ -110,6 +110,11 @@ export const installMutationRecordHooks = ({
   hooks.removeChild = (parent, node, index) => {
     removeChildHook?.(parent, node, index);
 
+    registry.registerTransientObservations({
+      detachedNode: node,
+      formerParent: parent,
+    });
+
     registry.broadcastMutationRecord({
       record: createMutationRecord({
         type: 'childList',

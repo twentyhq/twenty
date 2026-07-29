@@ -11,21 +11,24 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
     Node,
     MutationObserverRegistration[]
   >();
+  const transientTargetsBySink = new Map<MutationRecordSink, Set<Node>>();
   let registrationCount = 0;
+
+  const replaceRegistrations = (
+    target: Node,
+    registrations: MutationObserverRegistration[],
+    nextRegistrations: MutationObserverRegistration[],
+  ) => {
+    registrationCount += nextRegistrations.length - registrations.length;
+    registrationsByTarget.set(target, nextRegistrations);
+  };
 
   return {
     registerObservation: ({ target, sink, options }) => {
       const registrations = registrationsByTarget.get(target) ?? [];
-      const registrationsFromOtherSinks = registrations.filter(
-        (registration) => registration.sink !== sink,
-      );
 
-      if (registrationsFromOtherSinks.length === registrations.length) {
-        registrationCount += 1;
-      }
-
-      registrationsByTarget.set(target, [
-        ...registrationsFromOtherSinks,
+      replaceRegistrations(target, registrations, [
+        ...registrations.filter((registration) => registration.sink !== sink),
         { sink, options },
       ]);
     },
@@ -38,13 +41,83 @@ export const createMutationObserverRegistry = (): MutationObserverRegistry => {
           continue;
         }
 
-        const remainingRegistrations = registrations.filter(
-          (registration) => registration.sink !== sink,
+        replaceRegistrations(
+          target,
+          registrations,
+          registrations.filter((registration) => registration.sink !== sink),
         );
+      }
+    },
 
-        registrationCount -=
-          registrations.length - remainingRegistrations.length;
-        registrationsByTarget.set(target, remainingRegistrations);
+    registerTransientObservations: ({ detachedNode, formerParent }) => {
+      if (registrationCount === 0) {
+        return;
+      }
+
+      const transientRegistrations: MutationObserverRegistration[] = [];
+      let ancestor: Node | null = formerParent;
+
+      while (isDefined(ancestor)) {
+        for (const registration of registrationsByTarget.get(ancestor) ?? []) {
+          if (registration.options.subtree !== true) {
+            continue;
+          }
+
+          transientRegistrations.push({
+            sink: registration.sink,
+            options: registration.options,
+            isTransient: true,
+          });
+        }
+
+        ancestor = ancestor.parentNode;
+      }
+
+      if (transientRegistrations.length === 0) {
+        return;
+      }
+
+      const registrations = registrationsByTarget.get(detachedNode) ?? [];
+
+      replaceRegistrations(detachedNode, registrations, [
+        ...registrations,
+        ...transientRegistrations,
+      ]);
+
+      for (const { sink } of transientRegistrations) {
+        const transientTargets = transientTargetsBySink.get(sink) ?? new Set();
+
+        transientTargets.add(detachedNode);
+        transientTargetsBySink.set(sink, transientTargets);
+
+        sink.scheduleDelivery();
+      }
+    },
+
+    clearTransientObservations: ({ sink }) => {
+      const transientTargets = transientTargetsBySink.get(sink);
+
+      if (!isDefined(transientTargets)) {
+        return;
+      }
+
+      transientTargetsBySink.delete(sink);
+
+      for (const target of transientTargets) {
+        const registrations = registrationsByTarget.get(target);
+
+        if (!isDefined(registrations)) {
+          continue;
+        }
+
+        replaceRegistrations(
+          target,
+          registrations,
+          registrations.filter(
+            (registration) =>
+              registration.isTransient !== true || registration.sink !== sink,
+          ),
+        );
       }
     },
 

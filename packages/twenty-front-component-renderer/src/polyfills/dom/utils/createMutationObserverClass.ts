@@ -43,6 +43,8 @@ export const createMutationObserverClass = ({
     #targets = new Set<Node>();
 
     #deliverRecords = () => {
+      registry.clearTransientObservations({ sink: this.#sink });
+
       const records = this.takeRecords();
 
       if (records.length === 0) {
@@ -59,6 +61,9 @@ export const createMutationObserverClass = ({
     #sink: MutationRecordSink = {
       enqueueMutationRecord: (record) => {
         this.#records.push(record);
+        scheduleDelivery(this.#deliverRecords);
+      },
+      scheduleDelivery: () => {
         scheduleDelivery(this.#deliverRecords);
       },
     };
@@ -84,6 +89,7 @@ export const createMutationObserverClass = ({
         targets: this.#targets,
         sink: this.#sink,
       });
+      registry.clearTransientObservations({ sink: this.#sink });
 
       this.#targets.clear();
       this.#records = [];

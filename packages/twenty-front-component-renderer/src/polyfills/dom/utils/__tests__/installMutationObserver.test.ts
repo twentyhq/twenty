@@ -161,6 +161,112 @@ describe('installMutationObserver', () => {
     expect(record.nextSibling).toBe(lastChild);
   });
 
+  it('keeps observing a subtree that was detached earlier in the same batch', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const branch = document.createElement('div');
+    container.appendChild(branch);
+
+    new MutationObserver(collect).observe(container, {
+      childList: true,
+      subtree: true,
+    });
+
+    container.removeChild(branch);
+
+    const lateChild = document.createElement('span');
+    branch.appendChild(lateChild);
+
+    await flushDelivery();
+
+    expect(deliveries[0]).toHaveLength(2);
+    expect(deliveries[0][0].removedNodes).toEqual([branch]);
+    expect(deliveries[0][1].target).toBe(branch);
+    expect(deliveries[0][1].addedNodes).toEqual([lateChild]);
+  });
+
+  it('stops observing a detached subtree once its records were delivered', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const branch = document.createElement('div');
+    container.appendChild(branch);
+
+    new MutationObserver(collect).observe(container, {
+      childList: true,
+      subtree: true,
+    });
+
+    container.removeChild(branch);
+
+    await flushDelivery();
+
+    branch.appendChild(document.createElement('span'));
+
+    await flushDelivery();
+
+    expect(deliveries).toHaveLength(1);
+    expect(deliveries[0]).toHaveLength(1);
+  });
+
+  it('clears transient registrations even when the removal queued no record', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const branch = document.createElement('div');
+    container.appendChild(branch);
+
+    new MutationObserver(collect).observe(container, {
+      attributes: true,
+      subtree: true,
+    });
+
+    container.removeChild(branch);
+    branch.setAttribute('data-open', 'true');
+
+    await flushDelivery();
+
+    expect(deliveries).toHaveLength(1);
+    expect(deliveries[0]).toHaveLength(1);
+    expect(deliveries[0][0].attributeName).toBe('data-open');
+
+    branch.setAttribute('data-open', 'false');
+
+    await flushDelivery();
+
+    expect(deliveries).toHaveLength(1);
+  });
+
+  it('delivers a detached subtree mutation only once when the node is reattached', async () => {
+    const { document, MutationObserver } = createSandbox();
+    const { collect, deliveries } = createRecordCollector();
+
+    const container = document.createElement('div');
+    const branch = document.createElement('div');
+    container.appendChild(branch);
+
+    new MutationObserver(collect).observe(container, {
+      childList: true,
+      subtree: true,
+    });
+
+    container.removeChild(branch);
+    container.appendChild(branch);
+    branch.appendChild(document.createElement('span'));
+
+    await flushDelivery();
+
+    const childListOnBranch = deliveries[0].filter(
+      (record) => record.target === branch,
+    );
+
+    expect(childListOnBranch).toHaveLength(1);
+  });
+
   it('ignores descendant mutations unless subtree is requested', async () => {
     const { document, MutationObserver } = createSandbox();
     const { collect, deliveries } = createRecordCollector();

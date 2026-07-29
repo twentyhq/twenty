@@ -2,4 +2,5 @@ import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationR
 
 export type MutationRecordSink = {
   enqueueMutationRecord: (record: WorkerMutationRecord) => void;
+  scheduleDelivery: () => void;
 };
