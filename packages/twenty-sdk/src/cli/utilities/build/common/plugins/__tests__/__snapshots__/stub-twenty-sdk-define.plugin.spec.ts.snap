@@ -39,6 +39,8 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "featureFlags",
     "getFieldUniversalIdentifier",
     "getSystemRelationFieldUniversalIdentifier",
+    "getSystemViewFieldUniversalIdentifier",
+    "getSystemViewUniversalIdentifier",
     "hasAnySoftDeleteFilterOnView",
     "includes",
     "includesEvery",
