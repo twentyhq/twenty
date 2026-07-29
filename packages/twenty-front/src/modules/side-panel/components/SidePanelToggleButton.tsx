@@ -55,9 +55,6 @@ export const SidePanelToggleButton = () => {
     ({ page }) => COMMAND_MENU_SIDE_PANEL_PAGES.includes(page),
   );
 
-  // On mobile the side panel covers the page, so this header button lands on top
-  // of the panel's own close button. Layout customization mode is the exception:
-  // there the button is deliberately moved into the panel's top bar.
   const isCoveredBySidePanelOnMobile =
     isMobile && isSidePanelOpened && !alignWithSidePanelTopBar;
 
