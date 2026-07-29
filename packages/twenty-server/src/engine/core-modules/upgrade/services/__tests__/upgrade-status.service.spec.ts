@@ -61,7 +61,7 @@ const buildWorkspaceCacheGetMock = (
 
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
-  let getLastAttemptedInstanceCommand: jest.Mock;
+  let getInstanceProgress: jest.Mock;
   let getInferredVersion: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
@@ -81,7 +81,9 @@ describe('UpgradeStatusService', () => {
   };
 
   beforeEach(async () => {
-    getLastAttemptedInstanceCommand = jest.fn();
+    getInstanceProgress = jest
+      .fn()
+      .mockResolvedValue({ lastCompleted: null, blocked: null });
     getInferredVersion = jest.fn(async (name?: string) => {
       if (!name) return null;
       const idx = name.indexOf('_');
@@ -104,7 +106,7 @@ describe('UpgradeStatusService', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLastAttemptedInstanceCommand,
+            getInstanceProgress,
             getInferredVersion,
             getWorkspaceLastAttemptedCommandName,
           },
@@ -141,13 +143,22 @@ describe('UpgradeStatusService', () => {
   });
 
   describe('getInstanceStatus', () => {
-    it('should return up-to-date when cursor is at last instance command', async () => {
-      getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
-        status: 'completed',
-        executedByVersion: '1.23.0',
-        errorMessage: null,
-        createdAt: new Date('2025-06-01T00:00:00Z'),
+    const buildAttempt = (
+      name: string,
+      status: 'completed' | 'failed',
+      errorMessage: string | null = null,
+    ) => ({
+      name,
+      status,
+      executedByVersion: name.substring(0, name.indexOf('_')),
+      errorMessage,
+      createdAt: new Date('2025-06-01T00:00:00Z'),
+    });
+
+    it('should return up-to-date when every instance command has completed', async () => {
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: buildAttempt(V1_23_INSTANCE_COMMAND, 'completed'),
+        blocked: null,
       });
 
       const result = await service.getInstanceStatus();
@@ -156,13 +167,10 @@ describe('UpgradeStatusService', () => {
       expect(result.inferredVersion).toBe('1.23.0');
     });
 
-    it('should return behind when cursor is before last instance command', async () => {
-      getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_22_INSTANCE_COMMAND,
-        status: 'completed',
-        executedByVersion: '1.22.0',
-        errorMessage: null,
-        createdAt: new Date('2025-06-01T00:00:00Z'),
+    it('should return behind when an instance command has not been attempted', async () => {
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: buildAttempt(V1_22_INSTANCE_COMMAND, 'completed'),
+        blocked: { name: V1_23_INSTANCE_COMMAND, attempt: null },
       });
 
       const result = await service.getInstanceStatus();
@@ -171,13 +179,17 @@ describe('UpgradeStatusService', () => {
       expect(result.inferredVersion).toBe('1.22.0');
     });
 
-    it('should return failed when latest instance command failed', async () => {
-      getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
-        status: 'failed',
-        executedByVersion: '1.23.0',
-        errorMessage: 'column does not exist',
-        createdAt: new Date('2025-06-01T01:00:00Z'),
+    it('should return failed when the blocking instance command failed', async () => {
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: buildAttempt(V1_22_INSTANCE_COMMAND, 'completed'),
+        blocked: {
+          name: V1_23_INSTANCE_COMMAND,
+          attempt: buildAttempt(
+            V1_23_INSTANCE_COMMAND,
+            'failed',
+            'column does not exist',
+          ),
+        },
       });
 
       const result = await service.getInstanceStatus();
@@ -187,13 +199,32 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind when no migrations exist', async () => {
-      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: null,
+        blocked: { name: V1_21_INSTANCE_COMMAND, attempt: null },
+      });
 
       const result = await service.getInstanceStatus();
 
       expect(result.health).toBe(UpgradeHealthEnum.BEHIND);
       expect(result.inferredVersion).toBeNull();
       expect(result.latestCommand).toBeNull();
+    });
+
+    // Regression: a slow command re-dating an early step used to make the
+    // newest row a 1.21.0 command on an instance that had finished 1.23.0,
+    // which reported BEHIND at the wrong version forever.
+    it('should ignore which command ran most recently', async () => {
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: buildAttempt(V1_23_INSTANCE_COMMAND, 'completed'),
+        blocked: null,
+      });
+
+      const result = await service.getInstanceStatus();
+
+      expect(result.health).toBe(UpgradeHealthEnum.UP_TO_DATE);
+      expect(result.inferredVersion).toBe('1.23.0');
+      expect(result.latestCommand?.name).toBe(V1_23_INSTANCE_COMMAND);
     });
   });
 
@@ -418,12 +449,15 @@ describe('UpgradeStatusService', () => {
       cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-2']);
       cacheGetFailedWorkspaceIds.mockResolvedValue(['ws-3']);
       cacheGetUpToDateWorkspaceCount.mockResolvedValue(5);
-      getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
-        status: 'completed',
-        executedByVersion: '1.23.0',
-        errorMessage: null,
-        createdAt: new Date('2025-06-01T00:00:00Z'),
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: {
+          name: V1_23_INSTANCE_COMMAND,
+          status: 'completed',
+          executedByVersion: '1.23.0',
+          errorMessage: null,
+          createdAt: new Date('2025-06-01T00:00:00Z'),
+        },
+        blocked: null,
       });
       coreEntityCacheGet.mockImplementation(
         buildWorkspaceCacheGetMock([
@@ -444,7 +478,10 @@ describe('UpgradeStatusService', () => {
 
     it('should fall back to a refresh when the cache marker is missing', async () => {
       cacheGetComputedAt.mockResolvedValue(null);
-      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: null,
+        blocked: null,
+      });
       mockActiveWorkspaces([{ id: 'ws-1', displayName: 'Apple' }]);
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
@@ -457,7 +494,10 @@ describe('UpgradeStatusService', () => {
     it('should use null name when a cached id is missing from the cache', async () => {
       cacheGetComputedAt.mockResolvedValue(new Date());
       cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-orphan']);
-      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: null,
+        blocked: null,
+      });
       coreEntityCacheGet.mockResolvedValue(null);
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
@@ -469,7 +509,10 @@ describe('UpgradeStatusService', () => {
 
     it('should not query workspace names when both cached id sets are empty', async () => {
       cacheGetComputedAt.mockResolvedValue(new Date());
-      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: null,
+        blocked: null,
+      });
 
       await service.getInstanceAndAllWorkspacesStatus();
 
@@ -479,7 +522,10 @@ describe('UpgradeStatusService', () => {
 
   describe('refreshInstanceAndAllWorkspacesStatus', () => {
     it('should partition workspaces by health, write to cache, and return the fresh payload', async () => {
-      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      getInstanceProgress.mockResolvedValue({
+        lastCompleted: null,
+        blocked: null,
+      });
       mockActiveWorkspaces([
         { id: 'ws-1', displayName: 'Apple' },
         { id: 'ws-2', displayName: 'Banana' },
