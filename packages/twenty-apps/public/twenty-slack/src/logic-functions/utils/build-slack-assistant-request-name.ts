@@ -1,4 +1,4 @@
-import { SLACK_ASSISTANT_REQUEST_NAME_MAX_LENGTH } from 'src/logic-functions/constants/slack-assistant-request-name-max-length';
+const SLACK_ASSISTANT_REQUEST_NAME_MAX_LENGTH = 60;
 
 export const buildSlackAssistantRequestName = (requestText: string): string => {
   const codePoints = [...requestText];

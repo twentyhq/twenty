@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type RunAgentResult } from 'twenty-sdk/logic-function';
 
-import { SLACK_ASSISTANT_EMPTY_RESPONSE_FALLBACK_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-fallback-text';
+const SLACK_ASSISTANT_EMPTY_RESPONSE_FALLBACK_TEXT =
+  'Done. I finished the requested action, but did not get a text summary back from the model.';
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && typeof result.response === 'string';
