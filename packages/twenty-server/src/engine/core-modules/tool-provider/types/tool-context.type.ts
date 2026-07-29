@@ -4,10 +4,15 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type ToolContext = {
   workspaceId: string;
   roleId: string;
+  // Defaults to the single role in roleId. Set it to compose several roles, for
+  // instance when a run is narrowed to the intersection of an agent role and
+  // the workspace member it runs as.
+  rolePermissionConfig?: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   actorContext?: ActorMetadata;
   userId?: string;

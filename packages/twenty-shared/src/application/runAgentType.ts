@@ -1,6 +1,7 @@
 export type RunAgentInput = {
   agentUniversalIdentifier: string;
   prompt: string;
+  runAsWorkspaceMemberId?: string;
 };
 
 export type RunAgentResult = {

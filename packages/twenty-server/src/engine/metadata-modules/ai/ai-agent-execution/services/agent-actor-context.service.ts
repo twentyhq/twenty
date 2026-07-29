@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import {
   AiException,
   AiExceptionCode,
@@ -26,6 +30,12 @@ export type AgentActorContext = {
   userId: string;
   userWorkspaceId: string;
   userContext: UserContext;
+};
+
+export type RunAsWorkspaceMemberContext = {
+  actorContext: ActorMetadata;
+  authContext: UserWorkspaceAuthContext;
+  roleId: string;
 };
 
 @Injectable()
@@ -111,6 +121,51 @@ export class AgentActorContextService {
       userId: userWorkspace.userId,
       userWorkspaceId,
       userContext,
+    };
+  }
+
+  // Used when an agent runs on behalf of a workspace member: the run gets that
+  // member's auth context, so row-level permissions and record attribution
+  // follow the member rather than the calling application.
+  async buildRunAsWorkspaceMemberContext({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<RunAsWorkspaceMemberContext> {
+    const workspaceMember =
+      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+        workspaceMemberId,
+        workspaceId,
+      });
+
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: workspaceMember.userId,
+        workspaceId,
+        relations: ['workspace', 'user'],
+      });
+
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      userWorkspaceId: userWorkspace.id,
+      workspaceId,
+    });
+
+    return {
+      actorContext: buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: workspaceMember.name,
+        workspaceMemberId: workspaceMember.id,
+        source: FieldActorSource.AGENT,
+      }),
+      authContext: buildUserAuthContext({
+        workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
+        userWorkspaceId: userWorkspace.id,
+        user: fromUserEntityToFlat(userWorkspace.user),
+        workspaceMemberId: workspaceMember.id,
+        workspaceMember,
+      }),
+      roleId,
     };
   }
 }

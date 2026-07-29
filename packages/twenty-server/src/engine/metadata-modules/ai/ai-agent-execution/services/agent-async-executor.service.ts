@@ -65,6 +65,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -133,16 +134,34 @@ export class AgentAsyncExecutorService {
     return {};
   }
 
+  // The agent role stays first: it is the role explicit object grants are
+  // resolved against. A run-as role only ever narrows it further.
+  private buildAgentRolePermissionConfig({
+    agentRoleId,
+    runAsRoleId,
+  }: {
+    agentRoleId: string;
+    runAsRoleId?: string;
+  }): RolePermissionConfig {
+    return {
+      intersectionOf: isDefined(runAsRoleId)
+        ? [agentRoleId, runAsRoleId]
+        : [agentRoleId],
+    };
+  }
+
   // Workflow agent nodes run a scoped task: pre-load the full schemas of the
   // few explicitly-granted objects so the model skips the learn_tools round trip.
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -151,7 +170,10 @@ export class AgentAsyncExecutorService {
     const toolProviderContext: ToolProviderContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
-      rolePermissionConfig: { intersectionOf: [agentRoleId] },
+      rolePermissionConfig: this.buildAgentRolePermissionConfig({
+        agentRoleId,
+        runAsRoleId,
+      }),
       requireExplicitObjectGrants: true,
       authContext,
       actorContext,
@@ -173,19 +195,28 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
+    // Left undefined without a run-as role so the catalog and the meta-tools
+    // keep resolving permissions exactly as they do outside run-as mode.
+    const rolePermissionConfig = isDefined(runAsRoleId)
+      ? this.buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+      : undefined;
+
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
+      rolePermissionConfig,
       authContext,
       actorContext,
       userId,
@@ -195,7 +226,7 @@ export class AgentAsyncExecutorService {
     const fullCatalog = await this.toolRegistry.buildToolIndex(
       agent.workspaceId,
       agentRoleId,
-      { userId, userWorkspaceId },
+      { userId, userWorkspaceId, rolePermissionConfig },
     );
 
     const allowedCategories = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
@@ -238,6 +269,7 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
+    runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
   }: {
@@ -248,6 +280,7 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
+    runAsRoleId?: string;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -304,6 +337,7 @@ export class AgentAsyncExecutorService {
             const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });
@@ -314,6 +348,7 @@ export class AgentAsyncExecutorService {
             registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });

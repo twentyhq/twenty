@@ -4,11 +4,16 @@ import {
   type RunAgentInput,
   type RunAgentResult,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import {
+  AgentActorContextService,
+  type RunAsWorkspaceMemberContext,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -20,6 +25,7 @@ export class AgentRunService {
   private readonly logger = new Logger(AgentRunService.name);
 
   constructor(
+    private readonly agentActorContextService: AgentActorContextService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -57,7 +63,29 @@ export class AgentRunService {
       );
     }
 
-    const authContext: WorkspaceAuthContext = {
+    const { runAsWorkspaceMemberId } = input;
+    let runAsContext: RunAsWorkspaceMemberContext | undefined;
+
+    if (isDefined(runAsWorkspaceMemberId)) {
+      const resolvedRunAsContext = await this.buildRunAsContext({
+        workspaceMemberId: runAsWorkspaceMemberId,
+        workspaceId: workspace.id,
+      });
+
+      // Fail closed: falling back to the agent role alone would run the agent
+      // with more permissions than the member the caller asked to run as.
+      if (!isDefined(resolvedRunAsContext)) {
+        return {
+          result: null,
+          error: `Could not run as workspace member ${runAsWorkspaceMemberId}.`,
+          success: false,
+        };
+      }
+
+      runAsContext = resolvedRunAsContext;
+    }
+
+    const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
       type: 'application',
       workspace,
       application,
@@ -69,9 +97,12 @@ export class AgentRunService {
           agent,
           userPrompt: input.prompt,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          actorContext: runAsContext?.actorContext,
           authContext,
           workspaceId: workspace.id,
-          userWorkspaceId: requestUserWorkspaceId,
+          userWorkspaceId:
+            runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
+          runAsRoleId: runAsContext?.roleId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
         });
@@ -96,6 +127,30 @@ export class AgentRunService {
         error: 'Agent execution failed.',
         success: false,
       };
+    }
+  }
+
+  private async buildRunAsContext({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<RunAsWorkspaceMemberContext | null> {
+    try {
+      return await this.agentActorContextService.buildRunAsWorkspaceMemberContext(
+        {
+          workspaceMemberId,
+          workspaceId,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not build a run-as context for workspace member ${workspaceMemberId}`,
+        error instanceof Error ? error.stack : error,
+      );
+
+      return null;
     }
   }
 }

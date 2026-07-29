@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
@@ -13,6 +14,9 @@ describe('AgentRunService', () => {
   let agentRepository: { findOne: jest.Mock };
   let applicationService: { findById: jest.Mock };
   let agentAsyncExecutorService: { executeAgent: jest.Mock };
+  let agentActorContextService: {
+    buildRunAsWorkspaceMemberContext: jest.Mock;
+  };
 
   const workspace = { id: 'workspace-1' } as FlatWorkspace;
 
@@ -21,6 +25,20 @@ describe('AgentRunService', () => {
   const input = {
     agentUniversalIdentifier: 'agent-uid',
     prompt: 'Enrich record 123',
+  };
+
+  const runAsActorContext = {
+    source: 'AGENT',
+    workspaceMemberId: 'workspace-member-1',
+  };
+
+  const runAsAuthContext = {
+    type: 'user',
+    workspace,
+    userWorkspaceId: 'member-user-workspace-1',
+    user: { id: 'user-1' },
+    workspaceMemberId: 'workspace-member-1',
+    workspaceMember: { id: 'workspace-member-1' },
   };
 
   beforeEach(async () => {
@@ -34,10 +52,21 @@ describe('AgentRunService', () => {
         hasNoMoreAvailableCredits: false,
       }),
     };
+    agentActorContextService = {
+      buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
+        actorContext: runAsActorContext,
+        authContext: runAsAuthContext,
+        roleId: 'member-role-1',
+      }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AgentRunService,
+        {
+          provide: AgentActorContextService,
+          useValue: agentActorContextService,
+        },
         {
           provide: AgentAsyncExecutorService,
           useValue: agentAsyncExecutorService,
@@ -94,6 +123,66 @@ describe('AgentRunService', () => {
         },
       }),
     );
+  });
+
+  it('does not resolve a run-as context when no workspace member is requested', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
+    });
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        actorContext: undefined,
+        runAsRoleId: undefined,
+      }),
+    );
+  });
+
+  it('runs as the requested workspace member with their auth context and role', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+    });
+
+    expect(
+      agentActorContextService.buildRunAsWorkspaceMemberContext,
+    ).toHaveBeenCalledWith({
+      workspaceMemberId: 'workspace-member-1',
+      workspaceId: workspace.id,
+    });
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        actorContext: runAsActorContext,
+        authContext: runAsAuthContext,
+        runAsRoleId: 'member-role-1',
+        userWorkspaceId: 'member-user-workspace-1',
+      }),
+    );
+  });
+
+  it('fails the run instead of falling back to the agent role when the member cannot be resolved', async () => {
+    agentActorContextService.buildRunAsWorkspaceMemberContext.mockRejectedValue(
+      new Error('Workspace member not found'),
+    );
+
+    const result = await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input: { ...input, runAsWorkspaceMemberId: 'workspace-member-1' },
+    });
+
+    expect(result).toEqual({
+      result: null,
+      error: 'Could not run as workspace member workspace-member-1.',
+      success: false,
+    });
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
 
   it('runs the agent with the programmatic base system prompt', async () => {

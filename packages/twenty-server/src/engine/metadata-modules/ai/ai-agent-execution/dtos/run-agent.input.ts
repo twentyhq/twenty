@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { type RunAgentInput } from 'twenty-shared/application';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType('RunAgentInput')
 export class RunAgentInputDTO implements RunAgentInput {
@@ -14,4 +16,9 @@ export class RunAgentInputDTO implements RunAgentInput {
   @IsNotEmpty()
   @Field()
   prompt: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  runAsWorkspaceMemberId?: string;
 }

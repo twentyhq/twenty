@@ -127,6 +127,31 @@ Key points:
   failure `success` is `false`, `result` is `null`, and `error` holds the
   reason (for example, when the workspace ran out of AI credits mid-run).
 
+### Running on behalf of a workspace member
+
+Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat
+bot answering a message, for instance — so the agent acts as that member
+instead of as the app:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+The run is then restricted to what **both** the agent's role and the member's
+role allow, records it creates are attributed to that member, and the member's
+row-level permissions apply. Omit the field for autonomous runs (scheduled
+jobs, database-event triggers): those keep the agent's own role.
+
+<Warning>
+  The run fails when the workspace member cannot be resolved — a missing or
+  deactivated member, or one with no role. It never falls back to the agent's
+  own role, since that would grant more access than the caller asked for.
+</Warning>
+
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
 

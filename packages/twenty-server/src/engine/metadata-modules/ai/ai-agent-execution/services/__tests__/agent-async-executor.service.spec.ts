@@ -211,6 +211,71 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(system).not.toContain('create_one_workflow');
   });
 
+  it('intersects the agent role with the run-as role, keeping the agent role first', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      runAsRoleId: 'run-as-role-id',
+    });
+
+    expect(toolRegistry.getToolsByCategories).toHaveBeenCalledWith(
+      expect.objectContaining({
+        roleId: agentRoleId,
+        rolePermissionConfig: {
+          intersectionOf: [agentRoleId, 'run-as-role-id'],
+        },
+      }),
+      expect.objectContaining({ wrapWithErrorContext: false }),
+    );
+  });
+
+  it('intersects the agent role with the run-as role on the lazy path used by runAgent', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      runAsRoleId: 'run-as-role-id',
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.objectContaining({
+        rolePermissionConfig: {
+          intersectionOf: [agentRoleId, 'run-as-role-id'],
+        },
+      }),
+    );
+  });
+
+  it('leaves the lazy path on its default role resolution without a run-as role', async () => {
+    roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
+    toolRegistry.buildToolIndex.mockResolvedValueOnce([]);
+
+    await service.executeAgent({
+      agent: buildAgent(),
+      userPrompt: 'test',
+      baseSystemPrompt: 'base system prompt',
+      workspaceId,
+      toolLoadingStrategy: 'lazy',
+    });
+
+    expect(toolRegistry.buildToolIndex).toHaveBeenCalledWith(
+      workspaceId,
+      agentRoleId,
+      expect.objectContaining({ rolePermissionConfig: undefined }),
+    );
+  });
+
   it('does not resolve registry tools when the agent has no role (fail-closed)', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce(null);
 
