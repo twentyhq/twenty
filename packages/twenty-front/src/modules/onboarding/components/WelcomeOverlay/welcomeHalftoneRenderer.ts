@@ -8,8 +8,9 @@ const DASH_ASSEMBLE_DURATION_SECONDS = 0.62;
 const DASH_STRETCH_DURATION_SECONDS = 0.5;
 const BURST_DURATION_SECONDS = 0.75;
 const SETTLE_DRIFT_DURATION_SECONDS = 0.6;
-const SHIMMER_SWEEP_SPEED = 0.36;
-const SHIMMER_SWEEP_CYCLE = 1.3;
+// A full sweep has to finish inside WELCOME_HOLD_MIN_DURATION_MS or the last
+// particles it reaches never get lit before the burst starts
+const SHIMMER_SWEEP_DURATION_SECONDS = 2.6;
 const SHIMMER_BAND_HALF_WIDTH = 0.06;
 const SHIMMER_PEAK_OPACITY = 0.28;
 const MINIMUM_VISIBLE_OPACITY = 0.01;
@@ -146,8 +147,8 @@ export const createWelcomeHalftoneRenderer = (
     context.clearRect(0, 0, canvasWidth, canvasHeight);
 
     const shimmerSweepPosition =
-      ((elapsedSeconds * SHIMMER_SWEEP_SPEED) % SHIMMER_SWEEP_CYCLE) /
-      SHIMMER_SWEEP_CYCLE;
+      (elapsedSeconds % SHIMMER_SWEEP_DURATION_SECONDS) /
+      SHIMMER_SWEEP_DURATION_SECONDS;
     const isShimmerActive = !reducedMotion && !isLeaving;
     const inverseViewportSpan = 1 / (canvasWidth + canvasHeight);
     context.strokeStyle = baseColor;
@@ -189,8 +190,10 @@ export const createWelcomeHalftoneRenderer = (
         capsuleLength =
           particle.capsuleLengthAtLeaveStart +
           outwardPushDistance * 0.12 * burstProgress;
-        capsuleDirectionX = particle.burstDirectionX;
-        capsuleDirectionY = particle.burstDirectionY;
+        const capsuleAngle =
+          particle.burstAngleFromHorizontal * easedBurstProgress;
+        capsuleDirectionX = Math.cos(capsuleAngle);
+        capsuleDirectionY = Math.sin(capsuleAngle);
       }
 
       if (particleOpacity <= MINIMUM_VISIBLE_OPACITY) {

@@ -47,6 +47,19 @@ export const buildWelcomeHalftoneParticles = (
       const scatterRadius =
         halftoneSize * (0.35 + 0.5 * pseudoRandomFromSeed(dashIndex * 2.1));
       const scaledStrokeWidth = dashStrokeWidth * viewboxToCanvasScale;
+      const burstDirectionX =
+        distanceToCenter > 0 ? (targetX - canvasCenterX) / distanceToCenter : 0;
+      const burstDirectionY =
+        distanceToCenter > 0
+          ? (targetY - canvasCenterY) / distanceToCenter
+          : -1;
+      // A centered capsule is symmetric, so mirroring leftward bursts into the
+      // right hemisphere keeps the horizontal to radial rotation on the short arc
+      const isBurstDirectionPointingRight = burstDirectionX >= 0;
+      const burstAngleFromHorizontal = Math.atan2(
+        isBurstDirectionPointingRight ? burstDirectionY : -burstDirectionY,
+        isBurstDirectionPointingRight ? burstDirectionX : -burstDirectionX,
+      );
 
       return {
         targetX,
@@ -58,14 +71,9 @@ export const buildWelcomeHalftoneParticles = (
           scaledStrokeWidth * HALFTONE_DASH_LENGTH_TO_STROKE_WIDTH_RATIO,
         ),
         strokeWidth: Math.max(scaledStrokeWidth, MINIMUM_STROKE_WIDTH),
-        burstDirectionX:
-          distanceToCenter > 0
-            ? (targetX - canvasCenterX) / distanceToCenter
-            : 0,
-        burstDirectionY:
-          distanceToCenter > 0
-            ? (targetY - canvasCenterY) / distanceToCenter
-            : -1,
+        burstDirectionX,
+        burstDirectionY,
+        burstAngleFromHorizontal,
         distanceToCenter,
         assembleDelaySeconds:
           ASSEMBLE_STAGGER_SECONDS * (distanceToCenter / maxDistanceToCenter) +

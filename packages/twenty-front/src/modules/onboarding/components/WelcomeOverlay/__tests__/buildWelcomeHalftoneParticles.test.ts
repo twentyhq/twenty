@@ -54,6 +54,27 @@ describe('buildWelcomeHalftoneParticles', () => {
     expect(particles[0].dashLength).toBeCloseTo(
       fainterSourceStrokeWidth * smallCanvasScale * 1.452,
     );
-    expect(particles[0].dashLength).toBeLessThan(particles[1].dashLength);
+    expect(particles[1].dashLength / particles[0].dashLength).toBeCloseTo(
+      denserSourceStrokeWidth / fainterSourceStrokeWidth,
+    );
+  });
+
+  it('should rotate a leftward burst on the short arc so the capsule never collapses', () => {
+    const { particles } = buildWelcomeHalftoneParticles(
+      [
+        [0, 0, 119.5, 2],
+        [297.037, 297.037, 119.5, 2],
+      ],
+      CANVAS_WIDTH,
+      CANVAS_HEIGHT,
+    );
+
+    expect(particles[0].burstDirectionX).toBeLessThan(0);
+    expect(Math.abs(particles[0].burstAngleFromHorizontal)).toBeLessThanOrEqual(
+      Math.PI / 2,
+    );
+    expect(Math.abs(particles[1].burstAngleFromHorizontal)).toBeLessThanOrEqual(
+      Math.PI / 2,
+    );
   });
 });
