@@ -14,7 +14,6 @@ const EXIT_CODE_BY_SIGNAL: Record<ShutdownSignal, number> = {
 @Injectable()
 export class CommandShutdownService {
   private readonly logger = new Logger(CommandShutdownService.name);
-  private readonly abortController = new AbortController();
 
   private receivedSignal: ShutdownSignal | undefined;
   private isListening = false;
@@ -35,10 +34,6 @@ export class CommandShutdownService {
     return isDefined(this.receivedSignal);
   }
 
-  get abortSignal(): AbortSignal {
-    return this.abortController.signal;
-  }
-
   private handleSignal(shutdownSignal: ShutdownSignal): void {
     if (isDefined(this.receivedSignal)) {
       this.logger.warn(
@@ -51,7 +46,6 @@ export class CommandShutdownService {
 
     this.receivedSignal = shutdownSignal;
     process.exitCode = EXIT_CODE_BY_SIGNAL[shutdownSignal];
-    this.abortController.abort();
 
     this.logger.warn(
       `Received ${shutdownSignal}, finishing the step in progress then stopping. ` +

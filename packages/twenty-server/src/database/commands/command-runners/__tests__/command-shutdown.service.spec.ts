@@ -48,7 +48,6 @@ describe('CommandShutdownService', () => {
     service.listenToShutdownSignals();
 
     expect(service.isShutdownRequested()).toBe(false);
-    expect(service.abortSignal.aborted).toBe(false);
   });
 
   it('should request a graceful shutdown on the first SIGINT', () => {
@@ -57,7 +56,6 @@ describe('CommandShutdownService', () => {
     signalListeners.get('SIGINT')?.();
 
     expect(service.isShutdownRequested()).toBe(true);
-    expect(service.abortSignal.aborted).toBe(true);
     expect(process.exitCode).toBe(130);
     expect(exitSpy).not.toHaveBeenCalled();
   });
