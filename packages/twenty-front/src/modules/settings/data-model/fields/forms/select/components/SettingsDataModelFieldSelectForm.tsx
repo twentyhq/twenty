@@ -203,11 +203,7 @@ export const SettingsDataModelFieldSelectForm = ({
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
 
-    if (
-      isFormMounted &&
-      isDefined(newOptionValue) &&
-      !hasAppliedNewOption
-    ) {
+    if (isFormMounted && isDefined(newOptionValue) && !hasAppliedNewOption) {
       const newOption = generateNewSelectOption(initialOptions, newOptionValue);
 
       const optionsWithNew = [...initialOptions, newOption];
