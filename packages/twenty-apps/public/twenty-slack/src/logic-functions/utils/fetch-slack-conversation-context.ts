@@ -1,5 +1,4 @@
 import { type WebClient } from '@slack/web-api';
-
 import { isNonEmptyString } from '@sniptt/guards';
 
 const CONTEXT_MESSAGE_LIMIT = 15;
@@ -15,7 +14,7 @@ const formatContextMessages = ({
   messages,
   excludeMessageTimestamps,
 }: {
-  messages: SlackContextMessage[];
+  messages: ReadonlyArray<SlackContextMessage>;
   excludeMessageTimestamps: Set<string>;
 }): string =>
   messages
@@ -64,7 +63,7 @@ export const fetchSlackConversationContext = async ({
       });
 
       return formatContextMessages({
-        messages: (replies.messages ?? []) as SlackContextMessage[],
+        messages: replies.messages ?? [],
         excludeMessageTimestamps: excludedTimestamps,
       });
     }
@@ -76,7 +75,7 @@ export const fetchSlackConversationContext = async ({
       });
 
       return formatContextMessages({
-        messages: ((history.messages ?? []) as SlackContextMessage[]).reverse(),
+        messages: [...(history.messages ?? [])].reverse(),
         excludeMessageTimestamps: excludedTimestamps,
       });
     }
