@@ -131,6 +131,37 @@ export class FileUploadService {
       },
     });
 
+    return this.buildUploadTarget({
+      workspaceId,
+      fileId,
+      fileFolder,
+      applicationUniversalIdentifier,
+      resourcePath,
+      contentType: mimeType,
+      size,
+    });
+  }
+
+  // Resolves where a client should PUT the bytes of an already-created PENDING
+  // file: the storage presigned url when the driver supports it, otherwise the
+  // token-authenticated streaming endpoint on the server.
+  async buildUploadTarget({
+    workspaceId,
+    fileId,
+    fileFolder,
+    applicationUniversalIdentifier,
+    resourcePath,
+    contentType,
+    size,
+  }: {
+    workspaceId: string;
+    fileId: string;
+    fileFolder: FileFolder;
+    applicationUniversalIdentifier: string;
+    resourcePath: string;
+    contentType: string;
+    size: number;
+  }): Promise<FileUploadTargetDTO> {
     const expiresInSeconds = this.twentyConfigService.get(
       'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
     );
@@ -142,7 +173,7 @@ export class FileUploadService {
         applicationUniversalIdentifier,
         workspaceId,
         resourcePath,
-        contentType: mimeType,
+        contentType,
         contentLength: size,
         expiresInSeconds,
       });
@@ -151,7 +182,7 @@ export class FileUploadService {
       return {
         fileId,
         uploadUrl: presignedUploadUrl,
-        contentType: mimeType,
+        contentType,
         expiresAt,
       };
     }
@@ -378,7 +409,10 @@ export class FileUploadService {
     });
   }
 
-  private async detectUploadedMimeTypeOrThrow({
+  // Sniffs the mime type of bytes that already landed in storage. The client
+  // declared nothing trustworthy at createFileUpload time (the upload target
+  // is always octet-stream), so the real type is only knowable here.
+  async detectUploadedMimeTypeOrThrow({
     fileFolder,
     applicationUniversalIdentifier,
     workspaceId,

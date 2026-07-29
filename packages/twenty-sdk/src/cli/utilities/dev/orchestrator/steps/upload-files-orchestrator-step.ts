@@ -157,12 +157,74 @@ export class UploadFilesOrchestratorStep {
     this.totalQueued = 0;
   }
 
+  // The initial upload covers the whole app, so it goes through the batched
+  // direct-upload flow instead of one rate-limited api call per file.
   private uploadPendingFiles(): void {
-    for (const [
-      builtPath,
-      { fileFolder, sourcePath },
-    ] of this.state.steps.uploadFiles.output.builtFileInfos.entries()) {
-      this.uploadFile(builtPath, sourcePath, fileFolder);
+    const step = this.state.steps.uploadFiles;
+    const fileUploader = step.output.fileUploader;
+    const pendingFiles = Array.from(step.output.builtFileInfos.entries());
+
+    if (!isDefined(fileUploader) || pendingFiles.length === 0) {
+      return;
     }
+
+    step.status = 'in_progress';
+    this.totalQueued += pendingFiles.length;
+
+    if (this.verbose) {
+      this.state.addEvent({
+        message: `Uploading ${pendingFiles.length} files`,
+        status: 'info',
+      });
+    }
+
+    for (const [, { sourcePath }] of pendingFiles) {
+      this.state.updateEntityStatus(sourcePath, 'uploading');
+    }
+    this.notify();
+
+    const uploadPromise = fileUploader
+      .uploadFiles(
+        pendingFiles.map(([builtPath, { fileFolder }]) => ({
+          builtPath,
+          fileFolder,
+        })),
+      )
+      .then((failures) => {
+        for (const failure of failures) {
+          this.failedCount++;
+          this.state.addEvent({
+            message: `Failed to upload ${failure.builtPath}: ${failure.error}`,
+            status: 'error',
+          });
+        }
+
+        for (const [builtPath, { sourcePath }] of pendingFiles) {
+          if (failures.some((failure) => failure.builtPath === builtPath)) {
+            continue;
+          }
+
+          this.uploadedCount++;
+          this.state.updateEntityStatus(sourcePath, 'success');
+        }
+      })
+      .catch((error) => {
+        this.failedCount += pendingFiles.length;
+        this.state.addEvent({
+          message: `Upload failed: ${error}`,
+          status: 'error',
+        });
+      })
+      .finally(() => {
+        step.output.activeUploads.delete(uploadPromise);
+
+        if (step.output.activeUploads.size === 0) {
+          this.logUploadSummary();
+          step.status = 'done';
+          this.notify();
+        }
+      });
+
+    step.output.activeUploads.add(uploadPromise);
   }
 }

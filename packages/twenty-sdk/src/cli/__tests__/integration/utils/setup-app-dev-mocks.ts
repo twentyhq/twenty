@@ -55,6 +55,7 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
 vi.mock('@/cli/utilities/file/file-uploader', () => ({
   FileUploader: class {
     uploadFile = vi.fn().mockResolvedValue({ success: true, data: true });
+    uploadFiles = vi.fn().mockResolvedValue([]);
   },
 }));
 
