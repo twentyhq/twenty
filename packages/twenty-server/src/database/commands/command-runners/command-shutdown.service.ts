@@ -21,8 +21,10 @@ export class CommandShutdownService {
   private receivedSignal: ShutdownSignal | undefined;
   private isListening = false;
 
-  // Signal listeners are only installed for CLI processes, so long-running
-  // processes sharing these services keep their own shutdown semantics.
+  // Registering a listener removes the default kill-on-signal behavior, so
+  // only commands that stop at an iteration boundary opt in. Every other
+  // command, and the server and worker processes sharing these services, keep
+  // their own shutdown semantics.
   listenToShutdownSignals(): void {
     if (this.isListening) {
       return;

@@ -58,6 +58,12 @@ export class WorkspaceIteratorService {
     private readonly commandShutdownService: CommandShutdownService,
   ) {}
 
+  // Opt in from a CLI command to make its iteration stop between two
+  // workspaces on SIGINT/SIGTERM instead of being killed mid-workspace.
+  listenToShutdownSignals(): void {
+    this.commandShutdownService.listenToShutdownSignals();
+  }
+
   async iterate(args: WorkspaceIteratorArgs): Promise<WorkspaceIteratorReport> {
     const { callback, ...options } = args;
 

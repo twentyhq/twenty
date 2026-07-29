@@ -108,6 +108,8 @@ export abstract class WorkspaceCommandRunner<
       });
     }
 
+    this.workspaceIteratorService.listenToShutdownSignals();
+
     try {
       const report = await this.workspaceIteratorService.iterate({
         workspaceIds:

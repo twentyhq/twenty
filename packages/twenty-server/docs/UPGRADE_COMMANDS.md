@@ -136,7 +136,7 @@ Workspace commands are executed sequentially across all active/suspended workspa
 
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
-CLI commands install cooperative shutdown handlers for `SIGINT` and `SIGTERM`.
+`upgrade`, `run-instance-commands` and any command extending `WorkspaceCommandRunner` install cooperative shutdown handlers for `SIGINT` and `SIGTERM`. Handlers are opt-in per command (`CommandShutdownService.listenToShutdownSignals()`), because registering one removes the default kill-on-signal behavior: a command that installs a handler without honoring the flag would ignore the first Ctrl+C entirely. Every other CLI command keeps the default behavior.
 
 - **First signal** — the runner finishes what it started, then stops at the next boundary instead of starting new work. Only the two iteration runners check for a shutdown: `UpgradeSequenceRunnerService` before each sequence step, and `WorkspaceIteratorService` before each workspace. Individual commands know nothing about shutdown, so a workspace that has started runs its whole pending segment before the run stops. The process exits with `130` (SIGINT) or `143` (SIGTERM) so orchestrators can tell an interruption apart from a failure.
 - **Second signal** — the process exits immediately, leaving the command in progress unfinished.

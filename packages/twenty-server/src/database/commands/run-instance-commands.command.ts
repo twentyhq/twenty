@@ -64,6 +64,8 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     _passedParams: string[],
     options: RunInstanceCommandsOptions,
   ): Promise<void> {
+    this.commandShutdownService.listenToShutdownSignals();
+
     try {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
