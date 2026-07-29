@@ -10,9 +10,9 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
+  WorkflowActionType,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
-  WorkflowActionType,
 } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -25,11 +25,11 @@ import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -52,7 +52,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -107,21 +106,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       );
     }
 
-    try {
-      const effectiveModelConfig =
-        this.aiModelRegistryService.getEffectiveModelConfig(
-          workspace.fastModel,
-        );
+    const effectiveModelConfig =
+      this.aiModelRegistryService.getEffectiveModelConfig(workspace.fastModel);
 
-      this.aiModelRegistryService.validateModelAvailability(
-        effectiveModelConfig.modelId,
-        workspace,
-      );
-
-      return effectiveModelConfig.modelId;
-    } catch {
-      return AUTO_SELECT_FAST_MODEL_ID;
-    }
+    return effectiveModelConfig.modelId;
   }
 
   async runWorkflowVersionStepDeletionSideEffects({
