@@ -120,16 +120,9 @@ export const IconPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): base-ui radio internals call MutationObserver.observe,
-// shipped as an empty stub class by @remote-dom/polyfill.
-const INPUT_EXPECTED_FAILURES = ['Radio', 'RadioGroup', 'CardPicker'];
-export const InputReact: Story = createKnownFailureGalleryStory(
+export const InputReact: Story = createGalleryStory('twenty-ui-input-gallery');
+export const InputPreact: Story = createGalleryStory(
   'twenty-ui-input-gallery',
-  INPUT_EXPECTED_FAILURES,
-);
-export const InputPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-input-gallery',
-  INPUT_EXPECTED_FAILURES,
   'preact',
 );
 
@@ -171,15 +164,11 @@ export const NavigationPreact: Story = createKnownFailureGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): AppTooltip observes document.body with the stubbed-out
-// MutationObserver.
-export const SurfacesReact: Story = createKnownFailureGalleryStory(
+export const SurfacesReact: Story = createGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
 );
-export const SurfacesPreact: Story = createKnownFailureGalleryStory(
+export const SurfacesPreact: Story = createGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
   'preact',
 );
 

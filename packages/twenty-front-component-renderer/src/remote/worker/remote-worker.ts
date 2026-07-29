@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -25,6 +26,10 @@ import { createClonableErrorThreadSerialization } from '@/utils/createClonableEr
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
+
+installMutationObserver({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+});
 
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
