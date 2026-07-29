@@ -145,7 +145,7 @@ export class AgentChatService {
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
       .addSelect('MAX(message.createdAt)', 'last_message_at')
-      .leftJoin('thread.messages', 'message')
+      .leftJoin('thread.messages', 'message', 'message.isHidden = false')
       .where(
         'thread.userWorkspaceId = :userWorkspaceId AND thread.workspaceId = :workspaceId',
         { userWorkspaceId, workspaceId },
@@ -189,7 +189,7 @@ export class AgentChatService {
       .createQueryBuilder('message')
       .select('MAX(message.createdAt)', 'last_message_at')
       .where(
-        'message.threadId = :threadId AND message.workspaceId = :workspaceId',
+        'message.threadId = :threadId AND message.workspaceId = :workspaceId AND message.isHidden = false',
         { threadId, workspaceId },
       )
       .getRawOne<{ last_message_at: Date | null }>();
@@ -204,6 +204,8 @@ export class AgentChatService {
     turnId,
     id,
     workspaceId,
+    isHidden,
+    processedAt,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -212,6 +214,8 @@ export class AgentChatService {
     turnId?: string;
     id?: string;
     workspaceId: string;
+    isHidden?: boolean;
+    processedAt?: Date;
   }) {
     let actualTurnId = turnId;
 
@@ -230,7 +234,8 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: processedAt ?? new Date(),
+      ...(isDefined(isHidden) ? { isHidden } : {}),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -319,6 +324,7 @@ export class AgentChatService {
         threadId,
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
+        isHidden: false,
       },
       order: { createdAt: 'DESC', id: 'DESC' },
       select: ['id', 'turnId'],
@@ -357,17 +363,19 @@ export class AgentChatService {
     threadId,
     userWorkspaceId,
     workspaceId,
+    includeHidden = false,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceId: string;
+    includeHidden?: boolean;
   }) {
     // getThreadById enforces ownership; messages then scoped by both
     // threadId and workspaceId.
     await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
 
     return this.messageRepository.find(workspaceId, {
-      where: { threadId },
+      where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
     });

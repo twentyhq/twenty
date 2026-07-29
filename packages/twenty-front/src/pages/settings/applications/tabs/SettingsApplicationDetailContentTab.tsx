@@ -80,7 +80,7 @@ export const SettingsApplicationDetailContentTab = ({
   });
 
   const fallbackApplicationData = {
-    logo: applicationInfo?.logo,
+    logoUrl: applicationInfo?.logoUrl,
     name: applicationInfo?.name,
   };
 
@@ -91,6 +91,8 @@ export const SettingsApplicationDetailContentTab = ({
     preInstallUniversalIdentifier:
       manifestContent?.application?.preInstallLogicFunction
         ?.universalIdentifier,
+    uninstallUniversalIdentifier:
+      manifestContent?.application?.uninstallLogicFunction?.universalIdentifier,
   };
 
   const logicFunctionRows: ApplicationContentRow[] = isDefined(

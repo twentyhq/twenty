@@ -69,7 +69,7 @@ your-app/
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
-│   generate SDK → [post-install]                         │
+│   generate SDK → [post-install] → … → [uninstall]       │
 ├─────────────────────────────────────────────────────────┤
 │ Publish                                                 │
 │   npm publish → appears in Twenty marketplace           │
@@ -78,13 +78,13 @@ your-app/
 
 * **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
 * **`yarn twenty dev:build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
-* **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
+* **Kurulum öncesi/sonrası ve kaldırma kancaları** — kurulum sırasında veya kaldırılmadan hemen önce çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 
 ## Sonraki adımlar
 
 <CardGroup cols={2}>
   <Card title="Yapılandırma" icon="screwdriver-wrench" href="/l/tr/developers/extend/apps/config/overview">
-    Uygulama kimliği, varsayılan rol ve kurulum kancaları.
+    Uygulama kimliği, varsayılan rol ve kurulum ile kaldırma kancaları.
   </Card>
   <Card title="Veri" icon="database" href="/l/tr/developers/extend/apps/data/overview">
     Nesneler, alanlar ve çift yönlü ilişkiler.

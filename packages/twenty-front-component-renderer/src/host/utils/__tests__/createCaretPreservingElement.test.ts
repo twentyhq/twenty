@@ -1,6 +1,13 @@
-import { type ReactElement } from 'react';
+import './setupServerRenderingGlobals';
+
+import { act, type ReactElement } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import { createCaretPreservingElement } from '../createCaretPreservingElement';
+
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const getProps = (element: ReactElement): Record<string, unknown> =>
   element.props as Record<string, unknown>;
@@ -10,8 +17,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { type: 'text' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(element.type).toBe('input');
@@ -22,19 +30,45 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'hello' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('hello');
+  });
+
+  it('should seed the initial value from a numeric defaultValue', () => {
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: { type: 'number', defaultValue: 42 },
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef: () => {},
+    });
+
+    expect(getProps(element).defaultValue).toBe('42');
+  });
+
+  it('should seed the initial value from a numeric value', () => {
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: { type: 'number', value: 42 },
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef: () => {},
+    });
+
+    expect(getProps(element).defaultValue).toBe('42');
   });
 
   it('should prefer defaultValue over value for the initial value', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { value: 'v', defaultValue: 'd' },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).defaultValue).toBe('d');
@@ -46,6 +80,7 @@ describe('createCaretPreservingElement', () => {
       reactBindableProps: {},
       hostEnforcedProps: { readOnly: true },
       setEditableFocused: null,
+      caretPreservingElementRef: () => {},
     });
 
     expect(getProps(element).readOnly).toBe(true);
@@ -57,8 +92,9 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: { onFocus },
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     const event = {} as never;
@@ -73,12 +109,41 @@ describe('createCaretPreservingElement', () => {
     const element = createCaretPreservingElement({
       htmlTag: 'input',
       reactBindableProps: {},
-      hostEnforcedProps: undefined,
+      hostEnforcedProps: {},
       setEditableFocused,
+      caretPreservingElementRef: () => {},
     });
 
     (getProps(element).onBlur as (event: unknown) => void)({} as never);
 
     expect(setEditableFocused).toHaveBeenCalledWith(false);
+  });
+
+  it('should forward the caret preserving ref to the rendered element', () => {
+    const caretPreservingElementRef = jest.fn();
+    const element = createCaretPreservingElement({
+      htmlTag: 'input',
+      reactBindableProps: {},
+      hostEnforcedProps: {},
+      setEditableFocused: null,
+      caretPreservingElementRef,
+    });
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(element);
+    });
+
+    expect(caretPreservingElementRef).toHaveBeenCalledWith(
+      container.firstElementChild,
+    );
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
   });
 });

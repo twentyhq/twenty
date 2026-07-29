@@ -70,7 +70,6 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         name
         universalIdentifier
-        logo
         logoUrl
       }
       isCustomDomainEnabled
@@ -81,7 +80,6 @@ export const USER_QUERY_FRAGMENT = gql`
         key
         value
       }
-      metadataVersion
       currentBillingSubscription {
         ...CurrentBillingSubscriptionFragment
       }

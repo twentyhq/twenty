@@ -33,7 +33,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
+import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
@@ -75,9 +75,10 @@ const EMPTY_USAGE: LanguageModelUsage = {
   },
 };
 
-// Agent execution within workflows uses registry tools plus native model tools.
-// Workflow registry tools are intentionally excluded to avoid circular
-// dependencies and recursive workflow execution.
+// Agent execution uses registry tools plus native model tools. The caller
+// supplies the base system prompt describing its execution context (workflow
+// step, programmatic run). Workflow registry tools are intentionally excluded
+// to avoid circular dependencies and recursive workflow execution.
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
@@ -113,6 +114,7 @@ export class AgentAsyncExecutorService {
   async executeAgent({
     agent,
     userPrompt,
+    baseSystemPrompt,
     actorContext,
     authContext,
     workspaceId,
@@ -121,6 +123,7 @@ export class AgentAsyncExecutorService {
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
+    baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
@@ -176,13 +179,14 @@ export class AgentAsyncExecutorService {
         // permission-tab role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           const agentRolePermissionConfig: RolePermissionConfig = {
-            unionOf: [agentRoleId],
+            intersectionOf: [agentRoleId],
           };
 
           const toolProviderContext: ToolProviderContext = {
             workspaceId: agent.workspaceId,
             roleId: agentRoleId,
             rolePermissionConfig: agentRolePermissionConfig,
+            requireExplicitObjectGrants: true,
             authContext,
             actorContext,
             userId:
@@ -230,7 +234,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
+        system: `${baseSystemPrompt}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
@@ -335,7 +339,7 @@ export class AgentAsyncExecutorService {
 
       if (agentSchema) {
         const structuredResult = await generateText({
-          system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+          system: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
           prompt: `Based on the following execution results, generate the structured output according to the schema:
 
@@ -426,8 +430,7 @@ export class AgentAsyncExecutorService {
       );
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +
-        (accumulatedUsage.outputTokens ?? 0) +
-        cacheCreationTokens;
+        (accumulatedUsage.outputTokens ?? 0);
 
       void this.aiBillingService.emitAiTokenUsageEvent(
         workspaceId,

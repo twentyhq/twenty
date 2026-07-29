@@ -22,8 +22,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 import { ResetPasswordService } from './reset-password.service';
 
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (_, options) => {
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockImplementation(async (_template, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }

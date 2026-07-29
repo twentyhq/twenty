@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import {
   destroyWorkflowRun,
   runWorkflowVersion,
@@ -57,31 +58,22 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
     createdWorkflowVersionId =
       getWorkflowData.workflow.versions.edges[0].node.id;
 
-    await graphql(
-      `
-        mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-          updateWorkflowVersion(id: $id, data: $data) {
-            id
-          }
-        }
-      `,
-      {
-        id: createdWorkflowVersionId,
-        data: {
-          trigger: {
-            name: 'Manual Trigger',
-            type: 'MANUAL',
-            settings: { outputSchema: {} },
-            nextStepIds: [],
-            position: { x: 0, y: 0 },
-          },
-        },
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: createdWorkflowVersionId!,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
       },
-    );
+    });
 
     await graphql(
       `
-        mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
           createWorkflowVersionStep(input: $input) {
             stepsDiff
           }
@@ -161,7 +153,9 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
 
     await graphql(
       `
-        mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+        mutation UpdateWorkflowVersionStep(
+          $input: UpdateWorkflowVersionStepInput!
+        ) {
           updateWorkflowVersionStep(input: $input) {
             id
           }
@@ -294,31 +288,22 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
       const misroutedWorkflowVersionId =
         workflowData.workflow.versions.edges[0].node.id;
 
-      await graphql(
-        `
-          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-            updateWorkflowVersion(id: $id, data: $data) {
-              id
-            }
-          }
-        `,
-        {
-          id: misroutedWorkflowVersionId,
-          data: {
-            trigger: {
-              name: 'Manual Trigger',
-              type: 'MANUAL',
-              settings: { outputSchema: {} },
-              nextStepIds: [],
-              position: { x: 0, y: 0 },
-            },
-          },
+      await updateWorkflowVersionTrigger({
+        workflowVersionId: misroutedWorkflowVersionId,
+        trigger: {
+          name: 'Manual Trigger',
+          type: 'MANUAL',
+          settings: { outputSchema: {} },
+          nextStepIds: [],
+          position: { x: 0, y: 0 },
         },
-      );
+      });
 
       await graphql(
         `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+          mutation CreateWorkflowVersionStep(
+            $input: CreateWorkflowVersionStepInput!
+          ) {
             createWorkflowVersionStep(input: $input) {
               stepsDiff
             }
@@ -353,7 +338,9 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
       // to person, not the company pool — the silent misrouting the guard blocks.
       await graphql(
         `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+          mutation UpdateWorkflowVersionStep(
+            $input: UpdateWorkflowVersionStepInput!
+          ) {
             updateWorkflowVersionStep(input: $input) {
               id
             }
@@ -397,7 +384,9 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
       expect(activateResponse.body.errors[0].message).toContain(
         'many-to-one relation',
       );
-      expect(activateResponse.body.data?.activateWorkflowVersion).not.toBe(true);
+      expect(activateResponse.body.data?.activateWorkflowVersion).not.toBe(
+        true,
+      );
     } finally {
       await graphql(
         `

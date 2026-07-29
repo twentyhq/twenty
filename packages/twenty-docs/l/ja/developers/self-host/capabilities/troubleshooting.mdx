@@ -22,7 +22,7 @@ Twentyを初めてインストールする際には、デフォルトのデー�
 ⚠️ 警告: 以下のステップを実行すると、データベース内のすべてのデータが完全に削除されます! ⚠️
 これは重要なデータのない新規インストールの場合のみ進めてください。
 
-`PG_DATABASE_PASSWORD`を更新するには、以下が必要です:
+`PG_DATABASE_PASSWORD` を更新するには、次のようにする必要があります。
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -32,7 +32,7 @@ docker compose up -d
 
 #### CR行区切り[Windows]が見つかる
 
-これはWindowsの改行文字とgit構成のためです。 次を実行してみてください: 次を実行してみてください: 次を実行してみてください:
+これは、Windows の改行文字と Git の設定を組み合わせたために発生します。 次を実行してみてください:
 
 ```
 git config --global core.autocrlf false
@@ -46,11 +46,11 @@ Twentyのインストール中に、postgresデータベースを適切なスキ
 この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
 そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
 この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
-そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
+そうでない場合は、お使いのコンピュータ上で複数の PostgreSQL インスタンスが実行されていないことを確認してください。
 
 #### モジュール'twenty-emails' またはその対応する型宣言が見つかりません。
 
-データベースの初期化を実行する前に`npx nx run twenty-emails:build`でtwenty-emailsパッケージをビルドする必要があります。
+データベースの初期化を実行する前に、`20-emails` パッケージ (`npx nx run 20-emails:build`) をビルドする必要があります。
 
 #### twenty-xパッケージが見つかりません
 
@@ -58,7 +58,7 @@ Twentyのインストール中に、postgresデータベースを適切なスキ
 
 #### 保存時のLintが機能しない
 
-Oxc拡張機能 (`oxc.oxc-vscode`) がインストールされている場合、これは標準設定で動作するはずです。 eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
+Oxc拡張機能 (`oxc.oxc-vscode`) がインストールされている場合、これは標準設定で動作するはずです。 これがうまくいかない場合は、VS Code の設定に追加してみてください (開発コンテナスコープ):
 
 ```
 "editor.codeActionsOnSave": {
@@ -68,7 +68,7 @@ Oxc拡張機能 (`oxc.oxc-vscode`) がインストールされている場合、
 }
 ```
 
-#### `npx nx start` または `npx nx start twenty-front` 実行中にメモリエラーが発生
+#### `npx nx start` または `npx nx start 21-front` を実行している間、メモリ不足のエラーがスローされます
 
 `npx nx start` の代わりに、必要なサービスだけを実行してください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。
 
@@ -77,7 +77,7 @@ WSL 上で `npx nx run twenty-server:start` だけを実行しようとして、
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-以下のコマンドをターミナルで実行するか、.bashrcプロファイルに追加して自動セットアップします:
+回避策は、ターミナルで以下のコマンドを実行するか、`.bashrc`プロファイルに追加して自動的に適用されるようにします。
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -86,12 +86,11 @@ WSL 上で `npx nx run twenty-server:start` だけを実行しようとして、
 参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**うまくいかない場合:**
-マシンの RAM を最も消費しているプロセスを調査してください。 **これが機能しない場合:**\
-あなたのマシンのRAMを最も使用しているプロセスを調査してください。 Twentyでは、一部のVScode拡張機能が多くのRAMを使用していることに気付き、一時的に無効化しました。
+**動作しない場合:**
+マシンのRAMをほとんど消費しているプロセスを調査します。 Twentyでは、一部のVS Code拡張モジュールが多くのRAMを消費していることに気づいたため、一時的に無効にしました。
 
-**うまくいかない場合:**
-マシンを再起動すると、ゴーストプロセスのクリーンアップに役立ちます。
+**動作しない場合:**
+マシンを再起動すると、ゴーストプロセスのクリーンアップができます。
 
 #### `npx nx start`を実行中にログに謎の[0]や[1]が表示される
 
@@ -105,19 +104,19 @@ WSL 上で `npx nx run twenty-server:start` だけを実行しようとして、
 npx nx worker twenty-server
 ```
 
-#### Microsoft 365アカウントに接続できない
+#### Microsoft 365 アカウントを Twenty に接続できません
 
 ほとんどの場合、管理者があなたのアカウントのMicrosoft 365ライセンスを有効化していないことが原因です。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。
 
 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 詳細は[こちら](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### `yarn`実行中の警告がコンソールに表示される
+#### `yarn` を実行中にコンソールに警告が表示されます
 
 警告は、`package.json`に明示的に記載されていない追加依存関係の取得を伝えており、破損するエラーがない限り、すべてが期待通りに動作するはずです。
 
-#### ログインページにアクセスした際、未認証ユーザーの作業スペースへのアクセスに関するエラーがログに表示される
+#### ユーザーがログインページにアクセスすると、ワークスペースにアクセスしようとする権限のないユーザーに関するエラーがログに表示されます。
 
-これは予想された挙動で、ログアウト中のユーザーはアイデンティティが確認されていないため未認証です。
+ユーザーの身元が確認されていないので、ログアウト時にユーザーが許可されていないと予想されます。
 
 #### ワーカーが稼働しているかどうかを確認するには?
 
@@ -144,9 +143,9 @@ npx nx worker twenty-server
 
 * **POSTリクエスト**が受信された場合、あなたのワーカーは正常に稼働しています。 そうでない場合は、ワーカーのトラブルシューティングが必要です。
 
-#### フロントエンドが起動に失敗し、エラーTS5042: オプション'プロジェクト'はコマンドライン上でソースファイルと一緒に使用できません
+#### フロントエンドの起動に失敗し、エラーが返される TS5042: オプション「プロジェクト」をコマンドラインのソースファイルと混在させることはできません
 
-例のように`packages/twenty-ui/vite-config.ts`内のチェッカープラグインをコメントアウトします
+以下の例に示すように、`packages/21ui/vite-config.ts`のチェッカープラグインにコメントしてください。
 
 ```
 plugins: [
@@ -172,13 +171,35 @@ plugins: [
 
 #### 管理パネルにアクセスできない
 
-adminパネルにアクセスするには、データベースコンテナで`UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`を実行します。
+`UPDATE core."user"を実行します。 SET "canAccessFullAdminPanel" = TRUE WHEREメール = 'you@yourdomain.com';`は、管理パネルにアクセスするためのデータベースコンテナにあります。
 
 #### ワークフローを実行すると、エラー「ロジック関数の実行は無効です。 有効にするには LOGIC_FUNCTION_TYPE を LOCAL または LAMBDA に設定してください。」
 
 本番環境では、ロジック関数はデフォルトで無効になっています。 有効にするには、`LOGIC_FUNCTION_TYPE` 環境変数を `LOCAL` または `LAMBDA` に設定します。 これは、環境変数経由、または管理画面のデータベース変数から設定できます。 詳細は[ロジック関数のセットアップガイド](/l/ja/developers/self-host/capabilities/setup#logic-functions-available-drivers)を参照してください。
 
-### 1クリックでDocker構成
+#### AIチャットでメッセージを入力すると、すぐには答えられず、答えを見るためにページを更新する必要があります。
+
+つまり、リバースプロキシはストリームベースの API 応答の構成を欠落しています。 以下は Nginx の設定例です。
+
+```
+location ~* ^/api/.*stream|\/graphql\/stream {
+proxy_pass http://twenty_backend;
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_cache off;
+gzip off;
+#chunked_transfer_encoding off;
+add_header X-Accel-Buffering no always;
+}
+```
+
+### Docker Compose 1-click
 
 #### ログインできない
 
@@ -195,7 +216,7 @@ adminパネルにアクセスするには、データベースコンテナで`UP
    docker compose up -d
    ```
 
-database:resetコマンドはデータベースを完全に消去し、最初から再構築します。
+`database:reset` コマンドはデータベースを完全に消去し、最初から再作成します。
 
 #### リバースプロキシの背後での接続問題
 

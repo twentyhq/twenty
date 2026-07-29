@@ -138,16 +138,6 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;
 
-  // Emergency kill switch: while set, every logic function execution of every
-  // application installed from this registration is blocked, across all
-  // workspaces (see `application-registration:stop` command).
-  @Column({ nullable: true, type: 'timestamptz' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.24.0_AddStoppedAtToApplicationAndApplicationRegistrationFastInstanceCommand_1784734278506',
-  })
-  stoppedAt: Date | null;
-
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 

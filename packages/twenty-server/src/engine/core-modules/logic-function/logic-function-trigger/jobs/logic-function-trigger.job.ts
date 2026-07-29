@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -22,41 +22,38 @@ export type LogicFunctionTriggerJobData = {
   scope: Scope.REQUEST,
 })
 export class LogicFunctionTriggerJob {
-  private readonly logger = new Logger(LogicFunctionTriggerJob.name);
-
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
   @Process(LogicFunctionTriggerJob.name)
-  async handle(logicFunctionPayloads: LogicFunctionTriggerJobData[]) {
-    await Promise.all(
-      logicFunctionPayloads.map(async (logicFunctionPayload) => {
-        try {
-          await this.logicFunctionExecutorService.execute({
-            logicFunctionId: logicFunctionPayload.logicFunctionId,
-            workspaceId: logicFunctionPayload.workspaceId,
-            payload: logicFunctionPayload.payload ?? {},
-            userId: logicFunctionPayload.userId,
-            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          });
-        } catch (error) {
-          // A stopped application must not fail the job: failing would make
-          // the queue retry an execution that is intentionally blocked.
-          if (
-            error instanceof LogicFunctionException &&
-            error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
-          ) {
-            this.logger.warn(
-              `Skipping execution of logic function ${logicFunctionPayload.logicFunctionId} in workspace ${logicFunctionPayload.workspaceId}: ${error.message}`,
-            );
+  async handle(
+    jobData: LogicFunctionTriggerJobData | LogicFunctionTriggerJobData[],
+  ) {
+    // Jobs enqueued in version <=2.24.x carry arrays, remove this case once those jobs are drained
+    const logicFunctionPayloads = Array.isArray(jobData) ? jobData : [jobData];
 
-            return;
-          }
-
-          throw error;
+    for (const logicFunctionPayload of logicFunctionPayloads) {
+      try {
+        await this.logicFunctionExecutorService.execute({
+          logicFunctionId: logicFunctionPayload.logicFunctionId,
+          workspaceId: logicFunctionPayload.workspaceId,
+          payload: logicFunctionPayload.payload ?? {},
+          userId: logicFunctionPayload.userId,
+          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+        });
+      } catch (error) {
+        // A stopped application must not fail the job: failing would make
+        // the queue retry an execution that is intentionally blocked.
+        if (
+          error instanceof LogicFunctionException &&
+          error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+        ) {
+          continue;
         }
-      }),
-    );
+
+        throw error;
+      }
+    }
   }
 }

@@ -30,7 +30,7 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
-import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -327,6 +327,31 @@ export class BullMQDriver
     );
   }
 
+  private buildJobsOptions({
+    queueName,
+    options,
+  }: {
+    queueName: MessageQueue;
+    options?: QueueJobOptions;
+  }): JobsOptions {
+    return {
+      // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
+      jobId: options?.id ? `${options.id}-${v4()}` : undefined,
+      priority:
+        options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
+      attempts: 1 + (options?.retryLimit || 0),
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
+      delay: options?.delay,
+    };
+  }
+
   async add<T>(
     queueName: MessageQueue,
     jobName: string,
@@ -352,22 +377,41 @@ export class BullMQDriver
       }
     }
 
-    const queueOptions: JobsOptions = {
-      jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
-      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
-      attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
-      delay: options?.delay,
-    };
+    const queueOptions = this.buildJobsOptions({ queueName, options });
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
+  }
+
+  async bulkAdd<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+    options?: QueueJobOptions,
+  ): Promise<void> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    if (dataItems.length === 0) {
+      return;
+    }
+
+    const queueOptions = this.buildJobsOptions({ queueName, options });
+
+    await this.queueMap[queueName].addBulk(
+      dataItems.map((data, index) => ({
+        name: jobName,
+        data,
+        opts: {
+          ...queueOptions,
+          jobId: queueOptions.jobId
+            ? `${queueOptions.jobId}-${index}`
+            : undefined,
+        },
+      })),
+    );
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(

@@ -59,7 +59,7 @@ export default defineLogicFunction({
 * **cron**: CRON 式を使用してスケジュールで関数を実行します。
 * **databaseEvent**: ワークスペースのオブジェクトのライフサイクルイベントで実行されます。 イベント操作が `updated` の場合、監視する特定のフィールドを `updatedFields` 配列で指定できます。 未定義または空のままにすると、任意の更新でも関数がトリガーされます。
 > 例：`person.updated`、`*.created`、`company.*`
-* **serverRoute**: 1 つの登録スコープの HTTP ルートを公開します。 **resolver** 関数（`serverRouteTriggerSettings` で宣言）は、オーナーワークスペースで実行され、ディスパッチ先のターゲットワークスペースとターゲットロジック関数の両方を返します。プラットフォームは `202` で応答し、その **target** 関数をワーカーキュー上で実行します。 [サーバールートトリガー](#server-route-trigger) を参照してください。
+* **serverRoute**: 1 つの登録スコープの HTTP ルートを公開します。 **resolver** 関数（`serverRouteTriggerSettings` で宣言）は、オーナーワークスペースで実行され、同期的な `Response` を返すか、ターゲットワークスペースとエンキューする対象のロジック関数を返します。エンキュールートでは、プラットフォームは `202` で ACK し、その **target** をワーカーキュー上で実行します。 [サーバールートトリガー](#server-route-trigger) を参照してください。
 
 <Note>
 CLI を使用して、関数を手動で実行することもできます：
@@ -178,13 +178,18 @@ const handler = async (event: RoutePayload) => {
 
 トリガーには 2 つの構成要素があります:
 
-1. **resolver** ロジック関数 — `serverRouteTriggerSettings` で宣言される — は、**オーナーワークスペース**（アプリケーション登録を所有するワークスペース）で実行されます。 受信リクエストを検査し、`{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` を返し、ターゲットのワークスペースと関数の *両方* を選択します。 resolver は単一の認可ポイントであり、URL には resolver の識別子のみが含まれます。 **ここがリクエスト署名を検証するための推奨箇所です**。resolver は副作用が発生する前に実行され、元の `rawBody` と転送されたヘッダーにアクセスでき、ターゲットに一切触れずにリクエストを拒否できます。
-2. **target** ロジック関数 — 通常のワークスペース単位のロジック関数 — は、その後、resolver によって解決されたワークスペースで、resolver が返したペイロード（resolver が変換しなかった場合は元のリクエストペイロード）を使って実行されます。 その戻り値が HTTP レスポンスになります。
+1. **resolver** ロジック関数 — `serverRouteTriggerSettings` で宣言される — は、**オーナーワークスペース**（アプリケーション登録を所有するワークスペース）で実行されます。 この関数は受信リクエストを検査し、次のいずれかを返します。
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — プラットフォームは解決済みワークスペースでその target をキューに入れ、`202 { queued: true }` で ACK します、または
+   * `twenty-sdk/logic-function` からの `Response` — プラットフォームはその HTTP レスポンスを**同期的に**エコーし、ターゲットをキューに入れることは**ありません**（Slack の `url_verification` のようなチャレンジハンドシェイクに使用します）。
+
+   resolver は単一の認可ポイントであり、URL には resolver の識別子のみが含まれます。 **ここがリクエスト署名を検証するための推奨箇所です**。resolver は副作用が発生する前に実行され、元の `rawBody` と転送されたヘッダーにアクセスでき、ターゲットに一切触れずにリクエストを拒否できます。
+2. **target** ロジック関数 — 通常のワークスペース単位のロジック関数 — は、その後、resolver によって解決されたワークスペースで、resolver が返したペイロード（resolver が変換しなかった場合は元のリクエストペイロード）を使って実行されます。 resolver が enqueue パスを選択した場合、その戻り値は HTTP 呼び出し元からは**観測されません**。
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +216,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -265,7 +283,7 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 **アプリケーションは所有者ワークスペースでクレームされ、インストールされている必要があります。** リゾルバーは **所有者ワークスペース**（アプリケーション登録を所有しているワークスペース）上で実行されるため、サーバールートトリガーが動作するのは、アプリケーションが*クレーム*されている、つまり所有者ワークスペースを持っていること **かつ** そのアプリケーションが **所有者ワークスペースにインストールされている** 場合のみです。 この2つの条件がどちらも満たされるまでは、リゾルバーを実行する場所が存在しないため、ルートをディスパッチできません。 したがって、`serverRouteTriggerSettings` ロジック関数を公開するアプリケーションは、所有者ワークスペースでクレームされインストールされるまで、マーケットプレイスに掲載することはできません。
 </Note>
 
-**Resolver の契約**。SDK の `LogicFunctionConfig` 型は、コンパイル時にこれを強制します。`serverRouteTriggerSettings` を設定するとすぐに、ハンドラーは `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（またはその `Promise`）を返すように制約されます。 `workspaceId` は、ターゲット関数がインストールされているワークスペースである必要があります。そうでない場合、リクエストは `404` で拒否されます。
+**Resolver の契約。** SDK の `LogicFunctionConfig` 型はコンパイル時にこれを強制します。`serverRouteTriggerSettings` を設定するとすぐに、ハンドラーは `Response` か、`{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }`（またはそのいずれかの `Promise`）を返すように制約されます。 dispatch パスでは、`workspaceId` は target 関数がインストールされているワークスペースである必要があります。そうでない場合、リクエストは `404` で拒否されます。 どちらの形にも一致しない結果（識別子が UUID でないものを含む）は、`502` で拒否されます。
 
 | フィールド                                    | タイプ             | ノート                                          |
 | ---------------------------------------- | --------------- | -------------------------------------------- |
@@ -290,7 +308,9 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 上記の resolver の例では、すでに GitHub の HMAC-SHA256 フローを示しています。連携するプロバイダーに合わせて、ヘッダー名、ダイジェストのエンコーディング、および署名対象となるペイロード文字列を調整してください。
 
 <Note>
-ルートは、resolver が戻った直後に `202 { queued: true }` を返し、target はワーカーキュー上で実行されます。呼び出し元は target のレイテンシ、結果、失敗を一切観測しません（それらは実行ログに記録されます）。 これにより、送信側の再配信によって処理の遅延が増幅されるのを防げます。これは、Webhook 取り込みにおいて望ましい動作です。 呼び出し元がレスポンスボディを読み取る必要があるエンドポイント（チャレンジハンドシェイク、Slack コマンドなど）の場合は、代わりに `httpRouteTriggerSettings` ルートを使用してください。 resolver は高速に保ってください。Slack など一部のプロバイダーは数秒でタイムアウトします。 resolver はパブリックエンドポイントとして到達可能であるため、エッジでレート制限をかけて保護してください。
+resolver が dispatch オブジェクトを返すと、ルートは `202 { queued: true }` を返し、target はワーカーキュー上で実行されます。呼び出し元は target のレイテンシ、結果、失敗を一切観測しません（それらは実行ログに記録されます）。 これにより、送信側の再配信によって処理の遅延が増幅されるのを防げます。これは、Webhook 取り込みにおいて望ましい動作です。
+
+呼び出し元が同じリクエストでレスポンスボディを読み取る必要がある場合（チャレンジハンドシェイク、対話的な受領確認など）、代わりに **resolver** から `Response` を返してください。 プラットフォームはそれを同期的にエコーし、キューをスキップします。そのヘッダーは HTTP ルートレスポンスと同じ許可リストを通過します。 resolver は高速に保ってください。Slack など一部のプロバイダーは数秒でタイムアウトします。 resolver はパブリックエンドポイントとして到達可能であるため、エッジでレート制限をかけて保護してください。
 </Note>
 
 #### データベースイベントトリガーのペイロード
@@ -593,7 +613,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**インストールフック** — pre-install と post-install のハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction` と `definePostInstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
+**インストールフック** — pre-install、post-install、uninstall の各ハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction`、`definePostInstallLogicFunction`、`defineUninstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
 </Note>
 
 ## 型付き API クライアント（`twenty-client-sdk`）

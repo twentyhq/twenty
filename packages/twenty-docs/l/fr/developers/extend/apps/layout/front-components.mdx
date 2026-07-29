@@ -8,15 +8,17 @@ Les composants frontaux sont des composants React qui s'affichent directement da
 
 ## Où les composants frontaux peuvent être utilisés
 
-Les composants frontaux peuvent s'afficher à deux emplacements au sein de Twenty :
+Les composants frontaux peuvent s'afficher à trois emplacements au sein de Twenty :
 
 * **Panneau latéral** — Les composants frontaux non-headless s'ouvrent dans le panneau latéral droit. Il s'agit du comportement par défaut lorsqu'un composant frontal est déclenché depuis le menu de commande.
 * **Widgets (tableaux de bord et pages d'enregistrement)** — Les composants frontaux peuvent être intégrés comme widgets dans les [mises en page](/l/fr/developers/extend/apps/layout/page-layouts). Lors de la configuration d'un tableau de bord ou d'une page d'enregistrement, les utilisateurs peuvent ajouter un widget de composant frontal.
+* **Paramètres de l'application** — Défini avec [`defineSettingsFrontComponent()`](#custom-settings-component), le composant frontal s'affiche comme une section dans l'onglet **Settings** de l'application, à la place de l'interface utilisateur par défaut de configuration des variables.
 
-Un composant frontal seul n'est pas accessible depuis l'interface utilisateur — vous devez l'*exposer*. Les deux façons de le faire sont :
+Un composant frontal seul n'est pas accessible depuis l'interface utilisateur — vous devez l'*exposer*. Les trois façons de le faire sont :
 
 * **L'associer à un [élément de menu de commande](/l/fr/developers/extend/apps/layout/command-menu-items)** — l'enregistre dans le menu de commande (Cmd+K) et, éventuellement, comme action rapide épinglée.
 * **L'intégrer comme widget dans une [mise en page](/l/fr/developers/extend/apps/layout/page-layouts)** — le place sur la page de détails d'un enregistrement ou sur un tableau de bord.
+* **Le définir avec [`defineSettingsFrontComponent()`](#custom-settings-component)** — l'affiche comme une section dans l'onglet **Settings** de l'application, à la place de l'interface utilisateur par défaut de configuration des variables.
 
 ## Exemple de base
 
@@ -76,6 +78,34 @@ Cliquez dessus pour afficher le composant en ligne.
 ## Placer un composant frontal sur une page
 
 Au-delà des commandes, vous pouvez intégrer un composant frontal directement dans une page d'enregistrement en l'ajoutant comme widget dans une **mise en page**. Voir [mises en page](/l/fr/developers/extend/apps/layout/page-layouts) pour plus de détails.
+
+## Composant de paramètres personnalisé
+
+Pour remplacer l'interface utilisateur générée automatiquement pour la configuration des variables dans l'onglet **Settings** de votre application par votre propre composant, définissez-le avec `defineSettingsFrontComponent` au lieu de `defineFrontComponent`. Il utilise les mêmes [champs de configuration](#configuration-fields) (sauf `isHeadless`, qui n’est pas accepté puisqu’un composant de paramètres affiche toujours une interface utilisateur visible) et marque en plus le composant comme interface de paramètres de l’application.
+
+Le composant est affiché comme une section **à l’intérieur** de l’onglet Settings, et non comme un remplacement de l’onglet entier. Les sections gérées par le système de Twenty — mise à niveau automatique, App URL et connexions — sont toujours affichées au-dessus et ne peuvent pas être remplacées par l’application.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Un seul composant frontal de paramètres est autorisé par application ; en déclarer plus d’un provoque l’échec de la compilation. Lorsqu’il est présent, l’onglet **Settings** de l’application affiche ce composant à la place de l’interface utilisateur de configuration des variables par défaut.
 
 ## Headless vs non-headless
 

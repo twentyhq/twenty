@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { toPlainText } from '@react-email/render';
 import { isNonEmptyString } from '@sniptt/guards';
 import DOMPurify from 'dompurify';
+import { toPlainText } from 'twenty-emails';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,

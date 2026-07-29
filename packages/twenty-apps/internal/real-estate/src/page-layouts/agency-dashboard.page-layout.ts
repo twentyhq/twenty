@@ -169,7 +169,6 @@ export default definePageLayout({
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataUniversalIdentifier:
               LISTING_AGENT_ON_PROPERTY_ID,
-            primaryAxisGroupBySubFieldName: 'name.firstName',
             ...BAR,
             primaryAxisOrderBy: 'VALUE_DESC',
           },
@@ -187,7 +186,6 @@ export default definePageLayout({
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataUniversalIdentifier:
               AGENT_ON_SHOWING_ID,
-            primaryAxisGroupBySubFieldName: 'name.firstName',
             ...BAR,
             primaryAxisOrderBy: 'VALUE_DESC',
           },

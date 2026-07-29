@@ -1,0 +1,111 @@
+---
+title: 法的なFAQ
+description: よく寄せられる法的な質問。
+---
+
+## データ居住地と国際送金
+
+<AccordionGroup>
+<Accordion title="ワークスペースのデータ、添付ファイル、ログ、バックアップはどの国と地域に保存されますか?">
+20 CloudはドイツのフランクフルトにあるAWSサーバー上で動作します。
+</Accordion>
+<Accordion title="ホスティング地域は契約的に私たちのワークスペースのために修正することができますか?">
+ホスティング地域の選択は、2027年から利用可能になり、当初は新しいワークスペースが対象となります。 既存のワークスペースについては、後日、地域の変更をリクエストできるようになります。 また、インスタンスのセットアップについてサポートが必要な場合は、[当社のパートナー](https://twenty.com/partners/list?categories=HOSTING)までお問い合わせください。
+</Accordion>
+<Accordion title="どのサブプロセッサが当社のCRMデータを処理またはアクセスし、どの国に所在していますか?">
+すべてのサブプロセッサーの一覧は、[当社のトラストセンター](https://trust.twenty.com/?tab=subprocessors)でご覧いただけます。
+</Accordion>
+<Accordion title="国際データ転送にどのような保護措置が適用されますか?">
+EU標準契約条項は、UK付属文書およびスイス向け修正条項とあわせて、EU域外への国際的なデータ移転（すべてのサブプロセッサーへの移転を含む）に適用されます。
+</Accordion>
+</AccordionGroup>
+
+## データ処理協定と法的役割
+
+<AccordionGroup>
+<Accordion title="現在のデータ処理契約（Data Processing Agreement）はどこで確認できますか？">
+署名済みのDPAは、https://{your-domain}/settings/legal/dpa（例: https://getting-started.twenty.com/settings/legal/dpa）で生成できます。
+</Accordion>
+<Accordion title="当社がデータコントローラのままでいる間、20はCRMに保存されているマーチャントおよび連絡先情報のデータプロセッサとして機能しますか?">
+[プライバシーポリシー](https://twenty.com/privacy-policy)に記載のとおり、CRM に保存されているマーチャントおよび連絡先情報について、Twenty はデータプロセッサーとして、御社はデータコントローラーとしてそれぞれの役割を担います。
+</Accordion>
+<Accordion title="CRMコンテンツは、これまでに20またはサードパーティのAIモデルのトレーニングに使用されていますか?">
+CRMコンテンツは、サブプロセッサーの利用規約に応じてAIモデルのトレーニングに使用される場合があります。 Twentyは独自のAIモデルを保有しておらず、Twenty Cloudで利用可能なすべてのAIモデルはサブプロセッサーによって提供されています。
+</Accordion>
+<Accordion title="オプションのAI処理が存在する場合、ワークスペースで完全に無効にすることはできますか?">
+AIは、「Settings → AI → Models」で、すべてのAIモデルをオフにすることで完全に無効化できます。 さらに、AIチャットやワークフロー内のAIノードと積極的にやり取りを行わない限り、AIにデータが送信されることはありません。
+</Accordion>
+</AccordionGroup>
+
+## セキュリティとアクセスコントロール
+
+<AccordionGroup>
+<Accordion title="通信中および保存時に暗号化は使用されていますか。また、キー管理の運用方法とテナントデータの分離方法について教えてください。">
+すべてのデータは、通信中および保存時の両方で暗号化されています。 テナントデータはテナントごとのスキーマ構成によって分離されており、暗号鍵は定期的にローテーションされています。
+</Accordion>
+<Accordion title="どのような目的で、どのような目的で、どのようにアクセスが承認され、ログされるのですか?">
+Twentyのエンジニアリングチームおよびサポートチームがカスタマーのワークスペースにアクセスできるのは、カスタマーが問題を報告し、「Settings → General → Security」からアクセスを許可した後のみです。
+</Accordion>
+<Accordion title="データに影響を与えるセキュリティインシデントが確認された後、インシデント通知プロセスとターゲット通知の期間はどのようなものですか?">
+お客様のデータに影響を与えることが確認された個人データの侵害が発生した場合 我々は過度の遅延なしにあなたに通知しますし、いずれの場合でもそれを認識するようになってから48時間以内に。 当社の通知には、当時知られている範囲内での違反の性質が含まれます。 影響を受けるデータと個人のカテゴリーと概算の量、おそらく結果、そして取られるか計画された修復と緩和措置。 調査が進むにつれて、最新情報を提供します。
+</Accordion>
+</AccordionGroup>
+
+## データの保存と削除
+
+<AccordionGroup>
+<Accordion title="個々のCRMレコードが削除されると、いつアクティブなシステムから削除されますか？">
+レコードが削除されると、まずソフトデリートされ、この段階ではまだ復元が可能です。 保持期間が終了するか、ユーザーが手動で破棄した場合、そのレコードは完全に削除され、稼働中のシステムからも削除されます。
+</Accordion>
+<Accordion title="ソフトデリートされたレコードはシステム内にどのくらい保持されますか？">
+デフォルトでは、ソフトデリートされたレコードは14日間保持され、その後システムから完全に削除されます。 ソフトデリートされたレコードの保持期間は、「Settings → General → Security」で変更できます。
+</Accordion>
+<Accordion title="どのくらいの期間、そのレコードがバックアップや技術的なログに残る可能性がありますか?">
+削除されたレコードは30日間バックアップに保持され、その後完全に削除されます。
+</Accordion>
+<Accordion title="ワークスペースが閉じられている、または完全な削除が要求される場合、プロダクションデータ、添付ファイル、ログ、およびバックアップにどのような正確なタイムラインが適用されますか?">
+ワークスペースが削除されると、そのデータは稼働中のシステムから即座に削除されます。 バックアップは7日間保持され、その後すべてのデータが完全に削除されます。
+</Accordion>
+<Accordion title="バックアップ保持期間中、運用アクセスから分離されたデータは削除され、使用されますか?">
+はい、任意のバックアップ保持期間中に、削除されたデータは、運用中の使用から分離されます。
+</Accordion>
+<Accordion title="法律、請求、詐欺防止、セキュリティ、または監査目的で、データのカテゴリが長く保持されますか? もしそうなら、どのカテゴリーとどのくらいの期間ですか?">
+データ保持に関する詳しい情報については、[当社のトラストセンター](https://trust.twenty.com/?tab=documents)で入手可能なデータ管理および保持ポリシーをご請求ください。
+</Accordion>
+<Accordion title="Twenty は、完全な削除要求が完了したときに書面による確認を提供できますか?">
+削除要求を承認し、削除が完了したら書面による確認を提供します。
+</Accordion>
+</AccordionGroup>
+
+## バックアップと回復力
+
+<AccordionGroup>
+<Accordion title="バックアップの頻度と保持期間は何ですか?">
+バックアップは継続的に作成され、スナップショットは毎日取得されます。保持期間は30日間です。
+</Accordion>
+<Accordion title="Twenty Cloudの回復目標と回復時間の目標は何ですか?">
+RTOとRPOはどちらも(当社のDPAによると)6時間です。
+</Accordion>
+<Accordion title="復元を要求または実行するためのプロセスは何ですか?">
+リストアをリクエストする場合は、サポートチャット、または[contact@twenty.com](mailto:contact@twenty.com)宛てのメールで当社チームまでご連絡ください。
+</Accordion>
+<Accordion title="バックアップは暗号化され、プライマリワークスペースのデータと同じ領域に保存されますか?">
+すべてのバックアップは暗号化され、同じ管轄内の地理的に別々の場所(EUデータなど)に保存されます。
+</Accordion>
+</AccordionGroup>
+
+## コンプライアンス
+
+<AccordionGroup>
+<Accordion title="GDPRに準拠していますか?">
+はい、[GDPR (GDPR)準拠](https://trust.twenty.com/?tab=securityControls\&frameworks=gdpr_v1)です。
+</Accordion>
+<Accordion title="20SOC 2は準拠していますか?">
+はい、20 は [SOC 2 準拠](https://trust.twenty.com/?tab=securityControls\&frameworks=soc2_v1) です。
+</Accordion>
+<Accordion title="HIPAA に準拠していますか?">
+いいえ、20はHIPAAに準拠する過程にあります。
+</Accordion>
+</AccordionGroup>
+
+さらにご質問がある場合は、[利用規約](https://twenty.com/terms)、[プライバシーポリシー](https://twenty.com/privacy-policy)、[トラストセンター](https://trust.twenty.com/)をご確認ください。 それでもご不明点が解消しない場合は、[contact@twenty.com](mailto:contact@twenty.com) まで、またはサポートチャットからお問い合わせください。

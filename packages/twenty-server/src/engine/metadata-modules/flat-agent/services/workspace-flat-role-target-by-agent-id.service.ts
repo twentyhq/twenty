@@ -7,6 +7,7 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -26,6 +27,8 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {
     super();
   }
@@ -33,28 +36,36 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatRoleTargetByAgentIdMaps> {
-    const [roleTargetEntities, applications, roles] = await Promise.all([
-      this.roleTargetRepository.find(workspaceId, {
-        where: {
-          agentId: Not(IsNull()),
-        },
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.roleRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-    ]);
+    const [roleTargetEntities, applications, roles, agents] = await Promise.all(
+      [
+        this.roleTargetRepository.find(workspaceId, {
+          where: {
+            agentId: Not(IsNull()),
+          },
+          withDeleted: true,
+        }),
+        this.applicationRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.roleRepository.find(workspaceId, {
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.agentRepository.find(workspaceId, {
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+      ],
+    );
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const agentIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(agents);
 
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
 
@@ -66,6 +77,7 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
         entity: roleTargetEntity,
         applicationIdToUniversalIdentifierMap,
         roleIdToUniversalIdentifierMap,
+        agentIdToUniversalIdentifierMap,
       });
 
       flatRoleTargetByAgentIdMaps[roleTargetEntity.agentId] = flatRoleTarget;

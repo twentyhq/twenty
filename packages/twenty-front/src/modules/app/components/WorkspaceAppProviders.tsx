@@ -16,11 +16,13 @@ import { CommandRunner } from '@/command-menu-item/engine-command/components/Com
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import { FrontComponentExternalLinkModalManager } from '@/front-components/components/FrontComponentExternalLinkModalManager';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
+import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -69,6 +71,7 @@ export const WorkspaceAppProviders = () => {
                             <Outlet />
                             <GlobalFilePreviewModal />
                             <CommandMenuConfirmationModalManager />
+                            <FrontComponentExternalLinkModalManager />
                             <CommandRunner />
                           </StrictMode>
                         </DialogManager>
@@ -82,6 +85,7 @@ export const WorkspaceAppProviders = () => {
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
                   <WelcomeOverlay />
+                  <CompanyEnrichmentOnboardingEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
               </ApolloAdminProvider>

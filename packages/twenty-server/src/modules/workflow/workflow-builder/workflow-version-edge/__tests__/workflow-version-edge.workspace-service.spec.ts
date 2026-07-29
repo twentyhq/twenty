@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -113,6 +114,18 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           provide: WorkflowCommonWorkspaceService,
           useValue: workflowCommonWorkspaceService,
         },
+        {
+          provide: WorkflowVersionCoreSyncService,
+          useValue: {
+            writeWorkflowVersionAndMirror: jest.fn(
+              async (_workspaceId: string, write: any) => {
+                await write(mockWorkflowVersionWorkspaceRepository, {});
+              },
+            ),
+            mirrorWorkflowVersionWrite: jest.fn(),
+            invalidateAutomatedTriggerMaps: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -175,12 +188,17 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          trigger: {
-            ...mockTrigger,
-            nextStepIds: ['step-1', 'step-3'],
+        ).toHaveBeenCalledWith(
+          mockWorkflowVersionId,
+          {
+            trigger: {
+              ...mockTrigger,
+              nextStepIds: ['step-1', 'step-3'],
+            },
           },
-        });
+          undefined,
+          expect.anything(),
+        );
 
         expect(result).toEqual({
           triggerDiff: [
@@ -258,18 +276,23 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
           expect(
             mockWorkflowVersionWorkspaceRepository.update,
-          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-            steps: expect.arrayContaining([
-              expect.objectContaining({
-                id: 'iterator-step',
-                settings: expect.objectContaining({
-                  input: expect.objectContaining({
-                    initialLoopStepIds: ['step-1', 'step-3'],
+          ).toHaveBeenCalledWith(
+            mockWorkflowVersionId,
+            {
+              steps: expect.arrayContaining([
+                expect.objectContaining({
+                  id: 'iterator-step',
+                  settings: expect.objectContaining({
+                    input: expect.objectContaining({
+                      initialLoopStepIds: ['step-1', 'step-3'],
+                    }),
                   }),
                 }),
-              }),
-            ]),
-          });
+              ]),
+            },
+            undefined,
+            expect.anything(),
+          );
 
           expect(result).toEqual({
             stepsDiff: [
@@ -350,14 +373,19 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
           expect(
             mockWorkflowVersionWorkspaceRepository.update,
-          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-            steps: expect.arrayContaining([
-              expect.objectContaining({
-                id: 'iterator-step',
-                nextStepIds: ['step-2', 'step-3'],
-              }),
-            ]),
-          });
+          ).toHaveBeenCalledWith(
+            mockWorkflowVersionId,
+            {
+              steps: expect.arrayContaining([
+                expect.objectContaining({
+                  id: 'iterator-step',
+                  nextStepIds: ['step-2', 'step-3'],
+                }),
+              ]),
+            },
+            undefined,
+            expect.anything(),
+          );
 
           expect(result).toEqual({
             stepsDiff: [
@@ -382,18 +410,23 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          steps: mockSteps.map((step) => {
-            if (step.id === 'step-2') {
-              return {
-                ...step,
-                nextStepIds: ['step-3'],
-              };
-            }
+        ).toHaveBeenCalledWith(
+          mockWorkflowVersionId,
+          {
+            steps: mockSteps.map((step) => {
+              if (step.id === 'step-2') {
+                return {
+                  ...step,
+                  nextStepIds: ['step-3'],
+                };
+              }
 
-            return step;
-          }),
-        });
+              return step;
+            }),
+          },
+          undefined,
+          expect.anything(),
+        );
 
         expect(result).toEqual({
           stepsDiff: [
@@ -474,12 +507,17 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          trigger: {
-            ...mockTrigger,
-            nextStepIds: [],
+        ).toHaveBeenCalledWith(
+          mockWorkflowVersionId,
+          {
+            trigger: {
+              ...mockTrigger,
+              nextStepIds: [],
+            },
           },
-        });
+          undefined,
+          expect.anything(),
+        );
 
         expect(result).toEqual({
           triggerDiff: [
@@ -530,18 +568,23 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
         expect(
           mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          steps: mockSteps.map((step) => {
-            if (step.id === 'step-1') {
-              return {
-                ...step,
-                nextStepIds: [],
-              };
-            }
+        ).toHaveBeenCalledWith(
+          mockWorkflowVersionId,
+          {
+            steps: mockSteps.map((step) => {
+              if (step.id === 'step-1') {
+                return {
+                  ...step,
+                  nextStepIds: [],
+                };
+              }
 
-            return step;
-          }),
-        });
+              return step;
+            }),
+          },
+          undefined,
+          expect.anything(),
+        );
 
         expect(result).toEqual({
           stepsDiff: [
@@ -654,18 +697,23 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
           expect(
             mockWorkflowVersionWorkspaceRepository.update,
-          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-            steps: expect.arrayContaining([
-              expect.objectContaining({
-                id: 'iterator-step',
-                settings: expect.objectContaining({
-                  input: expect.objectContaining({
-                    initialLoopStepIds: ['step-3'],
+          ).toHaveBeenCalledWith(
+            mockWorkflowVersionId,
+            {
+              steps: expect.arrayContaining([
+                expect.objectContaining({
+                  id: 'iterator-step',
+                  settings: expect.objectContaining({
+                    input: expect.objectContaining({
+                      initialLoopStepIds: ['step-3'],
+                    }),
                   }),
                 }),
-              }),
-            ]),
-          });
+              ]),
+            },
+            undefined,
+            expect.anything(),
+          );
 
           expect(result).toEqual({
             stepsDiff: [
@@ -739,14 +787,19 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
           expect(
             mockWorkflowVersionWorkspaceRepository.update,
-          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-            steps: expect.arrayContaining([
-              expect.objectContaining({
-                id: 'iterator-step',
-                nextStepIds: [],
-              }),
-            ]),
-          });
+          ).toHaveBeenCalledWith(
+            mockWorkflowVersionId,
+            {
+              steps: expect.arrayContaining([
+                expect.objectContaining({
+                  id: 'iterator-step',
+                  nextStepIds: [],
+                }),
+              ]),
+            },
+            undefined,
+            expect.anything(),
+          );
 
           expect(result).toEqual({
             stepsDiff: [

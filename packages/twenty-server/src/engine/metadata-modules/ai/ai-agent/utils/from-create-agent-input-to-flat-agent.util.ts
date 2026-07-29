@@ -77,6 +77,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       roleUniversalIdentifier,
       userWorkspaceId: null,
       agentId,
+      agentUniversalIdentifier: flatAgentToCreate.universalIdentifier,
       apiKeyId: null,
       createdAt,
       updatedAt: createdAt,

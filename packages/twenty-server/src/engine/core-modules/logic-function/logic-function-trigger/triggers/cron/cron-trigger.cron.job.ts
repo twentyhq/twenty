@@ -85,15 +85,13 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+          await this.messageQueueService.add<LogicFunctionTriggerJobData>(
             LogicFunctionTriggerJob.name,
-            [
-              {
-                logicFunctionId: logicFunction.id,
-                workspaceId: activeWorkspace.id,
-                payload: {},
-              },
-            ],
+            {
+              logicFunctionId: logicFunction.id,
+              workspaceId: activeWorkspace.id,
+              payload: {},
+            },
             { retryLimit: 10 },
           );
         }
