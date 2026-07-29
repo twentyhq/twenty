@@ -1,5 +1,4 @@
 import { type WebClient } from '@slack/web-api';
-
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const fetchSlackRequesterName = async ({
@@ -15,10 +14,14 @@ export const fetchSlackRequesterName = async ({
 
   try {
     const userInfo = await client.users.info({ user: slackUserId });
+    const displayName = userInfo.user?.profile?.display_name;
+    const realName = userInfo.user?.real_name;
 
-    return (
-      userInfo.user?.profile?.display_name || userInfo.user?.real_name || undefined
-    );
+    if (isNonEmptyString(displayName)) {
+      return displayName;
+    }
+
+    return isNonEmptyString(realName) ? realName : undefined;
   } catch {
     return undefined;
   }
