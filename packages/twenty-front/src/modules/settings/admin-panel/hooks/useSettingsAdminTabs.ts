@@ -1,9 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
-import { SettingsAdminTabContent } from '@/settings/admin-panel/components/SettingsAdminTabContent';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
-import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
@@ -15,14 +12,15 @@ import {
   IconVariable,
 } from 'twenty-ui/icon';
 
-export const SettingsAdminContent = () => {
+export const useSettingsAdminTabs = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const billing = useAtomStateValue(billingState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
   const isBillingEnabled = billing?.isBillingEnabled;
-  const tabs = [
+
+  return [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
       title: t`General`,
@@ -64,15 +62,4 @@ export const SettingsAdminContent = () => {
         ]
       : []),
   ];
-
-  return (
-    <>
-      <TabList
-        tabs={tabs}
-        behaveAsLinks={true}
-        componentInstanceId={SETTINGS_ADMIN_TABS_ID}
-      />
-      <SettingsAdminTabContent />
-    </>
-  );
 };
