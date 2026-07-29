@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should surface the root cause when a unique index cannot be created over duplicated data should fail with the underlying postgres error in the migration runner error message 1`] = `
+{
+  "eventId": Any<String>,
+  "extensions": {
+    "action": {
+      "flatEntity": {
+        "applicationUniversalIdentifier": Any<String>,
+        "createdAt": Any<String>,
+        "indexType": "BTREE",
+        "indexWhereClause": null,
+        "isCustom": true,
+        "isSystemSideEffect": true,
+        "isUnique": true,
+        "name": "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8",
+        "objectMetadataUniversalIdentifier": Any<String>,
+        "universalFlatIndexFieldMetadatas": [
+          {
+            "createdAt": Any<String>,
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "indexMetadataUniversalIdentifier": Any<String>,
+            "order": 0,
+            "subFieldName": null,
+            "updatedAt": Any<String>,
+          },
+        ],
+        "universalIdentifier": Any<String>,
+        "updatedAt": Any<String>,
+      },
+      "metadataName": "index",
+      "type": "create",
+    },
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "errors": {
+      "metadata": {
+        "code": "25P02",
+        "message": "current transaction is aborted, commands ignored until end of transaction block",
+      },
+      "workspaceSchema": {
+        "code": "23505",
+        "message": "could not create unique index "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8"",
+      },
+    },
+    "exceptionEventId": Any<String>,
+    "userFriendlyMessage": "Migration execution failed.",
+  },
+  "message": "Migration action 'create' for 'index' (universalIdentifier: 67c6811e-9c4e-578a-ad3a-ea4ef152c0fd) failed: [workspaceSchema] could not create unique index "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8" (pg code: 23505, detail: Key ("externalId")=(DUPLICATED-VALUE) is duplicated.)",
+  "name": "GraphQLError",
+}
+`;

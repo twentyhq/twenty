@@ -4826,6 +4826,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@borewit/text-codec@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@borewit/text-codec@npm:0.2.2"
+  checksum: 10c0/2d3fb132bc6a132914a8fbf8e9ff2fa1ead210ecc395b28bb7355bd7719548a5e351ffe39f21c3bee8048f6cabd99eabd404bb5cc809cad9cba25abed19d271f
+  languageName: node
+  linkType: hard
+
 "@bramus/specificity@npm:^2.4.2":
   version: 2.4.2
   resolution: "@bramus/specificity@npm:2.4.2"
@@ -6202,14 +6209,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@file-type/pdf@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@file-type/pdf@npm:0.2.0"
+"@file-type/pdf@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@file-type/pdf@npm:0.3.0"
   dependencies:
-    "@borewit/text-codec": "npm:^0.2.1"
+    "@borewit/text-codec": "npm:^0.2.2"
+    debug: "npm:^4.4.3"
     read-next-line: "npm:^0.5.0"
-    sax: "npm:^1.4.1"
-  checksum: 10c0/9f2f446a04ca2fff4f5a02aeb6065d72f4fc95b6bce5efc6a8ec77530c5b36192f9aa718b65e00398921cf5a0d505cda5e9208d3ac81aad63f7d60a535212a89
+    sax: "npm:^1.6.0"
+  checksum: 10c0/ad54724cf90aea1a60f3419a4bf5120b18f8b58ab802d49a0a0e5233fe44f784cbe19a3f68bf757d4d9d6d40cdb5fa2a09ab07bf0887183cab20deb3265b80e2
   languageName: node
   linkType: hard
 
@@ -45644,17 +45652,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sax@npm:^1.4.1":
-  version: 1.5.0
-  resolution: "sax@npm:1.5.0"
-  checksum: 10c0/bc3b60a7bfecd40b18256596e96b32df2488339ae1e00a77f842b568f0831228a16c3bd357ec500241ec0b9dc7a475a1286427795c4a8c50bb8e8878f3435dd8
-  languageName: node
-  linkType: hard
-
 "sax@npm:^1.5.0":
   version: 1.6.0
   resolution: "sax@npm:1.6.0"
   checksum: 10c0/e5593f4a91eb25761a688c4d96902e4e95a0dd6017bc65146b6f21236e3d715cf893333b76bc758923c9574c2fb5a7a76c3a81e96ea15432f2624f906c027c1e
+  languageName: node
+  linkType: hard
+
+"sax@npm:^1.6.0":
+  version: 1.6.1
+  resolution: "sax@npm:1.6.1"
+  checksum: 10c0/c91a71043d60da50fdf1e2cee936fc7ad4c9376afb8d1022aef5655f279433640859ec06b3b49abfcbe578fc7da2828cc1661e45aaedf835f5393496193437fa
   languageName: node
   linkType: hard
 
@@ -49206,7 +49214,7 @@ __metadata:
     "@e2b/code-interpreter": "npm:^2.6.0"
     "@envelop/core": "npm:4.0.3"
     "@faker-js/faker": "npm:9.8.0"
-    "@file-type/pdf": "npm:^0.2.0"
+    "@file-type/pdf": "npm:^0.3.0"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/utils": "npm:9.2.1"
     "@graphql-yoga/nestjs": "npm:2.1.0"
