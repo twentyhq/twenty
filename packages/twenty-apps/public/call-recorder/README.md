@@ -41,4 +41,3 @@ scheduled, since it can't join the call.
   your Google, Outlook, or CalDAV calendar aren't recorded.
 - **Your copy is yours** — Twenty stores its own video, audio, and transcript,
   so they stay available after the source media expires.
-- **Transcription is powered by Gladia**, generated right after each call ends.
