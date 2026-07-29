@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, type Repository } from 'typeorm';
 
+import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -228,7 +229,11 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
           iterate: jest.fn().mockImplementation(async (args: any) => {
             const { callback, workspaceIds } = args;
             const ids = workspaceIds ?? [WS_1];
-            const report = { fail: [] as any[], success: [] as any[] };
+            const report = {
+              fail: [] as any[],
+              success: [] as any[],
+              interrupted: false,
+            };
 
             for (const [index, workspaceId] of ids.entries()) {
               try {
@@ -256,6 +261,7 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
           getHiddenColumnPropertyNames: jest.fn().mockReturnValue(new Set()),
         },
       },
+      CommandShutdownService,
       UpgradeSequenceRunnerService,
     ],
   }).compile();

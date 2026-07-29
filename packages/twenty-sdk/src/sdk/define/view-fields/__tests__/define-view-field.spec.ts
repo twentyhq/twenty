@@ -3,7 +3,7 @@ import { type StandaloneViewFieldManifest } from 'twenty-shared/application';
 
 const validConfig: StandaloneViewFieldManifest = {
   universalIdentifier: '40b17076-ea50-4e42-968e-8989a95f2b5d',
-  viewUniversalIdentifier: '20202020-a002-4a02-8a02-ae0a1ea11a00',
+  viewUniversalIdentifier: '0cda0ad4-74da-5ccd-975c-a0e4db43a05a',
   fieldMetadataUniversalIdentifier: '4e0fd7ff-0bbc-47b2-baab-5fe2c0d12557',
   position: 10,
   isVisible: true,

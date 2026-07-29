@@ -5,11 +5,13 @@ import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/ca
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof EventCardCalendarEvent> = {
   title: 'Modules/TimelineActivities/Rows/CalendarEvent/EventCardCalendarEvent',
   component: EventCardCalendarEvent,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

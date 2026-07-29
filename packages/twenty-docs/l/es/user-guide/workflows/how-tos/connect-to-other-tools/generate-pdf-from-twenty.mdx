@@ -17,7 +17,7 @@ Este flujo de trabajo utiliza un **Activador manual** para que los usuarios pued
 
 Antes de configurar el flujo de trabajo:
 
-1. **Cree una clave de API**: Vaya a **Settings → APIs** y cree una nueva clave de API. Necesitará este token para la función de lógica.
+1. **Cree una clave de API**: Vaya a **Settings → APIs** y cree una nueva clave de API. Necesitarás este token para la función lógica.
 2. **Configure un servicio de generación de PDF** (opcional): Si desea generar PDFs dinámicamente (p. ej., cotizaciones), use un servicio como Carbone, PDFMonkey o DocuSeal para crear el PDF y obtener una URL de descarga.
 
 ## Configuración paso a paso
@@ -29,12 +29,12 @@ Antes de configurar el flujo de trabajo:
 3. Elija el objeto al que desea adjuntar archivos PDF (p. ej., **Empresa** u **Oportunidad**)
 
 <Tip>
-Con un Activador manual, los usuarios pueden ejecutar este flujo de trabajo usando un botón que aparece en la parte superior derecha una vez que se selecciona un registro, para generar y adjuntar un PDF.
+Con un disparador manual, los usuarios pueden ejecutar este flujo de trabajo usando un botón que aparece en la parte superior derecha una vez seleccionado un registro, esto ejecuta el flujo de trabajo para generar y adjuntar un PDF.
 </Tip>
 
 ### Paso 2: Añadir una Función de lógica
 
-1. Añada una acción **Code** (función de lógica)
+1. Agrega una acción de **código** (función lógica)
 2. Cree una nueva función con el siguiente código
 3. Configure los parámetros de entrada
 
@@ -237,7 +237,7 @@ Para crear cotizaciones o facturas dinámicas:
 | 1    | Activador manual (Empresa) | El usuario lo inicia en un registro                             |
 | 2    | Buscar registro            | Obtener detalles de la oportunidad o de las partidas            |
 | 3    | Solicitud HTTP             | Llamar a la API de generación de PDF con los datos del registro |
-| 4    | Función sin servidor       | Descargar y adjuntar el PDF generado                            |
+| 4    | Función de lógica          | Descargar y adjuntar el PDF generado                            |
 
 ### Servicios populares de generación de PDF
 
@@ -246,7 +246,7 @@ Para crear cotizaciones o facturas dinámicas:
 * **DocuSeal** - Plataforma de automatización de documentos
 * **Documint** - Generación de documentos con enfoque API-first
 
-Cada servicio proporciona una API que devuelve una URL de PDF, que luego puede pasar a la función de lógica.
+Cada servicio proporciona una API que devuelve una URL PDF, la cual puede pasar a la función lógica.
 
 ## Solución de Problemas
 

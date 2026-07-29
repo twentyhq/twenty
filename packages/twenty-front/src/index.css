@@ -5,6 +5,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--t-background-tertiary);
   color: var(--t-font-color-primary);
+  touch-action: manipulation;
 }
 
 html {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import {
   type RunAgentInput,
@@ -17,6 +17,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 @Injectable()
 export class AgentRunService {
+  private readonly logger = new Logger(AgentRunService.name);
+
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
@@ -61,25 +63,39 @@ export class AgentRunService {
       application,
     };
 
-    const { result, hasNoMoreAvailableCredits } =
-      await this.agentAsyncExecutorService.executeAgent({
-        agent,
-        userPrompt: input.prompt,
-        baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-        authContext,
-        workspaceId: workspace.id,
-        userWorkspaceId: requestUserWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      });
+    try {
+      const { result, hasNoMoreAvailableCredits } =
+        await this.agentAsyncExecutorService.executeAgent({
+          agent,
+          userPrompt: input.prompt,
+          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          authContext,
+          workspaceId: workspace.id,
+          userWorkspaceId: requestUserWorkspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          toolLoadingStrategy: 'lazy',
+        });
 
-    if (hasNoMoreAvailableCredits) {
+      if (hasNoMoreAvailableCredits) {
+        return {
+          result: null,
+          error: 'AI agent stopped: no more available credits.',
+          success: false,
+        };
+      }
+
+      return { result, error: null, success: true };
+    } catch (error) {
+      this.logger.error(
+        `Agent execution failed for ${input.agentUniversalIdentifier}`,
+        error instanceof Error ? error.stack : error,
+      );
+
       return {
         result: null,
-        error: 'AI agent stopped: no more available credits.',
+        error: 'Agent execution failed.',
         success: false,
       };
     }
-
-    return { result, error: null, success: true };
   }
 }

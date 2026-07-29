@@ -4,10 +4,12 @@ description: Incluye vistas guardadas preconfiguradas — orden de columnas, fil
 icon: list
 ---
 
-Una **vista** es una configuración guardada de cómo se muestran los registros de un objeto: qué campos aparecen, su orden, si son visibles y qué filtros o grupos se aplican. Usa `defineView()` para incluir vistas preconfiguradas con tu aplicación — normalmente una vista de índice predeterminada para cada objeto personalizado que crees.
+Una **vista** es una configuración guardada de cómo se muestran los registros de un objeto: qué campos aparecen, su orden, si son visibles y qué filtros o grupos se aplican. Usa `defineView()` para incluir vistas preconfiguradas con tu aplicación.
+
+Cada objeto obtiene automáticamente su vista principal de lista (la tabla "All ..." que abre un elemento de navegación `OBJECT`) aprovisionada por el servidor, incluidos los objetos que crea tu aplicación, con una columna por cada campo que declara tu aplicación. Las vistas que defines con `defineView()` son siempre vistas **adicionales** sobre esa vista predeterminada.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,8 +34,8 @@ export default defineView({
 ## Puntos clave
 
 * `objectUniversalIdentifier` especifica a qué objeto se aplica esta vista. Puede ser un objeto personalizado que hayas definido o un objeto estándar de Twenty.
-* `key: ViewKey.INDEX` marca la vista como la vista de lista principal del objeto (la que abre un elemento de navegación `OBJECT`).
-* `fields` controla qué columnas aparecen y en qué orden. Cada campo referencia un `fieldMetadataUniversalIdentifier`. Para hacer referencia a un campo del sistema creado automáticamente, como `createdAt`, consulta [Referencia a campos del sistema](/l/es/developers/extend/apps/data/system-fields).
+* La vista principal de lista del objeto pertenece al servidor: `key` está en desuso y se ignora, por lo que una vista de manifiesto nunca puede reclamarla. Incluye un elemento de navegación `VIEW` si quieres que tu vista esté a un clic de distancia en la barra lateral.
+* `fields` controla qué columnas aparecen y en qué orden. Cada campo referencia un `fieldMetadataUniversalIdentifier`. Para hacer referencia a un campo del sistema creado automáticamente, como `createdAt`, consulta [Orientación de metadatos del sistema](/l/es/developers/extend/apps/data/system-fields).
 * También puedes definir `filters`, `filterGroups`, `sorts`, `groups` y `fieldGroups` para configuraciones avanzadas.
 * `position` controla el orden cuando existen múltiples vistas para el mismo objeto.
 

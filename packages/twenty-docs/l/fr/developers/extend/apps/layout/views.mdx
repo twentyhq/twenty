@@ -4,10 +4,12 @@ description: Livrez des vues enregistrées préconfigurées — ordre des colonn
 icon: list
 ---
 
-Une **vue** est une configuration enregistrée pour la façon dont les enregistrements d’un objet sont affichés : quels champs apparaissent, leur ordre, s’ils sont visibles, ainsi que les filtres ou groupes appliqués. Utilisez `defineView()` pour livrer des vues préconfigurées avec votre application — généralement une vue d’index par défaut pour chaque objet personnalisé que vous créez.
+Une **vue** est une configuration enregistrée pour la façon dont les enregistrements d’un objet sont affichés : quels champs apparaissent, leur ordre, s’ils sont visibles, ainsi que les filtres ou groupes appliqués. Utilisez `defineView()` pour fournir des vues préconfigurées avec votre application.
+
+Chaque objet obtient automatiquement sa vue de liste principale (le tableau « All ... » ouvert par un élément de navigation `OBJECT`), provisionnée par le serveur — y compris les objets que votre application crée, avec une colonne par champ que votre application déclare. Les vues que vous définissez avec `defineView()` sont toujours des vues **supplémentaires** en plus de cette vue par défaut.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,7 +34,7 @@ export default defineView({
 ## Points clés
 
 * `objectUniversalIdentifier` spécifie à quel objet cette vue s'applique. Il peut s’agir d’un objet personnalisé que vous avez défini ou d’un objet Twenty standard.
-* `key: ViewKey.INDEX` marque la vue comme la vue de liste principale de l’objet (celle qu’un élément de navigation `OBJECT` ouvre).
+* La vue de liste principale de l’objet appartient au serveur : `key` est obsolète et ignorée, de sorte qu’une vue définie dans le manifeste ne peut jamais la revendiquer. Ajoutez un élément de navigation `VIEW` si vous voulez que votre vue soit à un clic dans la barre latérale.
 * `fields` contrôle les colonnes affichées et leur ordre. Chaque champ référence un `fieldMetadataUniversalIdentifier`. Pour faire référence à un champ système créé automatiquement tel que `createdAt`, voir [Ciblage des champs système](/l/fr/developers/extend/apps/data/system-fields).
 * Vous pouvez également définir `filters`, `filterGroups`, `sorts`, `groups` et `fieldGroups` pour des configurations plus avancées.
 * `position` contrôle l’ordre lorsqu’il existe plusieurs vues pour le même objet.

@@ -74,12 +74,6 @@ export const ObjectOptionsDropdownCustomView = ({
       )
     : undefined;
 
-  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarEndFieldMetadataId,
-      )
-    : undefined;
-
   const viewsOnCurrentObject = useAtomFamilySelectorValue(
     viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
@@ -129,8 +123,9 @@ export const ObjectOptionsDropdownCustomView = ({
     'Fields',
     ...(customViewData?.type === ViewType.CALENDAR
       ? [
-          'CalendarDateField',
-          ...(isCalendarWeekViewEnabled ? ['CalendarEndDateField'] : []),
+          isCalendarWeekViewEnabled
+            ? 'CalendarDateFields'
+            : 'CalendarDateField',
           'CalendarView',
         ]
       : []),
@@ -196,42 +191,43 @@ export const ObjectOptionsDropdownCustomView = ({
         <DropdownMenuItemsContainer scrollable={false}>
           {customViewData?.type === ViewType.CALENDAR && (
             <>
-              <div id="calendar-date-field-picker-menu-item">
-                <SelectableListItem
-                  itemId="CalendarDateField"
-                  onEnter={() => onContentChange('calendarFields')}
-                >
-                  <MenuItem
-                    focused={selectedItemId === 'CalendarDateField'}
-                    onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={
-                      isDefaultView
-                        ? t`Not available on Default View`
-                        : calendarFieldMetadata?.label
-                    }
-                    contextualTextPosition="right"
-                    hasSubMenu
-                    disabled={isDefaultView}
-                  />
-                </SelectableListItem>
-              </div>
-              {isCalendarWeekViewEnabled && (
-                <div id="calendar-end-date-field-picker-menu-item">
+              {isCalendarWeekViewEnabled ? (
+                <div id="calendar-date-fields-picker-menu-item">
                   <SelectableListItem
-                    itemId="CalendarEndDateField"
-                    onEnter={() => onContentChange('calendarEndFields')}
+                    itemId="CalendarDateFields"
+                    onEnter={() => onContentChange('calendarDateFields')}
                   >
                     <MenuItem
-                      focused={selectedItemId === 'CalendarEndDateField'}
-                      onClick={() => onContentChange('calendarEndFields')}
+                      focused={selectedItemId === 'CalendarDateFields'}
+                      onClick={() => onContentChange('calendarDateFields')}
                       LeftIcon={IconCalendar}
-                      text={t`End date field`}
+                      text={t`Date fields`}
                       contextualText={
                         isDefaultView
                           ? t`Not available on Default View`
-                          : (calendarEndFieldMetadata?.label ?? t`None`)
+                          : calendarFieldMetadata?.label
+                      }
+                      contextualTextPosition="right"
+                      hasSubMenu
+                      disabled={isDefaultView}
+                    />
+                  </SelectableListItem>
+                </div>
+              ) : (
+                <div id="calendar-date-field-picker-menu-item">
+                  <SelectableListItem
+                    itemId="CalendarDateField"
+                    onEnter={() => onContentChange('calendarFields')}
+                  >
+                    <MenuItem
+                      focused={selectedItemId === 'CalendarDateField'}
+                      onClick={() => onContentChange('calendarFields')}
+                      LeftIcon={IconCalendar}
+                      text={t`Date field`}
+                      contextualText={
+                        isDefaultView
+                          ? t`Not available on Default View`
+                          : calendarFieldMetadata?.label
                       }
                       contextualTextPosition="right"
                       hasSubMenu
