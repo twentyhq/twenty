@@ -1,5 +1,4 @@
-import { type ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { type GqlContextType } from '@nestjs/graphql';
+import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -15,11 +14,7 @@ import {
 
 @Catch(FileStorageException)
 export class FileStorageExceptionFilter implements ExceptionFilter {
-  catch(exception: FileStorageException, host: ArgumentsHost) {
-    if (host.getType<GqlContextType>() !== 'graphql') {
-      throw exception;
-    }
-
+  catch(exception: FileStorageException) {
     switch (exception.code) {
       case FileStorageExceptionCode.INVALID_EXTENSION:
         throw new UserInputError(exception);
