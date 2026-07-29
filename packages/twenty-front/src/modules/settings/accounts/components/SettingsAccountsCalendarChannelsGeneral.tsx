@@ -49,6 +49,7 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
         workspaceMemberId: currentWorkspaceMember?.id || '',
       },
     ],
+    callRecordings: [],
     endsAt: exampleEndDate.toISOString(),
     isFullDay: false,
     startsAt: exampleStartDate.toISOString(),

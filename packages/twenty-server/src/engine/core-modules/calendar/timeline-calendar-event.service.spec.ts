@@ -31,6 +31,7 @@ describe('TimelineCalendarEventService', () => {
   let mockUserWorkspaceRepository: { findOne: jest.Mock };
   let mockWorkspaceMemberRepository: { findOne: jest.Mock };
   let mockFileUrlService: { signFirstFilesFieldFileUrl: jest.Mock };
+  let mockCallRecordingRepository: { find: jest.Mock };
 
   const mockCalendarEvent: Partial<CalendarEventWorkspaceEntity> = {
     id: '1',
@@ -69,12 +70,20 @@ describe('TimelineCalendarEventService', () => {
       signFirstFilesFieldFileUrl: jest.fn().mockResolvedValue(null),
     };
 
+    mockCallRecordingRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+
     const mockGlobalWorkspaceOrmManager = {
       getRepository: jest
         .fn()
         .mockImplementation((_workspaceId, entityName) => {
           if (entityName === 'workspaceMember') {
             return Promise.resolve(mockWorkspaceMemberRepository);
+          }
+
+          if (entityName === 'callRecording') {
+            return Promise.resolve(mockCallRecordingRepository);
           }
 
           return Promise.resolve(mockCalendarEventRepository);

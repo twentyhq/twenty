@@ -392,7 +392,6 @@ export interface Application {
     id: Scalars['UUID']
     name: Scalars['String']
     description?: Scalars['String']
-    logo?: Scalars['String']
     logoFileId?: Scalars['UUID']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -1752,7 +1751,7 @@ export interface MarketplaceApp {
     description: Scalars['String']
     author: Scalars['String']
     category: Scalars['String']
-    logo?: Scalars['String']
+    logoUrl?: Scalars['String']
     sourcePackage?: Scalars['String']
     isVetted: Scalars['Boolean']
     __typename: 'MarketplaceApp'
@@ -1806,7 +1805,7 @@ export interface MarketplaceAppDetail {
     description?: Scalars['String']
     author?: Scalars['String']
     category?: Scalars['String']
-    logo?: Scalars['String']
+    logoUrl?: Scalars['String']
     websiteUrl?: Scalars['String']
     aboutDescription?: Scalars['String']
     termsUrl?: Scalars['String']
@@ -3549,7 +3548,6 @@ export interface ApplicationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
-    logo?: boolean | number
     logoFileId?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
@@ -4958,7 +4956,7 @@ export interface MarketplaceAppGenqlSelection{
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
-    logo?: boolean | number
+    logoUrl?: boolean | number
     sourcePackage?: boolean | number
     isVetted?: boolean | number
     __typename?: boolean | number
@@ -5016,7 +5014,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
-    logo?: boolean | number
+    logoUrl?: boolean | number
     websiteUrl?: boolean | number
     aboutDescription?: boolean | number
     termsUrl?: boolean | number

@@ -5,24 +5,24 @@ description: Perguntas frequentes sobre a exportação de dados.
 
 <AccordionGroup>
 <Accordion title="Podemos exportar todos os dados do espaço de trabalho antes do cancelamento, incluindo objetos personalizados, campos personalizados, relações, notas, tarefas, oportunidades, anexos, fluxos de trabalho, permissões e histórico de auditoria?">
-Os dados da Área de Trabalho podem ser exportados antes do cancelamento com algumas exceções: painéis, fluxos de trabalho e permissões devem ser transferidos manualmente e os logs de auditoria não podem ser transferidos.
+Os dados da Área de Trabalho podem ser exportados antes do cancelamento com algumas exceções: painéis, fluxos de trabalho e permissões devem ser transferidos manualmente; os logs de auditoria não podem ser transferidos.
 </Accordion>
 <Accordion title="Quais elementos não podem ser exportados ou migrados?">
 A maioria dos elementos pode ser exportada ou migrada com algumas exceções:
 * workflows, dashboards e todas as configurações (chaves API, webhooks, logs de auditoria, configurações de usuário, etc.) deve ser migrado manualmente
-* objetos e campos criados pelo app podem ser migrados instalando o app dito em uma área de trabalho diferente, eles não devem ser migrados manualmente
-* alguns registros, como versões do workflow e execução do fluxo de trabalho. não são transferíveis de forma alguma e espera-se que sejam perdidos
-* alguns objetos como mensagem e objetos relacionados à agenda não devem ser exportados como são criados quando uma conta é conectada e sincronizada periodicamente, elas serão sincronizadas novamente assim que você conectar sua conta (desde que você tenha acesso a essa conta, se é uma conta de membro da equipe que deixou a sua empresa, então essas mensagens devem ser exportadas, caso contrário serão perdidas)
+* objetos e campos criados pelo app podem ser migrados instalando o aplicativo dito em um espaço de trabalho diferente. Eles não deveriam ser migrados manualmente
+* alguns registros, como versões do fluxo de trabalho e execução de fluxo de trabalho, não são transferíveis e espera-se que sejam perdidos
+* alguns objetos como mensagem e objetos relacionados à agenda não devem ser exportados como são criados quando uma conta é conectada e sincronizada periodicamente. Eles serão sincronizados novamente assim que você conectar sua conta (desde que você tenha acesso a essa conta, se é uma conta de um membro da equipe que deixou a sua empresa, então essas mensagens devem ser exportadas, caso contrário serão perdidas)
 </Accordion>
 <Accordion title="Existe uma nuvem oficial para o procedimento de migração auto-hospedado ou um serviço de migração assistido?">
 A partir de agora, não existe um procedimento oficial de migração em nuvem por auto-hospedado. A ideia geral é:
 * primeiramente, instale aplicativos para introduzir objetos e campos do app
 * replicar objetos e campos personalizados adicionados por usuários
-* usar script com chaves de API ou ferramentas de IA para migrar todos os dados de um espaço de trabalho para outro
+* usar um script com chaves de API ou ferramentas de IA para migrar todos os dados de uma área de trabalho para outra
 * todos os objetos não transferíveis devem ser migrados manualmente
 
 Peço-lhe que esteja ciente de algumas coisas:
-* você pode enviar até 50 solicitações por minuto no plano Pro ou 100 solicitações por minuto no plano da Organização antes de atingir um limite de pedido/min
+* você pode enviar até 50 solicitações por minuto no plano Pro ou 100 solicitações por minuto no plano da Organização antes de atingir o limite de uma solicitação/min
 * Cada solicitação de API pode ter até 200 registros
 * alguns dados em campos como criados por atividades da Linha do tempo e atualizados serão perdidos durante a importação e substituídos pelo sistema
 </Accordion>
