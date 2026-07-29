@@ -41,7 +41,15 @@ describe('CommandShutdownService', () => {
     service.listenToShutdownSignals();
     service.listenToShutdownSignals();
 
-    expect(process.on).toHaveBeenCalledTimes(2);
+    const registrationsBySignal = (process.on as jest.Mock).mock.calls.reduce<
+      Record<string, number>
+    >((accumulator, [event]) => {
+      accumulator[String(event)] = (accumulator[String(event)] ?? 0) + 1;
+
+      return accumulator;
+    }, {});
+
+    expect(registrationsBySignal).toEqual({ SIGINT: 1, SIGTERM: 1 });
   });
 
   it('should not report a shutdown before any signal is received', () => {
