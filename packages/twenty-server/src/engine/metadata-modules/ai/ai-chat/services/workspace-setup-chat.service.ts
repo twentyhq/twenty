@@ -14,6 +14,7 @@ import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WORKSPACE_SETUP_CHAT_MODEL_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-model-id.constant';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -83,14 +84,11 @@ export class WorkspaceSetupChatService {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
     }
 
-    try {
-      this.aiModelRegistryService.validateModelAvailability(
-        workspace.smartModel,
-        workspace,
-      );
-    } catch {
+    const modelId = this.resolveKickoffModelId(workspace);
+
+    if (!isDefined(modelId)) {
       this.logger.warn(
-        `Workspace setup chat unavailable for workspace ${workspace.id}: model ${workspace.smartModel} is not available`,
+        `Workspace setup chat unavailable for workspace ${workspace.id}: neither ${WORKSPACE_SETUP_CHAT_MODEL_ID} nor ${workspace.smartModel} is available`,
       );
 
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
@@ -124,7 +122,30 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
       workspace,
       companyContext,
+      modelId,
     });
+  }
+
+  private resolveKickoffModelId(workspace: WorkspaceEntity): string | null {
+    const preferredModelIds = [
+      WORKSPACE_SETUP_CHAT_MODEL_ID,
+      workspace.smartModel,
+    ];
+
+    for (const preferredModelId of preferredModelIds) {
+      try {
+        this.aiModelRegistryService.validateModelAvailability(
+          preferredModelId,
+          workspace,
+        );
+
+        return preferredModelId;
+      } catch {
+        continue;
+      }
+    }
+
+    return null;
   }
 
   private async hasCreditsToStartKickoffStream(
@@ -305,11 +326,13 @@ export class WorkspaceSetupChatService {
     userWorkspaceId,
     workspace,
     companyContext,
+    modelId,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
+    modelId: string;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     const thread = await this.agentChatService.getThreadById({
       threadId,
@@ -360,6 +383,7 @@ export class WorkspaceSetupChatService {
           companyEnrichment: companyContext,
           locale: await this.getUserLocale(userWorkspaceId),
         }),
+        modelId,
       });
 
     if (!isDefined(kickoffResult)) {

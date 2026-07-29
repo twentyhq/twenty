@@ -86,6 +86,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     userWorkspaceId: 'user-workspace-id',
     workspace,
     text: kickoffText,
+    modelId: 'kickoff-model-id',
   };
 
   it('should throw THREAD_NOT_FOUND when the thread does not exist', async () => {
@@ -153,7 +154,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       expect.objectContaining({
         threadId: 'thread-id',
         browsingContext: null,
-        modelId: undefined,
+        modelId: 'kickoff-model-id',
         lastUserMessageText: kickoffText,
         lastUserMessageParts: [{ type: 'text', text: kickoffText }],
         hasTitle: true,

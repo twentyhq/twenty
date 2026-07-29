@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { WORKSPACE_SETUP_CHAT_MODEL_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-model-id.constant';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
@@ -183,7 +184,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
-  it('should return unavailable without throwing when model availability validation fails', async () => {
+  it('should return unavailable without throwing when no candidate model is available', async () => {
     const { service, aiModelRegistryService, agentChatService } =
       buildService();
 
@@ -198,6 +199,39 @@ describe('WorkspaceSetupChatService', () => {
       threadId: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
+  });
+
+  it('should start the kickoff stream with the workspace setup model', async () => {
+    const { service, agentChatStreamingService } = buildService();
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ modelId: WORKSPACE_SETUP_CHAT_MODEL_ID }),
+    );
+  });
+
+  it('should fall back to the workspace smart model when the workspace setup model is unavailable', async () => {
+    const { service, aiModelRegistryService, agentChatStreamingService } =
+      buildService();
+
+    aiModelRegistryService.validateModelAvailability.mockImplementation(
+      (modelId: string) => {
+        if (modelId === WORKSPACE_SETUP_CHAT_MODEL_ID) {
+          throw new Error('model is not available');
+        }
+      },
+    );
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ modelId: 'smart-model-id' }),
+    );
   });
 
   it('should return unavailable without creating a thread when the workspace has no available credits', async () => {
@@ -345,6 +379,7 @@ describe('WorkspaceSetupChatService', () => {
       text: expect.stringContaining(
         'No information about the company that owns this workspace is available.',
       ),
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.STARTED,

@@ -324,11 +324,13 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     text,
+    modelId,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     text: string;
+    modelId: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string } | null> {
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },
@@ -404,7 +406,7 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages,
           browsingContext: null,
-          modelId: undefined,
+          modelId,
           lastUserMessageText: text,
           lastUserMessageParts: [{ type: 'text' as const, text }],
           hasTitle: !!thread.title,
@@ -422,7 +424,7 @@ export class AgentChatStreamingService {
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
         attributes: {
-          model: 'unknown',
+          model: modelId,
           failure_phase: 'enqueue',
           error_code: streamError.code,
         },
