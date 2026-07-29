@@ -9,8 +9,6 @@ import {
   SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// Slack redelivers the same message as several events, so this unique index is
-// what actually makes the enqueue idempotent under concurrent deliveries
 export default defineIndex({
   universalIdentifier:
     SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_UNIVERSAL_IDENTIFIER,
