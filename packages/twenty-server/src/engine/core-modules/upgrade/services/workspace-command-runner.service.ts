@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -27,6 +28,7 @@ export class WorkspaceCommandRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeStatusService: UpgradeStatusService,
+    private readonly commandShutdownService: CommandShutdownService,
   ) {}
 
   async runWorkspaceCommands({
@@ -56,6 +58,23 @@ export class WorkspaceCommandRunnerService {
 
     try {
       for (const workspaceCommandEntry of workspaceCommands) {
+        if (this.commandShutdownService.isShutdownRequested()) {
+          this.logger.warn(
+            formatUpgradeLog({
+              humanMessage:
+                `Shutdown requested, stopping workspace ${workspaceId} before "${workspaceCommandEntry.name}". ` +
+                'Rerun the upgrade to resume from this command.',
+              event: 'workspace.interrupted',
+              logFields: {
+                workspaceId,
+                before: workspaceCommandEntry.name,
+              },
+            }),
+          );
+
+          return;
+        }
+
         await this.runSingleWorkspaceCommandOrThrow({
           workspaceCommandEntry,
           workspaceId,

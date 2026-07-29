@@ -180,7 +180,7 @@ export class ApplicationUpgradeService {
     // provisioned workspace, which would upgrade workspaces that were
     // filtered out.
     if (!isNonEmptyArray(applications)) {
-      return { success: [], fail: [] };
+      return { success: [], fail: [], interrupted: false };
     }
 
     return this.workspaceIteratorService.iterate({

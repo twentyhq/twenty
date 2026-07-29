@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import {
   type WorkspaceIteratorReport,
   WorkspaceIteratorService,
@@ -39,6 +40,7 @@ export class UpgradeSequenceRunnerService {
     private readonly upgradeAwareEntityMetadataAdapter: UpgradeAwareEntityMetadataAdapter,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
+    private readonly commandShutdownService: CommandShutdownService,
   ) {}
 
   async run({
@@ -94,6 +96,23 @@ export class UpgradeSequenceRunnerService {
 
     while (cursor < sequence.length) {
       const step = sequence[cursor];
+
+      if (this.commandShutdownService.isShutdownRequested()) {
+        this.logger.warn(
+          formatUpgradeLog({
+            humanMessage:
+              `Stopping before step "${step.name}": shutdown requested. ` +
+              'Rerun the upgrade to resume from this step.',
+            event: 'sequence.stopped',
+            logFields: {
+              before: step.name,
+              reason: 'shutdown-requested',
+            },
+          }),
+        );
+
+        break;
+      }
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
         if (
@@ -166,6 +185,24 @@ export class UpgradeSequenceRunnerService {
             logFields: {
               failures: report.fail.length,
               reason: 'workspace-failures',
+            },
+          }),
+        );
+
+        return { totalSuccesses, totalFailures };
+      }
+
+      // The workspace segment is only partially applied, advancing the cursor
+      // would run an instance step on workspaces that are not aligned yet.
+      if (report.interrupted) {
+        this.logger.warn(
+          formatUpgradeLog({
+            humanMessage:
+              'Stopped during workspace steps: shutdown requested. ' +
+              'Rerun the upgrade to resume from the last recorded command.',
+            event: 'sequence.stopped',
+            logFields: {
+              reason: 'shutdown-requested',
             },
           }),
         );

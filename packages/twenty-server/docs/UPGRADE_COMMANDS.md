@@ -134,6 +134,18 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+## Interrupting a run (Ctrl+C, SIGTERM)
+
+CLI commands install cooperative shutdown handlers for `SIGINT` and `SIGTERM`.
+
+- **First signal** — the runner finishes the step in progress, then stops at the next boundary instead of starting new work. Boundaries are checked before each sequence step, before each workspace, and before each workspace command. The process exits with `130` (SIGINT) or `143` (SIGTERM) so orchestrators can tell an interruption apart from a failure.
+- **Second signal** — the process exits immediately, leaving the step in progress unfinished.
+- **`SIGKILL`** — cannot be trapped, same outcome as a second signal.
+
+Nothing is rolled back on stop: the run resumes from the last command recorded in `upgradeMigration`. A graceful stop leaves every workspace on a completed command, so resuming is a plain rerun of the same command. A forced kill can interrupt a command mid-flight; its own transaction rolls back, but a command that writes across several transactions may leave partial work, which is why upgrade commands must be idempotent.
+
+Under Kubernetes, `terminationGracePeriodSeconds` must be long enough for the step in progress to finish, otherwise the pod is `SIGKILL`ed before the graceful stop completes.
+
 ## Shipping a command for a future version (deferred drops)
 
 You can write a command for a version listed in `TWENTY_NEXT_VERSIONS` — typically the second half of a zero-downtime migration, e.g. dropping a column one release after its replacement ships. Pass the target version to the generator:
