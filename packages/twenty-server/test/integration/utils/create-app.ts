@@ -1,4 +1,3 @@
-import { APP_FILTER } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 import {
   Test,
@@ -16,7 +15,6 @@ import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-
 import { CaptchaDriverFactory } from 'src/engine/core-modules/captcha/captcha-driver.factory';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
-import { MockedUnhandledExceptionFilter } from 'src/engine/core-modules/exception-handler/mocks/mock-unhandled-exception.filter';
 import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 
@@ -44,12 +42,6 @@ export const createApp = async (
   const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule, JobsModule, MessageQueueModule.registerExplorer()],
-    providers: [
-      {
-        provide: APP_FILTER,
-        useClass: MockedUnhandledExceptionFilter,
-      },
-    ],
   })
     .overrideProvider(StripeSDKService)
     .useValue(stripeSDKMockService)

@@ -1,3 +1,5 @@
+import { type ArgumentsHost } from '@nestjs/common';
+
 import { FileStorageExceptionFilter } from 'src/engine/core-modules/file-storage/file-storage-exception-filter';
 import {
   FileStorageException,
@@ -9,8 +11,20 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
+const graphqlHost = { getType: () => 'graphql' } as unknown as ArgumentsHost;
+const httpHost = { getType: () => 'http' } as unknown as ArgumentsHost;
+
 describe('FileStorageExceptionFilter', () => {
   const filter = new FileStorageExceptionFilter();
+
+  it('should rethrow untouched outside of a GraphQL context', () => {
+    const exception = new FileStorageException(
+      'test message',
+      FileStorageExceptionCode.ACCESS_DENIED,
+    );
+
+    expect(() => filter.catch(exception, httpHost)).toThrow(exception);
+  });
 
   it.each([
     {
@@ -30,7 +44,7 @@ describe('FileStorageExceptionFilter', () => {
     ({ code, expectedError }) => {
       const exception = new FileStorageException('test message', code);
 
-      expect(() => filter.catch(exception)).toThrow(expectedError);
+      expect(() => filter.catch(exception, graphqlHost)).toThrow(expectedError);
     },
   );
 });

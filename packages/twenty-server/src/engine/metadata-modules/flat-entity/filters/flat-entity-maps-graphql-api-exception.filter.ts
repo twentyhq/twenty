@@ -1,4 +1,10 @@
-import { Catch, type ExceptionFilter, Injectable } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+  Injectable,
+} from '@nestjs/common';
+import { type GqlContextType } from '@nestjs/graphql';
 
 import {
   InternalServerError,
@@ -12,7 +18,11 @@ import {
 @Catch(FlatEntityMapsException)
 @Injectable()
 export class FlatEntityMapsGraphqlApiExceptionFilter implements ExceptionFilter {
-  catch(exception: FlatEntityMapsException) {
+  catch(exception: FlatEntityMapsException, host: ArgumentsHost) {
+    if (host.getType<GqlContextType>() !== 'graphql') {
+      throw exception;
+    }
+
     switch (exception.code) {
       case FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND:
         throw new NotFoundError(exception);
