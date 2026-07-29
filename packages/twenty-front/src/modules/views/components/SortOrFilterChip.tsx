@@ -5,7 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { Dropdown, type DropdownProps } from '@/ui/layout/dropdown/components/Dropdown';
+import {
+  Dropdown,
+  type DropdownProps,
+} from '@/ui/layout/dropdown/components/Dropdown';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -211,12 +214,28 @@ export const SortOrFilterChip = ({
     if (isDefined(dropdown)) {
       return (
         <Dropdown
-          {...dropdown}
           clickableComponent={
             <StyledChipLabelDropdownTrigger>
               {labelContent}
             </StyledChipLabelDropdownTrigger>
           }
+          clickableComponentWidth={dropdown.clickableComponentWidth}
+          disableClickForClickableComponent={
+            dropdown.disableClickForClickableComponent
+          }
+          dropdownComponents={dropdown.dropdownComponents}
+          dropdownId={dropdown.dropdownId}
+          dropdownOffset={dropdown.dropdownOffset}
+          dropdownPlacement={dropdown.dropdownPlacement}
+          dropdownStrategy={dropdown.dropdownStrategy}
+          excludedClickOutsideIds={dropdown.excludedClickOutsideIds}
+          globalHotkeysConfig={dropdown.globalHotkeysConfig}
+          hotkey={dropdown.hotkey}
+          isDropdownInModal={dropdown.isDropdownInModal}
+          middlewareBoundaryPadding={dropdown.middlewareBoundaryPadding}
+          onClickOutside={dropdown.onClickOutside}
+          onClose={dropdown.onClose}
+          onOpen={dropdown.onOpen}
         />
       );
     }
