@@ -13,6 +13,9 @@ const graphql = (query: string, variables?: object) =>
 const INITIAL_NAME = 'Core Mirror Workflow';
 const RENAMED_NAME = 'Core Mirror Workflow Renamed';
 
+const POLL_ATTEMPTS = 20;
+const POLL_INTERVAL_MS = 250;
+
 describe('workflow core mirror (e2e)', () => {
   let workflowId: string;
   let alreadyDestroyed = false;
@@ -25,6 +28,25 @@ describe('workflow core mirror (e2e)', () => {
     );
 
     return rows.length;
+  };
+
+  // the mirror is an async database-event listener, so the core row lands
+  // shortly after the mutation returns rather than within it
+  const waitForCoreWorkflowsNamed = async (
+    name: string,
+    expected: number,
+  ): Promise<number> => {
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      const count = await countCoreWorkflowsNamed(name);
+
+      if (count === expected) {
+        return count;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    return countCoreWorkflowsNamed(name);
   };
 
   afterAll(async () => {
@@ -57,7 +79,7 @@ describe('workflow core mirror (e2e)', () => {
     expect(createResponse.body.errors).toBeUndefined();
     workflowId = createResponse.body.data.createWorkflow.id;
 
-    expect(await countCoreWorkflowsNamed(INITIAL_NAME)).toBe(1);
+    expect(await waitForCoreWorkflowsNamed(INITIAL_NAME, 1)).toBe(1);
 
     const renameResponse = await graphql(
       `
@@ -71,8 +93,8 @@ describe('workflow core mirror (e2e)', () => {
     );
 
     expect(renameResponse.body.errors).toBeUndefined();
-    expect(await countCoreWorkflowsNamed(INITIAL_NAME)).toBe(0);
-    expect(await countCoreWorkflowsNamed(RENAMED_NAME)).toBe(1);
+    expect(await waitForCoreWorkflowsNamed(RENAMED_NAME, 1)).toBe(1);
+    expect(await waitForCoreWorkflowsNamed(INITIAL_NAME, 0)).toBe(0);
 
     const deleteResponse = await graphql(
       `
@@ -86,7 +108,7 @@ describe('workflow core mirror (e2e)', () => {
     );
 
     expect(deleteResponse.body.errors).toBeUndefined();
-    expect(await countCoreWorkflowsNamed(RENAMED_NAME)).toBe(0);
+    expect(await waitForCoreWorkflowsNamed(RENAMED_NAME, 0)).toBe(0);
 
     const restoreResponse = await graphql(
       `
@@ -100,7 +122,7 @@ describe('workflow core mirror (e2e)', () => {
     );
 
     expect(restoreResponse.body.errors).toBeUndefined();
-    expect(await countCoreWorkflowsNamed(RENAMED_NAME)).toBe(1);
+    expect(await waitForCoreWorkflowsNamed(RENAMED_NAME, 1)).toBe(1);
 
     const destroyResponse = await graphql(
       `
@@ -115,6 +137,6 @@ describe('workflow core mirror (e2e)', () => {
 
     expect(destroyResponse.body.errors).toBeUndefined();
     alreadyDestroyed = true;
-    expect(await countCoreWorkflowsNamed(RENAMED_NAME)).toBe(0);
+    expect(await waitForCoreWorkflowsNamed(RENAMED_NAME, 0)).toBe(0);
   });
 });

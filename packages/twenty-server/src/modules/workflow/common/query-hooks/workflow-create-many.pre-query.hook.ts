@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -17,10 +15,7 @@ export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInst
     const sanitizedData = payload.data.map((workflow) => {
       const { statuses: _statuses, ...workflowWithoutStatuses } = workflow; // silent not to break creation from view with filter
 
-      return {
-        ...workflowWithoutStatuses,
-        coreWorkflowId: uuidv4(),
-      } as WorkflowWorkspaceEntity;
+      return workflowWithoutStatuses as WorkflowWorkspaceEntity;
     });
 
     return {

@@ -5,7 +5,6 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
@@ -16,7 +15,6 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 export class WorkflowUpdateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   async execute(
@@ -32,14 +30,5 @@ export class WorkflowUpdateOnePostQueryHook implements WorkspacePostQueryHookIns
       workflowIds,
       authContext,
     );
-
-    const workspaceId = authContext.workspace?.id;
-
-    if (isDefined(workspaceId)) {
-      await this.workflowCoreSyncService.mirrorWorkflowsByIds(
-        workspaceId,
-        workflowIds,
-      );
-    }
   }
 }
