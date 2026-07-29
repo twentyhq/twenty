@@ -14,7 +14,6 @@
     "clickhouse:migrate:prod": "node dist/database/clickHouse/migrations/run-migrations.js",
     "upgrade:background": "./scripts/upgrade-background.sh start",
     "upgrade:background:logs": "./scripts/upgrade-background.sh logs",
-    "upgrade:background:status": "./scripts/upgrade-background.sh status",
     "upgrade:background:stop": "./scripts/upgrade-background.sh stop",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },

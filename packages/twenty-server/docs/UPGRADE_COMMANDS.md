@@ -151,21 +151,20 @@ Use it for any long upgrade started over `kubectl exec` or SSH. A foreground run
 ```bash
 yarn upgrade:background [args]   # start detached, then stream the log
 yarn upgrade:background:logs     # re-attach from another shell
-yarn upgrade:background:status   # one-shot check, for scripts
 yarn upgrade:background:stop     # graceful stop; --now for immediate, --force for SIGKILL
 ```
 
 `upgrade:background` refuses to start when a run is already in flight, and forwards any extra arguments (`--include-slow`, workspace filters) to `upgrade`. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
 
-`logs` is the one to reach for interactively, because it reports what it found before streaming. If a run is alive it announces the pid and follows the log. If none is alive it prints how the last one ended and dumps the tail instead of following, so it always terminates rather than waiting on a log that will never grow again. That distinction cannot be made from the log alone: a workspace segment can run for many minutes without printing anything, so a silent log looks identical whether the run is grinding through a slow segment or was killed twenty minutes ago. Only the recorded pid answers it.
+`logs` is the only one you need to check on a run, because it reports what it found before streaming. If a run is alive it announces the pid and follows the log. If none is alive it prints how the last one ended and dumps the tail instead of following, so it always terminates rather than waiting on a log that will never grow again. That distinction cannot be made from the log alone: a workspace segment can run for many minutes without printing anything, so a silent log looks identical whether the run is grinding through a slow segment or was killed twenty minutes ago. Only the recorded pid answers it.
 
-`status` answers the same question in one line and exits, for scripts rather than people. It exits `0` while a run is alive and `1` once none is, so a wait loop reads as:
+The script also takes a `status` subcommand, which gives the same verdict in one line and exits. It has no yarn entry point because it is meant for scripts rather than people, and calling the script directly avoids both yarn's startup cost per poll and its requirement to be run from the package directory:
 
 ```bash
-until ! yarn upgrade:background:status > /dev/null; do sleep 30; done
+until ! /app/packages/twenty-server/scripts/upgrade-background.sh status > /dev/null; do sleep 30; done
 ```
 
-Note that `1` means "not running", not "failed": a run that completed cleanly still exits `1`, because the code answers liveness and the outcome is in the text.
+It exits `0` while a run is alive and `1` once none is. Note that `1` means "not running", not "failed": a run that completed cleanly still exits `1`, because the code answers liveness and the outcome is in the text.
 
 The three `stop` tiers map onto the signal behavior above, as three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, and a timer would defeat the graceful path entirely.
 
