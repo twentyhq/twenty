@@ -18,6 +18,8 @@ const APP_UNIVERSAL_IDENTIFIER = '6a6f983f-5c1a-4c60-a3c8-7d0e2a4a66a6';
 const ROLE_UNIVERSAL_IDENTIFIER = '7b7f983f-5c1a-4c60-a3c8-7d0e2a4a77b7';
 const ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
   '8c8f983f-5c1a-4c60-a3c8-7d0e2a4a88c8';
+const AUTHENTICATED_ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
+  '9d9f983f-5c1a-4c60-a3c8-7d0e2a4a99d9';
 
 const ROUTE_FUNCTION_RESPONSE = { greeting: 'hello from route function' };
 
@@ -57,6 +59,20 @@ const routeFunctionManifest: LogicFunctionManifest = {
     path: '/suspended-workspace-route',
     httpMethod: 'GET',
     isAuthRequired: false,
+  },
+};
+
+const authenticatedRouteFunctionManifest: LogicFunctionManifest = {
+  universalIdentifier: AUTHENTICATED_ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'authenticated-workspace-route',
+  handlerName: 'main',
+  sourceHandlerPath: 'src/authenticated-workspace-route.ts',
+  builtHandlerPath: 'dist/authenticated-workspace-route.mjs',
+  builtHandlerChecksum: 'checksum-authenticated-workspace-route',
+  httpRouteTriggerSettings: {
+    path: '/authenticated-workspace-route',
+    httpMethod: 'GET',
+    isAuthRequired: true,
   },
 };
 
@@ -101,12 +117,20 @@ describe('RouteTrigger suspended workspace (integration)', () => {
       builtHandlerCode: ROUTE_BUILT_HANDLER_CODE,
     });
 
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/authenticated-workspace-route.mjs',
+      builtHandlerCode: ROUTE_BUILT_HANDLER_CODE,
+    });
+
     await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_UNIVERSAL_IDENTIFIER,
         roleId: ROLE_UNIVERSAL_IDENTIFIER,
         overrides: {
-          logicFunctions: [routeFunctionManifest],
+          logicFunctions: [
+            routeFunctionManifest,
+            authenticatedRouteFunctionManifest,
+          ],
         },
       }),
       expectToFail: false,
@@ -147,6 +171,18 @@ describe('RouteTrigger suspended workspace (integration)', () => {
       applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
     });
   }, 60000);
+
+  describe('GET /s/authenticated-workspace-route', () => {
+    it('should serve an authenticated route when the bearer token resolves the workspace', async () => {
+      const response = await request(baseUrl)
+        .get('/s/authenticated-workspace-route')
+        .set('Host', bareHost)
+        .set('Authorization', `Bearer ${applicationAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(ROUTE_FUNCTION_RESPONSE);
+    }, 60000);
+  });
 
   describe('GET /s/suspended-workspace-route', () => {
     it('should return WORKSPACE_NOT_FOUND when neither host nor token identifies a workspace', async () => {
