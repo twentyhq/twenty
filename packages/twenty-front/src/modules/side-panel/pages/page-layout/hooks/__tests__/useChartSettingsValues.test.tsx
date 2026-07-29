@@ -679,7 +679,7 @@ describe('useChartSettingsValues', () => {
   });
 
   describe('Number format setting', () => {
-    it('should return a format label for FORMAT when numberFormat is set on a bar chart', () => {
+    it('should return the Full label for FORMAT when numberFormat is set on a bar chart', () => {
       const config = buildBarChartConfiguration({
         numberFormat: ChartNumberFormat.FULL,
       });
@@ -690,11 +690,10 @@ describe('useChartSettingsValues', () => {
         CHART_CONFIGURATION_SETTING_IDS.FORMAT,
       );
 
-      expect(value).toBeDefined();
-      expect(typeof value).toBe('string');
+      expect(value).toBe('Full');
     });
 
-    it('should return undefined for FORMAT when numberFormat is not set', () => {
+    it('should return the default format label for FORMAT when numberFormat is not set', () => {
       const { result } = renderUseChartSettingsValues(
         buildBarChartConfiguration({}),
       );
@@ -703,7 +702,7 @@ describe('useChartSettingsValues', () => {
         CHART_CONFIGURATION_SETTING_IDS.FORMAT,
       );
 
-      expect(value).toBeUndefined();
+      expect(value).toBe('Short');
     });
   });
 });

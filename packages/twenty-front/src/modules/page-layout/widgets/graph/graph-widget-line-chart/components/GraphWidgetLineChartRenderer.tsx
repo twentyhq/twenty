@@ -7,6 +7,7 @@ import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graph-w
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { getChartValueDisplayType } from '@/page-layout/widgets/graph/utils/getChartValueDisplayType';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -20,7 +21,6 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
-  ChartNumberFormat,
   type LineChartDataPoint,
 } from '~/generated-metadata/graphql';
 
@@ -152,13 +152,7 @@ export const GraphWidgetLineChartRenderer = () => {
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         colorMode={colorMode}
-        displayType={
-          configuration.numberFormat === ChartNumberFormat.FULL
-            ? 'number'
-            : 'shortNumber'
-        }
-        axisDisplayType="shortNumber"
-        tooltipDisplayType="number"
+        displayType={getChartValueDisplayType(configuration.numberFormat)}
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

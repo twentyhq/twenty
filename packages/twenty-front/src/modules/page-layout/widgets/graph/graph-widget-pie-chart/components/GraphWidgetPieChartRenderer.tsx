@@ -6,6 +6,7 @@ import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graph-wi
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { getChartValueDisplayType } from '@/page-layout/widgets/graph/utils/getChartValueDisplayType';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -16,7 +17,6 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { ChartNumberFormat } from '~/generated-metadata/graphql';
 
 const GraphWidgetPieChart = lazy(() =>
   import('@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart').then(
@@ -110,12 +110,9 @@ export const GraphWidgetPieChartRenderer = () => {
         configuration={widget.configuration}
         showLegend={showLegend}
         colorMode={colorMode}
-        displayType={
-          widget.configuration.numberFormat === ChartNumberFormat.FULL
-            ? 'number'
-            : 'shortNumber'
-        }
-        tooltipDisplayType="number"
+        displayType={getChartValueDisplayType(
+          widget.configuration.numberFormat,
+        )}
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

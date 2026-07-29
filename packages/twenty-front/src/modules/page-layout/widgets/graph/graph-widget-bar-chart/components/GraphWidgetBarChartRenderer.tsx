@@ -7,6 +7,7 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { getChartValueDisplayType } from '@/page-layout/widgets/graph/utils/getChartValueDisplayType';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -17,10 +18,7 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  AxisNameDisplay,
-  ChartNumberFormat,
-} from '~/generated-metadata/graphql';
+import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import('@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChart').then(
@@ -146,13 +144,7 @@ export const GraphWidgetBarChartRenderer = () => {
         groupMode={groupMode}
         colorMode={colorMode}
         id={widget.id}
-        displayType={
-          configuration.numberFormat === ChartNumberFormat.FULL
-            ? 'number'
-            : 'shortNumber'
-        }
-        axisDisplayType="shortNumber"
-        tooltipDisplayType="number"
+        displayType={getChartValueDisplayType(configuration.numberFormat)}
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}

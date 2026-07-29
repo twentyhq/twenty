@@ -47,7 +47,6 @@ type LinesLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type NoDataLayerWrapperProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
-  axisDisplayType?: GraphValueFormatOptions['displayType'];
   data: LineChartSeriesWithColor[];
   showLegend?: boolean;
   showGrid?: boolean;
@@ -62,7 +61,6 @@ type GraphWidgetLineChartProps = {
   groupMode?: 'stacked';
   colorMode: GraphColorMode;
   onSliceClick?: (point: Point<LineSeries>) => void;
-  tooltipDisplayType?: GraphValueFormatOptions['displayType'];
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -87,8 +85,6 @@ export const GraphWidgetLineChart = ({
   rangeMax,
   omitNullValues = false,
   displayType,
-  axisDisplayType,
-  tooltipDisplayType,
   groupMode,
   colorMode,
   decimals,
@@ -116,12 +112,12 @@ export const GraphWidgetLineChart = ({
 
   const axisFormatOptions: GraphValueFormatOptions = {
     ...formatOptions,
-    displayType: axisDisplayType ?? displayType,
+    displayType: 'shortNumber',
   };
 
   const tooltipFormatOptions: GraphValueFormatOptions = {
     ...formatOptions,
-    displayType: tooltipDisplayType ?? displayType,
+    displayType: 'number',
   };
 
   const { enrichedSeries, nivoData, colors, legendItems, visibleData } =

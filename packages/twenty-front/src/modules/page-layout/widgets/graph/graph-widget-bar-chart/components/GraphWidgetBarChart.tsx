@@ -35,7 +35,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type GraphWidgetBarChartProps = {
-  axisDisplayType?: GraphValueFormatOptions['displayType'];
   colorMode: GraphColorMode;
   data: BarChartDatum[];
   groupMode?: 'grouped' | 'stacked';
@@ -52,7 +51,6 @@ type GraphWidgetBarChartProps = {
   showGrid?: boolean;
   showLegend?: boolean;
   showValues?: boolean;
-  tooltipDisplayType?: GraphValueFormatOptions['displayType'];
   xAxisLabel?: string;
   yAxisLabel?: string;
 } & GraphValueFormatOptions;
@@ -85,8 +83,6 @@ export const GraphWidgetBarChart = ({
   rangeMax,
   omitNullValues = false,
   displayType,
-  axisDisplayType,
-  tooltipDisplayType,
   decimals,
   prefix,
   suffix,
@@ -143,20 +139,9 @@ export const GraphWidgetBarChart = ({
     [customFormatter, decimals, displayType, formatNumber, prefix, suffix],
   );
 
-  const axisFormatOptions = useMemo<GraphValueFormatOptions>(
-    () => ({
-      ...formatOptions,
-      displayType: axisDisplayType ?? displayType,
-    }),
-    [formatOptions, axisDisplayType, displayType],
-  );
-
   const tooltipFormatOptions = useMemo<GraphValueFormatOptions>(
-    () => ({
-      ...formatOptions,
-      displayType: tooltipDisplayType ?? displayType,
-    }),
-    [formatOptions, tooltipDisplayType, displayType],
+    () => ({ ...formatOptions, displayType: 'number' }),
+    [formatOptions],
   );
 
   const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
@@ -286,7 +271,6 @@ export const GraphWidgetBarChart = ({
             hasExplicitRangeBounds={hasExplicitRangeBounds}
             enrichedKeysMap={enrichedKeysMap}
             formatOptions={formatOptions}
-            axisFormatOptions={axisFormatOptions}
             rightTickLabels={rightTickLabels}
             groupMode={groupMode}
             hasNoData={hasNoData}
