@@ -12,7 +12,8 @@ import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/ho
 export const useCreateWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [mutate] = useMutation<

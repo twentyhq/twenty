@@ -12,7 +12,8 @@ import {
 export const useDuplicateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
 
   const { enqueueErrorSnackBar } = useSnackBar();
 

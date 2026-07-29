@@ -11,7 +11,8 @@ import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/ho
 export const useDeleteWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
 
   const [mutate] = useMutation<
     DeleteWorkflowVersionEdgeMutation,

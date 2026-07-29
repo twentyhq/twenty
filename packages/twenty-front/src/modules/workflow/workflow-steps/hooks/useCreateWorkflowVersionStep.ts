@@ -12,7 +12,8 @@ import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/ho
 export const useCreateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
 
   const { enqueueErrorSnackBar } = useSnackBar();
 

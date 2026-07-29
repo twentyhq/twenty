@@ -14,7 +14,8 @@ import {
 export const useDeleteWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { applyWorkflowVersionStepChanges } = useApplyWorkflowVersionStepChanges();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const { findOneRecordQuery: findOneWorkflowVersionQuery } =
