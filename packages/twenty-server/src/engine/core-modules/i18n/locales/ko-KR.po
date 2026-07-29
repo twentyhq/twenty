@@ -5278,6 +5278,11 @@ msgstr "정규화된 화자 분리 전사본"
 msgid "Not authorized to access this OAuth provider."
 msgstr "이 OAuth 공급자에 액세스할 권한이 없습니다."
 
+#. js-lingui-id: iXlml9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+msgid "Not recorded"
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
