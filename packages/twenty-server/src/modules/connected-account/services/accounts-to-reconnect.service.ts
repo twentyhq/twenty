@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountsToReconnectKeyValueType,
   AccountsToReconnectKeys,
@@ -10,7 +16,45 @@ import {
 export class AccountsToReconnectService {
   constructor(
     private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
+
+  public async markAccountForReconnect(
+    connectedAccountId: string,
+    workspaceId: string,
+  ) {
+    const connectedAccount = await this.connectedAccountRepository.findOne({
+      where: { id: connectedAccountId, workspaceId },
+    });
+
+    if (!isDefined(connectedAccount)) {
+      return;
+    }
+
+    await this.connectedAccountRepository.update(
+      { id: connectedAccountId, workspaceId },
+      { authFailedAt: new Date() },
+    );
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: connectedAccount.userWorkspaceId },
+      select: ['userId'],
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return;
+    }
+
+    await this.addAccountToReconnectByKey(
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+      userWorkspace.userId,
+      workspaceId,
+      connectedAccountId,
+    );
+  }
 
   public async removeAccountToReconnect(
     userId: string,

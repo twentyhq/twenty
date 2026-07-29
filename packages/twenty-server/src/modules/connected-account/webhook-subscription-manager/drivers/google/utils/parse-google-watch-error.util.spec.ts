@@ -13,10 +13,10 @@ const createWatchError = (status: number, reason: string, message: string) =>
   });
 
 describe('parseGoogleWatchError', () => {
-  it('should map a permanent 403 to a forbidden subscription exception', () => {
+  it('should map a notACalendarUser 403 to a forbidden subscription exception', () => {
     const error = createWatchError(
       403,
-      'required',
+      'notACalendarUser',
       'The user must be signed up for Google Calendar.',
     );
 
@@ -28,10 +28,10 @@ describe('parseGoogleWatchError', () => {
     );
   });
 
-  it.each(['rateLimitExceeded', 'userRateLimitExceeded'])(
+  it.each(['rateLimitExceeded', 'userRateLimitExceeded', 'forbidden'])(
     'should keep the original error for 403 %s',
     (reason) => {
-      const error = createWatchError(403, reason, 'Rate limit exceeded');
+      const error = createWatchError(403, reason, 'Forbidden');
 
       expect(parseGoogleWatchError(error)).toBe(error);
     },

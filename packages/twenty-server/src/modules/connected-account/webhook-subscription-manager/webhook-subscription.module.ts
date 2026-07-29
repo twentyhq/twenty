@@ -7,6 +7,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { CreateWebhookSubscriptionForConnectedAccountCommand } from 'src/modules/connected-account/webhook-subscription-manager/commands/create-webhook-subscription-for-connected-account.command';
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { CreateWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
@@ -20,6 +21,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
 @Module({
   imports: [
     WebhookSubscriptionManagerModule,
+    ConnectedAccountModule,
     FeatureFlagModule,
     WorkspaceIteratorModule,
     TypeOrmModule.forFeature([

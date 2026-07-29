@@ -14,6 +14,7 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -25,6 +26,7 @@ describe('CalendarWebhookSubscriptionService', () => {
   let service: CalendarWebhookSubscriptionService;
   let calendarChannelRepository: { findOne: jest.Mock; update: jest.Mock };
   let exceptionHandlerService: { captureExceptions: jest.Mock };
+  let accountsToReconnectService: { markAccountForReconnect: jest.Mock };
   let driver: {
     createSubscription: jest.Mock;
     renewSubscription: jest.Mock;
@@ -56,6 +58,9 @@ describe('CalendarWebhookSubscriptionService', () => {
     exceptionHandlerService = {
       captureExceptions: jest.fn(),
     };
+    accountsToReconnectService = {
+      markAccountForReconnect: jest.fn(),
+    };
     driver = {
       createSubscription: jest.fn(),
       renewSubscription: jest.fn(),
@@ -83,6 +88,10 @@ describe('CalendarWebhookSubscriptionService', () => {
         {
           provide: ExceptionHandlerService,
           useValue: exceptionHandlerService,
+        },
+        {
+          provide: AccountsToReconnectService,
+          useValue: accountsToReconnectService,
         },
       ],
     }).compile();
@@ -114,6 +123,9 @@ describe('CalendarWebhookSubscriptionService', () => {
           webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         }),
       );
+      expect(
+        accountsToReconnectService.markAccountForReconnect,
+      ).toHaveBeenCalledWith('connected-account-id', mockWorkspaceId);
       expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
     });
 
@@ -153,6 +165,9 @@ describe('CalendarWebhookSubscriptionService', () => {
         [unknownError],
         { workspace: { id: mockWorkspaceId } },
       );
+      expect(
+        accountsToReconnectService.markAccountForReconnect,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -186,6 +201,9 @@ describe('CalendarWebhookSubscriptionService', () => {
         mockCalendarChannelId,
         { webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED },
       );
+      expect(
+        accountsToReconnectService.markAccountForReconnect,
+      ).toHaveBeenCalledWith('connected-account-id', mockWorkspaceId);
       expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
     });
 

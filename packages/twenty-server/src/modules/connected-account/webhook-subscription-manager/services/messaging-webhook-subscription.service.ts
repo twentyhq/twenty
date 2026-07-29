@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 import { isNonRetryableWebhookSubscriptionError } from 'src/modules/connected-account/webhook-subscription-manager/utils/is-non-retryable-webhook-subscription-error.util';
@@ -25,6 +26,7 @@ export class MessagingWebhookSubscriptionService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   async createSubscription(
@@ -90,6 +92,11 @@ export class MessagingWebhookSubscriptionService {
       });
 
       if (isNonRetryableWebhookSubscriptionError(error)) {
+        await this.accountsToReconnectService.markAccountForReconnect(
+          connectedAccount.id,
+          workspaceId,
+        );
+
         return;
       }
 
@@ -158,6 +165,11 @@ export class MessagingWebhookSubscriptionService {
       });
 
       if (isNonRetryableWebhookSubscriptionError(error)) {
+        await this.accountsToReconnectService.markAccountForReconnect(
+          connectedAccount.id,
+          workspaceId,
+        );
+
         return;
       }
 
