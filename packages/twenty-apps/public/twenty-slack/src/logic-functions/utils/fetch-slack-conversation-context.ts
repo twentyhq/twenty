@@ -2,6 +2,9 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
 const CONTEXT_MESSAGE_LIMIT = 15;
+// conversations.replies pages from the start of the thread, so fetch a wider
+// window and keep the tail to stay on the most recent turns
+const THREAD_REPLIES_FETCH_LIMIT = 100;
 
 type SlackContextMessage = {
   ts?: string;
@@ -28,6 +31,7 @@ const formatContextMessages = ({
 
       return isNonEmptyString(message.text);
     })
+    .slice(-CONTEXT_MESSAGE_LIMIT)
     .map((message) => {
       const author = isNonEmptyString(message.bot_id)
         ? 'assistant'
@@ -46,7 +50,7 @@ export const fetchSlackConversationContext = async ({
 }: {
   client: WebClient;
   channelId: string;
-  threadTimestamp: string;
+  threadTimestamp: string | undefined;
   isDirectMessage: boolean;
   excludeMessageTimestamps?: string[];
 }): Promise<string | undefined> => {
@@ -59,7 +63,7 @@ export const fetchSlackConversationContext = async ({
       const replies = await client.conversations.replies({
         channel: channelId,
         ts: threadTimestamp,
-        limit: CONTEXT_MESSAGE_LIMIT,
+        limit: THREAD_REPLIES_FETCH_LIMIT,
       });
 
       return formatContextMessages({
