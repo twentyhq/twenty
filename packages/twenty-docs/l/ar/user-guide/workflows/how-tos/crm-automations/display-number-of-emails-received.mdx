@@ -56,11 +56,6 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 ### الخطوة 4: تحديث سجل Person باستخدام إجراء Create or Update Record
 
 1. أضف إجراء **Create or Update Record**
-
-<Warning>
-استخدم **Upsert Record** بدلًا من **Update Record** هنا. يتيح لك هذا تحديد الشخص عبر عنوان بريده الإلكتروني (حقل `handle`) بدلًا من اشتراط معرّف سجل من خطوة سابقة.
-</Warning>
-
 2. حدّد **People** كالكائن
 3. اعثر على الشخص بمطابقة بريده الإلكتروني مع قيمة `handle` من Message Participant
 4. عيّن الحقل المخصص "عدد رسائل البريد الإلكتروني المستلمة" إلى `{{searchRecords.totalCount}}`

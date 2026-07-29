@@ -5,24 +5,24 @@ description: Domande frequenti sull'esportazione dei dati.
 
 <AccordionGroup>
 <Accordion title="Possiamo esportare tutti i dati dello spazio di lavoro prima della cancellazione, inclusi oggetti personalizzati, campi personalizzati, relazioni, note, attività, opportunità, allegati, flussi di lavoro, autorizzazioni e cronologia controlli?">
-I dati del workspace possono essere esportati prima della cancellazione con alcune eccezioni: i dashboard, i flussi di lavoro e i permessi devono essere trasferiti manualmente e i log di audit non possono essere trasferiti.
+I dati dello spazio di lavoro possono essere esportati prima della cancellazione con alcune eccezioni: dashboard, flussi di lavoro e permessi devono essere trasferiti manualmente; log di audit non possono essere trasferiti.
 </Accordion>
 <Accordion title="Quali elementi non possono attualmente essere esportati o migrati?">
 La maggior parte degli elementi può essere esportata o migrata con alcune eccezioni:
 * flussi di lavoro, dashboard e tutte le impostazioni (chiavi API, webhooks, registri di controllo, impostazioni utente, ecc.) deve essere migrato manualmente
-* gli oggetti e i campi creati da app possono essere migrati installando detta app in workspace diverso, non dovrebbero essere migrati manualmente
-* alcuni record, come le versioni del flusso di lavoro e le esecuzioni del flusso di lavoro. non sono affatto trasferibili e si prevede che vadano persi
-* alcuni oggetti come messaggi e oggetti relativi al calendario non dovrebbero essere esportati come vengono creati quando l'account è connesso e sincronizzato periodicamente, saranno sincronizzati di nuovo una volta che si collega il tuo account (purché si dispone di un accesso a detto account, se è un account del membro del team che ha lasciato la tua azienda, questi messaggi devono essere esportati, altrimenti andranno persi)
+* gli oggetti e i campi creati da app possono essere migrati installando detta app in un diverso workspace. Non dovrebbero essere migrati manualmente
+* alcuni record, come le versioni del flusso di lavoro e le esecuzioni del flusso di lavoro, non sono trasferibili e dovrebbero essere persi
+* alcuni oggetti come messaggi e oggetti relativi al calendario non dovrebbero essere esportati come vengono creati quando un account è connesso e sincronizzato periodicamente. Verranno sincronizzati di nuovo una volta connesso il tuo account (purché tu abbia accesso a detto account, se è un account di un membro del team che ha lasciato la tua azienda, questi messaggi devono essere esportati, altrimenti andranno persi)
 </Accordion>
 <Accordion title="Esiste un cloud ufficiale per la procedura di migrazione autosufficiente o un servizio di migrazione assistita?">
 A tutt'oggi non esiste una procedura ufficiale di migrazione tra nuvole e autostituita. L'idea generale è la seguente:
 * in primo luogo, installare applicazioni per introdurre oggetti e campi di proprietà app
 * replica oggetti personalizzati e campi aggiunti dagli utenti
-* utilizzare script con chiavi API o strumenti AI per migrare tutti i dati da uno spazio di lavoro ad un altro
+* utilizzare uno script con chiavi API o strumenti AI per migrare tutti i dati da uno spazio di lavoro ad un altro
 * tutti gli oggetti non trasferibili devono essere migrati manualmente
 
 Si prega di essere a conoscenza di alcune cose:
-* è possibile inviare fino a 50 richieste al minuto su piano Pro o 100 richieste al minuto sul piano Organizzazione prima di colpire un limite richiesta/min
+* è possibile inviare fino a 50 richieste al minuto sul piano Pro o 100 richieste al minuto sul piano Organizzazione prima di colpire un limite richiesta/min
 * ogni richiesta API può avere fino a 200 record
 * alcuni dati in campi come Creato da, Attività Timeline e Aggiornato da saranno persi durante l'importazione e sovrascritti dal sistema
 </Accordion>

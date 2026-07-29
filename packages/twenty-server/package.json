@@ -37,7 +37,7 @@
     "@e2b/code-interpreter": "^2.6.0",
     "@envelop/core": "4.0.3",
     "@faker-js/faker": "9.8.0",
-    "@file-type/pdf": "^0.2.0",
+    "@file-type/pdf": "^0.3.0",
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-yoga/nestjs": "2.1.0",

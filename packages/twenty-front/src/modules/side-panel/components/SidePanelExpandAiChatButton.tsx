@@ -6,11 +6,10 @@ import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SidePanelExpandAiChatButton = () => {
   const { t } = useLingui();
@@ -18,8 +17,8 @@ export const SidePanelExpandAiChatButton = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const isOnboardingAiChatEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+  const isOnboardingAiChatEnabled = useAtomStateValue(
+    isOnboardingAiChatEnabledState,
   );
   const setAiChatExpandedReturnLocation = useSetAtomState(
     aiChatExpandedReturnLocationState,

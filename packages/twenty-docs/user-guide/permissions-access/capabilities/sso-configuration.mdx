@@ -15,14 +15,14 @@ Single Sign-On (SSO) allows your team members to log into Twenty using your orga
 Twenty supports SSO with:
 - **SAML 2.0**: Works with most enterprise identity providers
 - **Google Workspace**: For organizations using Google
-- **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+- **Microsoft Entra ID** (formerly Azure AD): For Microsoft environments
 
 ## Setting Up SSO
 
 ### Prerequisites
 - Organization plan (cloud and self-hosted workspaces)
 - Admin access to your identity provider
-- Admin access to Twenty workspace
+- Admin access to your Twenty workspace
 
 ### Configuration Steps
 
@@ -54,13 +54,13 @@ You'll need to configure your identity provider with:
 
 ### Just-in-Time (JIT) Provisioning
 - Users are created automatically on first login
-- Assigned default role automatically
+- Users are assigned a default role automatically
 - No manual user creation needed
 
 ### Manual Provisioning
 - Invite users before they can log in
 - Pre-assign specific roles
-- More control over who can access
+- More control over who can access the workspace
 
 ## Managing SSO Users
 
@@ -90,8 +90,8 @@ To remove access for SSO users:
 ## Troubleshooting
 
 ### Common Issues
-- **Certificate errors**: Ensure certificate hasn't expired
-- **URL mismatches**: Verify ACS URL matches exactly
+- **Certificate errors**: Ensure the certificate hasn't expired
+- **URL mismatches**: Verify the ACS URL matches exactly
 - **User not found**: Check JIT provisioning settings
 
 ### Getting Help
