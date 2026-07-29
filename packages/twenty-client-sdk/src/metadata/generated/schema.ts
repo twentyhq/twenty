@@ -392,7 +392,6 @@ export interface Application {
     id: Scalars['UUID']
     name: Scalars['String']
     description?: Scalars['String']
-    logo?: Scalars['String']
     logoFileId?: Scalars['UUID']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -1406,7 +1405,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_ONBOARDING_AI_CHAT_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1608,6 +1607,7 @@ export interface ClientConfig {
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
+    isOnboardingAiChatEnabled: Scalars['Boolean']
     enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
@@ -1751,7 +1751,7 @@ export interface MarketplaceApp {
     description: Scalars['String']
     author: Scalars['String']
     category: Scalars['String']
-    logo?: Scalars['String']
+    logoUrl?: Scalars['String']
     sourcePackage?: Scalars['String']
     isVetted: Scalars['Boolean']
     __typename: 'MarketplaceApp'
@@ -1805,7 +1805,7 @@ export interface MarketplaceAppDetail {
     description?: Scalars['String']
     author?: Scalars['String']
     category?: Scalars['String']
-    logo?: Scalars['String']
+    logoUrl?: Scalars['String']
     websiteUrl?: Scalars['String']
     aboutDescription?: Scalars['String']
     termsUrl?: Scalars['String']
@@ -1820,6 +1820,14 @@ export interface MarketplaceAppDetail {
     manifest?: Scalars['JSON']
     __typename: 'MarketplaceAppDetail'
 }
+
+export interface WorkspaceCompanyEnrichmentResult {
+    outcome: WorkspaceCompanyEnrichmentOutcome
+    enrichment?: Scalars['JSON']
+    __typename: 'WorkspaceCompanyEnrichmentResult'
+}
+
+export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
 
 export interface Relation {
     type: RelationType
@@ -2979,6 +2987,7 @@ export interface Mutation {
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
     checkCustomDomainValidRecords?: DomainValidRecords
+    enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
     upgradeApplication: Scalars['Boolean']
     createApplicationRegistration: CreateApplicationRegistration
     updateApplicationRegistration: ApplicationRegistration
@@ -3529,7 +3538,6 @@ export interface ApplicationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
-    logo?: boolean | number
     logoFileId?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
@@ -4777,6 +4785,7 @@ export interface ClientConfigGenqlSelection{
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
+    isOnboardingAiChatEnabled?: boolean | number
     enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
@@ -4937,7 +4946,7 @@ export interface MarketplaceAppGenqlSelection{
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
-    logo?: boolean | number
+    logoUrl?: boolean | number
     sourcePackage?: boolean | number
     isVetted?: boolean | number
     __typename?: boolean | number
@@ -4995,7 +5004,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
-    logo?: boolean | number
+    logoUrl?: boolean | number
     websiteUrl?: boolean | number
     aboutDescription?: boolean | number
     termsUrl?: boolean | number
@@ -5008,6 +5017,13 @@ export interface MarketplaceAppDetailGenqlSelection{
     roles?: MarketplaceAppRoleGenqlSelection
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
+    outcome?: boolean | number
+    enrichment?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6270,6 +6286,7 @@ export interface MutationGenqlSelection{
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
     updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
@@ -8043,6 +8060,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
+    export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
+      return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Relation_possibleTypes: string[] = ['Relation']
     export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
@@ -9391,7 +9416,6 @@ export const enumFeatureFlagKey = {
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
-   IS_ONBOARDING_AI_CHAT_ENABLED: 'IS_ONBOARDING_AI_CHAT_ENABLED' as const,
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const
 }
@@ -9423,6 +9447,12 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumWorkspaceCompanyEnrichmentOutcome = {
+   matched: 'matched' as const,
+   unavailable: 'unavailable' as const,
+   transientError: 'transientError' as const
 }
 
 export const enumRelationType = {

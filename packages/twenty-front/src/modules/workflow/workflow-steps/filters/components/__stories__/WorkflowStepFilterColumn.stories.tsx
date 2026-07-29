@@ -12,6 +12,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const STEP_FILTER_GROUP: StepFilterGroup = {
   id: 'filter-group-1',
@@ -40,6 +41,7 @@ const meta: Meta<typeof WorkflowStepFilterColumn> = {
     stepFilterIndex: 0,
   },
   decorators: [
+    MemoryRouterDecorator,
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,

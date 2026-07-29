@@ -4,6 +4,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -95,6 +96,20 @@ describe('AgentRunService', () => {
     );
   });
 
+  it('runs the agent with the programmatic base system prompt', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: null,
+      input,
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+      }),
+    );
+  });
+
   it('returns an error result when the workspace ran out of credits', async () => {
     agentAsyncExecutorService.executeAgent.mockResolvedValue({
       result: { response: 'partial' },
@@ -110,6 +125,24 @@ describe('AgentRunService', () => {
     expect(result).toEqual({
       result: null,
       error: 'AI agent stopped: no more available credits.',
+      success: false,
+    });
+  });
+
+  it('returns a generic error result when agent execution throws instead of bubbling GraphQL errors', async () => {
+    agentAsyncExecutorService.executeAgent.mockRejectedValue(
+      new Error('Failed to process successful response'),
+    );
+
+    const result = await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
+    });
+
+    expect(result).toEqual({
+      result: null,
+      error: 'Agent execution failed.',
       success: false,
     });
   });
