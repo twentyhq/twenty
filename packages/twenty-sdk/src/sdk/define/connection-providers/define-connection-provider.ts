@@ -36,13 +36,17 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
-  if (
-    config.onConnectLogicFunction &&
-    !UUID_PATTERN.test(config.onConnectLogicFunction.universalIdentifier)
-  ) {
-    errors.push(
-      `Connection provider onConnectLogicFunction.universalIdentifier "${config.onConnectLogicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
-    );
+  const lifecycleHooks = [
+    ['onConnectLogicFunction', config.onConnectLogicFunction],
+    ['onDisconnectLogicFunction', config.onDisconnectLogicFunction],
+  ] as const;
+
+  for (const [hookName, hook] of lifecycleHooks) {
+    if (hook && !UUID_PATTERN.test(hook.universalIdentifier)) {
+      errors.push(
+        `Connection provider ${hookName}.universalIdentifier "${hook.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+      );
+    }
   }
 
   if (!config.type) {

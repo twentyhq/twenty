@@ -1,7 +1,7 @@
-import { type SlackTeamClaimPayload } from 'src/logic-functions/types/slack-team-claim-payload.type';
+import { type SlackConnectionHookPayload } from 'src/logic-functions/types/slack-connection-hook-payload.type';
 import { claimSlackTeam } from 'src/logic-functions/utils/claim-slack-team';
 
-export const slackTeamClaimHandler = (payload: SlackTeamClaimPayload) =>
+export const slackTeamClaimHandler = (payload: SlackConnectionHookPayload) =>
   claimSlackTeam({
     connectedAccountId: payload.connectedAccountId,
   });

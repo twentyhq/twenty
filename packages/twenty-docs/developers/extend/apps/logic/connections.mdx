@@ -124,6 +124,40 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 </Accordion>
 
+<Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
+
+Anything an app persisted at connect time has to be undone when the connection goes away. The Slack app, for example, releases the server-scoped `slack-team:<team_id>` claim it took on connect so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right after the `ConnectedAccount` is deleted.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Like the on-connect hook it runs **asynchronously in the disconnecting workspace** and never blocks the disconnect. The handler receives the same payload shape:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+The `ConnectedAccount` is already gone when the hook runs, so `getConnection(connectedAccountId)` no longer resolves. Anything the cleanup needs (a `team_id`, an external subscription id) must have been written to the [key-value store](/developers/extend/apps/logic/key-value-store) at connect time, keyed by `connectedAccountId`.
+
+</Accordion>
+
 <Accordion title="listConnections / getConnection" description="Use connections from a logic function">
 
 Inside a logic function handler, `listConnections({ providerName })` returns this app's `ConnectedAccount` rows for the given provider, with refreshed access tokens.
