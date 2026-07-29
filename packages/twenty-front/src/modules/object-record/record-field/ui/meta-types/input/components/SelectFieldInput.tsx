@@ -19,10 +19,10 @@ import { type SelectOption } from 'twenty-ui/input';
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
   const { addSelectOption } = useAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
   const { canAddSelectOption } = useCanAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);

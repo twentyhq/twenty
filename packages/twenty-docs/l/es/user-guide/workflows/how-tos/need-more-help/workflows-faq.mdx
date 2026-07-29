@@ -28,8 +28,8 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
   <Accordion title="¿Cuál es la diferencia entre los disparadores manuales Single, Global y Bulk?">
     | Tipo | Registros necesarios | Ejecuciones de flujos de trabajo |
     | ---- | -------------------- | -------------------------------- |
-    \| **Global** | Ninguno | Una vez, sin entrada de registros |
-    \| **Single** | Uno o más seleccionados | Una vez por cada registro seleccionado |
+    \| **Global** | Ninguna | Una vez, sin entrada de registro |
+    \| **Single** | Uno o más seleccionados | Una vez por registro seleccionado |
     \| **Bulk** | Uno o más seleccionados | Una vez, con todos los registros como matriz |
 
     * **Global**: Úsalo cuando el flujo de trabajo no necesite ningún contexto de registros (p. ej., generar un informe)
@@ -155,11 +155,9 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
   </Accordion>
 
   <Accordion title="¿Por qué no veo mis ejecuciones de flujos de trabajo?">
-    Es posible que las ejecuciones de flujos de trabajo estén fallando de inmediato debido a los límites de tasa.
+    Es posible que las ejecuciones de flujos de trabajo estén fallando de inmediato debido a los límites de tasa. Veinte impone un límite duro de 5.000 ejecuciones por hora por espacio de trabajo.
 
-    **Límite estricto: 5,000 ejecuciones por hora por espacio de trabajo.**
-
-    Si superas este límite, los flujos de trabajo se marcan inmediatamente como fallidos y no aparecerán en tu lista de ejecuciones como cabría esperar.
+    Si excede este límite, los flujos de trabajo se marcan inmediatamente como fallidos y no aparecerán en su lista de ejecuciones.
 
     **Escenarios comunes que alcanzan este límite**:
     * Seleccionar más de 5,000 registros con un disparador manual Single

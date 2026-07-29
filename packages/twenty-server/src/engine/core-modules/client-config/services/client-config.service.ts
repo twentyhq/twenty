@@ -281,6 +281,9 @@ export class ClientConfigService {
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
         'WORKSPACE_SCHEMA_DDL_LOCKED',
       ),
+      isOnboardingAiChatEnabled: this.twentyConfigService.get(
+        'IS_ONBOARDING_AI_CHAT_ENABLED',
+      ),
       enterpriseInstanceType:
         this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
         ENTERPRISE_INSTANCE_TYPE.PRODUCTION,

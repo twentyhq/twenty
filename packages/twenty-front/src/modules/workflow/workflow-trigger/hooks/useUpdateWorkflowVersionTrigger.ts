@@ -21,14 +21,14 @@ import {
   type UpdateWorkflowVersionTriggerMutationVariables,
 } from '~/generated/graphql';
 
-export const useUpdateWorkflowVersionTrigger = () => {
+export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
+    useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   const { markStepForRecomputation } = useStepsOutputSchema();
 

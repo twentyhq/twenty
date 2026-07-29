@@ -9,15 +9,15 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useCallback } from 'react';
-import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
@@ -73,8 +73,8 @@ export const useSetNextOnboardingStatus = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const isOnboardingAiChatEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED,
+  const isOnboardingAiChatEnabled = useAtomStateValue(
+    isOnboardingAiChatEnabledState,
   );
 
   return useCallback(() => {

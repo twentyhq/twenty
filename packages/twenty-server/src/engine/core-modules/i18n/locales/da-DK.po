@@ -9725,11 +9725,6 @@ msgstr "Du kan ikke tilbagekalde adgang til administrationspanelet fra den sidst
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "Du kan ikke indstille felttilladelser på systemobjekter, da de administreres af platformen."
 
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "Du kan ikke indstille tilladelser på systemobjekter, da de administreres af platformen."
-
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
