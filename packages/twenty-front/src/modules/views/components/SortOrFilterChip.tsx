@@ -1,8 +1,11 @@
+import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { useContext, type MouseEvent, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+
+import { Dropdown, type DropdownProps } from '@/ui/layout/dropdown/components/Dropdown';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -38,7 +41,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -51,7 +53,35 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   white-space: nowrap;
 `;
 
-const StyledIcon = styled.div`
+const StyledChipLabelButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: inherit;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledChipLabelStatic = styled.span`
+  align-items: center;
+  color: inherit;
+  column-gap: ${themeCssVariables.spacing[1]};
+  display: flex;
+`;
+
+const StyledChipLabelDropdownTrigger = styled.span`
+  align-items: center;
+  color: inherit;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: pointer;
+  display: flex;
+`;
+
+const StyledIcon = styled.span`
   align-items: center;
   display: flex;
 `;
@@ -86,7 +116,7 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   }
 `;
 
-const StyledLabelKey = styled.div`
+const StyledLabelKey = styled.span`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
@@ -108,13 +138,15 @@ const StyledSubFieldValue = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
-const StyledKeyLabelContainer = styled.div`
+const StyledKeyLabelContainer = styled.span`
   display: flex;
 `;
 
 export type SortOrFilterChipVariant = 'default' | 'danger';
 
 export type SortOrFilterChipType = 'sort' | 'filter';
+
+type SortOrFilterChipDropdownProps = Omit<DropdownProps, 'clickableComponent'>;
 
 type SortOrFilterChipProps = {
   labelKey?: string;
@@ -126,6 +158,9 @@ type SortOrFilterChipProps = {
   onClick?: () => void;
   testId?: string;
   type: SortOrFilterChipType;
+  // Wraps only the chip label so the remove button stays outside the
+  // Dropdown trigger and avoids nested interactive controls (WCAG 4.1.2).
+  dropdown?: SortOrFilterChipDropdownProps;
 };
 
 export const SortOrFilterChip = ({
@@ -138,16 +173,18 @@ export const SortOrFilterChip = ({
   testId,
   onClick,
   type,
+  dropdown,
 }: SortOrFilterChipProps) => {
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDeleteClick = (event: MouseEvent) => {
+    event.stopPropagation();
     onRemove();
   };
 
-  return (
-    <StyledChip onClick={onClick} variant={variant}>
+  const labelContent = (
+    <>
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.sm} />
@@ -167,9 +204,42 @@ export const SortOrFilterChip = ({
           </>
         )}
       </StyledKeyLabelContainer>
+    </>
+  );
+
+  const renderLabel = () => {
+    if (isDefined(dropdown)) {
+      return (
+        <Dropdown
+          {...dropdown}
+          clickableComponent={
+            <StyledChipLabelDropdownTrigger>
+              {labelContent}
+            </StyledChipLabelDropdownTrigger>
+          }
+        />
+      );
+    }
+
+    if (isDefined(onClick)) {
+      return (
+        <StyledChipLabelButton type="button" onClick={onClick}>
+          {labelContent}
+        </StyledChipLabelButton>
+      );
+    }
+
+    return <StyledChipLabelStatic>{labelContent}</StyledChipLabelStatic>;
+  };
+
+  return (
+    <StyledChip variant={variant}>
+      {renderLabel()}
       <StyledDelete
+        type="button"
         variant={variant}
         onClick={handleDeleteClick}
+        aria-label={type === 'sort' ? t`Remove sort` : t`Remove filter`}
         data-testid={'remove-icon-' + testId}
       >
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

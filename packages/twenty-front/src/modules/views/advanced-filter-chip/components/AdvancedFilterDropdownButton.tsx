@@ -1,5 +1,3 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-
 import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootRecordFilterGroup';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
@@ -25,13 +23,14 @@ export const AdvancedFilterDropdownButton = () => {
   }
 
   return (
-    <Dropdown
-      dropdownId={ViewBarFilterDropdownIds.ADVANCED}
-      clickableComponent={<AdvancedFilterChip />}
-      dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-      onOpen={handleOpenAdvancedFilterDropdown}
+    <AdvancedFilterChip
+      dropdown={{
+        dropdownId: ViewBarFilterDropdownIds.ADVANCED,
+        dropdownComponents: <AdvancedFilterRootRecordFilterGroup />,
+        dropdownOffset: { y: 8, x: 0 },
+        dropdownPlacement: 'bottom-start',
+        onOpen: handleOpenAdvancedFilterDropdown,
+      }}
     />
   );
 };

@@ -3,6 +3,7 @@ import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdow
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
+import { type DropdownProps } from '@/ui/layout/dropdown/components/Dropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
 
@@ -14,12 +15,14 @@ type EditableFilterChipProps = {
   recordFilter: RecordFilter;
   onRemove: () => void;
   onClick?: () => void;
+  dropdown?: Omit<DropdownProps, 'clickableComponent'>;
 };
 
 export const EditableFilterChip = ({
   recordFilter,
   onRemove,
   onClick,
+  dropdown,
 }: EditableFilterChipProps) => {
   const { getIcon } = useIcons();
 
@@ -62,6 +65,7 @@ export const EditableFilterChip = ({
       Icon={FieldMetadataItemIcon}
       onRemove={onRemove}
       onClick={onClick}
+      dropdown={dropdown}
       type="filter"
     />
   );

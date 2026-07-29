@@ -9,6 +9,7 @@ import { SOFT_DELETE_FILTER_FIELD_NAME } from '@/object-record/record-filter/con
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
+import { type DropdownProps } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -19,7 +20,11 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
 
-export const AdvancedFilterChip = () => {
+type AdvancedFilterChipProps = {
+  dropdown?: Omit<DropdownProps, 'clickableComponent'>;
+};
+
+export const AdvancedFilterChip = ({ dropdown }: AdvancedFilterChipProps) => {
   const { closeDropdown } = useCloseDropdown();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
@@ -117,6 +122,7 @@ export const AdvancedFilterChip = () => {
       onRemove={handleRemoveClick}
       variant={hasAnyDeletedAtFilterInAdvancedFilters ? 'danger' : 'default'}
       type="filter"
+      dropdown={dropdown}
     />
   );
 };
