@@ -24,7 +24,9 @@ export const createAsyncRecallTranscript = async ({
     path: `/recording/${externalRecordingId}/create_transcript/`,
     method: 'POST',
     body: {
-      provider: { recallai_async: { language_code: 'auto' } },
+      // Gladia detects the spoken language automatically; the Gladia API key
+      // must be configured in the Recall dashboard for the active region.
+      provider: { gladia_v2_async: {} },
       diarization: { use_separate_streams_when_available: true },
     },
     maxAttempts: 1,
