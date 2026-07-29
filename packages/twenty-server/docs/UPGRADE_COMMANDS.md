@@ -197,6 +197,8 @@ Ctrl+C cannot reach a detached run at all: it has its own session and no control
 
 The log and PID files live in `/tmp` inside the container (override with `TWENTY_UPGRADE_LOG_FILE` and `TWENTY_UPGRADE_PID_FILE`). Both are lost if the pod is replaced, along with the run itself.
 
+Detaching needs `setsid`, which is what puts the run in its own session. The runtime image has it (busybox provides the applet) and so does any Linux host, but macOS does not ship it, so `upgrade:background` refuses to start there and points you at the foreground command. That is no real loss, since a local run has no connection to drop in the first place.
+
 Kubernetes cannot stop a detached run gracefully either, and `terminationGracePeriodSeconds` is not the lever it looks like. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion it exits immediately and the detached node process is torn down without ever receiving `SIGTERM`, however long the grace period is. Graceful shutdown on eviction only applies when node is the container's main process, which is the foreground case, not this one.
 
 ## Shipping a command for a future version (deferred drops)
