@@ -79,6 +79,13 @@ type EmailThreadPreviewProps = {
   thread: TimelineThread;
 };
 
+type LastAvatar = {
+  displayedName: string | undefined;
+  avatarUrl: string | undefined;
+  isCountIcon: boolean;
+  placeholderColorSeed: string | undefined;
+};
+
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { theme } = useContext(ThemeContext);
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -94,22 +101,29 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
       : '');
 
-  const [
-    finalDisplayedName,
-    finalAvatarUrl,
+  const lastParticipant = thread?.lastTwoParticipants?.[1];
+
+  const {
+    displayedName,
+    avatarUrl,
     isCountIcon,
-    finalPlaceholderColorSeed,
-  ] =
+    placeholderColorSeed,
+  }: LastAvatar =
     thread.participantCount > 3
-      ? [`${thread.participantCount}`, '', true, undefined]
-      : [
-          thread?.lastTwoParticipants?.[1]?.displayName,
-          thread?.lastTwoParticipants?.[1]?.avatarUrl,
-          false,
-          isDefined(thread?.lastTwoParticipants?.[1])
-            ? getEmailParticipantAvatarColorSeed(thread.lastTwoParticipants[1])
+      ? {
+          displayedName: `${thread.participantCount}`,
+          avatarUrl: '',
+          isCountIcon: true,
+          placeholderColorSeed: undefined,
+        }
+      : {
+          displayedName: lastParticipant?.displayName,
+          avatarUrl: lastParticipant?.avatarUrl,
+          isCountIcon: false,
+          placeholderColorSeed: isDefined(lastParticipant)
+            ? getEmailParticipantAvatarColorSeed(lastParticipant)
             : undefined,
-        ];
+        };
 
   const handleThreadClick = () => {
     const canOpen =
@@ -150,12 +164,12 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
               />
             </StyledAvatarWrapper>
           )}
-          {finalDisplayedName && (
+          {displayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(finalAvatarUrl)}
-                placeholder={finalDisplayedName}
-                placeholderColorSeed={finalPlaceholderColorSeed}
+                avatarUrl={getAbsoluteImageUrl(avatarUrl)}
+                placeholder={displayedName}
+                placeholderColorSeed={placeholderColorSeed}
                 type="rounded"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}
                 backgroundColor={
