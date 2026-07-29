@@ -73,7 +73,9 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { aiProviderConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.schema';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
@@ -482,11 +484,18 @@ export class AdminPanelResolver {
       throw new UserInputError('Invalid provider name');
     }
 
+    const parsedProviderConfig =
+      aiProviderConfigSchema.safeParse(providerConfig);
+
+    if (!parsedProviderConfig.success) {
+      throw new UserInputError('Invalid provider configuration');
+    }
+
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
-    customProviders[providerName] = providerConfig;
+    customProviders[providerName] = parsedProviderConfig.data;
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
 
     return true;
@@ -529,6 +538,14 @@ export class AdminPanelResolver {
     @Args('modelConfig', { type: () => GraphQLJSON })
     modelConfig: AiProviderModelConfig,
   ): Promise<boolean> {
+    const parsedModelConfig =
+      aiProviderModelConfigSchema.safeParse(modelConfig);
+
+    if (!parsedModelConfig.success) {
+      throw new UserInputError('Invalid model configuration');
+    }
+
+    const validatedModelConfig = parsedModelConfig.data;
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
@@ -543,18 +560,22 @@ export class AdminPanelResolver {
 
     const existingModels = existing.models ?? [];
     const alreadyExists = existingModels.some(
-      (model: AiProviderModelConfig) => model.name === modelConfig.name,
+      (model: AiProviderModelConfig) =>
+        model.name === validatedModelConfig.name,
     );
 
     if (alreadyExists) {
       throw new UserInputError(
-        `Model "${modelConfig.name}" already exists on provider "${providerName}"`,
+        `Model "${validatedModelConfig.name}" already exists on provider "${providerName}"`,
       );
     }
 
     customProviders[providerName] = {
       ...existing,
-      models: [...existingModels, { ...modelConfig, source: 'manual' }],
+      models: [
+        ...existingModels,
+        { ...validatedModelConfig, source: 'manual' },
+      ],
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);

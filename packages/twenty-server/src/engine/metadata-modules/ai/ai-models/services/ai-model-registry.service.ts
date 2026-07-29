@@ -155,8 +155,14 @@ export class AiModelRegistryService {
         modelDef.cacheCreationCostPerMillionTokens,
       longContextCost: modelDef.longContextCost,
       contextWindowTokens:
-        modelDef.contextWindowTokens ?? DEFAULT_CONTEXT_WINDOW_TOKENS,
-      maxOutputTokens: modelDef.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+        modelDef.contextWindowTokens !== undefined &&
+        modelDef.contextWindowTokens > 0
+          ? modelDef.contextWindowTokens
+          : DEFAULT_CONTEXT_WINDOW_TOKENS,
+      maxOutputTokens:
+        modelDef.maxOutputTokens !== undefined && modelDef.maxOutputTokens > 0
+          ? modelDef.maxOutputTokens
+          : DEFAULT_MAX_OUTPUT_TOKENS,
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
       isDeprecated: modelDef.isDeprecated,

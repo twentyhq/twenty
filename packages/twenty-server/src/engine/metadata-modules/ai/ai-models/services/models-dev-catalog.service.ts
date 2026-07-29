@@ -3,6 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { inferAiSdkPackage } from 'twenty-shared/ai';
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
+import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
 export type ModelsDevModelSuggestion = {
@@ -93,8 +95,14 @@ export class ModelsDevCatalogService {
         outputCostPerMillionTokens: model.cost?.output ?? 0,
         cachedInputCostPerMillionTokens: model.cost?.cache_read,
         cacheCreationCostPerMillionTokens: model.cost?.cache_write,
-        contextWindowTokens: model.limit?.context ?? 0,
-        maxOutputTokens: model.limit?.output ?? 0,
+        contextWindowTokens:
+          model.limit?.context && model.limit.context > 0
+            ? model.limit.context
+            : DEFAULT_CONTEXT_WINDOW_TOKENS,
+        maxOutputTokens:
+          model.limit?.output && model.limit.output > 0
+            ? model.limit.output
+            : DEFAULT_MAX_OUTPUT_TOKENS,
         modalities: (model.modalities?.input ?? []).filter(
           (modality) => modality !== 'text',
         ),

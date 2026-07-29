@@ -238,8 +238,12 @@ export const SettingsAdminNewAiModel = () => {
       ...(isFinite(cacheCreation) && {
         cacheCreationCostPerMillionTokens: cacheCreation,
       }),
-      contextWindowTokens: parseInt(values.contextWindowTokens || '0', 10),
-      maxOutputTokens: parseInt(values.maxOutputTokens || '0', 10),
+      ...(values.contextWindowTokens && {
+        contextWindowTokens: parseInt(values.contextWindowTokens, 10),
+      }),
+      ...(values.maxOutputTokens && {
+        maxOutputTokens: parseInt(values.maxOutputTokens, 10),
+      }),
       ...(values.modalities.length > 0 && {
         modalities: values.modalities,
       }),

@@ -1,12 +1,15 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
+import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 
 describe('AiModelRegistryService', () => {
   let service: AiModelRegistryService;
@@ -15,13 +18,16 @@ describe('AiModelRegistryService', () => {
     getPreferences: jest.Mock;
     getRecommendedModelIds: jest.Mock;
   };
+  let mockProviderConfigService: {
+    getResolvedProviders: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockConfigService = {
       get: jest.fn().mockReturnValue({}),
     } as any;
 
-    const mockProviderConfigService = {
+    mockProviderConfigService = {
       getResolvedProviders: jest.fn().mockReturnValue({}),
     };
 
@@ -129,6 +135,27 @@ describe('AiModelRegistryService', () => {
     expect(result.label).toBe('custom/mistral');
     expect(result.inputCostPerMillionTokens).toBe(0);
     expect(result.outputCostPerMillionTokens).toBe(0);
+  });
+
+  it('should use defaults for non-positive model limits', () => {
+    mockProviderConfigService.getResolvedProviders.mockReturnValue({
+      custom: {
+        npm: '@ai-sdk/openai-compatible',
+        models: [
+          {
+            name: 'custom-model',
+            label: 'Custom model',
+            contextWindowTokens: 0,
+            maxOutputTokens: 0,
+          },
+        ],
+      },
+    });
+
+    const result = service.getEffectiveModelConfig('custom/custom-model');
+
+    expect(result.contextWindowTokens).toBe(DEFAULT_CONTEXT_WINDOW_TOKENS);
+    expect(result.maxOutputTokens).toBe(DEFAULT_MAX_OUTPUT_TOKENS);
   });
 
   it('should throw error for non-existent model', () => {
