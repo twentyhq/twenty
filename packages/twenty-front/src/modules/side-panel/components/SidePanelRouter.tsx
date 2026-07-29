@@ -21,8 +21,6 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledSidePanelContent = styled.div`
   flex: 1;
   min-height: 0;
-  // Keeps a drag that starts inside the panel from scrolling or bouncing the
-  // page behind it once the panel itself has nothing left to scroll.
   overscroll-behavior: contain;
   overflow-y: auto;
 `;

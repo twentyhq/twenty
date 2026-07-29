@@ -37,8 +37,6 @@ const StyledInputArea = styled.div<{ isMobile: boolean }>`
   flex-direction: column;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  // Sits at the bottom on its own rather than relying on a sibling to grow into
-  // the free space, so it stays put when the empty state is not rendered.
   margin-top: auto;
   padding-block: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[3]};

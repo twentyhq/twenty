@@ -15,9 +15,6 @@ export const AiChatEditorFocusEffect = ({
     shouldFocusChatEditorState,
   );
 
-  // Focus synchronously rather than on the next frame: mobile browsers only open
-  // the keyboard for a focus call that is still part of the tap that asked for
-  // it, and a rAF callback runs after that task has ended.
   useLayoutEffect(() => {
     if (!shouldFocusChatEditor || !editor) {
       return;

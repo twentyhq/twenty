@@ -53,8 +53,6 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
   const skeletonShowing =
     (agentChatThreadsLoading && isOnNewChatSlot) ||
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
-  // Mobile keeps the composer alone on an empty thread: the suggestions would
-  // take most of the screen and push the input under the keyboard.
   const shouldRender =
     !isMobile && !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
 
