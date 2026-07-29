@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackAssistantRequestStatus } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 
 export const updateSlackAssistantRequest = async (
   client: CoreApiClient,
