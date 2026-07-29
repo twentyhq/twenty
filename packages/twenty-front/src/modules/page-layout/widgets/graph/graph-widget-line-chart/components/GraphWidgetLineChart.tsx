@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
@@ -102,12 +103,15 @@ export const GraphWidgetLineChart = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
 
+  const { formatNumber } = useNumberFormat();
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
     prefix,
     suffix,
     customFormatter,
+    formatNumberFn: formatNumber,
   };
 
   const axisFormatOptions: GraphValueFormatOptions = {

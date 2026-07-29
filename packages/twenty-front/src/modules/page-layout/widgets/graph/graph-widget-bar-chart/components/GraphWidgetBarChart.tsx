@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
@@ -128,15 +129,18 @@ export const GraphWidgetBarChart = ({
 
   const allowDataTransitions = !isLayoutAnimating;
 
+  const { formatNumber } = useNumberFormat();
+
   const formatOptions = useMemo<GraphValueFormatOptions>(
     () => ({
       customFormatter,
       decimals,
       displayType,
+      formatNumberFn: formatNumber,
       prefix,
       suffix,
     }),
-    [customFormatter, decimals, displayType, prefix, suffix],
+    [customFormatter, decimals, displayType, formatNumber, prefix, suffix],
   );
 
   const axisFormatOptions = useMemo<GraphValueFormatOptions>(
