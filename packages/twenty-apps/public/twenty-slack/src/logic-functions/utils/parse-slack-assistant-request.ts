@@ -1,9 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ParsedSlackAssistantRequest } from 'src/logic-functions/types/parsed-slack-assistant-request.type';
+import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
 const LEADING_BOT_MENTION_PATTERN = /^<@[A-Z0-9]+(\|[^>]*)?>\s*/;
+
+type ParsedSlackAssistantRequest =
+  | {
+      request: SlackAssistantRequestDraft;
+      requiresActiveThreadSubscription: boolean;
+    }
+  | { request: null; skipReason: string };
 
 const stripLeadingBotMention = (text: string): string =>
   text.replace(LEADING_BOT_MENTION_PATTERN, '').replace(/\s+/g, ' ').trim();

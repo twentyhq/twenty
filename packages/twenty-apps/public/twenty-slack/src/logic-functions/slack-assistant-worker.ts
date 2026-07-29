@@ -15,7 +15,6 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
-import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
@@ -30,6 +29,17 @@ const SLACK_ASSISTANT_FAILURE_TEXT =
 const SLACK_ASSISTANT_PLACEHOLDER_TEXT = '_Looking into it…_';
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 const SLACK_ASSISTANT_THINKING_REACTION_EMOJI = 'eyes';
+
+type SlackAssistantRequestRecord = {
+  id: string;
+  status?: string;
+  slackChannelId?: string;
+  slackChannelType?: string;
+  slackThreadTimestamp?: string;
+  slackMessageTimestamp?: string;
+  slackUserId?: string;
+  requestText?: string;
+};
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<SlackAssistantRequestRecord>

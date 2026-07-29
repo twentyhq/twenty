@@ -1,4 +1,14 @@
-import { type SlackInboundEvent } from 'src/logic-functions/types/slack-inbound-event.type';
+type SlackInboundEvent = {
+  type?: string;
+  subtype?: string;
+  channel_type?: string;
+  bot_id?: string;
+  user?: string;
+  text?: string;
+  ts?: string;
+  thread_ts?: string;
+  channel?: string;
+};
 
 export type SlackEventsRequestBody = {
   type?: string;
