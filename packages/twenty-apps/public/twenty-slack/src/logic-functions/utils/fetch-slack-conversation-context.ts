@@ -16,15 +16,24 @@ type SlackContextMessage = {
 const formatContextMessages = ({
   messages,
   excludeMessageTimestamps,
+  excludeMessageTexts,
 }: {
   messages: ReadonlyArray<SlackContextMessage>;
   excludeMessageTimestamps: Set<string>;
+  excludeMessageTexts: Set<string>;
 }): string =>
   messages
     .filter((message) => {
       if (
         isNonEmptyString(message.ts) &&
         excludeMessageTimestamps.has(message.ts)
+      ) {
+        return false;
+      }
+
+      if (
+        isNonEmptyString(message.text) &&
+        excludeMessageTexts.has(message.text)
       ) {
         return false;
       }
@@ -47,16 +56,19 @@ export const fetchSlackConversationContext = async ({
   threadTimestamp,
   isDirectMessage,
   excludeMessageTimestamps = [],
+  excludeMessageTexts = [],
 }: {
   client: WebClient;
   channelId: string;
   threadTimestamp: string | undefined;
   isDirectMessage: boolean;
   excludeMessageTimestamps?: string[];
+  excludeMessageTexts?: string[];
 }): Promise<string | undefined> => {
   const excludedTimestamps = new Set(
     excludeMessageTimestamps.filter(isNonEmptyString),
   );
+  const excludedTexts = new Set(excludeMessageTexts.filter(isNonEmptyString));
 
   try {
     if (isNonEmptyString(threadTimestamp)) {
@@ -69,6 +81,7 @@ export const fetchSlackConversationContext = async ({
       return formatContextMessages({
         messages: replies.messages ?? [],
         excludeMessageTimestamps: excludedTimestamps,
+        excludeMessageTexts: excludedTexts,
       });
     }
 
@@ -81,6 +94,7 @@ export const fetchSlackConversationContext = async ({
       return formatContextMessages({
         messages: [...(history.messages ?? [])].reverse(),
         excludeMessageTimestamps: excludedTimestamps,
+        excludeMessageTexts: excludedTexts,
       });
     }
 

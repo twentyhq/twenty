@@ -5,12 +5,12 @@ import {
   defineLogicFunction,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
-import { runAgent } from 'twenty-sdk/logic-function';
 
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_PLACEHOLDER_TEXT } from 'src/logic-functions/constants/slack-assistant-placeholder-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_THINKING_REACTION_EMOJI } from 'src/logic-functions/constants/slack-assistant-thinking-reaction-emoji';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
@@ -18,16 +18,17 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
+import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { clearSlackAssistantThinkingReaction } from 'src/logic-functions/utils/clear-slack-assistant-thinking-reaction';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { runSlackAssistantAgentWithProgress } from 'src/logic-functions/utils/run-slack-assistant-agent-with-progress';
 import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
-const SLACK_ASSISTANT_PLACEHOLDER_TEXT = '_Looking into it…_';
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
@@ -37,6 +38,7 @@ type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
 export const slackAssistantWorkerHandler = async (
   event: SlackAssistantRequestCreatedEvent,
 ): Promise<object> => {
+  const startedAt = Date.now();
   const record = event.properties.after;
 
   if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
@@ -118,7 +120,7 @@ export const slackAssistantWorkerHandler = async (
         excludeMessageTimestamps: [slackMessageTimestamp, placeholderTimestamp],
       });
 
-    const agentResult = await runAgent({
+    const agentResult = await runSlackAssistantAgentWithProgress({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       prompt: buildSlackAssistantPrompt({
         requestText,
@@ -126,6 +128,8 @@ export const slackAssistantWorkerHandler = async (
         conversationContext,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
       }),
+      slackChannelId,
+      placeholderTimestamp,
     });
 
     if (!agentResult.success) {
@@ -147,7 +151,10 @@ export const slackAssistantWorkerHandler = async (
     const updateResult = await slackUpdateMessageHandler({
       slackChannelId,
       messageTimestamp: placeholderTimestamp,
-      newMessageText: responseText,
+      newMessageText: buildSlackAssistantAnswerText({
+        responseText,
+        durationMilliseconds: Date.now() - startedAt,
+      }),
       messageFormat: 'markdown',
     });
 
