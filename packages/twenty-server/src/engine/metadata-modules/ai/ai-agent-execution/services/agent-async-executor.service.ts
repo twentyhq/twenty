@@ -40,6 +40,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -66,12 +67,6 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-// 'preload' inlines the full schemas of the agent's explicitly-granted tools
-// (workflow nodes: scoped task, skips learn_tools). 'lazy' exposes a compact
-// catalog + learn_tools/execute_tool (open-ended runAgent/Slack: broad access
-// without the full-payload latency).
-export type AgentToolLoadingStrategy = 'preload' | 'lazy';
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -140,12 +135,17 @@ export class AgentAsyncExecutorService {
 
   // Workflow agent nodes run a scoped task: pre-load the full schemas of the
   // few explicitly-granted objects so the model skips the learn_tools round trip.
-  private async buildPreloadedRegistryTools(
-    agent: AgentEntity,
-    agentRoleId: string,
-    authContext?: WorkspaceAuthContext,
-    actorContext?: ActorMetadata,
-  ): Promise<ToolSet> {
+  private async buildPreloadedRegistryTools({
+    agent,
+    agentRoleId,
+    authContext,
+    actorContext,
+  }: {
+    agent: AgentEntity;
+    agentRoleId: string;
+    authContext?: WorkspaceAuthContext;
+    actorContext?: ActorMetadata;
+  }): Promise<ToolSet> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const toolProviderContext: ToolProviderContext = {
@@ -170,12 +170,17 @@ export class AgentAsyncExecutorService {
   // make pre-loading ship every schema. Expose a compact catalog plus the
   // learn_tools / execute_tool meta-tools instead, using composed role
   // permissions rather than explicit grants only.
-  private async buildLazyRegistryTools(
-    agent: AgentEntity,
-    agentRoleId: string,
-    authContext?: WorkspaceAuthContext,
-    actorContext?: ActorMetadata,
-  ): Promise<{ tools: ToolSet; catalogSection: string }> {
+  private async buildLazyRegistryTools({
+    agent,
+    agentRoleId,
+    authContext,
+    actorContext,
+  }: {
+    agent: AgentEntity;
+    agentRoleId: string;
+    authContext?: WorkspaceAuthContext;
+    actorContext?: ActorMetadata;
+  }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const toolContext: ToolContext = {
@@ -296,22 +301,22 @@ export class AgentAsyncExecutorService {
         // role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           if (toolLoadingStrategy === 'lazy') {
-            const lazyToolset = await this.buildLazyRegistryTools(
+            const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
               authContext,
               actorContext,
-            );
+            });
 
             registryTools = lazyToolset.tools;
             toolCatalogSection = lazyToolset.catalogSection;
           } else {
-            registryTools = await this.buildPreloadedRegistryTools(
+            registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
               authContext,
               actorContext,
-            );
+            });
           }
         }
 
