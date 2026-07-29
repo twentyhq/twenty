@@ -22,6 +22,8 @@ const REMOVE_STEP = '2.7.0_DropColumn_1800000000001';
 const EARLY_STEP = '2.6.0_Early_1700000000001';
 const SLOW_STEP = '2.6.0_Backfill_1700000000002';
 const WORKSPACE_STEP = '2.6.0_WorkspaceThing_1700000000003';
+const COLUMN_RENAME_STEP = '2.6.0_RenameColumn_1700000000004';
+const CLASS_INTRODUCE_STEP = '2.6.0_AddEntity_1700000000005';
 
 @WasRenamedInUpgrade([
   { previousName: 'oldEntity', upgradeCommandName: RENAME_STEP },
@@ -44,6 +46,16 @@ class EntityWithIntroducedColumn {
 
   visibleColumn!: string;
 }
+
+class EntityWithRenamedColumn {
+  @WasRenamedInUpgrade([
+    { previousName: 'oldColumn', upgradeCommandName: COLUMN_RENAME_STEP },
+  ])
+  newColumn!: string;
+}
+
+@WasIntroducedInUpgrade({ upgradeCommandName: CLASS_INTRODUCE_STEP })
+class LateEntity {}
 
 const buildColumn = (propertyName: string): ColumnMetadata =>
   ({
@@ -263,6 +275,164 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     expect(introducedColumn.isSelect).toBe(true);
     expect(metadata.columns).toEqual([introducedColumn, visibleColumn]);
+  });
+
+  // Production hit this exact shape: a missing slow instance command stalled
+  // the cursor before a rename that had in fact been applied, so the adapter
+  // would have pointed every query at a column the database no longer had.
+  it('does not rename a column back when only the new name exists in the database', async () => {
+    const renamedColumn = buildColumn('newColumn');
+
+    const metadata = {
+      target: EntityWithRenamedColumn,
+      tableName: 'entityWithRenamedColumn',
+      tablePath: 'core.entityWithRenamedColumn',
+      givenTableName: 'entityWithRenamedColumn',
+      schema: 'core',
+      columns: [renamedColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: COLUMN_RENAME_STEP }],
+      statuses: [],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'entityWithRenamedColumn',
+          column_name: 'newColumn',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(renamedColumn.databaseName).toBe('newColumn');
+  });
+
+  it('still renames a column back when the old name is what the database has', async () => {
+    const renamedColumn = buildColumn('newColumn');
+
+    const metadata = {
+      target: EntityWithRenamedColumn,
+      tableName: 'entityWithRenamedColumn',
+      tablePath: 'core.entityWithRenamedColumn',
+      givenTableName: 'entityWithRenamedColumn',
+      schema: 'core',
+      columns: [renamedColumn],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: COLUMN_RENAME_STEP }],
+      statuses: [],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'entityWithRenamedColumn',
+          column_name: 'oldColumn',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(renamedColumn.databaseName).toBe('oldColumn');
+  });
+
+  it('does not rename a table back when only the new table exists in the database', async () => {
+    const metadata = {
+      target: RenamedEntity,
+      tableName: 'newEntity',
+      tablePath: 'core.newEntity',
+      givenTableName: 'newEntity',
+      schema: 'core',
+      columns: [],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: RENAME_STEP }],
+      statuses: [],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'newEntity',
+          column_name: 'id',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(metadata.tableName).toBe('newEntity');
+    expect(metadata.tablePath).toBe('core.newEntity');
+  });
+
+  it('keeps an entity available when its table exists in the database', async () => {
+    const metadata = {
+      target: LateEntity,
+      tableName: 'lateEntity',
+      tablePath: 'core.lateEntity',
+      givenTableName: 'lateEntity',
+      schema: 'core',
+      columns: [],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: CLASS_INTRODUCE_STEP }],
+      statuses: [],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'lateEntity',
+          column_name: 'id',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(adapter.isEntityAvailable(LateEntity)).toBe(true);
+  });
+
+  it('leaves an entity unavailable when its table is genuinely absent', async () => {
+    const metadata = {
+      target: LateEntity,
+      tableName: 'lateEntity',
+      tablePath: 'core.lateEntity',
+      givenTableName: 'lateEntity',
+      schema: 'core',
+      columns: [],
+    } as unknown as EntityMetadata;
+
+    const adapter = await buildAdapter({
+      metadata,
+      sequence: [{ name: EARLY_STEP }, { name: CLASS_INTRODUCE_STEP }],
+      statuses: [],
+      databaseColumns: [
+        {
+          table_schema: 'core',
+          table_name: 'someOtherTable',
+          column_name: 'id',
+        },
+      ],
+    });
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(adapter.isEntityAvailable(LateEntity)).toBe(false);
   });
 
   // Safety net: whatever the cursor believes, a column that is physically in
