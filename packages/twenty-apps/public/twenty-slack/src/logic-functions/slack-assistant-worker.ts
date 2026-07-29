@@ -11,16 +11,14 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
-import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { buildSlackAssistantPrompt } from 'src/logic-functions/utils/build-slack-assistant-prompt';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
-import { fetchSlackConversationContext } from 'src/logic-functions/utils/fetch-slack-conversation-context';
-import { fetchSlackRequesterName } from 'src/logic-functions/utils/fetch-slack-requester-name';
+import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { runSlackReaction } from 'src/logic-functions/utils/run-slack-reaction';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
@@ -147,26 +145,14 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const slackClientResult = await getSlackClient();
-
-    const [conversationContext, requesterName] = slackClientResult.success
-      ? await Promise.all([
-          fetchSlackConversationContext({
-            client: slackClientResult.client,
-            channelId: slackChannelId,
-            threadTimestamp: parentMessageTimestamp ?? '',
-            isDirectMessage,
-            excludeMessageTimestamps: [
-              slackMessageTimestamp,
-              placeholderTimestamp,
-            ],
-          }),
-          fetchSlackRequesterName({
-            client: slackClientResult.client,
-            slackUserId: record.slackUserId,
-          }),
-        ])
-      : [undefined, undefined];
+    const { conversationContext, requesterName } =
+      await fetchSlackAssistantContext({
+        slackChannelId,
+        parentMessageTimestamp,
+        isDirectMessage,
+        slackUserId: record.slackUserId,
+        excludeMessageTimestamps: [slackMessageTimestamp, placeholderTimestamp],
+      });
 
     const agentResult = await runAgent({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
