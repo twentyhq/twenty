@@ -1,0 +1,112 @@
+---
+title: Background Jobs
+description: Hand long or rate-limited work to the Twenty workers by enqueuing another logic function run instead of doing everything inline.
+icon: "layer-group"
+---
+
+A logic function run is capped by its `timeoutSeconds` (900 seconds maximum). Anything that can't finish in that window — a full re-sync, a per-record fan-out, a third-party API that rate-limits you — has to be split into smaller runs.
+
+`enqueueJob` does exactly that: it asks the Twenty workers to run one of your app's logic functions later, in its own process, with its own timeout budget. The caller returns immediately.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Enqueue a run
+
+Import `enqueueJob` from `twenty-sdk/logic-function` and point it at the `universalIdentifier` of the logic function you want to run.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+The target function receives `payload` as its handler argument, exactly like any other trigger. It must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found`.
+
+<Note>
+`enqueueJob` returns as soon as the job is accepted, not when it has run. It does not return the target's result — have the target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+</Note>
+
+## Job options
+
+| Option | Default | Range | What it does |
+|--------|---------|-------|--------------|
+| `retryLimit` | `0` | `0`–`10` | Extra attempts if the run throws. Only raise this for handlers that are safe to run twice. |
+| `priority` | queue default | `1`–`10` | Lower value is picked first when jobs are waiting. |
+| `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  priority: 2,
+  delayMs: 60_000,
+});
+```
+
+The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
+
+## Use it: page through a long sync
+
+The classic shape is a function that enqueues *itself* with the next cursor. Each run does one page of work well inside its own timeout, and the chain stops when there is nothing left.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      // Space runs out to stay under the provider's rate limit.
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Fan out per record
+
+When the work is naturally per-item, enqueue one job per item and let the workers process them in parallel instead of looping inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+<Warning>
+Retries re-run the whole handler. Keep enqueued handlers idempotent — key writes on the record or external id you are processing — before setting `retryLimit` above `0`.
+</Warning>
