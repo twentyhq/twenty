@@ -187,6 +187,7 @@ export const ConfirmationModal = ({
         title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}
         fullWidth
+        wrapText
         justify="center"
         dataTestId="confirmation-modal-confirm-button"
       />

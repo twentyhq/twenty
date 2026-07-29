@@ -19,6 +19,12 @@ $base-transition-timing: 300ms;
   transition-delay: $base-transition-timing * 0.25;
   white-space: nowrap;
 
+  &[data-wrap] {
+    overflow-wrap: anywhere;
+    text-align: center;
+    white-space: normal;
+  }
+
   &[data-loading] {
     clip-path: inset(0 var(--t-spacing-12) 0 0);
     transform: translateX(var(--t-spacing-7));

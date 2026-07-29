@@ -70,10 +70,14 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 .small {
+  --btn-min-height: 24px;
+
   height: 24px;
 }
 
 .medium {
+  --btn-min-height: 32px;
+
   height: 32px;
 }
 
@@ -81,6 +85,16 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // width wins the cascade at equal specificity.
 .fullWidth {
   width: 100%;
+}
+
+// Declared after the size classes so the auto height wins the cascade at equal
+// specificity: the button grows to fit a wrapped label instead of clipping it.
+.wrapText {
+  height: auto;
+  min-height: var(--btn-min-height);
+  padding-bottom: var(--t-spacing-1);
+  padding-top: var(--t-spacing-1);
+  white-space: normal;
 }
 
 // position only reshapes radius and collapses inner borders. The legacy

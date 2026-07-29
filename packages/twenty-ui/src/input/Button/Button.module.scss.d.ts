@@ -5,5 +5,6 @@ declare const classNames: {
   readonly small: 'small';
   readonly medium: 'medium';
   readonly fullWidth: 'fullWidth';
+  readonly wrapText: 'wrapText';
 };
 export default classNames;

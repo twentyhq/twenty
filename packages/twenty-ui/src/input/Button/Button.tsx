@@ -40,6 +40,7 @@ export type ButtonProps = {
   hotkeys?: string[];
   ariaLabel?: string;
   isLoading?: boolean;
+  wrapText?: boolean;
 } & Pick<React.ComponentProps<'button'>, 'type'> &
   ClickOutsideAttributes;
 
@@ -68,6 +69,7 @@ export const Button = ({
   ariaLabel,
   type,
   isLoading = false,
+  wrapText = false,
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
@@ -94,6 +96,7 @@ export const Button = ({
           styles.button,
           styles[size],
           fullWidth && styles.fullWidth,
+          wrapText && styles.wrapText,
           className,
         )}
         data-variant={variant}
@@ -119,7 +122,12 @@ export const Button = ({
           <ButtonIcon Icon={Icon} isLoading={!!isLoading} />
         )}
         {isDefined(title) && (
-          <ButtonText hasIcon={!!Icon} title={title} isLoading={isLoading} />
+          <ButtonText
+            hasIcon={!!Icon}
+            title={title}
+            isLoading={isLoading}
+            wrapText={wrapText}
+          />
         )}
         {hotkeys && !isMobile && (
           <ButtonHotkeys
