@@ -52,7 +52,7 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -93,7 +93,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
-  private async resolveDefaultAgentModelId(
+  private async getWorkspaceDefaultFastModelId(
     workspaceId: string,
   ): Promise<string> {
     try {
@@ -102,12 +102,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       });
 
       if (!isDefined(workspace)) {
-        return AUTO_SELECT_SMART_MODEL_ID;
+        return AUTO_SELECT_FAST_MODEL_ID;
       }
 
       const effectiveModelConfig =
         this.aiModelRegistryService.getEffectiveModelConfig(
-          workspace.smartModel,
+          workspace.fastModel,
         );
 
       this.aiModelRegistryService.validateModelAvailability(
@@ -117,7 +117,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
       return effectiveModelConfig.modelId;
     } catch {
-      return AUTO_SELECT_SMART_MODEL_ID;
+      return AUTO_SELECT_FAST_MODEL_ID;
     }
   }
 
@@ -580,7 +580,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             description: '',
             prompt:
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: await this.resolveDefaultAgentModelId(workspaceId),
+            modelId: await this.getWorkspaceDefaultFastModelId(workspaceId),
             responseFormat: { type: 'text' },
             isCustom: true,
           },
