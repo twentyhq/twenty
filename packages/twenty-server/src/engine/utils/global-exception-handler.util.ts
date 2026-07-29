@@ -31,7 +31,10 @@ const graphQLPredefinedExceptions = {
 };
 
 export const graphQLErrorCodesToFilter = [
+  ErrorCode.GRAPHQL_PARSE_FAILED,
   ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+  ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
   ErrorCode.UNAUTHENTICATED,
   ErrorCode.FORBIDDEN,
   ErrorCode.NOT_FOUND,

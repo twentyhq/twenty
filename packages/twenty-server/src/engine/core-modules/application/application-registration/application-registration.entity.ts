@@ -45,6 +45,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 )
 @Index('IDX_APPLICATION_REGISTRATION_CREATED_BY_USER_ID', ['createdByUserId'])
 @Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['ownerWorkspaceId'])
+@Index(
+  'IDX_APPLICATION_REGISTRATION_IS_LISTED_SOURCE_TYPE',
+  ['isListed', 'sourceType'],
+  { where: '"deletedAt" IS NULL' },
+)
 @Check(
   'CHK_NPM_HAS_SOURCE_PACKAGE',
   `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,

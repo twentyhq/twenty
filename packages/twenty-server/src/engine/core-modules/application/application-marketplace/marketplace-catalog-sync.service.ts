@@ -81,7 +81,7 @@ export class MarketplaceCatalogSyncService {
           manifest: manifestWithResolvedUrls,
         });
       } catch (error) {
-        this.logger.error(
+        this.logger.warn(
           `Failed to sync registry app "${pkg.name}": ${error instanceof Error ? error.message : String(error)}`,
         );
       }
