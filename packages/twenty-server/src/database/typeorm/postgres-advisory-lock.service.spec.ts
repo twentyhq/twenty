@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { type PoolClient } from 'pg';
 import { type DataSource } from 'typeorm';
 import { type PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
@@ -13,6 +15,7 @@ describe('PostgresAdvisoryLockService', () => {
   } as unknown as DataSource;
 
   const createMockConnection = (isLockAcquired: boolean) => {
+    let connectionErrorHandler: ((error: Error) => void) | undefined;
     const query = jest
       .fn()
       .mockResolvedValueOnce({
@@ -23,20 +26,30 @@ describe('PostgresAdvisoryLockService', () => {
       });
     const connection = {
       query,
-      on: jest.fn(),
+      on: jest.fn((_eventName: string, handler: (error: Error) => void) => {
+        connectionErrorHandler = handler;
+      }),
       removeListener: jest.fn(),
     } as unknown as PoolClient;
     const release = jest.fn();
 
     return {
       connection,
+      emitConnectionError: (error: Error) => connectionErrorHandler?.(error),
       query,
       release,
     };
   };
 
+  let loggerWarn: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    loggerWarn = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+  });
+
+  afterEach(() => {
+    loggerWarn.mockRestore();
   });
 
   it('runs the callback while holding the lock', async () => {
@@ -124,5 +137,57 @@ describe('PostgresAdvisoryLockService', () => {
     ).rejects.toBe(releaseError);
 
     expect(release).toHaveBeenCalledWith(releaseError);
+  });
+
+  it('preserves the callback error when the connection fails', async () => {
+    const { connection, emitConnectionError, release } =
+      createMockConnection(true);
+    const callbackError = new Error('callback failed');
+    const connectionError = new Error('connection failed');
+
+    obtainMasterConnection.mockResolvedValue([connection, release]);
+
+    await expect(
+      new PostgresAdvisoryLockService(dataSource).tryWithLock(
+        'lock-name',
+        async () => {
+          emitConnectionError(connectionError);
+          throw callbackError;
+        },
+      ),
+    ).rejects.toBe(callbackError);
+
+    expect(release).toHaveBeenCalledWith(connectionError);
+    expect(loggerWarn).toHaveBeenCalledWith(
+      expect.stringContaining(connectionError.message),
+    );
+  });
+
+  it('preserves the callback error when releasing the lock fails', async () => {
+    const { connection, query, release } = createMockConnection(true);
+    const callbackError = new Error('callback failed');
+    const releaseError = new Error('release failed');
+
+    query
+      .mockReset()
+      .mockResolvedValueOnce({
+        rows: [{ acquired: true }],
+      })
+      .mockRejectedValueOnce(releaseError);
+    obtainMasterConnection.mockResolvedValue([connection, release]);
+
+    await expect(
+      new PostgresAdvisoryLockService(dataSource).tryWithLock(
+        'lock-name',
+        async () => {
+          throw callbackError;
+        },
+      ),
+    ).rejects.toBe(callbackError);
+
+    expect(release).toHaveBeenCalledWith(releaseError);
+    expect(loggerWarn).toHaveBeenCalledWith(
+      expect.stringContaining(releaseError.message),
+    );
   });
 });

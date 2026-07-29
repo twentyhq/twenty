@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type PoolClient } from 'pg';
@@ -16,6 +16,8 @@ export type PostgresAdvisoryLockResult<T> =
 
 @Injectable()
 export class PostgresAdvisoryLockService {
+  private readonly logger = new Logger(PostgresAdvisoryLockService.name);
+
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -66,23 +68,40 @@ export class PostgresAdvisoryLockService {
       };
     }
 
+    let callbackFailed = false;
+
     try {
       return {
         acquired: true,
         value: await callback(),
       };
+    } catch (error) {
+      callbackFailed = true;
+      throw error;
     } finally {
+      let lockReleaseError: Error | undefined;
+
       try {
         await this.releaseLock(connection, lockName);
       } catch (error) {
-        releaseConnection(this.toError(error));
-        throw error;
+        lockReleaseError = this.toError(error);
+        releaseConnection(lockReleaseError);
       }
 
-      releaseConnection();
+      if (!lockReleaseError) {
+        releaseConnection();
+      }
 
-      if (connectionError) {
-        throw connectionError;
+      const secondaryError = lockReleaseError ?? connectionError;
+
+      if (secondaryError) {
+        if (callbackFailed) {
+          this.logger.warn(
+            `Secondary PostgreSQL advisory lock error for "${lockName}" after callback failure: ${secondaryError}`,
+          );
+        } else {
+          throw secondaryError;
+        }
       }
     }
   }
