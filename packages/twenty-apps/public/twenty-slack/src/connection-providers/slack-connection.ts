@@ -23,8 +23,7 @@ export default defineConnectionProvider({
       'chat:write.public',
       'groups:read',
       'reactions:write',
-      // Assistant (inbound) scopes: receive mentions and DMs, and read thread
-      // context so the assistant can follow along and reply in-thread.
+      // Inbound scopes, only used by the conversational assistant
       'app_mentions:read',
       'channels:history',
       'groups:history',
