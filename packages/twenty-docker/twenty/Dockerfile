@@ -115,6 +115,8 @@ COPY --chown=1000 --from=twenty-server-build /app/node_modules /app/node_modules
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/package.json /app/packages/twenty-server/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/dist /app/packages/twenty-server/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/patches /app/packages/twenty-server/patches
+# Shell entrypoints referenced by package.json scripts (upgrade:background*)
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/scripts /app/packages/twenty-server/scripts
 
 # Workspace packages (dist + package.json; node_modules symlinks resolve to these)
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package.json /app/packages/twenty-shared/

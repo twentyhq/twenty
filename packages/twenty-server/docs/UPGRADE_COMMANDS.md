@@ -142,6 +142,54 @@ Rerun the command to resume. Nothing is rolled back, and the run picks up from t
 
 Expect the first Ctrl+C to look like it did nothing while a long step is running: it takes effect once the step ends.
 
+### Running detached
+
+A foreground `upgrade` is a child of the shell it was started from, so anything that drops that shell kills the run: a `kubectl exec` session losing its SSM tunnel, a closed laptop, an expired VPN. `scripts/upgrade-background.sh` puts the run in its own session with no controlling terminal and streams its output from a log file instead, so the run survives the disconnect and can be re-attached from a new shell.
+
+Use it for any long upgrade started over `kubectl exec` or SSH. A foreground run is still the right thing locally, or in CI where the parent process is stable.
+
+```bash
+yarn upgrade:background [args]   # start detached, then stream the log
+yarn upgrade:background:logs     # re-attach to the log from another shell
+yarn upgrade:background:status   # is it running, and how did it end
+yarn upgrade:background:stop     # graceful stop; --now for immediate, --force for SIGKILL
+```
+
+`upgrade:background` refuses to start when a run is already in flight, and forwards any extra arguments (`--include-slow`, workspace filters) to `upgrade`. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
+
+The three `stop` tiers map onto the signal behavior above, as three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, and a timer would defeat the graceful path entirely.
+
+| Invocation | Signal | Effect |
+| --- | --- | --- |
+| `stop` | one `SIGTERM` | stops at the next boundary, exit `143` |
+| `stop --now` | two spaced `SIGTERM`s | immediate exit, step in progress left unfinished |
+| `stop --force` | `SIGKILL` | no graceful boundary, a multi-transaction command may leave partial work |
+
+Only the node process is signalled, never the process group. A group signal would also hit the wrapper shell, killing the process that records the exit code and tearing down node's parent while it is trying to finish its segment.
+
+#### Reading the outcome
+
+The wrapper outlives node and appends an `EXIT=<code>` line to the log, which is what `status` reports on:
+
+| Log | Meaning |
+| --- | --- |
+| `EXIT=0` | completed |
+| `EXIT=130` | graceful stop on `SIGINT` |
+| `EXIT=143` | graceful stop on `SIGTERM`, what `stop` and `stop --now` produce |
+| `EXIT=137` | `SIGKILL`ed, what `stop --force` produces |
+| any other `EXIT=` | the upgrade failed, `status` prints the tail of the log |
+| no `EXIT=` line | the wrapper died too, so the run was killed without any graceful stop (pod replaced, container restarted, host lost) |
+
+A graceful stop is always safe to rerun: nothing is rolled back, and the rerun resumes from the last command recorded in `upgradeMigration`, with each workspace either fully done with its segment or untouched. Rerunning after a forced kill or a lost pod is safe too, but only because upgrade commands are idempotent, since a command interrupted mid-flight may have left partial work.
+
+#### Limits of this mode
+
+Ctrl+C cannot reach a detached run at all: it has its own session and no controlling terminal, so no terminal can send it `SIGINT`. `upgrade:background:stop` is the only graceful entry point here, and the `130` exit code only ever shows up on foreground runs.
+
+The log and PID files live in `/tmp` inside the container (override with `TWENTY_UPGRADE_LOG_FILE` and `TWENTY_UPGRADE_PID_FILE`). Both are lost if the pod is replaced, along with the run itself.
+
+`terminationGracePeriodSeconds` does not protect a detached run. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion it exits immediately and the detached node process is torn down without ever receiving `SIGTERM`. The graceful path on eviction only applies when node is the container's main process.
+
 ## Shipping a command for a future version (deferred drops)
 
 You can write a command for a version listed in `TWENTY_NEXT_VERSIONS` — typically the second half of a zero-downtime migration, e.g. dropping a column one release after its replacement ships. Pass the target version to the generator:
