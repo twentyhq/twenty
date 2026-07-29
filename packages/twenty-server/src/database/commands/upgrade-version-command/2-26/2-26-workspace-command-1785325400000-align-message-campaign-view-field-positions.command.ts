@@ -7,6 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-26/utils/compute-view-field-positions-aligned-to-standard.util';
+import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-26/utils/split-view-field-position-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -131,13 +132,41 @@ export class AlignMessageCampaignViewFieldPositionsCommand extends ProvisionedWo
       return;
     }
 
+    const { others, lowest } = splitViewFieldPositionUpdates(viewFieldsToUpdate);
+
+    for (const viewFieldBatch of [others, lowest]) {
+      if (viewFieldBatch.length === 0) {
+        continue;
+      }
+
+      await this.runViewFieldUpdates({
+        workspaceId,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
+        viewFieldsToUpdate: viewFieldBatch,
+      });
+    }
+
+    this.logger.log(
+      `Aligned the all campaigns view columns for workspace ${workspaceId}`,
+    );
+  }
+
+  private async runViewFieldUpdates({
+    workspaceId,
+    applicationUniversalIdentifier,
+    viewFieldsToUpdate,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    viewFieldsToUpdate: FlatViewField[];
+  }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier,
           allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: [],
@@ -157,9 +186,5 @@ export class AlignMessageCampaignViewFieldPositionsCommand extends ProvisionedWo
         `Failed to align the all campaigns view columns for workspace ${workspaceId}`,
       );
     }
-
-    this.logger.log(
-      `Aligned the all campaigns view columns for workspace ${workspaceId}`,
-    );
   }
 }
