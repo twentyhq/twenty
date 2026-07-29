@@ -64,8 +64,9 @@ jest.mock(
 jest.mock(
   'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util',
   () => ({
-    getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions:
-      jest.fn().mockReturnValue([]),
+    getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions: jest
+      .fn()
+      .mockReturnValue([]),
   }),
 );
 
@@ -443,6 +444,9 @@ describe('WorkspaceService', () => {
   });
 
   describe('activateWorkspace', () => {
+    // getWorkspaceSchemaName hashes the id, so it has to be a real uuid.
+    const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
     const setupActivationMocks = () => {
       const callOrder: string[] = [];
 
@@ -450,11 +454,12 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'update')
         .mockResolvedValue({ affected: 1 } as never);
       workspaceRepository.findOneBy = jest.fn().mockResolvedValue({
-        id: 'workspace-id',
+        id: WORKSPACE_ID,
       });
 
-      const workspaceManagerService =
-        module.get<WorkspaceManagerService>(WorkspaceManagerService);
+      const workspaceManagerService = module.get<WorkspaceManagerService>(
+        WorkspaceManagerService,
+      );
 
       workspaceManagerService.init = jest.fn();
 
@@ -465,9 +470,8 @@ describe('WorkspaceService', () => {
 
       userWorkspaceService.createWorkspaceMember = jest.fn();
 
-      const prefillLogicFunctionService = module.get<PrefillLogicFunctionService>(
-        PrefillLogicFunctionService,
-      );
+      const prefillLogicFunctionService =
+        module.get<PrefillLogicFunctionService>(PrefillLogicFunctionService);
 
       prefillLogicFunctionService.ensureSeeded = jest.fn();
 
@@ -530,11 +534,11 @@ describe('WorkspaceService', () => {
 
       await service.activateWorkspace(
         { id: 'user-id' } as never,
-        { id: 'workspace-id' } as WorkspaceEntity,
+        { id: WORKSPACE_ID } as WorkspaceEntity,
       );
 
       expect(preInstalledAppsService.installOnWorkspace).toHaveBeenCalledWith(
-        'workspace-id',
+        WORKSPACE_ID,
       );
       expect(callOrder).toEqual([
         'markAsWorkspaceInitial',
@@ -558,9 +562,9 @@ describe('WorkspaceService', () => {
       await expect(
         service.activateWorkspace(
           { id: 'user-id' } as never,
-          { id: 'workspace-id' } as WorkspaceEntity,
+          { id: WORKSPACE_ID } as WorkspaceEntity,
         ),
-      ).resolves.toEqual({ id: 'workspace-id' });
+      ).resolves.toEqual({ id: WORKSPACE_ID });
     });
   });
 });
