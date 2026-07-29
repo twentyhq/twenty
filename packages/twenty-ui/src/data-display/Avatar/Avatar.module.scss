@@ -25,8 +25,10 @@
     cursor: pointer;
   }
 
-  &[data-clickable]:hover {
-    box-shadow: 0 0 0 4px var(--t-background-transparent-light);
+  @include hover-capable {
+    &[data-clickable]:hover {
+      box-shadow: 0 0 0 4px var(--t-background-transparent-light);
+    }
   }
 }
 
@@ -58,6 +60,26 @@
   font-size: 8px;
   height: 12px;
   width: 12px;
+}
+
+.pulsing {
+  animation: avatarPulsing 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes avatarPulsing {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulsing {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 .image {

@@ -17,6 +17,8 @@ type AppChipProps = {
   };
   className?: string;
   chipOnly?: boolean;
+  rounded?: boolean;
+  pulsing?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -38,6 +40,8 @@ export const AppChip = ({
   fallbackApplicationData,
   className,
   chipOnly = false,
+  rounded = false,
+  pulsing = false,
 }: AppChipProps) => {
   const { applicationChipData } = useApplicationChipData({
     applicationId,
@@ -47,7 +51,7 @@ export const AppChip = ({
   return (
     <StyledContainer className={className}>
       <Avatar
-        type="app"
+        type={rounded ? 'rounded' : 'app'}
         size={size}
         avatarUrl={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
         placeholder={applicationChipData.name}
@@ -55,6 +59,7 @@ export const AppChip = ({
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}
+        pulsing={pulsing}
       />
       {!chipOnly && (
         <OverflowingTextWithTooltip text={applicationChipData.name} />

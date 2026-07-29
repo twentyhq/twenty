@@ -193,6 +193,24 @@ describe('AgentRunService', () => {
     });
   });
 
+  it('returns a generic error result when agent execution throws instead of bubbling GraphQL errors', async () => {
+    agentAsyncExecutorService.executeAgent.mockRejectedValue(
+      new Error('Failed to process successful response'),
+    );
+
+    const result = await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
+    });
+
+    expect(result).toEqual({
+      result: null,
+      error: 'Agent execution failed.',
+      success: false,
+    });
+  });
+
   it('throws when no agent matches the identifier', async () => {
     agentRepository.findOne.mockResolvedValue(null);
 

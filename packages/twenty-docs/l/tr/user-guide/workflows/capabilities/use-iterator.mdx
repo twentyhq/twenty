@@ -19,7 +19,7 @@ Yineleyici, bir kayıt dizisi üzerinde döngü yapmanızı ve her biri için ey
 Yineleyici, girdi olarak bir **dizi** bekler. Ardından:
 
 1. Diziden ilk öğeyi alır
-2. Iterator içindeki tüm eylemleri o öğeyle çalıştırır
+2. Yineleyicinin içindeki tüm eylemleri o öğeyle çalıştırır
 3. Sonraki öğeye geçer
 4. Tüm öğeler işlenene kadar tekrarlar
 
@@ -58,7 +58,7 @@ Bir **Code** veya **Logic Function** adımı *üst düzey bir dizi* döndürdü�
 
 Yineleyiciden sonra yerleştirilen eylemler her öğe için çalışır:
 
-1. **E-posta Gönder** eylemi ekleyin (Iterator içinde)
+1. Bir **E-posta Gönder** eylemi ekleyin (yineleyici içinde)
 2. Kime: `{{iterator.currentItem.email}}`
 3. Konu: Merhaba `{{iterator.currentItem.firstName}}`!
 4. Gövde: Mevcut öğenin alanlarını kullanarak kişiselleştirilmiş mesaj

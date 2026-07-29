@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -30,6 +30,8 @@ type RunAgentServiceInput = {
 
 @Injectable()
 export class AgentRunService {
+  private readonly logger = new Logger(AgentRunService.name);
+
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly applicationService: ApplicationService,
@@ -49,6 +51,7 @@ export class AgentRunService {
     const prompt = input.prompt;
     const messages = input.messages;
 
+    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
     if (isNonEmptyArray(messages) === isNonEmptyString(prompt)) {
       throw new AiException(
         'Provide exactly one of prompt or messages',
@@ -93,37 +96,50 @@ export class AgentRunService {
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
 
-    let executionResult: AgentExecutionResult;
+    try {
+      let executionResult: AgentExecutionResult;
 
-    if (isNonEmptyArray(messages)) {
-      executionResult = await this.agentAsyncExecutorService.executeAgent({
-        ...sharedExecuteAgentArgs,
-        messages,
-      });
-    } else if (isNonEmptyString(prompt)) {
-      executionResult = await this.agentAsyncExecutorService.executeAgent({
-        ...sharedExecuteAgentArgs,
-        userPrompt: prompt,
-      });
-    } else {
-      throw new AiException(
-        'Provide exactly one of prompt or messages',
-        AiExceptionCode.INVALID_AGENT_INPUT,
+      if (isNonEmptyArray(messages)) {
+        executionResult = await this.agentAsyncExecutorService.executeAgent({
+          ...sharedExecuteAgentArgs,
+          messages,
+        });
+      } else if (isNonEmptyString(prompt)) {
+        executionResult = await this.agentAsyncExecutorService.executeAgent({
+          ...sharedExecuteAgentArgs,
+          userPrompt: prompt,
+        });
+      } else {
+        throw new AiException(
+          'Provide exactly one of prompt or messages',
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
+      if (executionResult.hasNoMoreAvailableCredits) {
+        return {
+          result: null,
+          error: 'AI agent stopped: no more available credits.',
+          success: false,
+        };
+      }
+
+      return {
+        result: executionResult.result,
+        error: null,
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Agent execution failed for ${input.agentUniversalIdentifier}`,
+        error instanceof Error ? error.stack : error,
       );
-    }
 
-    if (executionResult.hasNoMoreAvailableCredits) {
       return {
         result: null,
-        error: 'AI agent stopped: no more available credits.',
+        error: 'Agent execution failed.',
         success: false,
       };
     }
-
-    return {
-      result: executionResult.result,
-      error: null,
-      success: true,
-    };
   }
 }
