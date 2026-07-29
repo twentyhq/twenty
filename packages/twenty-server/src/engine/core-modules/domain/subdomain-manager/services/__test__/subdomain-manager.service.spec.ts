@@ -118,7 +118,6 @@ describe('SubdomainManagerService', () => {
     });
 
     it('respects the configured minimum length for the random fallback', async () => {
-      // Every generated random subdomain is at least 12 characters long
       subdomainMinLength = 12;
       areAllSubdomainsTaken = true;
 
