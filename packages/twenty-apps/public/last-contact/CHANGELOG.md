@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.1.3
+## 1.1.4
 
 - Batch the backfill's writes with `createMany` upserts, read message senders and calendar organizers from the participant pages already being paged, and skip records that already hold the value being written. Large workspaces no longer exhaust the application API rate limit during install or upgrade.
+
+## 1.1.3
+
+- Stop declaring INDEX view fields explicitly: the server now provisions the INDEX view column for each app field automatically, so the manifest no longer targets the engine-owned standard INDEX views.
 
 ## 1.1.1
 

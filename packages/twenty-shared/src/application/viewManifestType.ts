@@ -68,6 +68,11 @@ export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
   type?: ViewType;
+  /**
+   * @deprecated The INDEX key is reserved for the engine-owned default view,
+   * which the server provisions automatically for every object. This field is
+   * ignored: manifest views are always created as additional views.
+   */
   key?: ViewKey;
   icon?: string;
   position?: number;
