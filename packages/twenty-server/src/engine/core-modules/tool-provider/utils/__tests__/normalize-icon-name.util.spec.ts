@@ -21,6 +21,16 @@ describe('normalizeIconName', () => {
     expect(normalizeIconName('currency_dollar')).toBe('IconCurrencyDollar');
   });
 
+  it('should normalize uppercase slugs without breaking camelCase words', () => {
+    expect(normalizeIconName('BUILDING_SKYSCRAPER')).toBe(
+      'IconBuildingSkyscraper',
+    );
+    expect(normalizeIconName('ICONUSER')).toBe('IconUser');
+    expect(normalizeIconName('buildingSkyscraper')).toBe(
+      'IconBuildingSkyscraper',
+    );
+  });
+
   it('should normalize unknown names to a renderable shape for the frontend fallback', () => {
     expect(normalizeIconName('IconDoesNotExist')).toBe('IconDoesNotExist');
     expect(normalizeIconName('not a real icon')).toBe('IconNotARealIcon');
