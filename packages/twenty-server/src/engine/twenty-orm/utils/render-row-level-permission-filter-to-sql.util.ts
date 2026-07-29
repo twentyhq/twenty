@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   compositeTypeDefinitions,
@@ -9,21 +8,16 @@ import {
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
+import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 // Mirrors how TypeORM renders empty Brackets, so nested empty logical groups
 // behave the same on joined relations as on the main alias
@@ -31,8 +25,8 @@ const ALWAYS_TRUE_CONDITION = '1=1';
 
 type SqlRenderingContext = {
   tableAlias: string;
-  fieldMetadataIdByFieldName: Record<string, string>;
-  fieldMetadataIdByJoinColumnName: Record<string, string>;
+  fieldIdByName: Record<string, string>;
+  fieldIdByJoinColumnName: Record<string, string>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   collectedParameters: ObjectLiteral;
 };
@@ -60,8 +54,8 @@ export const renderRowLevelPermissionFilterToSql = ({
 
   const sql = renderFilterAsConjunction(recordFilter, {
     tableAlias,
-    fieldMetadataIdByFieldName: fieldIdByName,
-    fieldMetadataIdByJoinColumnName: fieldIdByJoinColumnName,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
     flatFieldMetadataMaps,
     collectedParameters,
   });
@@ -165,25 +159,18 @@ const renderFieldCondition = (
 ): string => {
   const {
     tableAlias,
-    fieldMetadataIdByFieldName,
-    fieldMetadataIdByJoinColumnName,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
     flatFieldMetadataMaps,
   } = context;
 
-  const isReferencedByFieldName = isDefined(
-    fieldMetadataIdByFieldName[fieldNameOrJoinColumnName],
-  );
-
-  const fieldMetadataId =
-    fieldMetadataIdByFieldName[fieldNameOrJoinColumnName] ??
-    fieldMetadataIdByJoinColumnName[fieldNameOrJoinColumnName];
-
-  const fieldMetadata = isDefined(fieldMetadataId)
-    ? findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      })
-    : undefined;
+  const { fieldMetadata, isReferencedByFieldName } =
+    resolveFilterKeyFieldMetadata({
+      filterKey: fieldNameOrJoinColumnName,
+      fieldIdByName,
+      fieldIdByJoinColumnName,
+      flatFieldMetadataMaps,
+    });
 
   if (!isDefined(fieldMetadata)) {
     throw new Error(
@@ -227,27 +214,6 @@ const renderFieldCondition = (
   });
 
   return joinConditions(operatorConditions, 'AND');
-};
-
-const assertArrayOperatorValueIsNonEmptyArray = ({
-  operator,
-  value,
-  key,
-}: {
-  operator: string;
-  value: unknown;
-  key: string;
-}): void => {
-  if (
-    ARRAY_OPERATORS.includes(operator) &&
-    (!Array.isArray(value) || value.length === 0)
-  ) {
-    throw new GraphqlQueryRunnerException(
-      `Invalid filter value for field ${key}. Expected non-empty array`,
-      GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      { userFriendlyMessage: msg`Invalid filter value` },
-    );
-  }
 };
 
 const renderCompositeFieldCondition = (

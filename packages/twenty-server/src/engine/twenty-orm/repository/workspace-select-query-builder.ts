@@ -12,7 +12,6 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -31,11 +30,10 @@ import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
-import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
-import { resolveRoleIdFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-id-from-auth-context.util';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 
 type JoinAttributeWithRowLevelPermissionMarker = JoinAttribute & {
   hasRowLevelPermissionPredicateApplied?: true;
@@ -377,8 +375,7 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
-    this.applyRowLevelPermissionPredicates();
-    this.applyRowLevelPermissionPredicatesToJoinedRelations();
+    this.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
@@ -441,16 +438,6 @@ export class WorkspaceSelectQueryBuilder<
       return;
     }
 
-    const roleId = resolveRoleIdFromAuthContext({
-      authContext: this.authContext,
-      userWorkspaceRoleMap: this.internalContext.userWorkspaceRoleMap,
-      apiKeyRoleMap: this.internalContext.apiKeyRoleMap,
-    });
-
-    const workspaceMember = isUserAuthContext(this.authContext)
-      ? this.authContext.workspaceMember
-      : undefined;
-
     for (const joinAttribute of this.expressionMap.joinAttributes) {
       if (hasRowLevelPermissionPredicateApplied(joinAttribute)) {
         continue;
@@ -463,18 +450,13 @@ export class WorkspaceSelectQueryBuilder<
         continue;
       }
 
-      const recordFilter = buildRowLevelPermissionRecordFilter({
-        flatRowLevelPermissionPredicateMaps:
-          this.internalContext.flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps:
-          this.internalContext.flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      const recordFilter = resolveRowLevelPermissionRecordFilter({
+        internalContext: this.internalContext,
+        authContext: this.authContext,
         objectMetadata: joinedObjectMetadata,
-        roleId,
-        workspaceMember,
       });
 
-      if (!isDefined(recordFilter) || Object.keys(recordFilter).length === 0) {
+      if (!isDefined(recordFilter)) {
         markRowLevelPermissionPredicateApplied(joinAttribute);
         continue;
       }
