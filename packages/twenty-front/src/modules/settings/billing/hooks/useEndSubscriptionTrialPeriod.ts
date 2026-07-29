@@ -21,8 +21,6 @@ export const useEndSubscriptionTrialPeriod = () => {
   const [endSubscriptionTrialPeriod] = useMutation(
     EndSubscriptionTrialPeriodDocument,
     {
-      // Credit grants change once the trial ends; refetch so the billing
-      // page's credits section doesn't display stale trial values
       refetchQueries: [GetResourceCreditUsageDocument],
     },
   );
