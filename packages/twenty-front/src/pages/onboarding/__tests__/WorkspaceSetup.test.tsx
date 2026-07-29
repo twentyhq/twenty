@@ -5,16 +5,14 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { WorkspaceSetup } from '~/pages/onboarding/WorkspaceSetup';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -57,13 +55,8 @@ jest.mock('react-router-dom', () => ({
   },
 }));
 
-const setOnboardingAiChatFeatureFlag = (value: boolean) => {
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      { key: FeatureFlagKey.IS_ONBOARDING_AI_CHAT_ENABLED, value },
-    ],
-  });
+const setIsOnboardingAiChatEnabled = (value: boolean) => {
+  jotaiStore.set(isOnboardingAiChatEnabledState.atom, value);
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -80,7 +73,7 @@ describe('WorkspaceSetup', () => {
   });
 
   it('should dress the chat for onboarding when the post-onboarding hint is set', () => {
-    setOnboardingAiChatFeatureFlag(true);
+    setIsOnboardingAiChatEnabled(true);
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
     const { getByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
@@ -91,7 +84,7 @@ describe('WorkspaceSetup', () => {
   });
 
   it('should render a plain chat when the post-onboarding hint is not set', () => {
-    setOnboardingAiChatFeatureFlag(true);
+    setIsOnboardingAiChatEnabled(true);
 
     const { getByTestId, queryByTestId } = render(<WorkspaceSetup />, {
       wrapper: Wrapper,
@@ -102,8 +95,8 @@ describe('WorkspaceSetup', () => {
     expect(getByTestId('header-title')).toHaveTextContent('Ask AI');
   });
 
-  it('should redirect home when the onboarding ai chat feature flag is disabled', () => {
-    setOnboardingAiChatFeatureFlag(false);
+  it('should redirect home when the onboarding ai chat is disabled', () => {
+    setIsOnboardingAiChatEnabled(false);
 
     const { queryByTestId } = render(<WorkspaceSetup />, { wrapper: Wrapper });
 

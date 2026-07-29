@@ -43,8 +43,8 @@ Relace mezi objekty můžete importovat pomocí funkce importu CSV. Na souvisej�
 
 Při importu souvisejících objektů nahrávejte soubory v tomto pořadí:
 1. **Společnosti** nejdříve ("jedna" strana vztahů)
-2. **Osoby** jako druhé (propojené se společnostmi přes companyId)
-3. **Příležitosti** jako třetí (propojené se společnostmi/osobami)
+2. **Lidé** jako druzí (propojení se Společnostmi přes companyId)
+3. **Příležitosti** jako třetí (propojené se Společnostmi/Lidmi)
 4. **Vlastní objekty** s relacemi nakonec
 
 Proč? "Jedna" strana vztahu jedna ku mnohým musí existovat dříve, než na ni můžete odkazovat. Například záznam společnosti musí existovat dříve, než importujete osobu s ID této společnosti.

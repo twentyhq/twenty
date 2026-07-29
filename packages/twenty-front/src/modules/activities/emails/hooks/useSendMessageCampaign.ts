@@ -1,5 +1,5 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { useCallback } from 'react';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -10,11 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type SendMessageCampaignParams = {
-  listId: string;
-  unsubscribeTopicId?: string;
-  subject: string;
-  body: string;
-  fromAddress: string;
+  campaignId: string;
 };
 
 export const useSendMessageCampaign = () => {
@@ -25,52 +21,47 @@ export const useSendMessageCampaign = () => {
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const sendMessageCampaign = useCallback(
-    async (params: SendMessageCampaignParams): Promise<boolean> => {
-      try {
-        const result = await sendMessageCampaignMutation({
-          variables: { input: params },
+  const sendMessageCampaign = async ({
+    campaignId,
+  }: SendMessageCampaignParams): Promise<boolean> => {
+    try {
+      const result = await sendMessageCampaignMutation({
+        variables: { input: { campaignId } },
+      });
+
+      const queued = result.data?.sendMessageCampaign;
+
+      if (!queued) {
+        enqueueErrorSnackBar({ message: t`Failed to send campaign` });
+
+        return false;
+      }
+
+      const { queuedCount, skipped } = queued;
+      const skippedCount = skipped.noEmail + skipped.deduped + skipped.overCap;
+
+      if (queuedCount === 0) {
+        enqueueErrorSnackBar({
+          message: t`No recipients to send to (${skippedCount} skipped)`,
         });
-
-        const queued = result.data?.sendMessageCampaign;
-
-        if (!queued) {
-          enqueueErrorSnackBar({ message: t`Failed to send campaign` });
-
-          return false;
-        }
-
-        const { queuedCount, skipped } = queued;
-        const skippedCount =
-          skipped.noEmail + skipped.deduped + skipped.overCap;
-
-        if (queuedCount === 0) {
-          enqueueErrorSnackBar({
-            message: t`No recipients to send to (${skippedCount} skipped)`,
-          });
-
-          return false;
-        }
-
+      } else {
         enqueueSuccessSnackBar({
           message:
             skippedCount > 0
               ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped`
               : t`Campaign queued to ${queuedCount} recipient(s)`,
         });
-
-        return true;
-      } catch (error) {
-        enqueueErrorSnackBar({
-          message:
-            error instanceof Error ? error.message : t`Failed to send campaign`,
-        });
-
-        return false;
       }
-    },
-    [sendMessageCampaignMutation, enqueueSuccessSnackBar, enqueueErrorSnackBar],
-  );
+
+      return true;
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+      });
+
+      return false;
+    }
+  };
 
   return { sendMessageCampaign, loading };
 };

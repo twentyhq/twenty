@@ -3484,6 +3484,11 @@ msgstr "Insufficient permissions to access calendar."
 msgid "Insufficient permissions."
 msgstr "Insufficient permissions."
 
+#. js-lingui-id: 4bX5tI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgid "Internal name of the campaign"
+msgstr "Internal name of the campaign"
+
 #. js-lingui-id: pSjWxS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
@@ -5029,6 +5034,7 @@ msgstr "Multiple subscriptions found where one was expected."
 #. js-lingui-id: 6YtxFj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -5241,6 +5247,11 @@ msgstr "No trigger type provided"
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "No valid authentication context found."
+
+#. js-lingui-id: r+kse7
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "No verified sending domain matches this from address."
+msgstr "No verified sending domain matches this from address."
 
 #. js-lingui-id: AzXrd9
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -7891,6 +7902,11 @@ msgstr "This {fieldLabel} value is already in use. Please check your data and tr
 msgid "This action is currently unavailable."
 msgstr "This action is currently unavailable."
 
+#. js-lingui-id: 4CW4iW
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This address cannot be removed from the suppression list."
+msgstr "This address cannot be removed from the suppression list."
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -7931,6 +7947,16 @@ msgstr "This app requires a newer version than this workspace has finished upgra
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
 msgstr "This application is already owned by a workspace."
+
+#. js-lingui-id: SRnMG0
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
+msgstr "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
+
+#. js-lingui-id: ZyEq3L
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This campaign no longer exists."
+msgstr "This campaign no longer exists."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -8202,6 +8228,11 @@ msgstr "This server key is already claimed by another workspace."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "This subdomain is already taken."
+
+#. js-lingui-id: dZF5Gw
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "This suppressed address no longer exists."
+msgstr "This suppressed address no longer exists."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -9688,11 +9719,6 @@ msgstr "You cannot revoke admin panel access from the last server administrator.
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
 msgstr "You cannot set field permissions on system objects as they are managed by the platform."
-
-#. js-lingui-id: SI6USg
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "You cannot set permissions on system objects as they are managed by the platform."
 
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

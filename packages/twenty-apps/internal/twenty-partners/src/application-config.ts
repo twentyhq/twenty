@@ -20,13 +20,13 @@ export default defineApplication({
     DISCORD_WEBHOOK_URL: {
       universalIdentifier: '7056c98a-e7e1-4dba-8a40-b578f30b3479',
       description:
-        'Discord incoming webhook URL. When set, a notification is posted to this channel each time the application form creates a new Partner. Leave empty to disable. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
+        'Discord incoming webhook URL. When set, a notification is posted to this channel each time the application form creates a new Partner, and each time the public marketplace form submits a client brief (brief details, contact name and company, and the referring partner). Leave empty to disable both. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
       isSecret: true,
     },
     PARTNER_APP_FRONTEND_URL: {
       universalIdentifier: '746e7bd8-8934-414e-95f5-cc266a624616',
       description:
-        'Workspace front-end base URL (e.g. https://partners.twenty.com), used to build the clickable Partner record link in the Discord notification. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
+        'Workspace front-end base URL (e.g. https://partners.twenty.com), used to build the clickable Partner and Opportunity record links in Discord notifications. When empty, notifications are still sent but carry no links. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
       isSecret: false,
     },
   },

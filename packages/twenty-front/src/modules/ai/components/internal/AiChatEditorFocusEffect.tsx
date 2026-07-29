@@ -1,5 +1,5 @@
 import { type Editor } from '@tiptap/react';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -15,19 +15,13 @@ export const AiChatEditorFocusEffect = ({
     shouldFocusChatEditorState,
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!shouldFocusChatEditor || !editor) {
       return;
     }
 
-    const rafId = requestAnimationFrame(() => {
-      editor.commands.focus('end');
-      setShouldFocusChatEditor(false);
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-    };
+    editor.commands.focus('end');
+    setShouldFocusChatEditor(false);
   }, [shouldFocusChatEditor, editor, setShouldFocusChatEditor]);
 
   return null;
