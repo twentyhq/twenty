@@ -6,12 +6,12 @@ import { PeopleDataLabsCompanyClientService } from 'src/engine/core-modules/comp
 import { COMPANY_ENRICHMENT_ATTEMPT_KEY } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 describe('CompanyEnrichmentService', () => {
@@ -23,7 +23,9 @@ describe('CompanyEnrichmentService', () => {
   };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let keyValuePairService: { set: jest.Mock };
-  let twentyConfigService: { get: jest.Mock };
+  let onboardingService: {
+    setOnboardingBookCallPendingIfQualified: jest.Mock;
+  };
 
   const workspaceId = 'workspace-id';
   const creatorUserId = 'creator-user-id';
@@ -38,8 +40,8 @@ describe('CompanyEnrichmentService', () => {
     };
     throttlerService = { tokenBucketThrottleOrThrow: jest.fn() };
     keyValuePairService = { set: jest.fn() };
-    twentyConfigService = {
-      get: jest.fn().mockReturnValue(true),
+    onboardingService = {
+      setOnboardingBookCallPendingIfQualified: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -58,8 +60,8 @@ describe('CompanyEnrichmentService', () => {
           useValue: throttlerService,
         },
         {
-          provide: TwentyConfigService,
-          useValue: twentyConfigService,
+          provide: OnboardingService,
+          useValue: onboardingService,
         },
         {
           provide: KeyValuePairService,
@@ -201,27 +203,6 @@ describe('CompanyEnrichmentService', () => {
     );
   });
 
-  it('should return unavailable without any lookup when onboarding AI chat is off', async () => {
-    twentyConfigService.get.mockReturnValue(false);
-
-    const result = await service.enrichCompanyForWorkspaceCreator({
-      userId: creatorUserId,
-      email: 'foo@acme.com',
-      workspaceId,
-    });
-
-    expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
-    expect(twentyConfigService.get).toHaveBeenCalledWith(
-      'IS_ONBOARDING_AI_CHAT_ENABLED',
-    );
-    expect(userWorkspaceRepository.findOne).not.toHaveBeenCalled();
-    expect(throttlerService.tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
-    expect(
-      peopleDataLabsCompanyClientService.enrichCompanyByDomain,
-    ).not.toHaveBeenCalled();
-    expect(keyValuePairService.set).not.toHaveBeenCalled();
-  });
-
   it('should not consume throttle tokens when the feature is disabled', async () => {
     peopleDataLabsCompanyClientService.isEnabled.mockReturnValue(false);
 
@@ -331,6 +312,65 @@ describe('CompanyEnrichmentService', () => {
       domain: 'acme.com',
       name: 'Acme Inc',
     });
+  });
+
+  it('should hand the enriched employee count to the book-call qualification on a match', async () => {
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'matched',
+      data: { name: 'Acme Inc', employee_count: 320 },
+    });
+
+    await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(
+      onboardingService.setOnboardingBookCallPendingIfQualified,
+    ).toHaveBeenCalledWith({
+      userId: creatorUserId,
+      workspaceId,
+      employeeCount: 320,
+    });
+  });
+
+  it.each(['transientError', 'notFound', 'permanentError'])(
+    'should not qualify for the book-call step on client outcome %s',
+    async (outcome) => {
+      peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue(
+        { outcome, httpStatus: 500, message: 'boom' },
+      );
+
+      await service.enrichCompanyForWorkspaceCreator({
+        userId: creatorUserId,
+        email: 'foo@acme.com',
+        workspaceId,
+      });
+
+      expect(
+        onboardingService.setOnboardingBookCallPendingIfQualified,
+      ).not.toHaveBeenCalled();
+    },
+  );
+
+  it('should still return the enrichment when the book-call qualification fails', async () => {
+    peopleDataLabsCompanyClientService.enrichCompanyByDomain.mockResolvedValue({
+      outcome: 'matched',
+      data: { name: 'Acme Inc', employee_count: 320 },
+    });
+    onboardingService.setOnboardingBookCallPendingIfQualified.mockRejectedValue(
+      new Error('user vars down'),
+    );
+
+    const result = await service.enrichCompanyForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'foo@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('matched');
+    expect(result.enrichment).toMatchObject({ domain: 'acme.com' });
   });
 
   it('should rethrow non throttler errors from the throttler', async () => {

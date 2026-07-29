@@ -1020,6 +1020,17 @@ export class ConfigVariables {
   CALENDAR_BOOKING_PAGE_ID?: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset to disable the step.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable buffering for logs before sending',
     type: ConfigVariableType.BOOLEAN,

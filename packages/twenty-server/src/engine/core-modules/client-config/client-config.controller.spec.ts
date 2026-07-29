@@ -104,6 +104,7 @@ describe('ClientConfigController', () => {
         isImapSmtpCaldavEnabled: false,
         isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
+        bookCallMinEmployeeCount: undefined,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,

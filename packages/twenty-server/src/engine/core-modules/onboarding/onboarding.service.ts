@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
@@ -27,6 +28,7 @@ export enum OnboardingStepKeys {
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
+  ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
 }
 
 export type OnboardingKeyValueTypeMap = {
@@ -34,6 +36,7 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
 };
 
 @Injectable()
@@ -103,6 +106,9 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
+    const isBookCallPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING) === true;
+
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -117,6 +123,10 @@ export class OnboardingService {
 
     if (isInviteTeamPending) {
       return OnboardingStatus.INVITE_TEAM;
+    }
+
+    if (isBookCallPending) {
+      return OnboardingStatus.BOOK_CALL;
     }
 
     if (
@@ -392,6 +402,78 @@ export class OnboardingService {
       },
       queryRunner,
     );
+  }
+
+  async setOnboardingBookCallPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
+  async setOnboardingBookCallPendingIfQualified({
+    userId,
+    workspaceId,
+    employeeCount,
+  }: {
+    userId: string;
+    workspaceId: string;
+    employeeCount: number | null;
+  }) {
+    const calendarBookingPageId = this.twentyConfigService.get(
+      'CALENDAR_BOOKING_PAGE_ID',
+    );
+
+    if (!isNonEmptyString(calendarBookingPageId)) {
+      return;
+    }
+
+    const minEmployeeCount = this.twentyConfigService.get(
+      'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+    );
+
+    if (!isNumber(minEmployeeCount) || !isNumber(employeeCount)) {
+      return;
+    }
+
+    if (employeeCount < minEmployeeCount) {
+      return;
+    }
+
+    await this.setOnboardingBookCallPending({
+      userId,
+      workspaceId,
+      value: true,
+    });
   }
 
   async setOnboardingCreateProfilePending(

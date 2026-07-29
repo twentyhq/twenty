@@ -4,6 +4,7 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { bookCallMinEmployeeCountState } from '@/client-config/states/bookCallMinEmployeeCountState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
@@ -104,6 +105,10 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
 
   const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
+
+  const setBookCallMinEmployeeCount = useSetAtomState(
+    bookCallMinEmployeeCountState,
+  );
 
   const setIsEmailingDomainInDemoMode = useSetAtomState(
     isEmailingDomainInDemoModeState,
@@ -210,6 +215,9 @@ export const useClientConfig = (): UseClientConfigResult => {
       }));
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
+      setBookCallMinEmployeeCount(
+        clientConfig?.bookCallMinEmployeeCount ?? null,
+      );
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainInDemoMode(
         clientConfig?.isEmailingDomainInDemoMode ?? false,
@@ -246,6 +254,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setAppVersion,
     setAuthProviders,
     setBilling,
+    setBookCallMinEmployeeCount,
     setCalendarBookingPageId,
     setCanManageFeatureFlags,
     setCaptcha,

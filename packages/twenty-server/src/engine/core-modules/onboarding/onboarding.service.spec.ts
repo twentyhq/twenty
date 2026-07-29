@@ -289,4 +289,102 @@ describe('OnboardingService', () => {
       ).resolves.not.toThrow();
     });
   });
+
+  describe('setOnboardingBookCallPendingIfQualified', () => {
+    const mockConfig = ({
+      calendarBookingPageId,
+      minEmployeeCount,
+    }: {
+      calendarBookingPageId?: string;
+      minEmployeeCount?: number;
+    }) => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'CALENDAR_BOOKING_PAGE_ID'
+            ? calendarBookingPageId
+            : minEmployeeCount,
+        );
+    };
+
+    it.each([50, 51])(
+      'should flag the step when the employee count is %s',
+      async (employeeCount) => {
+        mockConfig({
+          calendarBookingPageId: 'team/twenty/talk-to-us',
+          minEmployeeCount: 50,
+        });
+
+        await service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount,
+        });
+
+        expect(userVarsService.set).toHaveBeenCalledWith(
+          {
+            userId,
+            workspaceId,
+            key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+            value: true,
+          },
+          undefined,
+        );
+      },
+    );
+
+    it('should not flag the step below the threshold', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 49,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not flag the step without an employee count', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: null,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not flag the step when no threshold is configured', async () => {
+      mockConfig({ calendarBookingPageId: 'team/twenty/talk-to-us' });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 5000,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should not flag the step when no booking page is configured', async () => {
+      mockConfig({ minEmployeeCount: 50 });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 5000,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+  });
 });

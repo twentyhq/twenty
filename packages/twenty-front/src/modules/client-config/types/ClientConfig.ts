@@ -20,6 +20,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
+  bookCallMinEmployeeCount?: number;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   defaultSubdomain?: string;

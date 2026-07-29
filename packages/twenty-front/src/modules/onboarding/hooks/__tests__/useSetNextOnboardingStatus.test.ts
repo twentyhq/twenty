@@ -1,13 +1,17 @@
 import { act, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { bookCallMinEmployeeCountState } from '@/client-config/states/bookCallMinEmployeeCountState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -27,11 +31,30 @@ import {
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
 
+const mockCompanyEnrichment: WorkspaceCompanyEnrichment = {
+  domain: 'acme.com',
+  enrichedAt: '2026-07-21T10:00:00.000Z',
+  name: 'Acme Inc',
+  website: null,
+  industry: null,
+  employeeCount: null,
+  size: null,
+  founded: null,
+  headline: null,
+  summary: null,
+  tags: [],
+  locality: null,
+  region: null,
+  country: null,
+};
+
 type RenderHooksOptions = {
   withSubscription?: boolean;
   isBillingEnabled?: boolean;
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
+  enrichedEmployeeCount?: number | null;
+  bookCallMinEmployeeCount?: number | null;
 };
 
 const renderHooks = (
@@ -41,6 +64,8 @@ const renderHooks = (
     isBillingEnabled = false,
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
+    enrichedEmployeeCount = null,
+    bookCallMinEmployeeCount = null,
   }: RenderHooksOptions = {},
 ) => {
   jotaiStore.set(
@@ -56,6 +81,13 @@ const renderHooks = (
       );
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
       const setBilling = useSetAtomState(billingState);
+      const setCompanyEnrichment = useSetAtomState(companyEnrichmentState);
+      const setBookCallMinEmployeeCount = useSetAtomState(
+        bookCallMinEmployeeCountState,
+      );
+      const setCalendarBookingPageId = useSetAtomState(
+        calendarBookingPageIdState,
+      );
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       const isWelcomeAnimationVisible = useAtomStateValue(
         isWelcomeAnimationVisibleState,
@@ -69,6 +101,9 @@ const renderHooks = (
         setCurrentWorkspace,
         setCurrentUserWorkspace,
         setBilling,
+        setCompanyEnrichment,
+        setBookCallMinEmployeeCount,
+        setCalendarBookingPageId,
         setNextOnboardingStatus,
         isWelcomeAnimationVisible,
         shouldOpenAiChatAfterOnboarding,
@@ -93,6 +128,12 @@ const renderHooks = (
       isBillingEnabled,
       trialPeriods: [],
     });
+    result.current.setCalendarBookingPageId('team/twenty/talk-to-us');
+    result.current.setBookCallMinEmployeeCount(bookCallMinEmployeeCount);
+    result.current.setCompanyEnrichment({
+      ...mockCompanyEnrichment,
+      employeeCount: enrichedEmployeeCount,
+    });
   });
   act(() => {
     result.current.setNextOnboardingStatus();
@@ -108,6 +149,7 @@ const renderHooks = (
 describe('useSetNextOnboardingStatus', () => {
   beforeEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
     resetJotaiStore();
   });
 
@@ -233,6 +275,73 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
     expect(isWelcomeAnimationVisible).toBe(false);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should book a call after inviting the team when the company clears the employee threshold', () => {
+    const {
+      nextOnboardingStatus,
+      isWelcomeAnimationVisible,
+      shouldOpenAiChatAfterOnboarding,
+    } = renderHooks(OnboardingStatus.INVITE_TEAM, {
+      isBillingEnabled: true,
+      enrichedEmployeeCount: 320,
+      bookCallMinEmployeeCount: 50,
+    });
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
+    expect(isWelcomeAnimationVisible).toBe(false);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should book a call after profile creation when more than 1 workspaceMember exist', () => {
+    const { nextOnboardingStatus } = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      {
+        withOneWorkspaceMember: false,
+        enrichedEmployeeCount: 320,
+        bookCallMinEmployeeCount: 50,
+      },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
+  });
+
+  it.each([
+    { enrichedEmployeeCount: 49, bookCallMinEmployeeCount: 50 },
+    { enrichedEmployeeCount: null, bookCallMinEmployeeCount: 50 },
+    { enrichedEmployeeCount: 320, bookCallMinEmployeeCount: null },
+  ])(
+    'should skip the book-call step for employeeCount $enrichedEmployeeCount and threshold $bookCallMinEmployeeCount',
+    (options) => {
+      const { nextOnboardingStatus } = renderHooks(
+        OnboardingStatus.INVITE_TEAM,
+        { isBillingEnabled: true, ...options },
+      );
+      expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+    },
+  );
+
+  it('should require a plan after booking a call when billing is enabled and the workspace has no subscription', () => {
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.BOOK_CALL,
+      {
+        isBillingEnabled: true,
+        enrichedEmployeeCount: 320,
+        bookCallMinEmployeeCount: 50,
+      },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+    expect(isWelcomeAnimationVisible).toBe(false);
+  });
+
+  it('should complete after booking a call when billing is disabled', () => {
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.BOOK_CALL,
+      {
+        enrichedEmployeeCount: 320,
+        bookCallMinEmployeeCount: 50,
+      },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(true);
   });
 
   it('should not show the welcome animation when the onboarding was already completed', () => {

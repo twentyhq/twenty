@@ -17,12 +17,12 @@ import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
@@ -35,7 +35,7 @@ export class CompanyEnrichmentService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly onboardingService: OnboardingService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
@@ -49,11 +49,6 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    // The enrichment only feeds the AI-chat workspace setup, so it is pointless without it.
-    if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
-      return { outcome: 'unavailable', enrichment: null };
-    }
-
     const isWorkspaceCreator = await this.isWorkspaceCreator({
       userId,
       workspaceId,
@@ -112,7 +107,40 @@ export class CompanyEnrichmentService {
       });
     }
 
+    if (enrichmentResult.outcome === 'matched') {
+      await this.qualifyForBookCallOnboardingStep({
+        userId,
+        workspaceId,
+        employeeCount: enrichmentResult.enrichment.employeeCount,
+      });
+    }
+
     return enrichmentResult;
+  }
+
+  private async qualifyForBookCallOnboardingStep({
+    userId,
+    workspaceId,
+    employeeCount,
+  }: {
+    userId: string;
+    workspaceId: string;
+    employeeCount: number | null;
+  }): Promise<void> {
+    // Best-effort: a failure to flag the lead must never fail the enrichment itself.
+    try {
+      await this.onboardingService.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to flag the book-call onboarding step for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private resolveEnrichmentResult({

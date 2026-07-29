@@ -4,7 +4,6 @@ import { GraphQLError } from 'graphql';
 import { Provider as JotaiProvider } from 'jotai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
@@ -85,7 +84,6 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     resetJotaiStore();
     localStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
-    jotaiStore.set(isOnboardingAiChatEnabledState.atom, true);
   });
 
   afterEach(() => {
@@ -150,26 +148,6 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
     },
   );
-
-  it('does not fetch when onboarding AI chat is disabled', async () => {
-    jotaiStore.set(isOnboardingAiChatEnabledState.atom, false);
-
-    let callCount = 0;
-    renderEffect([
-      buildEnrichMock({
-        outcome: 'matched',
-        enrichmentPayload: enrichment,
-        countCall: () => {
-          callCount += 1;
-        },
-      }),
-    ]);
-
-    await flushMutation();
-
-    expect(callCount).toBe(0);
-    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
-  });
 
   it('does not fetch when an enrichment is already stored', async () => {
     jotaiStore.set(companyEnrichmentState.atom, enrichment);

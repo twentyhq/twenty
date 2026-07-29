@@ -3,12 +3,10 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
@@ -25,9 +23,6 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
-  );
 
   const isOnboardingInProgress =
     isDefined(onboardingStatus) &&
@@ -38,8 +33,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     if (
       hasAttemptedCompanyEnrichmentFetch ||
       isDefined(companyEnrichment) ||
-      !isOnboardingInProgress ||
-      !isOnboardingAiChatEnabled
+      !isOnboardingInProgress
     ) {
       return;
     }
@@ -73,7 +67,6 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     hasAttemptedCompanyEnrichmentFetch,
     companyEnrichment,
     isOnboardingInProgress,
-    isOnboardingAiChatEnabled,
     setHasAttemptedCompanyEnrichmentFetch,
     setCompanyEnrichment,
     enrichWorkspaceCompany,
