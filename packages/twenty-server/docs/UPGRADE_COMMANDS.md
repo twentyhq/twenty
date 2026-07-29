@@ -166,7 +166,7 @@ until ! /app/packages/twenty-server/scripts/upgrade-background.sh status > /dev/
 
 It exits `0` while a run is alive and `1` once none is. Note that `1` means "not running", not "failed": a run that completed cleanly still exits `1`, because the code answers liveness and the outcome is in the text.
 
-The three `stop` tiers map onto the signal behavior above, as three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, and a timer would defeat the graceful path entirely.
+`stop` has three tiers, deliberately three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, so a timer that escalated to `SIGKILL` on its own would defeat the graceful path entirely.
 
 | Invocation | Signal | Effect |
 | --- | --- | --- |
@@ -197,7 +197,7 @@ Ctrl+C cannot reach a detached run at all: it has its own session and no control
 
 The log and PID files live in `/tmp` inside the container (override with `TWENTY_UPGRADE_LOG_FILE` and `TWENTY_UPGRADE_PID_FILE`). Both are lost if the pod is replaced, along with the run itself.
 
-`terminationGracePeriodSeconds` does not protect a detached run. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion it exits immediately and the detached node process is torn down without ever receiving `SIGTERM`. The graceful path on eviction only applies when node is the container's main process.
+Kubernetes cannot stop a detached run gracefully either, and `terminationGracePeriodSeconds` is not the lever it looks like. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion it exits immediately and the detached node process is torn down without ever receiving `SIGTERM`, however long the grace period is. Graceful shutdown on eviction only applies when node is the container's main process, which is the foreground case, not this one.
 
 ## Shipping a command for a future version (deferred drops)
 
