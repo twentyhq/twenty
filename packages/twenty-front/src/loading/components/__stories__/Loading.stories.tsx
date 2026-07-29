@@ -8,6 +8,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { LoadingDecorator } from '~/testing/decorators/LoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'App/Loading',
@@ -32,7 +33,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 export const Default: Story = {
   // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
-  decorators: [LoadingDecorator, PageDecorator],
+  decorators: [MemoryRouterDecorator, LoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

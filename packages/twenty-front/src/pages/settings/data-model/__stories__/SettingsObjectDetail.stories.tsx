@@ -9,11 +9,12 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
 import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectDetail',
   component: SettingsObjectDetailPage,
-  decorators: [PageDecorator],
+  decorators: [MemoryRouterDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectNamePlural',
     routeParams: { ':objectNamePlural': 'companies' },

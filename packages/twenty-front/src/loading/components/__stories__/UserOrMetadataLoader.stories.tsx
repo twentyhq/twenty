@@ -16,6 +16,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const userMetadataLoaderMocks = {
   msw: {
@@ -81,7 +82,7 @@ export const Default: Story = {
   parameters: userMetadataLoaderMocks,
   // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
-  decorators: [PageDecorator],
+  decorators: [MemoryRouterDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
