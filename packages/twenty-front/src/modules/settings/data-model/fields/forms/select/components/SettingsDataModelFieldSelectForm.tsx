@@ -167,7 +167,7 @@ export const SettingsDataModelFieldSelectForm = ({
   disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { theme } = useContext(ThemeContext);
-  const { initialDefaultValue, initialOptions, resetOptionsField } =
+  const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
     });
@@ -188,6 +188,7 @@ export const SettingsDataModelFieldSelectForm = ({
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
+  const [isFormMounted, setIsFormMounted] = useState(false);
   const [isBulkInputMode, setIsBulkInputMode] = useState(false);
   const [bulkInputText, setBulkInputText] = useState('');
 
@@ -196,22 +197,29 @@ export const SettingsDataModelFieldSelectForm = ({
   const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
 
   useEffect(() => {
+    setIsFormMounted(true);
+  }, []);
+
+  useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
 
-    if (isDefined(newOptionValue) && !hasAppliedNewOption) {
+    if (
+      isFormMounted &&
+      isDefined(newOptionValue) &&
+      !hasAppliedNewOption
+    ) {
       const newOption = generateNewSelectOption(initialOptions, newOptionValue);
 
       const optionsWithNew = [...initialOptions, newOption];
 
-      resetOptionsField();
       setFormValue('options', optionsWithNew, { shouldDirty: true });
       setHasAppliedNewOption(true);
     }
   }, [
     searchParams,
+    isFormMounted,
     hasAppliedNewOption,
     initialOptions,
-    resetOptionsField,
     setFormValue,
   ]);
 

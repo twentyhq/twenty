@@ -47,13 +47,9 @@ export const useSelectSettingsFormInitialValues = ({
   const resetDefaultValueField = () =>
     resetField('defaultValue', { defaultValue: initialDefaultValue });
 
-  const resetOptionsField = () =>
-    resetField('options', { defaultValue: initialOptions });
-
   return {
     initialDefaultValue,
     initialOptions,
     resetDefaultValueField,
-    resetOptionsField,
   };
 };
