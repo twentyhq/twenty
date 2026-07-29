@@ -21,8 +21,8 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledSidePanelContent = styled.div`
   flex: 1;
   min-height: 0;
-  overscroll-behavior: contain;
   overflow-y: auto;
+  overscroll-behavior: contain;
 `;
 
 export const SidePanelRouter = () => {
