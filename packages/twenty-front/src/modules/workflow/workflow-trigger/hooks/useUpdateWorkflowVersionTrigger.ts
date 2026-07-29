@@ -4,6 +4,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { UPDATE_WORKFLOW_VERSION_TRIGGER } from '@/workflow/graphql/mutations/updateWorkflowVersionTrigger';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -39,6 +41,8 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
+
   const [mutate] = useMutation<
     UpdateWorkflowVersionTriggerMutation,
     UpdateWorkflowVersionTriggerMutationVariables
@@ -68,6 +72,17 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
     markStepForRecomputation({
       stepId: TRIGGER_STEP_ID,
       workflowVersionId,
+    });
+
+    setFlow((currentFlow) => {
+      if (
+        !isDefined(currentFlow) ||
+        currentFlow.workflowVersionId !== workflowVersionId
+      ) {
+        return currentFlow;
+      }
+
+      return { ...currentFlow, trigger: updatedTrigger };
     });
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);

@@ -5,6 +5,8 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
 import {
   type WorkflowVersion,
@@ -20,12 +22,13 @@ import {
   type UpdateWorkflowVersionStepMutationVariables,
 } from '~/generated/graphql';
 
-export const useUpdateWorkflowVersionStep = () => {
+export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { markStepForRecomputation } = useStepsOutputSchema();
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -57,6 +60,22 @@ export const useUpdateWorkflowVersionStep = () => {
     markStepForRecomputation({
       stepId: updatedStep.id,
       workflowVersionId: input.workflowVersionId,
+    });
+
+    setFlow((currentFlow) => {
+      if (
+        !isDefined(currentFlow) ||
+        currentFlow.workflowVersionId !== input.workflowVersionId
+      ) {
+        return currentFlow;
+      }
+
+      return {
+        ...currentFlow,
+        steps: (currentFlow.steps ?? []).map((step) =>
+          step.id === updatedStep.id ? updatedStep : step,
+        ),
+      };
     });
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
