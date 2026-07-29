@@ -13,6 +13,13 @@ import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-do
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
+import {
+  EMAILING_DOMAIN_BULK_RECIPIENT_STATUS,
+  type EmailingDomainBulkEmailContent,
+  type EmailingDomainBulkEmailRecipient,
+  type EmailingDomainBulkEmailRecipientResult,
+  type EmailingDomainSendBulkEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-bulk-email.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -81,6 +88,97 @@ export class EmailingDomainSenderService {
       .sendEmail(emailToSend);
   }
 
+  async sendBulkEmail(
+    workspaceId: string,
+    emailingDomainId: string,
+    bulkEmailContent: EmailingDomainBulkEmailContent,
+  ): Promise<EmailingDomainSendBulkEmailResult> {
+    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
+      workspaceId,
+      emailingDomainId,
+    );
+
+    this.assertDomainCanSend(emailingDomain, bulkEmailContent.from);
+
+    const suppressedResults: EmailingDomainBulkEmailRecipientResult[] = [];
+    const deliverableRecipients: EmailingDomainBulkEmailRecipient[] = [];
+
+    const isDeliverable = await this.buildBulkDeliverabilityCheck(
+      workspaceId,
+      bulkEmailContent,
+    );
+
+    for (const recipient of bulkEmailContent.recipients) {
+      if (isDeliverable(recipient.to)) {
+        deliverableRecipients.push(recipient);
+        continue;
+      }
+
+      suppressedResults.push({
+        to: recipient.to,
+        status: EMAILING_DOMAIN_BULK_RECIPIENT_STATUS.SUPPRESSED,
+        messageId: null,
+        error: null,
+      });
+    }
+
+    if (deliverableRecipients.length === 0) {
+      return { results: suppressedResults };
+    }
+
+    const emailGroupChannel = await this.findEmailGroupChannel(
+      workspaceId,
+      bulkEmailContent.from,
+    );
+
+    const { results } = await this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .sendBulkEmail({
+        ...bulkEmailContent,
+        from: formatMessageFromHeader({
+          fromEmail: bulkEmailContent.from,
+          fromName: emailGroupChannel?.displayName,
+        }),
+        replyTo: this.resolveReplyTo(bulkEmailContent, emailGroupChannel),
+        recipients: deliverableRecipients,
+        workspaceId,
+        domain: emailingDomain.domain,
+        emailingDomain,
+      });
+
+    return { results: [...results, ...suppressedResults] };
+  }
+
+  private async buildBulkDeliverabilityCheck(
+    workspaceId: string,
+    bulkEmailContent: EmailingDomainBulkEmailContent,
+  ): Promise<(address: string) => boolean> {
+    const allRecipients = bulkEmailContent.recipients.map(
+      (recipient) => recipient.to,
+    );
+
+    const suppressedAddresses =
+      await this.messageSuppressionService.getSuppressedAddresses(
+        workspaceId,
+        allRecipients,
+      );
+
+    const listUnsubscribedAddresses = await this.getListUnsubscribedAddresses(
+      workspaceId,
+      allRecipients,
+      bulkEmailContent.unsubscribeTopicId,
+    );
+
+    return (address: string): boolean => {
+      const normalizedAddress = address.trim().toLowerCase();
+
+      return (
+        !suppressedAddresses.has(normalizedAddress) &&
+        !listUnsubscribedAddresses.has(normalizedAddress)
+      );
+    };
+  }
+
   private async findEmailGroupChannel(
     workspaceId: string,
     fromAddress: string,
@@ -96,7 +194,7 @@ export class EmailingDomainSenderService {
   }
 
   private resolveReplyTo(
-    emailContent: EmailingDomainEmailContent,
+    emailContent: Pick<EmailingDomainEmailContent, 'replyTo'>,
     emailGroupChannel: MessageChannelEntity | null,
   ): string[] | undefined {
     if (isDefined(emailContent.replyTo) && emailContent.replyTo.length > 0) {

@@ -6,15 +6,22 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
+import { LOG_DRIVER_SIMULATED_SEND_LATENCY_MS } from 'src/engine/core-modules/emailing-domain/constants/log-driver-simulated-send-latency-ms.constant';
 import {
   type EmailingDomainDriverInterface,
   type EmailingDomainResourceInput,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
+import {
+  EMAILING_DOMAIN_BULK_RECIPIENT_STATUS,
+  type EmailingDomainSendBulkEmailRequest,
+  type EmailingDomainSendBulkEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-bulk-email.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
+import { substituteProviderTemplateVariables } from 'src/engine/core-modules/emailing-domain/utils/substitute-provider-template-variables.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -117,6 +124,10 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
       unsubscribeBaseUrl,
     );
 
+    await new Promise((resolve) =>
+      setTimeout(resolve, LOG_DRIVER_SIMULATED_SEND_LATENCY_MS),
+    );
+
     const messageId = `log-${v4()}`;
 
     const listUnsubscribe = emailToSend.headers?.find(
@@ -140,6 +151,55 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
         cc: emailToSend.cc ?? [],
         bcc: emailToSend.bcc ?? [],
       },
+    };
+  }
+
+  async sendBulkEmail(
+    input: EmailingDomainSendBulkEmailRequest,
+  ): Promise<EmailingDomainSendBulkEmailResult> {
+    const unsubscribeBaseUrl = await this.getUnsubscribeBaseUrl(
+      input.workspaceId,
+    );
+    const { htmlTemplate, textTemplate, headersByRecipient, variablesByRecipient } =
+      this.unsubscribeContentService.addToBulk(input, unsubscribeBaseUrl);
+
+    // One provider round trip covers the whole batch, so the simulated latency
+    // is charged once rather than per recipient.
+    await new Promise((resolve) =>
+      setTimeout(resolve, LOG_DRIVER_SIMULATED_SEND_LATENCY_MS),
+    );
+
+    this.logger.log(
+      `[log-driver] sendBulkEmail → ${input.recipients.length} recipients from ${input.from}`,
+    );
+
+    return {
+      results: input.recipients.map((recipient) => {
+        const messageId = `log-${v4()}`;
+        const variables = {
+          ...recipient.variables,
+          ...(variablesByRecipient.get(recipient.to) ?? {}),
+        };
+        const listUnsubscribe = headersByRecipient
+          .get(recipient.to)
+          ?.find((header) => header.name === 'List-Unsubscribe')?.value;
+
+        this.logger.log(
+          `[log-driver] sendBulkEmail → fake messageId=${messageId}\n` +
+            `To: ${recipient.to}\n` +
+            `Subject: ${substituteProviderTemplateVariables(input.subjectTemplate, variables)}\n` +
+            `List-Unsubscribe: ${listUnsubscribe ?? '(none)'}\n` +
+            `Content Text: ${substituteProviderTemplateVariables(textTemplate, variables)}\n` +
+            `Content HTML: ${substituteProviderTemplateVariables(htmlTemplate, variables)}`,
+        );
+
+        return {
+          to: recipient.to,
+          status: EMAILING_DOMAIN_BULK_RECIPIENT_STATUS.SENT,
+          messageId,
+          error: null,
+        };
+      }),
     };
   }
 

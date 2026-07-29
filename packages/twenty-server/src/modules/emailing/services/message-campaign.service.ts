@@ -14,12 +14,10 @@ import {
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
   REFRESH_CAMPAIGN_STATS_JOB,
-  SEND_CAMPAIGN_EMAIL_JOB,
+  CAMPAIGN_SEND_BATCH_INTERVAL_MS,
+  CAMPAIGN_SEND_BATCH_SIZE,
+  SEND_CAMPAIGN_EMAIL_BATCH_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import {
-  EmailingDomainDriverException,
-  EmailingDomainDriverExceptionCode,
-} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import {
   EmailGroupAccessException,
@@ -29,14 +27,20 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
+import {
+  EMAILING_DOMAIN_BULK_RECIPIENT_STATUS,
+  type EmailingDomainBulkEmailRecipientResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-bulk-email.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
 import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
-import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
+import {
+  type SendCampaignEmailBatchJobData,
+  type SendCampaignEmailBatchRecipient,
+} from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
 import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -131,6 +135,8 @@ export class MessageCampaignService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.emailStatsQueue)
+    private readonly emailStatsQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
@@ -402,34 +408,47 @@ export class MessageCampaignService {
         });
       }
 
-      for (const recipient of allRecipients) {
-        await this.messageQueueService.add<SendCampaignEmailJobData>(
-          SEND_CAMPAIGN_EMAIL_JOB,
+      for (
+        let batchStart = 0;
+        batchStart < allRecipients.length;
+        batchStart += CAMPAIGN_SEND_BATCH_SIZE
+      ) {
+        const batchRecipients = allRecipients.slice(
+          batchStart,
+          batchStart + CAMPAIGN_SEND_BATCH_SIZE,
+        );
+        const batchIndex = batchStart / CAMPAIGN_SEND_BATCH_SIZE;
+
+        await this.messageQueueService.add<SendCampaignEmailBatchJobData>(
+          SEND_CAMPAIGN_EMAIL_BATCH_JOB,
           {
             workspaceId,
             campaignId,
-            messageId: recipient.messageId,
-            personId: recipient.personId,
-            recipientEmail: recipient.email,
             emailingDomainId,
+            recipients: batchRecipients.map((recipient) => ({
+              messageId: recipient.messageId,
+              personId: recipient.personId,
+              recipientEmail: recipient.email,
+            })),
           },
-          { retryLimit: 3 },
+          {
+            retryLimit: 3,
+            delay: batchIndex * CAMPAIGN_SEND_BATCH_INTERVAL_MS,
+          },
         );
       }
 
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+      await this.messageCampaignStatisticsService.refreshCampaignCounts({
+        workspaceId,
+        campaignId,
+      });
     }, buildSystemAuthContext(workspaceId));
   }
 
-  async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
-    const {
-      workspaceId,
-      campaignId,
-      messageId,
-      personId,
-      recipientEmail,
-      emailingDomainId,
-    } = data;
+  async processSendBatchJob(
+    data: SendCampaignEmailBatchJobData,
+  ): Promise<void> {
+    const { workspaceId, campaignId, emailingDomainId, recipients } = data;
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getSystemRepository(
@@ -437,15 +456,27 @@ export class MessageCampaignService {
         MessageWorkspaceEntity,
       );
 
-      const message = await messageRepository.findOne({
-        where: { id: messageId },
+      const messages = await messageRepository.find({
+        where: { id: In(recipients.map((recipient) => recipient.messageId)) },
       });
 
-      if (
-        !isDefined(message) ||
-        (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
-          message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED)
-      ) {
+      const sendableMessageIds = new Set(
+        messages
+          .filter(
+            (message) =>
+              message.deliveryStatus ===
+                CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED ||
+              message.deliveryStatus ===
+                CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+          )
+          .map((message) => message.id),
+      );
+
+      const sendableRecipients = recipients.filter((recipient) =>
+        sendableMessageIds.has(recipient.messageId),
+      );
+
+      if (sendableRecipients.length === 0) {
         return;
       }
 
@@ -462,121 +493,180 @@ export class MessageCampaignService {
         return;
       }
 
-      const personRepository = await this.getSystemRepository(
-        workspaceId,
-        PersonWorkspaceEntity,
-      );
-
-      const person = await personRepository.findOne({
-        where: { id: personId },
-      });
-
-      const variables = this.buildTemplateVariables(person);
-      const subject = renderCampaignTemplate(
-        campaign.subject ?? '',
-        variables,
-        {
-          escapeValues: false,
-        },
-      );
-      const html = await renderCampaignBodyToHtml(
-        campaign.bodyTemplate ?? '',
-        variables,
-      );
-      const text = this.htmlToText(html);
-      const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
-      const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
-
-      const hasEmailCredits =
-        await this.emailBillingService.hasEmailCredits(workspaceId);
-
-      if (!hasEmailCredits) {
-        await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-        });
-
-        return;
-      }
-
       try {
-        let result: EmailingDomainSendEmailResult;
+        const hasEmailCredits =
+          await this.emailBillingService.hasEmailCredits(workspaceId);
 
-        try {
-          result = await this.emailingDomainSenderService.sendEmail(
-            workspaceId,
-            emailingDomainId,
+        if (!hasEmailCredits) {
+          await messageRepository.update(
             {
-              from: fromAddress,
-              to: [recipientEmail],
-              subject,
-              text,
-              html,
-              unsubscribeTopicId,
+              id: In(
+                sendableRecipients.map((recipient) => recipient.messageId),
+              ),
             },
+            { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
           );
-        } catch (error) {
-          const code =
-            error instanceof EmailingDomainDriverException ? error.code : null;
-
-          if (
-            code === EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED
-          ) {
-            await messageRepository.update(messageId, {
-              deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-            });
-
-            return;
-          }
-
-          await messageRepository.update(messageId, {
-            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-          });
-          this.logger.warn(
-            `Campaign ${campaignId} send failed for ${recipientEmail}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-
-          const isRetryable =
-            !isDefined(code) ||
-            code === EmailingDomainDriverExceptionCode.TEMPORARY_ERROR ||
-            code === EmailingDomainDriverExceptionCode.UNKNOWN;
-
-          if (isRetryable) {
-            throw error;
-          }
 
           return;
         }
 
-        await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
-          headerMessageId: result.messageId,
-          subject,
-          text,
-        });
-
-        await this.emailBillingService.billSentEmails({
+        const variablesByMessageId = await this.buildBatchTemplateVariables(
           workspaceId,
-          sentEmailCount: 1,
-        });
-
-        const associationRepository = await this.getSystemRepository(
-          workspaceId,
-          MessageChannelMessageAssociationWorkspaceEntity,
+          sendableRecipients,
         );
 
-        await associationRepository.update(
-          { messageId },
-          {
-            messageExternalId: result.messageId,
-            messageThreadExternalId: result.messageId,
-          },
+        // Placeholders stay in the templates so the provider substitutes them
+        // once per recipient instead of us rendering the body N times.
+        const htmlTemplate = await renderCampaignBodyToHtml(
+          campaign.bodyTemplate ?? '',
+          null,
         );
+        const textTemplate = this.htmlToText(htmlTemplate);
+
+        const { results } =
+          await this.emailingDomainSenderService.sendBulkEmail(
+            workspaceId,
+            emailingDomainId,
+            {
+              from: campaign.fromAddress?.primaryEmail ?? '',
+              subjectTemplate: campaign.subject ?? '',
+              htmlTemplate,
+              textTemplate,
+              unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
+              recipients: sendableRecipients.map((recipient) => ({
+                to: recipient.recipientEmail,
+                variables: variablesByMessageId.get(recipient.messageId) ?? {},
+              })),
+            },
+          );
+
+        await this.applyBatchSendResults({
+          workspaceId,
+          campaignId,
+          campaign,
+          textTemplate,
+          recipients: sendableRecipients,
+          results,
+          variablesByMessageId,
+        });
       } finally {
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+        await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
       }
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async buildBatchTemplateVariables(
+    workspaceId: string,
+    recipients: SendCampaignEmailBatchRecipient[],
+  ): Promise<Map<string, Record<string, string>>> {
+    const personRepository = await this.getSystemRepository(
+      workspaceId,
+      PersonWorkspaceEntity,
+    );
+
+    const persons = await personRepository.find({
+      where: { id: In(recipients.map((recipient) => recipient.personId)) },
+    });
+
+    const personById = new Map(persons.map((person) => [person.id, person]));
+
+    return new Map(
+      recipients.map((recipient) => [
+        recipient.messageId,
+        this.buildTemplateVariables(personById.get(recipient.personId) ?? null),
+      ]),
+    );
+  }
+
+  private async applyBatchSendResults({
+    workspaceId,
+    campaignId,
+    campaign,
+    textTemplate,
+    recipients,
+    results,
+    variablesByMessageId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    campaign: MessageCampaignWorkspaceEntity;
+    textTemplate: string;
+    recipients: SendCampaignEmailBatchRecipient[];
+    results: EmailingDomainBulkEmailRecipientResult[];
+    variablesByMessageId: Map<string, Record<string, string>>;
+  }): Promise<void> {
+    const resultByRecipientEmail = new Map(
+      results.map((result) => [result.to, result]),
+    );
+
+    const messageRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
+
+    const associationRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageChannelMessageAssociationWorkspaceEntity,
+    );
+
+    let sentEmailCount = 0;
+
+    for (const recipient of recipients) {
+      const result = resultByRecipientEmail.get(recipient.recipientEmail);
+
+      if (
+        result?.status === EMAILING_DOMAIN_BULK_RECIPIENT_STATUS.SUPPRESSED ||
+        !isDefined(result)
+      ) {
+        await messageRepository.update(recipient.messageId, {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+        });
+        continue;
+      }
+
+      if (
+        result.status === EMAILING_DOMAIN_BULK_RECIPIENT_STATUS.FAILED ||
+        !isNonEmptyString(result.messageId)
+      ) {
+        await messageRepository.update(recipient.messageId, {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+        });
+        this.logger.warn(
+          `Campaign ${campaignId} send failed for ${recipient.recipientEmail}: ${result.error}`,
+        );
+        continue;
+      }
+
+      const variables = variablesByMessageId.get(recipient.messageId) ?? {};
+
+      await messageRepository.update(recipient.messageId, {
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
+        headerMessageId: result.messageId,
+        subject: renderCampaignTemplate(campaign.subject ?? '', variables, {
+          escapeValues: false,
+        }),
+        text: renderCampaignTemplate(textTemplate, variables, {
+          escapeValues: false,
+        }),
+      });
+
+      await associationRepository.update(
+        { messageId: recipient.messageId },
+        {
+          messageExternalId: result.messageId,
+          messageThreadExternalId: result.messageId,
+        },
+      );
+
+      sentEmailCount += 1;
+    }
+
+    if (sentEmailCount > 0) {
+      await this.emailBillingService.billSentEmails({
+        workspaceId,
+        sentEmailCount,
+      });
+    }
   }
 
   async recordDeliveryFailureByProviderMessageId({
@@ -765,55 +855,6 @@ export class MessageCampaignService {
     );
   }
 
-  private async finalizeCampaignIfComplete(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
-    const queuedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
-    });
-
-    if (queuedCount > 0) {
-      return;
-    }
-
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      },
-    });
-
-    const campaignRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
-
-    await campaignRepository.update(
-      { id: campaignId, status: MessageCampaignStatus.SENDING },
-      {
-        status:
-          failedCount > 0
-            ? MessageCampaignStatus.SENT_WITH_ERRORS
-            : MessageCampaignStatus.SENT,
-        sentAt: new Date(),
-      },
-    );
-
-    await this.scheduleCampaignStatsRefresh({
-      workspaceId,
-      campaignId,
-    });
-  }
-
   private async scheduleCampaignStatsRefresh({
     workspaceId,
     campaignId,
@@ -830,7 +871,7 @@ export class MessageCampaignService {
       return;
     }
 
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
+    await this.emailStatsQueueService.add<RefreshCampaignStatsJobData>(
       REFRESH_CAMPAIGN_STATS_JOB,
       { workspaceId, campaignId },
       { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },

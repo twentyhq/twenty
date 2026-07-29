@@ -8,7 +8,7 @@ export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
 } as const;
 
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
-export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
+export const SEND_CAMPAIGN_EMAIL_BATCH_JOB = 'SendCampaignEmailBatchJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
 
 export const CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS = 10_000;
@@ -16,6 +16,12 @@ export const CAMPAIGN_STATS_REFRESH_DELAY_MS =
   CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
 
 export const MAX_CAMPAIGN_RECIPIENTS = 10000;
+
+// The provider bills every destination in a bulk call against its per-second
+// send rate, so one batch per interval has to stay under that rate rather than
+// under the 50-destination call ceiling.
+export const CAMPAIGN_SEND_BATCH_SIZE = 12;
+export const CAMPAIGN_SEND_BATCH_INTERVAL_MS = 1000;
 
 export const MAX_CAMPAIGN_EMAILS_SENDABLE = 2000;
 export const MAX_CAMPAIGN_EMAILS_SENDABLE_UNVERIFIED = 500;

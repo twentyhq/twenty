@@ -5,7 +5,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 
-@Processor(MessageQueue.emailQueue)
+@Processor(MessageQueue.emailStatsQueue)
 export class RefreshCampaignStatsJob {
   constructor(
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,

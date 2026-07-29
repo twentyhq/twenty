@@ -7,6 +7,7 @@ import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/dr
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { AwsSesDriver } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
+import { AwsSesSendBulkEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-bulk-email.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
@@ -25,6 +26,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
     private readonly awsSesRegisterDomainService: AwsSesRegisterDomainService,
     private readonly awsSesSendEmailService: AwsSesSendEmailService,
+    private readonly awsSesSendBulkEmailService: AwsSesSendBulkEmailService,
     private readonly logEmailingDomainDriver: LogEmailingDomainDriver,
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {
@@ -81,6 +83,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
           this.awsSesHandleErrorService,
           this.awsSesRegisterDomainService,
           this.awsSesSendEmailService,
+          this.awsSesSendBulkEmailService,
           this.unsubscribeContentService,
         );
       }

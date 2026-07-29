@@ -8,6 +8,7 @@ import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/dr
 import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
+import { AwsSesSendBulkEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-bulk-email.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service';
@@ -60,6 +61,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AwsSesObservabilityService,
     AwsSesRegisterDomainService,
     AwsSesSendEmailService,
+    AwsSesSendBulkEmailService,
     LogEmailingDomainDriver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
   ],

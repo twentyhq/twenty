@@ -5,6 +5,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { useSubscribeToRelationFieldRecordChanges } from '@/object-record/record-field/ui/hooks/useSubscribeToRelationFieldRecordChanges';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
@@ -67,6 +68,12 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   const record = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem?.name ?? '',
+  });
+
+  useSubscribeToRelationFieldRecordChanges({
+    recordId: targetRecord.id,
+    objectMetadataId: objectMetadataItem.id,
+    fieldMetadataItem,
   });
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {

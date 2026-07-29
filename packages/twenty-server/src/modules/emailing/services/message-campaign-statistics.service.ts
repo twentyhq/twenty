@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { MessageCampaignStatus } from 'twenty-shared/types';
+
 import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -58,6 +60,8 @@ export class MessageCampaignStatisticsService {
         countByDeliveryStatus.get(
           CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
         ) ?? 0;
+      const queuedCount =
+        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED) ?? 0;
 
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
@@ -69,6 +73,21 @@ export class MessageCampaignStatisticsService {
       await campaignRepository.update(
         { id: campaignId },
         { sentCount, failedCount, bouncedCount, complainedCount },
+      );
+
+      if (queuedCount > 0) {
+        return;
+      }
+
+      await campaignRepository.update(
+        { id: campaignId, status: MessageCampaignStatus.SENDING },
+        {
+          status:
+            failedCount > 0
+              ? MessageCampaignStatus.SENT_WITH_ERRORS
+              : MessageCampaignStatus.SENT,
+          sentAt: new Date(),
+        },
       );
     }, buildSystemAuthContext(workspaceId));
   }
