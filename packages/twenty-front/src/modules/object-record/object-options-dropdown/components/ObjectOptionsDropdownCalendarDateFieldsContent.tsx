@@ -11,6 +11,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCalendar, IconChevronLeft } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -22,24 +23,24 @@ export const ObjectOptionsDropdownCalendarDateFieldsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarFieldMetadataId,
-      )
-    : undefined;
-
-  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarEndFieldMetadataId,
-      )
-    : undefined;
-
-  const selectableItemIdArray = ['CalendarDateField', 'CalendarEndDateField'];
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
+
+  if (!isDefined(currentView)) {
+    return null;
+  }
+
+  const calendarFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === currentView.calendarFieldMetadataId,
+  );
+
+  const calendarEndFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === currentView.calendarEndFieldMetadataId,
+  );
+
+  const selectableItemIdArray = ['CalendarDateField', 'CalendarEndDateField'];
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>

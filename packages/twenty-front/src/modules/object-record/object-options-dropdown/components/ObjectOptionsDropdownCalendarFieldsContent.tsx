@@ -3,7 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
-import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { groupCalendarFieldMetadataItemsByType } from '@/object-record/record-calendar/utils/groupCalendarFieldMetadataItemsByType';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -20,10 +20,7 @@ import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();
@@ -70,16 +67,9 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
     field.label.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  const calendarFieldGroups = (
-    [FieldMetadataType.DATE, FieldMetadataType.DATE_TIME] as const
-  )
-    .map((fieldMetadataType) => ({
-      label: SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[fieldMetadataType].label,
-      fields: filteredCalendarFields.filter(
-        (field) => field.type === fieldMetadataType,
-      ),
-    }))
-    .filter((group) => group.fields.length > 0);
+  const calendarFieldGroups = groupCalendarFieldMetadataItemsByType(
+    filteredCalendarFields,
+  );
 
   const handleBack = () => {
     if (isCalendarWeekViewEnabled) {

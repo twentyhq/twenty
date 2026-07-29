@@ -2,7 +2,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
-import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { groupCalendarFieldMetadataItemsByType } from '@/object-record/record-calendar/utils/groupCalendarFieldMetadataItemsByType';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -20,10 +20,7 @@ import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
   const { t } = useLingui();
@@ -54,16 +51,9 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
       field.label.toLowerCase().includes(searchInput.toLowerCase()),
     );
 
-  const calendarEndFieldGroups = (
-    [FieldMetadataType.DATE, FieldMetadataType.DATE_TIME] as const
-  )
-    .map((fieldMetadataType) => ({
-      label: SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[fieldMetadataType].label,
-      fields: filteredCalendarEndFields.filter(
-        (field) => field.type === fieldMetadataType,
-      ),
-    }))
-    .filter((group) => group.fields.length > 0);
+  const calendarEndFieldGroups = groupCalendarFieldMetadataItemsByType(
+    filteredCalendarEndFields,
+  );
 
   const handleCalendarEndFieldChange = async (
     fieldMetadataItem: FieldMetadataItem | null,
