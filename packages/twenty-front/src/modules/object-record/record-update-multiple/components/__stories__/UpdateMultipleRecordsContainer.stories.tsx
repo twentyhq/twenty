@@ -19,6 +19,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const UPDATE_MANY_COMPANIES_MUTATION = gql`
   mutation UpdateManyCompanies(
@@ -72,6 +73,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     'Modules/ObjectRecord/RecordUpdateMultiple/Components/UpdateMultipleRecordsContainer',
   component: UpdateMultipleRecordsContainer,
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
         <CommandMenuContext.Provider
