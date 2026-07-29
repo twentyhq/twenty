@@ -17,7 +17,11 @@ import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/si
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
+import {
+  AppPath,
+  ContextStorePageType,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/icon';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
@@ -44,6 +48,17 @@ jest.mock(
     }),
   }),
 );
+
+const mockNavigateApp = jest.fn();
+jest.mock('~/hooks/useNavigateApp', () => ({
+  useNavigateApp: () => mockNavigateApp,
+}));
+
+let mockIsMobile = false;
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => mockIsMobile,
+}));
 
 const personMockObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
@@ -117,6 +132,7 @@ const renderHooks = () => {
 describe('useOpenRecordInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsMobile = false;
   });
 
   it('should set the correct states and navigate to the record page', () => {
@@ -255,5 +271,89 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to the record page instead of the side panel on mobile', () => {
+    mockIsMobile = true;
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId: 'record-123',
+        objectNameSingular: 'person',
+      });
+    });
+
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      { objectNameSingular: 'person', objectRecordId: 'record-123' },
+      undefined,
+      undefined,
+    );
+    expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+  });
+
+  it('should forward new record state to the record page on mobile', () => {
+    mockIsMobile = true;
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId: 'new-record-123',
+        objectNameSingular: 'person',
+        isNewRecord: true,
+      });
+    });
+
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      { objectNameSingular: 'person', objectRecordId: 'new-record-123' },
+      undefined,
+      {
+        state: {
+          isNewRecord: true,
+          objectRecordId: 'new-record-123',
+          labelIdentifierFieldName: getLabelIdentifierFieldMetadataItem(
+            personMockObjectMetadataItem,
+          )?.name,
+        },
+      },
+    );
+    expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
+  });
+
+  it('should preset the record page active tab on mobile', () => {
+    mockIsMobile = true;
+    const { result } = renderHooks();
+
+    const recordId = 'record-123';
+    const objectNameSingular = 'person';
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId,
+        objectNameSingular,
+        tab: 'tab-emails',
+      });
+    });
+
+    const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId: getDefaultRecordPageLayoutId({
+        targetObjectNameSingular: objectNameSingular,
+      }),
+      layoutType: PageLayoutType.RECORD_PAGE,
+      targetRecordIdentifier: {
+        id: recordId,
+        targetObjectNameSingular: objectNameSingular,
+      },
+    });
+
+    expect(
+      jotaiStore.get(
+        activeTabIdComponentState.atomFamily({
+          instanceId: tabListInstanceId,
+        }),
+      ),
+    ).toBe('tab-emails');
   });
 });
