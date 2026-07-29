@@ -42,6 +42,8 @@ export class RouteTriggerService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private async getLogicFunctionWithPathParamsOrFail({
@@ -57,8 +59,11 @@ export class RouteTriggerService {
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const { workspace, publicDomain, isIsolatedOrigin } =
+    const { workspace: workspaceFromHost, publicDomain, isIsolatedOrigin } =
       await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
+
+    const workspace =
+      workspaceFromHost ?? (await this.resolveWorkspaceFromToken(request));
 
     assertIsDefinedOrThrow(
       workspace,
@@ -202,6 +207,33 @@ export class RouteTriggerService {
     }
 
     return authContext;
+  }
+
+  // Invalid tokens resolve to undefined, not throw: public-route callers on an
+  // unresolvable host must keep getting WORKSPACE_NOT_FOUND, not an auth error.
+  private async resolveWorkspaceFromToken(
+    request: Request,
+  ): Promise<WorkspaceEntity | undefined> {
+    if (!isNonEmptyString(request.headers.authorization)) {
+      return undefined;
+    }
+
+    try {
+      const authContext =
+        await this.accessTokenService.validateTokenByRequest(request);
+
+      if (!isDefined(authContext.workspace)) {
+        return undefined;
+      }
+
+      return (
+        (await this.workspaceRepository.findOneBy({
+          id: authContext.workspace.id,
+        })) ?? undefined
+      );
+    } catch {
+      return undefined;
+    }
   }
 
   private mapErrorToRouteTriggerCode(
