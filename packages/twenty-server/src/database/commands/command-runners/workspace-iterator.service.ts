@@ -87,6 +87,8 @@ export class WorkspaceIteratorService {
             `${workspaceIdsToProcess.length - index} workspace(s) left untouched.`,
         );
 
+        report.interrupted = true;
+
         break;
       }
 
@@ -132,8 +134,6 @@ export class WorkspaceIteratorService {
         report.fail.push({ error: error as Error, workspaceId });
       }
     }
-
-    report.interrupted = this.commandShutdownService.isShutdownRequested();
 
     report.fail.forEach(({ error, workspaceId }) => {
       this.logger.error(
