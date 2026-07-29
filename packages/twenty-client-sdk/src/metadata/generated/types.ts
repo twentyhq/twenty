@@ -3066,6 +3066,12 @@ export default {
             "billingPortalUrl": [
                 1
             ],
+            "currentBillingSubscription": [
+                140
+            ],
+            "billingSubscriptions": [
+                140
+            ],
             "__typename": [
                 1
             ]
