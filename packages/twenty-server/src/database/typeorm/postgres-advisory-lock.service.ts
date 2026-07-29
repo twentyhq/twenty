@@ -5,6 +5,9 @@ import { type PoolClient } from 'pg';
 import { DataSource } from 'typeorm';
 import { type PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 
+const toError = (error: unknown): Error =>
+  error instanceof Error ? error : new Error(String(error));
+
 export type PostgresAdvisoryLockResult<T> =
   | {
       acquired: false;
@@ -27,116 +30,155 @@ export class PostgresAdvisoryLockService {
     lockName: string,
     callback: () => Promise<T>,
   ): Promise<PostgresAdvisoryLockResult<T>> {
-    const [connection, release] = (await (
-      this.coreDataSource.driver as PostgresDriver
-    ).obtainMasterConnection()) as [PoolClient, (error?: Error) => void];
-    let connectionError: Error | undefined;
-    const handleConnectionError = (error: Error) => {
-      connectionError ??= error;
-    };
-    const releaseConnection = (error?: Error) => {
-      connection.removeListener('error', handleConnectionError);
-      const errorToRelease = error ?? connectionError;
+    const lockSession = await PostgresAdvisoryLockSession.tryAcquire(
+      this.coreDataSource,
+      lockName,
+    );
 
-      if (errorToRelease) {
-        release(errorToRelease);
-      } else {
-        release();
-      }
-    };
-
-    connection.on('error', handleConnectionError);
-
-    let isLockAcquired: boolean;
-
-    try {
-      isLockAcquired = await this.tryAcquireLock(connection, lockName);
-    } catch (error) {
-      releaseConnection(this.toError(error));
-      throw error;
-    }
-
-    if (!isLockAcquired) {
-      releaseConnection();
-
-      if (connectionError) {
-        throw connectionError;
-      }
-
+    if (!lockSession) {
       return {
         acquired: false,
       };
     }
 
-    let callbackFailed = false;
+    const callbackResult = await this.captureCallbackResult(callback);
+    const cleanupError = await lockSession.unlockAndClose();
 
-    try {
-      return {
-        acquired: true,
-        value: await callback(),
-      };
-    } catch (error) {
-      callbackFailed = true;
-      throw error;
-    } finally {
-      let lockReleaseError: Error | undefined;
-
-      try {
-        await this.releaseLock(connection, lockName);
-      } catch (error) {
-        lockReleaseError = this.toError(error);
-        releaseConnection(lockReleaseError);
+    if (callbackResult.status === 'rejected') {
+      if (cleanupError) {
+        this.logger.warn(
+          `Secondary PostgreSQL advisory lock error for "${lockName}" after callback failure: ${cleanupError}`,
+        );
       }
 
-      if (!lockReleaseError) {
-        releaseConnection();
-      }
-
-      const secondaryError = lockReleaseError ?? connectionError;
-
-      if (secondaryError) {
-        if (callbackFailed) {
-          this.logger.warn(
-            `Secondary PostgreSQL advisory lock error for "${lockName}" after callback failure: ${secondaryError}`,
-          );
-        } else {
-          throw secondaryError;
-        }
-      }
+      throw callbackResult.reason;
     }
+
+    if (cleanupError) {
+      throw cleanupError;
+    }
+
+    return {
+      acquired: true,
+      value: callbackResult.value,
+    };
   }
 
-  private async tryAcquireLock(
-    connection: PoolClient,
+  private async captureCallbackResult<T>(
+    callback: () => Promise<T>,
+  ): Promise<PromiseSettledResult<T>> {
+    try {
+      return {
+        status: 'fulfilled',
+        value: await callback(),
+      };
+    } catch (reason) {
+      return {
+        status: 'rejected',
+        reason,
+      };
+    }
+  }
+}
+
+class PostgresAdvisoryLockSession {
+  private connectionError: Error | undefined;
+
+  private readonly handleConnectionError = (error: Error) => {
+    this.connectionError ??= error;
+  };
+
+  private constructor(
+    private readonly connection: PoolClient,
+    private readonly releaseConnection: (error?: Error) => void,
+    private readonly lockName: string,
+  ) {
+    this.connection.on('error', this.handleConnectionError);
+  }
+
+  static async tryAcquire(
+    dataSource: DataSource,
     lockName: string,
-  ): Promise<boolean> {
+  ): Promise<PostgresAdvisoryLockSession | undefined> {
+    const [connection, releaseConnection] = (await (
+      dataSource.driver as PostgresDriver
+    ).obtainMasterConnection()) as [PoolClient, (error?: Error) => void];
+    const lockSession = new PostgresAdvisoryLockSession(
+      connection,
+      releaseConnection,
+      lockName,
+    );
+
+    let isLockAcquired: boolean;
+
+    try {
+      isLockAcquired = await lockSession.tryAcquireLock();
+    } catch (error) {
+      lockSession.close(toError(error));
+      throw error;
+    }
+
+    if (!isLockAcquired) {
+      const closeError = lockSession.close();
+
+      if (closeError) {
+        throw closeError;
+      }
+
+      return undefined;
+    }
+
+    return lockSession;
+  }
+
+  async unlockAndClose(): Promise<Error | undefined> {
+    let unlockError: Error | undefined;
+
+    try {
+      await this.unlock();
+    } catch (error) {
+      unlockError = toError(error);
+    }
+
+    return this.close(unlockError);
+  }
+
+  private async tryAcquireLock(): Promise<boolean> {
     const {
       rows: [result],
-    } = await connection.query<{ acquired: boolean }>(
+    } = await this.connection.query<{ acquired: boolean }>(
       `SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS "acquired"`,
-      [lockName],
+      [this.lockName],
     );
 
     return result?.acquired === true;
   }
 
-  private async releaseLock(
-    connection: PoolClient,
-    lockName: string,
-  ): Promise<void> {
+  private async unlock(): Promise<void> {
     const {
       rows: [result],
-    } = await connection.query<{ released: boolean }>(
+    } = await this.connection.query<{ released: boolean }>(
       `SELECT pg_advisory_unlock(hashtextextended($1, 0)) AS "released"`,
-      [lockName],
+      [this.lockName],
     );
 
     if (result?.released !== true) {
-      throw new Error(`Could not release PostgreSQL advisory lock ${lockName}`);
+      throw new Error(
+        `Could not release PostgreSQL advisory lock ${this.lockName}`,
+      );
     }
   }
 
-  private toError(error: unknown): Error {
-    return error instanceof Error ? error : new Error(String(error));
+  private close(error?: Error): Error | undefined {
+    this.connection.removeListener('error', this.handleConnectionError);
+    const errorToRelease = error ?? this.connectionError;
+
+    if (errorToRelease) {
+      this.releaseConnection(errorToRelease);
+    } else {
+      this.releaseConnection();
+    }
+
+    return errorToRelease;
   }
 }

@@ -98,6 +98,25 @@ describe('PostgresAdvisoryLockService', () => {
     expect(release).toHaveBeenCalledTimes(1);
   });
 
+  it('discards the connection when acquiring the lock fails', async () => {
+    const { connection, query, release } = createMockConnection(true);
+    const callback = jest.fn();
+    const acquisitionError = new Error('acquisition failed');
+
+    query.mockReset().mockRejectedValueOnce(acquisitionError);
+    obtainMasterConnection.mockResolvedValue([connection, release]);
+
+    await expect(
+      new PostgresAdvisoryLockService(dataSource).tryWithLock(
+        'lock-name',
+        callback,
+      ),
+    ).rejects.toBe(acquisitionError);
+
+    expect(callback).not.toHaveBeenCalled();
+    expect(release).toHaveBeenCalledWith(acquisitionError);
+  });
+
   it('releases the lock when the callback fails', async () => {
     const { connection, query, release } = createMockConnection(true);
     const callbackError = new Error('callback failed');
