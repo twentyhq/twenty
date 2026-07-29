@@ -1,6 +1,7 @@
 import { Command } from 'nest-commander';
 import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -159,15 +160,37 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         );
       }
 
-      viewFieldsToCreate.push({
-        ...standardNameViewField,
-        position: this.computeNameViewFieldPosition({
-          flatViewMaps,
-          flatViewFieldMaps,
-          standardNameViewField,
-          isNameLabelIdentifier,
-        }),
-      });
+      // The INDEX view universal identifiers are reconciled onto the derived
+      // scheme in 2.26, after this command: the workspace's campaign INDEX
+      // view can still hold its legacy identifier here, so it is resolved by
+      // its INDEX key on the campaign object rather than by identifier.
+      const campaignIndexFlatView = campaignObjectMetadata.viewUniversalIdentifiers
+        .map(
+          (viewUniversalIdentifier) =>
+            flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+        )
+        .filter(isDefined)
+        .find(
+          (flatView) =>
+            flatView.key === ViewKey.INDEX && !isDefined(flatView.deletedAt),
+        );
+
+      if (isDefined(campaignIndexFlatView)) {
+        viewFieldsToCreate.push({
+          ...standardNameViewField,
+          viewUniversalIdentifier: campaignIndexFlatView.universalIdentifier,
+          position: this.computeNameViewFieldPosition({
+            campaignIndexFlatView,
+            flatViewFieldMaps,
+            standardNameViewField,
+            isNameLabelIdentifier,
+          }),
+        });
+      } else {
+        this.logger.warn(
+          `No INDEX view found for messageCampaign in workspace ${workspaceId}, skipping the name view column`,
+        );
+      }
     }
 
     const searchFieldMetadatasToCreate =
@@ -255,26 +278,17 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
   // it), above all of them otherwise (the validator forbids anything below the
   // label identifier).
   private computeNameViewFieldPosition({
-    flatViewMaps,
+    campaignIndexFlatView,
     flatViewFieldMaps,
     standardNameViewField,
     isNameLabelIdentifier,
   }: {
-    flatViewMaps: FlatEntityMaps<FlatView>;
+    campaignIndexFlatView: FlatView;
     flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
     standardNameViewField: FlatViewField;
     isNameLabelIdentifier: boolean;
   }): number {
-    const flatView = findFlatEntityByUniversalIdentifier<FlatView>({
-      flatEntityMaps: flatViewMaps,
-      universalIdentifier: standardNameViewField.viewUniversalIdentifier,
-    });
-
-    if (!isDefined(flatView)) {
-      return standardNameViewField.position;
-    }
-
-    const otherViewFieldPositions = flatView.viewFieldUniversalIdentifiers
+    const otherViewFieldPositions = campaignIndexFlatView.viewFieldUniversalIdentifiers
       .map(
         (viewFieldUniversalIdentifier) =>
           flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
