@@ -16,6 +16,8 @@ import { ApplicationInstallModule } from 'src/engine/core-modules/application/ap
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
+import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
+import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
@@ -95,6 +97,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationInstallModule,
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
+    PreInstalledAppsModule,
     OnboardingModule,
     BillingReminderModule,
   ],
@@ -113,6 +116,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     GenerateSdkClientJob,
     UpgradeApplicationsJob,
     InstallOnboardingAppsJob,
+    InstallPreInstalledAppsJob,
   ],
 })
 export class JobsModule {
