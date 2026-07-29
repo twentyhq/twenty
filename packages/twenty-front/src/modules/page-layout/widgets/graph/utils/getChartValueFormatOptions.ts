@@ -32,17 +32,24 @@ export const getChartValueFormatOptions = ({
       ? aggregateFieldMetadataItem.settings
       : undefined;
 
+  const aggregateNumberFieldDecimals =
+    isDefined(aggregateFieldSettings) && 'decimals' in aggregateFieldSettings
+      ? aggregateFieldSettings.decimals
+      : undefined;
+
+  const aggregateFieldDecimals =
+    aggregateFieldMetadataItem?.type === FieldMetadataType.CURRENCY
+      ? 2
+      : aggregateNumberFieldDecimals;
+
   const shouldUseAggregateFieldDecimals =
     NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
       aggregateOperation as AggregateOperations,
     );
 
-  const decimals =
-    shouldUseAggregateFieldDecimals &&
-    isDefined(aggregateFieldSettings) &&
-    'decimals' in aggregateFieldSettings
-      ? aggregateFieldSettings.decimals
-      : undefined;
+  const decimals = shouldUseAggregateFieldDecimals
+    ? aggregateFieldDecimals
+    : undefined;
 
   return {
     decimals,

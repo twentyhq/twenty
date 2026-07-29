@@ -1,3 +1,4 @@
+import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -30,7 +31,11 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentNumberFormat = configuration.numberFormat;
+  const currentNumberFormat =
+    configuration.numberFormat ??
+    (configuration.__typename === 'AggregateChartConfiguration'
+      ? undefined
+      : CHART_NUMBER_FORMAT_DEFAULT);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,

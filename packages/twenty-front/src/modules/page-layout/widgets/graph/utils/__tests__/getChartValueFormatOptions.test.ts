@@ -17,6 +17,11 @@ describe('getChartValueFormatOptions', () => {
     },
   } as FieldMetadataItem;
 
+  const aggregateCurrencyFieldMetadataItem = {
+    id: 'revenue-field-id',
+    type: FieldMetadataType.CURRENCY,
+  } as FieldMetadataItem;
+
   it.each([
     AggregateOperations.AVG,
     AggregateOperations.MAX,
@@ -29,6 +34,25 @@ describe('getChartValueFormatOptions', () => {
         aggregateOperation,
         aggregateFieldMetadataId: aggregateFieldMetadataItem.id,
         fieldMetadataItems: [aggregateFieldMetadataItem],
+        numberFormat: ChartNumberFormat.FULL,
+      });
+
+      expect(formatGraphValue(123.4567, formatOptions)).toBe('123.46');
+    },
+  );
+
+  it.each([
+    AggregateOperations.AVG,
+    AggregateOperations.MAX,
+    AggregateOperations.MIN,
+    AggregateOperations.SUM,
+  ])(
+    'should format aggregate currency fields with two decimals for %s',
+    (aggregateOperation) => {
+      const formatOptions = getChartValueFormatOptions({
+        aggregateOperation,
+        aggregateFieldMetadataId: aggregateCurrencyFieldMetadataItem.id,
+        fieldMetadataItems: [aggregateCurrencyFieldMetadataItem],
         numberFormat: ChartNumberFormat.FULL,
       });
 
