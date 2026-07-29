@@ -288,7 +288,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       isStepApplied,
     });
 
-    const resolved = this.keepColumnsPresentInDatabase({
+    const resolved = this.reconcileWithDatabase({
       metadata,
       snapshot,
       resolved: resolvedAtCursor,
@@ -307,12 +307,12 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     return { snapshot, resolved };
   }
 
-  // Hiding exists to stop TypeORM referencing columns the database does not
-  // have yet. A column that is physically present is therefore never worth
-  // hiding, and hiding it is actively harmful: every query naming it fails
-  // with "Property X was not found in Y". This keeps a stale or stalled cursor
-  // from taking the instance down over columns that are really there.
-  private keepColumnsPresentInDatabase({
+  // The cursor only ever proposes a shape; the database decides. Every
+  // rewrite this adapter makes exists to stop TypeORM naming something the
+  // database does not have, so a rewrite the database contradicts can only
+  // break the instance. A stalled or stale cursor must degrade into running
+  // against the real schema, never into emitting SQL that cannot execute.
+  private reconcileWithDatabase({
     metadata,
     snapshot,
     resolved,
@@ -321,35 +321,61 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     snapshot: EntityMetadataSnapshot;
     resolved: ResolvedEntityShapeAtUpgradeCursor;
   }): ResolvedEntityShapeAtUpgradeCursor {
-    if (resolved.hiddenPropertyNames.size === 0) {
+    if (this.databaseColumnsByTablePath.size === 0) {
       return resolved;
     }
 
+    const entityName =
+      typeof metadata.target === 'function'
+        ? metadata.target.name
+        : snapshot.tableName;
     const schema = metadata.schema ?? snapshot.tablePath.split('.')[0];
+
+    const effectiveTableName = this.resolveTableNameAgainstDatabase({
+      entityName,
+      schema,
+      snapshot,
+      proposedTableName: resolved.effectiveTableName,
+    });
+
     const databaseColumns = this.databaseColumnsByTablePath.get(
-      `${schema}.${resolved.effectiveTableName}`,
+      `${schema}.${effectiveTableName}`,
     );
 
     if (!isDefined(databaseColumns)) {
-      return resolved;
+      return { ...resolved, effectiveTableName };
+    }
+
+    const columnDatabaseNameRemap = new Map(resolved.columnDatabaseNameRemap);
+
+    for (const [propertyName, renamedTo] of resolved.columnDatabaseNameRemap) {
+      const canonicalName =
+        snapshot.columnDatabaseNamesByPropertyName.get(propertyName);
+
+      if (
+        !databaseColumns.has(renamedTo) &&
+        isDefined(canonicalName) &&
+        databaseColumns.has(canonicalName)
+      ) {
+        this.logger.warn(
+          `[upgrade-metadata] not renaming ${entityName}.${propertyName} to ${renamedTo}: ` +
+            `the cursor says the rename is pending but ${effectiveTableName}.${canonicalName} is what exists`,
+        );
+        columnDatabaseNameRemap.delete(propertyName);
+      }
     }
 
     const hiddenPropertyNames = new Set<string>();
 
     for (const propertyName of resolved.hiddenPropertyNames) {
       const databaseName =
-        resolved.columnDatabaseNameRemap.get(propertyName) ??
+        columnDatabaseNameRemap.get(propertyName) ??
         snapshot.columnDatabaseNamesByPropertyName.get(propertyName);
 
       if (isDefined(databaseName) && databaseColumns.has(databaseName)) {
-        const entityName =
-          typeof metadata.target === 'function'
-            ? metadata.target.name
-            : snapshot.tableName;
-
         this.logger.warn(
           `[upgrade-metadata] keeping ${entityName}.${propertyName} visible: ` +
-            `the cursor would hide it but ${resolved.effectiveTableName}.${databaseName} exists in the database`,
+            `the cursor would hide it but ${effectiveTableName}.${databaseName} exists in the database`,
         );
         continue;
       }
@@ -357,7 +383,52 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       hiddenPropertyNames.add(propertyName);
     }
 
-    return { ...resolved, hiddenPropertyNames };
+    if (!resolved.isAvailable) {
+      this.logger.warn(
+        `[upgrade-metadata] keeping ${entityName} available: ` +
+          `the cursor says it is not introduced yet but ${effectiveTableName} exists in the database`,
+      );
+    }
+
+    return {
+      isAvailable: true,
+      effectiveTableName,
+      hiddenPropertyNames,
+      columnDatabaseNameRemap,
+    };
+  }
+
+  private resolveTableNameAgainstDatabase({
+    entityName,
+    schema,
+    snapshot,
+    proposedTableName,
+  }: {
+    entityName: string;
+    schema: string;
+    snapshot: EntityMetadataSnapshot;
+    proposedTableName: string;
+  }): string {
+    if (proposedTableName === snapshot.tableName) {
+      return proposedTableName;
+    }
+
+    if (this.databaseColumnsByTablePath.has(`${schema}.${proposedTableName}`)) {
+      return proposedTableName;
+    }
+
+    if (
+      !this.databaseColumnsByTablePath.has(`${schema}.${snapshot.tableName}`)
+    ) {
+      return proposedTableName;
+    }
+
+    this.logger.warn(
+      `[upgrade-metadata] not renaming ${entityName} to ${proposedTableName}: ` +
+        `the cursor says the rename is pending but ${snapshot.tableName} is what exists`,
+    );
+
+    return snapshot.tableName;
   }
 
   private logResolvedShape({
