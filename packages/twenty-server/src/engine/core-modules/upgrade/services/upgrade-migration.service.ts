@@ -386,6 +386,33 @@ export class UpgradeMigrationService {
     };
   }
 
+  // Latest attempt status per instance command, keyed by name. Callers that
+  // need upgrade progress must resolve it against the sequence order in code
+  // rather than ordering rows by createdAt: slow commands, retries and --force
+  // runs all write rows newer than steps that ran long before them.
+  async getLatestInstanceCommandStatuses(): Promise<
+    Map<string, UpgradeMigrationStatus>
+  > {
+    const migrations = await this.upgradeMigrationRepository
+      .createQueryBuilder('migration')
+      .select(['migration.name', 'migration.status'])
+      .where('migration."workspaceId" IS NULL')
+      .andWhere('migration."isInitial" = false')
+      .andWhere(
+        `migration.attempt = (
+          SELECT MAX(sub.attempt)
+          FROM core."upgradeMigration" sub
+          WHERE sub.name = migration.name
+          AND sub."workspaceId" IS NULL
+        )`,
+      )
+      .getMany();
+
+    return new Map(
+      migrations.map((migration) => [migration.name, migration.status]),
+    );
+  }
+
   async getLastAttemptedInstanceCommandOrThrow(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;

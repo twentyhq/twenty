@@ -8,7 +8,11 @@ import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import {
+  type UpgradeStep,
+  UpgradeSequenceReaderService,
+} from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import {
   resolveEntityShapeAtUpgradeCursor,
   type ResolvedEntityShapeAtUpgradeCursor,
@@ -46,7 +50,12 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   >();
 
   private stepNameToIndex: Map<string, number> = new Map();
+  private sequence: UpgradeStep[] = [];
   private currentCursor = Number.MAX_SAFE_INTEGER;
+  private databaseColumnsByTablePath: ReadonlyMap<
+    string,
+    ReadonlySet<string>
+  > = new Map();
 
   constructor(
     @InjectDataSource()
@@ -57,6 +66,8 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+    this.sequence = sequence;
 
     for (const [index, step] of sequence.entries()) {
       this.stepNameToIndex.set(step.name, index);
@@ -82,22 +93,12 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }
 
   async refresh(): Promise<void> {
-    const lastAttempted =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+    const statusByInstanceCommandName =
+      await this.upgradeMigrationService.getLatestInstanceCommandStatuses();
 
-    let nextCursor: number;
+    const nextCursor = this.computeCursor(statusByInstanceCommandName);
 
-    if (!isDefined(lastAttempted)) {
-      nextCursor = 0;
-    } else {
-      const index = this.stepNameToIndex.get(lastAttempted.name);
-
-      if (!isDefined(index)) {
-        nextCursor = 0;
-      } else {
-        nextCursor = lastAttempted.status === 'completed' ? index + 1 : index;
-      }
-    }
+    this.databaseColumnsByTablePath = await this.loadDatabaseColumns();
 
     if (nextCursor === this.currentCursor) {
       return;
@@ -105,6 +106,74 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
     this.currentCursor = nextCursor;
     this.applyCursorToMetadata();
+  }
+
+  // The cursor is the position of the first instance step that has not
+  // completed, resolved against the sequence order declared in code. It is
+  // deliberately not derived from the newest upgradeMigration row: slow
+  // instance commands, retries and --force runs write rows whose createdAt is
+  // newer than steps that ran long before them, so a timestamp anchor drags
+  // the cursor backwards and starts hiding columns that are physically there.
+  private computeCursor(
+    statusByInstanceCommandName: ReadonlyMap<string, UpgradeMigrationStatus>,
+  ): number {
+    let cursor = 0;
+
+    for (const [index, step] of this.sequence.entries()) {
+      if (step.kind === 'workspace') {
+        continue;
+      }
+
+      if (statusByInstanceCommandName.get(step.name) !== 'completed') {
+        this.logger.log(
+          `[upgrade-metadata] cursor stops at ${step.name} (status=${
+            statusByInstanceCommandName.get(step.name) ?? 'not attempted'
+          })`,
+        );
+
+        return cursor;
+      }
+
+      cursor = index + 1;
+    }
+
+    return this.sequence.length;
+  }
+
+  private async loadDatabaseColumns(): Promise<
+    ReadonlyMap<string, ReadonlySet<string>>
+  > {
+    const schemas = [
+      ...new Set(
+        this.coreDataSource.entityMetadatas
+          .map((metadata) => metadata.schema)
+          .filter(isDefined),
+      ),
+    ];
+
+    if (schemas.length === 0) {
+      return new Map();
+    }
+
+    const rows: { table_schema: string; table_name: string; column_name: string }[] =
+      await this.coreDataSource.query(
+        `SELECT table_schema, table_name, column_name
+         FROM information_schema.columns
+         WHERE table_schema = ANY($1)`,
+        [schemas],
+      );
+
+    const columnsByTablePath = new Map<string, Set<string>>();
+
+    for (const row of rows) {
+      const tablePath = `${row.table_schema}.${row.table_name}`;
+      const columns = columnsByTablePath.get(tablePath) ?? new Set<string>();
+
+      columns.add(row.column_name);
+      columnsByTablePath.set(tablePath, columns);
+    }
+
+    return columnsByTablePath;
   }
 
   isEntityAvailable(entityClass: Function): boolean {
@@ -211,11 +280,17 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       ([propertyName, databaseName]) => ({ propertyName, databaseName }),
     );
 
-    const resolved = resolveEntityShapeAtUpgradeCursor({
+    const resolvedAtCursor = resolveEntityShapeAtUpgradeCursor({
       entityClass,
       currentTableName: snapshot.tableName,
       currentColumns,
       isStepApplied,
+    });
+
+    const resolved = this.keepColumnsPresentInDatabase({
+      metadata,
+      snapshot,
+      resolved: resolvedAtCursor,
     });
 
     this.applyResolvedShapeToMetadata({ metadata, snapshot, resolved });
@@ -229,6 +304,59 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     this.logResolvedShape({ entityClass, snapshot, resolved });
 
     return { snapshot, resolved };
+  }
+
+  // Hiding exists to stop TypeORM referencing columns the database does not
+  // have yet. A column that is physically present is therefore never worth
+  // hiding, and hiding it is actively harmful: every query naming it fails
+  // with "Property X was not found in Y". This keeps a stale or stalled cursor
+  // from taking the instance down over columns that are really there.
+  private keepColumnsPresentInDatabase({
+    metadata,
+    snapshot,
+    resolved,
+  }: {
+    metadata: EntityMetadata;
+    snapshot: EntityMetadataSnapshot;
+    resolved: ResolvedEntityShapeAtUpgradeCursor;
+  }): ResolvedEntityShapeAtUpgradeCursor {
+    if (resolved.hiddenPropertyNames.size === 0) {
+      return resolved;
+    }
+
+    const schema = metadata.schema ?? snapshot.tablePath.split('.')[0];
+    const databaseColumns = this.databaseColumnsByTablePath.get(
+      `${schema}.${resolved.effectiveTableName}`,
+    );
+
+    if (!isDefined(databaseColumns)) {
+      return resolved;
+    }
+
+    const hiddenPropertyNames = new Set<string>();
+
+    for (const propertyName of resolved.hiddenPropertyNames) {
+      const databaseName =
+        resolved.columnDatabaseNameRemap.get(propertyName) ??
+        snapshot.columnDatabaseNamesByPropertyName.get(propertyName);
+
+      if (isDefined(databaseName) && databaseColumns.has(databaseName)) {
+        const entityName =
+          typeof metadata.target === 'function'
+            ? metadata.target.name
+            : snapshot.tableName;
+
+        this.logger.warn(
+          `[upgrade-metadata] keeping ${entityName}.${propertyName} visible: ` +
+            `the cursor would hide it but ${resolved.effectiveTableName}.${databaseName} exists in the database`,
+        );
+        continue;
+      }
+
+      hiddenPropertyNames.add(propertyName);
+    }
+
+    return { ...resolved, hiddenPropertyNames };
   }
 
   private logResolvedShape({
