@@ -1,3 +1,8 @@
+import { EmailButton } from '@/advanced-text-editor/extensions/email-blocks/EmailButton';
+import { EmailColumn } from '@/advanced-text-editor/extensions/email-blocks/EmailColumn';
+import { EmailColumns } from '@/advanced-text-editor/extensions/email-blocks/EmailColumns';
+import { EmailDivider } from '@/advanced-text-editor/extensions/email-blocks/EmailDivider';
+import { EmailSection } from '@/advanced-text-editor/extensions/email-blocks/EmailSection';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
@@ -52,4 +57,11 @@ export const ADVANCED_TEXT_EDITOR_CAPABILITY_EXTENSIONS: Record<
   variables: () => [VariableTag],
   mentions: () => [MentionTag, MentionSuggestion],
   slashCommand: () => [SlashCommand],
+  emailBlocks: () => [
+    EmailSection,
+    EmailColumns,
+    EmailColumn,
+    EmailButton,
+    EmailDivider,
+  ],
 };

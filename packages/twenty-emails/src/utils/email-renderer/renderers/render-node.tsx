@@ -1,7 +1,11 @@
 import { type JSONContent } from '@tiptap/core';
 import { type JSX, Fragment, type ReactNode } from 'react';
-import { TIPTAP_NODE_TYPES, type TipTapNodeType } from 'twenty-shared/utils';
+import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { bulletList } from '@/utils/email-renderer/nodes/bullet-list';
+import { emailButton } from '@/utils/email-renderer/nodes/email-button';
+import { emailColumns } from '@/utils/email-renderer/nodes/email-columns';
+import { emailDivider } from '@/utils/email-renderer/nodes/email-divider';
+import { emailSection } from '@/utils/email-renderer/nodes/email-section';
 import { hardBreak } from '@/utils/email-renderer/nodes/hard-break';
 import { heading } from '@/utils/email-renderer/nodes/heading';
 import { image } from '@/utils/email-renderer/nodes/image';
@@ -21,10 +25,17 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.ORDERED_LIST]: orderedList,
   [TIPTAP_NODE_TYPES.LIST_ITEM]: listItem,
   [TIPTAP_NODE_TYPES.HARD_BREAK]: hardBreak,
+  [TIPTAP_NODE_TYPES.EMAIL_SECTION]: emailSection,
+  // emailColumns renders its emailColumn children itself because react-email
+  // <Column> must sit directly under <Row>; a bare emailColumn outside a
+  // columns row is not a valid document and stays unregistered.
+  [TIPTAP_NODE_TYPES.EMAIL_COLUMNS]: emailColumns,
+  [TIPTAP_NODE_TYPES.EMAIL_BUTTON]: emailButton,
+  [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: emailDivider,
 };
 
 const renderNode = (node: JSONContent): ReactNode => {
-  const renderer = NODE_RENDERERS[node.type as TipTapNodeType];
+  const renderer = NODE_RENDERERS[node.type as keyof typeof NODE_RENDERERS];
 
   if (!renderer) {
     return null;

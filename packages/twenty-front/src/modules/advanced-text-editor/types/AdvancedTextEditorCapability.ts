@@ -10,4 +10,5 @@ export type AdvancedTextEditorCapability =
   | 'images'
   | 'variables'
   | 'mentions'
-  | 'slashCommand';
+  | 'slashCommand'
+  | 'emailBlocks';

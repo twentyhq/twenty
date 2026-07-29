@@ -18,6 +18,15 @@ export const TIPTAP_NODE_TYPES = {
   ORDERED_LIST: 'orderedList',
   LIST_ITEM: 'listItem',
   HARD_BREAK: 'hardBreak',
+  // Email block nodes, authored in the campaign composer and rendered to
+  // email-safe HTML server-side by twenty-emails. Node attributes carry an
+  // inline CSS `style` string (pattern borrowed from @react-email/editor, MIT)
+  // so per-block styling survives the JSON round-trip without schema changes.
+  EMAIL_SECTION: 'emailSection',
+  EMAIL_COLUMNS: 'emailColumns',
+  EMAIL_COLUMN: 'emailColumn',
+  EMAIL_BUTTON: 'emailButton',
+  EMAIL_DIVIDER: 'emailDivider',
 } as const;
 
 export type TipTapMarkType =

@@ -16,7 +16,8 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { type Editor } from '@tiptap/core';
+import { useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -105,6 +106,9 @@ type FormAdvancedTextFieldInputProps = {
   minHeight?: number;
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
+  // Hands the live editor instance to the caller (null on unmount), so
+  // companion surfaces like the block settings side panel can reach it.
+  onEditorReady?: (editor: Editor | null) => void;
 };
 
 export const FormAdvancedTextFieldInput = ({
@@ -122,6 +126,7 @@ export const FormAdvancedTextFieldInput = ({
   minHeight,
   enableFullScreen,
   fullScreenBreadcrumbs,
+  onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
   const {
     contentType,
@@ -171,6 +176,14 @@ export const FormAdvancedTextFieldInput = ({
     },
     [isFullScreen],
   );
+
+  useEffect(() => {
+    onEditorReady?.(editor);
+
+    return () => {
+      onEditorReady?.(null);
+    };
+  }, [editor, onEditorReady]);
 
   const handleEnterFullScreen = () => {
     setIsFullScreen(true);

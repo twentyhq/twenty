@@ -13,7 +13,7 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
     chrome: 'document',
     minHeight: 0,
     enableFullScreen: false,
-    capabilities: FULL_RICH_TEXT_CAPABILITIES,
+    capabilities: [...FULL_RICH_TEXT_CAPABILITIES, 'emailBlocks'],
   },
   inlineEmailBody: {
     contentType: 'html',

@@ -73,6 +73,56 @@ const StyledEditorContainer = styled.div<{
       line-height: 1.5;
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
+
+    /* Email block nodes: inline styles on the element carry the authored
+       look; the rules below only add editing affordances. */
+    .email-section {
+      border-radius: ${themeCssVariables.border.radius.sm};
+      box-sizing: border-box;
+      margin-bottom: ${themeCssVariables.spacing[2]};
+      outline: 1px dashed transparent;
+      outline-offset: 2px;
+
+      &:hover {
+        outline-color: ${themeCssVariables.border.color.medium};
+      }
+    }
+
+    .email-columns {
+      box-sizing: border-box;
+      display: flex;
+      gap: ${themeCssVariables.spacing[2]};
+      margin-bottom: ${themeCssVariables.spacing[2]};
+    }
+
+    .email-column {
+      box-sizing: border-box;
+      flex: 1;
+      min-width: 0;
+      outline: 1px dashed ${themeCssVariables.border.color.light};
+      outline-offset: 2px;
+      border-radius: ${themeCssVariables.border.radius.sm};
+    }
+
+    .email-button-wrapper {
+      margin-bottom: ${themeCssVariables.spacing[2]};
+    }
+
+    .email-button {
+      box-sizing: border-box;
+      cursor: text;
+      width: fit-content;
+    }
+
+    .email-divider {
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .ProseMirror-selectednode {
+      outline: 2px solid ${themeCssVariables.color.blue};
+    }
   }
 
   .ProseMirror-focused {

@@ -1,0 +1,34 @@
+/* oxlint-disable twenty/no-hardcoded-colors --
+   default styles are literal inline CSS shipped inside emails, where theme
+   variables do not exist */
+import { mergeAttributes, Node } from '@tiptap/core';
+import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+
+export const EmailDivider = Node.create({
+  name: TIPTAP_NODE_TYPES.EMAIL_DIVIDER,
+  group: 'block',
+  atom: true,
+
+  addAttributes() {
+    return {
+      style: {
+        default: 'border-top: 1px solid #e1e1e1; margin: 16px 0;',
+        parseHTML: (element) => element.getAttribute('style'),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: 'hr[data-email-divider]' }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'hr',
+      mergeAttributes(HTMLAttributes, {
+        'data-email-divider': 'true',
+        class: 'email-divider',
+      }),
+    ];
+  },
+});
