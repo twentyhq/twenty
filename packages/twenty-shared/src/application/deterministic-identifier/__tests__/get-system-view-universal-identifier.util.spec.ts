@@ -8,7 +8,7 @@ describe('getSystemViewUniversalIdentifier', () => {
   it('derives a deterministic id from the stable INDEX view key within its object', () => {
     expect(
       getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier: APP,
+        objectMetadataApplicationUniversalIdentifier: APP,
         objectUniversalIdentifier: OBJECT,
         viewKey: ViewKey.INDEX,
       }),

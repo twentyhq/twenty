@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
+  getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +34,7 @@ type ReownUpdate = {
 @Command({
   name: 'upgrade:2-26:reconcile-index-view-universal-identifier',
   description:
-    'Re-own the INDEX table views ("All {objectLabelPlural}", keyed on ViewKey.INDEX) of the twenty-standard and workspace-custom applications, and all their view fields, onto the engine convention: the view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, object identifier + INDEX key), each view field gets the derived getViewFieldUniversalIdentifier keyed on the application of the field it DISPLAYS — not the row attribution, which diverges when a user shows a hidden standard column and mints a workspace-custom view field on a standard field — so an app or user column on a standard INDEX view converges too, and both get isSystemSideEffect: true, as if provisioned by the metadata side-effect engine. INDEX views of other applications are handled by the demote-and-backfill command. Children reference the view by primary key, so the re-own is a lossless update.',
+    'Re-own the INDEX table views ("All {objectLabelPlural}", keyed on ViewKey.INDEX) of the twenty-standard and workspace-custom applications, and all their view fields, onto the engine convention: the view gets the name-free deterministic universal identifier (getSystemViewUniversalIdentifier, object identifier + INDEX key), each view field gets the derived getSystemViewFieldUniversalIdentifier keyed on the application of the field it DISPLAYS — not the row attribution, which diverges when a user shows a hidden standard column and mints a workspace-custom view field on a standard field — so an app or user column on a standard INDEX view converges too, and both get isSystemSideEffect: true, as if provisioned by the metadata side-effect engine. INDEX views of other applications are handled by the demote-and-backfill command. Children reference the view by primary key, so the re-own is a lossless update.',
 })
 export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -171,7 +171,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       }
 
       const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier:
+        objectMetadataApplicationUniversalIdentifier:
           flatObjectMetadata.applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         viewKey: ViewKey.INDEX,
@@ -261,15 +261,14 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       return undefined;
     }
 
-    const derivedViewFieldUniversalIdentifier = getViewFieldUniversalIdentifier(
-      {
-        applicationUniversalIdentifier:
+    const derivedViewFieldUniversalIdentifier =
+      getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier:
           flatFieldMetadata.applicationUniversalIdentifier,
         viewUniversalIdentifier: derivedViewUniversalIdentifier,
         fieldMetadataUniversalIdentifier:
           flatViewField.fieldMetadataUniversalIdentifier,
-      },
-    );
+      });
 
     const update: ReownUpdate['update'] = {};
 

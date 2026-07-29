@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -56,7 +56,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     }
 
     const indexViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-      applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier:
         parentFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
       viewKey: ViewKey.INDEX,
@@ -255,8 +255,9 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     const { applicationUniversalIdentifier } = sourceFlatFieldMetadata;
 
     return {
-      universalIdentifier: getViewFieldUniversalIdentifier({
-        applicationUniversalIdentifier,
+      universalIdentifier: getSystemViewFieldUniversalIdentifier({
+        fieldMetadataApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
         viewUniversalIdentifier: indexViewUniversalIdentifier,
         fieldMetadataUniversalIdentifier:
           sourceFlatFieldMetadata.universalIdentifier,
