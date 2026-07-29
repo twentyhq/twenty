@@ -192,8 +192,6 @@ export class UpgradeSequenceRunnerService {
         return { totalSuccesses, totalFailures };
       }
 
-      // Some workspaces have not run the segment, advancing the cursor would
-      // run an instance step on workspaces that are not aligned yet.
       if (report.interrupted) {
         this.logger.warn(
           formatUpgradeLog({

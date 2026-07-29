@@ -6,8 +6,6 @@ const SHUTDOWN_SIGNALS = ['SIGINT', 'SIGTERM'] as const;
 
 type ShutdownSignal = (typeof SHUTDOWN_SIGNALS)[number];
 
-// Shells report a signal-terminated process as 128 + signal number, we mirror
-// that so orchestrators can tell an interruption apart from a real failure.
 const EXIT_CODE_BY_SIGNAL: Record<ShutdownSignal, number> = {
   SIGINT: 130,
   SIGTERM: 143,
@@ -21,10 +19,6 @@ export class CommandShutdownService {
   private receivedSignal: ShutdownSignal | undefined;
   private isListening = false;
 
-  // Registering a listener removes the default kill-on-signal behavior, so
-  // only commands that stop at an iteration boundary opt in. Every other
-  // command, and the server and worker processes sharing these services, keep
-  // their own shutdown semantics.
   listenToShutdownSignals(): void {
     if (this.isListening) {
       return;
