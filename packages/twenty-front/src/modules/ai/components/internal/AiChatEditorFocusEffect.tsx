@@ -1,5 +1,5 @@
 import { type Editor } from '@tiptap/react';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -15,19 +15,16 @@ export const AiChatEditorFocusEffect = ({
     shouldFocusChatEditorState,
   );
 
-  useEffect(() => {
+  // Focus synchronously rather than on the next frame: mobile browsers only open
+  // the keyboard for a focus call that is still part of the tap that asked for
+  // it, and a rAF callback runs after that task has ended.
+  useLayoutEffect(() => {
     if (!shouldFocusChatEditor || !editor) {
       return;
     }
 
-    const rafId = requestAnimationFrame(() => {
-      editor.commands.focus('end');
-      setShouldFocusChatEditor(false);
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-    };
+    editor.commands.focus('end');
+    setShouldFocusChatEditor(false);
   }, [shouldFocusChatEditor, editor, setShouldFocusChatEditor]);
 
   return null;

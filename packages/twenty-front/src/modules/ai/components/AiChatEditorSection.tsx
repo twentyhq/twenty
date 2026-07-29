@@ -37,12 +37,15 @@ const StyledInputArea = styled.div<{ isMobile: boolean }>`
   flex-direction: column;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
+  // Sits at the bottom on its own rather than relying on a sibling to grow into
+  // the free space, so it stays put when the empty state is not rendered.
+  margin-top: auto;
   padding-block: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[3]};
   padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledInputBox = styled.div`
+const StyledInputBox = styled.div<{ isMobile: boolean }>`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -50,7 +53,7 @@ const StyledInputBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 140px;
+  min-height: ${({ isMobile }) => (isMobile ? '88px' : '140px')};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -60,7 +63,7 @@ const StyledInputBox = styled.div`
   }
 `;
 
-const StyledEditorWrapper = styled.div`
+const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -75,8 +78,8 @@ const StyledEditorWrapper = styled.div`
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
-    max-height: 320px;
-    min-height: 48px;
+    max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
+    min-height: ${({ isMobile }) => (isMobile ? '36px' : '48px')};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -167,8 +170,8 @@ export const AiChatEditorSection = () => {
         {isDefined(pendingQuestion) ? (
           <AiChatQuestionCard pendingQuestion={pendingQuestion} />
         ) : (
-          <StyledInputBox>
-            <StyledEditorWrapper>
+          <StyledInputBox isMobile={isMobile}>
+            <StyledEditorWrapper isMobile={isMobile}>
               <EditorContent editor={editor} />
             </StyledEditorWrapper>
             <StyledButtonsContainer>
