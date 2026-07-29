@@ -31,7 +31,7 @@ const NOT_RECORDED_STATUS_OPTION: FieldMetadataComplexOption = {
   color: 'yellow',
 };
 
-@RegisteredWorkspaceCommand('2.26.0', 1785239640000)
+@RegisteredWorkspaceCommand('2.26.0', 1785334800000)
 @Command({
   name: 'upgrade:2-26:add-not-recorded-call-recording-status',
   description:
