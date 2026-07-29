@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code.util';
+import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
 
 const SLACK_MARKDOWN_FORMAT_ERROR_CODES = new Set([
   'invalid_arguments',

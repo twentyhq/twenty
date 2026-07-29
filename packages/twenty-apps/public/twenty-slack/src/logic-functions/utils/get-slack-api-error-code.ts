@@ -1,13 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 export const getSlackApiErrorCode = (error: unknown): string | undefined => {
-  if (typeof error !== 'object' || error === null || !('data' in error)) {
+  if (!isObject(error) || !('data' in error)) {
     return undefined;
   }
 
   const data = error.data;
 
-  if (typeof data !== 'object' || data === null || !('error' in data)) {
+  if (!isObject(data) || !('error' in data)) {
     return undefined;
   }
 
