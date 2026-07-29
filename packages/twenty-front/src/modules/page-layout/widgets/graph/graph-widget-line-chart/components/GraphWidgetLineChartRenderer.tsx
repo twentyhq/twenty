@@ -61,6 +61,7 @@ export const GraphWidgetLineChartRenderer = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const chartValueFormatOptions = getChartValueFormatOptions({
+    aggregateOperation: configuration.aggregateOperation,
     aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
     fieldMetadataItems: objectMetadataItem.fields,
     numberFormat: configuration.numberFormat,

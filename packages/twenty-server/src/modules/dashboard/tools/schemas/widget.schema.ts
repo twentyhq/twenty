@@ -169,7 +169,7 @@ const chartNumberFormatSchema = z
   .enum(CHART_NUMBER_FORMAT_OPTIONS)
   .optional()
   .describe(
-    'Display format for data label values: SHORT abbreviates large numbers (1.3m), FULL shows the complete number (1,300,090). Axis ticks stay abbreviated and tooltips always show the full value.',
+    'Display format for data label values: SHORT abbreviates large numbers (1.3m), FULL shows the complete number (1,300,090). Tooltips always show the full value.',
   );
 const showCenterMetricSchema = z
   .boolean()

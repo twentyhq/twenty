@@ -60,6 +60,7 @@ export const GraphWidgetPieChartRenderer = () => {
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
   const chartValueFormatOptions = getChartValueFormatOptions({
+    aggregateOperation: widget.configuration.aggregateOperation,
     aggregateFieldMetadataId: widget.configuration.aggregateFieldMetadataId,
     fieldMetadataItems: objectMetadataItem.fields,
     numberFormat: widget.configuration.numberFormat,
