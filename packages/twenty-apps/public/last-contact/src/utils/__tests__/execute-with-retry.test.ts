@@ -33,6 +33,19 @@ describe('executeWithRetry', () => {
     expect(execute).toHaveBeenCalledTimes(2);
   });
 
+  it('retries the server application throttler until it succeeds', async () => {
+    const execute = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Limit reached (500 tokens per 60000 ms)'))
+      .mockResolvedValue('ok');
+
+    const promise = executeWithRetry(execute);
+    await vi.advanceTimersByTimeAsync(2_000);
+
+    await expect(promise).resolves.toBe('ok');
+    expect(execute).toHaveBeenCalledTimes(2);
+  });
+
   it('does not retry non-retryable errors', async () => {
     const execute = vi
       .fn()

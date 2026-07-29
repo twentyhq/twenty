@@ -5,10 +5,11 @@ const MAX_JITTER_MS = 1_000;
 
 // The client SDK surfaces HTTP failures as plain Error messages built from the
 // status text and raw response body, so retryability has to be detected from
-// the message text. Covers rate limiting (429, Cloudflare 1015), transient
+// the message text. Covers rate limiting (429, Cloudflare 1015), the server
+// application throttler ("Limit reached (500 tokens per 60000 ms)"), transient
 // gateway errors (502/503/504) and network-level failures.
 const RETRYABLE_ERROR_PATTERN =
-  /\b(429|1015|too many requests|rate ?limit\w*|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
+  /\b(429|1015|too many requests|rate ?limit\w*|limit reached|tokens per|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
 
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
