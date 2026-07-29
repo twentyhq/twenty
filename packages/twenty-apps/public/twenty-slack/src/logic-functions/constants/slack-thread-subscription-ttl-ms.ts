@@ -1,1 +1,0 @@
-export const SLACK_THREAD_SUBSCRIPTION_TTL_MS = 24 * 60 * 60 * 1000;
