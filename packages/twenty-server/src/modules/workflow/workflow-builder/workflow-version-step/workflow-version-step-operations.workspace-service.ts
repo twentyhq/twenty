@@ -96,15 +96,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   private async getWorkspaceDefaultFastModelId(
     workspaceId: string,
   ): Promise<string> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new WorkflowVersionStepException(
+        `Workspace ${workspaceId} not found`,
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
     try {
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
-
-      if (!isDefined(workspace)) {
-        return AUTO_SELECT_FAST_MODEL_ID;
-      }
-
       const effectiveModelConfig =
         this.aiModelRegistryService.getEffectiveModelConfig(
           workspace.fastModel,
