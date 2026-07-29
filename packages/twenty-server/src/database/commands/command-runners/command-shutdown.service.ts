@@ -35,7 +35,7 @@ export class CommandShutdownService {
   }
 
   private handleSignal(shutdownSignal: ShutdownSignal): void {
-    if (isDefined(this.receivedSignal)) {
+    if (this.isShutdownRequested()) {
       this.logger.warn(
         `Received ${shutdownSignal} again, exiting immediately. ` +
           'The step in progress is left unfinished, rerun the command to resume from the last recorded step.',
