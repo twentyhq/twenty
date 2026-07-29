@@ -1,0 +1,34 @@
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  SLACK_ASSISTANT_REQUEST_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_MESSAGE_TS_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_MESSAGE_TS_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+// Slack redelivers the same message as several events, so this unique index is
+// what actually makes the enqueue idempotent under concurrent deliveries
+export default defineIndex({
+  universalIdentifier:
+    SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier:
+    SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [
+    {
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        SLACK_ASSISTANT_REQUEST_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_SLACK_MESSAGE_INDEX_MESSAGE_TS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        SLACK_ASSISTANT_REQUEST_MESSAGE_TS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});

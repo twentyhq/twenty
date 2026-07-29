@@ -3,8 +3,11 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
 import { isSlackThreadActive } from 'src/logic-functions/utils/is-slack-thread-active';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
+
+const ALREADY_QUEUED_SKIP_REASON = 'Slack message is already queued';
 
 type SlackEventsEnqueueResult = { ok: boolean; skipped?: string };
 
@@ -42,10 +45,20 @@ export const enqueueSlackAssistantRequest = async (
   );
 
   if (existingRequestId !== undefined) {
-    return { ok: true, skipped: 'Slack message is already queued' };
+    return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
   }
 
-  await createSlackAssistantRequest(client, parsed.request);
+  try {
+    await createSlackAssistantRequest(client, parsed.request);
+  } catch (error) {
+    // the unique index on (slackChannelId, slackMessageTimestamp) is what makes
+    // this idempotent when Slack redelivers concurrently
+    if (isDuplicateRecordError(error)) {
+      return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
+    }
+
+    throw error;
+  }
 
   return { ok: true };
 };
