@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CommandShutdownModule } from 'src/database/commands/command-runners/command-shutdown.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
@@ -60,7 +59,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    CommandShutdownModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
     // Cron command dependencies
