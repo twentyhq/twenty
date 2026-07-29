@@ -14,6 +14,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import { isNonRetryableWebhookSubscriptionError } from 'src/modules/connected-account/webhook-subscription-manager/utils/is-non-retryable-webhook-subscription-error.util';
 
 @Injectable()
 export class CalendarWebhookSubscriptionService {
@@ -89,6 +90,10 @@ export class CalendarWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       });
 
+      if (isNonRetryableWebhookSubscriptionError(error)) {
+        return;
+      }
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
@@ -153,6 +158,10 @@ export class CalendarWebhookSubscriptionService {
       await this.calendarChannelRepository.update(calendarChannel.id, {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
       });
+
+      if (isNonRetryableWebhookSubscriptionError(error)) {
+        return;
+      }
 
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },

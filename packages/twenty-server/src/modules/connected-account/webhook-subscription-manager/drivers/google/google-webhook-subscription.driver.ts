@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type GaxiosError } from 'gaxios';
 import { type calendar_v3, type gmail_v1, google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -19,6 +20,7 @@ import {
   type WebhookSubscriptionResult,
 } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
+import { parseGoogleWatchError } from 'src/modules/connected-account/webhook-subscription-manager/drivers/google/utils/parse-google-watch-error.util';
 
 @Injectable()
 export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDriver {
@@ -121,16 +123,20 @@ export class GoogleWebhookSubscriptionDriver implements WebhookSubscriptionDrive
     const notificationAddress = `${this.twentyConfigService.get('SERVER_URL')}/webhooks/google/calendar`;
     const watchChannelId = v4();
 
-    const { data } = await calendarClient.events.watch({
-      calendarId: 'primary',
-      requestBody: {
-        id: watchChannelId,
-        type: 'web_hook',
-        address: notificationAddress,
-        token: clientState,
-        params: { ttl: String(GOOGLE_CALENDAR_WATCH_TTL_MS / 1000) },
-      },
-    });
+    const { data } = await calendarClient.events
+      .watch({
+        calendarId: 'primary',
+        requestBody: {
+          id: watchChannelId,
+          type: 'web_hook',
+          address: notificationAddress,
+          token: clientState,
+          params: { ttl: String(GOOGLE_CALENDAR_WATCH_TTL_MS / 1000) },
+        },
+      })
+      .catch((error: GaxiosError) => {
+        throw parseGoogleWatchError(error);
+      });
 
     if (!isDefined(data.resourceId) || !isDefined(data.expiration)) {
       throw new WebhookSubscriptionDriverException(

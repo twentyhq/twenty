@@ -8,6 +8,7 @@ export enum WebhookSubscriptionDriverExceptionCode {
   PROVIDER_NOT_CONFIGURED = 'PROVIDER_NOT_CONFIGURED',
   PROVIDER_RESPONSE_INVALID = 'PROVIDER_RESPONSE_INVALID',
   UNSUPPORTED_PROVIDER = 'UNSUPPORTED_PROVIDER',
+  SUBSCRIPTION_FORBIDDEN = 'SUBSCRIPTION_FORBIDDEN',
 }
 
 const getWebhookSubscriptionDriverExceptionUserFriendlyMessage = (
@@ -17,6 +18,7 @@ const getWebhookSubscriptionDriverExceptionUserFriendlyMessage = (
     case WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED:
     case WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID:
     case WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER:
+    case WebhookSubscriptionDriverExceptionCode.SUBSCRIPTION_FORBIDDEN:
       return msg`The webhook subscription could not be managed for this account.`;
     default:
       assertUnreachable(code);

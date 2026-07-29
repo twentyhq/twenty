@@ -14,6 +14,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import { isNonRetryableWebhookSubscriptionError } from 'src/modules/connected-account/webhook-subscription-manager/utils/is-non-retryable-webhook-subscription-error.util';
 
 @Injectable()
 export class MessagingWebhookSubscriptionService {
@@ -88,6 +89,10 @@ export class MessagingWebhookSubscriptionService {
         webhookSubscriptionExpiresAt: null,
       });
 
+      if (isNonRetryableWebhookSubscriptionError(error)) {
+        return;
+      }
+
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
@@ -151,6 +156,10 @@ export class MessagingWebhookSubscriptionService {
       await this.messageChannelRepository.update(messageChannel.id, {
         webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
       });
+
+      if (isNonRetryableWebhookSubscriptionError(error)) {
+        return;
+      }
 
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: messageChannel.workspaceId },
