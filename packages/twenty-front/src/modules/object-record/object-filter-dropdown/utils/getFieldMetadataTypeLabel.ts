@@ -2,6 +2,8 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { i18n } from '@lingui/core';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getFieldMetadataTypeLabel = (fieldType: FieldMetadataType) => {
@@ -9,11 +11,18 @@ export const getFieldMetadataTypeLabel = (fieldType: FieldMetadataType) => {
   if (
     isNonCompositeField(fieldType) ||
     fieldType === FieldMetadataType.RELATION
-  )
-    return SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[
-      fieldType as keyof typeof SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS
-    ]?.label;
+  ) {
+    const label =
+      SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[
+        fieldType as keyof typeof SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS
+      ]?.label;
 
-  if (isCompositeFieldType(fieldType))
-    return SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType]?.label;
+    return isDefined(label) ? i18n._(label) : undefined;
+  }
+
+  if (isCompositeFieldType(fieldType)) {
+    const label = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType]?.label;
+
+    return isDefined(label) ? i18n._(label) : undefined;
+  }
 };
