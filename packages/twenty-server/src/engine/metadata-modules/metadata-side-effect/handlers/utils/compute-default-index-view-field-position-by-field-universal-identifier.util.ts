@@ -1,5 +1,6 @@
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata-modules/object-metadata/utils/is-flat-field-metadata-displayable-in-default-view.util';
+import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-modules/object-metadata/utils/order-flat-field-metadatas-for-system-index-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 // The INDEX view field layout, shared by objectSystemFieldsAndIndexViewOnCreate
@@ -33,23 +34,14 @@ export const computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier = ({
     }),
   );
 
-  const displayableFlatFieldMetadatas = [
-    ...displayableCallerFlatFieldMetadatas,
-    ...displayableSystemFlatFieldMetadatas,
-  ];
-
-  const orderedDisplayableFlatFieldMetadatas = [
-    ...displayableFlatFieldMetadatas.filter(
-      (flatFieldMetadata) =>
-        flatFieldMetadata.universalIdentifier ===
-        labelIdentifierFieldMetadataUniversalIdentifier,
-    ),
-    ...displayableFlatFieldMetadatas.filter(
-      (flatFieldMetadata) =>
-        flatFieldMetadata.universalIdentifier !==
-        labelIdentifierFieldMetadataUniversalIdentifier,
-    ),
-  ];
+  const orderedDisplayableFlatFieldMetadatas =
+    orderFlatFieldMetadatasForSystemIndexView({
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      flatFieldMetadatas: [
+        ...displayableCallerFlatFieldMetadatas,
+        ...displayableSystemFlatFieldMetadatas,
+      ],
+    });
 
   return new Map(
     orderedDisplayableFlatFieldMetadatas.map((flatFieldMetadata, position) => [

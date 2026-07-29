@@ -13,7 +13,6 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
-
 describe('View REST API', () => {
   let testObjectMetadataId: string;
   let testSelectFieldMetadataId: string;
