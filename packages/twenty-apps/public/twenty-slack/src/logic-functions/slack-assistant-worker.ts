@@ -100,15 +100,13 @@ export const slackAssistantWorkerHandler = async (
 
   const placeholderTimestamp = placeholderResult.slackTs;
 
-  const finishWithFailure = (errorMessage: string): Promise<object> =>
-    finishSlackAssistantRequestWithFailure({
-      client,
-      requestId: record.id,
-      slackChannelId,
-      slackMessageTimestamp,
-      placeholderTimestamp,
-      errorMessage,
-    });
+  const failureContext = {
+    client,
+    requestId: record.id,
+    slackChannelId,
+    slackMessageTimestamp,
+    placeholderTimestamp,
+  };
 
   try {
     const { conversationContext, requesterName } =
@@ -131,15 +129,19 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (!agentResult.success) {
-      return await finishWithFailure(
-        agentResult.error ?? 'Agent execution failed',
-      );
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: agentResult.error ?? 'Agent execution failed',
+      });
     }
 
     const responseText = extractAgentResponseText(agentResult);
 
     if (responseText === undefined) {
-      return await finishWithFailure('Agent returned an empty response');
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: 'Agent returned an empty response',
+      });
     }
 
     const updateResult = await slackUpdateMessageHandler({
@@ -150,9 +152,10 @@ export const slackAssistantWorkerHandler = async (
     });
 
     if (!updateResult.success) {
-      return await finishWithFailure(
-        `Could not update Slack message: ${updateResult.error ?? updateResult.message}`,
-      );
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: `Could not update Slack message: ${updateResult.error ?? updateResult.message}`,
+      });
     }
 
     await clearSlackAssistantThinkingReaction({
@@ -175,9 +178,11 @@ export const slackAssistantWorkerHandler = async (
 
     return { done: true };
   } catch (error) {
-    return await finishWithFailure(
-      error instanceof Error ? error.message : 'Unexpected worker error',
-    );
+    return await finishSlackAssistantRequestWithFailure({
+      ...failureContext,
+      errorMessage:
+        error instanceof Error ? error.message : 'Unexpected worker error',
+    });
   }
 };
 
