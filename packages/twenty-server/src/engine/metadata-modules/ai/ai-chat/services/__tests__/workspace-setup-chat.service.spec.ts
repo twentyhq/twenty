@@ -106,13 +106,11 @@ describe('WorkspaceSetupChatService', () => {
         .fn()
         .mockImplementation((callback: () => unknown) => callback()),
       getRepository: jest.fn().mockResolvedValue({
-        findOne: jest
-          .fn()
-          .mockImplementation(() =>
-            Promise.resolve({
-              locale: userWorkspaceState.workspaceMemberLocale,
-            }),
-          ),
+        findOne: jest.fn().mockImplementation(() =>
+          Promise.resolve({
+            locale: userWorkspaceState.workspaceMemberLocale,
+          }),
+        ),
       }),
     };
     const agentChatStreamingService = {
