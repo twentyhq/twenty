@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
 
@@ -24,8 +25,19 @@ const makeFlatVariable = (
 });
 
 describe('stripSecretFromApplicationVariables', () => {
+  const decryptVersionedOrThrow = jest.fn();
+  const secretEncryptionService = {
+    decryptVersionedOrThrow,
+  } as unknown as SecretEncryptionService;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should return empty object for empty array', () => {
-    expect(stripSecretFromApplicationVariables([])).toEqual({});
+    expect(
+      stripSecretFromApplicationVariables([], secretEncryptionService),
+    ).toEqual({});
   });
 
   it('should include non-secret variables', () => {
@@ -41,10 +53,9 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
-      PUBLIC_URL: 'https://example.com',
-      DEBUG: 'true',
-    });
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({ PUBLIC_URL: 'https://example.com', DEBUG: 'true' });
   });
 
   it('should exclude secret variables', () => {
@@ -56,7 +67,7 @@ describe('stripSecretFromApplicationVariables', () => {
       makeFlatVariable({
         id: '2',
         key: 'API_SECRET',
-        value: 'encrypted_secret' as EncryptedString,
+        value: 'enc:v2:key-id:secret-payload' as EncryptedString,
         isSecret: true,
       }),
       makeFlatVariable({
@@ -66,13 +77,17 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    const result = stripSecretFromApplicationVariables(variables);
+    const result = stripSecretFromApplicationVariables(
+      variables,
+      secretEncryptionService,
+    );
 
     expect(result).toEqual({
       PUBLIC_URL: 'https://example.com',
       DEBUG: 'true',
     });
     expect(result).not.toHaveProperty('API_SECRET');
+    expect(decryptVersionedOrThrow).not.toHaveBeenCalled();
   });
 
   it('should handle null and undefined values', () => {
@@ -88,10 +103,9 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
-      NULL_VALUE: '',
-      UNDEFINED_VALUE: '',
-    });
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({ NULL_VALUE: '', UNDEFINED_VALUE: '' });
   });
 
   it('should convert non-string values to strings', () => {
@@ -102,9 +116,9 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({
-      NUMBER_VALUE: '123',
-    });
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({ NUMBER_VALUE: '123' });
   });
 
   it('should return empty object when all variables are secret', () => {
@@ -122,6 +136,30 @@ describe('stripSecretFromApplicationVariables', () => {
       }),
     ];
 
-    expect(stripSecretFromApplicationVariables(variables)).toEqual({});
+    expect(
+      stripSecretFromApplicationVariables(variables, secretEncryptionService),
+    ).toEqual({});
+    expect(decryptVersionedOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('should decrypt non-secret encrypted variables', () => {
+    const encryptedValue = 'enc:v2:key-id:payload' as EncryptedString;
+
+    decryptVersionedOrThrow.mockReturnValue('pk.mapbox-token');
+
+    expect(
+      stripSecretFromApplicationVariables(
+        [
+          makeFlatVariable({
+            key: 'MAPBOX_PUBLIC_ACCESS_TOKEN',
+            value: encryptedValue,
+          }),
+        ],
+        secretEncryptionService,
+      ),
+    ).toEqual({ MAPBOX_PUBLIC_ACCESS_TOKEN: 'pk.mapbox-token' });
+    expect(decryptVersionedOrThrow).toHaveBeenCalledWith(encryptedValue, {
+      workspaceId: '00000000-0000-0000-0000-000000000000',
+    });
   });
 });
