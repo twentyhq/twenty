@@ -74,9 +74,7 @@ describe('CustomDomainManagerService', () => {
 
       const result = await service.checkCustomDomainValidRecords(workspace);
 
-      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(1);
       // Regression guard for the fix: this used to trigger a second,
       // redundant Cloudflare API call via isHostnameWorking().
       expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
