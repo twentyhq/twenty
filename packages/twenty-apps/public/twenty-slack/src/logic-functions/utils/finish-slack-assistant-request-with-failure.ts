@@ -1,12 +1,15 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
 import { clearSlackAssistantThinkingReaction } from 'src/logic-functions/utils/clear-slack-assistant-thinking-reaction';
 
-export const SLACK_ASSISTANT_FAILURE_TEXT =
-  'Sorry, I could not complete that request. An admin can check the Slack Assistant Request record in Twenty for details.';
+type SlackAssistantRequestFailureResult = {
+  failed: true;
+  reason: string;
+};
 
 export const finishSlackAssistantRequestWithFailure = async ({
   client,
@@ -15,7 +18,6 @@ export const finishSlackAssistantRequestWithFailure = async ({
   slackMessageTimestamp,
   placeholderTimestamp,
   errorMessage,
-  slackMessageText = SLACK_ASSISTANT_FAILURE_TEXT,
 }: {
   client: CoreApiClient;
   requestId: string;
@@ -23,12 +25,11 @@ export const finishSlackAssistantRequestWithFailure = async ({
   slackMessageTimestamp: string;
   placeholderTimestamp: string;
   errorMessage: string;
-  slackMessageText?: string;
-}): Promise<object> => {
+}): Promise<SlackAssistantRequestFailureResult> => {
   await slackUpdateMessageHandler({
     slackChannelId,
     messageTimestamp: placeholderTimestamp,
-    newMessageText: slackMessageText,
+    newMessageText: SLACK_ASSISTANT_FAILURE_TEXT,
   });
   await clearSlackAssistantThinkingReaction({
     slackChannelId,
