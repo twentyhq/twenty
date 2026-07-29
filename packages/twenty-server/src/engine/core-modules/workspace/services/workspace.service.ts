@@ -411,6 +411,8 @@ export class WorkspaceService {
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
       });
+
+      await this.enqueuePreInstalledAppsInstallation(workspace.id);
     } catch (error) {
       await this.workspaceRepository.update(workspace.id, {
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -952,12 +954,16 @@ export class WorkspaceService {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
 
+  private async enqueuePreInstalledAppsInstallation(
+    workspaceId: string,
+  ): Promise<void> {
     try {
-      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
+      await this.preInstalledAppsService.enqueueInstallOnWorkspace(workspaceId);
     } catch (error) {
       this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
+        `Non-critical: failed to enqueue pre-installed apps installation for workspace ${workspaceId}`,
         error,
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
