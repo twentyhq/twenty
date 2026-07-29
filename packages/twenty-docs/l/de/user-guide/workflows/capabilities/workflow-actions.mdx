@@ -19,7 +19,7 @@ Aktionen definieren, was nach dem Auslösen passiert. Sie können mehrere Aktion
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Einen Datensatz erstellen
+### Datensatz erstellen
 
 Fügt einem ausgewählten Objekt einen neuen Datensatz hinzu.
 
@@ -112,7 +112,7 @@ Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Ü
 
 **Konfiguration**:
 
-* Wählen Sie das Array von Datensätzen aus einem vorherigen Schritt aus (z. B. Ergebnisse aus Search Records, aus einem manuellen Auslöser mit Bulk-Verfügbarkeit, aus einem Code-Node). Wenn ein Code- oder Logikfunktions-Schritt ein Top-Level-Array zurückgibt, wählen Sie die Option **Whole list**, um über die gesamte Ausgabe zu iterieren.
+* Wählen Sie das Array der Datensätze aus einem vorherigen Schritt (z.B. Ergebnisse aus Suchdatensätzen, aus einem manuellen Trigger mit Bulk-Verfügbarkeit, aus einem Codeknoten). Wenn ein Code- oder Logikfunktions-Schritt ein Top-Level-Array zurückgibt, wählen Sie die Option **Whole list**, um über die gesamte Ausgabe zu iterieren.
 * Definieren Sie die Aktionen, die für jeden Datensatz in der Schleife ausgeführt werden sollen.
 
 <Note>
@@ -181,7 +181,7 @@ Das geplante Datum kann nicht in der Vergangenheit sein. Wenn ein Datumsfeld aus
 ### E-Mail senden
 
 Sendet eine E-Mail aus Ihrem Workflow. Dies ist ideal für vordefinierte Gruppenmails. E-Mails werden so aussehen, wie sie von Ihrem Postfach gesendet werden.
-Nicht geeignet für Newsletter (die eine umfassendere Formatierung erfordern) oder für automatisierte E-Mail-Sequenzen.
+Es eignet sich nicht für Newsletter (die eine umfassendere Formatierung erfordern) oder für automatisierte E-Mail-Sequenzen.
 
 **Voraussetzungen**: Fügen Sie ein E-Mail-Konto unter Einstellungen → Konten hinzu
 
@@ -202,7 +202,7 @@ Im Moment ist nur ein Empfänger möglich.
 </Note>
 
 * Betreffzeile festlegen.
-* Nachrichtentext verfassen. Sie können Links formatieren, nummerierte Liste, Aufzählungspunkte erstellen und Anhänge hinzufügen.
+* Nachrichtentext verfassen. Sie können Links formatieren, nummerierte Listen, Kugelpunktlisten erstellen und Anhänge hinzufügen.
 
 <Note>
 Das Hinzufügen von HTML-Signaturen ist im Moment nicht möglich.
@@ -213,24 +213,24 @@ Das Hinzufügen von HTML-Signaturen ist im Moment nicht möglich.
 Fordert während der Workflow-Ausführung ein Formular an, um Benutzereingaben zu sammeln. Die Antworten können dann in folgenden Schritten verwendet werden, um Datensätze zu erstellen, E-Mails zu senden oder jede andere Aktion basierend auf der Eingabe auszuführen.
 
 <Warning>
-**Formulare sind nur für manuelle Trigger konzipiert**. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
+**Formulare sind nur für manuelle Trigger konzipiert**. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. 2026 wird ein Benachrichtigungszentrum freigegeben, um Formulare in automatisierten Arbeitsabläufen ordnungsgemäß zu unterstützen.
 </Warning>
 
 **Konfiguration**:
 
 * Konfigurieren Sie die Felder, die Benutzer ausfüllen sollen. Für jedes Feld wählen
-  * ein Typ unter Text, Nummer, Datum, gegebener Datensatz, ein Auswahlfeld. Wählen Sie Felder aus allen Objekten verfügbar.
+  * ein Typ unter Text, Nummer, Datum, gegebener Datensatz, ein Auswahlfeld. Felder aller Objekte stehen zur Auswahl zur Verfügung.
   * ein Label
   * ein Standardwert unter `Platzhalter` (optional)
 * Formulartitel bearbeiten
 
 **Ausgabe**: Formularantworten sind für nachfolgende Schritte verfügbar.
 
-**Beispiel**: Der "Quick Lead"-Workflow ist standardmäßig in allen Arbeitsbereichen verfügbar, die überall im Kommandomenü `Cmd + K` verfügbar sind.
+**Beispiel**: Der "Quick Lead"-Workflow ist standardmäßig in allen Arbeitsbereichen verfügbar, die überall im Kommandomenü `Cmd+K` verfügbar sind.
 
 **So füllen Sie das Formular aus**:
 
-* Löse deinen manuellen Workflow aus dem Kommandomenü `Cmd K` aus
+* Löse deinen manuellen Workflow aus dem Kommandomenü `Cmd+K` aus
 * Füllen Sie das Formular aus, das im Seitenfenster angezeigt wird, und klicken Sie auf "Absenden".
 
 <Note>

@@ -20,7 +20,7 @@ Das während der ersten Installation gesetzte Passwort wird dauerhaft im Datenba
 ⚠️ WARNUNG: Die folgenden Schritte werden ALLE Datenbankdaten PERMANENT LÖSCHEN! ⚠️
 Fahren Sie nur fort, wenn dies eine Neuinstallation ohne wichtige Daten ist.
 
-Um das `PG_DATABASE_PASSWORD` zu aktualisieren, müssen Sie:
+Um den `PG_DATABASE_PASSWORD` zu aktualisieren, müssen Sie auf:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -30,7 +30,7 @@ docker compose up -d
 
 #### CR-Zeilenumbrüche gefunden [Windows]
 
-Dies liegt an den Zeilenumbruchzeichen von Windows und der git-Konfiguration. Versuchen Sie Folgendes auszuführen:
+Dies geschieht aufgrund von Windows-Zeilenenden in Kombination mit Ihrer Git-Konfiguration. Versuchen Sie Folgendes auszuführen:
 
 ```
 git config --global core.autocrlf false
@@ -42,11 +42,11 @@ Löschen Sie dann das Repository und klonen Sie es erneut.
 
 Während der Twenty-Installation müssen Sie Ihre Postgres-Datenbank mit den richtigen Schemata, Erweiterungen und Benutzern bereitstellen.
 Wenn Sie diese Bereitstellung erfolgreich durchführen, sollten Sie `default` und `metadata` Schemata in Ihrer Datenbank haben.
-Falls nicht, stellen Sie sicher, dass auf Ihrem Rechner nicht mehr als eine Postgres-Instanz läuft.
+Wenn Sie dies nicht tun, stellen Sie sicher, dass nicht mehr als eine PostgreSQL-Instanz auf Ihrem Computer läuft.
 
 #### Modul 'twenty-emails' oder seine entsprechenden Typdeklarationen nicht gefunden.
 
-Sie müssen das Paket `twenty-emails` erstellen, bevor Sie die Initialisierung der Datenbank mit `npx nx run twenty-emails:build` ausführen.
+Du musst das »21«-Paket erstellen (`npx nx nx nx führen Sie einundzwanzig:build`) bevor du die Datenbank-Initialisierung ausführst.
 
 #### Fehlendes Twenty-x Paket
 
@@ -54,7 +54,7 @@ Stellen Sie sicher, dass Sie `yarn` im Root-Verzeichnis ausführen und dann `npx
 
 #### Lint beim Speichern funktioniert nicht
 
-Normalerweise sollte dies sofort mit der installierten Oxc-Erweiterung (`oxc.oxc-vscode`) funktionieren. Wenn es nicht funktioniert, versuchen Sie, dies zu Ihren vscode-Einstellungen hinzuzufügen (im Entwicklungscontainer-Bereich):
+Normalerweise sollte dies sofort mit der installierten Oxc-Erweiterung (`oxc.oxc-vscode`) funktionieren. Wenn dies nicht funktioniert, versuchen Sie dies zu Ihren VS Code Einstellungen zu hinzufügen (dev Containerbereich):
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,7 +64,7 @@ Normalerweise sollte dies sofort mit der installierten Oxc-Erweiterung (`oxc.oxc
 }
 ```
 
-#### Beim Ausführen von `npx nx start` oder `npx nx start twenty-front` wird ein Speicherfehler angezeigt
+#### Beim Ausführen von `npx nx start` oder `npx nx nx nx start`, wird ein Fehler außerhalb des Speichers angezeigt
 
 Führen Sie nur die Services aus, die Sie benötigen, anstatt `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
 
@@ -73,7 +73,7 @@ Wenn Sie versucht haben, nur `npx nx run twenty-server:start` auf WSL zu starten
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-Eine Möglichkeit ist, den Befehl unten im Terminal auszuführen oder ihn im .bashrc-Profil hinzuzufügen, um ihn automatisch einzurichten:
+Eine Workaround ist es, den folgenden Befehl in deinem Terminal auszuführen, oder füge ihn zu deinem `.bashrc`-Profil hinzu, damit er automatisch angewendet wird:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
@@ -81,10 +81,10 @@ Das Flag --max-old-space-size=8192 setzt ein oberes Limit von 8GB für den Node.
 Referenz: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **Wenn es nicht funktioniert:**
-Untersuchen Sie, welche Prozesse den größten Teil Ihres RAMs beanspruchen. Bei Twenty haben wir festgestellt, dass einige vscode-Erweiterungen viel RAM verwenden, daher deaktivieren wir sie vorübergehend.
+Investigate, welche Prozesse den Großteil des Arbeitsspeichers deiner Maschine in Anspruch nehmen. Bei Twenty haben wir festgestellt, dass einige VS Code Erweiterungen viel RAM in Anspruch nahmen, so dass wir sie vorübergehend deaktiviert haben.
 
 **Wenn es nicht funktioniert:**
-Ein Neustart Ihres Computers hilft dabei, Geisterprozesse zu bereinigen.
+Ein Neustart des Rechners hilft, Geisterprozesse zu bereinigen.
 
 #### Beim Ausführen von `npx nx start` gibt es seltsame [0] und [1] in den Logs
 
@@ -98,19 +98,19 @@ Meistens liegt das daran, dass der `worker` nicht im Hintergrund läuft. Versuch
 npx nx worker twenty-server
 ```
 
-#### Kann mein Microsoft 365-Konto nicht verbinden
+#### Mein Microsoft 365-Konto kann nicht mit 20 verbunden werden
 
 Meistens liegt das daran, dass Ihr Administrator die Microsoft 365-Lizenz für Ihr Konto nicht aktiviert hat. Überprüfen Sie [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
 Wenn Sie einen Fehlercode `AADSTS50020` haben, bedeutet dies wahrscheinlich, dass Sie ein privates Microsoft-Konto verwenden. Dies wird derzeit nicht unterstützt. Weitere Informationen [hier](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### Beim Ausführen von `yarn` erscheinen Warnungen in der Konsole
+#### Während du `yarn` ausführst, erscheinen Warnungen in der Konsole
 
 Warnungen informieren über das Ziehen zusätzlicher Abhängigkeiten, die nicht explizit in `package.json` angegeben sind. Solange kein schwerwiegender Fehler auftritt, sollte alles wie erwartet funktionieren.
 
-#### Wenn der Benutzer auf die Anmeldeseite zugreift, wird ein Fehler über einen unberechtigten Benutzer, der versucht, auf den Arbeitsbereich zuzugreifen, in den Logs angezeigt
+#### Wenn ein Benutzer auf die Login-Seite zugreift, erscheint in den Logs ein Fehler über einen nicht autorisierten Benutzer, der versucht, auf einen Arbeitsbereich zuzugreifen
 
-Das ist zu erwarten, da der Benutzer ohne Anmeldung nicht berechtigt ist, da seine Identität nicht verifiziert ist.
+Das wird erwartet, da der Benutzer nicht autorisiert ist, wenn er ausgeloggt ist, da seine Identität nicht verifiziert wurde.
 
 #### Wie überprüfen Sie, ob Ihr Worker läuft?
 
@@ -137,9 +137,9 @@ Das ist zu erwarten, da der Benutzer ohne Anmeldung nicht berechtigt ist, da sei
 
 * Wenn eine **POST-Anfrage** empfangen wird, läuft Ihr Worker erfolgreich. Andernfalls müssen Sie Ihren Worker beheben.
 
-#### Front-End startet nicht und gibt Fehler TS5042 zurück: Option "project" kann nicht mit Quelldateien auf der Befehlszeile gemischt werden
+#### Frontend startet nicht und gibt den Fehler TS5042 zurück: Option 'project' kann nicht mit Quelldateien auf der Befehlszeile gemischt werden
 
-Kommentieren Sie das Checker-Plugin in `packages/twenty-ui/vite-config.ts` wie im folgenden Beispiel aus
+Kommentieren Sie das Checker-Plugin in `packages/twenty-ui/vite-config.ts`, wie im folgenden Beispiel angezeigt:
 
 ```
 plugins: [
@@ -165,7 +165,7 @@ plugins: [
 
 #### Admin-Panel nicht zugänglich
 
-Führen Sie den folgenden Befehl im Datenbankcontainer aus, um Zugriff auf das Admin-Panel zu erhalten: `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`
+Führen Sie `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` im Datenbank-Container aus, um Zugriff auf das Admin-Panel zu erhalten.
 
 #### Beim Ausführen eines Workflows schlägt die Workflow-Ausführung fehl mit "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
@@ -173,7 +173,7 @@ In der Produktion sind Logikfunktionen standardmäßig deaktiviert. Setzen Sie d
 
 #### Wenn ich eine Nachricht im AI-Chat eingebe, antwortet sie nicht sofort und ich muss die Seite aktualisieren, um die Antwort zu sehen
 
-Folgenden Block zur nginx config hinzufügen
+Das bedeutet, dass Ihrem Reverse Proxy die Konfiguration für Stream-basierte API-Antworten fehlt. Unten ist ein Beispiel Nginx Konfiguration:
 
 ```
 location ~* ^/api/.*stream|\/graphql\/stream {
@@ -193,7 +193,7 @@ add_header X-Accel-Buffering no always;
 }
 ```
 
-### 1-Klick Docker Compose
+### 1-Klick-Docker komponieren
 
 #### Kann mich nicht einloggen
 
@@ -210,7 +210,7 @@ Wenn Sie sich nach der Einrichtung nicht anmelden können:
    docker compose up -d
    ```
 
-Beachten Sie, dass der database:reset-Befehl Ihre Datenbank vollständig löscht und neu erstellt.
+Beachte, dass der Befehl `database:reset` deine Datenbank komplett löschen und von Grund auf neu erstellen wird.
 
 #### Verbindungsprobleme hinter einem Reverse-Proxy
 

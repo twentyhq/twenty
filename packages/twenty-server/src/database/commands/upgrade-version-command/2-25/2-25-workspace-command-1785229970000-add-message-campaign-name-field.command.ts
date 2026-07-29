@@ -1,6 +1,7 @@
 import { Command } from 'nest-commander';
 import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -13,8 +14,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -159,15 +160,34 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         );
       }
 
-      viewFieldsToCreate.push({
-        ...standardNameViewField,
-        position: this.computeNameViewFieldPosition({
-          flatViewMaps,
-          flatViewFieldMaps,
-          standardNameViewField,
-          isNameLabelIdentifier,
-        }),
-      });
+      const campaignIndexFlatView =
+        campaignObjectMetadata.viewUniversalIdentifiers
+          .map(
+            (viewUniversalIdentifier) =>
+              flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+          )
+          .filter(isDefined)
+          .find(
+            (flatView) =>
+              flatView.key === ViewKey.INDEX && !isDefined(flatView.deletedAt),
+          );
+
+      if (isDefined(campaignIndexFlatView)) {
+        viewFieldsToCreate.push({
+          ...standardNameViewField,
+          viewUniversalIdentifier: campaignIndexFlatView.universalIdentifier,
+          position: this.computeNameViewFieldPosition({
+            campaignIndexFlatView,
+            flatViewFieldMaps,
+            standardNameViewField,
+            isNameLabelIdentifier,
+          }),
+        });
+      } else {
+        this.logger.warn(
+          `No INDEX view found for messageCampaign in workspace ${workspaceId}, skipping the name view column`,
+        );
+      }
     }
 
     const searchFieldMetadatasToCreate =
@@ -255,32 +275,26 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
   // it), above all of them otherwise (the validator forbids anything below the
   // label identifier).
   private computeNameViewFieldPosition({
-    flatViewMaps,
+    campaignIndexFlatView,
     flatViewFieldMaps,
     standardNameViewField,
     isNameLabelIdentifier,
   }: {
-    flatViewMaps: FlatEntityMaps<FlatView>;
+    campaignIndexFlatView: FlatView;
     flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
     standardNameViewField: FlatViewField;
     isNameLabelIdentifier: boolean;
   }): number {
-    const flatView = findFlatEntityByUniversalIdentifier<FlatView>({
-      flatEntityMaps: flatViewMaps,
-      universalIdentifier: standardNameViewField.viewUniversalIdentifier,
-    });
-
-    if (!isDefined(flatView)) {
-      return standardNameViewField.position;
-    }
-
-    const otherViewFieldPositions = flatView.viewFieldUniversalIdentifiers
-      .map(
-        (viewFieldUniversalIdentifier) =>
-          flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
-      )
-      .filter(isDefined)
-      .map(({ position }) => position);
+    const otherViewFieldPositions =
+      campaignIndexFlatView.viewFieldUniversalIdentifiers
+        .map(
+          (viewFieldUniversalIdentifier) =>
+            flatViewFieldMaps.byUniversalIdentifier[
+              viewFieldUniversalIdentifier
+            ],
+        )
+        .filter(isDefined)
+        .map(({ position }) => position);
 
     if (otherViewFieldPositions.length === 0) {
       return standardNameViewField.position;
