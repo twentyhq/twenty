@@ -460,11 +460,6 @@ export class FlatViewValidatorService {
       });
     }
 
-    // The INDEX view is the object's engine-owned default view: the metadata
-    // side-effect engine is its sole writer, and every consumer assumes it is
-    // a singleton per object. Caller inputs (API and manifest) are forced
-    // isSystemSideEffect: false at their entry points, so this rejects any
-    // caller claiming the key while letting engine emissions through.
     if (flatViewToValidate.key === ViewKey.INDEX) {
       if (flatViewToValidate.isSystemSideEffect !== true) {
         validationResult.errors.push({
@@ -474,8 +469,6 @@ export class FlatViewValidatorService {
         });
       }
 
-      // The object's foreign-key aggregator is maintained optimistically on
-      // create, so this covers views created earlier in the same batch too.
       const objectAlreadyHasIndexFlatView =
         isDefined(optimisticFlatObjectMetadata) &&
         optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(

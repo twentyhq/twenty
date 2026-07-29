@@ -111,8 +111,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       return;
     }
 
-    // Single transaction per workspace: a partial re-own would leave a view
-    // and its view fields on mismatched universal identifiers.
     await this.viewRepository.manager.transaction(async (entityManager) => {
       const transactionalViewRepository =
         entityManager.getRepository(ViewEntity);
@@ -246,9 +244,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     derivedViewUniversalIdentifier: string;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): ReownUpdate | undefined {
-    // Soft-deleted view fields are skipped: one can coexist with an active
-    // successor on the same (view, field) pair, and re-owning both would
-    // collide on the same derived universal identifier.
     if (isDefined(flatViewField.deletedAt)) {
       return undefined;
     }
@@ -266,10 +261,6 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
       return undefined;
     }
 
-    // The derivation is keyed on the application of the DISPLAYED FIELD, like
-    // every engine emission (fieldIndexViewFieldOnCreate). The view field row
-    // itself can be attributed differently: showing a hidden standard column
-    // mints a workspace-custom view field displaying a standard field.
     const derivedViewFieldUniversalIdentifier = getViewFieldUniversalIdentifier(
       {
         applicationUniversalIdentifier:

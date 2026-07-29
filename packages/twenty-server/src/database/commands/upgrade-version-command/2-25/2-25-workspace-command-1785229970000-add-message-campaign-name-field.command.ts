@@ -14,8 +14,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -160,20 +160,17 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
         );
       }
 
-      // The INDEX view universal identifiers are reconciled onto the derived
-      // scheme in 2.26, after this command: the workspace's campaign INDEX
-      // view can still hold its legacy identifier here, so it is resolved by
-      // its INDEX key on the campaign object rather than by identifier.
-      const campaignIndexFlatView = campaignObjectMetadata.viewUniversalIdentifiers
-        .map(
-          (viewUniversalIdentifier) =>
-            flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
-        )
-        .filter(isDefined)
-        .find(
-          (flatView) =>
-            flatView.key === ViewKey.INDEX && !isDefined(flatView.deletedAt),
-        );
+      const campaignIndexFlatView =
+        campaignObjectMetadata.viewUniversalIdentifiers
+          .map(
+            (viewUniversalIdentifier) =>
+              flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+          )
+          .filter(isDefined)
+          .find(
+            (flatView) =>
+              flatView.key === ViewKey.INDEX && !isDefined(flatView.deletedAt),
+          );
 
       if (isDefined(campaignIndexFlatView)) {
         viewFieldsToCreate.push({
@@ -288,13 +285,16 @@ export class AddMessageCampaignNameFieldCommand extends ProvisionedWorkspaceComm
     standardNameViewField: FlatViewField;
     isNameLabelIdentifier: boolean;
   }): number {
-    const otherViewFieldPositions = campaignIndexFlatView.viewFieldUniversalIdentifiers
-      .map(
-        (viewFieldUniversalIdentifier) =>
-          flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
-      )
-      .filter(isDefined)
-      .map(({ position }) => position);
+    const otherViewFieldPositions =
+      campaignIndexFlatView.viewFieldUniversalIdentifiers
+        .map(
+          (viewFieldUniversalIdentifier) =>
+            flatViewFieldMaps.byUniversalIdentifier[
+              viewFieldUniversalIdentifier
+            ],
+        )
+        .filter(isDefined)
+        .map(({ position }) => position);
 
     if (otherViewFieldPositions.length === 0) {
       return standardNameViewField.position;

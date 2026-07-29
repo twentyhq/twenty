@@ -791,8 +791,6 @@ describe('computeFlatViewFieldsFromFieldsWidgets', () => {
   });
 
   describe('INDEX view non-propagation', () => {
-    // INDEX view fields are provisioned by the fieldIndexViewFieldOnCreate
-    // metadata side effect, not by this caller-side util.
     it('should not target the object INDEX view without a fields widget', () => {
       const result = computeFlatViewFieldsFromFieldsWidgets({
         fieldsToCreate: [

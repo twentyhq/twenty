@@ -32,11 +32,7 @@ const isFieldsWidgetConfiguration = (
   );
 };
 
-// INDEX views are NOT targeted here: their view fields are provisioned by the
-// fieldIndexViewFieldOnCreate metadata side effect. A fields widget explicitly
-// targeting the INDEX view is not deduped: both writers claim the same
-// (view, field) pair and the flat view field validator surfaces the conflict
-// downstream.
+// TODO remove when implementing https://github.com/twentyhq/core-team-issues/issues/2721
 const getFieldViewTargets = ({
   objectMetadataUniversalIdentifier,
   flatPageLayoutWidgetMaps,

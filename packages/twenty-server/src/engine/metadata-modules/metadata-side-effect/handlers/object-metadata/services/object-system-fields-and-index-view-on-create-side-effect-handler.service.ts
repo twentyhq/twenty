@@ -34,8 +34,6 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
     const { applicationUniversalIdentifier, universalIdentifier } =
       sourceFlatObjectMetadata;
 
-    // The 7 reserved system fields, computed locally so the INDEX view below can
-    // reference them without depending on another handler's execution order.
     const systemFlatFieldMetadatas = Object.values(
       buildReservedSystemFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
@@ -69,9 +67,6 @@ export class ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService exte
         displayableOnly: true,
       });
 
-    // Shared with fieldIndexViewFieldOnCreate: the label identifier view field
-    // must be strictly lowest whether it is backed by a caller field or by a
-    // reserved system field (id, when the object has no name field).
     const positionByFieldUniversalIdentifier =
       computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
         applicationUniversalIdentifier,

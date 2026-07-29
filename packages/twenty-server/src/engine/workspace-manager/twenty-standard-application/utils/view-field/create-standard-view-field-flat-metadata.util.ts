@@ -80,9 +80,6 @@ export const createStandardViewFieldFlatMetadata = <
     );
   }
 
-  // A view field's lifecycle is owned by whoever owns its view: engine-owned
-  // views (INDEX, FIELDS_WIDGET) carry engine-owned view fields. Views are built
-  // before their view fields, so a missing parent is a config error.
   const parentView =
     dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
       viewDefinition.universalIdentifier

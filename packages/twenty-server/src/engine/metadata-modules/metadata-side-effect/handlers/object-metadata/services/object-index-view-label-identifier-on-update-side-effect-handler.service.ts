@@ -86,10 +86,6 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
       return { status: 'noop' };
     }
 
-    // Only synced view fields are considered: a view field being created in the
-    // same operation (relabeling onto a field created in the same sync) does not
-    // exist yet to be updated, so fieldIndexViewFieldOnCreate provisions it
-    // lowest and visible from the start instead.
     const indexFlatViewFields = indexFlatView.viewFieldUniversalIdentifiers
       .map(
         (viewFieldUniversalIdentifier) =>
@@ -109,8 +105,6 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
         newLabelIdentifierFieldMetadataUniversalIdentifier,
     );
 
-    // The INDEX view is engine-owned, so every view field on it is a system
-    // side effect; there is nothing caller-owned to preserve.
     if (!isDefined(labelIdentifierFlatViewField)) {
       return { status: 'noop' };
     }

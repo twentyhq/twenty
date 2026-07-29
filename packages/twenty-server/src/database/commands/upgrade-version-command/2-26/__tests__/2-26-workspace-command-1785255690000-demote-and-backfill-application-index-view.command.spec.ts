@@ -225,8 +225,6 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
     await runOnWorkspace();
 
     expect(viewUpdateMock).not.toHaveBeenCalled();
-    // No demotion happened, so no raw-update cache invalidation either; the
-    // pipeline handles its own.
     expect(invalidateCacheMock).not.toHaveBeenCalled();
     expect(validateBuildAndRunWorkspaceMigrationMock).toHaveBeenCalledTimes(2);
   });
@@ -261,8 +259,6 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
   });
 
   it('backfills the missing view fields of an already-committed engine INDEX view', async () => {
-    // Retry after a partial failure: the view migration committed, the view
-    // field one did not.
     mockWorkspaceCache({
       views: [
         buildFlatView({

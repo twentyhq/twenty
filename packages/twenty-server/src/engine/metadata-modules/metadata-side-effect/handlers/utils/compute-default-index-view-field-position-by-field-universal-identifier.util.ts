@@ -3,12 +3,6 @@ import { isFlatFieldMetadataDisplayableInDefaultView } from 'src/engine/metadata
 import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-modules/object-metadata/utils/order-flat-field-metadatas-for-system-index-view.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// The INDEX view field layout, shared by objectSystemFieldsAndIndexViewOnCreate
-// (system fields) and fieldIndexViewFieldOnCreate (caller fields) so both derive
-// the same positions. The label identifier view field must be at the strictly
-// lowest position whatever field backs it: a caller field (e.g. name) or a
-// reserved system field (e.g. id, when the object has no name field). Ordering
-// it first here keeps that invariant regardless of which handler emits it.
 export const computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier = ({
   applicationUniversalIdentifier,
   objectMetadataUniversalIdentifier,

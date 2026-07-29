@@ -1,3 +1,4 @@
+import { VIEW_FIELD_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -6,7 +7,6 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { VIEW_FIELD_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
@@ -19,8 +19,6 @@ const TEST_VIEW_FIELD_ID = uuidv4();
 
 const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.universalIdentifier;
-// The INDEX view fields are engine-owned, so an app contributes columns to the
-// record-page (FIELDS_WIDGET) view, which the engine does not auto-populate.
 const PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.views.personRecordPageFields.universalIdentifier;
 const PERSON_RECORD_PAGE_GENERAL_GROUP_UNIVERSAL_IDENTIFIER =

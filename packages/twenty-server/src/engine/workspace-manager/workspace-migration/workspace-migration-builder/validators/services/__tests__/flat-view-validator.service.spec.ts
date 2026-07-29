@@ -169,9 +169,6 @@ describe('FlatViewValidatorService INDEX key reservation', () => {
   });
 
   describe('update', () => {
-    // The key is not a comparable nor editable property, so promote/demote
-    // attempts cannot reach the update validator; unrelated updates on an
-    // INDEX view stay allowed.
     it('accepts an update on an INDEX view', () => {
       const result = service.validateFlatViewUpdate(
         buildUpdateArgs({

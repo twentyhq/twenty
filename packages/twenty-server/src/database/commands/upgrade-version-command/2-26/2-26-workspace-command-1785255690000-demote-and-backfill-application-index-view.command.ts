@@ -23,8 +23,8 @@ import { orderFlatFieldMetadatasForSystemIndexView } from 'src/engine/metadata-m
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 type BackfillOperationsByApplication = Map<
@@ -83,8 +83,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     ]);
 
     const viewIdsToDemote: string[] = [];
-    // Objects already holding an engine-owned INDEX view (a previous run of
-    // this command); demoting or re-backfilling them would not be idempotent.
+
     const objectUniversalIdentifiersWithEngineIndexView = new Set<string>();
 
     for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
@@ -157,8 +156,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
         { key: null },
       );
 
-      // The backfill pipeline validates against fresh flat maps: the singleton
-      // INDEX validator must see the demotions.
       await invalidateIndexViewReconcileCache({
         workspaceId,
         workspaceMigrationRunnerService: this.workspaceMigrationRunnerService,
@@ -175,12 +172,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     );
   }
 
-  // Engine INDEX views for every application object that has none, with the
-  // full default layout, mirroring what objectSystemFieldsAndIndexViewOnCreate
-  // emits at object creation. View creation and view-field creation are gated
-  // independently: views and view fields commit in separate migration passes,
-  // so a retry after a partial failure must still backfill the missing view
-  // fields of an already-committed view.
   private computeBackfillOperationsByApplication({
     flatViewFieldMaps,
     flatObjectMetadataMaps,
@@ -282,16 +273,11 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
 
       orderedDisplayableFlatFieldMetadatas.forEach(
         (flatFieldMetadata, position) => {
-          // The view field belongs to the application of the DISPLAYED FIELD,
-          // matching fieldIndexViewFieldOnCreate: it can differ from the
-          // object's application (fields can be created on another
-          // application object).
           const fieldApplicationUniversalIdentifier =
             flatFieldMetadata.applicationUniversalIdentifier;
 
           const viewFieldUniversalIdentifier = getViewFieldUniversalIdentifier({
-            applicationUniversalIdentifier:
-              fieldApplicationUniversalIdentifier,
+            applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
             viewUniversalIdentifier: indexViewUniversalIdentifier,
             fieldMetadataUniversalIdentifier:
               flatFieldMetadata.universalIdentifier,
@@ -335,12 +321,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
     return backfillOperationsByApplication;
   }
 
-  // The pipeline is application-scoped, so the backfill runs one migration per
-  // application and per metadata name, views first across every application:
-  // a view field only depends on its parent view (and pre-existing fields), so
-  // once all views are committed the view-field migrations are order-free —
-  // including cross-application view fields (e.g. a workspace-custom field on
-  // an app object).
   private async runBackfillMigrations({
     workspaceId,
     backfillOperationsByApplication,
@@ -407,10 +387,6 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
       }
     >;
   }): Promise<void> {
-    // Legacy path: the matrix is applied literally, without the metadata
-    // side-effect engine. A backfill command replays a state the engine
-    // convention already defines; expanding side effects here would couple its
-    // output to whatever handlers are registered at upgrade time.
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {

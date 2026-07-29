@@ -5,9 +5,6 @@ const RESERVED_VIEW_UNIVERSAL_IDENTIFIER =
   'a1a2a3a4-a5a6-4000-8000-000000000001';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 
-// A handler that, when an object is created, emits a system-side-effect view on
-// a fixed (reserved) universal identifier, standing in for the real INDEX view
-// provisioning.
 const systemViewEmittingHandler = {
   operation: 'create',
   metadataName: 'objectMetadata',

@@ -1,6 +1,5 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
-// A view is identified by its name within its object.
 export const getViewUniversalIdentifier = ({
   applicationUniversalIdentifier,
   objectUniversalIdentifier,

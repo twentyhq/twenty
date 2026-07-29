@@ -133,9 +133,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         displayableOnly: true,
       });
 
-    // Shared with objectSystemFieldsAndIndexViewOnCreate: keeps the label
-    // identifier view field strictly lowest, even when a caller field (this
-    // handler) coexists with a label identifier backed by a system field.
     const positionByFieldUniversalIdentifier =
       computeDefaultIndexViewFieldPositionByFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -154,8 +151,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     const [flatViewFieldToCreate] = computeFlatViewFieldsToCreate({
       objectFlatFieldMetadatas: [sourceFlatFieldMetadata],
       viewUniversalIdentifier: indexViewUniversalIdentifier,
-      // The view field belongs to the created field's application, not to its
-      // object's one, exactly like the existing-object branch below.
       applicationUniversalIdentifier:
         sourceFlatFieldMetadata.applicationUniversalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier,
@@ -165,8 +160,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     return flatViewFieldToCreate;
   }
 
-  // Historical createOneField behavior: every created field gets a hidden view
-  // field appended to the object INDEX view.
   private buildViewFieldForExistingObject({
     sourceFlatFieldMetadata,
     parentFlatObjectMetadata,
@@ -212,11 +205,6 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         )
         .map((existingFlatViewField) => existingFlatViewField.position);
 
-    // Relabeling onto a field created in the same sync: the field is both new
-    // and the object label identifier, so its view field must be visible and
-    // strictly lowest (below every existing one). The update-path counterpart
-    // objectIndexViewLabelIdentifierOnUpdate cannot reposition it because it does
-    // not exist yet, so it is provisioned correctly here.
     const isLabelIdentifierField =
       sourceFlatFieldMetadata.universalIdentifier ===
       parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier;

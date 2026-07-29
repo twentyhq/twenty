@@ -146,8 +146,6 @@ describe('View side effect on object creation', () => {
       throw new Error('expected the INDEX view to survive the rename');
     }
 
-    // Same primary key: the engine did not recreate or duplicate the view, and
-    // the derived (name-free) identifier survives the object rename.
     expect(indexViewAfterRename.id).toBe(indexViewBeforeRename.id);
 
     const {

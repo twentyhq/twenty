@@ -20,9 +20,6 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Fixed so the portable viewFieldUniversalIdentifiers aggregator carried by the
-// field-delete migration action (derived from app + object + field) stays
-// deterministic across runs.
 const TEST_APP_ID = '0c17e907-f32a-4526-98e4-9addd4302b1a';
 const TEST_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();

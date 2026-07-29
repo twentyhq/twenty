@@ -89,9 +89,6 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     };
   }
 
-  // Reserved system fields and default relation fields. The reverse side of a
-  // relation belongs to the object it targets, so it is reached through the
-  // forward field pairing rather than by scanning the workspace fields.
   private computeFieldMetadataToDelete({
     flatObjectMetadata,
     relatedFlatEntityMaps,
@@ -143,8 +140,6 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     return fieldMetadataToDelete;
   }
 
-  // System indexes of the object, plus the join-column indexes backing a
-  // deleted field, which belong to the object that field belongs to.
   private computeIndexToDelete({
     flatObjectMetadata,
     relatedFlatEntityMaps,
@@ -244,7 +239,6 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     return searchFieldMetadataToDelete;
   }
 
-  // Engine-owned views of the object, the INDEX table view today.
   private computeViewToDelete({
     flatObjectMetadata,
     relatedFlatEntityMaps,
@@ -270,8 +264,6 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     return viewToDelete;
   }
 
-  // View fields of the deleted views, plus those displaying a deleted field on
-  // a view we keep, which happens for the reverse relation fields.
   private computeViewFieldToDelete({
     relatedFlatEntityMaps,
     flatViewsToDelete,

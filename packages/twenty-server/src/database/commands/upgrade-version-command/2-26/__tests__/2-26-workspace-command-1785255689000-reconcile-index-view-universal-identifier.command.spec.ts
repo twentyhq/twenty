@@ -233,8 +233,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         isSystemSideEffect: true,
       },
     );
-    // Parents aggregate the re-owned identifiers and children resolve them as
-    // universal foreign keys, so invalidation must cover the whole closure.
     expect(invalidateCacheMock).toHaveBeenCalledTimes(1);
     expect(invalidateCacheMock.mock.calls[0][0].allFlatEntityMapsKeys).toEqual(
       expect.arrayContaining([
@@ -316,8 +314,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
 
     await runOnWorkspace();
 
-    // Both views derive the same identifier: re-owning the soft-deleted one
-    // too would violate the (workspaceId, universalIdentifier) unique index.
     expect(viewUpdateMock).toHaveBeenCalledTimes(1);
     expect(viewUpdateMock).toHaveBeenCalledWith(
       { id: 'active-view-id', workspaceId: WORKSPACE_ID },
@@ -329,9 +325,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   });
 
   it('re-owns only the active row of a soft-deleted + re-created view field pair', async () => {
-    // The (fieldMetadataId, viewId) unique index is partial on deletedAt, so a
-    // removed then re-added column leaves two rows deriving the same
-    // universal identifier.
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -418,9 +411,6 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   });
 
   it('derives a view field from the displayed field application, not the row attribution', async () => {
-    // Showing a hidden standard column mints a workspace-custom view field
-    // displaying a standard field: the derivation must be keyed on the
-    // standard application, like every engine emission.
     mockWorkspaceCache({
       views: [
         buildFlatView({
