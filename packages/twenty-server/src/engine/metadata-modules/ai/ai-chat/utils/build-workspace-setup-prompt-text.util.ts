@@ -50,6 +50,8 @@ Fields you create are not shown in the objects' views by default. Once the data 
 
 When creating objects and fields, their names must be in English (camelCase field names, singular English object names), while every user-facing label (object labelSingular and labelPlural, field labels, select option labels) must be in the user's language.
 
+Give every object and field you create a meaningful icon. Twenty uses Tabler icons, so set icon to a Tabler icon name in PascalCase prefixed with Icon, such as IconBuildingSkyscraper, IconCalendarEvent or IconCurrencyEuro, and set targetFieldIcon the same way on the inverse side of each relation. Only Tabler icons exist, so pick the closest real one rather than inventing a name.
+
 End this reply with the ask_questions call asking whether to build the proposed data model.
 
 The user locale is ${userLanguageName}, please continue the discussion in that language.`;
