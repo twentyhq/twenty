@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { sanitizeRouteTriggerPath } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/sanitize-route-trigger-path.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -271,7 +272,7 @@ export class RouteTriggerService {
       this.findLogicFunctionWithPathParamsOrFail({
         httpMethod,
         logicFunctionsWithHttpRouteTrigger,
-        requestPath: request.path.replace(/^\/s\//, '/'),
+        requestPath: sanitizeRouteTriggerPath(request.path),
       });
 
     this.assertLegacyRouteIsServableOrThrow({
