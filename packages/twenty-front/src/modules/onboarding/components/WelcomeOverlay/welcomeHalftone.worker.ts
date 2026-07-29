@@ -8,7 +8,6 @@ type InitMessage = {
   height: number;
   devicePixelRatio: number;
   color: string;
-  highlightColor: string;
   reducedMotion: boolean;
 };
 
@@ -63,7 +62,6 @@ addEventListener(
         height: message.height,
         devicePixelRatio: message.devicePixelRatio,
         color: message.color,
-        highlightColor: message.highlightColor,
         reducedMotion: message.reducedMotion,
       });
       workerSelf.postMessage({ type: 'ready' });

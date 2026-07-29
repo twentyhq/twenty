@@ -7,7 +7,6 @@ export type WelcomeHalftoneParticle = {
   strokeWidth: number;
   burstDirectionX: number;
   burstDirectionY: number;
-  burstAngleFromHorizontal: number;
   distanceToCenter: number;
   assembleDelaySeconds: number;
   driftPhase: number;

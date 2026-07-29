@@ -59,7 +59,7 @@ describe('buildWelcomeHalftoneParticles', () => {
     );
   });
 
-  it('should rotate a leftward burst on the short arc so the capsule never collapses', () => {
+  it('should point the burst direction outward from the canvas center', () => {
     const { particles } = buildWelcomeHalftoneParticles(
       [
         [0, 0, 119.5, 2],
@@ -70,11 +70,6 @@ describe('buildWelcomeHalftoneParticles', () => {
     );
 
     expect(particles[0].burstDirectionX).toBeLessThan(0);
-    expect(Math.abs(particles[0].burstAngleFromHorizontal)).toBeLessThanOrEqual(
-      Math.PI / 2,
-    );
-    expect(Math.abs(particles[1].burstAngleFromHorizontal)).toBeLessThanOrEqual(
-      Math.PI / 2,
-    );
+    expect(particles[1].burstDirectionX).toBeGreaterThan(0);
   });
 });

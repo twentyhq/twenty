@@ -4,23 +4,16 @@ import { buildWelcomeHalftoneParticles } from '@/onboarding/components/WelcomeOv
 import { createWelcomeHalftoneAnimationFrameLoop } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneAnimationFrameLoop';
 import { type WelcomeHalftoneParticle } from '@/onboarding/components/WelcomeOverlay/welcomeHalftoneParticle.type';
 
-const DASH_ASSEMBLE_DURATION_SECONDS = 0.62;
-const DASH_STRETCH_DURATION_SECONDS = 0.5;
+const DASH_ASSEMBLE_DURATION_SECONDS = 0.9;
+const DASH_STRETCH_START_ASSEMBLE_PROGRESS = 0.35;
 const BURST_DURATION_SECONDS = 0.75;
 const SETTLE_DRIFT_DURATION_SECONDS = 0.6;
-// A full sweep has to finish inside WELCOME_HOLD_MIN_DURATION_MS or the last
-// particles it reaches never get lit before the burst starts
-const SHIMMER_SWEEP_DURATION_SECONDS = 2.6;
-const SHIMMER_BAND_HALF_WIDTH = 0.06;
-const SHIMMER_PEAK_OPACITY = 0.28;
 const MINIMUM_VISIBLE_OPACITY = 0.01;
 
 const clampToUnitRange = (value: number) => Math.max(0, Math.min(1, value));
 const interpolate = (from: number, to: number, ratio: number) =>
   from + (to - from) * ratio;
 const easeOutCubic = (ratio: number) => 1 - Math.pow(1 - ratio, 3);
-const easeOutExpo = (ratio: number) =>
-  ratio >= 1 ? 1 : 1 - Math.pow(2, -10 * ratio);
 const smootherStep = (ratio: number) => ratio * ratio * (3 - 2 * ratio);
 
 type WelcomeHalftoneRendererOptions = {
@@ -30,7 +23,6 @@ type WelcomeHalftoneRendererOptions = {
   height: number;
   devicePixelRatio: number;
   color: string;
-  highlightColor: string;
   reducedMotion: boolean;
 };
 
@@ -39,7 +31,6 @@ export const createWelcomeHalftoneRenderer = (
 ) => {
   const { context, dashes, reducedMotion } = options;
   const baseColor = options.color;
-  const highlightColor = options.highlightColor;
 
   let canvasWidth = options.width;
   let canvasHeight = options.height;
@@ -72,7 +63,7 @@ export const createWelcomeHalftoneRenderer = (
     particle: WelcomeHalftoneParticle,
     elapsedSeconds: number,
   ) => {
-    const assembleProgress = easeOutExpo(
+    const assembleProgress = easeOutCubic(
       clampToUnitRange(
         (elapsedSeconds - particle.assembleDelaySeconds) /
           DASH_ASSEMBLE_DURATION_SECONDS,
@@ -95,21 +86,22 @@ export const createWelcomeHalftoneRenderer = (
       secondsSinceLanding / SETTLE_DRIFT_DURATION_SECONDS,
     );
     particleX +=
-      Math.sin(elapsedSeconds * 1.6 + particle.driftPhase) *
+      Math.sin(elapsedSeconds * 1.1 + particle.driftPhase) *
       settleDriftProgress *
-      1.2;
+      0.5;
     particleY +=
-      Math.cos(elapsedSeconds * 1.4 + particle.driftPhase) *
+      Math.cos(elapsedSeconds * 0.95 + particle.driftPhase) *
       settleDriftProgress *
-      0.8;
+      0.35;
     const stretchProgress = clampToUnitRange(
-      secondsSinceLanding / DASH_STRETCH_DURATION_SECONDS,
+      (assembleProgress - DASH_STRETCH_START_ASSEMBLE_PROGRESS) /
+        (1 - DASH_STRETCH_START_ASSEMBLE_PROGRESS),
     );
     return {
       particleX,
       particleY,
       opacity: assembleProgress,
-      capsuleLength: particle.dashLength * easeOutCubic(stretchProgress),
+      capsuleLength: particle.dashLength * stretchProgress,
     };
   };
 
@@ -146,11 +138,6 @@ export const createWelcomeHalftoneRenderer = (
 
     context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const shimmerSweepPosition =
-      (elapsedSeconds % SHIMMER_SWEEP_DURATION_SECONDS) /
-      SHIMMER_SWEEP_DURATION_SECONDS;
-    const isShimmerActive = !reducedMotion && !isLeaving;
-    const inverseViewportSpan = 1 / (canvasWidth + canvasHeight);
     context.strokeStyle = baseColor;
 
     for (const particle of particles) {
@@ -158,8 +145,6 @@ export const createWelcomeHalftoneRenderer = (
       let particleY: number;
       let particleOpacity: number;
       let capsuleLength = particle.dashLength;
-      let capsuleDirectionX = 1;
-      let capsuleDirectionY = 0;
 
       if (reducedMotion) {
         particleX = particle.targetX;
@@ -172,11 +157,10 @@ export const createWelcomeHalftoneRenderer = (
         particleOpacity = assembleState.opacity;
         capsuleLength = assembleState.capsuleLength;
       } else {
-        const easedBurstProgress = smootherStep(burstProgress);
         const outwardPushDistance =
-          easedBurstProgress *
+          smootherStep(burstProgress) *
           halftoneSize *
-          1.1 *
+          0.25 *
           (0.6 + 0.8 * (particle.distanceToCenter / maxDistanceToCenter));
         particleX =
           particle.positionAtLeaveStartX +
@@ -187,43 +171,20 @@ export const createWelcomeHalftoneRenderer = (
         particleOpacity =
           particle.opacityAtLeaveStart *
           (1 - easeOutCubic(clampToUnitRange(burstProgress / 0.85)));
-        capsuleLength =
-          particle.capsuleLengthAtLeaveStart +
-          outwardPushDistance * 0.12 * burstProgress;
-        const capsuleAngle =
-          particle.burstAngleFromHorizontal * easedBurstProgress;
-        capsuleDirectionX = Math.cos(capsuleAngle);
-        capsuleDirectionY = Math.sin(capsuleAngle);
+        capsuleLength = particle.capsuleLengthAtLeaveStart;
       }
 
       if (particleOpacity <= MINIMUM_VISIBLE_OPACITY) {
         continue;
       }
 
-      const distanceToShimmerBand = Math.abs(
-        (particleX + particleY) * inverseViewportSpan - shimmerSweepPosition,
-      );
-      const shimmerIntensity =
-        isShimmerActive && distanceToShimmerBand < SHIMMER_BAND_HALF_WIDTH
-          ? smootherStep(1 - distanceToShimmerBand / SHIMMER_BAND_HALF_WIDTH) *
-            SHIMMER_PEAK_OPACITY
-          : 0;
-
       context.globalAlpha = particleOpacity;
       context.lineWidth = particle.strokeWidth;
       context.beginPath();
-      const halfCapsuleX = (capsuleDirectionX * capsuleLength) / 2;
-      const halfCapsuleY = (capsuleDirectionY * capsuleLength) / 2;
-      context.moveTo(particleX - halfCapsuleX, particleY - halfCapsuleY);
-      context.lineTo(particleX + halfCapsuleX, particleY + halfCapsuleY);
+      const halfCapsuleLength = capsuleLength / 2;
+      context.moveTo(particleX - halfCapsuleLength, particleY);
+      context.lineTo(particleX + halfCapsuleLength, particleY);
       context.stroke();
-
-      if (shimmerIntensity > 0) {
-        context.globalAlpha = particleOpacity * shimmerIntensity;
-        context.strokeStyle = highlightColor;
-        context.stroke();
-        context.strokeStyle = baseColor;
-      }
     }
 
     context.globalAlpha = 1;
