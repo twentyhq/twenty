@@ -1,16 +1,22 @@
 ---
-title: 定位系统字段
-description: 在视图和其他实体中，使用 getFieldUniversalIdentifier 引用自动创建的系统字段，例如 createdAt 或 updatedAt。
+title: 定位系统元数据
+description: 解析 Twenty 在每个对象上自动预配置的元数据的确定性通用标识符，这样你的应用无需硬编码就能引用它。
 icon: gears
 ---
 
-Twenty 中的每个对象都带有一组你无需自行声明的**系统字段**。 这些字段在对象初始化时由服务器自动创建：
+Twenty 中的每个对象都带有你无需自行声明的**系统元数据**，例如一组字段以及带有列的主列表视图。 当对象被预配置时，服务器会创建所有这些内容，并且随着 Twenty 的发展，这个集合也会随之增长。
+
+由于你不会声明它，因此也就没有可供你导入的 `universalIdentifier` 常量。 相反，服务器会以确定性方式**派生**每个标识符，而 `twenty-sdk` 暴露了相同的派生逻辑，这样你的 manifest 就能解析出服务器实际使用的精确值。
+
+## 系统字段
+
+存在于每个对象上的标量字段，你不会使用 [`defineField()`](/l/zh/developers/extend/apps/data/extending-objects) 来声明其中任何一个：
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-由于你不会使用 [`defineField()`](/l/zh/developers/extend/apps/data/extending-objects) 来声明这些字段，因此也没有可供你导入的 `universalIdentifier` 常量。 那么，如何在[视图](/l/zh/developers/extend/apps/layout/views)中将 `createdAt` 作为一列来引用呢？
+那么，如何在[视图](/l/zh/developers/extend/apps/layout/views)中将 `createdAt` 作为一列来引用呢？
 
-## 问题
+### 问题
 
 从 Twenty 2.19 起，系统字段的通用标识符由服务器根据三个输入**确定性派生**：应用通用标识符、对象通用标识符以及字段名称。 自行构造一个 id 并将其硬编码是行不通的：它在服务器上不会匹配任何内容，同步时会拒绝这个悬空引用：
 
@@ -18,7 +24,7 @@ Twenty 中的每个对象都带有一组你无需自行声明的**系统字段**
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## 解决方案
+### 解决方案
 
 <Note>
   `getFieldUniversalIdentifier` 从 `twenty-sdk` 2.21 版本开始可用。
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` 是该字段所属对象的标识符。
 * `name` 是系统字段名称，为上面列出的值之一。
 
-## 示例：视图中的 createdAt 列
+### 示例：视图中的 createdAt 列
 
 典型场景是：为你某个自定义对象的视图添加一列 `createdAt`。 解析字段 id，并像引用其他 `fieldMetadataUniversalIdentifier` 一样引用它：
 
@@ -84,7 +90,7 @@ export default defineView({
   `getFieldUniversalIdentifier` 能在这些输入发生变化时仍保持引用正确，并在派生逻辑演进时避免偏差。
 </Note>
 
-## 系统关系字段
+### 系统关系字段
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` 可在 `twenty-sdk`
@@ -130,18 +136,63 @@ const attachmentTargetRocketFieldId =
 
 与标量系统字段一样，解析得到的 id 可在任何需要 `fieldMetadataUniversalIdentifier` 的地方使用。
 
+## 系统视图
+
+<Note>
+  `getSystemViewUniversalIdentifier` 和 `getSystemViewFieldUniversalIdentifier` 可在 `twenty-sdk` 2.26 及更高版本中使用，并且需要 Twenty 服务器版本为 2.26 或更高。
+</Note>
+
+服务器还会在每个对象上预配置一个**系统视图**：主列表视图（`All {objectLabelPlural}`，以 `ViewKey.INDEX` 作为键），其中每个可显示字段对应一列。 与系统关联字段类似，它们的标识符是以**与名称无关**的方式派生的，因此重命名对象或字段都不会改变这些标识符。
+
+使用 `getSystemViewUniversalIdentifier` 来解析该视图：
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` 是拥有该**对象**的应用程序，也是视图命名空间所基于的应用。
+* `objectUniversalIdentifier` 是该视图所列出的对象。
+* `viewKey` 是系统视图键，目前为 `ViewKey.INDEX`。
+
+解析得到的 id 可用于任何需要 `viewUniversalIdentifier` 的地方，例如侧边栏中的 [`NavigationMenuItemType.VIEW`](/l/zh/developers/extend/apps/layout/navigation-menu-items) 条目。 如果只是要打开某个对象的主列表，优先使用带有 `targetObjectUniversalIdentifier` 的 `NavigationMenuItemType.OBJECT`：它不需要派生。
+
+`getSystemViewFieldUniversalIdentifier` 会从视图以及其显示的字段中解析系统视图上的单个**列**：
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+注意第一个参数：列是由**其显示的字段**所属的应用程序进行命名空间划分的，而不是由拥有该视图的应用程序进行划分。 你的应用向标准对象添加的字段，会在 Twenty 拥有的视图上，以你的应用为命名空间来派生其列。
+
+<Warning>
+  系统视图及其列是由**服务器所有**的：解析它们的标识符是为了引用它们，而不是为了声明它们。 [`defineView()`](/l/zh/developers/extend/apps/layout/views) 上的 `key` 已被弃用且会被忽略，因此 manifest 视图永远无法占用 `INDEX` 键，并且服务器已经为你添加的每个字段预配置了一列，所以在系统视图上为同一个字段声明你自己的 `defineViewField()` 会与其发生冲突。
+</Warning>
+
 ## 标准 Twenty 对象
 
-对于**标准** Twenty 对象（Person、Company、Opportunity 等），你不需要进行任何派生：系统字段标识符是预先计算好的常量，你可以直接导入。
+对于**标准** Twenty 对象（Person、Company、Opportunity 等），你不需要进行任何派生：字段和视图的标识符都是预先计算好的常量，你可以直接导入。
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-当对象是由**你的应用**使用 [`defineObject()`](/l/zh/developers/extend/apps/data/objects) 定义、且不存在此类常量时，再使用 `getFieldUniversalIdentifier`。
+当对象是由**你的应用**使用 [`defineObject()`](/l/zh/developers/extend/apps/data/objects) 定义、且不存在此类常量时，再使用上面的辅助方法。
 
 <Note>
   `name` 是一个**默认**字段，而不是系统字段。 它保留自己的硬编码

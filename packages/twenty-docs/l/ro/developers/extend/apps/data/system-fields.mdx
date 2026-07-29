@@ -1,16 +1,22 @@
 ---
-title: Țintirea câmpurilor de sistem
-description: Folosind `getFieldUniversalIdentifier`, poți face referire la câmpuri de sistem create automat, precum `createdAt` sau `updatedAt`, din vizualizări și alte entități.
+title: Metadate de sistem pentru țintire
+description: Rezolvă identificatorii universali determinați ai metadatelor Twenty pentru provizionări în mod automat pe fiecare obiect, astfel încât aplicația ta să le poată referenția fără hardcodare.
 icon: gears
 ---
 
-Fiecare obiect din Twenty este livrat cu un set de **câmpuri de sistem** pe care nu le declari tu însuți. Acestea sunt create automat de server atunci când obiectul este provizionat:
+Fiecare obiect din Twenty vine cu **metadate de sistem** pe care nu le declari niciodată tu însuți, cum ar fi un set de câmpuri și o vizualizare principală de listă cu coloanele sale. Serverul le creează pe toate atunci când obiectul este provizionat, iar setul crește pe măsură ce Twenty evoluează.
+
+Deoarece nu îl declari, nu există nicio constantă `universalIdentifier` pe care să o imporți. În schimb, serverul **derivează** fiecare identificator într-un mod determinist, iar `twenty-sdk` expune aceeași derivare astfel încât manifestul tău să poată rezolva exact valoarea pe care o folosește serverul.
+
+## Câmpuri de sistem
+
+Câmpurile scalare prezente pe fiecare obiect, niciunul dintre ele declarat de tine cu [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects):
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-Deoarece nu declari aceste câmpuri cu [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects), nu există niciun `universalIdentifier` constant pe care să-l imporți. Deci cum faci referire la `createdAt` ca o coloană într-o [vizualizare](/l/ro/developers/extend/apps/layout/views)?
+Deci cum faci referire la `createdAt` ca o coloană într-o [vizualizare](/l/ro/developers/extend/apps/layout/views)?
 
-## Problema
+### Problema
 
 Începând cu Twenty 2.19, identificatorul universal al unui câmp de sistem este **derivat deterministic** de server din trei intrări: identificatorul universal al aplicației, identificatorul universal al obiectului și numele câmpului. Inventarea unui id și hardcodarea lui nu va funcționa: acesta nu se potrivește cu nimic de pe server, iar sincronizarea respinge referința rămasă în aer:
 
@@ -18,7 +24,7 @@ Deoarece nu declari aceste câmpuri cu [`defineField()`](/l/ro/developers/extend
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## Soluția
+### Soluția
 
 <Note>
   `getFieldUniversalIdentifier` este disponibil începând cu `twenty-sdk` 2.21.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` este identificatorul obiectului căruia îi aparține câmpul.
 * `name` este numele câmpului de sistem, una dintre valorile listate mai sus.
 
-## Exemplu: o coloană createdAt într-o vizualizare
+### Exemplu: o coloană createdAt într-o vizualizare
 
 Cazul tipic este adăugarea unei coloane `createdAt` la o vizualizare a unuia dintre obiectele tale personalizate. Calculează id-ul câmpului și fă referire la el ca la orice alt `fieldMetadataUniversalIdentifier`:
 
@@ -86,7 +92,7 @@ Același id calculat funcționează oriunde este așteptat un `fieldMetadataUniv
   intrări se schimbă și evită divergența dacă metoda de derivare evoluează vreodată.
 </Note>
 
-## Câmpuri de relație de sistem
+### Câmpuri de relație de sistem
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` este disponibil începând cu versiunea 2.23 a `twenty-sdk` și necesită un server Twenty pe versiunea 2.23 sau o versiune ulterioară.
@@ -131,18 +137,70 @@ const attachmentTargetRocketFieldId =
 
 Ca și în cazul câmpurilor de sistem scalare, id-ul rezolvat funcționează oriunde este așteptat un `fieldMetadataUniversalIdentifier`.
 
+## Vizualizări de sistem
+
+<Note>
+  `getSystemViewUniversalIdentifier` și `getSystemViewFieldUniversalIdentifier`
+  sunt disponibile începând cu versiunea 2.26 a `twenty-sdk` și necesită un server Twenty pe
+  versiunea 2.26 sau o versiune ulterioară.
+</Note>
+
+Serverul provizionează, de asemenea, o **vizualizare de sistem** pe fiecare obiect: vizualizarea principală de listă (`All {objectLabelPlural}`, indexată prin `ViewKey.INDEX`), cu câte o coloană pentru fiecare câmp afișabil. La fel ca în cazul câmpurilor de relație de sistem, identificatorii lor sunt derivați **fără nume**, astfel încât redenumirea unui obiect sau a unui câmp nu îi schimbă niciodată.
+
+Folosește `getSystemViewUniversalIdentifier` pentru a rezolva vizualizarea:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` este aplicația care deține **obiectul**, ceea ce reprezintă spațiul de nume pentru vizualizare.
+* `objectUniversalIdentifier` este obiectul pe care îl listează vizualizarea.
+* `viewKey` este cheia vizualizării de sistem, astăzi `ViewKey.INDEX`.
+
+ID-ul rezolvat funcționează oriunde este așteptat un `viewUniversalIdentifier`, cum ar fi o intrare în bara laterală [`NavigationMenuItemType.VIEW`](/l/ro/developers/extend/apps/layout/navigation-menu-items). Pentru a deschide pur și simplu lista principală a unui obiect, preferă `NavigationMenuItemType.OBJECT` cu `targetObjectUniversalIdentifier`: nu are nevoie de derivare.
+
+`getSystemViewFieldUniversalIdentifier` rezolvă o singură **coloană** dintr-o vizualizare de sistem, pornind de la vizualizare și câmpul pe care îl afișează:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Observă primul argument: o coloană este plasată în spațiul de nume al aplicației care deține **câmpul pe care îl afișează**, nu al celei care deține vizualizarea. Un câmp pe care aplicația ta îl adaugă la un obiect standard își obține coloana derivată sub aplicația ta, pe o vizualizare deținută de Twenty.
+
+<Warning>
+  Vizualizările de sistem și coloanele lor sunt **deținute de server**: rezolvă-le identificatorii
+  pentru a le referenția, niciodată pentru a le declara. `key` pe
+  [`defineView()`](/l/ro/developers/extend/apps/layout/views) este depreciat și
+  ignorat, astfel încât o vizualizare din manifest nu poate revendica niciodată cheia `INDEX`, iar serverul
+  provizionează deja o coloană pentru fiecare câmp pe care îl adaugi, deci declararea propriului tău
+  `defineViewField()` pentru același câmp într-o vizualizare de sistem intră în conflict cu aceasta.
+</Warning>
+
 ## Obiecte standard Twenty
 
-Pentru un obiect Twenty **standard** (Person, Company, Opportunity, …), nu trebuie să derivezi nimic: identificatorii câmpurilor de sistem sunt constante pre-calculate pe care le poți importa direct.
+Pentru un obiect Twenty **standard** (Person, Company, Opportunity, …), nu trebuie să derivezi nimic: identificatorii sunt constante pre-calculate pe care le poți importa direct, atât pentru câmpuri, cât și pentru vizualizări.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-Apelează la `getFieldUniversalIdentifier` atunci când obiectul este unul pe care **aplicația ta** îl definește cu [`defineObject()`](/l/ro/developers/extend/apps/data/objects), unde nu există o astfel de constantă.
+Apelează la helper-ele de mai sus atunci când obiectul este unul pe care **aplicația ta** îl definește cu [`defineObject()`](/l/ro/developers/extend/apps/data/objects), unde nu există o astfel de constantă.
 
 <Note>
   `name` este un câmp **implicit**, nu un câmp de sistem. Acesta își păstrează propriul identificator universal

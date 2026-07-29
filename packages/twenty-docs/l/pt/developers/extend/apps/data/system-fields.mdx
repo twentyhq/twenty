@@ -1,16 +1,22 @@
 ---
-title: Referenciando campos de sistema
-description: Referencie campos de sistema gerados automaticamente, como createdAt ou updatedAt, a partir de visualizações e de outras entidades com getFieldUniversalIdentifier.
+title: Metadados de sistema de direcionamento
+description: Resolva os identificadores universais determinísticos dos metadados que o Twenty provisiona automaticamente em cada objeto, para que seu app possa referenciá‑los sem hardcode.
 icon: gears
 ---
 
-Todo objeto no Twenty é fornecido com um conjunto de **campos de sistema** que você nunca declara manualmente. Eles são criados automaticamente pelo servidor quando o objeto é provisionado:
+Todo objeto no Twenty vem com **metadados de sistema** que você nunca declara explicitamente, como um conjunto de campos e uma visualização principal de lista com suas colunas. O servidor cria tudo isso quando o objeto é provisionado, e o conjunto cresce conforme o Twenty cresce.
+
+Como você não o declara, não existe nenhuma constante `universalIdentifier` para você importar. Em vez disso, o servidor **deriva** cada identificador de forma determinística, e o `twenty-sdk` expõe a mesma derivação para que seu manifesto possa resolver o valor exato que o servidor usa.
+
+## Campos do sistema
+
+Os campos escalares presentes em todo objeto, nenhum dos quais você declara com [`defineField()`](/l/pt/developers/extend/apps/data/extending-objects):
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-Como você não declara esses campos com [`defineField()`](/l/pt/developers/extend/apps/data/extending-objects), não existe nenhuma constante `universalIdentifier` para você importar. Então, como você referencia `createdAt` como uma coluna em uma [visualização](/l/pt/developers/extend/apps/layout/views)?
+Então, como você referencia `createdAt` como uma coluna em uma [visualização](/l/pt/developers/extend/apps/layout/views)?
 
-## O Problema
+### O Problema
 
 Desde o Twenty 2.19, o identificador universal de um campo de sistema é **derivado deterministicamente** pelo servidor a partir de três entradas: o identificador universal do aplicativo, o identificador universal do objeto e o nome do campo. Inventar um id e deixá-lo hardcoded não funciona: ele não corresponde a nada no servidor, e a sincronização rejeita a referência pendente:
 
@@ -18,7 +24,7 @@ Desde o Twenty 2.19, o identificador universal de um campo de sistema é **deriv
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## A Solução
+### A Solução
 
 <Note>
   `getFieldUniversalIdentifier` está disponível a partir do `twenty-sdk` 2.21.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` é o identificador do objeto ao qual o campo pertence.
 * `name` é o nome do campo de sistema, um dos valores listados acima.
 
-## Exemplo: uma coluna createdAt em uma visualização
+### Exemplo: uma coluna createdAt em uma visualização
 
 O caso típico é adicionar uma coluna `createdAt` a uma visualização de um dos seus objetos personalizados. Resolva o id do campo e referencie-o como qualquer outro `fieldMetadataUniversalIdentifier`:
 
@@ -86,7 +92,7 @@ O mesmo id resolvido funciona em qualquer lugar onde se espera um `fieldMetadata
   entradas mudem, e evita divergências se a derivação evoluir no futuro.
 </Note>
 
-## Campos de relação do sistema
+### Campos de relação do sistema
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` está disponível a partir da versão 2.23 do `twenty-sdk` e requer um servidor Twenty na versão 2.23 ou posterior.
@@ -131,18 +137,69 @@ const attachmentTargetRocketFieldId =
 
 Assim como acontece com campos de sistema escalares, o id resolvido funciona em qualquer lugar em que um `fieldMetadataUniversalIdentifier` é esperado.
 
+## Visualizações de sistema
+
+<Note>
+  `getSystemViewUniversalIdentifier` e `getSystemViewFieldUniversalIdentifier`
+  estão disponíveis a partir da versão 2.26 do `twenty-sdk` e requerem um servidor Twenty na versão 2.26 ou posterior.
+</Note>
+
+O servidor também provisiona uma **visualização de sistema** em cada objeto: a visualização principal de lista (`All {objectLabelPlural}`, com chave `ViewKey.INDEX`), com uma coluna por campo exibível. Assim como os campos de relação de sistema, seus identificadores são derivados **sem usar nomes**, então renomear um objeto ou um campo nunca os altera.
+
+Use `getSystemViewUniversalIdentifier` para resolvê‑la:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` é o aplicativo proprietário do **objeto**, pelo qual a visualização é colocada em namespace.
+* `objectUniversalIdentifier` é o objeto que a visualização lista.
+* `viewKey` é a chave da visualização de sistema, hoje `ViewKey.INDEX`.
+
+O id resolvido funciona em qualquer lugar em que um `viewUniversalIdentifier` seja esperado, como uma entrada de barra lateral [`NavigationMenuItemType.VIEW`](/l/pt/developers/extend/apps/layout/navigation-menu-items). Para simplesmente abrir a lista principal de um objeto, prefira `NavigationMenuItemType.OBJECT` com `targetObjectUniversalIdentifier`: isso não precisa de derivação.
+
+`getSystemViewFieldUniversalIdentifier` resolve uma única **coluna** em uma visualização de sistema, a partir da visualização e do campo que ela exibe:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Observe o primeiro argumento: uma coluna é colocada em namespace pelo aplicativo proprietário do **campo que ela exibe**, não pelo que é proprietário da visualização. Um campo que seu app adiciona a um objeto padrão tem sua coluna derivada sob o seu aplicativo, em uma visualização de propriedade do Twenty.
+
+<Warning>
+  As visualizações de sistema e suas colunas são **de propriedade do servidor**: resolva seus identificadores
+  para referenciá‑las, nunca para declará‑las. `key` em
+  [`defineView()`](/l/pt/developers/extend/apps/layout/views) está obsoleto e
+  é ignorado, portanto uma visualização de manifesto nunca pode reivindicar a chave `INDEX`, e o servidor
+  já provisiona uma coluna para cada campo que você adiciona, então declarar seu próprio
+  `defineViewField()` para esse mesmo campo em uma visualização de sistema entra em conflito com ela.
+</Warning>
+
 ## Objetos Padrão do Twenty
 
-Para um objeto **padrão** do Twenty (Person, Company, Opportunity, …), você não precisa derivar nada: os identificadores de campos de sistema são constantes pré-computadas que você pode importar diretamente.
+Para um objeto **padrão** do Twenty (Person, Company, Opportunity, …), você não precisa derivar nada: os identificadores são constantes pré‑computadas que você pode importar diretamente, tanto para campos quanto para visualizações.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-Use `getFieldUniversalIdentifier` quando o objeto é um que **seu app** define com [`defineObject()`](/l/pt/developers/extend/apps/data/objects), em que não existe tal constante.
+Use os helpers acima quando o objeto for um que **seu app** define com [`defineObject()`](/l/pt/developers/extend/apps/data/objects), em que não existe tal constante.
 
 <Note>
   `name` é um campo **padrão**, não um campo de sistema. Ele mantém seu próprio identificador universal

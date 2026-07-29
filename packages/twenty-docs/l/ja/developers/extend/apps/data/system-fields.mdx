@@ -1,16 +1,22 @@
 ---
-title: システムフィールドのターゲット指定
-description: ビューやその他のエンティティから `createdAt` や `updatedAt` のような自動作成されるシステムフィールドを、`getFieldUniversalIdentifier` を使って参照します。
+title: システムメタデータのターゲット指定
+description: メタデータ Twenty の決定論的なユニバーサル識別子を、あらゆるオブジェクトに対して自動的に解決し、アプリがハードコーディングせずに参照できるようにします。
 icon: gears
 ---
 
-Twenty のすべてのオブジェクトには、あなたが自分で宣言する必要のない **システムフィールド** のセットがあらかじめ用意されています。 これらは、オブジェクトがプロビジョニングされるときにサーバーによって自動的に作成されます。
+Twenty のすべてのオブジェクトには、フィールドのセットや、そのカラムを持つメインのリストビューなど、あなた自身が宣言する必要のない **システムメタデータ** が付属しています。 オブジェクトがプロビジョニングされるときに、そのすべてをサーバーが作成し、そのセットは Twenty の拡張に合わせて増えていきます。
+
+あなたがそれを宣言しないため、インポートできる `universalIdentifier` 定数は存在しません。 その代わりに、サーバーはそれぞれの識別子を決定論的に**導出**し、`twenty-sdk` が同じ導出処理を公開することで、マニフェストがサーバーで使用される正確な値を解決できるようにします。
+
+## システムフィールド
+
+すべてのオブジェクトに存在し、いずれも [`defineField()`](/l/ja/developers/extend/apps/data/extending-objects) で宣言しないスカラー フィールドは次のとおりです。
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-[`defineField()`](/l/ja/developers/extend/apps/data/extending-objects) でこれらのフィールドを宣言しないため、インポートできる `universalIdentifier` 定数は存在しません。 では、[view](/l/ja/developers/extend/apps/layout/views) で `createdAt` をカラムとしてどのように参照すればよいのでしょうか。
+では、[view](/l/ja/developers/extend/apps/layout/views) で `createdAt` をカラムとしてどのように参照すればよいのでしょうか。
 
-## 問題
+### 問題
 
 Twenty 2.19 以降、システムフィールドのユニバーサル識別子は、アプリケーションのユニバーサル識別子、オブジェクトのユニバーサル識別子、およびフィールド名という 3 つの入力からサーバーによって **決定的に導出** されます。 id を独自に作成してハードコードしても機能しません。サーバー上のどの値とも一致せず、同期時にそのぶら下がった参照は拒否されます。
 
@@ -18,7 +24,7 @@ Twenty 2.19 以降、システムフィールドのユニバーサル識別子�
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## 解決策
+### 解決策
 
 <Note>
   `getFieldUniversalIdentifier` は `twenty-sdk` 2.21 以降で利用可能です。
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` は、そのフィールドが属するオブジェクトの識別子です。
 * `name` はシステムフィールド名であり、上に挙げた値のいずれかです。
 
-## 例: ビュー内の createdAt カラム
+### 例: ビュー内の createdAt カラム
 
 典型的なケースは、カスタムオブジェクトの 1 つのビューに `createdAt` カラムを追加することです。 フィールド id を解決し、他の `fieldMetadataUniversalIdentifier` と同様にそれを参照します。
 
@@ -83,7 +89,7 @@ export default defineView({
   id は解決して、ハードコードしないでください。 サーバーはその値をアプリケーション id、オブジェクト id、フィールド名から導出するため、`getFieldUniversalIdentifier` を呼び出すことで、それらの入力が変更された場合でも参照を正しい状態に保ち、導出方法が将来変わった場合のずれも防ぐことができます。
 </Note>
 
-## システムリレーションフィールド
+### システムリレーションフィールド
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` は `twenty-sdk`
@@ -129,18 +135,63 @@ const attachmentTargetRocketFieldId =
 
 スカラーのシステムフィールドと同様に、解決された ID は `fieldMetadataUniversalIdentifier` が想定されるあらゆる場所で使用できます。
 
+## システムビュー
+
+<Note>
+  `getSystemViewUniversalIdentifier` と `getSystemViewFieldUniversalIdentifier` は `twenty-sdk` 2.26 以降で利用可能であり、バージョン 2.26 以降の Twenty サーバーが必要です。
+</Note>
+
+サーバーは、すべてのオブジェクトに対して **システムビュー** もプロビジョニングします。つまり、表示可能なフィールドごとに 1 つのカラムを持つメインのリストビュー（`ViewKey.INDEX` をキーとし、`All {objectLabelPlural}`）です。 システムリレーションフィールドと同様に、それらの識別子は **名前に依存しない** 形で導出されるため、オブジェクトやフィールドの名前を変更しても識別子は変わりません。
+
+ビューを解決するには、`getSystemViewUniversalIdentifier` を使用します。
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` は **オブジェクト** を所有しているアプリケーションであり、ビューが名前空間分割されている単位です。
+* `objectUniversalIdentifier` は、そのビューがリストするオブジェクトです。
+* `viewKey` はシステムビューのキーで、現時点では `ViewKey.INDEX` です。
+
+解決された ID は、[`NavigationMenuItemType.VIEW`](/l/ja/developers/extend/apps/layout/navigation-menu-items) のサイドバーエントリなど、`viewUniversalIdentifier` が必要とされるあらゆる場所で使用できます。 オブジェクトのメインリストを単に開くだけであれば、導出が不要な `NavigationMenuItemType.OBJECT` と `targetObjectUniversalIdentifier` を優先して使用してください。
+
+`getSystemViewFieldUniversalIdentifier` は、ビューとそのビューが表示するフィールドから、システムビュー上の 1 つの**カラム**を解決します。
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+最初の引数に注目してください。カラムは、そのビューではなく、**表示しているフィールド** を所有するアプリケーションで名前空間分割されます。 あなたのアプリが標準オブジェクトに追加したフィールドは、Twenty が所有するビュー上で、そのアプリケーションの名前空間の下にカラムが導出されます。
+
+<Warning>
+  システムビューとそのカラムは **サーバー所有** です。これらの識別子は、宣言ではなく参照のためにのみ解決してください。 [`defineView()`](/l/ja/developers/extend/apps/layout/views) の `key` は非推奨で無視されます。そのため、マニフェストのビューが `INDEX` キーを主張することはできません。また、サーバーはあなたが追加するすべてのフィールドに対してすでにカラムをプロビジョニングしているため、同じフィールドについてシステムビュー上で独自の `defineViewField()` を宣言すると競合が発生します。
+</Warning>
+
 ## 標準の Twenty オブジェクト
 
-**標準** の Twenty オブジェクト（Person、Company、Opportunity など）の場合、何も導出する必要はありません。システムフィールドの識別子はあらかじめ計算された定数として用意されており、直接インポートできます。
+**標準** の Twenty オブジェクト（Person、Company、Opportunity など）の場合、何も導出する必要はありません。フィールドおよびビューの識別子は、あらかじめ計算された定数として用意されており、直接インポートできます。
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-[`defineObject()`](/l/ja/developers/extend/apps/data/objects) で **あなたのアプリ** が定義するオブジェクトのように、そのような定数が存在しない場合にこそ、`getFieldUniversalIdentifier` を使用してください。
+[`defineObject()`](/l/ja/developers/extend/apps/data/objects) で **あなたのアプリ** が定義するオブジェクトのように、そのような定数が存在しない場合には、ここまでで紹介したヘルパーを使用してください。
 
 <Note>
   `name` はシステムフィールドではなく、**デフォルト** フィールドです。 このフィールドは独自のハードコードされたユニバーサル識別子を持ち、`getFieldUniversalIdentifier` で解決されることはありません。 あなたが定義したオブジェクトでは、`name` フィールドは `defineObject()` で与えた識別子で参照してください。
