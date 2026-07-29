@@ -87,12 +87,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       )
     : undefined;
 
-  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarEndFieldMetadataId,
-      )
-    : undefined;
-
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
@@ -140,8 +134,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(currentView?.type === ViewType.CALENDAR
       ? [
           'CalendarView',
-          'CalendarDateField',
-          ...(isCalendarWeekViewEnabled ? ['CalendarEndDateField'] : []),
+          isCalendarWeekViewEnabled
+            ? 'CalendarDateFields'
+            : 'CalendarDateField',
         ]
       : []),
     ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
@@ -237,33 +232,32 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           <DropdownMenuItemsContainer scrollable={false}>
             {currentView?.type === ViewType.CALENDAR && (
               <>
-                <SelectableListItem
-                  itemId="CalendarDateField"
-                  onEnter={() => onContentChange('calendarFields')}
-                >
-                  <MenuItem
-                    focused={selectedItemId === 'CalendarDateField'}
-                    onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={calendarFieldMetadata?.label}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
-                </SelectableListItem>
-                {isCalendarWeekViewEnabled && (
+                {isCalendarWeekViewEnabled ? (
                   <SelectableListItem
-                    itemId="CalendarEndDateField"
-                    onEnter={() => onContentChange('calendarEndFields')}
+                    itemId="CalendarDateFields"
+                    onEnter={() => onContentChange('calendarDateFields')}
                   >
                     <MenuItem
-                      focused={selectedItemId === 'CalendarEndDateField'}
-                      onClick={() => onContentChange('calendarEndFields')}
+                      focused={selectedItemId === 'CalendarDateFields'}
+                      onClick={() => onContentChange('calendarDateFields')}
                       LeftIcon={IconCalendar}
-                      text={t`End date field`}
-                      contextualText={
-                        calendarEndFieldMetadata?.label ?? t`None`
-                      }
+                      text={t`Date fields`}
+                      contextualText={calendarFieldMetadata?.label}
+                      contextualTextPosition="right"
+                      hasSubMenu
+                    />
+                  </SelectableListItem>
+                ) : (
+                  <SelectableListItem
+                    itemId="CalendarDateField"
+                    onEnter={() => onContentChange('calendarFields')}
+                  >
+                    <MenuItem
+                      focused={selectedItemId === 'CalendarDateField'}
+                      onClick={() => onContentChange('calendarFields')}
+                      LeftIcon={IconCalendar}
+                      text={t`Date field`}
+                      contextualText={calendarFieldMetadata?.label}
                       contextualTextPosition="right"
                       hasSubMenu
                     />

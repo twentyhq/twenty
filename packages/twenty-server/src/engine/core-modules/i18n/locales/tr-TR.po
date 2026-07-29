@@ -1875,6 +1875,11 @@ msgstr ""
 msgid "Could not resolve the existing object \"{0}\" to rename its default relations"
 msgstr ""
 
+#. js-lingui-id: 5rS7nl
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5425,6 +5430,11 @@ msgstr "OAuth sağlayıcısı bulunamadı."
 msgid "Object already exists"
 msgstr "Nesne zaten mevcut"
 
+#. js-lingui-id: fjXGxN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Object already has an INDEX view"
+msgstr ""
+
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
@@ -7662,6 +7672,16 @@ msgstr "Dosya henüz yüklenmedi. Lütfen onaylamadan önce yükleyin."
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Dosya boş veya izin verilen maksimum boyutu aşıyor."
 
+#. js-lingui-id: oeePqy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the default view"
+msgstr ""
+
+#. js-lingui-id: jkNMHQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition"
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -7700,6 +7720,11 @@ msgstr "OAuth durum parametresi geçersiz veya süresi dolmuş."
 #. js-lingui-id: w/9iNJ
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
 msgid "The object to rename could not be found to update its default relations"
+msgstr ""
+
+#. js-lingui-id: s9DUGk
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "The object to update could not be found to reconcile its INDEX view"
 msgstr ""
 
 #. js-lingui-id: hx2IZ4
@@ -8106,6 +8131,11 @@ msgstr "Bu isim mevcut değil."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
+msgstr ""
+
+#. js-lingui-id: /mGcny
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "This object already has a default view"
 msgstr ""
 
 #. js-lingui-id: R8zIJd
