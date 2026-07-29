@@ -17,16 +17,19 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const OverrideWorkflowDraftConfirmationModal = () => {
+const OverrideWorkflowDraftConfirmationModalContent = ({
+  workflowId,
+  workflowVersionIdToCopy,
+}: {
+  workflowId: string;
+  workflowVersionIdToCopy: string;
+}) => {
   const { closeModal } = useModal();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
 
-  const overrideWorkflowDraftConfirmationModalConfig = useAtomStateValue(
-    overrideWorkflowDraftConfirmationModalConfigState,
-  );
   const setOverrideWorkflowDraftConfirmationModalConfig = useSetAtomState(
     overrideWorkflowDraftConfirmationModalConfigState,
   );
@@ -35,13 +38,6 @@ export const OverrideWorkflowDraftConfirmationModal = () => {
     useCreateDraftFromWorkflowVersion();
 
   const navigate = useNavigateApp();
-
-  if (!isDefined(overrideWorkflowDraftConfirmationModalConfig)) {
-    return null;
-  }
-
-  const { workflowId, workflowVersionIdToCopy } =
-    overrideWorkflowDraftConfirmationModalConfig;
 
   const handleOverrideDraft = async () => {
     setIsCreatingDraft(true);
@@ -90,6 +86,27 @@ export const OverrideWorkflowDraftConfirmationModal = () => {
           fullWidth
           justify="center"
         />
+      }
+    />
+  );
+};
+
+// Mounted app-wide, so the content is only rendered once a caller opens the
+// modal: its hooks read workflow metadata the current user may not have access to
+export const OverrideWorkflowDraftConfirmationModal = () => {
+  const overrideWorkflowDraftConfirmationModalConfig = useAtomStateValue(
+    overrideWorkflowDraftConfirmationModalConfigState,
+  );
+
+  if (!isDefined(overrideWorkflowDraftConfirmationModalConfig)) {
+    return null;
+  }
+
+  return (
+    <OverrideWorkflowDraftConfirmationModalContent
+      workflowId={overrideWorkflowDraftConfirmationModalConfig.workflowId}
+      workflowVersionIdToCopy={
+        overrideWorkflowDraftConfirmationModalConfig.workflowVersionIdToCopy
       }
     />
   );
