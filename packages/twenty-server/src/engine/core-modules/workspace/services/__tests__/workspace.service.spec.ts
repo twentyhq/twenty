@@ -37,6 +37,38 @@ import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/s
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util',
+  () => ({ prefillCompanies: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util',
+  () => ({ prefillPeople: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util',
+  () => ({ prefillWorkflows: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util',
+  () => ({ prefillOpportunities: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util',
+  () => ({ prefillDashboards: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util',
+  () => ({ prefillWorkflowCommandMenuItems: jest.fn() }),
+);
+jest.mock(
+  'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util',
+  () => ({
+    getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions:
+      jest.fn().mockReturnValue([]),
+  }),
+);
+
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
@@ -47,9 +79,10 @@ describe('WorkspaceService', () => {
   let dnsManagerService: DnsManagerService;
   let billingSubscriptionService: BillingSubscriptionService;
   let userWorkspaceService: UserWorkspaceService;
+  let module: TestingModule;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         WorkspaceService,
         {
@@ -164,6 +197,7 @@ describe('WorkspaceService', () => {
               release: jest.fn(),
               manager: {
                 delete: jest.fn().mockResolvedValue({ affected: 0 }),
+                update: jest.fn().mockResolvedValue({ affected: 1 }),
               },
             }),
             getRepository: jest.fn().mockReturnValue({
@@ -405,6 +439,128 @@ describe('WorkspaceService', () => {
       const hasBeenSuspended = await service.suspendWorkspace('workspace-id');
 
       expect(hasBeenSuspended).toBe(false);
+    });
+  });
+
+  describe('activateWorkspace', () => {
+    const setupActivationMocks = () => {
+      const callOrder: string[] = [];
+
+      jest
+        .spyOn(workspaceRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+      workspaceRepository.findOneBy = jest.fn().mockResolvedValue({
+        id: 'workspace-id',
+      });
+
+      const workspaceManagerService =
+        module.get<WorkspaceManagerService>(WorkspaceManagerService);
+
+      workspaceManagerService.init = jest.fn();
+
+      const featureFlagService =
+        module.get<FeatureFlagService>(FeatureFlagService);
+
+      featureFlagService.enableFeatureFlags = jest.fn();
+
+      userWorkspaceService.createWorkspaceMember = jest.fn();
+
+      const prefillLogicFunctionService = module.get<PrefillLogicFunctionService>(
+        PrefillLogicFunctionService,
+      );
+
+      prefillLogicFunctionService.ensureSeeded = jest.fn();
+
+      const twentyConfigService =
+        module.get<TwentyConfigService>(TwentyConfigService);
+
+      twentyConfigService.get = jest.fn().mockReturnValue('2.0.0');
+
+      const billingService = module.get<BillingService>(BillingService);
+
+      billingService.hasWorkspaceAnySubscription = jest
+        .fn()
+        .mockResolvedValue(false);
+
+      const upgradeMigrationService = module.get<UpgradeMigrationService>(
+        UpgradeMigrationService,
+      );
+
+      upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow = jest
+        .fn()
+        .mockResolvedValue({ name: 'command', status: 'completed' });
+      upgradeMigrationService.markAsWorkspaceInitial = jest
+        .fn()
+        .mockImplementation(async () => {
+          callOrder.push('markAsWorkspaceInitial');
+        });
+
+      const upgradeSequenceReaderService =
+        module.get<UpgradeSequenceReaderService>(UpgradeSequenceReaderService);
+
+      upgradeSequenceReaderService.getInitialCursorForNewWorkspace = jest
+        .fn()
+        .mockReturnValue({ name: 'command', status: 'completed' });
+
+      const preInstalledAppsService = module.get<PreInstalledAppsService>(
+        PreInstalledAppsService,
+      );
+
+      preInstalledAppsService.installOnWorkspace = jest
+        .fn()
+        .mockImplementation(async () => {
+          callOrder.push('installOnWorkspace');
+        });
+
+      const sdkClientGenerationService = module.get<SdkClientGenerationService>(
+        SdkClientGenerationService,
+      );
+
+      sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace =
+        jest.fn();
+
+      return { callOrder, preInstalledAppsService };
+    };
+
+    // The compatibility check of an app pinning `engines.twenty` resolves the
+    // workspace version from its upgrade cursor, so installing before the
+    // cursor exists rejects every pinned pre-installed app.
+    it('should install pre-installed apps after the upgrade cursor is written', async () => {
+      const { callOrder, preInstalledAppsService } = setupActivationMocks();
+
+      await service.activateWorkspace(
+        { id: 'user-id' } as never,
+        { id: 'workspace-id' } as WorkspaceEntity,
+      );
+
+      expect(preInstalledAppsService.installOnWorkspace).toHaveBeenCalledWith(
+        'workspace-id',
+      );
+      expect(callOrder).toEqual([
+        'markAsWorkspaceInitial',
+        'installOnWorkspace',
+      ]);
+    });
+
+    it('should not fail activation when installing pre-installed apps throws', async () => {
+      const { preInstalledAppsService } = setupActivationMocks();
+
+      preInstalledAppsService.installOnWorkspace = jest
+        .fn()
+        .mockRejectedValue(new Error('install failed'));
+
+      const exceptionHandlerService = module.get<ExceptionHandlerService>(
+        ExceptionHandlerService,
+      );
+
+      exceptionHandlerService.captureExceptions = jest.fn();
+
+      await expect(
+        service.activateWorkspace(
+          { id: 'user-id' } as never,
+          { id: 'workspace-id' } as WorkspaceEntity,
+        ),
+      ).resolves.toEqual({ id: 'workspace-id' });
     });
   });
 });

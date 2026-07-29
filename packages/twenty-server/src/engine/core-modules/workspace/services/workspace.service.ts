@@ -411,6 +411,11 @@ export class WorkspaceService {
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
       });
+
+      // Must run after the upgrade cursor is written: an app pinning
+      // `engines.twenty` is checked against the workspace completed version,
+      // which is undeterminable while the workspace has no upgrade migration row.
+      await this.installPreInstalledApps(workspace.id);
     } catch (error) {
       await this.workspaceRepository.update(workspace.id, {
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -952,7 +957,9 @@ export class WorkspaceService {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
 
+  private async installPreInstalledApps(workspaceId: string): Promise<void> {
     try {
       await this.preInstalledAppsService.installOnWorkspace(workspaceId);
     } catch (error) {
