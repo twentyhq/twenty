@@ -1,0 +1,71 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/constants/RelationFieldRefetchDebounceMs.ts
+  s_b3927bbca3beac::t_9e68e2f68d2733 1
+packages/twenty-front/src/modules/object-record/record-field/ui/hooks/useRefetchRelationFieldRecord.ts
+  s_b3927bbca3beac::t_ef8cba326e1a78 1-37
+packages/twenty-front/src/modules/object-record/record-field/ui/hooks/useSubscribeToRelationFieldRecordChanges.ts
+  s_b3927bbca3beac::t_ece5bc0c34f0e0 1-54
+packages/twenty-front/src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+  s_b3927bbca3beac::t_e5e55679af8244 8,73-78
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_b3927bbca3beac::t_906469266fed0f 11,20-25
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/log-driver-simulated-send-latency-ms.constant.ts
+  s_b3927bbca3beac::t_167fb2e3465ffb 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/unsubscribe-url-variable-name.constant.ts
+  s_b3927bbca3beac::t_9f352be9f68576 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/ses-bulk-email-max-destinations.constant.ts
+  s_b3927bbca3beac::t_dd5979bfdc9d1e 1-2
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service.ts
+  s_b3927bbca3beac::t_6f9cc80f2bc4d9 29-32,43,57,158-174
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-bulk-email.service.ts
+  s_b3927bbca3beac::t_3c43e0892619cc 1-135
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory.ts
+  s_b3927bbca3beac::t_649d0fe6fda3f5 10,29,86
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface.ts
+  s_b3927bbca3beac::t_434c1bbf59f4d1 1-4,34-36
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_b3927bbca3beac::t_3f074e7e5c78dc 9,15-19,24,127-130,157-205
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-bulk-email.type.ts
+  s_b3927bbca3beac::t_ccfc67695d2e4c 1-42
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_b3927bbca3beac::t_5f4df9ec503a4d 11,64
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-content.service.ts
+  s_b3927bbca3beac::t_0c44d09dbea953 5-7,55-109
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type.ts
+  s_b3927bbca3beac::t_3c5df633b68029 1,5-9,11
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/substitute-provider-template-variables.util.ts
+  s_b3927bbca3beac::t_033da131f67a5c 1-13
+packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts
+  s_b3927bbca3beac::t_ed8a935274c32d 26,106
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue-worker-config.constant.ts
+  s_b3927bbca3beac::t_af9ecfcb14b871 70-78
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts
+  s_b3927bbca3beac::t_46805dabd686c8 11
+packages/twenty-server/src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+  s_b3927bbca3beac::t_2a7bd0046d541a 238-242
+packages/twenty-server/src/modules/emailing/jobs/refresh-campaign-stats.job.ts
+  s_b3927bbca3beac::t_2dc39d4d40bd68 8
+packages/twenty-server/src/modules/emailing/jobs/send-campaign-email-batch.job.ts
+  s_b3927bbca3beac::t_15eccdf2845f01 1-2,6,9,14-16
+packages/twenty-server/src/modules/emailing/services/emailing-domain-sender.service.ts
+  s_b3927bbca3beac::t_792997b4c2c696 16-22,91-181,197
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_b3927bbca3beac::t_2037e3406cf49b 3-4,63-64,77-91
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_b3927bbca3beac::t_848152a6fa313f 17-19,30-33,40-43,138-139,411-423,428-436,441-444,448-451,459-460,463-479,496-498,500-508,510-511,513-516,518-524,526-527,531-539,543-556,558-565,567-569,571,573-579,581-600,602-605,607-635,637,639-669,874
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "e88f12f2cfc5273cb9c3acecc70507ae64bcee97",
+  "prompts": {},
+  "sessions": {
+    "s_b3927bbca3beac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0b7d88-454f-48ba-91c9-7603d0dae167",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
