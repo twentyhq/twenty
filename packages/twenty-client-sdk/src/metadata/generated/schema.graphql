@@ -2267,6 +2267,7 @@ type DomainValidRecords {
   domain: String!
   records: [DomainRecord!]!
   isCustomDomainEnabled: Boolean
+  isWorking: Boolean!
 }
 
 type UpsertRowLevelPermissionPredicatesResult {

@@ -1941,6 +1941,7 @@ export interface DomainValidRecords {
     domain: Scalars['String']
     records: DomainRecord[]
     isCustomDomainEnabled?: Scalars['Boolean']
+    isWorking: Scalars['Boolean']
     __typename: 'DomainValidRecords'
 }
 
@@ -5102,6 +5103,7 @@ export interface DomainValidRecordsGenqlSelection{
     domain?: boolean | number
     records?: DomainRecordGenqlSelection
     isCustomDomainEnabled?: boolean | number
+    isWorking?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

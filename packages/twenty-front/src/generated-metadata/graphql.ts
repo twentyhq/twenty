@@ -1528,6 +1528,7 @@ export type DomainValidRecords = {
   domain: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isCustomDomainEnabled?: Maybe<Scalars['Boolean']['output']>;
+  isWorking: Scalars['Boolean']['output'];
   records: Array<DomainRecord>;
 };
 
