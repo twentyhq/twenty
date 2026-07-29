@@ -10,9 +10,11 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   RouteTriggerException,
@@ -31,6 +33,11 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
 
+type RouteTriggerWorkspace = Pick<
+  WorkspaceEntity,
+  'activationStatus' | 'id' | 'subdomain'
+>;
+
 @Injectable()
 export class RouteTriggerService {
   private readonly logger = new Logger(RouteTriggerService.name);
@@ -42,8 +49,6 @@ export class RouteTriggerService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private async getLogicFunctionWithPathParamsOrFail({
@@ -56,14 +61,23 @@ export class RouteTriggerService {
     logicFunction: LogicFunctionEntity;
     pathParams: Partial<Record<string, string | string[]>>;
     isIsolatedOrigin: boolean;
+    authenticationContext: AuthContext | undefined;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const { workspace: workspaceFromHost, publicDomain, isIsolatedOrigin } =
-      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
+    const {
+      workspace: workspaceFromHost,
+      publicDomain,
+      isIsolatedOrigin,
+    } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
+      host,
+    );
 
-    const workspace =
-      workspaceFromHost ?? (await this.resolveWorkspaceFromToken(request));
+    const authenticationContext = isDefined(workspaceFromHost)
+      ? undefined
+      : await this.resolveAuthenticationContextFromBearerToken(request);
+
+    const workspace = workspaceFromHost ?? authenticationContext?.workspace;
 
     assertIsDefinedOrThrow(
       workspace,
@@ -120,6 +134,7 @@ export class RouteTriggerService {
           logicFunction,
           pathParams: routeMatched.params,
           isIsolatedOrigin,
+          authenticationContext,
         };
       }
     }
@@ -136,7 +151,7 @@ export class RouteTriggerService {
     isIsolatedOrigin,
   }: {
     logicFunction: LogicFunctionEntity;
-    workspace: WorkspaceEntity;
+    workspace: RouteTriggerWorkspace;
     isIsolatedOrigin: boolean;
   }) {
     if (isIsolatedOrigin) {
@@ -185,54 +200,48 @@ export class RouteTriggerService {
   private async validateWorkspaceFromRequest({
     request,
     workspaceId,
+    authenticationContext,
   }: {
     request: Request;
     workspaceId: string;
+    authenticationContext: AuthContext | undefined;
   }) {
-    const authContext =
-      await this.accessTokenService.validateTokenByRequest(request);
+    const resolvedAuthenticationContext =
+      authenticationContext ??
+      (await this.accessTokenService.validateTokenByRequest(request));
 
-    if (!isDefined(authContext.workspace)) {
+    if (!isDefined(resolvedAuthenticationContext.workspace)) {
       throw new RouteTriggerException(
         'Workspace not found',
         RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 
-    if (authContext.workspace.id !== workspaceId) {
+    if (resolvedAuthenticationContext.workspace.id !== workspaceId) {
       throw new RouteTriggerException(
         'You are not authorized',
         RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    return authContext;
+    return resolvedAuthenticationContext;
   }
 
-  // Invalid tokens resolve to undefined, not throw: public-route callers on an
-  // unresolvable host must keep getting WORKSPACE_NOT_FOUND, not an auth error.
-  private async resolveWorkspaceFromToken(
+  private async resolveAuthenticationContextFromBearerToken(
     request: Request,
-  ): Promise<WorkspaceEntity | undefined> {
+  ): Promise<AuthContext | undefined> {
     if (!isNonEmptyString(request.headers.authorization)) {
       return undefined;
     }
 
     try {
-      const authContext =
-        await this.accessTokenService.validateTokenByRequest(request);
-
-      if (!isDefined(authContext.workspace)) {
+      return await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      if (error instanceof AuthException) {
         return undefined;
       }
 
-      return (
-        (await this.workspaceRepository.findOneBy({
-          id: authContext.workspace.id,
-        })) ?? undefined
-      );
-    } catch {
-      return undefined;
+      throw error;
     }
   }
 
@@ -267,11 +276,15 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
-    const { logicFunction, pathParams, isIsolatedOrigin } =
-      await this.getLogicFunctionWithPathParamsOrFail({
-        request,
-        httpMethod,
-      });
+    const {
+      logicFunction,
+      pathParams,
+      isIsolatedOrigin,
+      authenticationContext,
+    } = await this.getLogicFunctionWithPathParamsOrFail({
+      request,
+      httpMethod,
+    });
 
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
@@ -282,6 +295,7 @@ export class RouteTriggerService {
       const authContext = await this.validateWorkspaceFromRequest({
         request,
         workspaceId: logicFunction.workspaceId,
+        authenticationContext,
       });
 
       userWorkspaceId = authContext.userWorkspaceId ?? null;
