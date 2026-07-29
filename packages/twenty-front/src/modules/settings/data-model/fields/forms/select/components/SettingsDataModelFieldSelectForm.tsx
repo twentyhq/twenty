@@ -167,7 +167,7 @@ export const SettingsDataModelFieldSelectForm = ({
   disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { theme } = useContext(ThemeContext);
-  const { initialDefaultValue, initialOptions } =
+  const { initialDefaultValue, initialOptions, resetOptionsField } =
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
     });
@@ -203,10 +203,17 @@ export const SettingsDataModelFieldSelectForm = ({
 
       const optionsWithNew = [...initialOptions, newOption];
 
+      resetOptionsField();
       setFormValue('options', optionsWithNew, { shouldDirty: true });
       setHasAppliedNewOption(true);
     }
-  }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
+  }, [
+    searchParams,
+    hasAppliedNewOption,
+    initialOptions,
+    resetOptionsField,
+    setFormValue,
+  ]);
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
