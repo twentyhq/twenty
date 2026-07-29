@@ -165,6 +165,12 @@ export const chartFilterSchema = z
 
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();
+const chartNumberFormatSchema = z
+  .enum(CHART_NUMBER_FORMAT_OPTIONS)
+  .optional()
+  .describe(
+    'Display format for data label values: SHORT abbreviates large numbers (1.3m), FULL shows the complete number (1,300,090). Axis ticks stay abbreviated and tooltips always show the full value.',
+  );
 const showCenterMetricSchema = z
   .boolean()
   .optional()
@@ -391,6 +397,7 @@ const barChartConfigSchemaCore = z.object({
     .describe('Which axis labels to show'),
   displayDataLabel: displayDataLabelSchema,
   displayLegend: displayLegendSchema,
+  numberFormat: chartNumberFormatSchema,
   groupMode: z
     .enum(BAR_CHART_GROUP_MODE_OPTIONS)
     .optional()
@@ -482,6 +489,7 @@ const lineChartConfigSchemaCore = z.object({
     .describe('Which axis labels to show'),
   displayDataLabel: displayDataLabelSchema,
   displayLegend: displayLegendSchema,
+  numberFormat: chartNumberFormatSchema,
   isStacked: z.boolean().optional().describe('Stack multiple lines'),
   isCumulative: z.boolean().optional().describe('Show running totals'),
   rangeMin: z.number().optional().describe('Y axis minimum value'),
@@ -541,6 +549,7 @@ const pieChartConfigSchemaCore = z.object({
   color: z.enum(CHART_COLORS).optional().describe('Chart color theme'),
   displayDataLabel: displayDataLabelSchema,
   displayLegend: displayLegendSchema,
+  numberFormat: chartNumberFormatSchema,
   showCenterMetric: showCenterMetricSchema,
   hideEmptyCategory: hideEmptyCategorySchema,
   filter: chartFilterSchema.optional(),

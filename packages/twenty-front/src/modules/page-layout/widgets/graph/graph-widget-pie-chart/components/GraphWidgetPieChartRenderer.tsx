@@ -16,6 +16,7 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { ChartNumberFormat } from '~/generated-metadata/graphql';
 
 const GraphWidgetPieChart = lazy(() =>
   import('@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart').then(
@@ -109,7 +110,12 @@ export const GraphWidgetPieChartRenderer = () => {
         configuration={widget.configuration}
         showLegend={showLegend}
         colorMode={colorMode}
-        displayType="shortNumber"
+        displayType={
+          widget.configuration.numberFormat === ChartNumberFormat.FULL
+            ? 'number'
+            : 'shortNumber'
+        }
+        tooltipDisplayType="number"
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

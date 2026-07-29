@@ -17,7 +17,10 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { AxisNameDisplay } from '~/generated-metadata/graphql';
+import {
+  AxisNameDisplay,
+  ChartNumberFormat,
+} from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import('@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChart').then(
@@ -143,7 +146,13 @@ export const GraphWidgetBarChartRenderer = () => {
         groupMode={groupMode}
         colorMode={colorMode}
         id={widget.id}
-        displayType="shortNumber"
+        displayType={
+          configuration.numberFormat === ChartNumberFormat.FULL
+            ? 'number'
+            : 'shortNumber'
+        }
+        axisDisplayType="shortNumber"
+        tooltipDisplayType="number"
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}

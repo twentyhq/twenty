@@ -141,6 +141,7 @@ export const usePieChartCenterMetricData = ({
       timeFormat,
       timeZone,
       numberFormat,
+      chartNumberFormat: configuration.numberFormat ?? undefined,
     });
   }, [
     aggregateFieldMetadataItem,
@@ -153,6 +154,7 @@ export const usePieChartCenterMetricData = ({
     timeZone,
     numberFormat,
     formatNumber,
+    configuration.numberFormat,
   ]);
 
   return {

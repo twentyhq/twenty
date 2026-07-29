@@ -300,7 +300,10 @@ export const useChartSettingsValues = ({
           ? (configuration.displayLegend ?? true)
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.FORMAT:
-        return configuration.__typename === 'AggregateChartConfiguration' &&
+        return (configuration.__typename === 'AggregateChartConfiguration' ||
+          configuration.__typename === 'BarChartConfiguration' ||
+          configuration.__typename === 'LineChartConfiguration' ||
+          configuration.__typename === 'PieChartConfiguration') &&
           isDefined(configuration.numberFormat)
           ? getChartNumberFormatLabel(configuration.numberFormat)
           : undefined;

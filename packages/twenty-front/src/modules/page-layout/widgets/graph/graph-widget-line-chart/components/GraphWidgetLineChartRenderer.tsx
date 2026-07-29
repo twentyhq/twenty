@@ -20,6 +20,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
+  ChartNumberFormat,
   type LineChartDataPoint,
 } from '~/generated-metadata/graphql';
 
@@ -151,7 +152,13 @@ export const GraphWidgetLineChartRenderer = () => {
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         colorMode={colorMode}
-        displayType="shortNumber"
+        displayType={
+          configuration.numberFormat === ChartNumberFormat.FULL
+            ? 'number'
+            : 'shortNumber'
+        }
+        axisDisplayType="shortNumber"
+        tooltipDisplayType="number"
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

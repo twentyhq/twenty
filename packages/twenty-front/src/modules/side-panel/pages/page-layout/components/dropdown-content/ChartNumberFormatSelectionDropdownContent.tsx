@@ -20,9 +20,13 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    !isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
-  ) {
+  const isChartWithNumberFormat =
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'PieChartConfiguration');
+
+  if (!isChartWithNumberFormat) {
     throw new Error('Invalid configuration type');
   }
 
