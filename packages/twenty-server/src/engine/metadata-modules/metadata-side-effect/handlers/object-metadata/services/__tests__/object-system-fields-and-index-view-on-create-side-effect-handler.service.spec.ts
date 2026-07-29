@@ -1,7 +1,7 @@
 import {
   getFieldUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 
@@ -46,7 +46,8 @@ const DISPLAYABLE_SYSTEM_FIELD_NAMES = [
 
 const DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
     viewKey: ViewKey.INDEX,
   });
@@ -192,8 +193,9 @@ describe('ObjectSystemFieldsAndIndexViewOnCreateSideEffectHandlerService', () =>
     for (const viewField of viewFields) {
       expect(viewField.isSystemSideEffect).toBe(true);
       expect(viewField.universalIdentifier).toBe(
-        getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        getSystemViewFieldUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
           viewUniversalIdentifier: DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
           fieldMetadataUniversalIdentifier:
             viewField.fieldMetadataUniversalIdentifier,

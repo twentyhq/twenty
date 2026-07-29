@@ -10,7 +10,8 @@ const NAME_FIELD_UNIVERSAL_IDENTIFIER = 'd1d2d3d4-d5d6-4000-8000-000000000001';
 const CODE_FIELD_UNIVERSAL_IDENTIFIER = 'd1d2d3d4-d5d6-4000-8000-000000000002';
 
 const INDEX_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectMetadataApplicationUniversalIdentifier:
+    APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   viewKey: ViewKey.INDEX,
 });

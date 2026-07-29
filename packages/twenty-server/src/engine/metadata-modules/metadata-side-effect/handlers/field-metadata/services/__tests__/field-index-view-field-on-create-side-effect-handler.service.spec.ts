@@ -1,7 +1,7 @@
 import {
   getFieldUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 
@@ -25,7 +25,8 @@ const PRIORITY_FIELD_UNIVERSAL_IDENTIFIER =
 
 const DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
     viewKey: ViewKey.INDEX,
   });
@@ -37,8 +38,9 @@ const computeViewFieldUniversalIdentifier = ({
   viewUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
 }) =>
-  getViewFieldUniversalIdentifier({
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  getSystemViewFieldUniversalIdentifier({
+    fieldMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
     viewUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
   });

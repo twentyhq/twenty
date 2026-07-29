@@ -15,7 +15,8 @@ describe('computeFlatIndexViewToCreate', () => {
 
     expect(result.universalIdentifier).toBe(
       getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier,
+        objectMetadataApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
         objectUniversalIdentifier,
         viewKey: ViewKey.INDEX,
       }),

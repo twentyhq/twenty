@@ -80,6 +80,7 @@ export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/ge
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
+export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
 export { getSystemViewUniversalIdentifier } from './deterministic-identifier/get-system-view-universal-identifier.util';
 export { getViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-view-field-group-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';

@@ -2,16 +2,17 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 import { type ViewKey } from '@/types/ViewKey';
 
 export const getSystemViewUniversalIdentifier = ({
-  applicationUniversalIdentifier,
+  objectMetadataApplicationUniversalIdentifier,
   objectUniversalIdentifier,
   viewKey,
 }: {
-  applicationUniversalIdentifier: string;
+  objectMetadataApplicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
   viewKey: ViewKey;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${viewKey}`,
-    applicationUniversalIdentifier,
+    applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier,
   });

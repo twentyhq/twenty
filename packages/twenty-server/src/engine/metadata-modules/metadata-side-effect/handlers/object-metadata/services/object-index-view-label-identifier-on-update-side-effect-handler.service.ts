@@ -66,7 +66,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
     }
 
     const indexViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-      applicationUniversalIdentifier:
+      objectMetadataApplicationUniversalIdentifier:
         updatedFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
       viewKey: ViewKey.INDEX,

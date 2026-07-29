@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
+  getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -220,7 +220,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
       }
 
       const indexViewUniversalIdentifier = getSystemViewUniversalIdentifier({
-        applicationUniversalIdentifier:
+        objectMetadataApplicationUniversalIdentifier:
           flatObjectMetadata.applicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         viewKey: ViewKey.INDEX,
@@ -276,12 +276,14 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
           const fieldApplicationUniversalIdentifier =
             flatFieldMetadata.applicationUniversalIdentifier;
 
-          const viewFieldUniversalIdentifier = getViewFieldUniversalIdentifier({
-            applicationUniversalIdentifier: fieldApplicationUniversalIdentifier,
-            viewUniversalIdentifier: indexViewUniversalIdentifier,
-            fieldMetadataUniversalIdentifier:
-              flatFieldMetadata.universalIdentifier,
-          });
+          const viewFieldUniversalIdentifier =
+            getSystemViewFieldUniversalIdentifier({
+              fieldMetadataApplicationUniversalIdentifier:
+                fieldApplicationUniversalIdentifier,
+              viewUniversalIdentifier: indexViewUniversalIdentifier,
+              fieldMetadataUniversalIdentifier:
+                flatFieldMetadata.universalIdentifier,
+            });
 
           // Already backfilled by a previous (partially failed) run.
           if (
