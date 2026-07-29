@@ -8,6 +8,19 @@ export LOG_FILE PID_FILE
 
 upgrade_pid() { [ -s "$PID_FILE" ] && cat "$PID_FILE" || return 1; }
 is_running()  { pid=$(upgrade_pid) && kill -0 "$pid" 2>/dev/null; }
+stream()      { exec tail -f "$LOG_FILE"; }
+
+last_run() {
+  code=$(grep '^EXIT=' "$LOG_FILE" 2>/dev/null | tail -n 1 | cut -d= -f2)
+  case "$code" in
+    0)   echo "completed" ;;
+    130) echo "stopped gracefully on SIGINT — rerun to resume" ;;
+    143) echo "stopped gracefully on SIGTERM — rerun to resume" ;;
+    137) echo "killed (SIGKILL) — partial work possible, rerun to resume" ;;
+    "")  echo "left no exit code — killed, or never started" ;;
+    *)   echo "failed (exit $code)" ;;
+  esac
+}
 
 start() {
   if is_running; then
@@ -30,21 +43,25 @@ start() {
 
   echo "Upgrade started (pid $(upgrade_pid)), logging to $LOG_FILE"
   echo "Ctrl-C detaches the log stream only. Use upgrade:background:stop to stop the run."
-  exec tail -f "$LOG_FILE"
+  stream
 }
 
-logs() { [ -f "$LOG_FILE" ] || { echo "No log at $LOG_FILE" >&2; exit 1; }; exec tail -f "$LOG_FILE"; }
+# Reports what it found before streaming: a silent log is otherwise ambiguous
+# between a slow workspace segment and a run that died without writing EXIT=.
+logs() {
+  if is_running; then
+    echo "Running (pid $(upgrade_pid)), following $LOG_FILE. Ctrl-C detaches the stream only." >&2
+    stream
+  fi
+  [ -f "$LOG_FILE" ] || { echo "No run found, no log at $LOG_FILE" >&2; exit 1; }
+  echo "Not running, last run $(last_run). Tail of $LOG_FILE:" >&2
+  exec tail -n 20 "$LOG_FILE"
+}
 
 status() {
   is_running && { echo "running (pid $(upgrade_pid))"; exit 0; }
-  code=$(grep '^EXIT=' "$LOG_FILE" 2>/dev/null | tail -n 1 | cut -d= -f2)
-  case "$code" in
-    0)   echo "completed" ;;
-    130) echo "stopped gracefully on SIGINT — rerun to resume" ;;
-    143) echo "stopped gracefully on SIGTERM — rerun to resume" ;;
-    "")  echo "not running, no exit recorded — killed, or never started" ;;
-    *)   echo "failed (exit $code)"; tail -n 20 "$LOG_FILE" ;;
-  esac
+  echo "not running, last run $(last_run)"
+  exit 1
 }
 
 stop() {
