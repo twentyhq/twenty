@@ -14,21 +14,7 @@ import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/util
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-const getCallerRoleIds = (
-  rolePermissionConfig: RolePermissionConfig,
-): string[] => {
-  if ('unionOf' in rolePermissionConfig) {
-    return rolePermissionConfig.unionOf;
-  }
-
-  if ('intersectionOf' in rolePermissionConfig) {
-    return rolePermissionConfig.intersectionOf;
-  }
-
-  return [];
-};
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
 @Injectable()
 export class RoleToolProvider implements ToolProvider {
@@ -71,7 +57,7 @@ export class RoleToolProvider implements ToolProvider {
 
   private buildToolSet(context: ToolProviderContext): ToolSet {
     const callerRoleIds = new Set([
-      ...getCallerRoleIds(context.rolePermissionConfig),
+      ...getRoleIdsFromRolePermissionConfig(context.rolePermissionConfig),
       context.roleId,
     ]);
 

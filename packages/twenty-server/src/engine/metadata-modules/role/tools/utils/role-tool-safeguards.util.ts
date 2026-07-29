@@ -1,6 +1,7 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
@@ -28,6 +29,26 @@ export const findFlatRoleForToolOrThrow = ({
   return flatRole;
 };
 
+export const getFlatRoleForToolOrThrow = async ({
+  roleId,
+  workspaceId,
+  flatEntityMapsCacheService,
+}: {
+  roleId: string;
+  workspaceId: string;
+  flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
+}): Promise<FlatRole> => {
+  const { flatRoleMaps } =
+    await flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatRoleMaps'],
+    });
+
+  return findFlatRoleForToolOrThrow({ roleId, flatRoleMaps });
+};
+
+// The migration validators reject non-editable roles too; checking here first
+// gives the model a named, actionable message instead of a build failure report.
 export const assertRoleIsEditable = (flatRole: FlatRole): void => {
   if (!flatRole.isEditable) {
     throw new Error(

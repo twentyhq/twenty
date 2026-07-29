@@ -17,6 +17,7 @@ import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools
 import { type RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { type RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const workspaceId = 'workspace-id';
 const callerRoleId = 'caller-role-id';
@@ -42,7 +43,7 @@ const createFlatRole = (overrides: PartialFlatRole): FlatRole =>
     ...overrides,
   }) as FlatRole;
 
-const createFlatEntityMaps = <TEntity extends { id: string }>(
+const createFlatEntityMapsKeyedById = <TEntity extends { id: string }>(
   entities: TEntity[],
 ) => ({
   byUniversalIdentifier: Object.fromEntries(
@@ -88,7 +89,7 @@ const buildProvider = (options?: BuildProviderOptions) => {
       .mockResolvedValue({ predicates: [], predicateGroups: [] }),
   };
   const rowLevelPermissionPredicateGroupService = {
-    findByRole: jest.fn().mockResolvedValue([]),
+    findByWorkspaceId: jest.fn().mockResolvedValue([]),
   };
   const applicationService = {
     findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
@@ -102,8 +103,8 @@ const buildProvider = (options?: BuildProviderOptions) => {
   };
   const flatEntityMapsCacheService = {
     getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatRoleMaps: createFlatEntityMaps(flatRoles),
-      flatRolePermissionFlagMaps: createFlatEntityMaps(
+      flatRoleMaps: createFlatEntityMapsKeyedById(flatRoles),
+      flatRolePermissionFlagMaps: createFlatEntityMapsKeyedById(
         options?.rolesPermissionFlagEntities ?? [],
       ),
     }),
@@ -243,6 +244,12 @@ describe('RoleToolProvider', () => {
         { id: 'predicate-1', roleId: 'role-1' },
         { id: 'predicate-2', roleId: 'other-role' },
       ]);
+      rowLevelPermissionPredicateGroupService.findByWorkspaceId.mockResolvedValue(
+        [
+          { id: 'group-1', roleId: 'role-1' },
+          { id: 'group-2', roleId: 'other-role' },
+        ],
+      );
 
       const output = await provider.executeStaticTool(
         'list_roles',
@@ -251,17 +258,51 @@ describe('RoleToolProvider', () => {
       );
 
       expect(output.success).toBe(true);
-      expect(
-        rowLevelPermissionPredicateGroupService.findByRole,
-      ).toHaveBeenCalledWith(workspaceId, 'role-1');
 
       const { roles } = output.result as {
-        roles: { rowLevelPermissionPredicates: { id: string }[] }[];
+        roles: {
+          rowLevelPermissionPredicates: { id: string }[];
+          rowLevelPermissionPredicateGroups: { id: string }[];
+        }[];
       };
 
       expect(roles[0].rowLevelPermissionPredicates).toEqual([
         { id: 'predicate-1', roleId: 'role-1' },
       ]);
+      expect(roles[0].rowLevelPermissionPredicateGroups).toEqual([
+        { id: 'group-1', roleId: 'role-1' },
+      ]);
+    });
+
+    it('fetches predicates and groups once for the workspace, not per role', async () => {
+      const {
+        provider,
+        roleService,
+        rowLevelPermissionPredicateService,
+        rowLevelPermissionPredicateGroupService,
+      } = buildProvider();
+
+      roleService.getWorkspaceRoles.mockResolvedValue([
+        { id: 'role-1', label: 'Support', isEditable: true },
+        { id: 'role-2', label: 'Sales', isEditable: true },
+        { id: 'role-3', label: 'Guest', isEditable: true },
+      ]);
+
+      await provider.executeStaticTool(
+        'list_roles',
+        { includeRowLevelPermissionRules: true },
+        context,
+      );
+
+      expect(
+        rowLevelPermissionPredicateService.findByWorkspaceId,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        rowLevelPermissionPredicateGroupService.findByWorkspaceId,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        rowLevelPermissionPredicateGroupService.findByWorkspaceId,
+      ).toHaveBeenCalledWith(workspaceId);
     });
   });
 
@@ -290,6 +331,41 @@ describe('RoleToolProvider', () => {
           }),
         }),
       );
+    });
+
+    it('surfaces the underlying validation errors from a failed migration build', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.createRole.mockRejectedValue(
+        new WorkspaceMigrationBuilderException(
+          {
+            status: 'fail',
+            report: {
+              role: [
+                {
+                  flatEntityMinimalInformation: { label: 'Sales' },
+                  errors: [
+                    { code: 'INVALID', message: 'Role label already exists' },
+                  ],
+                },
+              ],
+            },
+          } as unknown as ConstructorParameters<
+            typeof WorkspaceMigrationBuilderException
+          >[0],
+          'Multiple validation errors occurred while creating role',
+        ),
+      );
+
+      const output = await provider.executeStaticTool(
+        'create_role',
+        { label: 'Sales' },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('Role label already exists');
+      expect(output.error).toContain('Sales');
     });
   });
 

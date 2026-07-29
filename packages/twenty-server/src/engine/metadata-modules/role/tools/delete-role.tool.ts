@@ -5,11 +5,12 @@ import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tool
 import {
   assertRoleDeletionDoesNotLockOutCaller,
   assertRoleIsEditable,
-  findFlatRoleForToolOrThrow,
+  getFlatRoleForToolOrThrow,
 } from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
+import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const deleteRoleSchema = z.object({
-  roleId: z.string().uuid().describe('Id of the role to delete'),
+  roleId: z.uuid().describe('Id of the role to delete'),
 });
 
 type DeleteRoleParams = z.infer<typeof deleteRoleSchema>;
@@ -28,17 +29,10 @@ System-managed roles (isEditable=false, like Admin), the workspace default role,
   inputSchema: deleteRoleSchema,
   execute: async (parameters: DeleteRoleParams) => {
     try {
-      const { flatRoleMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatRoleMaps'],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
+      const flatRole = await getFlatRoleForToolOrThrow({
         roleId: parameters.roleId,
-        flatRoleMaps,
+        workspaceId: context.workspaceId,
+        flatEntityMapsCacheService: deps.flatEntityMapsCacheService,
       });
 
       assertRoleIsEditable(flatRole);
@@ -58,7 +52,7 @@ System-managed roles (isEditable=false, like Admin), the workspace default role,
         result: { id: deletedRole.id, label: deletedRole.label },
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = toRoleToolErrorMessage(error);
 
       return {
         success: false,

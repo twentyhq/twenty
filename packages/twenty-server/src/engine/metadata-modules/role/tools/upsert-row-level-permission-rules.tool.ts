@@ -8,8 +8,9 @@ import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/typ
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import {
   assertRoleIsEditable,
-  findFlatRoleForToolOrThrow,
+  getFlatRoleForToolOrThrow,
 } from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
+import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const predicateValueSchema = z
   .union([
@@ -27,14 +28,12 @@ const predicateValueSchema = z
 
 const rowLevelPermissionPredicateSchema = z.object({
   id: z
-    .string()
     .uuid()
     .optional()
     .describe(
       'Id of an existing predicate to update. Omit to create a new one.',
     ),
   fieldMetadataId: z
-    .string()
     .uuid()
     .describe('Id of the field (on the target object) the rule filters on'),
   operand: z
@@ -49,7 +48,6 @@ const rowLevelPermissionPredicateSchema = z.object({
       'Sub-field for composite fields (e.g. "firstName" of a FULL_NAME field)',
     ),
   workspaceMemberFieldMetadataId: z
-    .string()
     .uuid()
     .nullable()
     .optional()
@@ -64,7 +62,6 @@ const rowLevelPermissionPredicateSchema = z.object({
       'Sub-field of the workspace member field when it is a composite field',
     ),
   rowLevelPermissionPredicateGroupId: z
-    .string()
     .uuid()
     .nullable()
     .optional()
@@ -78,7 +75,6 @@ const rowLevelPermissionPredicateSchema = z.object({
 
 const rowLevelPermissionPredicateGroupSchema = z.object({
   id: z
-    .string()
     .uuid()
     .optional()
     .describe(
@@ -88,7 +84,6 @@ const rowLevelPermissionPredicateGroupSchema = z.object({
     .enum(RowLevelPermissionPredicateGroupLogicalOperator)
     .describe('How predicates inside this group are combined (AND / OR)'),
   parentRowLevelPermissionPredicateGroupId: z
-    .string()
     .uuid()
     .nullable()
     .optional()
@@ -101,11 +96,8 @@ const rowLevelPermissionPredicateGroupSchema = z.object({
 });
 
 const upsertRowLevelPermissionRulesSchema = z.object({
-  roleId: z.string().uuid().describe('Id of the role the rules apply to'),
-  objectMetadataId: z
-    .string()
-    .uuid()
-    .describe('Id of the object the rules restrict'),
+  roleId: z.uuid().describe('Id of the role the rules apply to'),
+  objectMetadataId: z.uuid().describe('Id of the object the rules restrict'),
   predicates: z
     .array(rowLevelPermissionPredicateSchema)
     .describe(
@@ -138,17 +130,10 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
   inputSchema: upsertRowLevelPermissionRulesSchema,
   execute: async (parameters: UpsertRowLevelPermissionRulesParams) => {
     try {
-      const { flatRoleMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatRoleMaps'],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
+      const flatRole = await getFlatRoleForToolOrThrow({
         roleId: parameters.roleId,
-        flatRoleMaps,
+        workspaceId: context.workspaceId,
+        flatEntityMapsCacheService: deps.flatEntityMapsCacheService,
       });
 
       assertRoleIsEditable(flatRole);
@@ -177,7 +162,7 @@ IMPORTANT: this replaces the full rule set for the role + object. Predicates or 
         result: { predicates, predicateGroups },
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = toRoleToolErrorMessage(error);
 
       return {
         success: false,

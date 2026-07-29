@@ -2,19 +2,22 @@ import { z } from 'zod';
 
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
-import { findFlatRoleForToolOrThrow } from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
+import { getFlatRoleForToolOrThrow } from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
+import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const assignRoleToWorkspaceMemberSchema = z.object({
   workspaceMemberId: z
-    .string()
     .uuid()
     .describe('Id of the workspace member to assign the role to'),
-  roleId: z.string().uuid().describe('Id of the role to assign'),
+  roleId: z.uuid().describe('Id of the role to assign'),
 });
 
 type AssignRoleToWorkspaceMemberParams = z.infer<
   typeof assignRoleToWorkspaceMemberSchema
 >;
+
+const SELF_ROLE_CHANGE_ERROR =
+  'You cannot change your own role. Ask another administrator to update it.';
 
 export const createAssignRoleToWorkspaceMemberTool = (
   deps: Pick<
@@ -31,22 +34,13 @@ You cannot change your own role, assign a role that does not allow user assignme
   execute: async (parameters: AssignRoleToWorkspaceMemberParams) => {
     try {
       if (parameters.workspaceMemberId === context.callerWorkspaceMemberId) {
-        throw new Error(
-          'You cannot change your own role. Ask another administrator to update it.',
-        );
+        throw new Error(SELF_ROLE_CHANGE_ERROR);
       }
 
-      const { flatRoleMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatRoleMaps'],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
+      const flatRole = await getFlatRoleForToolOrThrow({
         roleId: parameters.roleId,
-        flatRoleMaps,
+        workspaceId: context.workspaceId,
+        flatEntityMapsCacheService: deps.flatEntityMapsCacheService,
       });
 
       if (!flatRole.canBeAssignedToUsers) {
@@ -65,12 +59,11 @@ You cannot change your own role, assign a role that does not allow user assignme
         await deps.userWorkspaceService.getUserWorkspaceForUserOrThrow({
           userId: workspaceMember.userId,
           workspaceId: context.workspaceId,
+          relations: [],
         });
 
       if (userWorkspace.id === context.callerUserWorkspaceId) {
-        throw new Error(
-          'You cannot change your own role. Ask another administrator to update it.',
-        );
+        throw new Error(SELF_ROLE_CHANGE_ERROR);
       }
 
       await deps.userRoleService.assignRoleToManyUserWorkspace({
@@ -90,7 +83,7 @@ You cannot change your own role, assign a role that does not allow user assignme
         },
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = toRoleToolErrorMessage(error);
 
       return {
         success: false,

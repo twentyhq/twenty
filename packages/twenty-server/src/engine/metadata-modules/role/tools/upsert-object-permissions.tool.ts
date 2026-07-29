@@ -4,16 +4,17 @@ import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/typ
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import {
   assertRoleIsEditable,
-  findFlatRoleForToolOrThrow,
+  getFlatRoleForToolOrThrow,
 } from 'src/engine/metadata-modules/role/tools/utils/role-tool-safeguards.util';
+import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
+import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const upsertObjectPermissionsSchema = z.object({
-  roleId: z.string().uuid().describe('Id of the role to set overrides on'),
+  roleId: z.uuid().describe('Id of the role to set overrides on'),
   objectPermissions: z
     .array(
       z.object({
         objectMetadataId: z
-          .string()
           .uuid()
           .describe('Id of the object metadata the override applies to'),
         canReadObjectRecords: z
@@ -60,17 +61,10 @@ Granting write access without read access is rejected. System-managed roles (lik
   inputSchema: upsertObjectPermissionsSchema,
   execute: async (parameters: UpsertObjectPermissionsParams) => {
     try {
-      const { flatRoleMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatRoleMaps'],
-          },
-        );
-
-      const flatRole = findFlatRoleForToolOrThrow({
+      const flatRole = await getFlatRoleForToolOrThrow({
         roleId: parameters.roleId,
-        flatRoleMaps,
+        workspaceId: context.workspaceId,
+        flatEntityMapsCacheService: deps.flatEntityMapsCacheService,
       });
 
       assertRoleIsEditable(flatRole);
@@ -89,18 +83,11 @@ Granting write access without read access is rejected. System-managed roles (lik
         message: `Object permissions updated on role "${flatRole.label}"`,
         result: {
           roleId: parameters.roleId,
-          objectPermissions: objectPermissions.map((objectPermission) => ({
-            objectMetadataId: objectPermission.objectMetadataId,
-            canReadObjectRecords: objectPermission.canReadObjectRecords,
-            canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
-            canSoftDeleteObjectRecords:
-              objectPermission.canSoftDeleteObjectRecords,
-            canDestroyObjectRecords: objectPermission.canDestroyObjectRecords,
-          })),
+          objectPermissions: objectPermissions.map(toObjectPermissionSummary),
         },
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = toRoleToolErrorMessage(error);
 
       return {
         success: false,
