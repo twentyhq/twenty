@@ -1,6 +1,7 @@
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
@@ -89,17 +90,36 @@ type AdvancedTextEditorProps = {
   minHeight: number;
 };
 
+// Marks and nodes the text bubble menu can act on. When a preset loads none
+// of them, the menu has nothing to offer and does not mount at all.
+const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'bulletList',
+  'orderedList',
+  'heading',
+  'link',
+];
+
 export const AdvancedTextEditor = ({
   readonly,
   editor,
   minHeight,
 }: AdvancedTextEditorProps) => {
+  const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
+    (extensionName) => hasEditorExtension(editor, extensionName),
+  );
+
   return (
     <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
       <EditorContent className="editor-content" editor={editor} />
-      <ImageBubbleMenu editor={editor} />
-      <TextBubbleMenu editor={editor} />
-      <LinkBubbleMenu editor={editor} />
+      {hasEditorExtension(editor, 'image') && (
+        <ImageBubbleMenu editor={editor} />
+      )}
+      {hasTextBubbleMenu && <TextBubbleMenu editor={editor} />}
+      {hasEditorExtension(editor, 'link') && <LinkBubbleMenu editor={editor} />}
     </StyledEditorContainer>
   );
 };

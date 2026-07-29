@@ -1,4 +1,5 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { type AdvancedTextEditorPresetName } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
@@ -17,16 +18,17 @@ const EditorWrapper = ({
   defaultValue = null,
   onUpdate = fn(),
   minHeight = 200,
-  enableSlashCommand = true,
+  preset = 'recordRichTextField',
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
   minHeight?: number;
-  enableSlashCommand?: boolean;
+  preset?: AdvancedTextEditorPresetName;
 }) => {
   const editor = useAdvancedTextEditor({
+    preset,
     placeholder,
     readonly,
     defaultValue,
@@ -41,7 +43,6 @@ const EditorWrapper = ({
     onImageUploadError: (_error: Error, _file: File) => {
       // Handle image upload error
     },
-    enableSlashCommand,
   });
 
   if (!editor) {
@@ -275,6 +276,15 @@ export const ReadOnly: Story = {
 export const Empty: Story = {
   args: {
     placeholder: 'Start typing your content...',
+  },
+};
+
+// The mentions-only preset: no marks, headings, lists or slash command, so
+// no bubble menu mounts.
+export const AiChatPreset: Story = {
+  args: {
+    preset: 'aiChat',
+    placeholder: 'Ask, search or make anything...',
   },
 };
 

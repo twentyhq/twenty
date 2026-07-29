@@ -1,31 +1,17 @@
-import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
-import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
-import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import {
+  ADVANCED_TEXT_EDITOR_PRESETS,
+  type AdvancedTextEditorPresetName,
+} from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
+import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
 import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
-import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
-import { t } from '@lingui/core/macro';
-import { Bold } from '@tiptap/extension-bold';
-import { Document } from '@tiptap/extension-document';
-import { HardBreak } from '@tiptap/extension-hard-break';
-import { Heading } from '@tiptap/extension-heading';
-import { Italic } from '@tiptap/extension-italic';
-import { Link } from '@tiptap/extension-link';
-import { ListKit } from '@tiptap/extension-list';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Strike } from '@tiptap/extension-strike';
-import { Text } from '@tiptap/extension-text';
-import { Underline } from '@tiptap/extension-underline';
-import { Dropcursor } from '@tiptap/extensions/drop-cursor';
-import { Placeholder } from '@tiptap/extensions/placeholder';
-import { UndoRedo } from '@tiptap/extensions/undo-redo';
-import { type Editor, useEditor } from '@tiptap/react';
+import { type Content } from '@tiptap/core';
+import { type Editor, type EditorOptions, useEditor } from '@tiptap/react';
 import { marked } from 'marked';
 import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export type AdvancedTextEditorContentType = 'json' | 'html' | 'markdown';
-
 type UseAdvancedTextEditorProps = {
+  preset: AdvancedTextEditorPresetName;
   placeholder: string | undefined;
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
@@ -34,12 +20,15 @@ type UseAdvancedTextEditorProps = {
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<string>;
   onImageUploadError?: (error: Error, file: File) => void;
-  enableSlashCommand?: boolean;
-  contentType?: AdvancedTextEditorContentType;
+  // Seeds the editor with already-parsed content instead of running
+  // defaultValue through the preset's contentType read path.
+  content?: Content;
+  editorProps?: EditorOptions['editorProps'];
 };
 
 export const useAdvancedTextEditor = (
   {
+    preset,
     placeholder,
     readonly,
     defaultValue,
@@ -48,60 +37,37 @@ export const useAdvancedTextEditor = (
     onBlur,
     onImageUpload,
     onImageUploadError,
-    enableSlashCommand,
-    contentType = 'json',
+    content,
+    editorProps,
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
-  const isMarkdownMode = contentType === 'markdown';
+  const { contentType, capabilities } = ADVANCED_TEXT_EDITOR_PRESETS[preset];
 
   const extensions = useMemo(
-    () => [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: placeholder ?? t`Enter text or Type '/' for commands`,
+    () =>
+      buildAdvancedTextEditorExtensions({
+        capabilities,
+        context: {
+          onImageUpload,
+          onImageUploadError,
+        },
+        placeholder,
+        readonly,
       }),
-      VariableTag,
-      HardBreak.configure({
-        keepMarks: false,
-      }),
-      UndoRedo,
-      Bold,
-      Italic,
-      Strike,
-      Underline,
-      Heading.configure({
-        levels: [1, 2, 3],
-      }),
-      Link.configure({
-        openOnClick: false,
-      }),
-      ResizableImage,
-      Dropcursor,
-      ListKit,
-      UploadImageExtension.configure({
-        onImageUpload,
-        onImageUploadError,
-      }),
-      ...(!readonly && enableSlashCommand !== false ? [SlashCommand] : []),
-    ],
-    [
-      placeholder,
-      onImageUpload,
-      onImageUploadError,
-      readonly,
-      enableSlashCommand,
-    ],
+    [capabilities, placeholder, onImageUpload, onImageUploadError, readonly],
   );
 
-  const getEditorContent = () => {
+  const getEditorContent = (): Content | undefined => {
+    if (isDefined(content)) {
+      return content;
+    }
+
     if (!isDefined(defaultValue)) {
       return undefined;
     }
 
-    if (isMarkdownMode) {
+    if (contentType === 'markdown') {
       // Convert markdown to HTML, then TipTap will parse the HTML
       return marked.parse(defaultValue, { async: false }) as string;
     }
@@ -130,6 +96,7 @@ export const useAdvancedTextEditor = (
       editorProps: {
         scrollThreshold: 60,
         scrollMargin: 60,
+        ...editorProps,
       },
       injectCSS: false,
     },

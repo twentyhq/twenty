@@ -4,6 +4,7 @@ import {
   type AdvancedTextEditorPresetName,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorPresets';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { serializeAdvancedTextEditorContent } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorContent';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputHint } from '@/ui/input/components/InputHint';
@@ -143,17 +144,12 @@ export const FormAdvancedTextFieldInput = ({
 
   const editor = useAdvancedTextEditor(
     {
+      preset,
       placeholder: placeholder,
       readonly,
       defaultValue,
-      contentType,
       onUpdate: (editor) => {
-        if (contentType === 'markdown' || contentType === 'html') {
-          onChange?.(editor.getHTML());
-        } else {
-          const jsonContent = editor.getJSON();
-          onChange?.(JSON.stringify(jsonContent));
-        }
+        onChange?.(serializeAdvancedTextEditorContent({ editor, contentType }));
       },
       onFocus: () => {
         pushFocusItemToFocusStack({
@@ -172,7 +168,6 @@ export const FormAdvancedTextFieldInput = ({
       },
       onImageUpload,
       onImageUploadError,
-      enableSlashCommand: true,
     },
     [isFullScreen],
   );
@@ -209,6 +204,10 @@ export const FormAdvancedTextFieldInput = ({
     hasClosePageButton: !isMobile,
   });
 
+  if (!isDefined(editor)) {
+    return null;
+  }
+
   const fullScreenOverlay = isFullScreenEnabled
     ? renderFullScreenModal(
         <div data-globally-prevent-click-outside="true">
@@ -223,10 +222,6 @@ export const FormAdvancedTextFieldInput = ({
         isFullScreen,
       )
     : null;
-
-  if (!isDefined(editor)) {
-    return null;
-  }
 
   return (
     <>

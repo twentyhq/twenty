@@ -1,4 +1,5 @@
-import { type AdvancedTextEditorContentType } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type AdvancedTextEditorCapability } from '@/advanced-text-editor/types/AdvancedTextEditorCapability';
+import { type AdvancedTextEditorContentType } from '@/advanced-text-editor/types/AdvancedTextEditorContentType';
 
 // 'field' keeps the bordered form-field chrome. 'document' drops the border so
 // the editor fills whatever container it is given and reads as page content
@@ -10,4 +11,5 @@ export type AdvancedTextEditorPreset = {
   chrome: AdvancedTextEditorChrome;
   minHeight: number;
   enableFullScreen: boolean;
+  capabilities: readonly AdvancedTextEditorCapability[];
 };

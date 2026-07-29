@@ -2,6 +2,7 @@ import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMe
 import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
 import { TurnIntoBlockDropdown } from '@/advanced-text-editor/components/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleState';
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
 import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
@@ -37,35 +38,41 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
   const menuActions = [
     {
       Icon: IconBold,
+      extensionName: 'bold',
       onClick: () => editor.chain().focus().toggleBold().run(),
       isActive: state.isBold,
     },
     {
       Icon: IconItalic,
+      extensionName: 'italic',
       onClick: () => editor.chain().focus().toggleItalic().run(),
       isActive: state.isItalic,
     },
     {
       Icon: IconUnderline,
+      extensionName: 'underline',
       onClick: () => editor.chain().focus().toggleUnderline().run(),
       isActive: state.isUnderline,
     },
     {
       Icon: IconStrikethrough,
+      extensionName: 'strike',
       onClick: () => editor.chain().focus().toggleStrike().run(),
       isActive: state.isStrike,
     },
     {
       Icon: IconList,
+      extensionName: 'bulletList',
       onClick: () => editor.chain().focus().wrapInList('bulletList').run(),
       isActive: state.isBulletList,
     },
     {
       Icon: IconListNumbers,
+      extensionName: 'orderedList',
       onClick: () => editor.chain().focus().wrapInList('orderedList').run(),
       isActive: state.isOrderedList,
     },
-  ];
+  ].filter(({ extensionName }) => hasEditorExtension(editor, extensionName));
 
   const handleShouldShow = () => {
     if (editor.isActive('image')) {
@@ -83,7 +90,9 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       updateDelay={0}
     >
       <StyledBubbleMenuContainer>
-        <TurnIntoBlockDropdown editor={editor} />
+        {hasEditorExtension(editor, 'heading') && (
+          <TurnIntoBlockDropdown editor={editor} />
+        )}
         {menuActions.map(({ Icon, onClick, isActive }) => {
           return (
             <BubbleMenuIconButton
@@ -94,7 +103,9 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
             />
           );
         })}
-        <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
+        {hasEditorExtension(editor, 'link') && (
+          <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
+        )}
       </StyledBubbleMenuContainer>
     </BubbleMenu>
   );
