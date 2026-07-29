@@ -5,6 +5,7 @@ export const CHECK_PUBLIC_DOMAIN_VALID_RECORDS = gql`
     checkPublicDomainValidRecords(domain: $domain) {
       id
       domain
+      isWorking
       records {
         type
         key

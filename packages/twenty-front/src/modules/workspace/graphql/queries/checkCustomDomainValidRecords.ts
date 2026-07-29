@@ -6,6 +6,7 @@ export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS = gql`
       id
       domain
       isCustomDomainEnabled
+      isWorking
       records {
         type
         key

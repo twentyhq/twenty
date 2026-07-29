@@ -122,9 +122,7 @@ describe('CustomDomainManagerService', () => {
 
       await service.checkCustomDomainValidRecords(workspace);
 
-      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(dnsManagerService.getHostnameWithRecords).toHaveBeenCalledTimes(1);
       expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
     });
 
