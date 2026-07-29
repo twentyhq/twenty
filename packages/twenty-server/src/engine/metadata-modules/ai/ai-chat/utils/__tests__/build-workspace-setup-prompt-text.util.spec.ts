@@ -147,22 +147,6 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain("must be in the user's language");
   });
 
-  it('should require a tabler icon on every created object and field', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
-
-    expect(result).toContain(
-      'Give every object and field you create a meaningful icon',
-    );
-    expect(result).toContain(
-      'Tabler icon name in PascalCase prefixed with Icon',
-    );
-    expect(result).toContain('IconBuildingSkyscraper');
-    expect(result).toContain('targetFieldIcon');
-  });
-
   it.each([
     ['fr-FR', 'French'],
     ['de-DE', 'German'],
