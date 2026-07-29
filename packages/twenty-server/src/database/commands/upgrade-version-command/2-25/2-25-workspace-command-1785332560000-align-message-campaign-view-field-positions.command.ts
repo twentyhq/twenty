@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-26/utils/compute-view-field-positions-aligned-to-standard.util';
-import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-26/utils/split-view-field-position-updates.util';
+import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-25/utils/compute-view-field-positions-aligned-to-standard.util';
+import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-25/utils/split-view-field-position-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -19,9 +19,9 @@ const ALL_MESSAGE_CAMPAIGNS_VIEW_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
     .universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.26.0', 1785325400000)
+@RegisteredWorkspaceCommand('2.25.0', 1785332560000)
 @Command({
-  name: 'upgrade:2-26:align-message-campaign-view-field-positions',
+  name: 'upgrade:2-25:align-message-campaign-view-field-positions',
   description:
     'Align the all campaigns view columns with the standard layout so the name label identifier sits strictly first and the standard-application sync stops trying to move it back',
 })

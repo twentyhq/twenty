@@ -13,8 +13,6 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
-import { ViewKey } from 'twenty-shared/types';
-
 describe('View REST API', () => {
   let testObjectMetadataId: string;
   let testSelectFieldMetadataId: string;
@@ -107,7 +105,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -121,7 +119,7 @@ describe('View REST API', () => {
         objectMetadataId: testObjectMetadataId,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -161,7 +159,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -202,7 +200,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -262,7 +260,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,

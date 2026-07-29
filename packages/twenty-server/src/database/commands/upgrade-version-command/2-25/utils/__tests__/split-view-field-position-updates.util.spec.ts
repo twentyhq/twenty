@@ -1,4 +1,4 @@
-import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-26/utils/split-view-field-position-updates.util';
+import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-25/utils/split-view-field-position-updates.util';
 
 describe('splitViewFieldPositionUpdates', () => {
   it('should hold back the column that ends up lowest', () => {

@@ -1,4 +1,4 @@
-import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-26/utils/compute-view-field-positions-aligned-to-standard.util';
+import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-25/utils/compute-view-field-positions-aligned-to-standard.util';
 
 const STANDARD = {
   name: 0,
