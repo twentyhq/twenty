@@ -34,15 +34,15 @@ export const slackEventsResolverHandler = async (
     );
   }
 
-  const signatureCheck = verifySlackRequestSignature({
-    rawBody: routePayload.rawBody,
-    signatureHeader: routePayload.headers['x-slack-signature'],
-    timestampHeader: routePayload.headers['x-slack-request-timestamp'],
-    secret: secretResult.secret,
-  });
-
-  if (!signatureCheck.valid) {
-    throw new Error(`Invalid Slack signature: ${signatureCheck.error}`);
+  if (
+    !verifySlackRequestSignature({
+      rawBody: routePayload.rawBody,
+      signatureHeader: routePayload.headers['x-slack-signature'],
+      timestampHeader: routePayload.headers['x-slack-request-timestamp'],
+      secret: secretResult.secret,
+    })
+  ) {
+    throw new Error('Invalid Slack signature');
   }
 
   const body = routePayload.body;
