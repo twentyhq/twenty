@@ -337,6 +337,22 @@ export type ApplicationConnectionProviderOAuthConfig = {
   scopes: Array<Scalars['String']['output']>;
 };
 
+export type ApplicationFileUploadRequestInput = {
+  fileFolder: FileFolder;
+  filePath: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
+};
+
+export type ApplicationFileUploadTarget = {
+  __typename?: 'ApplicationFileUploadTarget';
+  contentType: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  fileFolder: FileFolder;
+  fileId: Scalars['UUID']['output'];
+  filePath: Scalars['String']['output'];
+  uploadUrl: Scalars['String']['output'];
+};
+
 export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
   createdAt: Scalars['DateTime']['output'];
@@ -2573,8 +2589,10 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
+  completeApplicationFileUploads: Array<File>;
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
+  createApplicationFileUploads: Array<ApplicationFileUploadTarget>;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
@@ -2861,6 +2879,12 @@ export type MutationClaimApplicationRegistrationOwnershipArgs = {
 };
 
 
+export type MutationCompleteApplicationFileUploadsArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
+  fileIds: Array<Scalars['UUID']['input']>;
+};
+
+
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
 };
@@ -2868,6 +2892,12 @@ export type MutationCompleteFileUploadArgs = {
 
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
+};
+
+
+export type MutationCreateApplicationFileUploadsArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
+  files: Array<ApplicationFileUploadRequestInput>;
 };
 
 
