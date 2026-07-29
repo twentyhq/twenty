@@ -526,9 +526,6 @@ describe('WorkspaceService', () => {
       return { callOrder, preInstalledAppsService };
     };
 
-    // The compatibility check of an app pinning `engines.twenty` resolves the
-    // workspace version from its upgrade cursor, so installing before the
-    // cursor exists rejects every pinned pre-installed app.
     it('should install pre-installed apps after the upgrade cursor is written', async () => {
       const { callOrder, preInstalledAppsService } = setupActivationMocks();
 

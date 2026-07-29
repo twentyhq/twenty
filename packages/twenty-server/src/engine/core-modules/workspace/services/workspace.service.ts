@@ -412,9 +412,6 @@ export class WorkspaceService {
         workspaceId: workspace.id,
       });
 
-      // Must run after the upgrade cursor is written: an app pinning
-      // `engines.twenty` is checked against the workspace completed version,
-      // which is undeterminable while the workspace has no upgrade migration row.
       await this.installPreInstalledApps(workspace.id);
     } catch (error) {
       await this.workspaceRepository.update(workspace.id, {
