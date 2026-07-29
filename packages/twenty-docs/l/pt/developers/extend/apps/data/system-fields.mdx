@@ -1,6 +1,6 @@
 ---
-title: Metadados de sistema de direcionamento
-description: Resolva os identificadores universais determinísticos dos metadados que o Twenty provisiona automaticamente em cada objeto, para que seu app possa referenciá‑los sem hardcode.
+title: Referenciando metadados de sistema
+description: Resolva os identificadores universais determinísticos dos metadados que o Twenty provisiona automaticamente em cada objeto, para que seu app possa referenciá-los sem hardcoding.
 icon: gears
 ---
 
@@ -158,7 +158,7 @@ const rocketIndexViewId = getSystemViewUniversalIdentifier({
 });
 ```
 
-* `objectMetadataApplicationUniversalIdentifier` é o aplicativo proprietário do **objeto**, pelo qual a visualização é colocada em namespace.
+* `objectMetadataApplicationUniversalIdentifier` é o aplicativo proprietário do **objeto**, que define o namespace da visualização.
 * `objectUniversalIdentifier` é o objeto que a visualização lista.
 * `viewKey` é a chave da visualização de sistema, hoje `ViewKey.INDEX`.
 

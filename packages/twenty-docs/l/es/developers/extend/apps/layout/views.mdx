@@ -35,7 +35,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` especifica a qué objeto se aplica esta vista. Puede ser un objeto personalizado que hayas definido o un objeto estándar de Twenty.
 * La vista principal de lista del objeto pertenece al servidor: `key` está en desuso y se ignora, por lo que una vista de manifiesto nunca puede reclamarla. Incluye un elemento de navegación `VIEW` si quieres que tu vista esté a un clic de distancia en la barra lateral.
-* `fields` controla qué columnas aparecen y en qué orden. Cada campo referencia un `fieldMetadataUniversalIdentifier`. Para hacer referencia a un campo del sistema creado automáticamente, como `createdAt`, consulta [Orientación de metadatos del sistema](/l/es/developers/extend/apps/data/system-fields).
+* `fields` controla qué columnas aparecen y en qué orden. Cada campo referencia un `fieldMetadataUniversalIdentifier`. Para hacer referencia a un campo del sistema creado automáticamente, como `createdAt`, consulta [Referencia a metadatos del sistema](/l/es/developers/extend/apps/data/system-fields).
 * También puedes definir `filters`, `filterGroups`, `sorts`, `groups` y `fieldGroups` para configuraciones avanzadas.
 * `position` controla el orden cuando existen múltiples vistas para el mismo objeto.
 

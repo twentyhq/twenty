@@ -176,7 +176,7 @@ const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
 İlk argümana dikkat edin: bir sütun, **görüntülediği alana** sahip olan uygulamanın ad alanındadır, görünüme sahip olanın değil. Uygulamanızın standart bir nesneye eklediği bir alan, Twenty'ye ait bir görünüm üzerinde, kendi uygulamanız altında türetilen bir sütun alır.
 
 <Warning>
-  Sistem görünümleri ve sütunları **sunucuya aittir**: bunlara asla bildirmek için değil, yalnızca onlara başvurmak için tanımlayıcılarını çözümleyin. [`defineView()`](/l/tr/developers/extend/apps/layout/views) üzerindeki
+  Sistem görünümleri ve sütunları **sunucuya aittir**: bunları bildirmek için değil, yalnızca onlara başvurmak için tanımlayıcılarını çözümleyin. [`defineView()`](/l/tr/developers/extend/apps/layout/views) üzerindeki
   `key` kullanımdan kaldırılmıştır ve yok sayılır; bu nedenle bir bildirim görünümü asla `INDEX` anahtarını talep edemez ve sunucu, eklediğiniz her alan için zaten bir sütun sağlar; bu yüzden bir sistem görünümünde aynı alan için kendi `defineViewField()` bildiriminizi yapmak bununla çelişir.
 </Warning>
 
