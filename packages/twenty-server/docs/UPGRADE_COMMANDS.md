@@ -144,6 +144,8 @@ Workspace commands are executed sequentially across all active/suspended workspa
 
 Nothing is rolled back on stop: the run resumes from the last command recorded in `upgradeMigration`. A graceful stop leaves each workspace either fully done with the segment or untouched, so resuming is a plain rerun. A forced kill can interrupt a command mid-flight; its own transaction rolls back, but a command that writes across several transactions may leave partial work, which is why upgrade commands must be idempotent.
 
+Expect the first signal to look like it did nothing while a step is running. `upgrade` runs instance steps through the same loop, and a slow instance command can spend a long time in `runDataMigration` before the next boundary is reached. The run stops when the step ends; send the signal again to give up on it instead.
+
 Under Kubernetes, `terminationGracePeriodSeconds` must be long enough for the workspace in progress to finish its segment, otherwise the pod is `SIGKILL`ed before the graceful stop completes.
 
 ## Shipping a command for a future version (deferred drops)
