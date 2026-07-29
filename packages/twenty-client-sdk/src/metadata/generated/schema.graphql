@@ -2950,6 +2950,7 @@ type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   threadId: UUID
   streamId: String
+  modelId: String
 }
 
 enum WorkspaceSetupChatOutcome {

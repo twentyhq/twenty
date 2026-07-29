@@ -5,6 +5,7 @@ export const START_WORKSPACE_SETUP_CHAT = gql`
     startWorkspaceSetupChat(companyContext: $companyContext) {
       outcome
       threadId
+      modelId
     }
   }
 `;

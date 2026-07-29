@@ -6,6 +6,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
@@ -97,6 +98,10 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           !isValidUuid(threadId)
         ) {
           return;
+        }
+
+        if (isDefined(result.modelId)) {
+          store.set(agentChatUserSelectedModelState.atom, result.modelId);
         }
 
         const nowIsoString = new Date().toISOString();

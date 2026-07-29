@@ -5933,6 +5933,9 @@ export default {
             "streamId": [
                 1
             ],
+            "modelId": [
+                1
+            ],
             "__typename": [
                 1
             ]

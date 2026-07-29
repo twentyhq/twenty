@@ -10,6 +10,7 @@ import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/a
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
+import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
@@ -69,6 +70,7 @@ const buildKickoffMock = ({
           __typename: 'StartWorkspaceSetupChatResult',
           outcome,
           threadId: outcome === 'UNAVAILABLE' ? null : threadId,
+          modelId: outcome === 'UNAVAILABLE' ? null : 'openai/gpt-5.6-luna',
         },
       },
     };
@@ -192,6 +194,16 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
         }),
       ),
     ).toBe(WORKSPACE_SETUP_CHAT_THREAD_TITLE);
+  });
+
+  it('should pin the model returned by the kickoff so the chat continues on it', async () => {
+    renderKickoffEffect([buildKickoffMock({ outcome: 'STARTED' })]);
+
+    await flushMutation();
+
+    expect(jotaiStore.get(agentChatUserSelectedModelState.atom)).toBe(
+      'openai/gpt-5.6-luna',
+    );
   });
 
   it('should select the thread without awaiting a first chunk when the chat was already started', async () => {

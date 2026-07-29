@@ -62,6 +62,7 @@ export class WorkspaceSetupChatResolver {
         outcome: result.outcome,
         threadId: result.threadId,
         streamId: result.streamId,
+        modelId: result.modelId,
       };
     }
 
@@ -69,6 +70,7 @@ export class WorkspaceSetupChatResolver {
       outcome: result.outcome,
       threadId: result.threadId,
       streamId: null,
+      modelId: result.modelId,
     };
   }
 }

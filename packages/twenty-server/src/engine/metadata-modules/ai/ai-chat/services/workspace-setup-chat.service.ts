@@ -24,6 +24,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-chat-key-value.type';
 import { buildWorkspaceSetupPromptText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   AiException,
   AiExceptionCode,
@@ -37,9 +39,18 @@ type StartWorkspaceSetupChatServiceResult =
       threadId: string;
       streamId: string;
       turnId: string;
+      modelId: string;
     }
-  | { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED; threadId: string }
-  | { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE; threadId: null };
+  | {
+      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED;
+      threadId: string;
+      modelId: string;
+    }
+  | {
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE;
+      threadId: null;
+      modelId: null;
+    };
 
 @Injectable()
 export class WorkspaceSetupChatService {
@@ -54,6 +65,7 @@ export class WorkspaceSetupChatService {
     private readonly keyValuePairService: KeyValuePairService<WorkspaceSetupChatKeyValueTypeMap>,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async startWorkspaceSetupChat({
@@ -68,7 +80,11 @@ export class WorkspaceSetupChatService {
     companyContext: WorkspaceCompanyEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     const isWorkspaceCreator = await this.isWorkspaceCreator({
@@ -77,11 +93,19 @@ export class WorkspaceSetupChatService {
     });
 
     if (!isWorkspaceCreator) {
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     const modelId = this.resolveKickoffModelId(workspace);
@@ -91,7 +115,11 @@ export class WorkspaceSetupChatService {
         `Workspace setup chat unavailable for workspace ${workspace.id}: neither ${WORKSPACE_SETUP_CHAT_MODEL_ID} nor ${workspace.smartModel} is available`,
       );
 
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     const existingThreadId = await this.resolveExistingThread({
@@ -106,7 +134,11 @@ export class WorkspaceSetupChatService {
       mustCreateThread &&
       !(await this.hasCreditsToStartKickoffStream(workspace.id))
     ) {
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     const threadId =
@@ -172,12 +204,64 @@ export class WorkspaceSetupChatService {
     });
   }
 
-  private async getUserLocale(userWorkspaceId: string): Promise<string> {
+  private async getUserLocale({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<string> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { id: userWorkspaceId },
     });
 
-    return userWorkspace?.locale ?? SOURCE_LOCALE;
+    if (!isDefined(userWorkspace)) {
+      return SOURCE_LOCALE;
+    }
+
+    // The workspace member locale is what the UI is translated with, while the user workspace
+    // one stays at its signup default, so the assistant must follow the member locale.
+    const workspaceMemberLocale = await this.findWorkspaceMemberLocale({
+      userId: userWorkspace.userId,
+      workspaceId,
+    });
+
+    return workspaceMemberLocale ?? userWorkspace.locale ?? SOURCE_LOCALE;
+  }
+
+  private async findWorkspaceMemberLocale({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    try {
+      const workspaceMember =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workspaceMemberRepository =
+              await this.globalWorkspaceOrmManager.getRepository(
+                workspaceId,
+                'workspaceMember',
+                { shouldBypassPermissionChecks: true },
+              );
+
+            return workspaceMemberRepository.findOne({ where: { userId } });
+          },
+          buildSystemAuthContext(workspaceId),
+        );
+
+      return workspaceMember?.locale ?? null;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read the workspace member locale for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return null;
+    }
   }
 
   private async isWorkspaceCreator({
@@ -357,7 +441,11 @@ export class WorkspaceSetupChatService {
         });
 
       if (!isDefined(interruptedError)) {
-        return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
+        return {
+          outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
+          threadId,
+          modelId,
+        };
       }
     }
 
@@ -368,11 +456,19 @@ export class WorkspaceSetupChatService {
       });
 
     if (hasConversationMessages) {
-      return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
+      return {
+        outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
+        threadId,
+        modelId,
+      };
     }
 
     if (!(await this.hasCreditsToStartKickoffStream(workspace.id))) {
-      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, threadId: null };
+      return {
+        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+        threadId: null,
+        modelId: null,
+      };
     }
 
     const kickoffResult =
@@ -382,13 +478,20 @@ export class WorkspaceSetupChatService {
         workspace,
         text: buildWorkspaceSetupPromptText({
           companyEnrichment: companyContext,
-          locale: await this.getUserLocale(userWorkspaceId),
+          locale: await this.getUserLocale({
+            userWorkspaceId,
+            workspaceId: workspace.id,
+          }),
         }),
         modelId,
       });
 
     if (!isDefined(kickoffResult)) {
-      return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, threadId };
+      return {
+        outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
+        threadId,
+        modelId,
+      };
     }
 
     return {
@@ -396,6 +499,7 @@ export class WorkspaceSetupChatService {
       threadId,
       streamId: kickoffResult.streamId,
       turnId: kickoffResult.turnId,
+      modelId,
     };
   }
 }

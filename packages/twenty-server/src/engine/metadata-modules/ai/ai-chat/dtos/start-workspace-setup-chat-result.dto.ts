@@ -13,4 +13,7 @@ export class StartWorkspaceSetupChatResultDTO {
 
   @Field(() => String, { nullable: true })
   streamId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  modelId?: string | null;
 }

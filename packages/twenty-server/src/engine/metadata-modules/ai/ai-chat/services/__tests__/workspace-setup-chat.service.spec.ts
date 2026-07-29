@@ -33,19 +33,22 @@ describe('WorkspaceSetupChatService', () => {
 
     const userWorkspaceState = {
       creatorUserId: 'creator-user-id',
-      locale: 'fr-FR',
+      locale: 'en',
+      workspaceMemberLocale: 'fr-FR',
     };
 
     const userWorkspaceRepository = {
-      findOne: jest
-        .fn()
-        .mockImplementation(({ where }) =>
-          Promise.resolve(
-            isDefined(where?.id)
-              ? { id: where.id, locale: userWorkspaceState.locale }
-              : { userId: userWorkspaceState.creatorUserId },
-          ),
+      findOne: jest.fn().mockImplementation(({ where }) =>
+        Promise.resolve(
+          isDefined(where?.id)
+            ? {
+                id: where.id,
+                userId: userWorkspaceState.creatorUserId,
+                locale: userWorkspaceState.locale,
+              }
+            : { userId: userWorkspaceState.creatorUserId },
         ),
+      ),
     };
     const twentyConfigService = {
       get: jest.fn().mockReturnValue(true),
@@ -98,6 +101,20 @@ describe('WorkspaceSetupChatService', () => {
       unarchiveThread: jest.fn().mockResolvedValue(undefined),
       hasConversationMessages: jest.fn().mockResolvedValue(false),
     };
+    const globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((callback: () => unknown) => callback()),
+      getRepository: jest.fn().mockResolvedValue({
+        findOne: jest
+          .fn()
+          .mockImplementation(() =>
+            Promise.resolve({
+              locale: userWorkspaceState.workspaceMemberLocale,
+            }),
+          ),
+      }),
+    };
     const agentChatStreamingService = {
       reapDeadStream: jest.fn().mockResolvedValue(null),
       startHiddenKickoffStream: jest.fn().mockResolvedValue({
@@ -115,6 +132,7 @@ describe('WorkspaceSetupChatService', () => {
       keyValuePairService as never,
       agentChatService as never,
       agentChatStreamingService as never,
+      globalWorkspaceOrmManager as never,
     );
 
     return {
@@ -128,6 +146,7 @@ describe('WorkspaceSetupChatService', () => {
       keyValuePairService,
       agentChatService,
       agentChatStreamingService,
+      globalWorkspaceOrmManager,
     };
   };
 
@@ -146,6 +165,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(twentyConfigService.get).toHaveBeenCalledWith(
       'IS_ONBOARDING_AI_CHAT_ENABLED',
@@ -165,6 +185,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
@@ -194,6 +215,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
@@ -211,8 +233,38 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
+  });
+
+  it('should build the prompt with the workspace member locale rather than the user workspace one', async () => {
+    const { service, agentChatStreamingService } = buildService();
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    const kickoffText =
+      agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
+
+    expect(kickoffText).toContain(
+      'The user locale is French, please continue the discussion in that language.',
+    );
+  });
+
+  it('should fall back to the user workspace locale when the workspace member has none', async () => {
+    const { service, globalWorkspaceOrmManager, agentChatStreamingService } =
+      buildService();
+
+    globalWorkspaceOrmManager.getRepository.mockResolvedValue({
+      findOne: jest.fn().mockResolvedValue(null),
+    });
+
+    await service.startWorkspaceSetupChat(startArguments);
+
+    const kickoffText =
+      agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
+
+    expect(kickoffText).toContain('The user locale is English');
   });
 
   it('should start the kickoff stream with the workspace setup model', async () => {
@@ -258,6 +310,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
@@ -283,6 +336,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
     expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
     expect(
@@ -310,6 +364,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
       threadId: null,
+      modelId: null,
     });
     expect(
       agentChatStreamingService.startHiddenKickoffStream,
@@ -400,6 +455,7 @@ describe('WorkspaceSetupChatService', () => {
       threadId: createdThreadId,
       streamId: 'stream-id',
       turnId: 'turn-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
   });
 
@@ -483,6 +539,7 @@ describe('WorkspaceSetupChatService', () => {
       threadId: 'winner-thread-id',
       streamId: 'stream-id',
       turnId: 'turn-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
   });
 
@@ -511,6 +568,7 @@ describe('WorkspaceSetupChatService', () => {
       threadId: freshThreadId,
       streamId: 'stream-id',
       turnId: 'turn-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
   });
 
@@ -533,6 +591,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
     expect(
       agentChatStreamingService.startHiddenKickoffStream,
@@ -566,6 +625,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: 'existing-thread-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
     expect(agentChatService.hasConversationMessages).not.toHaveBeenCalled();
     expect(
@@ -586,6 +646,7 @@ describe('WorkspaceSetupChatService', () => {
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
       threadId: createdThreadId,
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
   });
 
@@ -625,6 +686,7 @@ describe('WorkspaceSetupChatService', () => {
       threadId: 'archived-thread-id',
       streamId: 'stream-id',
       turnId: 'turn-id',
+      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
     });
   });
 
