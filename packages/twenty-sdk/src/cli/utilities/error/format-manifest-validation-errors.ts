@@ -40,6 +40,7 @@ export const formatManifestValidationErrors = (
     for (const entry of entries) {
       const universalIdentifier =
         entry.flatEntityMinimalInformation?.universalIdentifier;
+      const conflictContext = entry.existingEntityConflictContext;
 
       for (const entryError of entry.errors) {
         const details: string[] = [];
@@ -50,6 +51,13 @@ export const formatManifestValidationErrors = (
 
         if (isNonEmptyString(universalIdentifier)) {
           details.push(`universalIdentifier: ${universalIdentifier}`);
+        }
+
+        if (isDefined(conflictContext)) {
+          details.push(`existingEntityId: ${conflictContext.existingEntityId}`);
+          details.push(
+            `existingOwnerApp: ${conflictContext.existingApplicationUniversalIdentifier}`,
+          );
         }
 
         const suffix = details.length > 0 ? ` (${details.join(', ')})` : '';

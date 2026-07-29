@@ -16,6 +16,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "testField",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -35,6 +36,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -52,6 +54,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,

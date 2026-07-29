@@ -15,6 +15,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -52,6 +53,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -89,6 +91,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -125,6 +128,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -162,6 +166,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,

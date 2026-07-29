@@ -16,6 +16,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "fieldNameBisId",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -35,6 +36,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -52,6 +54,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -91,6 +94,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "fieldName",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -110,6 +114,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -127,6 +132,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -191,6 +197,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -208,6 +215,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -247,6 +255,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -266,6 +275,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -283,6 +293,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -347,6 +358,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -364,6 +376,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -562,6 +575,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "fieldNameBisId",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -579,6 +593,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "defaulttargetfieldlabel",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -598,6 +613,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_747db609dd2bb7abe30d5d1926c",
             "universalIdentifier": Any<String>,
           },
@@ -616,6 +632,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -633,6 +650,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -650,6 +668,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -667,6 +686,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -787,6 +807,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "fieldName",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -804,6 +825,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "uniqueTargetLabel",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -823,6 +845,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_7ee6c7ff1e4648b0665f60cd5e4",
             "universalIdentifier": Any<String>,
           },
@@ -841,6 +864,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -858,6 +882,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -875,6 +900,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -892,6 +918,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -973,6 +1000,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "fieldNameBisId",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -992,6 +1020,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_28fc32819c3dc0ec7c8594219fc",
               "universalIdentifier": Any<String>,
             },
@@ -1010,6 +1039,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1027,6 +1057,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1069,6 +1100,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "fieldName",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1088,6 +1120,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_e19260dc9ba8bb2ac7c39c6fcfd",
               "universalIdentifier": Any<String>,
             },
@@ -1106,6 +1139,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1123,6 +1157,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1190,6 +1225,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_78587d9d07f2ad40242e070725f",
               "universalIdentifier": Any<String>,
             },
@@ -1208,6 +1244,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1225,6 +1262,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1267,6 +1305,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1286,6 +1325,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_94535ac037cc2cd5eb316e87a54",
               "universalIdentifier": Any<String>,
             },
@@ -1304,6 +1344,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1321,6 +1362,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1388,6 +1430,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_78587d9d07f2ad40242e070725f",
               "universalIdentifier": Any<String>,
             },
@@ -1406,6 +1449,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1423,6 +1467,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1632,6 +1677,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "fieldNameBisId",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1649,6 +1695,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "defaulttargetfieldlabel",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1668,6 +1715,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_8f338db6589d97164642f3fe641",
               "universalIdentifier": Any<String>,
             },
@@ -1686,6 +1734,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1703,6 +1752,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1720,6 +1770,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1737,6 +1788,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1863,6 +1915,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "fieldName",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1880,6 +1933,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "uniqueTargetLabel",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1899,6 +1953,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "IDX_d41e56dfc90f36d133336f65736",
               "universalIdentifier": Any<String>,
             },
@@ -1917,6 +1972,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1934,6 +1990,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1951,6 +2008,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1968,6 +2026,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2051,6 +2110,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "manager",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2070,6 +2130,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2087,6 +2148,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2126,6 +2188,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "manager",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2145,6 +2208,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_772faa136925e6c4141fd45ac0e",
             "universalIdentifier": Any<String>,
           },
@@ -2163,6 +2227,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2180,6 +2245,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2220,6 +2286,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "fieldName",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2237,6 +2304,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "relatedObject",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2256,6 +2324,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_7ee6c7ff1e4648b0665f60cd5e4",
             "universalIdentifier": Any<String>,
           },
@@ -2274,6 +2343,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2291,6 +2361,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2308,6 +2379,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2325,6 +2397,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2365,6 +2438,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "companyId",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2382,6 +2456,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "related",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2401,6 +2476,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_ed8240d8bc1e69a39dab1c17fe2",
             "universalIdentifier": Any<String>,
           },
@@ -2419,6 +2495,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2436,6 +2513,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2453,6 +2531,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -2470,6 +2549,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,

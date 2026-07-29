@@ -39,6 +39,7 @@ exports[`Skill update should fail when updating with empty content 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "skill",
@@ -74,6 +75,7 @@ exports[`Skill update should fail when updating with empty label 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "skill",

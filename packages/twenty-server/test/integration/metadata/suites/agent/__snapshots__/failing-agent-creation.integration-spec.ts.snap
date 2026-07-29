@@ -15,6 +15,7 @@ exports[`Agent creation should fail when computed name already exists 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "existingTestAgent",
             "universalIdentifier": Any<String>,
           },
@@ -51,6 +52,7 @@ exports[`Agent creation should fail when label is empty string 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "",
             "universalIdentifier": Any<String>,
           },
@@ -101,6 +103,7 @@ exports[`Agent creation should fail when modelId is empty string 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "emptyModelidAgent",
             "universalIdentifier": Any<String>,
           },
@@ -151,6 +154,7 @@ exports[`Agent creation should fail when prompt is empty string 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "emptyPromptAgent",
             "universalIdentifier": Any<String>,
           },
@@ -201,6 +205,7 @@ exports[`Agent creation should fail when responseFormat has invalid type 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "invalidResponseFormatAgent",
             "universalIdentifier": Any<String>,
           },
@@ -237,6 +242,7 @@ exports[`Agent creation should fail when responseFormat type is json but schema 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "jsonWithoutSchemaAgent",
             "universalIdentifier": Any<String>,
           },
@@ -273,6 +279,7 @@ exports[`Agent creation should fail when responseFormat type is text but schema 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "textWithSchemaAgent",
             "universalIdentifier": Any<String>,
           },

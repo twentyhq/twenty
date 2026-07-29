@@ -20,6 +20,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldPermission",
@@ -41,6 +42,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Admin",
             "universalIdentifier": Any<String>,
           },
@@ -82,6 +84,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Admin",
             "universalIdentifier": Any<String>,
           },
@@ -105,6 +108,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "permissionFlagUniversalIdentifier": Any<String>,
             "roleUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -148,6 +152,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "objectPermission",
@@ -169,6 +174,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Admin",
             "universalIdentifier": Any<String>,
           },

@@ -7,10 +7,20 @@ export type FailedMetadataValidationError = {
   value?: unknown;
 };
 
+// Cross-reference for "create" actions that collided with an existing entity
+// on the server. The server populates this for the universalIdentifier and
+// viewField collisions so the CLI can render the existing entity owner and id
+// instead of just "already exists".
+export type ExistingEntityConflictContext = {
+  existingEntityId: string;
+  existingApplicationUniversalIdentifier: string;
+};
+
 export type FailedMetadataValidation = {
   type: string;
   errors: FailedMetadataValidationError[];
   flatEntityMinimalInformation: Record<string, unknown>;
+  existingEntityConflictContext?: ExistingEntityConflictContext | null;
 };
 
 export type MetadataValidationErrorResponse = {

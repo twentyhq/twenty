@@ -17,6 +17,7 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "numericField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -36,6 +37,7 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -53,6 +55,7 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -119,6 +122,7 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -136,6 +140,7 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -175,6 +180,7 @@ exports[`Failing create field metadata tests suite should fail to create TS_VECT
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "id": Any<String>,
             },
             "metadataName": "fieldMetadata",

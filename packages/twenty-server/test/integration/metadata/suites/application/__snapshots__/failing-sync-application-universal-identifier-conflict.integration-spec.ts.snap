@@ -14,6 +14,7 @@ exports[`Sync application should fail on universalIdentifier conflicts should fa
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -48,6 +49,7 @@ exports[`Sync application should fail on universalIdentifier conflicts should fa
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",

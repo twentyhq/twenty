@@ -14,6 +14,7 @@ import {
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { type Manifest } from 'twenty-shared/application';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
@@ -76,7 +77,13 @@ export class SyncApplicationOrchestratorStep {
 
     events.push({ message: 'Manifest checksums set', status: 'info' });
 
-    await writeManifestToOutput(input.appPath, manifest);
+    const translations = await compileApplicationTranslations(input.appPath);
+
+    const manifestWithTranslations: Manifest = translations
+      ? { ...manifest, translations }
+      : manifest;
+
+    await writeManifestToOutput(input.appPath, manifestWithTranslations);
 
     events.push({
       message: 'Manifest saved to output directory',
@@ -86,9 +93,12 @@ export class SyncApplicationOrchestratorStep {
     if (!this.force) {
       events.push({ message: 'Computing metadata plan', status: 'info' });
 
-      const planResult = await this.apiService.syncApplication(manifest, {
-        dryRun: true,
-      });
+      const planResult = await this.apiService.syncApplication(
+        manifestWithTranslations,
+        {
+          dryRun: true,
+        },
+      );
 
       if (!planResult.success) {
         this.applyFailure(planResult, events);
@@ -110,7 +120,9 @@ export class SyncApplicationOrchestratorStep {
 
     events.push({ message: 'Syncing manifest', status: 'info' });
 
-    const syncResult = await this.apiService.syncApplication(manifest);
+    const syncResult = await this.apiService.syncApplication(
+      manifestWithTranslations,
+    );
 
     if (syncResult.success) {
       events.push(...formatSyncActionsSummary(syncResult.data.actions));

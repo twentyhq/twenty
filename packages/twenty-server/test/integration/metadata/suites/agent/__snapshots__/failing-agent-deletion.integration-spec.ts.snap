@@ -15,6 +15,7 @@ exports[`Agent deletion should fail should fail when attempting to delete a stan
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "helper",
             "universalIdentifier": Any<String>,
           },

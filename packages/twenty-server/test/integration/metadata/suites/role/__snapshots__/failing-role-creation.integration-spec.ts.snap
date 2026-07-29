@@ -15,6 +15,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Inconsistent Destroy Role",
             "universalIdentifier": Any<String>,
           },
@@ -51,6 +52,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Inconsistent Soft Delete Role",
             "universalIdentifier": Any<String>,
           },
@@ -87,6 +89,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Inconsistent Update Role",
             "universalIdentifier": Any<String>,
           },
@@ -123,6 +126,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Inconsistent Multiple Write Role",
             "universalIdentifier": Any<String>,
           },
@@ -159,6 +163,7 @@ exports[`Role creation should fail when label already exists 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "label": "Existing Test Role",
             "universalIdentifier": Any<String>,
           },

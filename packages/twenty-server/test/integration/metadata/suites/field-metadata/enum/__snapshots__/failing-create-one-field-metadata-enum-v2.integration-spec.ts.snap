@@ -17,6 +17,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -36,6 +37,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -53,6 +55,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -94,6 +97,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -113,6 +117,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -130,6 +135,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -171,6 +177,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -190,6 +197,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -207,6 +215,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -282,6 +291,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -299,6 +309,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -374,6 +385,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -391,6 +403,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -466,6 +479,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -483,6 +497,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -558,6 +573,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -575,6 +591,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -616,6 +633,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -635,6 +653,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -652,6 +671,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -693,6 +713,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -712,6 +733,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -729,6 +751,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -795,6 +818,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -812,6 +836,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -853,6 +878,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -872,6 +898,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -889,6 +916,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -930,6 +958,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -949,6 +978,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -966,6 +996,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1007,6 +1038,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1026,6 +1058,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1043,6 +1076,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1121,6 +1155,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1138,6 +1173,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1179,6 +1215,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1198,6 +1235,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1215,6 +1253,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1256,6 +1295,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1275,6 +1315,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1292,6 +1333,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1333,6 +1375,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1352,6 +1395,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1369,6 +1413,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1410,6 +1455,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1429,6 +1475,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1446,6 +1493,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1487,6 +1535,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1506,6 +1555,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1523,6 +1573,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1564,6 +1615,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1583,6 +1635,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1600,6 +1653,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1641,6 +1695,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1660,6 +1715,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1677,6 +1733,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1742,6 +1799,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1759,6 +1817,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1799,6 +1858,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1818,6 +1878,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1835,6 +1896,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1876,6 +1938,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1895,6 +1958,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1912,6 +1976,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1952,6 +2017,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -1971,6 +2037,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -1988,6 +2055,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2054,6 +2122,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2071,6 +2140,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2112,6 +2182,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2131,6 +2202,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2148,6 +2220,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2189,6 +2262,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2208,6 +2282,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2225,6 +2300,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2266,6 +2342,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2285,6 +2362,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2302,6 +2380,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2368,6 +2447,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2385,6 +2465,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2426,6 +2507,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2445,6 +2527,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2462,6 +2545,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2503,6 +2587,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2522,6 +2607,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2539,6 +2625,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2605,6 +2692,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2622,6 +2710,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2662,6 +2751,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2681,6 +2771,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2698,6 +2789,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2738,6 +2830,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2757,6 +2850,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2774,6 +2868,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2815,6 +2910,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2834,6 +2930,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2851,6 +2948,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2892,6 +2990,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -2911,6 +3010,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2928,6 +3028,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -2994,6 +3095,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3011,6 +3113,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3052,6 +3155,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3071,6 +3175,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3088,6 +3193,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3129,6 +3235,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3148,6 +3255,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3165,6 +3273,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3240,6 +3349,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3257,6 +3367,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3332,6 +3443,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3349,6 +3461,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3424,6 +3537,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3441,6 +3555,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3516,6 +3631,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3533,6 +3649,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3574,6 +3691,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3593,6 +3711,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3610,6 +3729,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3676,6 +3796,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3693,6 +3814,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3734,6 +3856,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3753,6 +3876,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3770,6 +3894,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3811,6 +3936,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3830,6 +3956,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3847,6 +3974,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3888,6 +4016,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3907,6 +4036,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3924,6 +4054,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -3965,6 +4096,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -3984,6 +4116,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4001,6 +4134,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4042,6 +4176,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4061,6 +4196,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4078,6 +4214,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4119,6 +4256,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4138,6 +4276,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4155,6 +4294,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4196,6 +4336,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4215,6 +4356,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4232,6 +4374,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4273,6 +4416,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4292,6 +4436,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4309,6 +4454,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4350,6 +4496,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4369,6 +4516,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4386,6 +4534,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4451,6 +4600,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4468,6 +4618,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4508,6 +4659,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4527,6 +4679,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4544,6 +4697,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4585,6 +4739,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4604,6 +4759,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4621,6 +4777,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4661,6 +4818,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4680,6 +4838,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4697,6 +4856,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4763,6 +4923,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4780,6 +4941,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4821,6 +4983,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4840,6 +5003,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4857,6 +5021,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4898,6 +5063,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4917,6 +5083,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4934,6 +5101,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -4975,6 +5143,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -4994,6 +5163,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5011,6 +5181,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5077,6 +5248,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5094,6 +5266,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5135,6 +5308,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -5154,6 +5328,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5171,6 +5346,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5212,6 +5388,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -5231,6 +5408,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5248,6 +5426,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5314,6 +5493,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5331,6 +5511,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5371,6 +5552,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -5390,6 +5572,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5407,6 +5590,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5447,6 +5631,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -5466,6 +5651,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5483,6 +5669,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5524,6 +5711,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "testField",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
@@ -5543,6 +5731,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,
@@ -5560,6 +5749,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
               "viewUniversalIdentifier": Any<String>,

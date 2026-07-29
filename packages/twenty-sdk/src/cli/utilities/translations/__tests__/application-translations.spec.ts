@@ -61,6 +61,30 @@ describe('collectTranslatableStrings', () => {
       'Name',
     ]);
   });
+
+  it('walks nested objects[].fields[].label so field labels are translated (#23192)', () => {
+    const manifest = buildManifest({
+      objects: [
+        {
+          labelSingular: 'Project',
+          labelPlural: 'Projects',
+          fields: [
+            { label: 'Project Name', description: 'Short title' },
+            { label: 'Total Investment', description: null },
+          ],
+        },
+      ],
+    });
+
+    expect(collectTranslatableStrings(manifest)).toEqual(
+      expect.arrayContaining([
+        'Project',
+        'Projects',
+        'Project Name',
+        'Short title',
+      ]),
+    );
+  });
 });
 
 describe('compileApplicationTranslations', () => {

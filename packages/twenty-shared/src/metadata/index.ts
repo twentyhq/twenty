@@ -23,6 +23,7 @@ export { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from './constants/standard
 export type { AllMetadataName } from './types/all-metadata-name.type';
 export type {
   FailedMetadataValidationError,
+  ExistingEntityConflictContext,
   FailedMetadataValidation,
   MetadataValidationErrorResponse,
 } from './types/MetadataValidationError';

@@ -37,6 +37,42 @@ export const collectTranslatableStrings = (manifest: Manifest): string[] => {
       for (const fieldKey of fieldKeys) {
         addString((entity as Record<string, unknown>)[fieldKey]);
       }
+
+      // Field labels live inside `objects[].fields[]`, not at the top-level
+      // `fields[]` array, so walk one level deeper here. Without this, the
+      // translation catalog only contains object-level labels and four generic
+      // top-level fields; every field defined via `defineObject` is missed.
+      // See #23192.
+      if (manifestKey === 'objects') {
+        const nestedFields = (entity as Record<string, unknown>)['fields'];
+
+        if (Array.isArray(nestedFields)) {
+          for (const nestedField of nestedFields) {
+            if (nestedField === null || typeof nestedField !== 'object') {
+              continue;
+            }
+
+            for (const nestedFieldKey of ['label', 'description']) {
+              addString(
+                (nestedField as Record<string, unknown>)[nestedFieldKey],
+              );
+            }
+          }
+        }
+
+        const nestedIndex = (entity as Record<string, unknown>)['indexes'];
+
+        if (Array.isArray(nestedIndex)) {
+          for (const index of nestedIndex) {
+            if (index === null || typeof index !== 'object') {
+              continue;
+            }
+            for (const indexKey of ['name', 'description']) {
+              addString((index as Record<string, unknown>)[indexKey]);
+            }
+          }
+        }
+      }
     }
   }
 

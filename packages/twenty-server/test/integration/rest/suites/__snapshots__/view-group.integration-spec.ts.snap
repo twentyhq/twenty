@@ -14,6 +14,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
           },
         ],
         "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
           "universalIdentifier": Any<String>,
           "viewUniversalIdentifier": Any<String>,
         },

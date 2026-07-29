@@ -33,6 +33,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "namePlural": "whatevers",
               "nameSingular": "whatever",
               "universalIdentifier": Any<String>,

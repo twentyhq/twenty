@@ -15,6 +15,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "filesFieldUnique",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -34,6 +35,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_UNIQUE_47bf8eae9471bbd64cbb794a3b6",
             "universalIdentifier": Any<String>,
           },
@@ -52,6 +54,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -69,6 +72,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -108,6 +112,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "filesFieldInvalid",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -127,6 +132,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -144,6 +150,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -182,6 +189,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "filesFieldExceeds",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -201,6 +209,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -218,6 +227,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -256,6 +266,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "filesFieldNoSettings",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -275,6 +286,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,
@@ -292,6 +304,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,

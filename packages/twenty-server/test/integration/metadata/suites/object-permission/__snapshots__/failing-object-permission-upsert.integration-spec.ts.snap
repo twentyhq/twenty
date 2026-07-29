@@ -56,6 +56,7 @@ exports[`Object permission upsert should fail when role is not editable (system 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "objectMetadataUniversalIdentifier": Any<String>,
             "roleUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,

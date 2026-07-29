@@ -15,6 +15,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -50,6 +51,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -85,6 +87,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -120,6 +123,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -155,6 +159,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -190,6 +195,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -225,6 +231,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -260,6 +267,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",
@@ -295,6 +303,7 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             },
           ],
           "flatEntityMinimalInformation": {
+          "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "logicFunction",

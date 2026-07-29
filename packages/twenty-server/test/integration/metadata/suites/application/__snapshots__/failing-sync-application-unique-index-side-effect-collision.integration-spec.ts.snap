@@ -15,6 +15,7 @@ exports[`Sync application should fail on unique index side-effect collision shou
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_UNIQUE_790b15e5a08e02973ecff530bce",
             "universalIdentifier": Any<String>,
           },

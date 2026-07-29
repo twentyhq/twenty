@@ -27,6 +27,7 @@ exports[`Role update should fail updating role with existing write permissions s
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -62,6 +63,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -97,6 +99,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -132,6 +135,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -167,6 +171,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -202,6 +207,7 @@ exports[`Role update should fail when updating label to one that already exists 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -237,6 +243,7 @@ exports[`Role update should fail when updating to enable write permissions witho
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",

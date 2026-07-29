@@ -15,6 +15,7 @@ exports[`Front component creation should fail when builtComponentPath contains p
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "TraversalTest",
             "universalIdentifier": Any<String>,
           },
@@ -51,6 +52,7 @@ exports[`Front component creation should fail when builtComponentPath has a comp
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "PdfExtTest",
             "universalIdentifier": Any<String>,
           },
@@ -87,6 +89,7 @@ exports[`Front component creation should fail when builtComponentPath has an inv
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "InvalidExtTest",
             "universalIdentifier": Any<String>,
           },
@@ -123,6 +126,7 @@ exports[`Front component creation should fail when builtComponentPath is a folde
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "FolderPathTest",
             "universalIdentifier": Any<String>,
           },
@@ -159,6 +163,7 @@ exports[`Front component creation should fail when builtComponentPath is an abso
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "AbsolutePathTest",
             "universalIdentifier": Any<String>,
           },
@@ -195,6 +200,7 @@ exports[`Front component creation should fail when name is empty 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "",
             "universalIdentifier": Any<String>,
           },
@@ -231,6 +237,7 @@ exports[`Front component creation should fail when name is whitespace-only 1`] =
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "",
             "universalIdentifier": Any<String>,
           },
@@ -267,6 +274,7 @@ exports[`Front component creation should fail when sourceComponentPath contains 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "TraversalTest",
             "universalIdentifier": Any<String>,
           },
@@ -303,6 +311,7 @@ exports[`Front component creation should fail when sourceComponentPath has an in
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "InvalidSourceExtTest",
             "universalIdentifier": Any<String>,
           },
@@ -339,6 +348,7 @@ exports[`Front component creation should fail when sourceComponentPath is a fold
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "FolderSourcePathTest",
             "universalIdentifier": Any<String>,
           },

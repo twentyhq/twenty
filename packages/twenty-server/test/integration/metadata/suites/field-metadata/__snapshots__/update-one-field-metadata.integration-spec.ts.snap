@@ -16,6 +16,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
               },
             ],
             "flatEntityMinimalInformation": {
+              "existingEntityConflictContext": null,
               "name": "newName",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,

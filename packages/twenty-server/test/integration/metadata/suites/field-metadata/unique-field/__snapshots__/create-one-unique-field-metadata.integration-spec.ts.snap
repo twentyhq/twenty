@@ -15,6 +15,7 @@ exports[`failing createOne unique field metadata should fail for composite type 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_UNIQUE_98d410e804d758f9bcceb154dde",
             "universalIdentifier": Any<String>,
           },
@@ -51,6 +52,7 @@ exports[`failing createOne unique field metadata should fail when field has cust
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_UNIQUE_a1b02809c523cdc853d35fbc413",
             "universalIdentifier": Any<String>,
           },

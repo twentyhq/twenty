@@ -16,6 +16,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -97,6 +98,60 @@ export class ViewResolver {
           view.name,
           view.isCustom,
           translatedObjectLabel,
+          context.req.locale,
+        );
+      }
+    }
+
+    // For custom (app-defined) views, fall back to the app's translation
+    // catalog. Without this, view names like "All projects" stay in English
+    // even when the workspace has a Turkish tr-TR translation, because
+    // `processViewNameWithTemplate` only consults the built-in Lingui
+    // catalog and short-circuits to the source string for custom views.
+    // See #23192.
+    if (view.isCustom) {
+      const objectMetadata = await context.loaders.objectMetadataLoader.load({
+        objectMetadataId: view.objectMetadataId,
+        workspaceId: workspace.id,
+      });
+
+      if (isDefined(objectMetadata)) {
+        const i18n = this.i18nService.getI18nInstance(context.req.locale);
+        const standardApplicationId =
+          await context.loaders.standardApplicationIdLoader.load({
+            workspaceId: workspace.id,
+          });
+        const isStandardApp =
+          objectMetadata.applicationId === standardApplicationId;
+        const applicationCatalog =
+          await context.loaders.applicationTranslationCatalogLoader.load({
+            applicationId: objectMetadata.applicationId,
+            workspaceId: workspace.id,
+            locale: context.req.locale,
+          });
+        const translatedViewName = resolveEffectiveEntityProperty({
+          metadataName: 'view',
+          baseValue: view.name,
+          // view.overrides is the entity's parsed overrides (string-typed at
+          // the storage boundary); `MetadataPresentationOverrides<"view">` is
+          // the same shape with explicit string typing. The mismatch is a
+          // type-system artifact, not a runtime difference.
+          overrides: (view.overrides ?? undefined) as
+            | MetadataPresentationOverrides<'view'>
+            | undefined,
+          property: 'name',
+          i18nContext: {
+            locale: context.req.locale,
+            i18nInstance: i18n,
+            isStandardApp,
+            applicationCatalog,
+          },
+        });
+
+        return this.viewService.processViewNameWithTemplate(
+          translatedViewName,
+          view.isCustom,
+          undefined,
           context.req.locale,
         );
       }

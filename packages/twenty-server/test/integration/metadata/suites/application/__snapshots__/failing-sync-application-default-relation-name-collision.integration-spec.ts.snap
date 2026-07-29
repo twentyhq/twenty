@@ -16,6 +16,7 @@ exports[`Sync application default relation name collision should reject a manife
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -33,6 +34,7 @@ exports[`Sync application default relation name collision should reject a manife
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "targetDefaultRelationCollisionTarget",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -52,6 +54,7 @@ exports[`Sync application default relation name collision should reject a manife
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "IDX_6d15112a8688389df51c6dfc321",
             "universalIdentifier": Any<String>,
           },
@@ -89,6 +92,7 @@ exports[`Sync application default relation name collision should reject a manife
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "name": "attachments",
             "universalIdentifier": Any<String>,
           },

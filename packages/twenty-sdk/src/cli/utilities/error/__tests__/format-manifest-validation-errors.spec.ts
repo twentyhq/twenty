@@ -254,4 +254,39 @@ describe('formatManifestValidationErrors', () => {
     expect(multipleErrors?.[0].message).toBe('Sync failed with 5 errors');
     expect(multipleErrors?.[1].message).toBe('objectMetadata: 5 errors');
   });
+
+  it('should render existingEntityConflictContext when the server reports one', () => {
+    const events = formatManifestValidationErrors({
+      errors: {
+        viewField: [
+          {
+            type: 'viewField',
+            flatEntityMinimalInformation: {
+              universalIdentifier: 'viewfield-uuid-1',
+            },
+            existingEntityConflictContext: {
+              existingEntityId: 'existing-id-42',
+              existingApplicationUniversalIdentifier:
+                'workspace-custom-app-uuid',
+            },
+            errors: [
+              {
+                code: 'ENTITY_ALREADY_EXISTS',
+                message:
+                  'Cannot create viewField: universalIdentifier already exists',
+              },
+            ],
+          },
+        ],
+      },
+      summary: { viewField: 1, totalErrors: 1 },
+    });
+
+    expect(events).not.toBeNull();
+    const errorLine = events?.[2].message ?? '';
+
+    expect(errorLine).toContain('viewfield-uuid-1');
+    expect(errorLine).toContain('existingEntityId: existing-id-42');
+    expect(errorLine).toContain('existingOwnerApp: workspace-custom-app-uuid');
+  });
 });

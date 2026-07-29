@@ -15,6 +15,7 @@ exports[`View Field Resolver - Failing Create Operation Should fail to create a 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
             "viewUniversalIdentifier": Any<String>,

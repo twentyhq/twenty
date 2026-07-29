@@ -54,6 +54,7 @@ exports[`Standard field with standard unique index update should fail on isUniqu
             },
           ],
           "flatEntityMinimalInformation": {},
+          "existingEntityConflictContext": null,
           "type": "update_field",
         },
       ],

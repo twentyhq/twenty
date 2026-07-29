@@ -42,6 +42,7 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "commandMenuItem",
@@ -106,6 +107,7 @@ exports[`CommandMenuItem update should fail when changing engineComponentKey to 
             },
           ],
           "flatEntityMinimalInformation": {
+            "existingEntityConflictContext": null,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "commandMenuItem",
