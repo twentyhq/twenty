@@ -49,10 +49,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -133,6 +130,7 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
@@ -946,23 +944,12 @@ export class AuthResolver {
   ): Promise<EmailPasswordResetLinkDTO> {
     const normalizedEmail = emailPasswordResetInput.email.toLowerCase();
 
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `password-reset-email:${normalizedEmail}`,
-        1,
-        PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX,
-        PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
-      );
-    } catch (error) {
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        return { success: true };
-      }
-
-      throw error;
-    }
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `password-reset-email:${normalizedEmail}`,
+      1,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
+    );
 
     await this.messageQueueService.add<EmailPasswordResetLinkJobData>(
       EmailPasswordResetLinkJob.name,

@@ -251,7 +251,7 @@ describe('AuthResolver', () => {
       );
     });
 
-    it('should return success without enqueuing the job when throttled', async () => {
+    it('should surface the throttling error without enqueuing the job', async () => {
       (
         throttlerService.tokenBucketThrottleOrThrow as jest.Mock
       ).mockRejectedValue(
@@ -261,12 +261,9 @@ describe('AuthResolver', () => {
         ),
       );
 
-      const result = await resolver.emailPasswordResetLink(
-        emailPasswordResetInput,
-        context,
-      );
-
-      expect(result).toEqual({ success: true });
+      await expect(
+        resolver.emailPasswordResetLink(emailPasswordResetInput, context),
+      ).rejects.toThrow(ThrottlerException);
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
