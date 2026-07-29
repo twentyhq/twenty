@@ -12,10 +12,15 @@ import {
   createStandardNavigationMenuItemFolderItemFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
 
+// allMessageCampaigns is deliberately absent: navigationMenuItem has no
+// conditionalAvailabilityExpression column, unlike commandMenuItem and
+// pageLayoutWidget, so building it would surface campaigns in every
+// workspace's sidebar while the feature is still behind IS_EMAIL_GROUP_ENABLED.
+// Its definition stays in STANDARD_NAVIGATION_MENU_ITEMS so the identifier
+// remains reserved; add it back here once navigation items can be gated.
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompanies',
   'allDashboards',
-  'allMessageCampaigns',
   'allNotes',
   'allOpportunities',
   'allPeople',
