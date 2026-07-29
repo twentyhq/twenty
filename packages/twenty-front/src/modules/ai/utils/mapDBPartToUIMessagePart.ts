@@ -23,6 +23,7 @@ export const mapDBPartToUIMessagePart = (
         type: 'reasoning',
         text: part.reasoningContent!,
         state: part.state as ReasoningUIPart['state'],
+        providerMetadata: part.providerMetadata ?? undefined,
       };
     case 'file':
       return {
@@ -73,6 +74,9 @@ export const mapDBPartToUIMessagePart = (
             state: part.state,
             ...(part.providerExecuted != null && {
               providerExecuted: part.providerExecuted,
+            }),
+            ...(part.providerMetadata != null && {
+              callProviderMetadata: part.providerMetadata,
             }),
           } as ToolUIPart;
         }

@@ -34,6 +34,7 @@ export const mapUIMessagePartsToDBParts = (
           return {
             ...basePart,
             reasoningContent: part.text,
+            providerMetadata: part.providerMetadata ?? null,
           };
         case 'file': {
           if (!isExtendedFileUIPart(part)) {
@@ -93,6 +94,7 @@ export const mapUIMessagePartsToDBParts = (
                 errorMessage: errorText,
                 state,
                 providerExecuted: part.providerExecuted ?? null,
+                providerMetadata: part.callProviderMetadata ?? null,
               };
             }
           }

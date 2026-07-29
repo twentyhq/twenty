@@ -59,6 +59,8 @@ import {
   getCallLevelCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import { sanitizeAzureMessagesForReplay } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-azure-messages-for-replay.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -257,7 +259,11 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const rawModelMessages = await convertToModelMessages(processedMessages);
+    const replayableMessages = sanitizeAzureMessagesForReplay(
+      processedMessages,
+      registeredModel.sdkPackage,
+    );
+    const rawModelMessages = await convertToModelMessages(replayableMessages);
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
@@ -393,9 +399,12 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelCacheProviderOptions(
-        registeredModel.sdkPackage,
-      ),
+      providerOptions: getCallLevelProviderOptions({
+        sdkPackage: registeredModel.sdkPackage,
+        providerOptions: getCallLevelCacheProviderOptions(
+          registeredModel.sdkPackage,
+        ),
+      }),
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 
