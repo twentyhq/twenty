@@ -12,8 +12,8 @@ export const createSlackAssistantRequest = async (
     createSlackAssistantRequest: {
       __args: {
         data: {
-          name: buildSlackAssistantRequestName(draft.requestText),
           ...draft,
+          name: buildSlackAssistantRequestName(draft.requestText),
         },
       },
       id: true,
