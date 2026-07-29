@@ -7,7 +7,7 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { getChartValueDisplayType } from '@/page-layout/widgets/graph/utils/getChartValueDisplayType';
+import { getChartValueFormatOptions } from '@/page-layout/widgets/graph/utils/getChartValueFormatOptions';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -61,6 +61,12 @@ export const GraphWidgetBarChartRenderer = () => {
   const navigate = useNavigate();
   const configuration = widget.configuration;
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const chartValueFormatOptions = getChartValueFormatOptions({
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+    fieldMetadataItems: objectMetadataItem.fields,
+    numberFormat: configuration.numberFormat,
+  });
 
   const axisNameDisplay = configuration.axisNameDisplay;
 
@@ -144,7 +150,8 @@ export const GraphWidgetBarChartRenderer = () => {
         groupMode={groupMode}
         colorMode={colorMode}
         id={widget.id}
-        displayType={getChartValueDisplayType(configuration.numberFormat)}
+        decimals={chartValueFormatOptions.decimals}
+        displayType={chartValueFormatOptions.displayType}
         axisDisplayType="shortNumber"
         tooltipDisplayType="number"
         rangeMin={configuration.rangeMin ?? undefined}
