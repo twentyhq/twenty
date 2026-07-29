@@ -51,8 +51,6 @@ export const enqueueSlackAssistantRequest = async (
   try {
     await createSlackAssistantRequest(client, parsed.request);
   } catch (error) {
-    // the unique index on (slackChannelId, slackMessageTimestamp) is what makes
-    // this idempotent when Slack redelivers concurrently
     if (isDuplicateRecordError(error)) {
       return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
     }
