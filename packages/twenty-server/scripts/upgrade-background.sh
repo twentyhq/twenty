@@ -1,5 +1,4 @@
 #!/bin/sh
-# Detached `upgrade`, cooperating with CommandShutdownService.
 set -eu
 
 LOG_FILE="${TWENTY_UPGRADE_LOG_FILE:-/tmp/twenty-upgrade.log}"
@@ -10,9 +9,6 @@ export LOG_FILE PID_FILE
 upgrade_pid() { [ -s "$PID_FILE" ] && cat "$PID_FILE" || return 1; }
 stream()      { exec tail -f "$LOG_FILE"; }
 
-# A recorded pid outlives the run that wrote it, so a recycled pid would other-
-# wise be reported as running and, worse, signalled by stop. Where /proc is
-# unavailable (macOS) the check cannot run and the pid is taken at face value.
 is_our_upgrade() {
   [ -r "/proc/$1/cmdline" ] || return 0
   tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null | grep -q 'dist/command/command'
@@ -22,12 +18,10 @@ is_running() {
   pid=$(upgrade_pid) && kill -0 "$pid" 2>/dev/null && is_our_upgrade "$pid"
 }
 
-# Shared so start and logs cannot drift apart.
 detach_hint() {
   echo "Ctrl+C detaches the stream only. Use 'yarn upgrade:background:stop' to stop the run."
 }
 
-# Header on stderr, log content on stdout, so redirecting keeps the log clean.
 show_tail() {
   [ -f "$LOG_FILE" ] || return 0
   echo "Tail of $LOG_FILE:" >&2
@@ -53,16 +47,13 @@ start() {
     exit 1
   }
 
-  # Keeps this wrapper's own bookkeeping straight, one pid file and one log per
-  # run. It is not a guard against concurrent upgrades: the pid file is local to
-  # this container, so nothing here constrains another pod or another machine.
   if is_running; then
     echo "Failed to start: already running (pid $(upgrade_pid))" >&2; exit 1
   fi
   : > "$LOG_FILE"; rm -f "$PID_FILE"
 
-  # setsid: own session, no controlling terminal -> survives disconnect.
-  # The wrapper outlives node on purpose, so it can record the exit code.
+  # Not exec: the wrapper has to outlive node to record EXIT=, and stop has to
+  # signal node alone, never the process group this would otherwise share.
   setsid sh -c '
     node dist/command/command upgrade "$@" &
     echo $! > "$PID_FILE"
@@ -83,8 +74,6 @@ start() {
   stream
 }
 
-# Reports what it found before streaming: a silent log is otherwise ambiguous
-# between a slow workspace segment and a run that died without writing EXIT=.
 logs() {
   if is_running; then
     echo "Running (pid $(upgrade_pid)), following $LOG_FILE" >&2
@@ -104,7 +93,6 @@ stop() {
     "")
       kill -TERM "$pid"
       echo "SIGTERM sent to $pid, it finishes the step in progress then stops (exit 143)" >&2
-      # Give the handler a moment so its acknowledgement makes the tail below.
       sleep 1
       show_tail
       echo "Follow with 'yarn upgrade:background:logs'. Still stuck: 'stop --now'. Last resort: 'stop --force'." >&2
