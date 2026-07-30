@@ -18,18 +18,12 @@ import {
   TextInput,
   UrlInput,
 } from './my-profile/form-fields';
-import {
-  toProfileForm,
-  toSaveBody,
-  type ProfileForm,
-  type ProfilePayload,
-} from './my-profile/profile-form';
-import type { ProfileOptions } from './my-profile/types';
-
-type LoadResult =
-  | { ok: true; profile: ProfilePayload; options: ProfileOptions }
-  | { ok: false; reason: string };
-type SaveResult = { ok: true } | { ok: false; reason: string };
+import { toProfileForm, toSaveBody, type ProfileForm } from './my-profile/profile-form';
+import type {
+  MyPartnerProfileResult,
+  ProfileOptions,
+  SaveResult,
+} from './my-profile/types';
 
 const SKILL_SUGGESTIONS = [
   'Migrations',
@@ -124,7 +118,7 @@ const MyProfile = () => {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = (await callAppRoute('/my-partner-profile', {})) as LoadResult;
+      const res = (await callAppRoute('/my-partner-profile', {})) as MyPartnerProfileResult;
       if (res.ok) {
         setForm(toProfileForm(res.profile));
         setOptions(res.options);
