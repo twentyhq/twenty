@@ -77,6 +77,11 @@ const getNextOnboardingStatus = ({
   if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL) {
     return statusAfterBookCall;
   }
+  // Advancing from the plan step must not assume the plan was paid for: falling through
+  // to COMPLETED here would let a caller wave the paywall through.
+  if (currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED) {
+    return statusAfterBookCall;
+  }
   return OnboardingStatus.COMPLETED;
 };
 

@@ -384,6 +384,23 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
+  // Falling through to COMPLETED from the plan step would wave the paywall through.
+  it('should stay on the plan step when advancing from it without a subscription', () => {
+    const { nextOnboardingStatus } = renderHooks(
+      OnboardingStatus.PLAN_REQUIRED,
+      { isBillingEnabled: true, withSubscription: false },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+  });
+
+  it('should complete when advancing from the plan step with a subscription', () => {
+    const { nextOnboardingStatus } = renderHooks(
+      OnboardingStatus.PLAN_REQUIRED,
+      { isBillingEnabled: true, withSubscription: true },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+  });
+
   // A caller awaits the enrichment and then advances, so the callback it captured at
   // render time must still see the value that landed during the await.
   it('should honour an enrichment that arrives after the callback was captured', () => {
