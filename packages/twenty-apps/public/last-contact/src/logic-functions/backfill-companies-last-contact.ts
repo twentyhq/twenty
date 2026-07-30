@@ -2,33 +2,32 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import {
-  BACKFILL_BATCH_SIZE,
+  type BackfillBatchResult,
   BACKFILL_COMPANIES_ROUTE_PATH,
-  BACKFILL_SLEEP_MS,
 } from 'src/constants/backfill';
 import { BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { collectPeopleByCompany } from 'src/utils/collect-people-by-company';
+import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
-  buildPersonAggregates,
   buildRelatedUpdateData,
+  buildPersonAggregates,
   pickLatestLastContact,
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
-import { postToOwnRoute, sleep } from 'src/utils/post-to-own-route';
 
 type BackfillBody = { cursor?: string };
 
 const handler = async (
   payload: RoutePayload<BackfillBody>,
-): Promise<object> => {
+): Promise<BackfillBatchResult> => {
   const client = new CoreApiClient();
   const cursor = payload.body?.cursor;
 
   const { companies } = await executeWithRetry(() =>
     client.query({
       companies: {
-        __args: { first: BACKFILL_BATCH_SIZE, after: cursor },
+        __args: { first: getBackfillBatchSize(), after: cursor },
         edges: { node: { id: true } },
         pageInfo: { hasNextPage: true, endCursor: true },
       },
@@ -40,7 +39,7 @@ const handler = async (
     .filter(Boolean);
 
   if (companyIds.length === 0) {
-    return { outcome: 'done' };
+    return { nextCursor: null, count: 0 };
   }
 
   const peopleByCompanyId = await collectPeopleByCompany(client, companyIds);
@@ -68,23 +67,20 @@ const handler = async (
     );
   }
 
-  if (companies?.pageInfo.hasNextPage && companies.pageInfo.endCursor) {
-    await sleep(BACKFILL_SLEEP_MS);
-    await postToOwnRoute({
-      path: BACKFILL_COMPANIES_ROUTE_PATH,
-      body: { cursor: companies.pageInfo.endCursor },
-    });
-  }
+  const nextCursor =
+    companies?.pageInfo.hasNextPage && companies.pageInfo.endCursor
+      ? companies.pageInfo.endCursor
+      : null;
 
-  return { outcome: 'processed', count: companyIds.length };
+  return { nextCursor, count: companyIds.length };
 };
 
 export default defineLogicFunction({
   universalIdentifier: BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-companies-last-contact',
   description:
-    'Backfills last-contact fields for a page of companies from the most recent contact of their people, then re-triggers itself with the next cursor.',
-  timeoutSeconds: 300,
+    'Backfills last-contact fields for one page of companies from the most recent contact of their people, returning the next cursor to the backfill orchestrator.',
+  timeoutSeconds: 120,
   handler,
   httpRouteTriggerSettings: {
     path: BACKFILL_COMPANIES_ROUTE_PATH,

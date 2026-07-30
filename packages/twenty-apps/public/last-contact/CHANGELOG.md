@@ -1,11 +1,8 @@
 # Changelog
 
-## 1.1.4
-
-- Replace the single-pass last-contact backfill with three cursor-paginated backfills (people, companies, opportunities). Each processes 20 records per run and re-triggers itself with the next cursor after a short pause, keeping update bursts under the hosted API rate limiting.
-
 ## 1.1.3
 
+- Rework the last-contact backfill into a sequential, cursor-paginated process orchestrated through the kv-store (people, then opportunities, then companies). Each run handles one batch and hands the next cursor back to the orchestrator, which pauses between runs to stay under the hosted API rate limiting. Batch size and pause are server variables.
 - Stop declaring INDEX view fields explicitly: the server now provisions the INDEX view column for each app field automatically, so the manifest no longer targets the engine-owned standard INDEX views.
 - Require Twenty `>=2.26.0`: the engine-owned INDEX view fields this version relies on only exist from 2.26.
 

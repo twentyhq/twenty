@@ -2,32 +2,31 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import {
-  BACKFILL_BATCH_SIZE,
+  type BackfillBatchResult,
   BACKFILL_OPPORTUNITIES_ROUTE_PATH,
-  BACKFILL_SLEEP_MS,
 } from 'src/constants/backfill';
 import { BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
-  buildPersonAggregates,
   buildRelatedUpdateData,
+  buildPersonAggregates,
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
-import { postToOwnRoute, sleep } from 'src/utils/post-to-own-route';
 
 type BackfillBody = { cursor?: string };
 type OpportunityNode = { id: string; pointOfContactId: string | null };
 
 const handler = async (
   payload: RoutePayload<BackfillBody>,
-): Promise<object> => {
+): Promise<BackfillBatchResult> => {
   const client = new CoreApiClient();
   const cursor = payload.body?.cursor;
 
   const { opportunities } = await executeWithRetry(() =>
     client.query({
       opportunities: {
-        __args: { first: BACKFILL_BATCH_SIZE, after: cursor },
+        __args: { first: getBackfillBatchSize(), after: cursor },
         edges: { node: { id: true, pointOfContactId: true } },
         pageInfo: { hasNextPage: true, endCursor: true },
       },
@@ -39,7 +38,7 @@ const handler = async (
     .filter((node: OpportunityNode) => Boolean(node.id));
 
   if (nodes.length === 0) {
-    return { outcome: 'done' };
+    return { nextCursor: null, count: 0 };
   }
 
   const personIds = [
@@ -70,15 +69,12 @@ const handler = async (
     );
   }
 
-  if (opportunities?.pageInfo.hasNextPage && opportunities.pageInfo.endCursor) {
-    await sleep(BACKFILL_SLEEP_MS);
-    await postToOwnRoute({
-      path: BACKFILL_OPPORTUNITIES_ROUTE_PATH,
-      body: { cursor: opportunities.pageInfo.endCursor },
-    });
-  }
+  const nextCursor =
+    opportunities?.pageInfo.hasNextPage && opportunities.pageInfo.endCursor
+      ? opportunities.pageInfo.endCursor
+      : null;
 
-  return { outcome: 'processed', count: nodes.length };
+  return { nextCursor, count: nodes.length };
 };
 
 export default defineLogicFunction({
@@ -86,8 +82,8 @@ export default defineLogicFunction({
     BACKFILL_OPPORTUNITIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-opportunities-last-contact',
   description:
-    'Backfills last-contact fields for a page of opportunities from their point of contact, then re-triggers itself with the next cursor.',
-  timeoutSeconds: 300,
+    'Backfills last-contact fields for one page of opportunities from their point of contact, returning the next cursor to the backfill orchestrator.',
+  timeoutSeconds: 120,
   handler,
   httpRouteTriggerSettings: {
     path: BACKFILL_OPPORTUNITIES_ROUTE_PATH,

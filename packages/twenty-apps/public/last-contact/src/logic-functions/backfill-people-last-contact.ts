@@ -2,30 +2,29 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import {
-  BACKFILL_BATCH_SIZE,
+  type BackfillBatchResult,
   BACKFILL_PEOPLE_ROUTE_PATH,
-  BACKFILL_SLEEP_MS,
 } from 'src/constants/backfill';
 import { BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
   buildPersonAggregates,
   buildPersonUpdateData,
 } from 'src/utils/person-last-contact-aggregation';
-import { postToOwnRoute, sleep } from 'src/utils/post-to-own-route';
 
 type BackfillBody = { cursor?: string };
 
 const handler = async (
   payload: RoutePayload<BackfillBody>,
-): Promise<object> => {
+): Promise<BackfillBatchResult> => {
   const client = new CoreApiClient();
   const cursor = payload.body?.cursor;
 
   const { people } = await executeWithRetry(() =>
     client.query({
       people: {
-        __args: { first: BACKFILL_BATCH_SIZE, after: cursor },
+        __args: { first: getBackfillBatchSize(), after: cursor },
         edges: { node: { id: true } },
         pageInfo: { hasNextPage: true, endCursor: true },
       },
@@ -37,7 +36,7 @@ const handler = async (
     .filter(Boolean);
 
   if (personIds.length === 0) {
-    return { outcome: 'done' };
+    return { nextCursor: null, count: 0 };
   }
 
   const aggByPersonId = await buildPersonAggregates(client, personIds);
@@ -57,23 +56,20 @@ const handler = async (
     );
   }
 
-  if (people?.pageInfo.hasNextPage && people.pageInfo.endCursor) {
-    await sleep(BACKFILL_SLEEP_MS);
-    await postToOwnRoute({
-      path: BACKFILL_PEOPLE_ROUTE_PATH,
-      body: { cursor: people.pageInfo.endCursor },
-    });
-  }
+  const nextCursor =
+    people?.pageInfo.hasNextPage && people.pageInfo.endCursor
+      ? people.pageInfo.endCursor
+      : null;
 
-  return { outcome: 'processed', count: personIds.length };
+  return { nextCursor, count: personIds.length };
 };
 
 export default defineLogicFunction({
   universalIdentifier: BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-people-last-contact',
   description:
-    'Backfills last-contact fields for a page of people from their messages and calendar events, then re-triggers itself with the next cursor.',
-  timeoutSeconds: 300,
+    'Backfills last-contact fields for one page of people from their messages and calendar events, returning the next cursor to the backfill orchestrator.',
+  timeoutSeconds: 120,
   handler,
   httpRouteTriggerSettings: {
     path: BACKFILL_PEOPLE_ROUTE_PATH,
