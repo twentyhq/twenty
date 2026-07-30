@@ -24,7 +24,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -139,10 +138,6 @@ describe('ConnectionProviderOAuthFlowService', () => {
         {
           provide: ExceptionHandlerService,
           useValue: exceptionHandlerService,
-        },
-        {
-          provide: ApplicationJobEnqueueThrottlerService,
-          useValue: { throttleOrThrow: jest.fn() },
         },
         {
           // Real prefix/round-trip behavior is asserted in
@@ -490,15 +485,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
         workspaceCacheService.getOrRecompute.mockResolvedValue({
           flatLogicFunctionMaps: {
             byUniversalIdentifier: {
-              [ON_CONNECT_UID]: {
-                id: 'logic-function-1',
-                applicationId: 'app-1',
-              },
-            },
-          },
-          flatApplicationMaps: {
-            byId: {
-              'app-1': { id: 'app-1', applicationRegistrationId: 'reg-1' },
+              [ON_CONNECT_UID]: { id: 'logic-function-1' },
             },
           },
         });
@@ -510,7 +497,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
         expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
           'workspace-1',
-          ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+          ['flatLogicFunctionMaps'],
         );
         expect(messageQueueService.add).toHaveBeenCalledWith(
           'LogicFunctionTriggerJob',

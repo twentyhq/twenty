@@ -27,10 +27,8 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -78,7 +76,6 @@ export class ConnectionProviderOAuthFlowService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   async startAuthorizationFlow(
@@ -235,10 +232,9 @@ export class ConnectionProviderOAuthFlowService {
     // persisted, so a misconfigured or failing hook must not break the OAuth
     // callback. We still report failures to Sentry so they don't go unnoticed.
     try {
-      const { flatLogicFunctionMaps, flatApplicationMaps } =
+      const { flatLogicFunctionMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatLogicFunctionMaps',
-          'flatApplicationMaps',
         ]);
 
       const flatLogicFunction =
@@ -256,24 +252,8 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
 
-      const application = findActiveFlatApplicationById(
-        flatApplicationMaps,
-        flatLogicFunction.applicationId,
-      );
-      const applicationRegistrationId = application?.applicationRegistrationId;
-
-      if (!isDefined(applicationRegistrationId)) {
-        throw new ConnectionProviderException(
-          `Connection provider ${provider.id} on-connect logic function ${onConnectLogicFunctionUniversalIdentifier} is not linked to an application registration.`,
-          ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
-        );
-      }
-
-      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
-        applicationId: flatLogicFunction.applicationId,
-        applicationRegistrationId,
-      });
-
+      // Not throttled: a critical one-shot hook with no retry must not be
+      // dropped.
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {

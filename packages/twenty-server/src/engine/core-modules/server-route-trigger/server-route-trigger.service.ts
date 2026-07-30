@@ -18,7 +18,6 @@ import {
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   buildRouteTriggerResponse,
@@ -47,7 +46,6 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   async handle({
@@ -165,11 +163,8 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
-      applicationId: logicFunction.applicationId,
-      applicationRegistrationId,
-    });
-
+    // Not throttled: a route trigger is a critical one-shot execution requested
+    // by an external caller and must not be dropped.
     await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
       {

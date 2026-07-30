@@ -9,7 +9,6 @@ import {
   type LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { type ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
@@ -134,9 +133,6 @@ describe('ServerRouteTriggerService', () => {
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
       messageQueueService as unknown as MessageQueueService,
-      {
-        throttleOrThrow: jest.fn().mockResolvedValue(undefined),
-      } as unknown as ApplicationJobEnqueueThrottlerService,
     );
   });
 
