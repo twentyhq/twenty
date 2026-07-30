@@ -71,7 +71,14 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
     const calendarEndFieldMetadataId = fieldMetadataItem?.id ?? null;
 
     setRecordIndexCalendarEndFieldMetadataId(calendarEndFieldMetadataId);
-    await updateCurrentView({ calendarEndFieldMetadataId });
+    try {
+      await updateCurrentView({ calendarEndFieldMetadataId });
+    } catch (error) {
+      setRecordIndexCalendarEndFieldMetadataId(
+        recordIndexCalendarEndFieldMetadataId,
+      );
+      throw error;
+    }
     closeDropdown();
   };
 

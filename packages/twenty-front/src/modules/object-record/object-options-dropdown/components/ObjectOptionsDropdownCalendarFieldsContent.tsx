@@ -95,12 +95,22 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       setRecordIndexCalendarEndFieldMetadataId(null);
     }
 
-    await updateCurrentView({
-      calendarFieldMetadataId: fieldMetadataItem.id,
-      ...(shouldClearCalendarEndField
-        ? { calendarEndFieldMetadataId: null }
-        : {}),
-    });
+    try {
+      await updateCurrentView({
+        calendarFieldMetadataId: fieldMetadataItem.id,
+        ...(shouldClearCalendarEndField
+          ? { calendarEndFieldMetadataId: null }
+          : {}),
+      });
+    } catch (error) {
+      setRecordIndexCalendarFieldMetadataId(recordIndexCalendarFieldMetadataId);
+      if (shouldClearCalendarEndField) {
+        setRecordIndexCalendarEndFieldMetadataId(
+          recordIndexCalendarEndFieldMetadataId,
+        );
+      }
+      throw error;
+    }
     closeDropdown();
   };
 
