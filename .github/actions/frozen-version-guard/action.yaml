@@ -91,12 +91,16 @@ runs:
           exit 1
         fi
 
-        DRIFT=$(git diff --name-status --find-renames "$RELEASE_TAG" "$BASE_SHA" -- "$FROZEN_PATH")
+        # Diffed against the merge candidate, not base_sha: the candidate is base_sha
+        # plus the bump itself, so this catches drift already on main and drift the bump
+        # PR introduces, and it lets the fix (moving commands into the new current
+        # directory) land in the bump PR and clear the check.
+        DRIFT=$(git diff --name-status --find-renames "$RELEASE_TAG" HEAD -- "$FROZEN_PATH")
 
         if [ -n "$DRIFT" ]; then
           echo "This bump would freeze $FROZEN_DIR in a state that $RELEASE_TAG never shipped."
           echo ""
-          echo "The following upgrade command files changed between $RELEASE_TAG and the tip of main:"
+          echo "The following upgrade command files changed between $RELEASE_TAG and this merge candidate:"
           echo "$DRIFT" | sed 's/^/  - /'
           echo ""
           echo "$RELEASE_TAG is the image running in production for $BASE_VERSION, and it does not"
@@ -114,4 +118,4 @@ runs:
           exit 1
         fi
 
-        echo "$FROZEN_PATH is identical between $RELEASE_TAG and the tip of main: safe to freeze."
+        echo "$FROZEN_PATH is identical between $RELEASE_TAG and this merge candidate: safe to freeze."
