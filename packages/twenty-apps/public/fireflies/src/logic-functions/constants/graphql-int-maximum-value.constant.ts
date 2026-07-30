@@ -1,0 +1,1 @@
+export const GRAPHQL_INT_MAXIMUM_VALUE = 2_147_483_647;
