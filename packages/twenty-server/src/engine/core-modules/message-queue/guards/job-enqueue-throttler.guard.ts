@@ -37,44 +37,65 @@ export class JobEnqueueThrottlerGuard {
     const timeWindow = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_TTL_IN_MS',
     );
-    const registrationKey =
-      application.applicationRegistrationId ?? application.universalIdentifier;
+    const applicationKey = `enqueue:throttler:application:${application.id}`;
+    const applicationLimit = this.twentyConfigService.get(
+      'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
+    );
+    const registrationKey = `enqueue:throttler:application-registration:${
+      application.applicationRegistrationId ?? application.universalIdentifier
+    }`;
+    const registrationLimit = this.twentyConfigService.get(
+      'APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
+    );
 
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `enqueue:throttler:application:${application.id}`,
-        tokensToConsume,
-        this.twentyConfigService.get(
-          'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
-        ),
+    // Check both buckets before debiting either, so a rejection on one tier
+    // never burns quota on the other.
+    const [applicationTokens, registrationTokens] = await Promise.all([
+      this.throttlerService.getAvailableTokensCount(
+        applicationKey,
+        applicationLimit,
         timeWindow,
-      );
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `enqueue:throttler:application-registration:${registrationKey}`,
-        tokensToConsume,
-        this.twentyConfigService.get(
-          'APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
-        ),
+      ),
+      this.throttlerService.getAvailableTokensCount(
+        registrationKey,
+        registrationLimit,
         timeWindow,
-      );
-    } catch (error) {
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        await this.metricsService.incrementCounterForEvent({
-          key: MetricsKeys.JobEnqueueApplicationRateLimited,
-          shouldStoreInCache: false,
-          attributes: {
-            universal_identifier: application.universalIdentifier,
-            app_name: application.name,
-            source_type: application.sourceType,
-          },
-        });
-      }
+      ),
+    ]);
 
-      throw error;
+    if (
+      applicationTokens < tokensToConsume ||
+      registrationTokens < tokensToConsume
+    ) {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.JobEnqueueApplicationRateLimited,
+        shouldStoreInCache: false,
+        attributes: {
+          universal_identifier: application.universalIdentifier,
+          app_name: application.name,
+          source_type: application.sourceType,
+        },
+      });
+
+      throw new ThrottlerException(
+        'Application job enqueue limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      );
     }
+
+    await Promise.all([
+      this.throttlerService.consumeTokens(
+        applicationKey,
+        tokensToConsume,
+        applicationLimit,
+        timeWindow,
+      ),
+      this.throttlerService.consumeTokens(
+        registrationKey,
+        tokensToConsume,
+        registrationLimit,
+        timeWindow,
+      ),
+    ]);
   }
 }
