@@ -48,7 +48,7 @@ following rights:
 4. Limits. This additional permission does not apply to Twenty itself:
    if you modify Twenty, the AGPLv3, including section 13, applies to
    your modified version in full. This additional permission grants no
-   rights to Twenty's trademarks (see TRADEMARK.md).
+   rights to Twenty's trademarks (see .github/TRADEMARK.md).
 
 This is a grant of additional permission, not a restriction: nothing in
 it limits any rights otherwise granted by the AGPLv3.

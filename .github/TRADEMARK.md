@@ -1,6 +1,6 @@
 # Twenty Trademark Policy
 
-"Twenty", the Twenty logo, and twenty.com are trademarks of Twenty.com, PBC ("Twenty"), whether registered or unregistered. The source code of Twenty is open source under the licenses described in [LICENSE](LICENSE); those licenses do not grant any rights to use our trademarks.
+"Twenty", the Twenty logo, and twenty.com are trademarks of Twenty.com, PBC ("Twenty"), whether registered or unregistered. The source code of Twenty is open source under the licenses described in [LICENSE](../LICENSE); those licenses do not grant any rights to use our trademarks.
 
 The goal of this policy is simple: anyone should be able to say truthfully that they use, build on, or contribute to Twenty, and nobody should suggest an affiliation with or endorsement by Twenty that does not exist, or confuse users about what comes from us.
 
