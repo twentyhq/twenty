@@ -21,7 +21,7 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
   const { getIcon } = useIcons();
   const [searchInput, setSearchInput] = useState('');
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
@@ -46,7 +46,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
 
   const filteredCalendarEndFields =
     availableCalendarEndFieldMetadataItems.filter((field) =>
-      field.label.toLowerCase().includes(searchInput.toLowerCase()),
+      i18n._(field.label).toLowerCase().includes(searchInput.toLowerCase()),
     );
 
   const handleCalendarEndFieldChange = async (
@@ -100,7 +100,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
             }
             onClick={() => handleCalendarEndFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
+            text={i18n._(fieldMetadataItem.label)}
           />
         ))}
       </DropdownMenuItemsContainer>

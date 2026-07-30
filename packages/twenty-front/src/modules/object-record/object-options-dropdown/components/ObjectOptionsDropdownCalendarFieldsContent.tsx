@@ -19,7 +19,7 @@ import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
   const { getIcon } = useIcons();
   const [searchInput, setSearchInput] = useState('');
 
@@ -51,7 +51,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
     : undefined;
 
   const filteredCalendarFields = availableFieldsForCalendar.filter((field) =>
-    field.label.toLowerCase().includes(searchInput.toLowerCase()),
+    i18n._(field.label).toLowerCase().includes(searchInput.toLowerCase()),
   );
 
   const handleCalendarFieldChange = async (
@@ -103,7 +103,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
             selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
+            text={i18n._(fieldMetadataItem.label)}
           />
         ))}
       </DropdownMenuItemsContainer>
