@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -54,6 +53,22 @@ export type InstanceAndAllWorkspacesUpgradeStatus = {
   computedAt: Date;
 };
 
+export type InstanceAndWorkspaceCountsUpgradeStatus = {
+  instanceUpgradeStatus: InstanceUpgradeStatus;
+  behindWorkspaceCount: number;
+  failedWorkspaceCount: number;
+  upToDateWorkspaceCount: number;
+  computedAt: Date;
+};
+
+type CachedInstanceAndWorkspaceUpgradeStatus = {
+  instanceUpgradeStatus: InstanceUpgradeStatus;
+  behindWorkspaceIds: string[];
+  failedWorkspaceIds: string[];
+  upToDateWorkspaceCount: number;
+  computedAt: Date;
+};
+
 const deriveHealth = (
   cursor: UpgradeCursor,
   lastExpectedCommandName: string | null,
@@ -82,7 +97,6 @@ export class UpgradeStatusService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
@@ -163,42 +177,55 @@ export class UpgradeStatusService {
     });
   }
 
-  async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
-    const computedAt = await this.upgradeStatusCacheService.getComputedAt();
+  async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus> {
+    const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
 
-    if (!isDefined(computedAt)) {
+    if (!isDefined(cachedStatus)) {
+      const refreshedStatus =
+        await this.refreshInstanceAndAllWorkspacesStatus();
+
+      return {
+        instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
+        behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
+        failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
+        upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
+        computedAt: refreshedStatus.computedAt,
+      };
+    }
+
+    return {
+      instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
+      behindWorkspaceCount: cachedStatus.behindWorkspaceIds.length,
+      failedWorkspaceCount: cachedStatus.failedWorkspaceIds.length,
+      upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
+      computedAt: cachedStatus.computedAt,
+    };
+  }
+
+  async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
+    const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
+
+    if (!isDefined(cachedStatus)) {
       return this.refreshInstanceAndAllWorkspacesStatus();
     }
 
-    const [
-      instanceUpgradeStatus,
-      behindWorkspaceIds,
-      failedWorkspaceIds,
-      upToDateWorkspaceCount,
-    ] = await Promise.all([
-      this.getInstanceStatus(),
-      this.upgradeStatusCacheService.getBehindWorkspaceIds(),
-      this.upgradeStatusCacheService.getFailedWorkspaceIds(),
-      this.upgradeStatusCacheService.getUpToDateWorkspaceCount(),
-    ]);
-
     const workspaceNamesById = await this.loadWorkspaceNamesById([
-      ...behindWorkspaceIds,
-      ...failedWorkspaceIds,
+      ...cachedStatus.behindWorkspaceIds,
+      ...cachedStatus.failedWorkspaceIds,
     ]);
 
     return {
-      instanceUpgradeStatus,
+      instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
       workspacesBehind: this.toWorkspaceRefs(
-        behindWorkspaceIds,
+        cachedStatus.behindWorkspaceIds,
         workspaceNamesById,
       ),
       workspacesFailed: this.toWorkspaceRefs(
-        failedWorkspaceIds,
+        cachedStatus.failedWorkspaceIds,
         workspaceNamesById,
       ),
-      upToDateWorkspaceCount,
-      computedAt,
+      upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
+      computedAt: cachedStatus.computedAt,
     };
   }
 
@@ -249,6 +276,34 @@ export class UpgradeStatusService {
 
   async invalidateInstanceAndAllWorkspacesStatus(): Promise<void> {
     await this.upgradeStatusCacheService.invalidate();
+  }
+
+  private async getCachedInstanceAndWorkspaceStatus(): Promise<CachedInstanceAndWorkspaceUpgradeStatus | null> {
+    const computedAt = await this.upgradeStatusCacheService.getComputedAt();
+
+    if (!isDefined(computedAt)) {
+      return null;
+    }
+
+    const [
+      instanceUpgradeStatus,
+      behindWorkspaceIds,
+      failedWorkspaceIds,
+      upToDateWorkspaceCount,
+    ] = await Promise.all([
+      this.getInstanceStatus(),
+      this.upgradeStatusCacheService.getBehindWorkspaceIds(),
+      this.upgradeStatusCacheService.getFailedWorkspaceIds(),
+      this.upgradeStatusCacheService.getUpToDateWorkspaceCount(),
+    ]);
+
+    return {
+      instanceUpgradeStatus,
+      behindWorkspaceIds,
+      failedWorkspaceIds,
+      upToDateWorkspaceCount,
+      computedAt,
+    };
   }
 
   private resolveInstanceCompletedVersion(
@@ -332,11 +387,12 @@ export class UpgradeStatusService {
       return namesById;
     }
 
-    const workspaces = await Promise.all(
-      workspaceIds.map((workspaceId) =>
-        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
-      ),
-    );
+    const workspaces = await this.workspaceRepository.find({
+      select: ['id', 'displayName'],
+      where: {
+        id: In(workspaceIds),
+      },
+    });
 
     for (const workspace of workspaces) {
       if (isDefined(workspace)) {
