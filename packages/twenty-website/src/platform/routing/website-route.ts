@@ -3,6 +3,11 @@ import { type MetadataRoute } from 'next';
 
 export type WebsiteRouteId =
   | 'apps'
+  | 'comparePricingAttio'
+  | 'comparePricingDynamics'
+  | 'comparePricingHubspot'
+  | 'comparePricingPipedrive'
+  | 'comparePricingSalesforce'
   | 'customers'
   | 'enterpriseActivate'
   | 'halftone'
