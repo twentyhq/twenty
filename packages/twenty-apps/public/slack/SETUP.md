@@ -70,7 +70,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 ## Behaviour notes
 
 - **Thread memory.** After a successful reply the bot stays active in that thread, so follow-ups need no mention. Channel threads stay active for 24 hours after the last reply (each reply renews it); DM threads never expire.
-- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. The claim is not released on disconnect yet, so moving a Slack workspace needs a server admin.
+- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too.
 
 ## Workflow field names (for step authors)
 
