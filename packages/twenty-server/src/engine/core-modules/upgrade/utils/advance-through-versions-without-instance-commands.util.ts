@@ -13,8 +13,12 @@ export const advanceThroughVersionsWithoutInstanceCommands = ({
 }): string => {
   const completedVersionIndex = supportedVersions.indexOf(completedVersion);
 
+  // The upgrade sequence is built from the supported versions, so a version
+  // resolved out of it always belongs to them.
   if (completedVersionIndex === -1) {
-    return completedVersion;
+    throw new Error(
+      `Completed upgrade version "${completedVersion}" is not one of the supported versions [${supportedVersions.join(', ')}]`,
+    );
   }
 
   let reachedVersion = completedVersion;

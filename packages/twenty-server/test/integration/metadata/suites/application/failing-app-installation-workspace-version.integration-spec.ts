@@ -8,7 +8,7 @@ import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
+import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // The full install flow runs cache-lock retries with real delays, so fake
@@ -103,17 +103,9 @@ describe('Install application is gated by the workspace completed upgrade versio
     // instance), so the install reaches the workspace gate.
     currentVersionCommandName = instanceCommand.name;
 
-    const inferredServerVersion = extractVersionFromCommandName(
+    currentServerVersion = extractVersionFromCommandNameOrThrow(
       currentVersionCommandName,
     );
-
-    if (!isDefined(inferredServerVersion)) {
-      throw new Error(
-        `Could not extract a server version from upgrade cursor "${currentVersionCommandName}"`,
-      );
-    }
-
-    currentServerVersion = inferredServerVersion;
   });
 
   afterEach(async () => {
