@@ -5,7 +5,7 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
 import { ComparePage } from '@/sections/compare/ComparePage';
-import { HUBSPOT_COMPARISON } from '@/sections/compare/compare-data';
+import { COMPARISONS } from '@/sections/compare/compare-data';
 import { Menu } from '@/sections/menu';
 
 export const generateMetadata = buildRouteMetadata('comparePricingHubspot');
@@ -24,7 +24,7 @@ export default async function CompareHubspotPricingPage({
     <>
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <ComparePage comparison={HUBSPOT_COMPARISON} />
+        <ComparePage comparison={COMPARISONS.hubspot} />
       </main>
     </>
   );

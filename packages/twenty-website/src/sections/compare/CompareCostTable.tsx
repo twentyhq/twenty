@@ -12,6 +12,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { ExternalLink } from '@/ui';
 
 import { type CompetitorComparison } from './compare-data';
 
@@ -102,7 +103,7 @@ const CompetitorDetail = styled.span`
   font-size: ${fontSize(3.5)};
 `;
 
-const SourceLink = styled.a`
+const SourceLink = styled(ExternalLink)`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
@@ -135,7 +136,7 @@ const SourceNote = styled.p`
   max-width: 640px;
 `;
 
-const ReportLink = styled.a`
+const ReportLink = styled(ExternalLink)`
   color: ${semanticColor.inkMuted};
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -182,7 +183,6 @@ export function CompareCostTable({
                   <SourceLink
                     href={row.competitor.sourceUrl}
                     rel="nofollow noreferrer"
-                    target="_blank"
                   >
                     {i18n._(msg`source`)}
                   </SourceLink>
@@ -200,11 +200,7 @@ export function CompareCostTable({
       </TableScroller>
       <SourceNote>
         {i18n._(comparison.sourceNote)}{' '}
-        <ReportLink
-          href={REPORT_INACCURACY_URL}
-          rel="noreferrer"
-          target="_blank"
-        >
+        <ReportLink href={REPORT_INACCURACY_URL}>
           {i18n._(msg`Spotted an inaccuracy? Tell us and we will fix it.`)}
         </ReportLink>
       </SourceNote>

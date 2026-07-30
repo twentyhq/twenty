@@ -5,7 +5,7 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
 import { ComparePage } from '@/sections/compare/ComparePage';
-import { SALESFORCE_COMPARISON } from '@/sections/compare/compare-data';
+import { COMPARISONS } from '@/sections/compare/compare-data';
 import { Menu } from '@/sections/menu';
 
 export const generateMetadata = buildRouteMetadata('comparePricingSalesforce');
@@ -24,7 +24,7 @@ export default async function CompareSalesforcePricingPage({
     <>
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <ComparePage comparison={SALESFORCE_COMPARISON} />
+        <ComparePage comparison={COMPARISONS.salesforce} />
       </main>
     </>
   );

@@ -56,7 +56,7 @@ const PIPEDRIVE_PRICING_URL = 'https://www.pipedrive.com/en/pricing';
 const DYNAMICS_PRICING_URL =
   'https://www.microsoft.com/en-us/dynamics-365/products/sales/pricing';
 
-export const HUBSPOT_COMPARISON: CompetitorComparison = {
+const HUBSPOT_COMPARISON: CompetitorComparison = {
   competitor: 'HubSpot',
   competitorColumnLabel: msg`On HubSpot`,
   eyebrow: msg`Twenty vs HubSpot`,
@@ -152,7 +152,7 @@ export const HUBSPOT_COMPARISON: CompetitorComparison = {
   sourceNote: msg`List prices from HubSpot's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
-export const SALESFORCE_COMPARISON: CompetitorComparison = {
+const SALESFORCE_COMPARISON: CompetitorComparison = {
   competitor: 'Salesforce',
   competitorColumnLabel: msg`On Salesforce`,
   eyebrow: msg`Twenty vs Salesforce`,
@@ -334,7 +334,7 @@ export const SALESFORCE_COMPARISON: CompetitorComparison = {
 //   sourceNote: msg`List prices from Attio's public pricing page, billed annually, checked on July 30, 2026.`,
 // };
 
-export const PIPEDRIVE_COMPARISON: CompetitorComparison = {
+const PIPEDRIVE_COMPARISON: CompetitorComparison = {
   competitor: 'Pipedrive',
   competitorColumnLabel: msg`On Pipedrive`,
   eyebrow: msg`Twenty vs Pipedrive`,
@@ -419,7 +419,7 @@ export const PIPEDRIVE_COMPARISON: CompetitorComparison = {
   sourceNote: msg`List prices from Pipedrive's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
-export const DYNAMICS_COMPARISON: CompetitorComparison = {
+const DYNAMICS_COMPARISON: CompetitorComparison = {
   competitor: 'Microsoft Dynamics',
   competitorColumnLabel: msg`On Dynamics 365`,
   eyebrow: msg`Twenty vs Microsoft Dynamics`,
@@ -509,7 +509,7 @@ export const DYNAMICS_COMPARISON: CompetitorComparison = {
 
 const SAP_STORE_URL = 'https://store.sap.com';
 
-export const SAP_COMPARISON: CompetitorComparison = {
+const SAP_COMPARISON: CompetitorComparison = {
   competitor: 'SAP Sales Cloud',
   competitorColumnLabel: msg`On SAP`,
   eyebrow: msg`Twenty vs SAP Sales Cloud`,
@@ -593,4 +593,12 @@ export const SAP_COMPARISON: CompetitorComparison = {
   },
   honest: msg`If your business already runs on S/4HANA, Sales Cloud speaks its language natively and handles global-enterprise compliance at serious scale.`,
   sourceNote: msg`License list price from the SAP Store, billed annually, checked on July 30, 2026. Implementation figures are typical partner-project ranges, not SAP list prices.`,
+};
+
+export const COMPARISONS = {
+  dynamics: DYNAMICS_COMPARISON,
+  hubspot: HUBSPOT_COMPARISON,
+  pipedrive: PIPEDRIVE_COMPARISON,
+  salesforce: SALESFORCE_COMPARISON,
+  sap: SAP_COMPARISON,
 };
