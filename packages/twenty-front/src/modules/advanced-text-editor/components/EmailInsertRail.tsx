@@ -75,6 +75,11 @@ const StyledImageForm = styled.div`
   width: 220px;
 `;
 
+const StyledImageHint = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
+`;
+
 const emailColumnJson = () => ({
   type: TIPTAP_NODE_TYPES.EMAIL_COLUMN,
   content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
@@ -309,10 +314,12 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
                 }
               }}
             />
+            <StyledImageHint>
+              {t`Paste a link to a hosted image`}
+            </StyledImageHint>
             <Button
               title={t`Insert image`}
               size="small"
-              disabled={imageUrl.trim() === ''}
               onClick={handleInsertImage}
             />
           </StyledImageForm>
