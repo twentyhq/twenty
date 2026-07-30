@@ -459,6 +459,40 @@ describe('UserWorkspaceService', () => {
     });
   });
 
+  describe('isWorkspaceCreator', () => {
+    it('should treat the earliest membership as the creator, including soft-deleted ones', async () => {
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        userId: 'creator-user-id',
+      } as UserWorkspaceEntity);
+
+      await expect(
+        service.isWorkspaceCreator({
+          userId: 'creator-user-id',
+          workspaceId: 'workspace-id',
+        }),
+      ).resolves.toBe(true);
+
+      expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+        where: { workspaceId: 'workspace-id' },
+        order: { createdAt: 'ASC' },
+        withDeleted: true,
+      });
+    });
+
+    it('should return false for a later member', async () => {
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        userId: 'creator-user-id',
+      } as UserWorkspaceEntity);
+
+      await expect(
+        service.isWorkspaceCreator({
+          userId: 'second-user-id',
+          workspaceId: 'workspace-id',
+        }),
+      ).resolves.toBe(false);
+    });
+  });
+
   describe('getUserCount', () => {
     it('should return the count of users in a workspace', async () => {
       const workspaceId = 'workspace-id';

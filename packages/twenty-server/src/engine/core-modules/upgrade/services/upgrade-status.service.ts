@@ -6,19 +6,22 @@ import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspa
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
-import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
-import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
+import { advanceThroughVersionsWithoutInstanceCommands } from 'src/engine/core-modules/upgrade/utils/advance-through-versions-without-instance-commands.util';
+import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
+import {
+  resolveCompletedVersionFromCursor,
+  type UpgradeCursor,
+} from 'src/engine/core-modules/upgrade/utils/resolve-completed-version-from-cursor.util';
 
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { In, Repository } from 'typeorm';
 
-export type LatestUpgradeCommand = {
-  name: string;
-  status: UpgradeMigrationStatus;
+export type LatestUpgradeCommand = UpgradeCursor & {
   executedByVersion: string;
   errorMessage: string | null;
   createdAt: Date;
@@ -52,16 +55,16 @@ export type InstanceAndAllWorkspacesUpgradeStatus = {
 };
 
 const deriveHealth = (
-  migration: { name: string; status: UpgradeMigrationStatus },
+  cursor: UpgradeCursor,
   lastExpectedCommandName: string | null,
 ): UpgradeHealthEnum => {
-  if (migration.status === 'failed') {
+  if (cursor.status === 'failed') {
     return UpgradeHealthEnum.FAILED;
   }
 
   if (
     lastExpectedCommandName !== null &&
-    migration.name !== lastExpectedCommandName
+    cursor.name !== lastExpectedCommandName
   ) {
     return UpgradeHealthEnum.BEHIND;
   }
@@ -83,21 +86,26 @@ export class UpgradeStatusService {
   ) {}
 
   async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
-    const migration =
+    const cursor =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const lastInstanceStep = [...sequence]
-      .reverse()
-      .find(
-        (step) =>
-          step.kind === 'fast-instance' || step.kind === 'slow-instance',
-      );
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames({
+      'fast-instance': true,
+      'slow-instance': true,
+    });
+    const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
-    return await this.buildCursorStatus(
-      migration,
-      lastInstanceStep?.name ?? null,
-    );
+    return {
+      ...this.buildCursorStatus(cursor, lastExpectedCommandName),
+      inferredVersion: this.resolveInstanceCompletedVersion(cursor),
+    };
+  }
+
+  async getInstanceCompletedVersion(): Promise<string | null> {
+    const cursor =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+
+    return this.resolveInstanceCompletedVersion(cursor);
   }
 
   async getWorkspaceStatuses(
@@ -123,20 +131,17 @@ export class UpgradeStatusService {
         loadedWorkspaceIds,
       );
 
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const lastStepName =
-      sequence.length > 0 ? sequence[sequence.length - 1].name : null;
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames();
+    const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
-    return Promise.all(
-      workspaces.map(async (workspace) => ({
-        ...(await this.buildCursorStatus(
-          cursors.get(workspace.id) ?? null,
-          lastStepName,
-        )),
-        workspaceId: workspace.id,
-        displayName: workspace.displayName ?? null,
-      })),
-    );
+    return workspaces.map((workspace) => ({
+      ...this.buildCursorStatus(
+        cursors.get(workspace.id) ?? null,
+        lastExpectedCommandName,
+      ),
+      workspaceId: workspace.id,
+      displayName: workspace.displayName ?? null,
+    }));
   }
 
   async getWorkspaceCompletedVersion(
@@ -152,39 +157,10 @@ export class UpgradeStatusService {
       return null;
     }
 
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const cursorIndex = sequence.findIndex((step) => step.name === cursor.name);
-
-    if (cursorIndex === -1) {
-      return null;
-    }
-
-    const cursorVersion = extractVersionFromCommandName(cursor.name);
-
-    if (!isDefined(cursorVersion)) {
-      return null;
-    }
-
-    const isLastStepOfItsVersion =
-      cursorIndex === sequence.length - 1 ||
-      extractVersionFromCommandName(sequence[cursorIndex + 1].name) !==
-        cursorVersion;
-
-    if (cursor.status === 'completed' && isLastStepOfItsVersion) {
-      return cursorVersion;
-    }
-
-    for (let stepIndex = cursorIndex - 1; stepIndex >= 0; stepIndex--) {
-      const stepVersion = extractVersionFromCommandName(
-        sequence[stepIndex].name,
-      );
-
-      if (stepVersion !== cursorVersion) {
-        return stepVersion;
-      }
-    }
-
-    return null;
+    return resolveCompletedVersionFromCursor({
+      stepNames: this.upgradeSequenceReaderService.getUpgradeStepNames(),
+      cursor,
+    });
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
@@ -275,11 +251,41 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.invalidate();
   }
 
-  private async buildCursorStatus(
-    migration: LatestUpgradeCommand | null,
+  private resolveInstanceCompletedVersion(
+    cursor: UpgradeCursor | null,
+  ): string | null {
+    if (!isDefined(cursor)) {
+      return null;
+    }
+
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames({
+      'fast-instance': true,
+      'slow-instance': true,
+    });
+
+    const completedVersion = resolveCompletedVersionFromCursor({
+      stepNames,
+      cursor,
+    });
+
+    if (!isDefined(completedVersion)) {
+      return null;
+    }
+
+    return advanceThroughVersionsWithoutInstanceCommands({
+      completedVersion,
+      supportedVersions: TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS,
+      versionsWithInstanceCommands: new Set(
+        stepNames.map(extractVersionFromCommandNameOrThrow),
+      ),
+    });
+  }
+
+  private buildCursorStatus(
+    cursor: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
-  ): Promise<InstanceUpgradeStatus> {
-    if (!migration) {
+  ): InstanceUpgradeStatus {
+    if (!isDefined(cursor)) {
       return {
         inferredVersion: null,
         health: UpgradeHealthEnum.BEHIND,
@@ -287,19 +293,15 @@ export class UpgradeStatusService {
       };
     }
 
-    const health = deriveHealth(migration, lastExpectedCommandName);
-
     return {
-      inferredVersion: await this.upgradeMigrationService.getInferredVersion(
-        migration.name,
-      ),
-      health,
+      inferredVersion: extractVersionFromCommandNameOrThrow(cursor.name),
+      health: deriveHealth(cursor, lastExpectedCommandName),
       latestCommand: {
-        name: migration.name,
-        status: migration.status,
-        executedByVersion: migration.executedByVersion,
-        errorMessage: migration.errorMessage,
-        createdAt: migration.createdAt,
+        name: cursor.name,
+        status: cursor.status,
+        executedByVersion: cursor.executedByVersion,
+        errorMessage: cursor.errorMessage,
+        createdAt: cursor.createdAt,
       },
     };
   }

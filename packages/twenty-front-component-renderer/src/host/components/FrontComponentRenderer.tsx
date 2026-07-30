@@ -1,7 +1,11 @@
+import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentExternalNavigationContext } from '@/host/contexts/FrontComponentExternalNavigationContext';
+import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
 import { type RequestExternalNavigation } from '@/host/types/RequestExternalNavigation';
+import { createGeometryTracker } from '@/host/utils/createGeometryTracker';
 import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
+import { FrontComponentGeometryTrackerEffect } from '@/remote/components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
@@ -60,75 +64,85 @@ export const FrontComponentRenderer = ({
   const [error, setError] = useState<Error | null>(null);
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
+  const [geometryTracker] = useState(() => createGeometryTracker());
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
   return (
-    <>
-      <FrontComponentWorkerEffect
-        componentUrl={componentUrl}
-        applicationAccessToken={applicationAccessToken}
-        apiUrl={apiUrl}
-        functionsBaseUrl={functionsBaseUrl}
-        sdkClientUrls={sdkClientUrls}
-        applicationVariables={applicationVariables}
-        setReceiver={setReceiver}
-        setThread={setThread}
-        setError={setError}
-      />
+    <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
+      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
+        <FrontComponentWorkerEffect
+          componentUrl={componentUrl}
+          applicationAccessToken={applicationAccessToken}
+          apiUrl={apiUrl}
+          functionsBaseUrl={functionsBaseUrl}
+          sdkClientUrls={sdkClientUrls}
+          applicationVariables={applicationVariables}
+          geometryTracker={geometryTracker}
+          setReceiver={setReceiver}
+          setThread={setThread}
+          setError={setError}
+        />
 
-      {isDefined(error) && (
-        <ThemeProvider colorScheme={colorScheme}>
-          <FrontComponentErrorEffect error={error} onError={onError} />
-          <FrontComponentErrorBox error={error} />
-        </ThemeProvider>
-      )}
+        {isDefined(error) && (
+          <ThemeProvider colorScheme={colorScheme}>
+            <FrontComponentErrorEffect error={error} onError={onError} />
+            <FrontComponentErrorBox error={error} />
+          </ThemeProvider>
+        )}
 
-      {isDefined(thread) && (
-        <>
-          <FrontComponentUpdateHostCommunicationApiEffect
-            thread={thread}
-            frontComponentHostCommunicationApi={
-              frontComponentHostCommunicationApi
-            }
-          />
-          <FrontComponentInitializeHostCommunicationApiEffect thread={thread} />
-          <FrontComponentUpdateContextEffect
-            thread={thread}
-            executionContext={executionContext}
-            onExecutionContextInitialized={() =>
-              setIsExecutionContextInitialized(true)
-            }
-          />
-          <FrontComponentConfirmationModalResultEffect
-            thread={thread}
-            frontComponentId={executionContext.frontComponentId}
-            onError={setError}
-          />
-        </>
-      )}
+        {isDefined(thread) && (
+          <>
+            <FrontComponentUpdateHostCommunicationApiEffect
+              thread={thread}
+              frontComponentHostCommunicationApi={
+                frontComponentHostCommunicationApi
+              }
+            />
+            <FrontComponentInitializeHostCommunicationApiEffect
+              thread={thread}
+            />
+            <FrontComponentGeometryTrackerEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
+            />
+            <FrontComponentUpdateContextEffect
+              thread={thread}
+              executionContext={executionContext}
+              onExecutionContextInitialized={() =>
+                setIsExecutionContextInitialized(true)
+              }
+            />
+            <FrontComponentConfirmationModalResultEffect
+              thread={thread}
+              frontComponentId={executionContext.frontComponentId}
+              onError={setError}
+            />
+          </>
+        )}
 
-      {!isDefined(error) && !isReady && loadingFallback}
+        {!isDefined(error) && !isReady && loadingFallback}
 
-      {isReady && (
-        <ThemeProvider colorScheme={colorScheme}>
-          <ErrorBoundary
-            onError={setError}
-            onReset={() => setError(null)}
-            resetKeys={[componentUrl]}
-            fallbackRender={() => null}
-          >
-            <FrontComponentExternalNavigationContext.Provider
-              value={onRequestExternalNavigation ?? null}
+        {isReady && (
+          <ThemeProvider colorScheme={colorScheme}>
+            <ErrorBoundary
+              onError={setError}
+              onReset={() => setError(null)}
+              resetKeys={[componentUrl]}
+              fallbackRender={() => null}
             >
-              <RemoteRootRenderer
-                receiver={receiver}
-                components={fallbackComponentRegistry}
-              />
-            </FrontComponentExternalNavigationContext.Provider>
-          </ErrorBoundary>
-        </ThemeProvider>
-      )}
-    </>
+              <FrontComponentExternalNavigationContext.Provider
+                value={onRequestExternalNavigation ?? null}
+              >
+                <RemoteRootRenderer
+                  receiver={receiver}
+                  components={fallbackComponentRegistry}
+                />
+              </FrontComponentExternalNavigationContext.Provider>
+            </ErrorBoundary>
+          </ThemeProvider>
+        )}
+      </div>
+    </FrontComponentGeometryTrackerContext.Provider>
   );
 };
