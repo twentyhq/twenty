@@ -1,68 +1,56 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { msg } from '@lingui/core/macro';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
+import { QueryFailedError } from 'typeorm';
+import { v5 } from 'uuid';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WORKSPACE_SETUP_CHAT_MODEL_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-model-id.constant';
+import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import {
-  WORKSPACE_SETUP_CHAT_THREAD_KEY,
-  type WorkspaceSetupChatKeyValueTypeMap,
-} from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-chat-key-value.type';
 import { buildWorkspaceSetupPromptText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util';
+import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 
-const RESOLVE_THREAD_MAX_ATTEMPTS = 3;
+const WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE =
+  '1e9195f3-c26a-4bfc-961e-dc317b4badbd';
+
+const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;
 
 type StartWorkspaceSetupChatServiceResult =
   | {
-      outcome: WorkspaceSetupChatOutcome.STARTED;
-      threadId: string;
-      streamId: string;
-      turnId: string;
-      modelId: string;
-    }
-  | {
-      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED;
-      threadId: string;
-      modelId: string;
+      outcome:
+        | WorkspaceSetupChatOutcome.STARTED
+        | WorkspaceSetupChatOutcome.ALREADY_STARTED;
+      thread: AgentChatThreadEntity;
     }
   | {
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE;
-      threadId: null;
-      modelId: null;
+      thread: null;
     };
 
 @Injectable()
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class WorkspaceSetupChatService {
   private readonly logger = new Logger(WorkspaceSetupChatService.name);
 
   constructor(
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingUsageService: BillingUsageService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly keyValuePairService: KeyValuePairService<WorkspaceSetupChatKeyValueTypeMap>,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly i18nService: I18nService,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -70,163 +58,194 @@ export class WorkspaceSetupChatService {
 
   async startWorkspaceSetupChat({
     userId,
+    userLocale,
     userWorkspaceId,
     workspace,
     companyContext,
   }: {
     userId: string;
+    userLocale: string | null;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
-    const isWorkspaceCreator = await this.isWorkspaceCreator({
-      userId,
-      workspaceId: workspace.id,
-    });
+    const isWorkspaceCreator =
+      await this.userWorkspaceService.isWorkspaceCreator({
+        userId,
+        workspaceId: workspace.id,
+      });
 
     if (!isWorkspaceCreator) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
-    const modelId = this.resolveKickoffModelId(workspace);
-
-    if (!isDefined(modelId)) {
-      this.logger.warn(
-        `Workspace setup chat unavailable for workspace ${workspace.id}: neither ${WORKSPACE_SETUP_CHAT_MODEL_ID} nor ${workspace.smartModel} is available`,
-      );
-
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
-    }
-
-    const existingThreadId = await this.resolveExistingThread({
+    const localePromise = this.resolveUserLocale({
       userId,
+      userLocale,
+      workspaceId: workspace.id,
+    });
+
+    const threadId = v5(
+      `${workspace.id}:${userWorkspaceId}`,
+      WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
+    );
+
+    let thread = await this.agentChatService.findThreadById({
+      threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
 
-    const mustCreateThread = !isDefined(existingThreadId);
+    if (isDefined(thread)) {
+      if (isDefined(thread.deletedAt)) {
+        thread = await this.agentChatService.unarchiveThread({
+          threadId,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        });
+      }
 
-    if (
-      mustCreateThread &&
-      !(await this.hasCreditsToStartKickoffStream(workspace.id))
-    ) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
-    }
+      if (isDefined(thread.activeStreamId)) {
+        const interruptedError =
+          await this.agentChatStreamingService.reapDeadStream({
+            thread,
+            workspaceId: workspace.id,
+          });
 
-    const threadId =
-      existingThreadId ??
-      (await this.createThreadWithPointer({
-        userId,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      }));
+        if (!isDefined(interruptedError)) {
+          return {
+            outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
+            thread,
+          };
+        }
+      }
 
-    return this.ensureKickoffStream({
-      threadId,
-      userWorkspaceId,
-      workspace,
-      companyContext,
-      modelId,
-    });
-  }
+      const hasConversationMessages =
+        await this.agentChatService.hasConversationMessages({
+          threadId,
+          workspaceId: workspace.id,
+        });
 
-  private resolveKickoffModelId(workspace: WorkspaceEntity): string | null {
-    const preferredModelIds = [
-      WORKSPACE_SETUP_CHAT_MODEL_ID,
-      workspace.smartModel,
-    ];
-
-    for (const preferredModelId of preferredModelIds) {
-      try {
-        this.aiModelRegistryService.validateModelAvailability(
-          preferredModelId,
-          workspace,
-        );
-
-        return preferredModelId;
-      } catch {
-        continue;
+      if (hasConversationMessages) {
+        return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
       }
     }
 
-    return null;
-  }
+    const hasAvailableCredits =
+      await this.billingUsageService.hasAvailableCredits(workspace.id);
 
-  private async hasCreditsToStartKickoffStream(
-    workspaceId: string,
-  ): Promise<boolean> {
-    return this.billingUsageService.hasAvailableCredits(workspaceId);
-  }
-
-  private async deletePointerToDeletedThread({
-    userId,
-    workspaceId,
-    deletedThreadId,
-  }: {
-    userId: string;
-    workspaceId: string;
-    deletedThreadId: string;
-  }): Promise<void> {
-    await this.keyValuePairService.deleteIfValueEquals({
-      userId,
-      workspaceId,
-      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-      value: { threadId: deletedThreadId },
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-  }
-
-  private async getUserLocale({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<string> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: userWorkspaceId },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return SOURCE_LOCALE;
+    if (!hasAvailableCredits) {
+      return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
-    // The workspace member locale is what the UI is translated with, while the user workspace
+    const locale = await localePromise;
+
+    thread ??= await this.createThreadWithDeterministicId({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      locale,
+    });
+
+    const kickoffResult =
+      await this.agentChatStreamingService.startHiddenKickoffStream({
+        thread,
+        userWorkspaceId,
+        workspace,
+        text: buildWorkspaceSetupPromptText({
+          companyEnrichment: companyContext,
+          locale,
+        }),
+      });
+
+    if (!isDefined(kickoffResult)) {
+      return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
+    }
+
+    tagAiChatStreamScope({
+      streamId: kickoffResult.streamId,
+      turnId: kickoffResult.turnId,
+      threadId,
+      workspaceId: workspace.id,
+    });
+
+    return { outcome: WorkspaceSetupChatOutcome.STARTED, thread };
+  }
+
+  private async createThreadWithDeterministicId({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+    locale,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+    locale: string;
+  }): Promise<AgentChatThreadEntity> {
+    const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
+    const title = this.i18nService
+      .getI18nInstance(safeLocale)
+      ._(WORKSPACE_SETUP_CHAT_THREAD_TITLE);
+
+    try {
+      return await this.agentChatService.createThread({
+        userWorkspaceId,
+        workspaceId,
+        id: threadId,
+        title,
+      });
+    } catch (error) {
+      if (this.isUniqueViolation(error)) {
+        const concurrentlyCreatedThread =
+          await this.agentChatService.findThreadById({
+            threadId,
+            userWorkspaceId,
+            workspaceId,
+          });
+
+        if (isDefined(concurrentlyCreatedThread)) {
+          return concurrentlyCreatedThread;
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  private isUniqueViolation(error: unknown): boolean {
+    return (
+      error instanceof QueryFailedError &&
+      (error as QueryFailedError & { code?: string }).code ===
+        POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+    );
+  }
+
+  private async resolveUserLocale({
+    userId,
+    userLocale,
+    workspaceId,
+  }: {
+    userId: string;
+    userLocale: string | null;
+    workspaceId: string;
+  }): Promise<string> {
+    // The workspace member locale is what the UI is translated with, while the user
     // one stays at its signup default, so the assistant must follow the member locale.
     const workspaceMemberLocale = await this.findWorkspaceMemberLocale({
-      userId: userWorkspace.userId,
+      userId,
       workspaceId,
     });
 
-    return workspaceMemberLocale ?? userWorkspace.locale ?? SOURCE_LOCALE;
+    return workspaceMemberLocale ?? userLocale ?? SOURCE_LOCALE;
   }
 
   private async findWorkspaceMemberLocale({
@@ -262,244 +281,5 @@ export class WorkspaceSetupChatService {
 
       return null;
     }
-  }
-
-  private async isWorkspaceCreator({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { workspaceId },
-      order: { createdAt: 'ASC' },
-      withDeleted: true,
-    });
-
-    return earliestUserWorkspace?.userId === userId;
-  }
-
-  private async resolveExistingThread({
-    userId,
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userId: string;
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    for (let attempt = 0; attempt < RESOLVE_THREAD_MAX_ATTEMPTS; attempt++) {
-      const storedThreadId = await this.getStoredThreadId({
-        userId,
-        workspaceId,
-      });
-
-      if (!isDefined(storedThreadId)) {
-        return null;
-      }
-
-      const storedThread = await this.agentChatService.findThreadById({
-        threadId: storedThreadId,
-        userWorkspaceId,
-        workspaceId,
-      });
-
-      if (isDefined(storedThread)) {
-        return storedThreadId;
-      }
-
-      await this.deletePointerToDeletedThread({
-        userId,
-        workspaceId,
-        deletedThreadId: storedThreadId,
-      });
-    }
-
-    throw new AiException(
-      'Could not resolve a workspace setup thread',
-      AiExceptionCode.THREAD_NOT_FOUND,
-    );
-  }
-
-  private async createThreadWithPointer({
-    userId,
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userId: string;
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<string> {
-    const newThreadId = v4();
-
-    await this.agentChatService.createThread({
-      userWorkspaceId,
-      workspaceId,
-      id: newThreadId,
-      title: WORKSPACE_SETUP_CHAT_THREAD_TITLE,
-    });
-
-    await this.keyValuePairService.trySetIfAbsent({
-      userId,
-      workspaceId,
-      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-      value: { threadId: newThreadId },
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-
-    const winningThreadId = await this.getStoredThreadId({
-      userId,
-      workspaceId,
-    });
-
-    if (winningThreadId === newThreadId) {
-      return newThreadId;
-    }
-
-    await this.agentChatService
-      .hardDeleteThread({
-        threadId: newThreadId,
-        userWorkspaceId,
-        workspaceId,
-      })
-      .catch((error) => {
-        this.logger.warn(
-          `Failed to delete losing workspace setup thread ${newThreadId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      });
-
-    if (!isDefined(winningThreadId)) {
-      throw new AiException(
-        'Could not resolve a workspace setup thread',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
-    return winningThreadId;
-  }
-
-  private async getStoredThreadId({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    const keyValuePairs = await this.keyValuePairService.get({
-      userId,
-      workspaceId,
-      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-
-    const storedValue = (
-      keyValuePairs[0] as
-        | {
-            value?: WorkspaceSetupChatKeyValueTypeMap[typeof WORKSPACE_SETUP_CHAT_THREAD_KEY];
-          }
-        | undefined
-    )?.value;
-
-    return isDefined(storedValue?.threadId) ? storedValue.threadId : null;
-  }
-
-  private async ensureKickoffStream({
-    threadId,
-    userWorkspaceId,
-    workspace,
-    companyContext,
-    modelId,
-  }: {
-    threadId: string;
-    userWorkspaceId: string;
-    workspace: WorkspaceEntity;
-    companyContext: WorkspaceCompanyEnrichment | null;
-    modelId: string;
-  }): Promise<StartWorkspaceSetupChatServiceResult> {
-    const thread = await this.agentChatService.getThreadById({
-      threadId,
-      userWorkspaceId,
-      workspaceId: workspace.id,
-    });
-
-    if (isDefined(thread.deletedAt)) {
-      await this.agentChatService.unarchiveThread({
-        threadId,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
-    }
-
-    if (isDefined(thread.activeStreamId)) {
-      const interruptedError =
-        await this.agentChatStreamingService.reapDeadStream({
-          thread,
-          workspaceId: workspace.id,
-        });
-
-      if (!isDefined(interruptedError)) {
-        return {
-          outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-          threadId,
-          modelId,
-        };
-      }
-    }
-
-    const hasConversationMessages =
-      await this.agentChatService.hasConversationMessages({
-        threadId,
-        workspaceId: workspace.id,
-      });
-
-    if (hasConversationMessages) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-        threadId,
-        modelId,
-      };
-    }
-
-    if (!(await this.hasCreditsToStartKickoffStream(workspace.id))) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-        threadId: null,
-        modelId: null,
-      };
-    }
-
-    const kickoffResult =
-      await this.agentChatStreamingService.startHiddenKickoffStream({
-        threadId,
-        userWorkspaceId,
-        workspace,
-        text: buildWorkspaceSetupPromptText({
-          companyEnrichment: companyContext,
-          locale: await this.getUserLocale({
-            userWorkspaceId,
-            workspaceId: workspace.id,
-          }),
-        }),
-        modelId,
-      });
-
-    if (!isDefined(kickoffResult)) {
-      return {
-        outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-        threadId,
-        modelId,
-      };
-    }
-
-    return {
-      outcome: WorkspaceSetupChatOutcome.STARTED,
-      threadId,
-      streamId: kickoffResult.streamId,
-      turnId: kickoffResult.turnId,
-      modelId,
-    };
   }
 }

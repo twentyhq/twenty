@@ -3,7 +3,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
-import { isRetryableAiChatStreamError } from '@/ai/utils/isRetryableAiChatStreamError';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
@@ -47,14 +46,7 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer
-        error={agentChatError}
-        onRetry={
-          isRetryableAiChatStreamError(agentChatError)
-            ? retryChatMessage
-            : undefined
-        }
-      />
+      <AiChatErrorRenderer error={agentChatError} onRetry={retryChatMessage} />
     </StyledErrorContainer>
   );
 };

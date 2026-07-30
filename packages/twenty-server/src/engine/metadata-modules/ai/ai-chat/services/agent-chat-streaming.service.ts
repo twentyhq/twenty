@@ -297,52 +297,18 @@ export class AgentChatStreamingService {
     }
   }
 
-  private async abandonKickoffAndFlushQueue({
-    threadId,
-    userWorkspaceId,
-    workspaceId,
-    streamId,
-    hasTitle,
-  }: {
-    threadId: string;
-    userWorkspaceId: string;
-    workspaceId: string;
-    streamId: string;
-    hasTitle: boolean;
-  }): Promise<void> {
-    await this.releaseStreamClaim(threadId, workspaceId, streamId);
-    await this.flushNextQueuedMessage(
-      threadId,
-      userWorkspaceId,
-      workspaceId,
-      hasTitle,
-    );
-  }
-
   async startHiddenKickoffStream({
-    threadId,
+    thread,
     userWorkspaceId,
     workspace,
     text,
-    modelId,
   }: {
-    threadId: string;
+    thread: AgentChatThreadEntity;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     text: string;
-    modelId: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string } | null> {
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
-    });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
+    const threadId = thread.id;
     const streamId = generateId();
 
     const hasClaimedStreamForKickoff = await this.tryClaimStream({
@@ -364,13 +330,13 @@ export class AgentChatStreamingService {
         });
 
       if (hasConversationMessages) {
-        await this.abandonKickoffAndFlushQueue({
+        await this.releaseStreamClaim(threadId, workspace.id, streamId);
+        await this.flushNextQueuedMessage(
           threadId,
           userWorkspaceId,
-          workspaceId: workspace.id,
-          streamId,
-          hasTitle: !!thread.title,
-        });
+          workspace.id,
+          !!thread.title,
+        );
 
         return null;
       }
@@ -406,7 +372,6 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages,
           browsingContext: null,
-          modelId,
           lastUserMessageText: text,
           lastUserMessageParts: [{ type: 'text' as const, text }],
           hasTitle: !!thread.title,
@@ -424,7 +389,7 @@ export class AgentChatStreamingService {
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
         attributes: {
-          model: modelId,
+          model: 'unknown',
           failure_phase: 'enqueue',
           error_code: streamError.code,
         },
@@ -483,12 +448,10 @@ export class AgentChatStreamingService {
 
     try {
       const lastUserMessage =
-        await this.agentChatService.findLatestProcessedSentUserMessageIncludingHidden(
-          {
-            threadId,
-            workspaceId: workspace.id,
-          },
-        );
+        await this.agentChatService.findLatestSentUserMessage({
+          threadId,
+          workspaceId: workspace.id,
+        });
 
       if (!isDefined(lastUserMessage) || !isDefined(lastUserMessage.turnId)) {
         throw new AiException(

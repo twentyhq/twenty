@@ -5927,14 +5927,8 @@ export default {
             "outcome": [
                 332
             ],
-            "threadId": [
-                4
-            ],
-            "streamId": [
-                1
-            ],
-            "modelId": [
-                1
+            "thread": [
+                324
             ],
             "__typename": [
                 1

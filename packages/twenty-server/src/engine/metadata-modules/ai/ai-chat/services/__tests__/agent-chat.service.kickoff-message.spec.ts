@@ -1,5 +1,3 @@
-import { In } from 'typeorm';
-
 import {
   AgentMessageRole,
   AgentMessageStatus,
@@ -10,13 +8,12 @@ const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
 const KICKOFF_TEXT = 'kickoff prompt text';
 
-const buildService = ({ existingHiddenMessages = [] as unknown[] } = {}) => {
+const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
   const threadRepository = {
     findOne: jest.fn().mockResolvedValue({ id: THREAD_ID }),
   };
   const messageRepository = {
-    find: jest.fn().mockResolvedValue(existingHiddenMessages),
-    findOne: jest.fn().mockResolvedValue(null),
+    findOne: jest.fn().mockResolvedValue(existingHiddenMessage),
     insert: jest
       .fn()
       .mockResolvedValue({ identifiers: [{ id: 'kickoff-message-id' }] }),
@@ -56,27 +53,20 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     jest.clearAllMocks();
   });
 
-  it('should delete part-less hidden rows and their orphan turns then insert a fresh hidden kickoff message when only partial rows exist', async () => {
+  it('should insert a hidden kickoff message with its own turn when none exists', async () => {
     const {
       service,
       messageRepository,
       turnRepository,
       messagePartRepository,
-    } = buildService({
-      existingHiddenMessages: [
-        { id: 'partial-id', turnId: 'partial-turn-id', parts: [] },
-      ],
-    });
+    } = buildService();
 
     const result = await ensureKickoff(service);
 
-    expect(messageRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
-      id: In(['partial-id']),
+    expect(messageRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
+      where: { threadId: THREAD_ID, isHidden: true },
+      relations: ['parts'],
     });
-    expect(turnRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
-      id: In(['partial-turn-id']),
-    });
-
     expect(turnRepository.insert).toHaveBeenCalledWith(WORKSPACE_ID, {
       threadId: THREAD_ID,
       agentId: null,
@@ -95,7 +85,6 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
 
     expect(insertedMessage.processedAt).toBeInstanceOf(Date);
     expect(insertedMessage.processedAt.getTime()).toBeGreaterThan(0);
-    expect(insertedMessage.processedAt).not.toEqual(new Date(0));
 
     const [, insertedParts] = messagePartRepository.insert.mock.calls[0];
 
@@ -111,13 +100,11 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
 
   it('should reuse the existing hidden message when one with parts already exists', async () => {
     const { service, messageRepository, turnRepository } = buildService({
-      existingHiddenMessages: [
-        {
-          id: 'existing-id',
-          turnId: 'existing-turn-id',
-          parts: [{ id: 'part-id' }],
-        },
-      ],
+      existingHiddenMessage: {
+        id: 'existing-id',
+        turnId: 'existing-turn-id',
+        parts: [{ id: 'part-id' }],
+      },
     });
 
     const result = await ensureKickoff(service);
@@ -125,33 +112,63 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     expect(result).toEqual({ id: 'existing-id', turnId: 'existing-turn-id' });
     expect(turnRepository.insert).not.toHaveBeenCalled();
     expect(messageRepository.insert).not.toHaveBeenCalled();
+    expect(messageRepository.delete).not.toHaveBeenCalled();
   });
 
-  it('should delete the created turn and rethrow when the message insert fails', async () => {
-    const { service, messageRepository, turnRepository } = buildService();
+  it('should replace a part-less hidden row and its orphan turn with a fresh kickoff message', async () => {
+    const { service, messageRepository, turnRepository } = buildService({
+      existingHiddenMessage: {
+        id: 'partial-id',
+        turnId: 'partial-turn-id',
+        parts: [],
+      },
+    });
 
-    messageRepository.insert.mockRejectedValue(
-      new Error('duplicate key value violates unique constraint'),
-    );
+    const result = await ensureKickoff(service);
 
-    await expect(ensureKickoff(service)).rejects.toThrow(
-      'duplicate key value violates unique constraint',
-    );
+    expect(messageRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
+      id: 'partial-id',
+    });
     expect(turnRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
-      id: 'kickoff-turn-id',
+      id: 'partial-turn-id',
+    });
+    expect(result).toEqual({
+      id: 'kickoff-message-id',
+      turnId: 'kickoff-turn-id',
+    });
+  });
+
+  it('should replace a turn-less hidden row without touching the turns', async () => {
+    const { service, messageRepository, turnRepository } = buildService({
+      existingHiddenMessage: {
+        id: 'turn-less-id',
+        turnId: null,
+        parts: [{ id: 'part-id' }],
+      },
+    });
+
+    const result = await ensureKickoff(service);
+
+    expect(messageRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
+      id: 'turn-less-id',
+    });
+    expect(turnRepository.delete).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      id: 'kickoff-message-id',
+      turnId: 'kickoff-turn-id',
     });
   });
 });
 
-describe('AgentChatService findLatestProcessedSentUserMessageIncludingHidden', () => {
+describe('AgentChatService findLatestSentUserMessage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should look up sent user messages without an isHidden predicate and order by processedAt then createdAt then id when finding the latest sent message', async () => {
+  it('should look up sent user messages without an isHidden predicate and order by processedAt then createdAt then id', async () => {
     const { service, messageRepository } = buildService();
 
-    await service.findLatestProcessedSentUserMessageIncludingHidden({
+    await service.findLatestSentUserMessage({
       threadId: THREAD_ID,
       workspaceId: WORKSPACE_ID,
     });

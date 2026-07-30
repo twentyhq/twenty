@@ -30,13 +30,12 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
   } as unknown as AgentMessageEntity;
 
   const buildService = ({
-    thread = kickoffThread as AgentChatThreadEntity | null,
     claimAffected = 1,
     hasConversationMessages = false,
     threadMessages = [hiddenKickoffMessageEntity],
   } = {}) => {
     const threadRepository = {
-      findOne: jest.fn().mockResolvedValue(thread),
+      findOne: jest.fn().mockResolvedValue(kickoffThread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
@@ -82,21 +81,11 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
   };
 
   const kickoffArguments = {
-    threadId: 'thread-id',
+    thread: kickoffThread,
     userWorkspaceId: 'user-workspace-id',
     workspace,
     text: kickoffText,
-    modelId: 'kickoff-model-id',
   };
-
-  it('should throw THREAD_NOT_FOUND when the thread does not exist', async () => {
-    const { service, messageQueueService } = buildService({ thread: null });
-
-    await expect(
-      service.startHiddenKickoffStream(kickoffArguments),
-    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
-    expect(messageQueueService.add).not.toHaveBeenCalled();
-  });
 
   it('should return null without queueing a visible copy when the claim is lost', async () => {
     const {
@@ -135,7 +124,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     });
   });
 
-  it('should enqueue the hidden kickoff turn without notifying thread activity when the claim is won', async () => {
+  it('should enqueue the hidden kickoff turn without a pinned model and without notifying thread activity', async () => {
     const { service, threadRepository, agentChatService, messageQueueService } =
       buildService();
 
@@ -154,13 +143,13 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       expect.objectContaining({
         threadId: 'thread-id',
         browsingContext: null,
-        modelId: 'kickoff-model-id',
         lastUserMessageText: kickoffText,
         lastUserMessageParts: [{ type: 'text', text: kickoffText }],
         hasTitle: true,
         existingTurnId: 'kickoff-turn-id',
       }),
     );
+    expect(messageQueueService.add.mock.calls[0][1].modelId).toBeUndefined();
     expect(agentChatService.notifyThreadActivityUpdated).not.toHaveBeenCalled();
     expect(result).toEqual({
       streamId: expect.any(String),

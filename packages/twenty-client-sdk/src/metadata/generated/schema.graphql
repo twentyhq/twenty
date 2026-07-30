@@ -2948,9 +2948,7 @@ type AgentChatEvent {
 
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
-  threadId: UUID
-  streamId: String
-  modelId: String
+  thread: AgentChatThread
 }
 
 enum WorkspaceSetupChatOutcome {

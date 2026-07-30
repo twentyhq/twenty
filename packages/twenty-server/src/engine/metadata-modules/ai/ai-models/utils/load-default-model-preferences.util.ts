@@ -20,7 +20,6 @@ export const DEFAULT_SMART_MODELS = [
 
 export const DEFAULT_RECOMMENDED_MODELS = [
   'openai/gpt-5.2',
-  'openai/gpt-5.6-luna',
   'openai/gpt-4.1',
   'anthropic/claude-opus-4-6',
   'anthropic/claude-sonnet-4-6',

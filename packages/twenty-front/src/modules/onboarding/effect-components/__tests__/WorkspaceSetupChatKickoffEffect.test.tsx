@@ -2,7 +2,6 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
-import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
@@ -10,22 +9,18 @@ import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/a
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { StartWorkspaceSetupChatDocument } from '~/generated-metadata/graphql';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
-import { workspaceSetupChatRequestedWorkspaceIdState } from '@/onboarding/states/workspaceSetupChatRequestedWorkspaceIdState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { StartWorkspaceSetupChatDocument } from '~/generated-metadata/graphql';
 
 const threadId = '20202020-aaaa-4aaa-8aaa-202020202020';
-const workspaceId = mockCurrentWorkspace.id;
+const threadTitle = 'Configuration du workspace';
 
 const enrichment: WorkspaceCompanyEnrichment = {
   domain: 'acme.com',
@@ -69,8 +64,24 @@ const buildKickoffMock = ({
         startWorkspaceSetupChat: {
           __typename: 'StartWorkspaceSetupChatResult',
           outcome,
-          threadId: outcome === 'UNAVAILABLE' ? null : threadId,
-          modelId: outcome === 'UNAVAILABLE' ? null : 'openai/gpt-5.6-luna',
+          thread:
+            outcome === 'UNAVAILABLE'
+              ? null
+              : {
+                  __typename: 'AgentChatThread',
+                  id: threadId,
+                  title: threadTitle,
+                  totalInputTokens: 0,
+                  totalOutputTokens: 0,
+                  contextWindowTokens: null,
+                  conversationSize: 0,
+                  totalInputCredits: 0,
+                  totalOutputCredits: 0,
+                  deletedAt: null,
+                  lastMessageAt: null,
+                  createdAt: '2026-07-21T10:00:00.000Z',
+                  updatedAt: '2026-07-21T10:00:00.000Z',
+                },
         },
       },
     };
@@ -99,7 +110,6 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     resetJotaiStore();
     sessionStorage.clear();
     localStorage.clear();
-    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   });
 
   afterEach(() => {
@@ -163,12 +173,9 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     await flushMutation();
 
     expect(callCount).toBe(1);
-    expect(
-      jotaiStore.get(workspaceSetupChatRequestedWorkspaceIdState.atom),
-    ).toBe(workspaceId);
   });
 
-  it('should select the thread and mark it awaiting the first chunk when the chat is started', async () => {
+  it('should select the thread with its server title and mark it awaiting the first chunk when the chat is started', async () => {
     renderKickoffEffect([buildKickoffMock({ outcome: 'STARTED' })]);
 
     await flushMutation();
@@ -193,17 +200,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
           familyKey: { threadId },
         }),
       ),
-    ).toBe(WORKSPACE_SETUP_CHAT_THREAD_TITLE);
-  });
-
-  it('should pin the model returned by the kickoff so the chat continues on it', async () => {
-    renderKickoffEffect([buildKickoffMock({ outcome: 'STARTED' })]);
-
-    await flushMutation();
-
-    expect(jotaiStore.get(agentChatUserSelectedModelState.atom)).toBe(
-      'openai/gpt-5.6-luna',
-    );
+    ).toBe(threadTitle);
   });
 
   it('should select the thread without awaiting a first chunk when the chat was already started', async () => {
@@ -220,52 +217,6 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
         }),
       ),
     ).toBe(false);
-  });
-
-  it('should not call the mutation when a workspace setup chat was already requested for this workspace', async () => {
-    jotaiStore.set(
-      workspaceSetupChatRequestedWorkspaceIdState.atom,
-      workspaceId,
-    );
-
-    let callCount = 0;
-    renderKickoffEffect([
-      buildKickoffMock({
-        outcome: 'STARTED',
-        countCall: () => {
-          callCount += 1;
-        },
-      }),
-    ]);
-
-    await flushMutation();
-
-    expect(callCount).toBe(0);
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
-  });
-
-  it('should call the mutation when the guard was consumed by another workspace', async () => {
-    jotaiStore.set(
-      workspaceSetupChatRequestedWorkspaceIdState.atom,
-      '20202020-bbbb-4bbb-8bbb-202020202020',
-    );
-
-    let callCount = 0;
-    renderKickoffEffect([
-      buildKickoffMock({
-        outcome: 'STARTED',
-        countCall: () => {
-          callCount += 1;
-        },
-      }),
-    ]);
-
-    await flushMutation();
-
-    expect(callCount).toBe(1);
-    expect(
-      jotaiStore.get(workspaceSetupChatRequestedWorkspaceIdState.atom),
-    ).toBe(workspaceId);
   });
 
   it('should pass the stored enrichment as the companyContext variable when one is stored', async () => {
@@ -303,7 +254,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     expect(capturedVariablesList[0].companyContext).toBeUndefined();
   });
 
-  it('should keep the guard consumed when the chat is unavailable', async () => {
+  it('should not touch the chat state when the chat is unavailable', async () => {
     renderKickoffEffect([buildKickoffMock({ outcome: 'UNAVAILABLE' })]);
 
     await flushMutation();
@@ -315,35 +266,16 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     expect(jotaiStore.get(skipMessagesSkeletonUntilLoadedState.atom)).toBe(
       false,
     );
-    expect(
-      jotaiStore.get(workspaceSetupChatRequestedWorkspaceIdState.atom),
-    ).toBe(workspaceId);
   });
 
-  it('should release the guard for a later retry when the mutation fails', async () => {
+  it('should retry on a later effect run when the mutation fails', async () => {
+    let callCount = 0;
+
     renderKickoffEffect([
       {
         request: { query: StartWorkspaceSetupChatDocument },
         error: new Error('Network error'),
       },
-    ]);
-
-    await flushMutation();
-
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
-    expect(jotaiStore.get(hasInitializedAgentChatThreadsState.atom)).toBe(
-      false,
-    );
-    expect(
-      jotaiStore.get(workspaceSetupChatRequestedWorkspaceIdState.atom),
-    ).toBeNull();
-  });
-
-  it('should not call the mutation when no current workspace is set', async () => {
-    jotaiStore.set(currentWorkspaceState.atom, null);
-
-    let callCount = 0;
-    renderKickoffEffect([
       buildKickoffMock({
         outcome: 'STARTED',
         countCall: () => {
@@ -354,9 +286,17 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     await flushMutation();
 
-    expect(callCount).toBe(0);
-    expect(
-      jotaiStore.get(workspaceSetupChatRequestedWorkspaceIdState.atom),
-    ).toBeNull();
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
+
+    await act(async () => {
+      jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
+    });
+    await act(async () => {
+      jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, false);
+    });
+    await flushMutation();
+
+    expect(callCount).toBe(1);
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(threadId);
   });
 });

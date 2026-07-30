@@ -121,67 +121,6 @@ export class KeyValuePairService<
     });
   }
 
-  async trySetIfAbsent<K extends keyof KeyValueTypesMap>({
-    userId,
-    workspaceId,
-    key,
-    value,
-    type,
-  }: {
-    userId: string;
-    workspaceId: string;
-    key: Extract<K, string>;
-    value: KeyValueTypesMap[K];
-    type: KeyValuePairType;
-  }): Promise<void> {
-    await this.keyValuePairRepository
-      .createQueryBuilder()
-      .insert()
-      .into(KeyValuePairEntity)
-      .values({
-        userId,
-        workspaceId,
-        applicationId: null,
-        key,
-        value,
-        type,
-      })
-      .orIgnore()
-      .execute();
-  }
-
-  async deleteIfValueEquals<K extends keyof KeyValueTypesMap>({
-    userId,
-    workspaceId,
-    key,
-    value,
-    type,
-  }: {
-    userId: string;
-    workspaceId: string;
-    key: Extract<K, string>;
-    value: KeyValueTypesMap[K];
-    type: KeyValuePairType;
-  }): Promise<boolean> {
-    const result = await this.keyValuePairRepository
-      .createQueryBuilder()
-      .delete()
-      .from(KeyValuePairEntity)
-      .where(
-        '"key" = :key AND "userId" = :userId AND "workspaceId" = :workspaceId AND "applicationId" IS NULL AND "type" = :type AND "value" = :value::jsonb',
-        {
-          key,
-          userId,
-          workspaceId,
-          type,
-          value: JSON.stringify(value),
-        },
-      )
-      .execute();
-
-    return (result.affected ?? 0) > 0;
-  }
-
   async delete(
     {
       userId,

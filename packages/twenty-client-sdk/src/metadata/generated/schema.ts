@@ -2643,9 +2643,7 @@ export interface AgentChatEvent {
 
 export interface StartWorkspaceSetupChatResult {
     outcome: WorkspaceSetupChatOutcome
-    threadId?: Scalars['UUID']
-    streamId?: Scalars['String']
-    modelId?: Scalars['String']
+    thread?: AgentChatThread
     __typename: 'StartWorkspaceSetupChatResult'
 }
 
@@ -5918,9 +5916,7 @@ export interface AgentChatEventGenqlSelection{
 
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
-    threadId?: boolean | number
-    streamId?: boolean | number
-    modelId?: boolean | number
+    thread?: AgentChatThreadGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }

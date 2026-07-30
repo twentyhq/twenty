@@ -1,55 +1,52 @@
-import { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import { QueryFailedError } from 'typeorm';
+import { v5 } from 'uuid';
 
-import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { WORKSPACE_SETUP_CHAT_MODEL_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-model-id.constant';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
-import { WORKSPACE_SETUP_CHAT_THREAD_KEY } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-chat-key-value.type';
-import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
+import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 
-const UUID_V4_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+jest.mock(
+  'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util',
+  () => ({
+    tagAiChatStreamScope: jest.fn(),
+  }),
+);
+
+// Pinned: changing the namespace or the name derivation would orphan the setup
+// threads already created from it.
+const WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE =
+  '1e9195f3-c26a-4bfc-961e-dc317b4badbd';
+
+const EXPECTED_THREAD_ID = v5(
+  'workspace-id:user-workspace-id',
+  WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
+);
 
 describe('WorkspaceSetupChatService', () => {
   const workspace = {
     id: 'workspace-id',
-    smartModel: 'smart-model-id',
   } as WorkspaceEntity;
 
   const startArguments = {
     userId: 'creator-user-id',
+    userLocale: 'en',
     userWorkspaceId: 'user-workspace-id',
     workspace,
     companyContext: null,
   };
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   const buildService = () => {
-    const keyValueState: { value: { threadId: string } | null } = {
-      value: null,
+    const workspaceMemberState: { locale: string | null } = {
+      locale: 'fr-FR',
     };
 
-    const userWorkspaceState = {
-      creatorUserId: 'creator-user-id',
-      locale: 'en',
-      workspaceMemberLocale: 'fr-FR',
-    };
-
-    const userWorkspaceRepository = {
-      findOne: jest.fn().mockImplementation(({ where }) =>
-        Promise.resolve(
-          isDefined(where?.id)
-            ? {
-                id: where.id,
-                userId: userWorkspaceState.creatorUserId,
-                locale: userWorkspaceState.locale,
-              }
-            : { userId: userWorkspaceState.creatorUserId },
-        ),
-      ),
-    };
     const twentyConfigService = {
       get: jest.fn().mockReturnValue(true),
     };
@@ -60,58 +57,32 @@ describe('WorkspaceSetupChatService', () => {
       getAvailableModels: jest
         .fn()
         .mockReturnValue([{ modelId: 'smart-model-id' }]),
-      validateModelAvailability: jest.fn(),
     };
-    const keyValuePairService = {
-      get: jest
-        .fn()
-        .mockImplementation(() =>
-          Promise.resolve(
-            isDefined(keyValueState.value)
-              ? [{ value: keyValueState.value }]
-              : [],
-          ),
-        ),
-      trySetIfAbsent: jest.fn().mockImplementation(({ value }) => {
-        if (!isDefined(keyValueState.value)) {
-          keyValueState.value = value;
-        }
-
-        return Promise.resolve();
-      }),
-      deleteIfValueEquals: jest.fn().mockImplementation(({ value }) => {
-        if (keyValueState.value?.threadId === value.threadId) {
-          keyValueState.value = null;
-        }
-
-        return Promise.resolve();
-      }),
+    const userWorkspaceService = {
+      isWorkspaceCreator: jest.fn().mockResolvedValue(true),
+    };
+    const translate = jest.fn().mockReturnValue('translated-workspace-setup');
+    const i18nService = {
+      getI18nInstance: jest.fn().mockReturnValue({ _: translate }),
     };
     const agentChatService = {
       findThreadById: jest.fn().mockResolvedValue(null),
-      createThread: jest.fn().mockResolvedValue(undefined),
-      hardDeleteThread: jest.fn().mockResolvedValue(undefined),
-      getThreadById: jest.fn().mockImplementation(({ threadId }) =>
+      createThread: jest.fn().mockImplementation(({ id, title }) =>
+        Promise.resolve({
+          id,
+          title,
+          deletedAt: null,
+          activeStreamId: null,
+        }),
+      ),
+      unarchiveThread: jest.fn().mockImplementation(({ threadId }) =>
         Promise.resolve({
           id: threadId,
           deletedAt: null,
           activeStreamId: null,
         }),
       ),
-      unarchiveThread: jest.fn().mockResolvedValue(undefined),
       hasConversationMessages: jest.fn().mockResolvedValue(false),
-    };
-    const globalWorkspaceOrmManager = {
-      executeInWorkspaceContext: jest
-        .fn()
-        .mockImplementation((callback: () => unknown) => callback()),
-      getRepository: jest.fn().mockResolvedValue({
-        findOne: jest.fn().mockImplementation(() =>
-          Promise.resolve({
-            locale: userWorkspaceState.workspaceMemberLocale,
-          }),
-        ),
-      }),
     };
     const agentChatStreamingService = {
       reapDeadStream: jest.fn().mockResolvedValue(null),
@@ -121,13 +92,29 @@ describe('WorkspaceSetupChatService', () => {
         turnId: 'turn-id',
       }),
     };
+    const globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((callback: () => unknown) => callback()),
+      getRepository: jest.fn().mockResolvedValue({
+        findOne: jest
+          .fn()
+          .mockImplementation(() =>
+            Promise.resolve(
+              isDefined(workspaceMemberState.locale)
+                ? { locale: workspaceMemberState.locale }
+                : null,
+            ),
+          ),
+      }),
+    };
 
     const service = new WorkspaceSetupChatService(
-      userWorkspaceRepository as never,
       twentyConfigService as never,
       billingUsageService as never,
       aiModelRegistryService as never,
-      keyValuePairService as never,
+      userWorkspaceService as never,
+      i18nService as never,
       agentChatService as never,
       agentChatStreamingService as never,
       globalWorkspaceOrmManager as never,
@@ -135,26 +122,21 @@ describe('WorkspaceSetupChatService', () => {
 
     return {
       service,
-      keyValueState,
-      userWorkspaceState,
-      userWorkspaceRepository,
+      workspaceMemberState,
       twentyConfigService,
       billingUsageService,
       aiModelRegistryService,
-      keyValuePairService,
+      userWorkspaceService,
+      i18nService,
+      translate,
       agentChatService,
       agentChatStreamingService,
       globalWorkspaceOrmManager,
     };
   };
 
-  it('should return unavailable without any thread or key-value writes when the onboarding ai chat is disabled', async () => {
-    const {
-      service,
-      twentyConfigService,
-      keyValuePairService,
-      agentChatService,
-    } = buildService();
+  it('should return unavailable without any thread interaction when the onboarding ai chat is disabled', async () => {
+    const { service, twentyConfigService, agentChatService } = buildService();
 
     twentyConfigService.get.mockReturnValue(false);
 
@@ -162,44 +144,31 @@ describe('WorkspaceSetupChatService', () => {
 
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
+      thread: null,
     });
     expect(twentyConfigService.get).toHaveBeenCalledWith(
       'IS_ONBOARDING_AI_CHAT_ENABLED',
     );
+    expect(agentChatService.findThreadById).not.toHaveBeenCalled();
     expect(agentChatService.createThread).not.toHaveBeenCalled();
-    expect(keyValuePairService.get).not.toHaveBeenCalled();
-    expect(keyValuePairService.trySetIfAbsent).not.toHaveBeenCalled();
   });
 
   it('should return unavailable when the caller is not the workspace creator', async () => {
-    const { service, userWorkspaceState, agentChatService } = buildService();
+    const { service, userWorkspaceService, agentChatService } = buildService();
 
-    userWorkspaceState.creatorUserId = 'another-user-id';
+    userWorkspaceService.isWorkspaceCreator.mockResolvedValue(false);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
+      thread: null,
+    });
+    expect(userWorkspaceService.isWorkspaceCreator).toHaveBeenCalledWith({
+      userId: 'creator-user-id',
+      workspaceId: 'workspace-id',
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
-  });
-
-  it('should keep the original creator when their membership was soft deleted', async () => {
-    const { service, userWorkspaceRepository } = buildService();
-
-    await service.startWorkspaceSetupChat(startArguments);
-
-    expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { workspaceId: 'workspace-id' },
-        order: { createdAt: 'ASC' },
-        withDeleted: true,
-      }),
-    );
   });
 
   it('should return unavailable when no ai models are available', async () => {
@@ -212,31 +181,128 @@ describe('WorkspaceSetupChatService', () => {
 
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
+      thread: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
-  it('should return unavailable without throwing when no candidate model is available', async () => {
-    const { service, aiModelRegistryService, agentChatService } =
-      buildService();
+  it('should return unavailable without creating a thread when the workspace has no available credits', async () => {
+    const { service, billingUsageService, agentChatService } = buildService();
 
-    aiModelRegistryService.validateModelAvailability.mockImplementation(() => {
-      throw new Error('model is not available');
-    });
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
+      thread: null,
     });
     expect(agentChatService.createThread).not.toHaveBeenCalled();
   });
 
-  it('should build the prompt with the workspace member locale rather than the user workspace one', async () => {
+  it('should create the thread under its deterministic id with a translated title and start the hidden kickoff stream', async () => {
+    const {
+      service,
+      i18nService,
+      translate,
+      agentChatService,
+      agentChatStreamingService,
+    } = buildService();
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(agentChatService.findThreadById).toHaveBeenCalledWith({
+      threadId: EXPECTED_THREAD_ID,
+      userWorkspaceId: 'user-workspace-id',
+      workspaceId: 'workspace-id',
+    });
+    expect(i18nService.getI18nInstance).toHaveBeenCalledWith('fr-FR');
+    expect(translate).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Workspace setup' }),
+    );
+    expect(agentChatService.createThread).toHaveBeenCalledWith({
+      userWorkspaceId: 'user-workspace-id',
+      workspaceId: 'workspace-id',
+      id: EXPECTED_THREAD_ID,
+      title: 'translated-workspace-setup',
+    });
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith({
+      thread: expect.objectContaining({ id: EXPECTED_THREAD_ID }),
+      userWorkspaceId: 'user-workspace-id',
+      workspace,
+      text: expect.stringContaining(
+        'No information about the company that owns this workspace is available.',
+      ),
+    });
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.STARTED,
+      thread: expect.objectContaining({
+        id: EXPECTED_THREAD_ID,
+        title: 'translated-workspace-setup',
+      }),
+    });
+    expect(tagAiChatStreamScope).toHaveBeenCalledWith({
+      streamId: 'stream-id',
+      turnId: 'turn-id',
+      threadId: EXPECTED_THREAD_ID,
+      workspaceId: 'workspace-id',
+    });
+  });
+
+  it('should reuse the concurrently created thread when the insert hits a unique violation', async () => {
+    const { service, agentChatService, agentChatStreamingService } =
+      buildService();
+
+    const concurrentlyCreatedThread = {
+      id: EXPECTED_THREAD_ID,
+      deletedAt: null,
+      activeStreamId: null,
+    };
+
+    agentChatService.findThreadById
+      .mockResolvedValueOnce(null)
+      .mockResolvedValue(concurrentlyCreatedThread);
+    agentChatService.createThread.mockRejectedValue(
+      Object.assign(
+        new QueryFailedError('INSERT', [], new Error('duplicate key')),
+        { code: '23505' },
+      ),
+    );
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(agentChatService.createThread).toHaveBeenCalledTimes(1);
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ thread: concurrentlyCreatedThread }),
+    );
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.STARTED,
+      thread: concurrentlyCreatedThread,
+    });
+  });
+
+  it('should rethrow a create failure that is not a unique violation', async () => {
+    const { service, agentChatService, agentChatStreamingService } =
+      buildService();
+
+    agentChatService.createThread.mockRejectedValue(
+      new Error('connection lost'),
+    );
+
+    await expect(
+      service.startWorkspaceSetupChat(startArguments),
+    ).rejects.toThrow('connection lost');
+
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should build the prompt with the workspace member locale rather than the user one', async () => {
     const { service, agentChatStreamingService } = buildService();
 
     await service.startWorkspaceSetupChat(startArguments);
@@ -249,13 +315,15 @@ describe('WorkspaceSetupChatService', () => {
     );
   });
 
-  it('should fall back to the user workspace locale when the workspace member has none', async () => {
-    const { service, globalWorkspaceOrmManager, agentChatStreamingService } =
-      buildService();
+  it('should fall back to the calling user locale when the workspace member has none', async () => {
+    const {
+      service,
+      workspaceMemberState,
+      i18nService,
+      agentChatStreamingService,
+    } = buildService();
 
-    globalWorkspaceOrmManager.getRepository.mockResolvedValue({
-      findOne: jest.fn().mockResolvedValue(null),
-    });
+    workspaceMemberState.locale = null;
 
     await service.startWorkspaceSetupChat(startArguments);
 
@@ -263,110 +331,7 @@ describe('WorkspaceSetupChatService', () => {
       agentChatStreamingService.startHiddenKickoffStream.mock.calls[0][0].text;
 
     expect(kickoffText).toContain('The user locale is English');
-  });
-
-  it('should start the kickoff stream with the workspace setup model', async () => {
-    const { service, agentChatStreamingService } = buildService();
-
-    await service.startWorkspaceSetupChat(startArguments);
-
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ modelId: WORKSPACE_SETUP_CHAT_MODEL_ID }),
-    );
-  });
-
-  it('should fall back to the workspace smart model when the workspace setup model is unavailable', async () => {
-    const { service, aiModelRegistryService, agentChatStreamingService } =
-      buildService();
-
-    aiModelRegistryService.validateModelAvailability.mockImplementation(
-      (modelId: string) => {
-        if (modelId === WORKSPACE_SETUP_CHAT_MODEL_ID) {
-          throw new Error('model is not available');
-        }
-      },
-    );
-
-    await service.startWorkspaceSetupChat(startArguments);
-
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ modelId: 'smart-model-id' }),
-    );
-  });
-
-  it('should return unavailable without creating a thread when the workspace has no available credits', async () => {
-    const { service, billingUsageService, agentChatService } = buildService();
-
-    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
-
-    const result = await service.startWorkspaceSetupChat(startArguments);
-
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
-    });
-    expect(agentChatService.createThread).not.toHaveBeenCalled();
-  });
-
-  it('should join the existing conversation when credits ran out after the kickoff', async () => {
-    const {
-      service,
-      keyValueState,
-      billingUsageService,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
-
-    keyValueState.value = { threadId: 'existing-thread-id' };
-    agentChatService.findThreadById.mockResolvedValue({
-      id: 'existing-thread-id',
-    });
-    agentChatService.hasConversationMessages.mockResolvedValue(true);
-    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
-
-    const result = await service.startWorkspaceSetupChat(startArguments);
-
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-      threadId: 'existing-thread-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
-    });
-    expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).not.toHaveBeenCalled();
-  });
-
-  it('should not start a stream on an empty existing thread when credits ran out', async () => {
-    const {
-      service,
-      keyValueState,
-      billingUsageService,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
-
-    keyValueState.value = { threadId: 'existing-thread-id' };
-    agentChatService.findThreadById.mockResolvedValue({
-      id: 'existing-thread-id',
-    });
-    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
-
-    const result = await service.startWorkspaceSetupChat(startArguments);
-
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
-      threadId: null,
-      modelId: null,
-    });
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).not.toHaveBeenCalled();
+    expect(i18nService.getI18nInstance).toHaveBeenCalledWith('en');
   });
 
   it('should embed the company context and the proposal instructions in the hidden prompt', async () => {
@@ -411,219 +376,84 @@ describe('WorkspaceSetupChatService', () => {
     expect(kickoffText).not.toContain('No information about the company');
   });
 
-  it('should create a titled thread, persist its pointer, and start the hidden kickoff stream when nothing is stored', async () => {
+  it('should return alreadyStarted without a credit check when the thread already has conversation messages', async () => {
     const {
       service,
-      keyValuePairService,
+      billingUsageService,
       agentChatService,
       agentChatStreamingService,
     } = buildService();
 
-    const result = await service.startWorkspaceSetupChat(startArguments);
+    const existingThread = {
+      id: EXPECTED_THREAD_ID,
+      deletedAt: null,
+      activeStreamId: null,
+    };
 
-    expect(agentChatService.createThread).toHaveBeenCalledWith({
-      userWorkspaceId: 'user-workspace-id',
-      workspaceId: 'workspace-id',
-      id: expect.stringMatching(UUID_V4_PATTERN),
-      title: WORKSPACE_SETUP_CHAT_THREAD_TITLE,
-    });
-
-    const createdThreadId = agentChatService.createThread.mock.calls[0][0].id;
-
-    expect(keyValuePairService.trySetIfAbsent).toHaveBeenCalledWith({
-      userId: 'creator-user-id',
-      workspaceId: 'workspace-id',
-      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-      value: { threadId: createdThreadId },
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith({
-      threadId: createdThreadId,
-      userWorkspaceId: 'user-workspace-id',
-      workspace,
-      text: expect.stringContaining(
-        'No information about the company that owns this workspace is available.',
-      ),
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
-    });
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.STARTED,
-      threadId: createdThreadId,
-      streamId: 'stream-id',
-      turnId: 'turn-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
-    });
-  });
-
-  it('should build the kickoff prompt with the language of the calling user workspace', async () => {
-    const { service, userWorkspaceRepository, agentChatStreamingService } =
-      buildService();
-
-    await service.startWorkspaceSetupChat(startArguments);
-
-    expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
-      where: { id: 'user-workspace-id' },
-    });
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        text: expect.stringContaining(
-          'The user locale is French, please continue the discussion in that language.',
-        ),
-      }),
-    );
-  });
-
-  it('should build the kickoff prompt in English when the user workspace has no locale', async () => {
-    const { service, userWorkspaceRepository, agentChatStreamingService } =
-      buildService();
-
-    userWorkspaceRepository.findOne.mockImplementation(({ where }) =>
-      Promise.resolve(
-        isDefined(where?.id) ? null : { userId: 'creator-user-id' },
-      ),
-    );
-
-    await service.startWorkspaceSetupChat(startArguments);
-
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        text: expect.stringContaining('The user locale is English'),
-      }),
-    );
-  });
-
-  it('should hard delete its own thread and use the winner thread when losing the key-value race', async () => {
-    const {
-      service,
-      keyValueState,
-      keyValuePairService,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
-
-    keyValuePairService.trySetIfAbsent.mockImplementation(() => {
-      keyValueState.value = { threadId: 'winner-thread-id' };
-
-      return Promise.resolve();
-    });
-    agentChatService.findThreadById.mockImplementation(({ threadId }) =>
-      Promise.resolve(
-        threadId === 'winner-thread-id' ? { id: 'winner-thread-id' } : null,
-      ),
-    );
-
-    const result = await service.startWorkspaceSetupChat(startArguments);
-
-    const losingThreadId = agentChatService.createThread.mock.calls[0][0].id;
-
-    expect(agentChatService.hardDeleteThread).toHaveBeenCalledWith({
-      threadId: losingThreadId,
-      userWorkspaceId: 'user-workspace-id',
-      workspaceId: 'workspace-id',
-    });
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ threadId: 'winner-thread-id' }),
-    );
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.STARTED,
-      threadId: 'winner-thread-id',
-      streamId: 'stream-id',
-      turnId: 'turn-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
-    });
-  });
-
-  it('should clear the stale pointer and create a fresh thread when the stored thread no longer exists', async () => {
-    const { service, keyValueState, keyValuePairService, agentChatService } =
-      buildService();
-
-    keyValueState.value = { threadId: 'stale-thread-id' };
-
-    const result = await service.startWorkspaceSetupChat(startArguments);
-
-    expect(keyValuePairService.deleteIfValueEquals).toHaveBeenCalledWith({
-      userId: 'creator-user-id',
-      workspaceId: 'workspace-id',
-      key: WORKSPACE_SETUP_CHAT_THREAD_KEY,
-      value: { threadId: 'stale-thread-id' },
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-    expect(agentChatService.createThread).toHaveBeenCalledTimes(1);
-
-    const freshThreadId = agentChatService.createThread.mock.calls[0][0].id;
-
-    expect(freshThreadId).not.toBe('stale-thread-id');
-    expect(result).toEqual({
-      outcome: WorkspaceSetupChatOutcome.STARTED,
-      threadId: freshThreadId,
-      streamId: 'stream-id',
-      turnId: 'turn-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
-    });
-  });
-
-  it('should return alreadyStarted without kicking off when the thread already has conversation messages', async () => {
-    const {
-      service,
-      keyValueState,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
-
-    keyValueState.value = { threadId: 'existing-thread-id' };
-    agentChatService.findThreadById.mockResolvedValue({
-      id: 'existing-thread-id',
-    });
+    agentChatService.findThreadById.mockResolvedValue(existingThread);
     agentChatService.hasConversationMessages.mockResolvedValue(true);
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-      threadId: 'existing-thread-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
+      thread: existingThread,
     });
+    expect(billingUsageService.hasAvailableCredits).not.toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should not start a stream on an empty existing thread when credits ran out', async () => {
+    const {
+      service,
+      billingUsageService,
+      agentChatService,
+      agentChatStreamingService,
+    } = buildService();
+
+    agentChatService.findThreadById.mockResolvedValue({
+      id: EXPECTED_THREAD_ID,
+      deletedAt: null,
+      activeStreamId: null,
+    });
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.UNAVAILABLE,
+      thread: null,
+    });
+    expect(agentChatService.createThread).not.toHaveBeenCalled();
     expect(
       agentChatStreamingService.startHiddenKickoffStream,
     ).not.toHaveBeenCalled();
   });
 
   it('should return alreadyStarted without kicking off when the active stream is still alive', async () => {
-    const {
-      service,
-      keyValueState,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
+    const { service, agentChatService, agentChatStreamingService } =
+      buildService();
 
-    keyValueState.value = { threadId: 'existing-thread-id' };
-    agentChatService.findThreadById.mockResolvedValue({
-      id: 'existing-thread-id',
-    });
-    agentChatService.getThreadById.mockResolvedValue({
-      id: 'existing-thread-id',
+    const streamingThread = {
+      id: EXPECTED_THREAD_ID,
       deletedAt: null,
       activeStreamId: 'active-stream-id',
-    });
+    };
+
+    agentChatService.findThreadById.mockResolvedValue(streamingThread);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(agentChatStreamingService.reapDeadStream).toHaveBeenCalledWith({
-      thread: expect.objectContaining({ activeStreamId: 'active-stream-id' }),
+      thread: streamingThread,
       workspaceId: 'workspace-id',
     });
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-      threadId: 'existing-thread-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
+      thread: streamingThread,
     });
     expect(agentChatService.hasConversationMessages).not.toHaveBeenCalled();
     expect(
@@ -631,37 +461,55 @@ describe('WorkspaceSetupChatService', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('should return alreadyStarted when the hidden kickoff stream claim is lost', async () => {
+  it('should kick off again when the active stream is dead', async () => {
     const { service, agentChatService, agentChatStreamingService } =
       buildService();
+
+    const interruptedThread = {
+      id: EXPECTED_THREAD_ID,
+      deletedAt: null,
+      activeStreamId: 'dead-stream-id',
+    };
+
+    agentChatService.findThreadById.mockResolvedValue(interruptedThread);
+    agentChatStreamingService.reapDeadStream.mockResolvedValue({
+      code: 'CONNECTION_LOST',
+      message: 'interrupted',
+    });
+
+    const result = await service.startWorkspaceSetupChat(startArguments);
+
+    expect(
+      agentChatStreamingService.startHiddenKickoffStream,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ thread: interruptedThread }),
+    );
+    expect(result).toEqual({
+      outcome: WorkspaceSetupChatOutcome.STARTED,
+      thread: interruptedThread,
+    });
+  });
+
+  it('should return alreadyStarted when the hidden kickoff stream claim is lost', async () => {
+    const { service, agentChatStreamingService } = buildService();
 
     agentChatStreamingService.startHiddenKickoffStream.mockResolvedValue(null);
 
     const result = await service.startWorkspaceSetupChat(startArguments);
 
-    const createdThreadId = agentChatService.createThread.mock.calls[0][0].id;
-
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED,
-      threadId: createdThreadId,
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
+      thread: expect.objectContaining({ id: EXPECTED_THREAD_ID }),
     });
+    expect(tagAiChatStreamScope).not.toHaveBeenCalled();
   });
 
-  it('should unarchive an archived stored thread before kicking off', async () => {
-    const {
-      service,
-      keyValueState,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
+  it('should unarchive an archived thread before kicking off', async () => {
+    const { service, agentChatService, agentChatStreamingService } =
+      buildService();
 
-    keyValueState.value = { threadId: 'archived-thread-id' };
     agentChatService.findThreadById.mockResolvedValue({
-      id: 'archived-thread-id',
-    });
-    agentChatService.getThreadById.mockResolvedValue({
-      id: 'archived-thread-id',
+      id: EXPECTED_THREAD_ID,
       deletedAt: new Date(),
       activeStreamId: null,
     });
@@ -669,7 +517,7 @@ describe('WorkspaceSetupChatService', () => {
     const result = await service.startWorkspaceSetupChat(startArguments);
 
     expect(agentChatService.unarchiveThread).toHaveBeenCalledWith({
-      threadId: 'archived-thread-id',
+      threadId: EXPECTED_THREAD_ID,
       userWorkspaceId: 'user-workspace-id',
       workspaceId: 'workspace-id',
     });
@@ -679,36 +527,13 @@ describe('WorkspaceSetupChatService', () => {
       agentChatStreamingService.startHiddenKickoffStream.mock
         .invocationCallOrder[0],
     );
+    expect(agentChatService.createThread).not.toHaveBeenCalled();
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.STARTED,
-      threadId: 'archived-thread-id',
-      streamId: 'stream-id',
-      turnId: 'turn-id',
-      modelId: WORKSPACE_SETUP_CHAT_MODEL_ID,
+      thread: expect.objectContaining({
+        id: EXPECTED_THREAD_ID,
+        deletedAt: null,
+      }),
     });
-  });
-
-  it('should throw an AiException when the stored thread keeps vanishing across all attempts', async () => {
-    const {
-      service,
-      keyValuePairService,
-      agentChatService,
-      agentChatStreamingService,
-    } = buildService();
-
-    keyValuePairService.get.mockResolvedValue([
-      { value: { threadId: 'vanishing-thread-id' } },
-    ]);
-    keyValuePairService.deleteIfValueEquals.mockResolvedValue(undefined);
-
-    await expect(
-      service.startWorkspaceSetupChat(startArguments),
-    ).rejects.toThrow(AiException);
-
-    expect(keyValuePairService.deleteIfValueEquals).toHaveBeenCalledTimes(3);
-    expect(agentChatService.createThread).not.toHaveBeenCalled();
-    expect(
-      agentChatStreamingService.startHiddenKickoffStream,
-    ).not.toHaveBeenCalled();
   });
 });

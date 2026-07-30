@@ -7,19 +7,6 @@ import {
 
 import { KeyValuePairService } from './key-value-pair.service';
 
-const buildQueryBuilderMock = (executeResult?: {
-  affected?: number | null;
-}) => ({
-  insert: jest.fn().mockReturnThis(),
-  into: jest.fn().mockReturnThis(),
-  values: jest.fn().mockReturnThis(),
-  orIgnore: jest.fn().mockReturnThis(),
-  delete: jest.fn().mockReturnThis(),
-  from: jest.fn().mockReturnThis(),
-  where: jest.fn().mockReturnThis(),
-  execute: jest.fn().mockResolvedValue(executeResult),
-});
-
 describe('KeyValuePairService', () => {
   let service: KeyValuePairService;
   let keyValuePairRepository: jest.Mocked<Repository<KeyValuePairEntity>>;
@@ -30,7 +17,6 @@ describe('KeyValuePairService', () => {
       insert: jest.fn().mockResolvedValue(undefined),
       update: jest.fn().mockResolvedValue(undefined),
       upsert: jest.fn().mockResolvedValue(undefined),
-      createQueryBuilder: jest.fn(),
     } as unknown as jest.Mocked<Repository<KeyValuePairEntity>>;
 
     service = new KeyValuePairService(keyValuePairRepository);
@@ -185,91 +171,5 @@ describe('KeyValuePairService', () => {
         indexPredicate: undefined,
       },
     );
-  });
-
-  describe('trySetIfAbsent', () => {
-    it('should insert with orIgnore and a null applicationId when setting a user workspace key', async () => {
-      const queryBuilderMock = buildQueryBuilderMock();
-
-      keyValuePairRepository.createQueryBuilder.mockReturnValue(
-        queryBuilderMock as never,
-      );
-
-      await service.trySetIfAbsent({
-        userId: 'user-id',
-        workspaceId: 'workspace-id',
-        key: 'WORKSPACE_SETUP_CHAT_THREAD',
-        value: { threadId: 'thread-id' },
-        type: KeyValuePairType.USER_VARIABLE,
-      });
-
-      expect(queryBuilderMock.insert).toHaveBeenCalled();
-      expect(queryBuilderMock.into).toHaveBeenCalledWith(KeyValuePairEntity);
-      expect(queryBuilderMock.values).toHaveBeenCalledWith({
-        userId: 'user-id',
-        workspaceId: 'workspace-id',
-        applicationId: null,
-        key: 'WORKSPACE_SETUP_CHAT_THREAD',
-        value: { threadId: 'thread-id' },
-        type: KeyValuePairType.USER_VARIABLE,
-      });
-      expect(queryBuilderMock.orIgnore).toHaveBeenCalled();
-      expect(queryBuilderMock.execute).toHaveBeenCalled();
-    });
-  });
-
-  describe('deleteIfValueEquals', () => {
-    const deleteIfValueEquals = () =>
-      service.deleteIfValueEquals({
-        userId: 'user-id',
-        workspaceId: 'workspace-id',
-        key: 'WORKSPACE_SETUP_CHAT_THREAD',
-        value: { threadId: 'thread-id' },
-        type: KeyValuePairType.USER_VARIABLE,
-      });
-
-    it('should return true and match on the stringified value when the delete affected a row', async () => {
-      const queryBuilderMock = buildQueryBuilderMock({ affected: 1 });
-
-      keyValuePairRepository.createQueryBuilder.mockReturnValue(
-        queryBuilderMock as never,
-      );
-
-      const result = await deleteIfValueEquals();
-
-      expect(result).toBe(true);
-      expect(queryBuilderMock.delete).toHaveBeenCalled();
-      expect(queryBuilderMock.from).toHaveBeenCalledWith(KeyValuePairEntity);
-      expect(queryBuilderMock.where).toHaveBeenCalledWith(
-        expect.stringContaining('"applicationId" IS NULL'),
-        {
-          key: 'WORKSPACE_SETUP_CHAT_THREAD',
-          userId: 'user-id',
-          workspaceId: 'workspace-id',
-          type: KeyValuePairType.USER_VARIABLE,
-          value: JSON.stringify({ threadId: 'thread-id' }),
-        },
-      );
-    });
-
-    it('should return false when the delete affected no rows', async () => {
-      const queryBuilderMock = buildQueryBuilderMock({ affected: 0 });
-
-      keyValuePairRepository.createQueryBuilder.mockReturnValue(
-        queryBuilderMock as never,
-      );
-
-      await expect(deleteIfValueEquals()).resolves.toBe(false);
-    });
-
-    it('should return false when the driver reports no affected count', async () => {
-      const queryBuilderMock = buildQueryBuilderMock({ affected: null });
-
-      keyValuePairRepository.createQueryBuilder.mockReturnValue(
-        queryBuilderMock as never,
-      );
-
-      await expect(deleteIfValueEquals()).resolves.toBe(false);
-    });
   });
 });

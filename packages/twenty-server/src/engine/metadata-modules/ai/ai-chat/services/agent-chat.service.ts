@@ -334,7 +334,7 @@ export class AgentChatService {
     }
   }
 
-  async findLatestProcessedSentUserMessageIncludingHidden({
+  async findLatestSentUserMessage({
     threadId,
     workspaceId,
   }: {
@@ -421,60 +421,6 @@ export class AgentChatService {
     });
   }
 
-  private async deletePartLessHiddenMessagesWithTheirTurns({
-    partLessHiddenMessages,
-    workspaceId,
-  }: {
-    partLessHiddenMessages: AgentMessageEntity[];
-    workspaceId: string;
-  }): Promise<void> {
-    await this.messageRepository.delete(workspaceId, {
-      id: In(partLessHiddenMessages.map((message) => message.id)),
-    });
-
-    const orphanedTurnIds = [
-      ...new Set(
-        partLessHiddenMessages
-          .map((message) => message.turnId)
-          .filter(isDefined),
-      ),
-    ];
-
-    if (isNonEmptyArray(orphanedTurnIds)) {
-      await this.turnRepository.delete(workspaceId, {
-        id: In(orphanedTurnIds),
-      });
-    }
-  }
-
-  private async loadHiddenMessagesWithPartsAfterDeletingPartLessOnes({
-    threadId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-  }): Promise<AgentMessageEntity[]> {
-    const hiddenMessages = await this.messageRepository.find(workspaceId, {
-      where: { threadId, isHidden: true },
-      relations: ['parts'],
-    });
-
-    const partLessHiddenMessages = hiddenMessages.filter(
-      (hiddenMessage) => !isNonEmptyArray(hiddenMessage.parts),
-    );
-
-    if (isNonEmptyArray(partLessHiddenMessages)) {
-      await this.deletePartLessHiddenMessagesWithTheirTurns({
-        partLessHiddenMessages,
-        workspaceId,
-      });
-    }
-
-    return hiddenMessages.filter((hiddenMessage) =>
-      isNonEmptyArray(hiddenMessage.parts),
-    );
-  }
-
   async ensureHiddenKickoffMessage({
     threadId,
     workspaceId,
@@ -484,49 +430,54 @@ export class AgentChatService {
     workspaceId: string;
     text: string;
   }): Promise<{ id: string; turnId: string }> {
-    const previouslyPersistedKickoffMessages =
-      await this.loadHiddenMessagesWithPartsAfterDeletingPartLessOnes({
-        threadId,
-        workspaceId,
-      });
-
-    const reusableKickoffMessage = previouslyPersistedKickoffMessages.find(
-      (hiddenMessage) => isDefined(hiddenMessage.turnId),
+    const existingKickoffMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, isHidden: true },
+        relations: ['parts'],
+      },
     );
 
-    if (
-      isDefined(reusableKickoffMessage) &&
-      isDefined(reusableKickoffMessage.turnId)
-    ) {
-      return {
-        id: reusableKickoffMessage.id,
-        turnId: reusableKickoffMessage.turnId,
-      };
-    }
+    if (isDefined(existingKickoffMessage)) {
+      if (
+        isDefined(existingKickoffMessage.turnId) &&
+        isNonEmptyArray(existingKickoffMessage.parts)
+      ) {
+        return {
+          id: existingKickoffMessage.id,
+          turnId: existingKickoffMessage.turnId,
+        };
+      }
 
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
-      threadId,
-      agentId: null,
-    });
-    const kickoffTurnId = turnInsertResult.identifiers[0].id as string;
-
-    try {
-      const savedMessage = await this.addMessage({
-        threadId,
-        workspaceId,
-        turnId: kickoffTurnId,
-        uiMessage: {
-          role: AgentMessageRole.USER,
-          parts: [{ type: 'text' as const, text }],
-        },
-        isHidden: true,
+      await this.messageRepository.delete(workspaceId, {
+        id: existingKickoffMessage.id,
       });
 
-      return { id: savedMessage.id, turnId: kickoffTurnId };
-    } catch (error) {
-      await this.turnRepository.delete(workspaceId, { id: kickoffTurnId });
-      throw error;
+      if (isDefined(existingKickoffMessage.turnId)) {
+        await this.turnRepository.delete(workspaceId, {
+          id: existingKickoffMessage.turnId,
+        });
+      }
     }
+
+    const savedMessage = await this.addMessage({
+      threadId,
+      workspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text' as const, text }],
+      },
+      isHidden: true,
+    });
+
+    if (!isDefined(savedMessage.turnId)) {
+      throw new AiException(
+        'Workspace setup kickoff message was persisted without a turn',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    return { id: savedMessage.id, turnId: savedMessage.turnId };
   }
 
   async queueMessage({

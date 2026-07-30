@@ -18,7 +18,6 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export type { NativeAiSdkProviderId } from './constants/native-ai-sdk-provider-ids.const';
 export { NATIVE_AI_SDK_PROVIDER_IDS } from './constants/native-ai-sdk-provider-ids.const';
 export { ToolCategory } from './constants/tool-category.const';
-export { WORKSPACE_SETUP_CHAT_THREAD_TITLE } from './constants/workspace-setup-chat-thread-title.const';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,

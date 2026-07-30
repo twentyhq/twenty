@@ -16,9 +16,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { StartWorkspaceSetupChatResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/start-workspace-setup-chat-result.dto';
-import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
-import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
 @UseGuards(
@@ -40,37 +38,13 @@ export class WorkspaceSetupChatResolver {
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<StartWorkspaceSetupChatResultDTO> {
-    const result = await this.workspaceSetupChatService.startWorkspaceSetupChat(
-      {
-        userId: user.id,
-        userWorkspaceId,
-        workspace,
-        companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
-      },
-    );
-
-    if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
-      tagAiChatStreamScope({
-        streamId: result.streamId,
-        turnId: result.turnId,
-        threadId: result.threadId,
-        workspaceId: workspace.id,
-      });
-
-      return {
-        outcome: result.outcome,
-        threadId: result.threadId,
-        streamId: result.streamId,
-        modelId: result.modelId,
-      };
-    }
-
-    return {
-      outcome: result.outcome,
-      threadId: result.threadId,
-      streamId: null,
-      modelId: result.modelId,
-    };
+  ) {
+    return this.workspaceSetupChatService.startWorkspaceSetupChat({
+      userId: user.id,
+      userLocale: user.locale,
+      userWorkspaceId,
+      workspace,
+      companyContext: sanitizeWorkspaceCompanyEnrichment(companyContext),
+    });
   }
 }
