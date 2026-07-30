@@ -44,8 +44,6 @@ export class ApplicationJobService {
   }): Promise<EnqueueJobResult> {
     const { logicFunctionUniversalIdentifier } = input;
 
-    // Scoping the lookup to the calling application is the authorization
-    // boundary: an app can only enqueue its own logic functions.
     const logicFunction = await this.logicFunctionRepository.findOne({
       where: {
         universalIdentifier: logicFunctionUniversalIdentifier,
@@ -68,8 +66,6 @@ export class ApplicationJobService {
         logicFunctionId: logicFunction.id,
         workspaceId,
         payload: input.payload ?? {},
-        // The enqueued run inherits the caller's acting user so its app access
-        // token carries the same permissions as the function that queued it.
         ...(isDefined(userId) ? { userId } : {}),
         ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
       },

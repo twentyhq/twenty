@@ -40,7 +40,6 @@ export class EnqueueJobInputDTO implements EnqueueJobInput {
   @Field(() => Int, { nullable: true })
   retryLimit?: number;
 
-  // Lower value is processed first, matching the queue-wide priority scale.
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_PRIORITY)
   @Max(ENQUEUE_JOB_MAX_PRIORITY)

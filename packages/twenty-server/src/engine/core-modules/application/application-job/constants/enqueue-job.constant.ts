@@ -1,6 +1,3 @@
-// Bounds kept deliberately narrow: these values are supplied by application
-// code, and an unbounded delay or retry count would let an app pin work in the
-// shared logic function queue for an arbitrarily long time.
 export const ENQUEUE_JOB_MIN_RETRY_LIMIT = 0;
 export const ENQUEUE_JOB_MAX_RETRY_LIMIT = 10;
 export const ENQUEUE_JOB_DEFAULT_RETRY_LIMIT = 0;

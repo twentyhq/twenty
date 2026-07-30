@@ -56,7 +56,6 @@ describe('enqueueJob (e2e)', () => {
     standardApplicationToken =
       standardTokenData.generateApplicationToken.applicationAccessToken.token;
 
-    // Functions created from source belong to the workspace custom application.
     const { data: createData } = await createOneLogicFunction({
       input: { name: `enqueue-job-target-${uuidv4()}` },
       gqlFields: 'id universalIdentifier',
