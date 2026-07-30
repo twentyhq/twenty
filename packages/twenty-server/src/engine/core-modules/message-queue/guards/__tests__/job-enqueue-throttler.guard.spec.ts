@@ -1,10 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { JobEnqueueThrottlerGuard } from 'src/engine/core-modules/message-queue/guards/job-enqueue-throttler.guard';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import {
+  type ApplicationJobEnqueueContext,
+  withApplicationJobEnqueueContext,
+} from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { JobEnqueueThrottlerGuard } from 'src/engine/core-modules/message-queue/guards/job-enqueue-throttler.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -15,21 +18,12 @@ const CONFIG = {
   APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT: 2000,
 } as const;
 
-// oxlint-disable-next-line typescript/no-explicit-any
-const buildApplicationContext = (application: any): WorkspaceAuthContext =>
-  ({
-    type: 'application',
-    workspace: { id: 'workspace-id' },
-    application,
-    // oxlint-disable-next-line typescript/no-explicit-any
-  }) as any;
+const GUARDED_QUEUE = MessageQueue.logicFunctionQueue;
+const UNGUARDED_QUEUE = MessageQueue.emailQueue;
 
-const application = {
-  id: 'application-id',
+const context: ApplicationJobEnqueueContext = {
+  applicationId: 'application-id',
   applicationRegistrationId: 'registration-id',
-  universalIdentifier: 'universal-id',
-  name: 'My App',
-  sourceType: 'LOCAL',
 };
 
 const APPLICATION_KEY = 'enqueue:throttler:application:application-id';
@@ -76,27 +70,34 @@ describe('JobEnqueueThrottlerGuard', () => {
     guard = module.get(JobEnqueueThrottlerGuard);
   });
 
-  it('does nothing when there is no auth context', async () => {
-    await guard.assertCanEnqueueOrThrow(1);
+  it('does nothing for non-guarded queues even without a context', async () => {
+    await guard.assertCanEnqueueOrThrow(UNGUARDED_QUEUE, 1);
 
     expect(throttlerService.getAvailableTokensCount).not.toHaveBeenCalled();
     expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
   });
 
-  it('does nothing for non-application auth contexts', async () => {
-    await withWorkspaceAuthContext(
-      // oxlint-disable-next-line typescript/no-explicit-any
-      { type: 'system', workspace: { id: 'workspace-id' } } as any,
-      () => guard.assertCanEnqueueOrThrow(1),
-    );
+  it('throws for a guarded queue when there is no enqueue context', async () => {
+    await expect(
+      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
+    ).rejects.toThrow(/application enqueue context/);
 
-    expect(throttlerService.getAvailableTokensCount).not.toHaveBeenCalled();
     expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
+  });
+
+  it('throws for a guarded queue when the registration id is missing', async () => {
+    await expect(
+      withApplicationJobEnqueueContext(
+        // oxlint-disable-next-line typescript/no-explicit-any
+        { applicationId: 'application-id' } as any,
+        () => guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
+      ),
+    ).rejects.toThrow(/application enqueue context/);
   });
 
   it('debits both application and registration buckets with distinct limits', async () => {
-    await withWorkspaceAuthContext(buildApplicationContext(application), () =>
-      guard.assertCanEnqueueOrThrow(1),
+    await withApplicationJobEnqueueContext(context, () =>
+      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
     );
 
     expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
@@ -114,30 +115,13 @@ describe('JobEnqueueThrottlerGuard', () => {
   });
 
   it('consumes one token per job for bulk enqueue', async () => {
-    await withWorkspaceAuthContext(buildApplicationContext(application), () =>
-      guard.assertCanEnqueueOrThrow(5),
+    await withApplicationJobEnqueueContext(context, () =>
+      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 5),
     );
 
     expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
       APPLICATION_KEY,
       5,
-      expect.any(Number),
-      expect.any(Number),
-    );
-  });
-
-  it('falls back to the universal identifier when there is no registration', async () => {
-    await withWorkspaceAuthContext(
-      buildApplicationContext({
-        ...application,
-        applicationRegistrationId: null,
-      }),
-      () => guard.assertCanEnqueueOrThrow(1),
-    );
-
-    expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
-      'enqueue:throttler:application-registration:universal-id',
-      1,
       expect.any(Number),
       expect.any(Number),
     );
@@ -150,8 +134,8 @@ describe('JobEnqueueThrottlerGuard', () => {
     });
 
     await expect(
-      withWorkspaceAuthContext(buildApplicationContext(application), () =>
-        guard.assertCanEnqueueOrThrow(1),
+      withApplicationJobEnqueueContext(context, () =>
+        guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
       ),
     ).rejects.toThrow(ThrottlerException);
 
@@ -170,8 +154,8 @@ describe('JobEnqueueThrottlerGuard', () => {
     });
 
     await expect(
-      withWorkspaceAuthContext(buildApplicationContext(application), () =>
-        guard.assertCanEnqueueOrThrow(1),
+      withApplicationJobEnqueueContext(context, () =>
+        guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
       ),
     ).rejects.toThrow(ThrottlerException);
 

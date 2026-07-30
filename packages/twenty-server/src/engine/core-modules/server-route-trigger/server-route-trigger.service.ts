@@ -19,6 +19,7 @@ import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
@@ -163,14 +164,18 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      {
-        logicFunctionId: logicFunction.id,
-        workspaceId,
-        payload,
-      },
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+    await withApplicationJobEnqueueContext(
+      { applicationId: logicFunction.applicationId, applicationRegistrationId },
+      () =>
+        this.messageQueueService.add<LogicFunctionTriggerJobData>(
+          LogicFunctionTriggerJob.name,
+          {
+            logicFunctionId: logicFunction.id,
+            workspaceId,
+            payload,
+          },
+          { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+        ),
     );
 
     return { statusCode: 202, headers: {}, body: { queued: true } };

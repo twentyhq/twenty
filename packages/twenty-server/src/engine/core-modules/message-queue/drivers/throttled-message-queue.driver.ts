@@ -24,7 +24,7 @@ export class ThrottledMessageQueueDriver implements MessageQueueDriver {
     data: T,
     options?: QueueJobOptions,
   ): Promise<void> {
-    await this.guard.assertCanEnqueueOrThrow(1);
+    await this.guard.assertCanEnqueueOrThrow(queueName, 1);
 
     return this.driver.add(queueName, jobName, data, options);
   }
@@ -36,7 +36,7 @@ export class ThrottledMessageQueueDriver implements MessageQueueDriver {
     options?: QueueJobOptions,
   ): Promise<void> {
     if (dataItems.length > 0) {
-      await this.guard.assertCanEnqueueOrThrow(dataItems.length);
+      await this.guard.assertCanEnqueueOrThrow(queueName, dataItems.length);
     }
 
     return this.driver.bulkAdd(queueName, jobName, dataItems, options);

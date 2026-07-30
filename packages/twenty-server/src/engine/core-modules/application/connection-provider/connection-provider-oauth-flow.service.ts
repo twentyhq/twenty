@@ -27,9 +27,11 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -232,9 +234,10 @@ export class ConnectionProviderOAuthFlowService {
     // persisted, so a misconfigured or failing hook must not break the OAuth
     // callback. We still report failures to Sentry so they don't go unnoticed.
     try {
-      const { flatLogicFunctionMaps } =
+      const { flatLogicFunctionMaps, flatApplicationMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatLogicFunctionMaps',
+          'flatApplicationMaps',
         ]);
 
       const flatLogicFunction =
@@ -252,18 +255,38 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
 
-      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
+      const application = findActiveFlatApplicationById(
+        flatApplicationMaps,
+        flatLogicFunction.applicationId,
+      );
+      const applicationRegistrationId = application?.applicationRegistrationId;
+
+      if (!isDefined(applicationRegistrationId)) {
+        throw new ConnectionProviderException(
+          `Connection provider ${provider.id} on-connect logic function ${onConnectLogicFunctionUniversalIdentifier} is not linked to an application registration.`,
+          ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      await withApplicationJobEnqueueContext(
         {
-          logicFunctionId: flatLogicFunction.id,
-          workspaceId,
-          payload: {
-            connectionProviderId: provider.id,
-            connectionProviderName: provider.name,
-            connectedAccountId,
-          },
+          applicationId: flatLogicFunction.applicationId,
+          applicationRegistrationId,
         },
-        { retryLimit: 3 },
+        () =>
+          this.messageQueueService.add<LogicFunctionTriggerJobData>(
+            LogicFunctionTriggerJob.name,
+            {
+              logicFunctionId: flatLogicFunction.id,
+              workspaceId,
+              payload: {
+                connectionProviderId: provider.id,
+                connectionProviderName: provider.name,
+                connectedAccountId,
+              },
+            },
+            { retryLimit: 3 },
+          ),
       );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {

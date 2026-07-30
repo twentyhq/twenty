@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -13,6 +14,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   LogicFunctionTriggerJob,
@@ -50,9 +52,10 @@ export class CronTriggerCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const { flatLogicFunctionMaps } =
+        const { flatLogicFunctionMaps, flatApplicationMaps } =
           await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
             'flatLogicFunctionMaps',
+            'flatApplicationMaps',
           ]);
 
         const logicFunctions = Object.values(
@@ -85,14 +88,32 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
+          const application = findActiveFlatApplicationById(
+            flatApplicationMaps,
+            logicFunction.applicationId,
+          );
+          const applicationRegistrationId =
+            application?.applicationRegistrationId;
+
+          if (!isDefined(applicationRegistrationId)) {
+            continue;
+          }
+
+          await withApplicationJobEnqueueContext(
             {
-              logicFunctionId: logicFunction.id,
-              workspaceId: activeWorkspace.id,
-              payload: {},
+              applicationId: logicFunction.applicationId,
+              applicationRegistrationId,
             },
-            { retryLimit: 10 },
+            () =>
+              this.messageQueueService.add<LogicFunctionTriggerJobData>(
+                LogicFunctionTriggerJob.name,
+                {
+                  logicFunctionId: logicFunction.id,
+                  workspaceId: activeWorkspace.id,
+                  payload: {},
+                },
+                { retryLimit: 10 },
+              ),
           );
         }
       } catch (error) {

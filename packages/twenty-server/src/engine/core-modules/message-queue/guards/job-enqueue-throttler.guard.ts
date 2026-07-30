@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { GUARDED_ENQUEUE_QUEUES } from 'src/engine/core-modules/message-queue/constants/guarded-enqueue-queues.constant';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { applicationJobEnqueueContextStorage } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
@@ -13,10 +14,11 @@ import {
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Limits how many jobs an application can enqueue so a single app cannot
-// overwhelm the queues. Two tiers, mirroring the API rate limiting: a lower
+// Limits how many jobs an application can enqueue to guarded queues so a single
+// app cannot overwhelm them. Two tiers, mirroring the API rate limiting: a lower
 // per-installation ceiling and a higher ceiling shared across every workspace
-// that installed the same registration.
+// that installed the same registration. Enqueues to guarded queues must run
+// within an application enqueue context, otherwise they are rejected.
 @Injectable()
 export class JobEnqueueThrottlerGuard {
   constructor(
@@ -25,28 +27,35 @@ export class JobEnqueueThrottlerGuard {
     private readonly metricsService: MetricsService,
   ) {}
 
-  async assertCanEnqueueOrThrow(tokensToConsume = 1): Promise<void> {
-    // Jobs are also enqueued outside any request scope (crons, workers, system
-    // tasks), where no auth context is set. Those enqueues are not application
-    // attributed and are never throttled.
-    const authContext = workspaceAuthContextStorage.getStore();
-
-    if (!isDefined(authContext) || !isApplicationAuthContext(authContext)) {
+  async assertCanEnqueueOrThrow(
+    queueName: MessageQueue,
+    tokensToConsume = 1,
+  ): Promise<void> {
+    if (!GUARDED_ENQUEUE_QUEUES.has(queueName)) {
       return;
     }
 
-    const { application } = authContext;
+    const context = applicationJobEnqueueContextStorage.getStore();
+
+    if (
+      !isDefined(context?.applicationId) ||
+      !isDefined(context?.applicationRegistrationId)
+    ) {
+      throw new Error(
+        `Cannot enqueue to ${queueName} without an application enqueue context. Wrap the enqueue with withApplicationJobEnqueueContext.`,
+      );
+    }
+
+    const { applicationId, applicationRegistrationId } = context;
 
     const timeWindow = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_TTL_IN_MS',
     );
-    const applicationKey = `enqueue:throttler:application:${application.id}`;
+    const applicationKey = `enqueue:throttler:application:${applicationId}`;
     const applicationLimit = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
     );
-    const registrationKey = `enqueue:throttler:application-registration:${
-      application.applicationRegistrationId ?? application.universalIdentifier
-    }`;
+    const registrationKey = `enqueue:throttler:application-registration:${applicationRegistrationId}`;
     const registrationLimit = this.twentyConfigService.get(
       'APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
     );
@@ -74,9 +83,9 @@ export class JobEnqueueThrottlerGuard {
         key: MetricsKeys.JobEnqueueApplicationRateLimited,
         shouldStoreInCache: false,
         attributes: {
-          universal_identifier: application.universalIdentifier,
-          app_name: application.name,
-          source_type: application.sourceType,
+          queue: queueName,
+          application_id: applicationId,
+          application_registration_id: applicationRegistrationId,
         },
       });
 

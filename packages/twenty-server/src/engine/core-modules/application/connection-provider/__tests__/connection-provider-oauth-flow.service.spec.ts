@@ -485,7 +485,15 @@ describe('ConnectionProviderOAuthFlowService', () => {
         workspaceCacheService.getOrRecompute.mockResolvedValue({
           flatLogicFunctionMaps: {
             byUniversalIdentifier: {
-              [ON_CONNECT_UID]: { id: 'logic-function-1' },
+              [ON_CONNECT_UID]: {
+                id: 'logic-function-1',
+                applicationId: 'app-1',
+              },
+            },
+          },
+          flatApplicationMaps: {
+            byId: {
+              'app-1': { id: 'app-1', applicationRegistrationId: 'reg-1' },
             },
           },
         });
@@ -497,7 +505,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
         expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
           'workspace-1',
-          ['flatLogicFunctionMaps'],
+          ['flatLogicFunctionMaps', 'flatApplicationMaps'],
         );
         expect(messageQueueService.add).toHaveBeenCalledWith(
           'LogicFunctionTriggerJob',
