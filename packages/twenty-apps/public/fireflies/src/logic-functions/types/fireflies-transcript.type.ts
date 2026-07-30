@@ -25,9 +25,6 @@ export type FirefliesTranscript = {
   transcript_url?: string | null;
   sentences?: FirefliesTranscriptSentence[] | null;
   summary?: FirefliesSummary | null;
-  meeting_info?: {
-    summary_status: 'processing' | 'processed' | 'failed' | 'skipped' | null;
-  } | null;
   calendar_id?: string | null;
   cal_id?: string | null;
   calendar_type?: string | null;

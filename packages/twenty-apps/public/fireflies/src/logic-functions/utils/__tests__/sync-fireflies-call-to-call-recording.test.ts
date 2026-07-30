@@ -30,6 +30,60 @@ describe('syncFirefliesCallToCallRecording', () => {
     vi.unstubAllGlobals();
   });
 
+  it('preserves an existing summary without fetching it again', async () => {
+    const fetchMock = vi.fn();
+
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { CoreApiClient } = await import('twenty-client-sdk/core');
+    const result = await syncFirefliesCallToCallRecording({
+      apiKey: 'fireflies-api-key',
+      coreApiClient: new CoreApiClient(),
+      transcriptId: 'already-populated-call',
+      field: 'summary',
+      callRecordingFieldState: {
+        isTranscriptFilled: false,
+        isSummaryFilled: true,
+        status: CALL_RECORDING_STATUS.PROCESSING,
+      },
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({ status: 'skipped', field: 'summary' }),
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('does not complete a recording without a Fireflies summary', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        buildGraphqlResponse({
+          transcript: { id: 'call-without-summary', summary: null },
+        }),
+      ),
+    );
+
+    const { CoreApiClient } = await import('twenty-client-sdk/core');
+    const result = await syncFirefliesCallToCallRecording({
+      apiKey: 'fireflies-api-key',
+      coreApiClient: new CoreApiClient(),
+      transcriptId: 'call-without-summary',
+      field: 'summary',
+      callRecordingFieldState: {
+        isTranscriptFilled: true,
+        isSummaryFilled: false,
+        status: CALL_RECORDING_STATUS.PROCESSING,
+      },
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({ status: 'skipped', field: 'summary' }),
+    );
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
   it('completes the recording when the opposite field arrives after its state snapshot', async () => {
     const transcriptId = 'concurrent-webhook-call';
     const callRecordingId =

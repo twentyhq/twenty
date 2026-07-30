@@ -59,6 +59,33 @@ export const syncFirefliesCallToCallRecording = async ({
   field: FirefliesSyncableField;
   callRecordingFieldState: CallRecordingFieldState | undefined;
 }): Promise<SyncFirefliesCallResult> => {
+  if (isDefined(callRecordingFieldState)) {
+    const isRequestedFieldFilled =
+      field === 'transcript'
+        ? callRecordingFieldState.isTranscriptFilled
+        : callRecordingFieldState.isSummaryFilled;
+
+    if (isRequestedFieldFilled) {
+      if (
+        callRecordingFieldState.isTranscriptFilled &&
+        callRecordingFieldState.isSummaryFilled
+      ) {
+        await completeCallRecordingIfBothFirefliesFieldsAreFilled({
+          coreApiClient,
+          callRecordingId:
+            computeCallRecordingIdForFirefliesMeeting(transcriptId),
+          currentStatus: callRecordingFieldState.status,
+        });
+      }
+
+      return {
+        status: 'skipped',
+        field,
+        reason: `CallRecording ${field} is already populated; preserving the existing value.`,
+      };
+    }
+  }
+
   const fetchResult =
     field === 'transcript'
       ? await fetchFirefliesTranscript({ apiKey, transcriptId })
@@ -184,15 +211,6 @@ const buildFieldUpdate = ({
   }
 
   if (!isDefined(firefliesTranscript.summary)) {
-    const summaryStatus = firefliesTranscript.meeting_info?.summary_status;
-
-    if (summaryStatus === 'failed' || summaryStatus === 'skipped') {
-      return {
-        empty: false,
-        fields: {},
-      };
-    }
-
     return {
       empty: true,
       reason:

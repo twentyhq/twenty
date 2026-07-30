@@ -17,9 +17,6 @@ const SUMMARY_QUERY = `
       calendar_id
       cal_id
       calendar_type
-      meeting_info {
-        summary_status
-      }
       summary {
         overview
         action_items

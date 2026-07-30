@@ -78,11 +78,9 @@ export const firefliesSyncCallHandler = async (
       isTranscriptFilled,
       isSummaryFilled,
       status:
-        results.length === 0
-          ? initialCallRecordingFieldState?.status
-          : isTranscriptFilled && isSummaryFilled
-            ? CALL_RECORDING_STATUS.COMPLETED
-            : CALL_RECORDING_STATUS.PROCESSING,
+        isTranscriptFilled && isSummaryFilled
+          ? CALL_RECORDING_STATUS.COMPLETED
+          : initialCallRecordingFieldState?.status,
     };
 
     results.push(
