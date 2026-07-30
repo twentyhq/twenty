@@ -29,7 +29,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     metadataName: 'fieldMetadata',
     name: 'fieldIndexViewFieldOnCreate',
     description:
-      'When a field is created, provision its visible view field on the parent object INDEX view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them. Noop when the field is not displayable in the default view (object created in the same batch) or when the object has no active INDEX view (pre-existing object).',
+      'When a field is created, provision its visible view field on the parent object INDEX view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them.',
   },
 ) {
   buildSideEffects({
