@@ -122,6 +122,8 @@ export class MessageCampaignService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.emailStatsQueue)
+    private readonly emailStatsQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
@@ -379,7 +381,10 @@ export class MessageCampaignService {
         );
       }
 
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+      await this.messageCampaignStatisticsService.refreshCampaignCounts({
+        workspaceId,
+        campaignId,
+      });
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -536,7 +541,7 @@ export class MessageCampaignService {
           },
         );
       } finally {
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+        await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
       }
     }, buildSystemAuthContext(workspaceId));
   }
@@ -727,55 +732,6 @@ export class MessageCampaignService {
     );
   }
 
-  private async finalizeCampaignIfComplete(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
-    const queuedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
-    });
-
-    if (queuedCount > 0) {
-      return;
-    }
-
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      },
-    });
-
-    const campaignRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
-
-    await campaignRepository.update(
-      { id: campaignId, status: MessageCampaignStatus.SENDING },
-      {
-        status:
-          failedCount > 0
-            ? MessageCampaignStatus.SENT_WITH_ERRORS
-            : MessageCampaignStatus.SENT,
-        sentAt: new Date(),
-      },
-    );
-
-    await this.scheduleCampaignStatsRefresh({
-      workspaceId,
-      campaignId,
-    });
-  }
-
   private async scheduleCampaignStatsRefresh({
     workspaceId,
     campaignId,
@@ -792,7 +748,7 @@ export class MessageCampaignService {
       return;
     }
 
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
+    await this.emailStatsQueueService.add<RefreshCampaignStatsJobData>(
       REFRESH_CAMPAIGN_STATS_JOB,
       { workspaceId, campaignId },
       { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },

@@ -235,9 +235,11 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const after = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const after = await eventSelectQueryBuilder
+        .whereInIds(formattedBefore.map((record) => record.id))
+        .getMany({
+          noFormatting: true,
+        });
 
       const formattedAfter = formatResult<T[]>(
         after,
