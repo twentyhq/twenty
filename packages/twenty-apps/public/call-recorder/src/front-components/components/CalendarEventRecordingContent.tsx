@@ -13,13 +13,20 @@ import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcr
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
+// height: 100% fills the bounded box the solo canvas tab provides; in
+// unbounded contexts (side panel, mobile column) it resolves to auto and the
+// component flows with the page instead.
 const StyledRecordingShell = styled.div`
   background: ${() => themeCssVariables.background.primary};
   border: 1px solid transparent;
   border-bottom: 1px solid transparent;
   border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   font-family: ${() => themeCssVariables.font.family};
+  height: 100%;
+  overflow: hidden;
   padding: ${() => themeCssVariables.spacing[4]};
   position: relative;
   width: 100%;
@@ -51,7 +58,11 @@ const StyledRecordingHeaderActions = styled.div`
 
 const StyledRecordingBody = styled.div`
   box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   margin-top: ${() => themeCssVariables.spacing[2]};
+  min-height: 0;
 `;
 
 const StyledRecordingContentFrame = styled.div`
@@ -59,6 +70,11 @@ const StyledRecordingContentFrame = styled.div`
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   padding: ${() => themeCssVariables.spacing[2]};
 `;
 

@@ -13,6 +13,7 @@ const StyledCenteredState = styled.div`
   box-sizing: border-box;
   color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
+  flex: 1;
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   justify-content: center;
@@ -24,6 +25,7 @@ const StyledRecordingContainer = styled.div<{
   $hasVideo?: boolean;
 }>`
   display: grid;
+  flex: 1;
   gap: ${() => themeCssVariables.spacing[2]};
   grid-template-rows: ${({ $hasVideo }) =>
     $hasVideo ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};

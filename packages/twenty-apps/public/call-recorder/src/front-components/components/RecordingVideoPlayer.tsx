@@ -12,10 +12,14 @@ const FIRST_FRAME_SEEK_FRAGMENT = '#t=0.001';
 
 type RecordingVideoLoadState = 'awaiting-first-frame' | 'ready' | 'errored';
 
+// The max-height cap keeps the player from swallowing the tab on short
+// viewports so the transcript always keeps room; the video letterboxes via
+// object-fit when the cap wins over the aspect ratio.
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
   background: ${() => themeCssVariables.background.primary};
   border-radius: ${() => themeCssVariables.border.radius.sm};
+  max-height: 45vh;
   overflow: hidden;
   position: relative;
   width: 100%;

@@ -6,6 +6,7 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { shouldWidgetFillCanvasTab } from '@/page-layout/utils/shouldWidgetFillCanvasTab';
 import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
@@ -116,6 +117,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const isInVerticalListTab =
     layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
+  const fillsCanvasTab = shouldWidgetFillCanvasTab({ widget, layoutMode });
+
   return {
     isPageLayoutInEditMode,
     isEditing,
@@ -129,6 +132,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     variant,
     isMobile,
     isInVerticalListTab,
+    fillsCanvasTab,
     handleClick,
     handleRemove,
     handleMouseEnter,

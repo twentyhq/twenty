@@ -10,6 +10,7 @@ type WidgetCardContentStyledProps = {
   isInVerticalListTab: boolean;
   isMobile: boolean;
   hasBoundedHeight: boolean;
+  hasDefiniteRow: boolean;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
@@ -28,6 +29,12 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+
+  // A definite row keeps the content's percentage heights resolvable so a
+  // canvas widget can fill the tab and scroll internally; the default auto
+  // row stays content-sized so regular widgets flow.
+  grid-template-rows: ${({ hasDefiniteRow }) =>
+    hasDefiniteRow ? 'minmax(0, 1fr)' : 'auto'};
 
   height: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : '100%')};
 
@@ -67,6 +74,7 @@ type WidgetCardContentProps = {
   isMobile: boolean;
   hasInteractiveContent?: boolean;
   hasBoundedHeight?: boolean;
+  hasDefiniteRow?: boolean;
   className?: string;
   children?: React.ReactNode;
 };
@@ -79,6 +87,7 @@ export const WidgetCardContent = ({
   isMobile,
   hasInteractiveContent = false,
   hasBoundedHeight = false,
+  hasDefiniteRow = false,
   className,
   children,
 }: WidgetCardContentProps) => {
@@ -98,6 +107,7 @@ export const WidgetCardContent = ({
       isInVerticalListTab={isInVerticalListTab}
       isMobile={isMobile}
       hasBoundedHeight={hasBoundedHeight}
+      hasDefiniteRow={hasDefiniteRow}
       className={className}
       onClick={handleContentClick}
     >

@@ -9,12 +9,16 @@ import { buildCalendarEventParticipantBySpeakerName } from 'src/front-components
 import { findActiveTranscriptEntryIndex } from 'src/front-components/utils/find-active-transcript-entry-index.util';
 import { getCalendarEventParticipantForSpeakerName } from 'src/front-components/utils/get-calendar-event-participant-for-speaker-name.util';
 
+// The transcript is the only scroll region of the recording tab: the video
+// above it stays in view while entries scroll underneath.
 const StyledTranscriptContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[2]};
   min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 `;
 
 type TranscriptEntryListProps = {

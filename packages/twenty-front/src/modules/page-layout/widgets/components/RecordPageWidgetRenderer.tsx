@@ -32,6 +32,7 @@ export const RecordPageWidgetRenderer = ({
       restriction={state.restriction}
       actions={actions}
       isInVerticalListTab={state.isInVerticalListTab}
+      fillsCanvasTab={state.fillsCanvasTab}
       isMobile={state.isMobile}
       isReorderEnabled={true}
       isDeletingWidgetEnabled={true}

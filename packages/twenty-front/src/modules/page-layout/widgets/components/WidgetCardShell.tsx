@@ -35,6 +35,7 @@ type WidgetCardShellProps = {
   restriction: WidgetAccessDenialInfo;
   actions: WidgetAction[];
   isInVerticalListTab: boolean;
+  fillsCanvasTab: boolean;
   isMobile: boolean;
   isReorderEnabled: boolean;
   isDeletingWidgetEnabled: boolean;
@@ -57,6 +58,7 @@ export const WidgetCardShell = ({
   restriction,
   actions,
   isInVerticalListTab,
+  fillsCanvasTab,
   isMobile,
   isReorderEnabled,
   isDeletingWidgetEnabled,
@@ -122,6 +124,7 @@ export const WidgetCardShell = ({
           isMobile={isMobile}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
           hasBoundedHeight={hasBoundedHeight}
+          hasDefiniteRow={variant === 'solo' && fillsCanvasTab}
         >
           {hasAccess ? (
             <ErrorBoundary
