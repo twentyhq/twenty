@@ -38,7 +38,7 @@ describe('releaseSlackTeam', () => {
     expect(kvDeleteMock).toHaveBeenCalledWith(
       'slack-connected-account-team:connected-account-1',
     );
-    expect(result).toEqual({ ok: true, teamId: 'T123' });
+    expect(result).toEqual({ ok: true, releasedTeamId: 'T123' });
   });
 
   it('should do nothing when the connection never recorded a team', async () => {
@@ -49,6 +49,6 @@ describe('releaseSlackTeam', () => {
     });
 
     expect(kvDeleteMock).not.toHaveBeenCalled();
-    expect(result).toEqual({ ok: true, teamId: null });
+    expect(result).toEqual({ ok: true, releasedTeamId: null });
   });
 });

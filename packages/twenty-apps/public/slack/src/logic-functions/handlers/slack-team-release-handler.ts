@@ -1,7 +1,7 @@
 import { type SlackConnectionHookPayload } from 'src/logic-functions/types/slack-connection-hook-payload.type';
-import { releaseSlackTeam } from 'src/logic-functions/utils/release-slack-team';
+import { releaseSlackTeamOnDisconnect } from 'src/logic-functions/utils/release-slack-team-on-disconnect';
 
 export const slackTeamReleaseHandler = (payload: SlackConnectionHookPayload) =>
-  releaseSlackTeam({
+  releaseSlackTeamOnDisconnect({
     connectedAccountId: payload.connectedAccountId,
   });
