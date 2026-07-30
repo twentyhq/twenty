@@ -74,6 +74,26 @@ export const FOOTER: {
       ],
     },
     {
+      id: 'footer-compare',
+      title: msg`Compare`,
+      links: [
+        { label: msg`Twenty vs HubSpot`, href: '/compare-pricing/hubspot' },
+        {
+          label: msg`Twenty vs Salesforce`,
+          href: '/compare-pricing/salesforce',
+        },
+        { label: msg`Twenty vs Attio`, href: '/compare-pricing/attio' },
+        {
+          label: msg`Twenty vs Pipedrive`,
+          href: '/compare-pricing/pipedrive',
+        },
+        {
+          label: msg`Twenty vs Dynamics`,
+          href: '/compare-pricing/microsoft-dynamics',
+        },
+      ],
+    },
+    {
       id: 'footer-legal',
       title: msg`Legal`,
       links: [

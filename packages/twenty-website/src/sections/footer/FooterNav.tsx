@@ -23,7 +23,7 @@ const NavGrid = styled.nav`
 
   ${mediaUp('md')} {
     display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
   }
 `;
 
