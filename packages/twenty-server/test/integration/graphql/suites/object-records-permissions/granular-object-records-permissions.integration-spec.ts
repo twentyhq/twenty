@@ -1,6 +1,7 @@
 import { default as request } from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
@@ -168,6 +169,60 @@ describe('granularObjectRecordsPermissions', () => {
       expect(companyResponse.body.errors[0].extensions.code).toBe(
         ErrorCode.FORBIDDEN,
       );
+    });
+
+    it('should throw permission error when querying a system object (calendarEvent) with a deny-all role', async () => {
+      const { roleId } = await createCustomRoleWithObjectPermissions({
+        label: 'DenyAllSystemObjectRole',
+        hasAllObjectRecordsReadPermission: false,
+      });
+
+      customRoleId = roleId;
+
+      await updateWorkspaceMemberRole({
+        client,
+        roleId: customRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+
+      const graphqlOperation = findManyOperationFactory({
+        objectMetadataSingularName: 'calendarEvent',
+        objectMetadataPluralName: 'calendarEvents',
+        gqlFields: `id`,
+      });
+
+      const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    });
+
+    it('should successfully query a system object (calendarEvent) with a read-all role', async () => {
+      const { roleId } = await createCustomRoleWithObjectPermissions({
+        label: 'ReadAllSystemObjectRole',
+      });
+
+      customRoleId = roleId;
+
+      await updateWorkspaceMemberRole({
+        client,
+        roleId: customRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+
+      const graphqlOperation = findManyOperationFactory({
+        objectMetadataSingularName: 'calendarEvent',
+        objectMetadataPluralName: 'calendarEvents',
+        gqlFields: `id`,
+      });
+
+      const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.calendarEvents).toBeDefined();
     });
   });
 });

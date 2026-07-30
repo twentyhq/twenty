@@ -128,11 +128,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       const objectRecordsPermissions: ObjectsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
-        const {
-          id: objectMetadataId,
-          isSystem,
-          universalIdentifier,
-        } = objectMetadata;
+        const { id: objectMetadataId, universalIdentifier } = objectMetadata;
 
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
@@ -178,27 +174,17 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
                 objectPermission.objectMetadataId === objectMetadataId,
             );
 
-            const getPermissionValue = (
-              overrideValue: boolean | undefined,
-              defaultValue: boolean,
-            ) => overrideValue ?? (isSystem ? true : defaultValue);
-
-            canRead = getPermissionValue(
-              objectRecordPermissionsOverride?.canReadObjectRecords,
-              canRead,
-            );
-            canUpdate = getPermissionValue(
-              objectRecordPermissionsOverride?.canUpdateObjectRecords,
-              canUpdate,
-            );
-            canSoftDelete = getPermissionValue(
-              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
-              canSoftDelete,
-            );
-            canDestroy = getPermissionValue(
-              objectRecordPermissionsOverride?.canDestroyObjectRecords,
-              canDestroy,
-            );
+            canRead =
+              objectRecordPermissionsOverride?.canReadObjectRecords ?? canRead;
+            canUpdate =
+              objectRecordPermissionsOverride?.canUpdateObjectRecords ??
+              canUpdate;
+            canSoftDelete =
+              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
+              canSoftDelete;
+            canDestroy =
+              objectRecordPermissionsOverride?.canDestroyObjectRecords ??
+              canDestroy;
           }
 
           const fieldPermissionsForObject = roleFieldPermissions.filter(

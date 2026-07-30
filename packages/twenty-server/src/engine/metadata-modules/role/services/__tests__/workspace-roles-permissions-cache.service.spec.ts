@@ -325,9 +325,30 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
   });
 
   describe('system object (message)', () => {
-    it('should default to full access when no object permission override exists', async () => {
+    it('should deny access when a deny-all role has no object permission override', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
+          rolePermissionFlags: [],
+          objectPermissions: [],
+        }),
+      ]);
+
+      const result = await service.computeForCache(WORKSPACE_ID);
+      const messagePermissions = result[ROLE_ID][MESSAGE_OBJECT_METADATA_ID];
+
+      expect(messagePermissions.canReadObjectRecords).toBe(false);
+      expect(messagePermissions.canUpdateObjectRecords).toBe(false);
+      expect(messagePermissions.canSoftDeleteObjectRecords).toBe(false);
+      expect(messagePermissions.canDestroyObjectRecords).toBe(false);
+    });
+
+    it('should follow role-wide defaults when no object permission override exists', async () => {
+      roleRepository.find.mockResolvedValue([
+        createBaseRole({
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
           rolePermissionFlags: [],
           objectPermissions: [],
         }),
@@ -342,7 +363,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       expect(messagePermissions.canDestroyObjectRecords).toBe(true);
     });
 
-    it('should honor an explicit deny override instead of forcing system default', async () => {
+    it('should honor an explicit deny override on a read-all role', async () => {
       objectPermissionRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
@@ -356,6 +377,10 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
           rolePermissionFlags: [],
           objectPermissions: [],
         }),
