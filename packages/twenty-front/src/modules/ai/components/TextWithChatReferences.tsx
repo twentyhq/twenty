@@ -1,13 +1,15 @@
-import { RecordLink } from '@/ai/components/RecordLink';
-import { findRecordReferences } from '@/ai/utils/findRecordReferences';
+import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
+import { findChatReferences } from '@/ai/utils/findChatReferences';
 import { type ReactNode } from 'react';
 
-type TextWithRecordLinksProps = {
+type TextWithChatReferencesProps = {
   text: string;
 };
 
-export const TextWithRecordLinks = ({ text }: TextWithRecordLinksProps) => {
-  const references = findRecordReferences(text);
+export const TextWithChatReferences = ({
+  text,
+}: TextWithChatReferencesProps) => {
+  const references = findChatReferences(text);
 
   if (references.length === 0) {
     return <>{text}</>;
@@ -22,12 +24,7 @@ export const TextWithRecordLinks = ({ text }: TextWithRecordLinksProps) => {
     }
 
     parts.push(
-      <RecordLink
-        key={reference.index}
-        objectNameSingular={reference.objectNameSingular}
-        recordId={reference.recordId}
-        displayName={reference.displayName}
-      />,
+      <ChatReferenceChip key={reference.index} reference={reference} />,
     );
 
     lastIndex = reference.index + reference.fullMatch.length;
