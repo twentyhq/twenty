@@ -35,7 +35,7 @@ describe('ApplicationFileUploadService', () => {
     createPendingFile: jest.fn(),
     getFileMetadata: jest.fn(),
     readFile: jest.fn(),
-    writeFile: jest.fn(),
+    writeFileStream: jest.fn(),
   };
 
   const fileUploadService = {
@@ -231,9 +231,10 @@ describe('ApplicationFileUploadService', () => {
         {
           status: FILE_STATUS.UPLOADED,
           mimeType: 'application/javascript',
+          size: 12,
         },
       );
-      expect(fileStorageService.writeFile).not.toHaveBeenCalled();
+      expect(fileStorageService.writeFileStream).not.toHaveBeenCalled();
     });
 
     it('should reject a file whose stored size does not match the declared one', async () => {
@@ -276,7 +277,7 @@ describe('ApplicationFileUploadService', () => {
       ).rejects.toThrow(ApplicationException);
     });
 
-    it('should sanitize an uploaded svg before it can ever be served', async () => {
+    it('should sanitize an uploaded svg in storage before flipping it to uploaded', async () => {
       const svgFile = {
         ...pendingFile,
         path: `${FileFolder.PublicAsset}/logo.svg`,
@@ -291,7 +292,21 @@ describe('ApplicationFileUploadService', () => {
       fileStorageService.readFile.mockResolvedValueOnce(
         Readable.from([Buffer.from('<svg><script>alert(1)</script></svg>')]),
       );
-      fileStorageService.writeFile.mockResolvedValueOnce({ size: 11 });
+
+      let rewrittenContent = '';
+      let statusWasUploadedAtRewrite: boolean | undefined;
+
+      fileStorageService.writeFileStream.mockImplementationOnce(
+        async ({ resourcePath, stream }) => {
+          expect(resourcePath).toBe('logo.svg');
+          statusWasUploadedAtRewrite =
+            fileRepository.update.mock.calls.length > 0;
+
+          for await (const chunk of stream) {
+            rewrittenContent += chunk.toString('utf-8');
+          }
+        },
+      );
 
       const files = await service.completeApplicationFileUploads({
         workspaceId: WORKSPACE_ID,
@@ -299,14 +314,23 @@ describe('ApplicationFileUploadService', () => {
         fileIds: ['file-id'],
       });
 
-      expect(fileStorageService.writeFile).toHaveBeenCalledWith(
-        expect.objectContaining({
-          fileId: 'file-id',
-          resourcePath: 'logo.svg',
-          sourceFile: expect.not.stringContaining('<script>'),
-        }),
+      // The bytes are sanitized and rewritten while the record is still
+      // pending, so the file only becomes servable once its script is stripped.
+      expect(statusWasUploadedAtRewrite).toBe(false);
+      expect(rewrittenContent).not.toContain('<script>');
+
+      const sanitizedSize = Buffer.byteLength(rewrittenContent);
+
+      expect(fileRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'file-id' },
+        {
+          status: FILE_STATUS.UPLOADED,
+          mimeType: 'image/svg+xml',
+          size: sanitizedSize,
+        },
       );
-      expect(files[0].size).toBe(11);
+      expect(files[0].size).toBe(sanitizedSize);
     });
   });
 });
