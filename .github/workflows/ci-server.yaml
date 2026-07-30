@@ -305,6 +305,9 @@ jobs:
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 16
+      PG_DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test"
+      PGUSER: postgres
+      PGPASSWORD: postgres
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -330,8 +333,9 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-emails
-      - name: Server / Create Test DB
+      - name: Server / Create Test DB (clean)
         run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'DROP DATABASE IF EXISTS "test";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
