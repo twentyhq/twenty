@@ -34,6 +34,7 @@ export type GoogleMessagingNotificationRequest = {
 @Injectable()
 export class GoogleMessagingNotificationHandler implements WebhookNotificationHandler<GoogleMessagingNotificationRequest> {
   private readonly logger = new Logger(GoogleMessagingNotificationHandler.name);
+  private readonly oauth2Client = new OAuth2Client();
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -125,7 +126,7 @@ export class GoogleMessagingNotificationHandler implements WebhookNotificationHa
     const expectedAudience = `${this.twentyConfigService.get('SERVER_URL')}/webhooks/google/messaging`;
 
     try {
-      const ticket = await new OAuth2Client().verifyIdToken({
+      const ticket = await this.oauth2Client.verifyIdToken({
         idToken,
         audience: expectedAudience,
       });

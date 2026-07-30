@@ -186,6 +186,8 @@ enum EngineComponentKey {
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
   COMPOSE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN
+  SEND_MESSAGE_CAMPAIGN_TEST
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -579,7 +581,6 @@ type Application {
   id: UUID!
   name: String!
   description: String
-  logo: String
   logoFileId: UUID
   version: String
   universalIdentifier: String!
@@ -592,7 +593,7 @@ type Application {
   canBeUninstalled: Boolean!
   autoUpgrade: Boolean!
   defaultRoleId: String
-  settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
+  settingsCustomTabFrontComponentId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -1043,6 +1044,8 @@ enum WidgetType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1070,7 +1073,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1111,6 +1114,8 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+  MESSAGE_CAMPAIGN_BODY
+  MESSAGE_CAMPAIGN_DETAILS
 }
 
 """Format used to display the chart value"""
@@ -1137,6 +1142,7 @@ type PieChartConfiguration {
   showCenterMetric: Boolean
   displayLegend: Boolean
   hideEmptyCategory: Boolean
+  numberFormat: ChartNumberFormat
   splitMultiValueFields: Boolean
   description: String
   color: String
@@ -1190,6 +1196,7 @@ type LineChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String
@@ -1233,6 +1240,7 @@ type BarChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String
@@ -1271,6 +1279,14 @@ type EmailsConfiguration {
 }
 
 type EmailThreadConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignBodyConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -1580,6 +1596,12 @@ type BillingEndTrialPeriod {
   Billing portal URL for payment method update (returned when no payment method exists)
   """
   billingPortalUrl: String
+
+  """Updated current billing subscription"""
+  currentBillingSubscription: BillingSubscription
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]
 }
 
 type BillingResourceCreditUsage {
@@ -1742,7 +1764,6 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-  IS_ONBOARDING_AI_CHAT_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
 }
@@ -1946,6 +1967,7 @@ type ClientConfig {
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
+  isOnboardingAiChatEnabled: Boolean!
   enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
 }
@@ -2072,7 +2094,7 @@ type MarketplaceApp {
   description: String!
   author: String!
   category: String!
-  logo: String
+  logoUrl: String
   sourcePackage: String
   isVetted: Boolean!
 }
@@ -2122,7 +2144,7 @@ type MarketplaceAppDetail {
   description: String
   author: String
   category: String
-  logo: String
+  logoUrl: String
   websiteUrl: String
   aboutDescription: String
   termsUrl: String
@@ -2133,6 +2155,17 @@ type MarketplaceAppDetail {
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
+}
+
+type WorkspaceCompanyEnrichmentResult {
+  outcome: WorkspaceCompanyEnrichmentOutcome!
+  enrichment: JSON
+}
+
+enum WorkspaceCompanyEnrichmentOutcome {
+  matched
+  unavailable
+  transientError
 }
 
 type Relation {
@@ -2499,6 +2532,7 @@ type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
   handle: String!
+  displayName: String
   type: MessageChannelType!
   isContactAutoCreationEnabled: Boolean!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -2595,6 +2629,31 @@ type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
   skipped: CampaignSkippedRecipientsDTO!
+}
+
+type MessageSuppression {
+  id: UUID!
+  createdAt: DateTime!
+  emailAddress: String!
+  reason: MessageSuppressionReason!
+  source: MessageSuppressionSource!
+  unsubscribeTopicId: UUID
+}
+
+enum MessageSuppressionReason {
+  BOUNCE
+  COMPLAINT
+  UNSUBSCRIBE
+}
+
+enum MessageSuppressionSource {
+  WEBHOOK
+  SYSTEM
+}
+
+type MessageSuppressionList {
+  records: [MessageSuppression!]!
+  totalCount: Int!
 }
 
 type UnsubscribeTopic {
@@ -3157,8 +3216,8 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
-  unsubscribePagePreviewUrl: String!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3230,6 +3289,14 @@ input LogicFunctionIdInput {
 input PreviewMessageCampaignAudienceInput {
   listId: String!
   unsubscribeTopicId: String
+}
+
+input FindMessageSuppressionsInput {
+  reason: MessageSuppressionReason
+  searchTerm: String
+  unsubscribeTopicId: UUID
+  limit: Int! = 30
+  offset: Int! = 0
 }
 
 input ListAppConnectionsInput {
@@ -3406,6 +3473,7 @@ type Mutation {
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
+  enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
@@ -3443,11 +3511,13 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
@@ -3491,6 +3561,7 @@ type Mutation {
   uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
+  getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
@@ -4495,7 +4566,11 @@ input SendEmailViaDomainInput {
 }
 
 input SendMessageCampaignInput {
-  listId: String!
+  campaignId: String!
+}
+
+input SendMessageCampaignTestInput {
+  toAddress: String!
   unsubscribeTopicId: String
   subject: String!
   body: String!
@@ -4532,6 +4607,12 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  displayName: String
+}
+
+input UpdateEmailGroupChannelInput {
+  id: UUID!
+  displayName: String
 }
 
 input CreateEmailingDomainInput {

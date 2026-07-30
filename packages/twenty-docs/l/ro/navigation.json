@@ -145,6 +145,14 @@
               "label": "How-Tos"
             }
           }
+        },
+        "legal": {
+          "label": "Juridic",
+          "groups": {
+            "legalHowTos": {
+              "label": "Ghiduri practice"
+            }
+          }
         }
       }
     },

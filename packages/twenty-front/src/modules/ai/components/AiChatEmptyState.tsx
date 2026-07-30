@@ -10,6 +10,7 @@ import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoad
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +19,6 @@ const StyledEmptyState = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100%;
   justify-content: flex-end;
 `;
 
@@ -46,13 +46,15 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
     agentChatHasMessageComponentSelector,
   );
 
+  const isMobile = useIsMobile();
+
   const isOnNewChatSlot =
     currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const skeletonShowing =
     (agentChatThreadsLoading && isOnNewChatSlot) ||
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
   const shouldRender =
-    !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
+    !isMobile && !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
 
   if (!shouldRender) {
     return null;

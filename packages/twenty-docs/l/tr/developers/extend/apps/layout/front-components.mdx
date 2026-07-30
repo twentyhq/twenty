@@ -6,17 +6,23 @@ icon: window-maximize
 
 Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan **izole bir Web Worker** içinde çalışırlar — kodunuz, korumalı (sandbox) ve opak kökenli bir iframe içinde yürütülür; ancak UI, o iframe ile sınırlanmak yerine sayfada yerel olarak işlenir.
 
+<Warning>
+Front bileşenleri hâlâ aktif geliştirme aşamasındadır. Kodunuz gerçek bir tarayıcı sayfası yerine kısmi bir DOM üzerinde çalışır, bu nedenle ileri düzey kullanımlar çoğu zaman sessizce başarısız olabilir. [Mevcut sınırlamalara](#current-limitations) bakın.
+</Warning>
+
 ## Ön uç bileşenlerinin kullanılabileceği yerler
 
-Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
+Ön uç bileşenler, Twenty içinde üç konumda işlenebilir:
 
 * **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
 * **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, [sayfa düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
+* **Uygulama ayarları** — [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlandığında, ön uç bileşeni, varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
-Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın iki yolu vardır:
+Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın üç yolu vardır:
 
 * **Onu bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirin** — komut menüsüne (Cmd+K) ve isteğe bağlı olarak sabitlenmiş hızlı işlem olarak kaydeder.
 * **Onu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömün** — bir kaydın ayrıntı sayfasına veya panosuna yerleştirir.
+* **Bunu [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlayın** — varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
 ## Basit örnek
 
@@ -76,6 +82,34 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 ## Bir ön uç bileşenini bir sayfaya yerleştirme
 
 Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) bölümüne bakın.
+
+## Özel ayarlar bileşeni
+
+Uygulamanızın **Settings** sekmesindeki otomatik oluşturulan değişken yapılandırma kullanıcı arayüzünü kendi bileşeninizle değiştirmek için, `defineFrontComponent` yerine `defineSettingsFrontComponent` ile tanımlayın. Ayarlar bileşeni her zaman görünür bir kullanıcı arayüzü oluşturduğundan, kabul edilmeyen `isHeadless` dışında, aynı [yapılandırma alanlarını](#configuration-fields) alır ve ek olarak bileşeni uygulamanın ayarlar arayüzü olarak işaretler.
+
+Bileşen, tüm sekmenin yerine geçmek yerine, Settings sekmesi içinde bir bölüm olarak görüntülenir. Twenty'nin sistem tarafından yönetilen bölümleri — otomatik yükseltme, App URL ve bağlantılar — her zaman bunun üstünde görüntülenir ve uygulama tarafından geçersiz kılınamaz.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Uygulama başına yalnızca bir ayarlar ön uç bileşenine izin verilir; birden fazla tanımlanması derlemenin başarısız olmasına neden olur. Mevcut olduğunda, uygulamanın **Settings** sekmesi, varsayılan değişken yapılandırma kullanıcı arayüzü yerine bu bileşeni görüntüler.
 
 ## Headless ve headless olmayan
 
@@ -666,3 +700,72 @@ const Card = () => {
 `useTheme()` bir kanca olduğundan, belirteçleri bileşen gövdesinin içinde okursunuz; böylece değerler her zaman etkin temayı yansıtır. Aynı belirteç haritası, `themeCssVariables` sabiti olarak da dışa aktarılır; ancak ön uç bileşenlerinde `useTheme()` kullanmayı tercih edin — `themeCssVariables` öğesini dolaylı olarak kullanan modül düzeyinde bir sabit, uygulama manifesti çıkarılırken tanımsız olabilir.
 
 Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki `useColorScheme()` ile okuyun; bu kanca `'light'` veya `'dark'` döndürür.
+
+## Mevcut sınırlamalar
+
+Front bileşenleri aktif olarak geliştirilmektedir. Render etme, stil verme ve olayları işleme iyi çalışıyor. Render etmenin *ötesine* geçen her şey (bir öğeyi ölçmek, bir ref üzerinde bir DOM metodunu çağırmak, ağacınızın dışına portal oluşturmak, tarayıcı depolamasına dokunmak) bugün eksik veya tamamlanmamış durumda ve çoğu sessizce başarısız oluyor: hiçbir exception yok ve TypeScript hatası da yok, çünkü iskelet tam tarayıcı DOM’una göre type edilmiştir.
+
+Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [open an issue](https://github.com/twentyhq/twenty/issues/new/choose).
+
+### Yerleşim ve ölçüm
+
+Hiçbir şey henüz kendi kendini ölçemiyor.
+
+| API                                                           | Ne olur                                                                                             |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Fırlatır                                                                                            |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Sessizce `undefined`, bu yüzden `width ?? 0` sonucu `0` verir ve `width > 600` her zaman false olur |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guard’ları çalışır)                                                      |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Fırlatır                                                                                            |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Sessizce `undefined`                                                                                |
+| `new MutationObserver(fn)`                                    | Oluşturur, ardından `.observe()` fırlatır                                                           |
+
+Bu yüzden recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaştırma ve sürükleyerek boyutlandırma henüz çalışmıyor. Bunun yerine yerleşimi CSS’te yapın: stil sayfanız gerçek sayfaya ulaştığı için flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` normal şekilde davranır.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` ve `queueMicrotask` `window.` öneki olmadan çalışır. Yalnızca `window.requestAnimationFrame(...)` ve benzerleri fırlatır.
+</Note>
+
+### DOM erişimi
+
+Bir `ref` size bir `HTMLElement` değil, bir sandbox öğesi verir.
+
+| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                               |
+| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined`’dır)                           | `className` string’ini kendiniz oluşturun                                                                     |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Fırlatır                                                         | Çalışan `querySelector()` / `querySelectorAll()`                                                              |
+| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                     |
+| `\<canvas>`                                                                                | Hiçbir şey render etmez, hata yoktur                             | SVG kullanın veya ekranda olmayan bir yerde çizip bir `<img src={dataUrl}>` gösterin                          |
+| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | Yer paylaşımlarını `position: absolute` ile satır içinde yapın veya kütüphaneye kendi container öğenizi verin |
+
+Portal boşluğu, Radix, Headless UI, MUI ve react-select popover’larının varsayılan olarak hiçbir şey render etmemesinin nedenidir. Çoğu bir container prop kabul eder; onu render ettiğiniz bir öğeye yönlendirin.
+
+### Etkinlikler
+
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+
+`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/tr/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/tr/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### Other gaps
+
+* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/tr/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
+* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

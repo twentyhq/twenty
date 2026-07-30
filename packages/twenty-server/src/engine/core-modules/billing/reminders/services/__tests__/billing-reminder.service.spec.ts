@@ -13,13 +13,14 @@ import {
 } from 'src/engine/core-modules/billing/reminders/constants/billing-reminder-sent-keys.constant';
 import { BillingReminderService } from 'src/engine/core-modules/billing/reminders/services/billing-reminder.service';
 
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockResolvedValue('<html></html>'),
-}));
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
 jest.mock('twenty-emails', () => ({
   BillingTrialEndingEmail: jest.fn(),
   BillingTrialConvertingEmail: jest.fn(),
   BillingSubscriptionRenewingEmail: jest.fn(),
+  renderEmail: jest.fn().mockResolvedValue('<html></html>'),
 }));
 
 const CONFIG: Record<string, unknown> = {

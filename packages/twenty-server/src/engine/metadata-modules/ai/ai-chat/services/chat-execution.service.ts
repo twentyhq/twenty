@@ -4,6 +4,7 @@ import {
   convertToModelMessages,
   hasToolCall,
   type LanguageModelUsage,
+  NoOutputGeneratedError,
   stepCountIs,
   type StepResult,
   streamText,
@@ -221,6 +222,7 @@ export class ChatExecutionService {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
+        { spillLargeOutput: true },
       ),
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
@@ -334,6 +336,7 @@ export class ChatExecutionService {
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
+    let lastUnderlyingStreamError: unknown;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -376,10 +379,7 @@ export class ChatExecutionService {
       );
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
-      const totalTokens =
-        (usage.inputTokens ?? 0) +
-        (usage.outputTokens ?? 0) +
-        cacheCreationTokens;
+      const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
       const costInDollars = this.aiBillingService.calculateCost(
         registeredModel.modelId,
@@ -483,6 +483,12 @@ export class ChatExecutionService {
             bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
           });
         }
+      },
+      onError: ({ error }) => {
+        lastUnderlyingStreamError = error;
+        this.logger.error(
+          `Stream ${streamId} emitted an error: ${error instanceof Error ? error.message : String(error)}`,
+        );
       },
       experimental_onToolCallFinish: (event) => {
         this.metricsService.recordHistogram({
@@ -601,6 +607,43 @@ export class ChatExecutionService {
         if (error?.name === 'AbortError') {
           return;
         }
+
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.STREAM_INTERRUPTED
+        ) {
+          return;
+        }
+
+        if (NoOutputGeneratedError.isInstance(error)) {
+          const underlying = lastUnderlyingStreamError;
+
+          this.exceptionHandlerService.captureExceptions([
+            Object.assign(
+              new Error(
+                `AI chat stream produced no output. ${JSON.stringify({
+                  modelId: registeredModel.modelId,
+                  provider: registeredModel.sdkPackage,
+                  workspaceId: workspace.id,
+                  threadId,
+                  streamId,
+                  turnId,
+                  messageCount: messages.length,
+                  conversationSizeTokens,
+                  elapsedMs: Math.round(performance.now() - streamStartedAt),
+                  underlyingError:
+                    underlying instanceof Error
+                      ? `${underlying.name}: ${underlying.message}`
+                      : String(underlying ?? 'none-recorded'),
+                })}`,
+              ),
+              { cause: underlying },
+            ),
+          ]);
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([error]);
       });
 

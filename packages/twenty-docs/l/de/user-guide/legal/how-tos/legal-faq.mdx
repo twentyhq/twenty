@@ -1,0 +1,111 @@
+---
+title: Rechtliche FAQ
+description: Häufig gestellte rechtliche Fragen.
+---
+
+## Datenwohnsitz und internationale Überweisungen
+
+<AccordionGroup>
+<Accordion title="In welchem Land und in welcher Region würden unsere Arbeitsbereichsdaten, Anhänge, Protokolle und Backups gespeichert?">
+Zwanzig Cloud läuft auf AWS-Servern in Frankfurt, Deutschland.
+</Accordion>
+<Accordion title="Kann der Hosting Bereich vertraglich für unseren Arbeitsbereich festgelegt werden?">
+Die Auswahl der Hosting-Region wird ab 2027 verfügbar sein, zunächst für neue Workspaces. Benutzer können zu einem späteren Zeitpunkt eine Regionsänderung für einen bestehenden Workspace anfordern. Alternativ können Sie sich an [unsere Partner](https://twenty.com/partners/list?categories=HOSTING) wenden, die Ihnen bei der Einrichtung Ihrer Instanz helfen.
+</Accordion>
+<Accordion title="Welche Subprozessoren können unsere CRM-Daten verarbeiten oder darauf zugreifen und in welchen Ländern befinden sie sich?">
+Eine Liste aller Unterauftragsverarbeiter ist in [unserem Trust Center](https://trust.twenty.com/?tab=subprocessors) verfügbar.
+</Accordion>
+<Accordion title="Welche Sicherheiten gelten für internationale Datenübertragungen?">
+EU-Standardvertragsklauseln, zusammen mit dem UK-Addendum und Schweizer Ergänzungen, gelten für internationale Datenübermittlungen außerhalb der EU, einschließlich der Übermittlungen an alle Unterauftragsverarbeiter.
+</Accordion>
+</AccordionGroup>
+
+## Datenverarbeitungsvertrag und rechtliche Rollen
+
+<AccordionGroup>
+<Accordion title="Wo finden wir die aktuelle Datenverarbeitungsvereinbarung?">
+Sie können Ihre unterzeichnete Datenverarbeitungsvereinbarung (DPA) unter https://{your-domain}/settings/legal/dpa (z. B. https://getting-started.twenty.com/settings/legal/dpa) erstellen.
+</Accordion>
+<Accordion title="Funktioniert Zwanzig als Datenverarbeiter für Händler- und Kontaktinformationen, die im CRM gespeichert sind, während unser Unternehmen der Datenregler bleibt?">
+Gemäß unserer [Datenschutzrichtlinie](https://twenty.com/privacy-policy), fungieren 20 als Datenverarbeiter für Händler und Kontaktinformationen, die im CRM gespeichert sind während Ihr Unternehmen bleibt der Data Controller.
+</Accordion>
+<Accordion title="Werden CRM-Inhalte jemals verwendet, um zwanzig oder andere KI-Modelle zu trainieren?">
+CRM-Inhalte können zur Schulung von KI-Modellen verwendet werden, abhängig von den Allgemeinen Geschäftsbedingungen der Unterauftragsverarbeiter. Twenty verfügt über kein eigenes KI-Modell – alle in Twenty Cloud verfügbaren KI-Modelle werden von unseren Unterauftragsverarbeitern bereitgestellt.
+</Accordion>
+<Accordion title="Wenn eine optionale KI-Verarbeitung existiert, kann sie für unseren Arbeitsbereich vollständig deaktiviert werden?">
+KI kann vollständig deaktiviert werden, indem alle KI-Modelle in Einstellungen → AI → Models ausgeschaltet werden. Zusätzlich werden keine Daten an KI gesendet, es sei denn, Sie interagieren aktiv mit dem KI-Chat oder einem KI-Knoten in einem Workflow.
+</Accordion>
+</AccordionGroup>
+
+## Sicherheit und Zugriffssteuerung
+
+<AccordionGroup>
+<Accordion title="Wird Verschlüsselung während der Übertragung und im Ruhezustand verwendet, wie sehen Ihre Verfahren zum Schlüsselmanagement aus und wie werden Mandantendaten isoliert?">
+Alle Daten werden während der Übertragung und im Ruhezustand verschlüsselt. Mandantendaten werden durch ein Schema-pro-Mandant-Setup isoliert, und die Verschlüsselungsschlüssel werden regelmäßig rotiert.
+</Accordion>
+<Accordion title="Welche 20 Mitarbeiter oder Subprozessoren können zu welchen Zwecken auf die Arbeitsbereiche des Kunden zugreifen und wie wird der Zugang genehmigt und protokolliert?">
+Die Engineering- und Support-Teams von Twenty können nur dann auf Kunden-Workspaces zugreifen, wenn der Kunde ein Problem meldet und den Zugriff über Einstellungen → General → Security gewährt.
+</Accordion>
+<Accordion title="Was sind Ihre Benachrichtigungen und Zielbenachrichtigungen nach einem bestätigten Sicherheitsfall, der unsere Daten beeinflusst?">
+Im Falle einer bestätigten Verletzung personenbezogener Daten, die Ihre Daten betrifft Wir werden Sie unverzüglich und in jedem Fall innerhalb von 48 Stunden nach Bekanntwerden davon in Kenntnis setzen. Unsere Mitteilung wird in dem Umfang, in dem sie zu dem Zeitpunkt bekannt ist, die Art des Verstoßes beinhalten, die Kategorien und ungefähre Menge von Daten und Einzelpersonen betroffen, wahrscheinliche Folgen, und die Maßnahmen zur Sanierung und Abmilderung ergriffen oder geplant. Wir werden die Aktualisierungen zur Verfügung stellen, sobald die Untersuchung fortschreitet.
+</Accordion>
+</AccordionGroup>
+
+## Datenspeicherung und -löschung
+
+<AccordionGroup>
+<Accordion title="Wenn ein einzelner CRM-Eintrag gelöscht wird, wann wird er dann von aktiven Systemen entfernt?">
+Wenn ein Datensatz gelöscht wird, wird er zunächst soft gelöscht und kann noch wiederhergestellt werden. Er wird dauerhaft gelöscht und aus aktiven Systemen entfernt, sobald die Aufbewahrungsfrist abläuft oder ein Benutzer ihn manuell vernichtet.
+</Accordion>
+<Accordion title="Wie lange werden soft gelöschte Datensätze im System aufbewahrt?">
+Standardmäßig werden soft gelöschte Datensätze 14 Tage lang aufbewahrt, danach werden sie dauerhaft aus dem System entfernt. Die Aufbewahrungsfrist für soft gelöschte Datensätze kann in Einstellungen → General → Security geändert werden.
+</Accordion>
+<Accordion title="Wie lange kann diese Aufzeichnung in Backups oder technischen Logs verbleiben?">
+Ein entfernter Datensatz bleibt 30 Tage lang in Backups, danach wird er dauerhaft gelöscht.
+</Accordion>
+<Accordion title="Wenn ein Arbeitsbereich geschlossen oder vollständig gelöscht wird, welche Zeitleiste gilt für Produktionsdaten, Anhänge, Protokolle und Backups?">
+Wenn ein Workspace gelöscht wird, werden seine Daten sofort aus aktiven Systemen entfernt. Backups werden 7 Tage lang aufbewahrt, danach werden alle Daten dauerhaft gelöscht.
+</Accordion>
+<Accordion title="Wurde während einer Sicherungslaufzeit Daten vom Zugriff und der Nutzung isoliert?">
+Ja, während einer Sicherungslaufzeit werden gelöschte Daten vom operativen Gebrauch isoliert.
+</Accordion>
+<Accordion title="Sind bestimmte Kategorien von Daten länger für rechtliche, rechtliche, rechtliche, betrugsvorbeugung, Sicherheit oder Prüfzwecke gespeichert? Wenn ja, welche Kategorien und für wie lange?">
+Für weitere Informationen über die Vorratsdatenspeicherung können Sie unsere Datenschutzrichtlinie in [unserem Treuhandzentrum](https://trust.twenty.com/?tab=documents) anfordern.
+</Accordion>
+<Accordion title="Kann Zwanzig eine schriftliche Bestätigung geben, wenn eine vollständige Löschanfrage abgeschlossen wurde?">
+Wir bestätigen Löschanfragen und geben nach der Löschung eine schriftliche Bestätigung ab.
+</Accordion>
+</AccordionGroup>
+
+## Sicherungen und Widerstandskraft
+
+<AccordionGroup>
+<Accordion title="Was sind die Sicherungsfrequenz und die Speicherzeit?">
+Backups werden kontinuierlich erstellt, mit täglichen Snapshots, und die Aufbewahrungsfrist beträgt 30 Tage.
+</Accordion>
+<Accordion title="Was ist das Ziel der Erholungspunkte und des Wiederauffüllungszeitraums für 20 Wolken?">
+RTO und RPO sind beide 6 Stunden (nach unserer DPA).
+</Accordion>
+<Accordion title="Was ist der Prozess um eine Restauration anzufordern oder durchzuführen?">
+Um eine Wiederherstellung anzufordern, wenden Sie sich bitte über den Support-Chat oder per E-Mail an [contact@twenty.com](mailto:contact@twenty.com).
+</Accordion>
+<Accordion title="Werden Backups verschlüsselt und in derselben Region wie die primären Arbeitsbereichsdaten gespeichert?">
+Alle Backups werden verschlüsselt und an geografisch getrennten Orten innerhalb derselben Gerichtsbarkeit gespeichert (z.B. innerhalb der EU für EU-Daten).
+</Accordion>
+</AccordionGroup>
+
+## Compliance
+
+<AccordionGroup>
+<Accordion title="Ist die DPR 20 kompatibel?">
+Ja, Zwanzig ist [DPR konform](https://trust.twenty.com/?tab=securityControls\&frameworks=gdpr_v1).
+</Accordion>
+<Accordion title="Ist 20 SOC 2 kompatibel?">
+Ja, 20 ist [SOC 2 Compliant](https://trust.twenty.com/?tab=securityControls\&frameworks=soc2_v1).
+</Accordion>
+<Accordion title="Sind 20 HIPAA kompatibel?">
+Nein, 20 sind dabei, HIPAA-konform zu werden.
+</Accordion>
+</AccordionGroup>
+
+Wenn Sie weitere Fragen haben, lesen Sie bitte unsere [Allgemeinen Geschäftsbedingungen](https://twenty.com/terms), [Datenschutzerklärung](https://twenty.com/privacy-policy) und unser [Trust Center](https://trust.twenty.com/). Wenn Ihre Fragen weiterhin unbeantwortet bleiben, senden Sie diese an [contact@twenty.com](mailto:contact@twenty.com) oder über den Support-Chat.

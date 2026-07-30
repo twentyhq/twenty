@@ -45,12 +45,15 @@ Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove 
 
 ## Dove viene visualizzata l'app
 
-| Superficie                                      | Cosa controlla                                                                            | Entità                                    |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Barra laterale**                              | Una voce personalizzata che collega a una vista salvata o a un URL esterno                | `defineNavigationMenuItem`                |
-| **Elenco record**                               | Una configurazione salvata per un oggetto — colonne visibili, ordine, filtri, gruppi      | `defineView`                              |
-| **Pagina di dettaglio del record**              | Le schede e i widget nella pagina di un record (del tuo oggetto o di un oggetto standard) | `definePageLayout`, `definePageLayoutTab` |
-| **All'interno di uno qualsiasi dei precedenti** | Un widget React personalizzato: pulsanti, moduli, dashboard, integrazioni                 | `defineFrontComponent`                    |
-| **Menu comandi (Cmd+K)**                        | Un'azione rapida fissata o un comando nascosto                                            | `defineCommandMenuItem`                   |
+| Superficie                                      | Cosa controlla                                                                                                                                            | Entità                                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Barra laterale**                              | Una voce personalizzata che collega a una vista salvata o a un URL esterno                                                                                | `defineNavigationMenuItem`                |
+| **Elenco record**                               | Una configurazione salvata per un oggetto — colonne visibili, ordine, filtri, gruppi                                                                      | `defineView`                              |
+| **Pagina di dettaglio del record**              | Le schede e i widget nella pagina di un record (del tuo oggetto o di un oggetto standard)                                                                 | `definePageLayout`, `definePageLayoutTab` |
+| **All'interno di uno qualsiasi dei precedenti** | Un widget React personalizzato: pulsanti, moduli, dashboard, integrazioni                                                                                 | `defineFrontComponent`                    |
+| **Impostazioni dell'app**                       | Una sezione di configurazione personalizzata all'interno della scheda Impostazioni dell'app, al posto dell'interfaccia utente predefinita delle variabili | `defineSettingsFrontComponent`            |
+| **Menu comandi (Cmd+K)**                        | Un'azione rapida fissata o un comando nascosto                                                                                                            | `defineCommandMenuItem`                   |
 
 I componenti front-end vengono eseguiti all'interno di un Web Worker isolato usando Remote DOM: vengono renderizzati in modo nativo nella pagina (non all'interno di un iframe), ma non possono accedere direttamente alla pagina host o al DOM. La comunicazione con Twenty avviene tramite un'API host basata sul passaggio di messaggi.
+
+Sono ancora in fase di sviluppo attivo: il sandbox implementa un DOM parziale, quindi gli utilizzi avanzati possono non funzionare. Vedi [Limitazioni attuali](/l/it/developers/extend/apps/layout/front-components#current-limitations).

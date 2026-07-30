@@ -37,6 +37,7 @@ export default defineApplication({
 * 在构建清单时会自动检测安装前、安装后和卸载函数——无需在 `defineApplication()` 中引用它们。
 * 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。
 * `serverVariables` 是实例级的配置和机密信息（例如 API 密钥）。 与 `applicationVariables` 不同，它们不会在 manifest 中声明具体值——工作区运维人员会在应用设置中填写这些值，并且它们只有在被设置后才会被注入到逻辑函数中。
+* 要在应用的 **Settings** 选项卡中渲染自定义配置界面（替换默认的变量配置部分），请在其独立文件中使用 [`defineSettingsFrontComponent()`](/l/zh/developers/extend/apps/layout/front-components#custom-settings-component) 声明一个前端组件。 每个应用只允许有一个。 系统管理的部分（自动升级、App URL、连接）将始终保持可见。
 
 ## 变量类型
 

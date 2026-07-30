@@ -51,6 +51,9 @@ Twenty アプリの **レイアウトレイヤー** とは、ユーザーに見�
 | **レコードリスト**          | オブジェクト向けの保存済み構成 — 表示カラム、順序、フィルター、グループ            | `defineView`                              |
 | **レコード詳細ページ**        | レコードページ上のタブおよびウィジェット（独自オブジェクトのもの、または標準オブジェクトのもの） | `definePageLayout`, `definePageLayoutTab` |
 | **上記いずれかの内部**        | カスタム React ウィジェット — ボタン、フォーム、ダッシュボード、連携機能        | `defineFrontComponent`                    |
+| **アプリ設定**            | アプリの「設定」タブ内にある、デフォルトの変数 UI に代わるカスタム設定セクション       | `defineSettingsFrontComponent`            |
 | **コマンドメニュー (Cmd+K)** | ピン留めされたクイックアクションまたは非表示コマンド                       | `defineCommandMenuItem`                   |
 
 フロントコンポーネントは Remote DOM を使用して、分離された Web Worker 内で実行されます。ページ内に *ネイティブに*（iframe 内ではなく）レンダリングされますが、ホストページや DOM へ直接アクセスすることはできません。 Twenty との通信は、メッセージパッシング型のホスト API を通じて行われます。
+
+これらは依然として積極的に開発中です。サンドボックスは DOM を部分的にのみ実装しているため、高度な利用方法では失敗する場合があります。 [現在の制限事項](/l/ja/developers/extend/apps/layout/front-components#current-limitations)を参照してください。

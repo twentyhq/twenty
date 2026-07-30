@@ -336,6 +336,18 @@ export class ToolRegistryService {
     }
   }
 
+  async spillToolOutputIfTooLarge(
+    output: ToolOutput,
+    context: ToolContext,
+    toolName: string,
+  ): Promise<ToolOutput> {
+    return this.toolOutputSpillService.spillIfTooLarge(
+      output,
+      { workspaceId: context.workspaceId },
+      { toolName },
+    );
+  }
+
   // Eager loading tools by categories (MCP, workflow agent).
   // These paths need full schemas, so generate with includeSchemas: true.
   async getToolsByCategories(

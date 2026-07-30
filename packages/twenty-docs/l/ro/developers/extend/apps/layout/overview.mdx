@@ -45,12 +45,15 @@ icon: table-columns
 
 ## Unde este afișată aplicația
 
-| Suprafață                                          | Ce controlează                                                                                          | Entitate                                  |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Bară laterală**                                  | O intrare personalizată care face legătura către o vizualizare salvată sau un URL extern                | `defineNavigationMenuItem`                |
-| **Listă de înregistrări**                          | O configurație salvată pentru un obiect — coloane vizibile, ordine, filtre, grupuri                     | `defineView`                              |
-| **Pagină de detalii a unei înregistrări**          | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard) | `definePageLayout`, `definePageLayoutTab` |
-| **În interiorul oricăreia dintre cele de mai sus** | Un widget React personalizat — butoane, formulare, dashboarduri, integrări                              | `defineFrontComponent`                    |
-| **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                           | `defineCommandMenuItem`                   |
+| Suprafață                                          | Ce controlează                                                                                                       | Entitate                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Bară laterală**                                  | O intrare personalizată care face legătura către o vizualizare salvată sau un URL extern                             | `defineNavigationMenuItem`                |
+| **Listă de înregistrări**                          | O configurație salvată pentru un obiect — coloane vizibile, ordine, filtre, grupuri                                  | `defineView`                              |
+| **Pagină de detalii a unei înregistrări**          | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard)              | `definePageLayout`, `definePageLayoutTab` |
+| **În interiorul oricăreia dintre cele de mai sus** | Un widget React personalizat — butoane, formulare, dashboarduri, integrări                                           | `defineFrontComponent`                    |
+| **Setări ale aplicației**                          | O secțiune de configurare personalizată din fila Setări a aplicației, în locul interfeței implicite pentru variabile | `defineSettingsFrontComponent`            |
+| **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                                        | `defineCommandMenuItem`                   |
 
 Componentele front rulează în interiorul unui Web Worker izolat folosind Remote DOM — acestea sunt redate *nativ* în pagină (nu într-un iframe), dar nu pot accesa direct pagina gazdă sau DOM-ul. Comunicarea cu Twenty se face printr-un API al gazdei bazat pe transmiterea de mesaje.
+
+Sunt încă în curs de dezvoltare activă: sandbox-ul implementează un DOM parțial, astfel încât utilizările avansate pot eșua. Vezi [limitările actuale](/l/ro/developers/extend/apps/layout/front-components#current-limitations).
