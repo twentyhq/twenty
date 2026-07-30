@@ -154,7 +154,19 @@ yarn upgrade:background:logs     # re-attach from another shell
 yarn upgrade:background:stop     # graceful stop; --now for immediate, --force for SIGKILL
 ```
 
-`upgrade:background` refuses to start when a run is already in flight, and forwards any extra arguments (`--include-slow`, workspace filters) to `upgrade`. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
+`upgrade:background` refuses to start when a run is already in flight. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
+
+Everything after `upgrade:background` is forwarded verbatim to `upgrade`, so it takes that command's options and no others:
+
+| Option | Effect |
+| --- | --- |
+| `-d`, `--dry-run` | simulate without making changes |
+| `-v`, `--verbose` | verbose output |
+| `-w`, `--workspace-id <id>` | restrict to a workspace, repeatable; all provisioned workspaces if omitted |
+| `--start-from-workspace-id <id>` | resume from a workspace, ascending id order |
+| `--workspace-count-limit <n>` | process at most n workspaces, ascending id order |
+
+`-w` and `--start-from-workspace-id` are mutually exclusive and `upgrade` rejects the combination. Note that `--include-slow` is **not** one of these: it belongs to `run-instance-commands`, which the upgrade pipeline invokes itself.
 
 `logs` is the only one you need to check on a run, because it reports what it found before streaming. If a run is alive it announces the pid and follows the log. If none is alive it prints how the last one ended and dumps the tail instead of following, so it always terminates rather than waiting on a log that will never grow again. That distinction cannot be made from the log alone: a workspace segment can run for many minutes without printing anything, so a silent log looks identical whether the run is grinding through a slow segment or was killed twenty minutes ago. Only the recorded pid answers it.
 
