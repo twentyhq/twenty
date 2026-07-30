@@ -474,7 +474,7 @@ export const ThinkingStepsDisplay = ({
                 )}
               />
             ))}
-            {showPendingThinkingRow && <AiChatThinkingRow />}
+            {showPendingThinkingRow && !isThinking && <AiChatThinkingRow />}
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>

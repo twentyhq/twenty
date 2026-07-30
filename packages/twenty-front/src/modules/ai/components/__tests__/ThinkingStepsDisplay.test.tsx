@@ -155,6 +155,19 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.queryByText('Thinking')).toBeNull();
   });
 
+  it('should not append the pending thinking row while a tool step is still running', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      showPendingThinkingRow: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
   it('should render done state collapsed by default', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,

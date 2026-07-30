@@ -42,10 +42,6 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-jest.mock('@/ai/components/AiChatThinkingRow', () => ({
-  AiChatThinkingRow: () => <div data-testid="thinking-row" />,
-}));
-
 const renderAssistantRenderer = (
   messageParts: ExtendedUIMessagePart[],
   { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
@@ -243,7 +239,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
-  it('should append the pending thinking row to the last thinking steps group when streaming pauses between steps', () => {
+  it('should mark the trailing thinking steps group as pending while streaming', () => {
     const messageParts = [
       {
         type: 'reasoning',
@@ -264,49 +260,9 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
       'with-pending-thinking-row',
     );
-    expect(screen.queryByTestId('thinking-row')).toBeNull();
   });
 
-  it('should show a standalone thinking row when streaming pauses after a text part', () => {
-    const messageParts = [
-      {
-        type: 'tool-web_search',
-        toolCallId: 'tool-1',
-        input: { query: 'crm software' },
-        output: { result: { ok: true } },
-        state: 'output-available',
-      },
-      {
-        type: 'text',
-        text: 'Intermediate summary',
-        state: 'done',
-      },
-    ] as ExtendedUIMessagePart[];
-
-    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
-
-    expect(screen.getByTestId('thinking-row')).toBeInTheDocument();
-    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
-      'with-pending-thinking-row',
-    );
-  });
-
-  it('should not show the pending next step indicator while a tool call awaits its output', () => {
-    const messageParts = [
-      {
-        type: 'tool-web_search',
-        toolCallId: 'tool-1',
-        input: { query: 'crm software' },
-        state: 'input-available',
-      },
-    ] as ExtendedUIMessagePart[];
-
-    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
-
-    expect(screen.queryByTestId('thinking-row')).toBeNull();
-  });
-
-  it('should not show the pending next step indicator while answer text streams', () => {
+  it('should not mark a thinking steps group as pending when answer text follows it', () => {
     const messageParts = [
       {
         type: 'tool-web_search',
@@ -324,10 +280,12 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
-    expect(screen.queryByTestId('thinking-row')).toBeNull();
+    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
+      'with-pending-thinking-row',
+    );
   });
 
-  it('should not show the pending next step indicator when the message is not streaming', () => {
+  it('should not mark the trailing thinking steps group as pending when the message is not streaming', () => {
     const messageParts = [
       {
         type: 'tool-web_search',
@@ -336,16 +294,13 @@ describe('AiChatAssistantMessageRenderer', () => {
         output: { result: { ok: true } },
         state: 'output-available',
       },
-      {
-        type: 'text',
-        text: 'Final answer',
-        state: 'done',
-      },
     ] as ExtendedUIMessagePart[];
 
     renderAssistantRenderer(messageParts);
 
-    expect(screen.queryByTestId('thinking-row')).toBeNull();
+    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
+      'with-pending-thinking-row',
+    );
   });
 
   it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {

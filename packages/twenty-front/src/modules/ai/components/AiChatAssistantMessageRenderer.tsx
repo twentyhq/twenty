@@ -1,6 +1,5 @@
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
-import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -10,7 +9,6 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
-import { isMessagePartInProgress } from '@/ai/utils/isMessagePartInProgress';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
@@ -88,15 +86,7 @@ export const AiChatAssistantMessageRenderer = ({
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
-  const isAwaitingNextStep =
-    isLastMessageStreaming &&
-    !hasError &&
-    !messageParts.some(isMessagePartInProgress);
-
   const lastRenderItemIndex = renderItems.length - 1;
-  const shouldShowStandaloneThinkingRow =
-    isAwaitingNextStep &&
-    renderItems[lastRenderItemIndex]?.type !== 'thinking-steps';
 
   if (!renderItems.length && !hasError) {
     return <AiChatInitialLoadingIndicator />;
@@ -120,7 +110,9 @@ export const AiChatAssistantMessageRenderer = ({
                     nextRenderItem.part.text.trim().length > 0,
                 )}
               showPendingThinkingRow={
-                isAwaitingNextStep && index === lastRenderItemIndex
+                isLastMessageStreaming &&
+                !hasError &&
+                index === lastRenderItemIndex
               }
             />
           ) : (
@@ -131,7 +123,6 @@ export const AiChatAssistantMessageRenderer = ({
             />
           ),
         )}
-        {shouldShowStandaloneThinkingRow && <AiChatThinkingRow />}
       </StyledMessagePartsContainer>
     </div>
   );
