@@ -30,8 +30,8 @@ import {
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -78,6 +78,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   async startAuthorizationFlow(
@@ -268,25 +269,23 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
 
-      await withApplicationJobEnqueueContext(
+      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+        applicationId: flatLogicFunction.applicationId,
+        applicationRegistrationId,
+      });
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
         {
-          applicationId: flatLogicFunction.applicationId,
-          applicationRegistrationId,
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload: {
+            connectionProviderId: provider.id,
+            connectionProviderName: provider.name,
+            connectedAccountId,
+          },
         },
-        () =>
-          this.messageQueueService.add<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
-            {
-              logicFunctionId: flatLogicFunction.id,
-              workspaceId,
-              payload: {
-                connectionProviderId: provider.id,
-                connectionProviderName: provider.name,
-                connectedAccountId,
-              },
-            },
-            { retryLimit: 3 },
-          ),
+        { retryLimit: 3 },
       );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {

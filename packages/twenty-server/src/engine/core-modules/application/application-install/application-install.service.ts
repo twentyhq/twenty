@@ -40,8 +40,8 @@ import {
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -65,6 +65,7 @@ export class ApplicationInstallService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   async installApplication(params: {
@@ -579,21 +580,19 @@ export class ApplicationInstallService {
         );
       }
 
-      await withApplicationJobEnqueueContext(
+      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+        applicationId: flatLogicFunction.applicationId,
+        applicationRegistrationId,
+      });
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
         {
-          applicationId: flatLogicFunction.applicationId,
-          applicationRegistrationId,
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
         },
-        () =>
-          this.messageQueueService.add<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
-            {
-              logicFunctionId: flatLogicFunction.id,
-              workspaceId,
-              payload,
-            },
-            { retryLimit: 3 },
-          ),
+        { retryLimit: 3 },
       );
 
       return;

@@ -1,11 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { JobEnqueueThrottlerGuard } from 'src/engine/core-modules/message-queue/guards/job-enqueue-throttler.guard';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import {
-  type ApplicationJobEnqueueContext,
-  withApplicationJobEnqueueContext,
-} from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -18,10 +13,7 @@ const CONFIG = {
   APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT: 2000,
 } as const;
 
-const GUARDED_QUEUE = MessageQueue.logicFunctionQueue;
-const UNGUARDED_QUEUE = MessageQueue.emailQueue;
-
-const context: ApplicationJobEnqueueContext = {
+const context = {
   applicationId: 'application-id',
   applicationRegistrationId: 'registration-id',
 };
@@ -30,8 +22,8 @@ const APPLICATION_KEY = 'enqueue:throttler:application:application-id';
 const REGISTRATION_KEY =
   'enqueue:throttler:application-registration:registration-id';
 
-describe('JobEnqueueThrottlerGuard', () => {
-  let guard: JobEnqueueThrottlerGuard;
+describe('ApplicationJobEnqueueThrottlerService', () => {
+  let service: ApplicationJobEnqueueThrottlerService;
   let throttlerService: {
     getAvailableTokensCount: jest.Mock;
     consumeTokens: jest.Mock;
@@ -55,7 +47,7 @@ describe('JobEnqueueThrottlerGuard', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        JobEnqueueThrottlerGuard,
+        ApplicationJobEnqueueThrottlerService,
         { provide: ThrottlerService, useValue: throttlerService },
         { provide: MetricsService, useValue: metricsService },
         {
@@ -67,38 +59,11 @@ describe('JobEnqueueThrottlerGuard', () => {
       ],
     }).compile();
 
-    guard = module.get(JobEnqueueThrottlerGuard);
-  });
-
-  it('does nothing for non-guarded queues even without a context', async () => {
-    await guard.assertCanEnqueueOrThrow(UNGUARDED_QUEUE, 1);
-
-    expect(throttlerService.getAvailableTokensCount).not.toHaveBeenCalled();
-    expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
-  });
-
-  it('throws for a guarded queue when there is no enqueue context', async () => {
-    await expect(
-      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
-    ).rejects.toThrow(/application enqueue context/);
-
-    expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
-  });
-
-  it('throws for a guarded queue when the registration id is missing', async () => {
-    await expect(
-      withApplicationJobEnqueueContext(
-        // oxlint-disable-next-line typescript/no-explicit-any
-        { applicationId: 'application-id' } as any,
-        () => guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
-      ),
-    ).rejects.toThrow(/application enqueue context/);
+    service = module.get(ApplicationJobEnqueueThrottlerService);
   });
 
   it('debits both application and registration buckets with distinct limits', async () => {
-    await withApplicationJobEnqueueContext(context, () =>
-      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
-    );
+    await service.throttleOrThrow(context);
 
     expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
       APPLICATION_KEY,
@@ -115,9 +80,7 @@ describe('JobEnqueueThrottlerGuard', () => {
   });
 
   it('consumes one token per job for bulk enqueue', async () => {
-    await withApplicationJobEnqueueContext(context, () =>
-      guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 5),
-    );
+    await service.throttleOrThrow({ ...context, jobCount: 5 });
 
     expect(throttlerService.consumeTokens).toHaveBeenCalledWith(
       APPLICATION_KEY,
@@ -133,11 +96,9 @@ describe('JobEnqueueThrottlerGuard', () => {
       [REGISTRATION_KEY]: 0,
     });
 
-    await expect(
-      withApplicationJobEnqueueContext(context, () =>
-        guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
-      ),
-    ).rejects.toThrow(ThrottlerException);
+    await expect(service.throttleOrThrow(context)).rejects.toThrow(
+      ThrottlerException,
+    );
 
     expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith(
@@ -153,11 +114,9 @@ describe('JobEnqueueThrottlerGuard', () => {
       [REGISTRATION_KEY]: 1000,
     });
 
-    await expect(
-      withApplicationJobEnqueueContext(context, () =>
-        guard.assertCanEnqueueOrThrow(GUARDED_QUEUE, 1),
-      ),
-    ).rejects.toThrow(ThrottlerException);
+    await expect(service.throttleOrThrow(context)).rejects.toThrow(
+      ThrottlerException,
+    );
 
     expect(throttlerService.consumeTokens).not.toHaveBeenCalled();
   });

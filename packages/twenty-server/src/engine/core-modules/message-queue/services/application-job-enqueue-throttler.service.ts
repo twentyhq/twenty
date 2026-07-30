@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import { GUARDED_ENQUEUE_QUEUES } from 'src/engine/core-modules/message-queue/constants/guarded-enqueue-queues.constant';
-import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { applicationJobEnqueueContextStorage } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
@@ -14,40 +9,28 @@ import {
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Limits how many jobs an application can enqueue to guarded queues so a single
-// app cannot overwhelm them. Two tiers, mirroring the API rate limiting: a lower
-// per-installation ceiling and a higher ceiling shared across every workspace
-// that installed the same registration. Enqueues to guarded queues must run
-// within an application enqueue context, otherwise they are rejected.
+// Limits how many jobs an application can enqueue so a single app cannot flood a
+// queue. Two tiers mirror the API rate limiting: a lower per-installation ceiling
+// and a higher ceiling shared across every workspace that installed the same
+// registration. Both buckets are checked before either is debited, so a rejection
+// on one tier never burns quota on the other.
 @Injectable()
-export class JobEnqueueThrottlerGuard {
+export class ApplicationJobEnqueueThrottlerService {
   constructor(
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
   ) {}
 
-  async assertCanEnqueueOrThrow(
-    queueName: MessageQueue,
-    tokensToConsume = 1,
-  ): Promise<void> {
-    if (!GUARDED_ENQUEUE_QUEUES.has(queueName)) {
-      return;
-    }
-
-    const context = applicationJobEnqueueContextStorage.getStore();
-
-    if (
-      !isDefined(context?.applicationId) ||
-      !isDefined(context?.applicationRegistrationId)
-    ) {
-      throw new Error(
-        `Cannot enqueue to ${queueName} without an application enqueue context. Wrap the enqueue with withApplicationJobEnqueueContext.`,
-      );
-    }
-
-    const { applicationId, applicationRegistrationId } = context;
-
+  async throttleOrThrow({
+    applicationId,
+    applicationRegistrationId,
+    jobCount = 1,
+  }: {
+    applicationId: string;
+    applicationRegistrationId: string;
+    jobCount?: number;
+  }): Promise<void> {
     const timeWindow = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_TTL_IN_MS',
     );
@@ -60,8 +43,6 @@ export class JobEnqueueThrottlerGuard {
       'APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
     );
 
-    // Check both buckets before debiting either, so a rejection on one tier
-    // never burns quota on the other.
     const [applicationTokens, registrationTokens] = await Promise.all([
       this.throttlerService.getAvailableTokensCount(
         applicationKey,
@@ -75,15 +56,11 @@ export class JobEnqueueThrottlerGuard {
       ),
     ]);
 
-    if (
-      applicationTokens < tokensToConsume ||
-      registrationTokens < tokensToConsume
-    ) {
+    if (applicationTokens < jobCount || registrationTokens < jobCount) {
       await this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobEnqueueApplicationRateLimited,
         shouldStoreInCache: false,
         attributes: {
-          queue: queueName,
           application_id: applicationId,
           application_registration_id: applicationRegistrationId,
         },
@@ -98,13 +75,13 @@ export class JobEnqueueThrottlerGuard {
     await Promise.all([
       this.throttlerService.consumeTokens(
         applicationKey,
-        tokensToConsume,
+        jobCount,
         applicationLimit,
         timeWindow,
       ),
       this.throttlerService.consumeTokens(
         registrationKey,
-        tokensToConsume,
+        jobCount,
         registrationLimit,
         timeWindow,
       ),
