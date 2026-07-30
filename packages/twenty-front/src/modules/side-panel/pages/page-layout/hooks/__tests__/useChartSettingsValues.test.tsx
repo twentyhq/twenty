@@ -11,6 +11,7 @@ import {
   AxisNameDisplay,
   BarChartGroupMode,
   BarChartLayout,
+  ChartNumberFormat,
   FieldMetadataType,
   GraphOrderBy,
   RelationType,
@@ -674,6 +675,34 @@ describe('useChartSettingsValues', () => {
 
         expect(verticalValue).toEqual(horizontalValue);
       });
+    });
+  });
+
+  describe('Number format setting', () => {
+    it('should return the Full label for FORMAT when numberFormat is set on a bar chart', () => {
+      const config = buildBarChartConfiguration({
+        numberFormat: ChartNumberFormat.FULL,
+      });
+
+      const { result } = renderUseChartSettingsValues(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.FORMAT,
+      );
+
+      expect(value).toBe('Full');
+    });
+
+    it('should return the default format label for FORMAT when numberFormat is not set', () => {
+      const { result } = renderUseChartSettingsValues(
+        buildBarChartConfiguration({}),
+      );
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.FORMAT,
+      );
+
+      expect(value).toBe('Short');
     });
   });
 });

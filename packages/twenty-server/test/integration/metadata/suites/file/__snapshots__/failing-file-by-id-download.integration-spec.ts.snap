@@ -2,14 +2,22 @@
 
 exports[`File-by-id controller download should fail should respond 403 when the URL fileId does not match the token payload 1`] = `
 {
-  "body": {},
+  "body": {
+    "error": "Forbidden",
+    "message": "Forbidden resource",
+    "statusCode": 403,
+  },
   "status": 403,
 }
 `;
 
 exports[`File-by-id controller download should fail should respond 403 when the request has no token query parameter 1`] = `
 {
-  "body": {},
+  "body": {
+    "error": "Forbidden",
+    "message": "Forbidden resource",
+    "statusCode": 403,
+  },
   "status": 403,
 }
 `;
