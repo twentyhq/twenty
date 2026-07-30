@@ -60,7 +60,7 @@ Pasul de build folosește esbuild pentru a produce un singur fișier autonom pen
 
 **Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
 
-**Componentele frontend** rulează într-un Web Worker. Modulele built-in Node nu sunt disponibile — doar API-urile de browser și pachetele npm care funcționează într-un mediu de browser.
+**Componentele frontend** rulează într-un Web Worker. Modulele built-in Node **nu** sunt disponibile — doar pachetele npm care funcționează într-un mediu de browser. Reține că sandbox-ul implementează un DOM *parțial*, astfel încât un pachet se poate construi fără erori, dar totuși poate eșua la execuție; vezi [Limitări curente](/l/ro/developers/extend/apps/layout/front-components#current-limitations).
 
 Ambele medii au `twenty-client-sdk/core` și `twenty-client-sdk/metadata` disponibile ca module pre-furnizate — acestea nu sunt incluse în bundle, ci sunt rezolvate la rulare de către server.
 

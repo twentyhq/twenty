@@ -59,6 +59,7 @@ export enum MetricsKeys {
   SignUpSuccess = 'sign-up/success',
   CommonApiQueryRateLimited = 'common-api-query/rate-limited',
   CommonApiApplicationQueryRateLimited = 'common-api-query/application-rate-limited',
+  JobEnqueueApplicationRateLimited = 'job/enqueue-application-rate-limited',
   JobCompleted = 'job/completed',
   JobFailed = 'job/failed',
   JobStalled = 'job/stalled',

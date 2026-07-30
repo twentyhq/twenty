@@ -568,7 +568,9 @@ describe('recall bot api', () => {
       expect.objectContaining({ method: 'POST' }),
     );
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
-      provider: { recallai_async: { language_code: 'auto' } },
+      provider: {
+        gladia_v2_async: { language_config: { code_switching: true } },
+      },
       diarization: { use_separate_streams_when_available: true },
     });
   });
