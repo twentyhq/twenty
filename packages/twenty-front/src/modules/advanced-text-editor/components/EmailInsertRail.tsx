@@ -116,6 +116,7 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
       .chain()
       .insertContentAt(editor.state.doc.content.size, content)
       .focus('end')
+      .scrollIntoView()
       .run();
     setOpenMenu(null);
   };
@@ -301,10 +302,17 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
               onChange={setImageUrl}
               placeholder={t`Image URL`}
               fullWidth
+              autoFocus
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleInsertImage();
+                }
+              }}
             />
             <Button
               title={t`Insert image`}
               size="small"
+              disabled={imageUrl.trim() === ''}
               onClick={handleInsertImage}
             />
           </StyledImageForm>
