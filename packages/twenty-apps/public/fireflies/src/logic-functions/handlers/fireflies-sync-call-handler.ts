@@ -1,17 +1,18 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status.constant';
+import { findCallRecordingFieldStatesOrThrow } from 'src/logic-functions/data/find-call-recording-field-states-or-throw.util';
 import { type FirefliesSyncCallInput } from 'src/logic-functions/types/fireflies-sync-call-input.type';
 import {
   type FirefliesSyncCallFieldOutcome,
   type FirefliesSyncCallResult,
 } from 'src/logic-functions/types/fireflies-sync-call-result.type';
 import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
-import {
-  type FirefliesSyncableField,
-  type SyncFirefliesCallResult,
-  syncFirefliesCallToCallRecording,
-} from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
+import { type FirefliesSyncableField } from 'src/logic-functions/types/fireflies-syncable-field.type';
+import { type SyncFirefliesCallResult } from 'src/logic-functions/types/sync-fireflies-call-result.type';
+import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
+import { syncFirefliesCallToCallRecording } from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording.util';
 
 const ALL_FIELDS: FirefliesSyncableField[] = ['transcript', 'summary'];
 
@@ -48,18 +49,49 @@ export const firefliesSyncCallHandler = async (
     );
   }
 
-  const client = new CoreApiClient();
+  const coreApiClient = new CoreApiClient();
+  const callRecordingId =
+    computeCallRecordingIdForFirefliesMeeting(transcriptId);
+  const callRecordingFieldStates = await findCallRecordingFieldStatesOrThrow({
+    coreApiClient,
+    callRecordingIds: [callRecordingId],
+  });
+  const initialCallRecordingFieldState =
+    callRecordingFieldStates.get(callRecordingId);
 
   // Sequential: both fields upsert the same row, concurrent runs would race on the create.
   const results: SyncFirefliesCallResult[] = [];
 
   for (const field of ALL_FIELDS) {
+    const isTranscriptFilled =
+      (initialCallRecordingFieldState?.isTranscriptFilled ?? false) ||
+      results.some(
+        (result) =>
+          result.status === 'updated' && result.field === 'transcript',
+      );
+    const isSummaryFilled =
+      (initialCallRecordingFieldState?.isSummaryFilled ?? false) ||
+      results.some(
+        (result) => result.status === 'updated' && result.field === 'summary',
+      );
+    const currentCallRecordingFieldState = {
+      isTranscriptFilled,
+      isSummaryFilled,
+      status:
+        results.length === 0
+          ? initialCallRecordingFieldState?.status
+          : isTranscriptFilled && isSummaryFilled
+            ? CALL_RECORDING_STATUS.COMPLETED
+            : CALL_RECORDING_STATUS.PROCESSING,
+    };
+
     results.push(
       await syncFirefliesCallToCallRecording({
         apiKey: apiKeyResult.apiKey,
-        client,
+        coreApiClient,
         transcriptId,
         field,
+        callRecordingFieldState: currentCallRecordingFieldState,
       }),
     );
   }
@@ -85,7 +117,9 @@ export const firefliesSyncCallHandler = async (
     .map((outcome) => outcome.field);
 
   const updatedResult = results.find(
-    (result): result is Extract<SyncFirefliesCallResult, { status: 'updated' }> =>
+    (
+      result,
+    ): result is Extract<SyncFirefliesCallResult, { status: 'updated' }> =>
       result.status === 'updated',
   );
 

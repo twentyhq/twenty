@@ -3,10 +3,8 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import {
-  CALL_RECORDING_REQUEST_STATUS,
-  CALL_RECORDING_STATUS,
-} from 'src/logic-functions/constants/call-recording-status';
+import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status.constant';
+import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status.constant';
 
 describe('App installation', () => {
   it('should find the installed Fireflies app in the applications list', async () => {
@@ -37,9 +35,8 @@ type GeneratedCoreSchemaRuntime = {
 };
 
 const getServerCallRecordingStatuses = async (): Promise<string[]> => {
-  const generatedCoreSchema = (await import(
-    'twenty-client-sdk/core'
-  )) as unknown as GeneratedCoreSchemaRuntime;
+  const generatedCoreSchema =
+    (await import('twenty-client-sdk/core')) as unknown as GeneratedCoreSchemaRuntime;
   const statusEnum = generatedCoreSchema.enumCallRecordingStatusEnum;
 
   if (statusEnum === undefined) {
