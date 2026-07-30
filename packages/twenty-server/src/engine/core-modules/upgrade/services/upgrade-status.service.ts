@@ -101,9 +101,6 @@ export class UpgradeStatusService {
     };
   }
 
-  // The version the instance itself has reached, independently of any
-  // workspace. Used to decide whether this server can host an app declaring an
-  // `engines.twenty` range.
   async getInstanceCompletedVersion(): Promise<string | null> {
     const cursor =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
