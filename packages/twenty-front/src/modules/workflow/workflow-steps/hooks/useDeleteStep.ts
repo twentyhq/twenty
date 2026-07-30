@@ -1,6 +1,7 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
@@ -21,11 +22,12 @@ export const useDeleteStep = () => {
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+  const flow = useAtomComponentStateValue(flowComponentState);
 
   const deleteStep = async (stepId: string) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const steps = workflow?.currentVersion?.steps;
+    const steps = flow?.steps;
     const stepToDelete = isDefined(steps)
       ? steps.find((step) => step.id === stepId)
       : undefined;

@@ -6,6 +6,7 @@ import {
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -33,6 +34,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     workflowVisualizerWorkflowId,
   );
+  const flow = useAtomComponentStateValue(flowComponentState);
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { closeRightClickMenu } = useCloseRightClickMenu();
@@ -81,7 +83,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
       return;
     }
 
-    const steps = workflowWithCurrentVersion?.currentVersion?.steps;
+    const steps = flow?.steps;
     const parentStep =
       isDefined(parentStepId) && isDefined(steps) && isDefined(position)
         ? steps.find((step) => step.id === parentStepId)
