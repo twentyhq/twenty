@@ -12,13 +12,23 @@ import { postToOwnRoute } from 'src/utils/post-to-own-route';
 
 // Seeds the backfill lock at the first phase and hands off to the orchestrator,
 // which walks every record in small batches while keeping updates sequential.
-const handler = async (): Promise<void> => {
+// The kv-store entry doubles as a lock: if one already exists a backfill is
+// still running, so we leave it alone instead of starting a second one.
+const handler = async (): Promise<object> => {
+  const existingState = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
+
+  if (existingState) {
+    return { outcome: 'already-running', phase: existingState.phase };
+  }
+
   await kv.set<BackfillState>(BACKFILL_STATE_KV_KEY, {
     phase: BACKFILL_PHASE_ORDER[0],
     cursor: null,
   });
 
   await postToOwnRoute({ path: BACKFILL_ORCHESTRATOR_ROUTE_PATH, body: {} });
+
+  return { outcome: 'started' };
 };
 
 export default definePostInstallLogicFunction({
