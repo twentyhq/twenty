@@ -59,12 +59,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'monthly',
-    description: msg`Attio's Pro plan lists at $79/user/month and SSO needs Enterprise. Twenty offers the same modern CRM from $9 per user, open source and self-hostable.`,
-    id: 'comparePricingAttio',
+    description: msg`SAP Sales Cloud lists at $134/user/month before a year-one implementation project that often exceeds the licenses. Compare with Twenty, from $9 per user.`,
+    id: 'comparePricingSap',
     indexed: true,
-    path: '/compare-pricing/attio',
+    path: '/compare-pricing/sap-sales-cloud',
     priority: 0.7,
-    title: msg`Twenty vs Attio Pricing — The Real Cost Compared`,
+    title: msg`Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared`,
   },
   {
     changeFrequency: 'monthly',

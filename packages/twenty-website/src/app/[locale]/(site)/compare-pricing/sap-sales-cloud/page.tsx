@@ -5,12 +5,12 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
 import { ComparePage } from '@/sections/compare/ComparePage';
-import { ATTIO_COMPARISON } from '@/sections/compare/compare-data';
+import { SAP_COMPARISON } from '@/sections/compare/compare-data';
 import { Menu } from '@/sections/menu';
 
-export const generateMetadata = buildRouteMetadata('comparePricingAttio');
+export const generateMetadata = buildRouteMetadata('comparePricingSap');
 
-export default async function CompareAttioPricingPage({
+export default async function CompareSapPricingPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
@@ -24,7 +24,7 @@ export default async function CompareAttioPricingPage({
     <>
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <ComparePage comparison={ATTIO_COMPARISON} />
+        <ComparePage comparison={SAP_COMPARISON} />
       </main>
     </>
   );

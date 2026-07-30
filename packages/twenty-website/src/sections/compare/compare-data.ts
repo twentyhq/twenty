@@ -51,7 +51,7 @@ export type CompetitorComparison = {
 
 const HUBSPOT_PRICING_URL = 'https://www.hubspot.com/pricing/sales';
 const SALESFORCE_PRICING_URL = 'https://www.salesforce.com/sales/pricing/';
-const ATTIO_PRICING_URL = 'https://attio.com/pricing';
+// const ATTIO_PRICING_URL = 'https://attio.com/pricing';
 const PIPEDRIVE_PRICING_URL = 'https://www.pipedrive.com/en/pricing';
 const DYNAMICS_PRICING_URL =
   'https://www.microsoft.com/en-us/dynamics-365/products/sales/pricing';
@@ -247,90 +247,92 @@ export const SALESFORCE_COMPARISON: CompetitorComparison = {
   sourceNote: msg`List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
-export const ATTIO_COMPARISON: CompetitorComparison = {
-  competitor: 'Attio',
-  competitorColumnLabel: msg`On Attio`,
-  eyebrow: msg`Twenty vs Attio`,
-  heading: msg`What does\n*Attio* really cost?`,
-  intro: msg`Both are modern CRMs. One is open source.\nHere is the price of the difference.`,
-  migrationLine: msg`Import your data and see your own numbers. Moving a workspace from Attio usually takes an afternoon.`,
-  slug: 'attio',
-  tableTitle: msg`The same features, priced differently`,
-  rows: [
-    {
-      feature: msg`The modern CRM`,
-      description: msg`Objects, pipelines, email sync`,
-      competitor: {
-        price: msg`$35/user/mo`,
-        detail: msg`Plus plan, billed annually`,
-        sourceUrl: ATTIO_PRICING_URL,
-      },
-      twenty: { detail: msg`$9/user on Pro` },
-    },
-    {
-      feature: msg`The full platform`,
-      description: msg`Advanced reporting and workflows`,
-      competitor: {
-        price: msg`$79/user/mo`,
-        detail: msg`Pro plan, billed annually`,
-        sourceUrl: ATTIO_PRICING_URL,
-      },
-      twenty: { detail: msg`Included from Pro, $9/user` },
-    },
-    {
-      feature: msg`SAML SSO & advanced admin`,
-      description: msg`Single sign-on, access control`,
-      competitor: {
-        price: msg`Custom pricing`,
-        detail: msg`Enterprise plan only`,
-        sourceUrl: ATTIO_PRICING_URL,
-      },
-      twenty: { detail: msg`Organization, $19/user` },
-    },
-    {
-      feature: msg`Cost per workflow run`,
-      description: msg`An automation that writes a record`,
-      competitor: {
-        price: msg`From ≈ 1.5¢/run`,
-        detail: msg`One credit per data-writing block, $150 per 10k credits`,
-        sourceUrl: ATTIO_PRICING_URL,
-      },
-      twenty: { detail: msg`Credit allowance included with every plan` },
-    },
-    {
-      feature: msg`Source code`,
-      description: msg`Audit it, extend it, own it`,
-      competitor: {
-        price: msg`Closed`,
-        detail: msg`Proprietary`,
-      },
-      twenty: { detail: msg`Open source` },
-    },
-  ],
-  receipt: {
-    scenario: msg`A 20-person team, billed annually`,
-    competitorLines: [
-      { label: msg`20 × Pro ($79)`, amount: msg`$18,960/yr` },
-      {
-        label: msg`SSO & advanced admin`,
-        amount: msg`Enterprise upgrade`,
-      },
-    ],
-    competitorTotalAmount: msg`$18,960+`,
-    competitorTotalSuffix: msg`per year`,
-    competitorPerUser: msg`$79 per user per month, before Enterprise`,
-    twentyLines: [
-      { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
-      { label: msg`SSO & advanced admin`, amount: msg`Included` },
-    ],
-    twentyTotalAmount: msg`$4,560`,
-    twentyTotalSuffix: msg`per year`,
-    twentyPerUser: msg`$19 per user per month, SSO included`,
-    multiplier: msg`≈ 4× less`,
-  },
-  honest: msg`Attio is a polished, fast product with strong built-in enrichment. If you never need to extend or own your CRM, it is a credible pick.`,
-  sourceNote: msg`List prices from Attio's public pricing page, billed annually, checked on July 30, 2026.`,
-};
+// The Attio comparison is parked for now (may return later). The data is
+// kept commented so it only needs re-verification to come back.
+// export const ATTIO_COMPARISON: CompetitorComparison = {
+//   competitor: 'Attio',
+//   competitorColumnLabel: msg`On Attio`,
+//   eyebrow: msg`Twenty vs Attio`,
+//   heading: msg`What does\n*Attio* really cost?`,
+//   intro: msg`Both are modern CRMs. One is open source.\nHere is the price of the difference.`,
+//   migrationLine: msg`Import your data and see your own numbers. Moving a workspace from Attio usually takes an afternoon.`,
+//   slug: 'attio',
+//   tableTitle: msg`The same features, priced differently`,
+//   rows: [
+//     {
+//       feature: msg`The modern CRM`,
+//       description: msg`Objects, pipelines, email sync`,
+//       competitor: {
+//         price: msg`$35/user/mo`,
+//         detail: msg`Plus plan, billed annually`,
+//         sourceUrl: ATTIO_PRICING_URL,
+//       },
+//       twenty: { detail: msg`$9/user on Pro` },
+//     },
+//     {
+//       feature: msg`The full platform`,
+//       description: msg`Advanced reporting and workflows`,
+//       competitor: {
+//         price: msg`$79/user/mo`,
+//         detail: msg`Pro plan, billed annually`,
+//         sourceUrl: ATTIO_PRICING_URL,
+//       },
+//       twenty: { detail: msg`Included from Pro, $9/user` },
+//     },
+//     {
+//       feature: msg`SAML SSO & advanced admin`,
+//       description: msg`Single sign-on, access control`,
+//       competitor: {
+//         price: msg`Custom pricing`,
+//         detail: msg`Enterprise plan only`,
+//         sourceUrl: ATTIO_PRICING_URL,
+//       },
+//       twenty: { detail: msg`Organization, $19/user` },
+//     },
+//     {
+//       feature: msg`Cost per workflow run`,
+//       description: msg`An automation that writes a record`,
+//       competitor: {
+//         price: msg`From ≈ 1.5¢/run`,
+//         detail: msg`One credit per data-writing block, $150 per 10k credits`,
+//         sourceUrl: ATTIO_PRICING_URL,
+//       },
+//       twenty: { detail: msg`Credit allowance included with every plan` },
+//     },
+//     {
+//       feature: msg`Source code`,
+//       description: msg`Audit it, extend it, own it`,
+//       competitor: {
+//         price: msg`Closed`,
+//         detail: msg`Proprietary`,
+//       },
+//       twenty: { detail: msg`Open source` },
+//     },
+//   ],
+//   receipt: {
+//     scenario: msg`A 20-person team, billed annually`,
+//     competitorLines: [
+//       { label: msg`20 × Pro ($79)`, amount: msg`$18,960/yr` },
+//       {
+//         label: msg`SSO & advanced admin`,
+//         amount: msg`Enterprise upgrade`,
+//       },
+//     ],
+//     competitorTotalAmount: msg`$18,960+`,
+//     competitorTotalSuffix: msg`per year`,
+//     competitorPerUser: msg`$79 per user per month, before Enterprise`,
+//     twentyLines: [
+//       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
+//       { label: msg`SSO & advanced admin`, amount: msg`Included` },
+//     ],
+//     twentyTotalAmount: msg`$4,560`,
+//     twentyTotalSuffix: msg`per year`,
+//     twentyPerUser: msg`$19 per user per month, SSO included`,
+//     multiplier: msg`≈ 4× less`,
+//   },
+//   honest: msg`Attio is a polished, fast product with strong built-in enrichment. If you never need to extend or own your CRM, it is a credible pick.`,
+//   sourceNote: msg`List prices from Attio's public pricing page, billed annually, checked on July 30, 2026.`,
+// };
 
 export const PIPEDRIVE_COMPARISON: CompetitorComparison = {
   competitor: 'Pipedrive',
@@ -503,4 +505,92 @@ export const DYNAMICS_COMPARISON: CompetitorComparison = {
   },
   honest: msg`If your company lives in Microsoft 365 and already runs on the Power Platform, Dynamics integrates like nothing else.`,
   sourceNote: msg`List prices from Microsoft's public Dynamics 365 pricing page, billed annually, checked on July 30, 2026.`,
+};
+
+const SAP_STORE_URL = 'https://store.sap.com';
+
+export const SAP_COMPARISON: CompetitorComparison = {
+  competitor: 'SAP Sales Cloud',
+  competitorColumnLabel: msg`On SAP`,
+  eyebrow: msg`Twenty vs SAP Sales Cloud`,
+  heading: msg`What does\n*SAP Sales Cloud* really cost?`,
+  intro: msg`The license is the cheap part.\nHere is what SAP Sales Cloud costs by the time it goes live.`,
+  migrationLine: msg`Import your data and see your own numbers. No six-month implementation project required.`,
+  slug: 'sap-sales-cloud',
+  tableTitle: msg`Enterprise software, enterprise line items`,
+  rows: [
+    {
+      feature: msg`The CRM itself`,
+      description: msg`Sales Cloud V2, per user`,
+      competitor: {
+        price: msg`$134/user/mo`,
+        detail: msg`SAP Store list price`,
+        sourceUrl: SAP_STORE_URL,
+      },
+      twenty: { detail: msg`$9 to $19/user, everything included` },
+    },
+    {
+      feature: msg`Contract terms`,
+      description: msg`How long you are committed`,
+      competitor: {
+        price: msg`Up to 36 months`,
+        detail: msg`Auto-renewing term contracts`,
+        sourceUrl: SAP_STORE_URL,
+      },
+      twenty: { detail: msg`Monthly or yearly, cancel anytime` },
+    },
+    {
+      feature: msg`Implementation`,
+      description: msg`Getting to a working CRM`,
+      competitor: {
+        price: msg`$40k to $150k+`,
+        detail: msg`Typical partner project, year one`,
+      },
+      twenty: { detail: msg`Self-serve, partners optional` },
+    },
+    {
+      feature: msg`Integration`,
+      description: msg`Connecting the rest of your stack`,
+      competitor: {
+        price: msg`Project-based`,
+        detail: msg`Middleware licensed separately`,
+      },
+      twenty: { detail: msg`REST & GraphQL APIs included` },
+    },
+    {
+      feature: msg`Price transparency`,
+      description: msg`Can you see the bill coming?`,
+      competitor: {
+        price: msg`Quote-based`,
+        detail: msg`Enterprise rate cards are rarely published`,
+      },
+      twenty: { detail: msg`Public pricing, this page included` },
+    },
+  ],
+  receipt: {
+    scenario: msg`A 20-person sales team, billed annually`,
+    competitorLines: [
+      {
+        label: msg`20 × Sales Cloud V2 ($134)`,
+        amount: msg`$32,160/yr`,
+      },
+      {
+        label: msg`Implementation project (year one, typical)`,
+        amount: msg`$40,000+`,
+      },
+    ],
+    competitorTotalAmount: msg`$72,160+`,
+    competitorTotalSuffix: msg`in year one`,
+    competitorPerUser: msg`≈ $300 per user per month in year one`,
+    twentyLines: [
+      { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
+      { label: msg`Implementation`, amount: msg`$0` },
+    ],
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`in year one`,
+    twentyPerUser: msg`$19 per user per month, that's it`,
+    multiplier: msg`≈ 15× less`,
+  },
+  honest: msg`If your business already runs on S/4HANA, Sales Cloud speaks its language natively and handles global-enterprise compliance at serious scale.`,
+  sourceNote: msg`License list price from the SAP Store, billed annually, checked on July 30, 2026. Implementation figures are typical partner-project ranges, not SAP list prices.`,
 };
