@@ -5,7 +5,7 @@ import { releaseSlackTeam } from 'src/logic-functions/utils/release-slack-team';
 
 type ReleaseAllSlackTeamsResult = {
   ok: true;
-  teamIds: string[];
+  releasedTeamIds: string[];
 };
 
 export const releaseAllSlackTeams =
@@ -20,8 +20,8 @@ export const releaseAllSlackTeams =
 
     return {
       ok: true,
-      teamIds: results
-        .map((result) => result.teamId)
+      releasedTeamIds: results
+        .map((result) => result.releasedTeamId)
         .filter((teamId): teamId is string => isNonEmptyString(teamId)),
     };
   };

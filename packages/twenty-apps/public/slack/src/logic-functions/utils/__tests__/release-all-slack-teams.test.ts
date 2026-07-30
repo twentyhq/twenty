@@ -36,7 +36,10 @@ describe('releaseAllSlackTeams', () => {
     expect(kvDeleteMock).toHaveBeenCalledWith('slack-team:T456', {
       scope: 'SERVER',
     });
-    expect(result).toEqual({ ok: true, teamIds: ['T123', 'T456'] });
+    expect(result).toEqual({
+      ok: true,
+      releasedTeamIds: ['T123', 'T456'],
+    });
   });
 
   it('should report no teams when the connections never recorded one', async () => {
@@ -46,7 +49,7 @@ describe('releaseAllSlackTeams', () => {
     const result = await releaseAllSlackTeams();
 
     expect(kvDeleteMock).not.toHaveBeenCalled();
-    expect(result).toEqual({ ok: true, teamIds: [] });
+    expect(result).toEqual({ ok: true, releasedTeamIds: [] });
   });
 
   it('should do nothing when the app has no Slack connection left', async () => {
@@ -55,6 +58,6 @@ describe('releaseAllSlackTeams', () => {
     const result = await releaseAllSlackTeams();
 
     expect(kvGetMock).not.toHaveBeenCalled();
-    expect(result).toEqual({ ok: true, teamIds: [] });
+    expect(result).toEqual({ ok: true, releasedTeamIds: [] });
   });
 });
