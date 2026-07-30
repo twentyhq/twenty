@@ -60,9 +60,11 @@ describe('ImapSmtpCalDavAPIService', () => {
   let service: ImapSmtpCalDavAPIService;
 
   const mockTransactionManagerSave = jest.fn();
+  const mockTransactionManagerUpdate = jest.fn();
   const mockTransactionManager = {
     getRepository: jest.fn().mockReturnValue({
       save: mockTransactionManagerSave,
+      update: mockTransactionManagerUpdate,
     }),
   };
 
@@ -284,6 +286,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
+        archivedAt: null,
       });
 
       expect(
@@ -363,6 +366,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
+        archivedAt: null,
       });
 
       expect(
@@ -396,6 +400,59 @@ describe('ImapSmtpCalDavAPIService', () => {
           workspaceId: 'workspace-id',
           calendarChannelId: 'existing-calendar-channel-id',
         },
+      );
+    });
+
+    it('should re-enable sync on existing channels when reconnecting an archived account', async () => {
+      const archivedAccount = {
+        id: 'archived-account-id',
+        handle: 'test@example.com',
+        userWorkspaceId: 'user-workspace-id',
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        archivedAt: new Date('2026-01-01'),
+      } as ConnectedAccountEntity;
+
+      const existingMessageChannel = {
+        id: 'existing-message-channel-id',
+        connectedAccountId: 'archived-account-id',
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      } as MessageChannelEntity;
+
+      const existingCalendarChannel = {
+        id: 'existing-calendar-channel-id',
+        connectedAccountId: 'archived-account-id',
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+      } as CalendarChannelEntity;
+
+      mockConnectedAccountRepository.findOne.mockResolvedValue(archivedAccount);
+      mockMessageChannelRepository.findOne.mockResolvedValue(
+        existingMessageChannel,
+      );
+      mockCalendarChannelRepository.findOne.mockResolvedValue(
+        existingCalendarChannel,
+      );
+      mockWorkspaceMemberRepository.findOne.mockResolvedValue({
+        id: 'workspace-member-id',
+        userId: 'user-id',
+      });
+      mockUserWorkspaceRepository.findOne.mockResolvedValue({
+        id: 'user-workspace-id',
+        userId: 'user-id',
+      });
+
+      await service.upsertConnectedAccount(baseInput);
+
+      expect(mockTransactionManagerSave).toHaveBeenCalledWith(
+        expect.objectContaining({ archivedAt: null }),
+      );
+
+      expect(mockTransactionManagerUpdate).toHaveBeenCalledWith(
+        { id: 'existing-message-channel-id', workspaceId: 'workspace-id' },
+        { isSyncEnabled: true },
+      );
+      expect(mockTransactionManagerUpdate).toHaveBeenCalledWith(
+        { id: 'existing-calendar-channel-id', workspaceId: 'workspace-id' },
+        { isSyncEnabled: true },
       );
     });
 
@@ -672,6 +729,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
+        archivedAt: null,
       });
     });
 
