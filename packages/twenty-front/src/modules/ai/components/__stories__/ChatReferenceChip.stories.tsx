@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { formatChatReference } from '@/ai/utils/formatChatReference';
@@ -94,6 +95,24 @@ export const ExistingMetadata: Story = {
       displayName: allCompaniesView.name,
     })} view.`,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect((await canvas.findByText('Companies')).closest('a')).toHaveAttribute(
+      'href',
+      `/objects/${companyObjectMetadataItem.namePlural}`,
+    );
+    expect((await canvas.findByText('Employees')).closest('a')).toHaveAttribute(
+      'href',
+      `/settings/objects/${companyObjectMetadataItem.namePlural}/${employeesFieldMetadataItem.name}`,
+    );
+    expect(
+      (await canvas.findByText('All Companies')).closest('a'),
+    ).toHaveAttribute(
+      'href',
+      `/objects/${companyObjectMetadataItem.namePlural}?viewId=${allCompaniesView.id}`,
+    );
+  },
 };
 
 export const ProposedObject: Story = {
@@ -105,5 +124,13 @@ export const ProposedObject: Story = {
         displayName: 'Partners',
       },
     )} object to track relationship status, partner type, owner, and next step. Should I create it?`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const proposedObjectChipLabel = await canvas.findByText('Partners');
+
+    expect(proposedObjectChipLabel).toBeVisible();
+    expect(proposedObjectChipLabel.closest('a')).toBeNull();
   },
 };
