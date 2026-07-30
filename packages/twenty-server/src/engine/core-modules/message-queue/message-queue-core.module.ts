@@ -10,6 +10,8 @@ import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/d
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { ThrottledMessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/throttled-message-queue.driver';
+import { JobEnqueueThrottlerGuard } from 'src/engine/core-modules/message-queue/guards/job-enqueue-throttler.guard';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import {
   MessageQueue,
@@ -23,6 +25,7 @@ import {
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Global()
 @Module({})
@@ -34,17 +37,27 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
-      useFactory: () => {
-        return this.createDriver(options);
+      useFactory: async (guard: JobEnqueueThrottlerGuard) => {
+        return new ThrottledMessageQueueDriver(
+          await this.createDriver(options),
+          guard,
+        );
       },
+      inject: [JobEnqueueThrottlerGuard],
     };
 
     const queueProviders = this.createQueueProviders();
 
     return {
       ...dynamicModule,
+      imports: [
+        ...(dynamicModule.imports ?? []),
+        MetricsModule,
+        ThrottlerModule,
+      ],
       providers: [
         ...(dynamicModule.providers ?? []),
+        JobEnqueueThrottlerGuard,
         driverProvider,
         ...queueProviders,
       ],
@@ -62,25 +75,36 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
-      // oxlint-disable-next-line typescript/no-explicit-any
-      useFactory: async (...args: any[]) => {
+      useFactory: async (
+        guard: JobEnqueueThrottlerGuard,
+        // oxlint-disable-next-line typescript/no-explicit-any
+        ...args: any[]
+      ) => {
         if (options.useFactory) {
           const config = await options.useFactory(...args);
 
-          return this.createDriver(config);
+          return new ThrottledMessageQueueDriver(
+            await this.createDriver(config),
+            guard,
+          );
         }
         throw new Error('useFactory is not defined');
       },
-      inject: options.inject || [],
+      inject: [JobEnqueueThrottlerGuard, ...(options.inject || [])],
     };
 
     const queueProviders = MessageQueueCoreModule.createQueueProviders();
 
     return {
       ...dynamicModule,
-      imports: [...(dynamicModule.imports ?? []), MetricsModule],
+      imports: [
+        ...(dynamicModule.imports ?? []),
+        MetricsModule,
+        ThrottlerModule,
+      ],
       providers: [
         ...(dynamicModule.providers ?? []),
+        JobEnqueueThrottlerGuard,
         driverProvider,
         ...queueProviders,
       ],
