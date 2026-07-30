@@ -585,7 +585,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(result.status).toBe('noop');
     });
 
-    it('should noop when the object has no active INDEX view', () => {
+    it('should emit a view field on a deactivated INDEX view', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: PRIORITY_FIELD,
@@ -602,7 +602,21 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
         }),
       );
 
-      expect(result.status).toBe('noop');
+      expect(result.status).toBe('success');
+
+      if (result.status !== 'success') {
+        throw new Error('expected success');
+      }
+
+      const viewFields = Object.values(
+        result.operations.viewField?.flatEntityToCreate ?? {},
+      );
+
+      expect(viewFields).toHaveLength(1);
+      expect(viewFields[0].viewUniversalIdentifier).toBe(
+        DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      );
+      expect(viewFields[0].isVisible).toBe(true);
     });
   });
 
