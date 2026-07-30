@@ -156,7 +156,11 @@ export class ImapSmtpCalDavAPIService {
           });
         }
 
-        if (wasArchived && isDefined(existingMessageChannel) && isDefined(input.connectionParameters.IMAP)) {
+        if (
+          wasArchived &&
+          isDefined(existingMessageChannel) &&
+          isDefined(input.connectionParameters.IMAP)
+        ) {
           await transactionManager
             .getRepository(MessageChannelEntity)
             .update(
@@ -165,7 +169,11 @@ export class ImapSmtpCalDavAPIService {
             );
         }
 
-        if (wasArchived && isDefined(existingCalendarChannel) && isDefined(input.connectionParameters.CALDAV)) {
+        if (
+          wasArchived &&
+          isDefined(existingCalendarChannel) &&
+          isDefined(input.connectionParameters.CALDAV)
+        ) {
           await transactionManager
             .getRepository(CalendarChannelEntity)
             .update(
