@@ -142,9 +142,6 @@ export class FileUploadService {
     });
   }
 
-  // Resolves where a client should PUT the bytes of an already-created PENDING
-  // file: the storage presigned url when the driver supports it, otherwise the
-  // token-authenticated streaming endpoint on the server.
   async buildUploadTarget({
     workspaceId,
     fileId,
@@ -409,9 +406,6 @@ export class FileUploadService {
     });
   }
 
-  // Sniffs the mime type of bytes that already landed in storage. The client
-  // declared nothing trustworthy at createFileUpload time (the upload target
-  // is always octet-stream), so the real type is only knowable here.
   async detectUploadedMimeTypeOrThrow({
     fileFolder,
     applicationUniversalIdentifier,

@@ -20,23 +20,12 @@ export type FileUploadFailure = {
   error: string;
 };
 
-// Bounds how many files are in flight against storage at once: the batch is
-// already reserved server-side, only the PUTs are throttled here.
 const DIRECT_UPLOAD_CONCURRENCY = 10;
-
-// A server that predates the batched mutations rejects the query at
-// validation time, before any file is touched.
-const isDirectUploadUnsupportedError = (error: string): boolean =>
-  error.includes('createApplicationFileUploads') &&
-  (error.includes('Cannot query field') ||
-    error.includes('Unknown type') ||
-    error.includes('Unknown argument'));
 
 export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
   private appPath: string;
-  private supportsDirectUpload = true;
 
   constructor(options: {
     applicationUniversalIdentifier: string;
@@ -47,27 +36,6 @@ export class FileUploader {
     this.appPath = options.appPath;
   }
 
-  async uploadFile({
-    builtPath,
-    fileFolder,
-  }: {
-    builtPath: string;
-    fileFolder: FileFolder;
-  }) {
-    const builtHandlerPath = relative(OUTPUT_DIR, builtPath);
-
-    return await this.apiService.uploadFile({
-      filePath: path.join(this.appPath, builtPath),
-      builtHandlerPath,
-      fileFolder,
-      applicationUniversalIdentifier: this.applicationUniversalIdentifier,
-    });
-  }
-
-  // Uploads every file through the direct-upload flow: one call reserves a
-  // batch of upload urls, the bytes go straight to storage, one call confirms
-  // them. A whole app therefore costs a couple of rate-limited api calls per
-  // batch instead of one per file, which is what makes large apps deployable.
   async uploadFiles(files: FileToUpload[]): Promise<FileUploadFailure[]> {
     const failures: FileUploadFailure[] = [];
 
@@ -81,11 +49,7 @@ export class FileUploader {
         index + APPLICATION_FILE_UPLOAD_BATCH_SIZE,
       );
 
-      failures.push(
-        ...(await (this.supportsDirectUpload
-          ? this.uploadBatch(batch)
-          : this.uploadBatchOneByOne(batch))),
-      );
+      failures.push(...(await this.uploadBatch(batch)));
     }
 
     return failures;
@@ -108,15 +72,7 @@ export class FileUploader {
     });
 
     if (!createResult.success) {
-      const error = serializeError(createResult.error);
-
-      if (isDirectUploadUnsupportedError(error)) {
-        this.supportsDirectUpload = false;
-
-        return this.uploadBatchOneByOne(batch);
-      }
-
-      return this.failWholeBatch(batch, error);
+      return this.failWholeBatch(batch, serializeError(createResult.error));
     }
 
     const uploadTargets = createResult.data;
@@ -162,8 +118,6 @@ export class FileUploader {
     );
 
     if (!completeResult.success) {
-      // The bytes reached storage but the records were never confirmed, so
-      // everything that was not already reported has to be retried too.
       const uploadedFiles = batch.filter(
         (file) =>
           !failures.some((failure) => failure.builtPath === file.builtPath),
@@ -177,28 +131,6 @@ export class FileUploader {
         ),
       ];
     }
-
-    return failures;
-  }
-
-  // Servers older than the direct-upload mutations still accept the one
-  // multipart call per file, so a newer cli keeps working against them — it
-  // just stays exposed to the rate limit that motivated the batched flow.
-  private async uploadBatchOneByOne(
-    batch: FileToUpload[],
-  ): Promise<FileUploadFailure[]> {
-    const failures: FileUploadFailure[] = [];
-
-    await this.runWithConcurrency(batch, async (file) => {
-      const result = await this.uploadFile(file);
-
-      if (!result.success) {
-        failures.push({
-          builtPath: file.builtPath,
-          error: serializeError(result.error),
-        });
-      }
-    });
 
     return failures;
   }

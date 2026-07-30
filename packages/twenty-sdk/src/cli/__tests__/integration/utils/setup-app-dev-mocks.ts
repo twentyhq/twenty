@@ -29,7 +29,6 @@ const mockApiService = {
     data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
   }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
-  uploadFile: vi.fn().mockResolvedValue({ success: true, data: true }),
   getSchema: vi
     .fn()
     .mockResolvedValue({ success: true, data: 'mock-core-schema' }),
@@ -47,14 +46,12 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
       mockApiService.createApplicationRegistration;
     createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
-    uploadFile = mockApiService.uploadFile;
     getSchema = mockApiService.getSchema;
   },
 }));
 
 vi.mock('@/cli/utilities/file/file-uploader', () => ({
   FileUploader: class {
-    uploadFile = vi.fn().mockResolvedValue({ success: true, data: true });
     uploadFiles = vi.fn().mockResolvedValue([]);
   },
 }));

@@ -9,8 +9,6 @@ export class ApplicationFileUploadTargetDTO {
   @Field(() => UUIDScalarType)
   fileId: string;
 
-  // fileFolder and filePath are echoed back so the client can pair a target
-  // with the local file it requested it for, without relying on array order.
   @Field(() => FileFolder)
   fileFolder: FileFolder;
 
@@ -20,7 +18,6 @@ export class ApplicationFileUploadTargetDTO {
   @Field()
   uploadUrl: string;
 
-  // Content-Type header the client must send when uploading to uploadUrl
   @Field()
   contentType: string;
 
