@@ -2170,6 +2170,26 @@ export interface UsageAnalytics {
     __typename: 'UsageAnalytics'
 }
 
+export interface File {
+    id: Scalars['UUID']
+    path: Scalars['String']
+    size: Scalars['Float']
+    createdAt: Scalars['DateTime']
+    __typename: 'File'
+}
+
+export interface ApplicationFileCompletionError {
+    fileId: Scalars['UUID']
+    message: Scalars['String']
+    __typename: 'ApplicationFileCompletionError'
+}
+
+export interface CompleteApplicationFileUploadsResult {
+    files: File[]
+    errors: ApplicationFileCompletionError[]
+    __typename: 'CompleteApplicationFileUploadsResult'
+}
+
 export interface ApplicationFileUploadTarget {
     fileId: Scalars['UUID']
     fileFolder: FileFolder
@@ -2182,6 +2202,19 @@ export interface ApplicationFileUploadTarget {
 
 export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
+export interface ApplicationFileUploadError {
+    fileFolder: FileFolder
+    filePath: Scalars['String']
+    message: Scalars['String']
+    __typename: 'ApplicationFileUploadError'
+}
+
+export interface CreateApplicationFileUploadsResult {
+    targets: ApplicationFileUploadTarget[]
+    errors: ApplicationFileUploadError[]
+    __typename: 'CreateApplicationFileUploadsResult'
+}
+
 export interface DevelopmentApplication {
     id: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -2192,14 +2225,6 @@ export interface WorkspaceMigration {
     applicationUniversalIdentifier: Scalars['String']
     actions: Scalars['JSON']
     __typename: 'WorkspaceMigration'
-}
-
-export interface File {
-    id: Scalars['UUID']
-    path: Scalars['String']
-    size: Scalars['Float']
-    createdAt: Scalars['DateTime']
-    __typename: 'File'
 }
 
 export interface PublicDomain {
@@ -3139,8 +3164,8 @@ export interface Mutation {
     createDevelopmentApplication: DevelopmentApplication
     syncApplication: WorkspaceMigration
     uploadApplicationFile: File
-    createApplicationFileUploads: ApplicationFileUploadTarget[]
-    completeApplicationFileUploads: File[]
+    createApplicationFileUploads: CreateApplicationFileUploadsResult
+    completeApplicationFileUploads: CompleteApplicationFileUploadsResult
     generateApplicationToken: ApplicationTokenPair
     renewApplicationToken: ApplicationTokenPair
     __typename: 'Mutation'
@@ -5434,6 +5459,29 @@ export interface UsageAnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface FileGenqlSelection{
+    id?: boolean | number
+    path?: boolean | number
+    size?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationFileCompletionErrorGenqlSelection{
+    fileId?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CompleteApplicationFileUploadsResultGenqlSelection{
+    files?: FileGenqlSelection
+    errors?: ApplicationFileCompletionErrorGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationFileUploadTargetGenqlSelection{
     fileId?: boolean | number
     fileFolder?: boolean | number
@@ -5441,6 +5489,21 @@ export interface ApplicationFileUploadTargetGenqlSelection{
     uploadUrl?: boolean | number
     contentType?: boolean | number
     expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationFileUploadErrorGenqlSelection{
+    fileFolder?: boolean | number
+    filePath?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CreateApplicationFileUploadsResultGenqlSelection{
+    targets?: ApplicationFileUploadTargetGenqlSelection
+    errors?: ApplicationFileUploadErrorGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5455,15 +5518,6 @@ export interface DevelopmentApplicationGenqlSelection{
 export interface WorkspaceMigrationGenqlSelection{
     applicationUniversalIdentifier?: boolean | number
     actions?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FileGenqlSelection{
-    id?: boolean | number
-    path?: boolean | number
-    size?: boolean | number
-    createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6464,8 +6518,8 @@ export interface MutationGenqlSelection{
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
-    createApplicationFileUploads?: (ApplicationFileUploadTargetGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
-    completeApplicationFileUploads?: (FileGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
+    createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
+    completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
     __typename?: boolean | number
@@ -8486,10 +8540,50 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const File_possibleTypes: string[] = ['File']
+    export const isFile = (obj?: { __typename?: any } | null): obj is File => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
+      return File_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationFileCompletionError_possibleTypes: string[] = ['ApplicationFileCompletionError']
+    export const isApplicationFileCompletionError = (obj?: { __typename?: any } | null): obj is ApplicationFileCompletionError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileCompletionError"')
+      return ApplicationFileCompletionError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CompleteApplicationFileUploadsResult_possibleTypes: string[] = ['CompleteApplicationFileUploadsResult']
+    export const isCompleteApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CompleteApplicationFileUploadsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCompleteApplicationFileUploadsResult"')
+      return CompleteApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationFileUploadTarget_possibleTypes: string[] = ['ApplicationFileUploadTarget']
     export const isApplicationFileUploadTarget = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadTarget => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadTarget"')
       return ApplicationFileUploadTarget_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationFileUploadError_possibleTypes: string[] = ['ApplicationFileUploadError']
+    export const isApplicationFileUploadError = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadError"')
+      return ApplicationFileUploadError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateApplicationFileUploadsResult_possibleTypes: string[] = ['CreateApplicationFileUploadsResult']
+    export const isCreateApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CreateApplicationFileUploadsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationFileUploadsResult"')
+      return CreateApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8506,14 +8600,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isWorkspaceMigration = (obj?: { __typename?: any } | null): obj is WorkspaceMigration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMigration"')
       return WorkspaceMigration_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const File_possibleTypes: string[] = ['File']
-    export const isFile = (obj?: { __typename?: any } | null): obj is File => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
-      return File_possibleTypes.includes(obj.__typename)
     }
     
 

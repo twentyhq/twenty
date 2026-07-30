@@ -2478,6 +2478,23 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type File {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+}
+
+type ApplicationFileCompletionError {
+  fileId: UUID!
+  message: String!
+}
+
+type CompleteApplicationFileUploadsResult {
+  files: [File!]!
+  errors: [ApplicationFileCompletionError!]!
+}
+
 type ApplicationFileUploadTarget {
   fileId: UUID!
   fileFolder: FileFolder!
@@ -2503,6 +2520,17 @@ enum FileFolder {
   Dpa
 }
 
+type ApplicationFileUploadError {
+  fileFolder: FileFolder!
+  filePath: String!
+  message: String!
+}
+
+type CreateApplicationFileUploadsResult {
+  targets: [ApplicationFileUploadTarget!]!
+  errors: [ApplicationFileUploadError!]!
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -2511,13 +2539,6 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
-}
-
-type File {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
 }
 
 type PublicDomain {
@@ -3633,8 +3654,8 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
-  createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): [ApplicationFileUploadTarget!]!
-  completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): [File!]!
+  createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
+  completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }

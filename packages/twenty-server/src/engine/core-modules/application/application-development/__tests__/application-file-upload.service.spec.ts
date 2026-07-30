@@ -1,17 +1,12 @@
-import { Readable } from 'stream';
-
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FileFolder } from 'twenty-shared/types';
 
-import { ApplicationDevelopmentThrottlerService } from 'src/engine/core-modules/application/application-development/application-development-throttler.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -27,51 +22,37 @@ describe('ApplicationFileUploadService', () => {
     }),
   };
 
-  const applicationDevelopmentThrottlerService = {
-    throttlePerApplication: jest.fn().mockResolvedValue(undefined),
-  };
-
-  const fileStorageService = {
-    createPendingFile: jest.fn(),
-    getFileMetadata: jest.fn(),
-    readFile: jest.fn(),
-    writeFileStream: jest.fn(),
-  };
-
   const fileUploadService = {
-    buildUploadTarget: jest.fn(),
-    detectUploadedMimeTypeOrThrow: jest.fn(),
+    createUploadTargetsBatch: jest.fn(),
+    completeUploadsBatch: jest.fn(),
   };
 
   const fileRepository = {
     find: jest.fn(),
-    update: jest.fn(),
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    fileStorageService.createPendingFile.mockImplementation(({ fileId }) =>
-      Promise.resolve({ id: fileId }),
-    );
-    fileUploadService.buildUploadTarget.mockImplementation(({ fileId }) =>
-      Promise.resolve({
-        fileId,
-        uploadUrl: `https://storage.tld/${fileId}`,
-        contentType: 'application/octet-stream',
-        expiresAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
+    fileUploadService.createUploadTargetsBatch.mockImplementation(
+      (requests: { resourcePath: string }[]) =>
+        Promise.resolve(
+          requests.map((request, index) => ({
+            success: true,
+            value: {
+              fileId: `file-id-${index}`,
+              uploadUrl: `https://storage.tld/${request.resourcePath}`,
+              contentType: 'application/octet-stream',
+              expiresAt: new Date('2026-01-01T00:00:00.000Z'),
+            },
+          })),
+        ),
     );
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationFileUploadService,
         { provide: ApplicationService, useValue: applicationService },
-        {
-          provide: ApplicationDevelopmentThrottlerService,
-          useValue: applicationDevelopmentThrottlerService,
-        },
-        { provide: FileStorageService, useValue: fileStorageService },
         { provide: FileUploadService, useValue: fileUploadService },
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
@@ -86,8 +67,8 @@ describe('ApplicationFileUploadService', () => {
   });
 
   describe('createApplicationFileUploads', () => {
-    it('should return one upload target per requested file for a single throttled call', async () => {
-      const targets = await service.createApplicationFileUploads({
+    it('should return one upload target per valid file, delegating to the batch primitive', async () => {
+      const result = await service.createApplicationFileUploads({
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         files: [
@@ -104,17 +85,18 @@ describe('ApplicationFileUploadService', () => {
         ],
       });
 
-      expect(targets).toHaveLength(2);
-      expect(targets[0].filePath).toBe('handler.mjs');
-      expect(targets[0].fileFolder).toBe(FileFolder.BuiltLogicFunction);
-      expect(targets[0].uploadUrl).toContain('https://storage.tld/');
-      expect(targets[1].filePath).toBe('logo.png');
-      expect(
-        applicationDevelopmentThrottlerService.throttlePerApplication,
-      ).toHaveBeenCalledTimes(1);
+      expect(result.errors).toEqual([]);
+      expect(result.targets).toHaveLength(2);
+      expect(result.targets[0].filePath).toBe('handler.mjs');
+      expect(result.targets[0].fileFolder).toBe(FileFolder.BuiltLogicFunction);
+      expect(result.targets[0].uploadUrl).toContain('https://storage.tld/');
+      expect(result.targets[1].filePath).toBe('logo.png');
+      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
-    it('should create every pending file as octet-stream so it can be sniffed after upload', async () => {
+    it('should reserve pending files as octet-stream through the batch primitive', async () => {
       await service.createApplicationFileUploads({
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -127,35 +109,118 @@ describe('ApplicationFileUploadService', () => {
         ],
       });
 
-      expect(fileStorageService.createPendingFile).toHaveBeenCalledWith(
+      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith([
         expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          applicationId: 'application-id',
           fileFolder: FileFolder.Source,
           resourcePath: 'src/index.ts',
-          mimeType: 'application/octet-stream',
           size: 12,
         }),
+      ]);
+    });
+
+    it('should collect a per-file error and skip the batch for a disallowed file folder', async () => {
+      const result = await service.createApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        files: [
+          {
+            fileFolder: FileFolder.FilesField,
+            filePath: 'document.pdf',
+            size: 12,
+          },
+        ],
+      });
+
+      expect(result.targets).toEqual([]);
+      expect(result.errors).toEqual([
+        {
+          fileFolder: FileFolder.FilesField,
+          filePath: 'document.pdf',
+          message: expect.stringContaining('Invalid fileFolder'),
+        },
+      ]);
+      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith(
+        [],
       );
     });
 
-    it('should reject file folders that are not application file folders', async () => {
-      await expect(
-        service.createApplicationFileUploads({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          files: [
-            {
-              fileFolder: FileFolder.FilesField,
-              filePath: 'document.pdf',
-              size: 12,
-            },
-          ],
-        }),
-      ).rejects.toThrow(ApplicationException);
+    it('should fail slow: a path escaping the folder becomes a per-file error while valid files still upload', async () => {
+      const result = await service.createApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        files: [
+          {
+            fileFolder: FileFolder.Source,
+            filePath: 'src/index.ts',
+            size: 12,
+          },
+          {
+            fileFolder: FileFolder.Source,
+            filePath: '../../../etc/passwd',
+            size: 12,
+          },
+        ],
+      });
 
-      expect(fileStorageService.createPendingFile).not.toHaveBeenCalled();
+      expect(result.targets).toHaveLength(1);
+      expect(result.targets[0].filePath).toBe('src/index.ts');
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].filePath).toBe('../../../etc/passwd');
+      // Only the valid file reaches the batch primitive.
+      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith([
+        expect.objectContaining({ resourcePath: 'src/index.ts' }),
+      ]);
     });
 
-    it('should reject the whole batch when one path escapes the application folder', async () => {
+    it('should collect a per-file error for a file larger than the direct upload limit', async () => {
+      const result = await service.createApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        files: [
+          {
+            fileFolder: FileFolder.Source,
+            filePath: 'src/index.ts',
+            size: 2 * 1024 * 1024 * 1024,
+          },
+        ],
+      });
+
+      expect(result.targets).toEqual([]);
+      expect(result.errors[0].message).toContain('above the');
+    });
+
+    it('should surface a batch-primitive failure as a per-file error', async () => {
+      fileUploadService.createUploadTargetsBatch.mockResolvedValueOnce([
+        { success: false, error: 'storage exploded' },
+      ]);
+
+      const result = await service.createApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        files: [
+          {
+            fileFolder: FileFolder.Source,
+            filePath: 'src/index.ts',
+            size: 12,
+          },
+        ],
+      });
+
+      expect(result.targets).toEqual([]);
+      expect(result.errors).toEqual([
+        {
+          fileFolder: FileFolder.Source,
+          filePath: 'src/index.ts',
+          message: 'storage exploded',
+        },
+      ]);
+    });
+
+    it('should throw when the application does not exist in the workspace', async () => {
+      applicationService.findByUniversalIdentifier.mockResolvedValueOnce(null);
+
       await expect(
         service.createApplicationFileUploads({
           workspaceId: WORKSPACE_ID,
@@ -165,29 +230,6 @@ describe('ApplicationFileUploadService', () => {
               fileFolder: FileFolder.Source,
               filePath: 'src/index.ts',
               size: 12,
-            },
-            {
-              fileFolder: FileFolder.Source,
-              filePath: '../../../etc/passwd',
-              size: 12,
-            },
-          ],
-        }),
-      ).rejects.toThrow(ApplicationException);
-
-      expect(fileStorageService.createPendingFile).not.toHaveBeenCalled();
-    });
-
-    it('should reject a file larger than the direct upload limit', async () => {
-      await expect(
-        service.createApplicationFileUploads({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          files: [
-            {
-              fileFolder: FileFolder.Source,
-              filePath: 'src/index.ts',
-              size: 2 * 1024 * 1024 * 1024,
             },
           ],
         }),
@@ -196,141 +238,82 @@ describe('ApplicationFileUploadService', () => {
   });
 
   describe('completeApplicationFileUploads', () => {
-    const pendingFile = {
+    const file = {
       id: 'file-id',
       path: `${FileFolder.BuiltLogicFunction}/handler.mjs`,
       size: 12,
       createdAt: new Date('2026-01-01T00:00:00.000Z'),
-      status: FILE_STATUS.PENDING,
     };
 
-    it('should flip a confirmed file to uploaded with its sniffed mime type', async () => {
-      fileRepository.find.mockResolvedValueOnce([pendingFile]);
-      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 12 });
-      fileUploadService.detectUploadedMimeTypeOrThrow.mockResolvedValueOnce(
-        'application/javascript',
-      );
-
-      const files = await service.completeApplicationFileUploads({
-        workspaceId: WORKSPACE_ID,
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        fileIds: ['file-id'],
-      });
-
-      expect(files).toEqual([
+    it('should return the completed files delegated to the batch primitive', async () => {
+      fileRepository.find.mockResolvedValueOnce([file]);
+      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([
         {
-          id: 'file-id',
-          path: pendingFile.path,
-          size: 12,
-          createdAt: pendingFile.createdAt,
+          success: true,
+          value: {
+            id: 'file-id',
+            path: file.path,
+            size: 12,
+            createdAt: file.createdAt,
+          },
         },
       ]);
-      expect(fileRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: 'file-id' },
-        {
-          status: FILE_STATUS.UPLOADED,
-          mimeType: 'application/javascript',
-          size: 12,
-        },
-      );
-      expect(fileStorageService.writeFileStream).not.toHaveBeenCalled();
-    });
 
-    it('should reject a file whose stored size does not match the declared one', async () => {
-      fileRepository.find.mockResolvedValueOnce([pendingFile]);
-      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 999 });
-
-      await expect(
-        service.completeApplicationFileUploads({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          fileIds: ['file-id'],
-        }),
-      ).rejects.toThrow(ApplicationException);
-
-      expect(fileRepository.update).not.toHaveBeenCalled();
-    });
-
-    it('should reject a file whose bytes never reached storage', async () => {
-      fileRepository.find.mockResolvedValueOnce([pendingFile]);
-      fileStorageService.getFileMetadata.mockResolvedValueOnce(null);
-
-      await expect(
-        service.completeApplicationFileUploads({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          fileIds: ['file-id'],
-        }),
-      ).rejects.toThrow(ApplicationException);
-    });
-
-    it('should reject file ids that do not belong to the application', async () => {
-      fileRepository.find.mockResolvedValueOnce([]);
-
-      await expect(
-        service.completeApplicationFileUploads({
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          fileIds: ['file-id-from-another-application'],
-        }),
-      ).rejects.toThrow(ApplicationException);
-    });
-
-    it('should sanitize an uploaded svg in storage before flipping it to uploaded', async () => {
-      const svgFile = {
-        ...pendingFile,
-        path: `${FileFolder.PublicAsset}/logo.svg`,
-        size: 60,
-      };
-
-      fileRepository.find.mockResolvedValueOnce([svgFile]);
-      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 60 });
-      fileUploadService.detectUploadedMimeTypeOrThrow.mockResolvedValueOnce(
-        'image/svg+xml',
-      );
-      fileStorageService.readFile.mockResolvedValueOnce(
-        Readable.from([Buffer.from('<svg><script>alert(1)</script></svg>')]),
-      );
-
-      let rewrittenContent = '';
-      let statusWasUploadedAtRewrite: boolean | undefined;
-
-      fileStorageService.writeFileStream.mockImplementationOnce(
-        async ({ resourcePath, stream }) => {
-          expect(resourcePath).toBe('logo.svg');
-          statusWasUploadedAtRewrite =
-            fileRepository.update.mock.calls.length > 0;
-
-          for await (const chunk of stream) {
-            rewrittenContent += chunk.toString('utf-8');
-          }
-        },
-      );
-
-      const files = await service.completeApplicationFileUploads({
+      const result = await service.completeApplicationFileUploads({
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         fileIds: ['file-id'],
       });
 
-      // The bytes are sanitized and rewritten while the record is still
-      // pending, so the file only becomes servable once its script is stripped.
-      expect(statusWasUploadedAtRewrite).toBe(false);
-      expect(rewrittenContent).not.toContain('<script>');
-
-      const sanitizedSize = Buffer.byteLength(rewrittenContent);
-
-      expect(fileRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { id: 'file-id' },
+      expect(result.errors).toEqual([]);
+      expect(result.files).toEqual([
         {
-          status: FILE_STATUS.UPLOADED,
-          mimeType: 'image/svg+xml',
-          size: sanitizedSize,
+          id: 'file-id',
+          path: file.path,
+          size: 12,
+          createdAt: file.createdAt,
         },
-      );
-      expect(files[0].size).toBe(sanitizedSize);
+      ]);
+      expect(fileUploadService.completeUploadsBatch).toHaveBeenCalledWith([
+        expect.objectContaining({ workspaceId: WORKSPACE_ID, file }),
+      ]);
+    });
+
+    it('should surface a batch-primitive completion failure as a per-file error', async () => {
+      fileRepository.find.mockResolvedValueOnce([file]);
+      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([
+        { success: false, error: 'size mismatch' },
+      ]);
+
+      const result = await service.completeApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        fileIds: ['file-id'],
+      });
+
+      expect(result.files).toEqual([]);
+      expect(result.errors).toEqual([
+        { fileId: 'file-id', message: 'size mismatch' },
+      ]);
+    });
+
+    it('should report file ids that do not belong to the application as errors', async () => {
+      fileRepository.find.mockResolvedValueOnce([]);
+      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([]);
+
+      const result = await service.completeApplicationFileUploads({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        fileIds: ['file-id-from-another-application'],
+      });
+
+      expect(result.files).toEqual([]);
+      expect(result.errors).toEqual([
+        {
+          fileId: 'file-id-from-another-application',
+          message: expect.stringContaining('No pending upload found'),
+        },
+      ]);
     });
   });
 });

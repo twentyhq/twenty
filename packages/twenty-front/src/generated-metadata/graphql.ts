@@ -337,6 +337,19 @@ export type ApplicationConnectionProviderOAuthConfig = {
   scopes: Array<Scalars['String']['output']>;
 };
 
+export type ApplicationFileCompletionError = {
+  __typename?: 'ApplicationFileCompletionError';
+  fileId: Scalars['UUID']['output'];
+  message: Scalars['String']['output'];
+};
+
+export type ApplicationFileUploadError = {
+  __typename?: 'ApplicationFileUploadError';
+  fileFolder: FileFolder;
+  filePath: Scalars['String']['output'];
+  message: Scalars['String']['output'];
+};
+
 export type ApplicationFileUploadRequestInput = {
   fileFolder: FileFolder;
   filePath: Scalars['String']['input'];
@@ -1033,6 +1046,12 @@ export enum CommandMenuItemAvailabilityType {
 
 export type CommandMenuItemPayload = ObjectMetadataCommandMenuItemPayload | PathCommandMenuItemPayload;
 
+export type CompleteApplicationFileUploadsResult = {
+  __typename?: 'CompleteApplicationFileUploadsResult';
+  errors: Array<ApplicationFileCompletionError>;
+  files: Array<File>;
+};
+
 export type ConnectedAccountPublicDto = {
   __typename?: 'ConnectedAccountPublicDTO';
   applicationId?: Maybe<Scalars['UUID']['output']>;
@@ -1089,6 +1108,12 @@ export type CreateApiKeyInput = {
   name: Scalars['String']['input'];
   revokedAt?: InputMaybe<Scalars['String']['input']>;
   roleId: Scalars['UUID']['input'];
+};
+
+export type CreateApplicationFileUploadsResult = {
+  __typename?: 'CreateApplicationFileUploadsResult';
+  errors: Array<ApplicationFileUploadError>;
+  targets: Array<ApplicationFileUploadTarget>;
 };
 
 export type CreateApplicationRegistration = {
@@ -2595,10 +2620,10 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
-  completeApplicationFileUploads: Array<File>;
+  completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
-  createApplicationFileUploads: Array<ApplicationFileUploadTarget>;
+  createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;

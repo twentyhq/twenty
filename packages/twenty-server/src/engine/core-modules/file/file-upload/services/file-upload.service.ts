@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Readable, Transform } from 'stream';
+import { Readable, Transform } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
@@ -18,6 +18,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
@@ -27,16 +28,19 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { readReadablePrefix } from 'src/utils/read-readable-prefix';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -44,6 +48,31 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
 ] as const;
+
+const DIRECT_UPLOAD_CONTENT_TYPE = 'application/octet-stream';
+
+export type BatchUploadTargetRequest = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+  applicationId?: string;
+  fileFolder: FileFolder;
+  resourcePath: string;
+  size: number;
+  settings: FileSettings;
+};
+
+export type BatchCompleteUploadRequest = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+  file: FileEntity;
+};
+
+export type BatchFileResult<TValue> =
+  | { success: true; value: TValue }
+  | { success: false; error: string };
+
+const toBatchErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
 
 @Injectable()
 export class FileUploadService {
@@ -207,6 +236,158 @@ export class FileUploadService {
       contentType: 'application/octet-stream',
       expiresAt,
     };
+  }
+
+  async createUploadTargetsBatch(
+    requests: BatchUploadTargetRequest[],
+  ): Promise<BatchFileResult<FileUploadTargetDTO>[]> {
+    return Promise.all(
+      requests.map(async (request) => {
+        try {
+          const pendingFile = await this.fileStorageService.createPendingFile({
+            fileFolder: request.fileFolder,
+            applicationUniversalIdentifier:
+              request.applicationUniversalIdentifier,
+            applicationId: request.applicationId,
+            workspaceId: request.workspaceId,
+            resourcePath: request.resourcePath,
+            fileId: v4(),
+            size: request.size,
+            mimeType: DIRECT_UPLOAD_CONTENT_TYPE,
+            settings: request.settings,
+          });
+
+          const value = await this.buildUploadTarget({
+            workspaceId: request.workspaceId,
+            fileId: pendingFile.id,
+            fileFolder: request.fileFolder,
+            applicationUniversalIdentifier:
+              request.applicationUniversalIdentifier,
+            resourcePath: request.resourcePath,
+            contentType: DIRECT_UPLOAD_CONTENT_TYPE,
+            size: request.size,
+          });
+
+          return { success: true as const, value };
+        } catch (error) {
+          return { success: false as const, error: toBatchErrorMessage(error) };
+        }
+      }),
+    );
+  }
+
+  async completeUploadsBatch(
+    requests: BatchCompleteUploadRequest[],
+  ): Promise<BatchFileResult<FileDTO>[]> {
+    return Promise.all(
+      requests.map(async (request) => {
+        try {
+          const value = await this.finalizeUploadedFile(request);
+
+          return { success: true as const, value };
+        } catch (error) {
+          return { success: false as const, error: toBatchErrorMessage(error) };
+        }
+      }),
+    );
+  }
+
+  private async finalizeUploadedFile({
+    workspaceId,
+    applicationUniversalIdentifier,
+    file,
+  }: BatchCompleteUploadRequest): Promise<FileDTO> {
+    const [fileFolder] = file.path.split('/');
+    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
+
+    const storageLocation = {
+      fileFolder: fileFolder as FileFolder,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath,
+    };
+
+    const metadata =
+      await this.fileStorageService.getFileMetadata(storageLocation);
+
+    if (!isDefined(metadata)) {
+      throw new FileUploadException(
+        `File "${file.path}" has not been uploaded to storage yet.`,
+        FileUploadExceptionCode.FILE_NOT_UPLOADED,
+        {
+          userFriendlyMessage: msg`The file has not been uploaded yet. Please upload it before confirming.`,
+        },
+      );
+    }
+
+    const declaredSize = Number(file.size);
+
+    if (metadata.size !== declaredSize) {
+      throw new FileUploadException(
+        `File "${file.path}" has ${metadata.size} bytes in storage but ${declaredSize} were declared.`,
+        FileUploadExceptionCode.FILE_SIZE_MISMATCH,
+        {
+          userFriendlyMessage: msg`The uploaded file does not match the declared size. Please retry the upload.`,
+        },
+      );
+    }
+
+    const mimeType = await this.detectUploadedMimeTypeOrThrow({
+      ...storageLocation,
+      filename: file.path,
+    });
+
+    const size = await this.sanitizeUploadedFileIfNeeded({
+      storageLocation,
+      mimeType,
+      size: metadata.size,
+    });
+
+    await this.fileRepository.update(
+      workspaceId,
+      { id: file.id },
+      { status: FILE_STATUS.UPLOADED, mimeType, size },
+    );
+
+    return { id: file.id, path: file.path, size, createdAt: file.createdAt };
+  }
+
+  private async sanitizeUploadedFileIfNeeded({
+    storageLocation,
+    mimeType,
+    size,
+  }: {
+    storageLocation: {
+      fileFolder: FileFolder;
+      applicationUniversalIdentifier: string;
+      workspaceId: string;
+      resourcePath: string;
+    };
+    mimeType: string;
+    size: number;
+  }): Promise<number> {
+    if (mimeType !== 'image/svg+xml') {
+      return size;
+    }
+
+    const stream = await this.fileStorageService.readFile(storageLocation);
+    const sanitizedFile = sanitizeFile({
+      file: await streamToBuffer(stream),
+      ext: 'svg',
+      mimeType,
+    });
+
+    const sanitizedBuffer = Buffer.isBuffer(sanitizedFile)
+      ? sanitizedFile
+      : Buffer.from(sanitizedFile);
+
+    await this.fileStorageService.writeFileStream({
+      ...storageLocation,
+      stream: Readable.from(sanitizedBuffer),
+      mimeType,
+    });
+
+    return sanitizedBuffer.length;
   }
 
   // Streams the request body straight to the storage driver, bounded by the

@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { Readable } from 'stream';
-
 import bytes from 'bytes';
-import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-import { v4 } from 'uuid';
 
-import { ApplicationDevelopmentThrottlerService } from 'src/engine/core-modules/application/application-development/application-development-throttler.service';
 import { ALLOWED_APPLICATION_FILE_FOLDERS } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
-import { type ApplicationFileUploadTargetDTO } from 'src/engine/core-modules/application/application-development/dtos/application-file-upload-target.dto';
+import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
+import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads-result.dto';
 import { type ApplicationFileUploadRequestInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import {
   ApplicationException,
@@ -18,17 +14,14 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { settings } from 'src/engine/constants/settings';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
-import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import {
+  type BatchUploadTargetRequest,
+  FileUploadService,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APPLICATION_FILE_SETTINGS = {
   isTemporaryFile: false,
@@ -39,8 +32,6 @@ const APPLICATION_FILE_SETTINGS = {
 export class ApplicationFileUploadService {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly applicationDevelopmentThrottlerService: ApplicationDevelopmentThrottlerService,
-    private readonly fileStorageService: FileStorageService,
     private readonly fileUploadService: FileUploadService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
@@ -54,58 +45,68 @@ export class ApplicationFileUploadService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     files: ApplicationFileUploadRequestInput[];
-  }): Promise<ApplicationFileUploadTargetDTO[]> {
-    await this.applicationDevelopmentThrottlerService.throttlePerApplication({
-      applicationIdentifier: applicationUniversalIdentifier,
-      workspaceId,
-    });
-
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
-    for (const file of files) {
-      this.validateFileFolderOrThrow(file.fileFolder);
-      this.validateFilePathOrThrow(file);
-
-      if (file.size > maxFileSize) {
-        throw new ApplicationException(
-          `File "${file.filePath}" is ${file.size} bytes, above the ${maxFileSize} bytes limit.`,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
-    }
-
+  }): Promise<CreateApplicationFileUploadsResultDTO> {
     const application = await this.findApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
     });
 
-    return Promise.all(
-      files.map(async ({ fileFolder, filePath, size }) => {
-        const pendingFile = await this.fileStorageService.createPendingFile({
-          fileFolder,
-          applicationUniversalIdentifier,
-          applicationId: application.id,
-          workspaceId,
-          resourcePath: filePath,
-          fileId: v4(),
-          size,
-          mimeType: 'application/octet-stream',
-          settings: APPLICATION_FILE_SETTINGS,
-        });
+    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
 
-        const uploadTarget = await this.fileUploadService.buildUploadTarget({
-          workspaceId,
-          fileId: pendingFile.id,
-          fileFolder,
-          applicationUniversalIdentifier,
-          resourcePath: filePath,
-          contentType: 'application/octet-stream',
-          size,
-        });
+    const result: CreateApplicationFileUploadsResultDTO = {
+      targets: [],
+      errors: [],
+    };
 
-        return { ...uploadTarget, fileFolder, filePath };
-      }),
-    );
+    const validFiles: ApplicationFileUploadRequestInput[] = [];
+
+    for (const file of files) {
+      const validationError = this.getFileValidationError(file, maxFileSize);
+
+      if (isDefined(validationError)) {
+        result.errors.push({
+          fileFolder: file.fileFolder,
+          filePath: file.filePath,
+          message: validationError,
+        });
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    const requests: BatchUploadTargetRequest[] = validFiles.map((file) => ({
+      workspaceId,
+      applicationUniversalIdentifier,
+      applicationId: application.id,
+      fileFolder: file.fileFolder,
+      resourcePath: file.filePath,
+      size: file.size,
+      settings: APPLICATION_FILE_SETTINGS,
+    }));
+
+    const batchResults =
+      await this.fileUploadService.createUploadTargetsBatch(requests);
+
+    batchResults.forEach((batchResult, index) => {
+      const file = validFiles[index];
+
+      if (batchResult.success) {
+        result.targets.push({
+          ...batchResult.value,
+          fileFolder: file.fileFolder,
+          filePath: file.filePath,
+        });
+      } else {
+        result.errors.push({
+          fileFolder: file.fileFolder,
+          filePath: file.filePath,
+          message: batchResult.error,
+        });
+      }
+    });
+
+    return result;
   }
 
   async completeApplicationFileUploads({
@@ -116,12 +117,7 @@ export class ApplicationFileUploadService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     fileIds: string[];
-  }): Promise<FileDTO[]> {
-    await this.applicationDevelopmentThrottlerService.throttlePerApplication({
-      applicationIdentifier: applicationUniversalIdentifier,
-      workspaceId,
-    });
-
+  }): Promise<CompleteApplicationFileUploadsResultDTO> {
     const application = await this.findApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
@@ -131,152 +127,65 @@ export class ApplicationFileUploadService {
       where: { id: In(fileIds), applicationId: application.id },
     });
 
-    const missingFileIds = fileIds.filter(
-      (fileId) => !files.some((file) => file.id === fileId),
-    );
-
-    if (missingFileIds.length > 0) {
-      throw new ApplicationException(
-        `No pending upload found for file(s): ${missingFileIds.join(', ')}`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    return Promise.all(
-      files.map((file) =>
-        this.finalizeUploadedFile({
-          workspaceId,
-          applicationUniversalIdentifier,
-          file,
-        }),
-      ),
-    );
-  }
-
-  private async finalizeUploadedFile({
-    workspaceId,
-    applicationUniversalIdentifier,
-    file,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    file: FileEntity;
-  }): Promise<FileDTO> {
-    const [fileFolder] = file.path.split('/');
-    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
-
-    this.validateFileFolderOrThrow(fileFolder as FileFolder);
-
-    const storageLocation = {
-      fileFolder: fileFolder as FileFolder,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath,
+    const result: CompleteApplicationFileUploadsResultDTO = {
+      files: [],
+      errors: [],
     };
 
-    const metadata =
-      await this.fileStorageService.getFileMetadata(storageLocation);
+    const foundFileIds = new Set(files.map((file) => file.id));
 
-    if (!isDefined(metadata)) {
-      throw new ApplicationException(
-        `File "${file.path}" has not been uploaded to storage yet.`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
+    for (const fileId of fileIds) {
+      if (!foundFileIds.has(fileId)) {
+        result.errors.push({
+          fileId,
+          message: 'No pending upload found for this file.',
+        });
+      }
     }
 
-    const declaredSize = Number(file.size);
-
-    if (metadata.size !== declaredSize) {
-      throw new ApplicationException(
-        `File "${file.path}" has ${metadata.size} bytes in storage but ${declaredSize} were declared.`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const mimeType = await this.fileUploadService.detectUploadedMimeTypeOrThrow(
-      { ...storageLocation, filename: file.path },
+    const batchResults = await this.fileUploadService.completeUploadsBatch(
+      files.map((file) => ({
+        workspaceId,
+        applicationUniversalIdentifier,
+        file,
+      })),
     );
 
-    const size = await this.sanitizeUploadedFileIfNeeded({
-      storageLocation,
-      mimeType,
-      size: metadata.size,
+    batchResults.forEach((batchResult, index) => {
+      const file = files[index];
+
+      if (batchResult.success) {
+        result.files.push(batchResult.value);
+      } else {
+        result.errors.push({ fileId: file.id, message: batchResult.error });
+      }
     });
 
-    await this.fileRepository.update(
-      workspaceId,
-      { id: file.id },
-      { status: FILE_STATUS.UPLOADED, mimeType, size },
-    );
-
-    return { id: file.id, path: file.path, size, createdAt: file.createdAt };
+    return result;
   }
 
-  private async sanitizeUploadedFileIfNeeded({
-    storageLocation,
-    mimeType,
-    size,
-  }: {
-    storageLocation: {
-      fileFolder: FileFolder;
-      applicationUniversalIdentifier: string;
-      workspaceId: string;
-      resourcePath: string;
-    };
-    mimeType: string;
-    size: number;
-  }): Promise<number> {
-    if (mimeType !== 'image/svg+xml') {
-      return size;
+  private getFileValidationError(
+    file: ApplicationFileUploadRequestInput,
+    maxFileSize: number,
+  ): string | undefined {
+    if (!ALLOWED_APPLICATION_FILE_FOLDERS.includes(file.fileFolder)) {
+      return `Invalid fileFolder for application file upload. Allowed values: ${ALLOWED_APPLICATION_FILE_FOLDERS.join(', ')}`;
     }
 
-    const stream = await this.fileStorageService.readFile(storageLocation);
-    const sanitizedFile = sanitizeFile({
-      file: await streamToBuffer(stream),
-      ext: 'svg',
-      mimeType,
-    });
-
-    const sanitizedBuffer = Buffer.isBuffer(sanitizedFile)
-      ? sanitizedFile
-      : Buffer.from(sanitizedFile);
-
-    await this.fileStorageService.writeFileStream({
-      ...storageLocation,
-      stream: Readable.from(sanitizedBuffer),
-      mimeType,
-    });
-
-    return sanitizedBuffer.length;
-  }
-
-  private validateFileFolderOrThrow(fileFolder: FileFolder): void {
-    if (!ALLOWED_APPLICATION_FILE_FOLDERS.includes(fileFolder)) {
-      throw new ApplicationException(
-        `Invalid fileFolder for application file upload. Allowed values: ${ALLOWED_APPLICATION_FILE_FOLDERS.join(', ')}`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-  }
-
-  private validateFilePathOrThrow({
-    fileFolder,
-    filePath,
-  }: {
-    fileFolder: FileFolder;
-    filePath: string;
-  }): void {
     const pathValidationResult = validateFilePath({
-      resourcePath: filePath,
-      fileFolder,
+      resourcePath: file.filePath,
+      fileFolder: file.fileFolder,
     });
 
     if (!pathValidationResult.isValid) {
-      throw new ApplicationException(
-        pathValidationResult.error,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
+      return pathValidationResult.error;
     }
+
+    if (file.size > maxFileSize) {
+      return `File "${file.filePath}" is ${file.size} bytes, above the ${maxFileSize} bytes limit.`;
+    }
+
+    return undefined;
   }
 
   private async findApplicationOrThrow({

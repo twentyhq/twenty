@@ -60,11 +60,11 @@ describe('FileUploader.uploadFiles', () => {
 
     mockCreateApplicationFileUploads.mockResolvedValue({
       success: true,
-      data: buildUploadTargets(builtFiles),
+      data: { targets: buildUploadTargets(builtFiles), errors: [] },
     });
     mockCompleteApplicationFileUploads.mockResolvedValue({
       success: true,
-      data: [],
+      data: { files: [], errors: [] },
     });
     mockPutFileToUploadUrl.mockResolvedValue(undefined);
   });
@@ -143,6 +143,59 @@ describe('FileUploader.uploadFiles', () => {
         failure.error.includes('confirmation failed'),
       ),
     ).toBe(true);
+  });
+
+  it('should map per-file reservation errors back to their built path (fail-slow)', async () => {
+    mockCreateApplicationFileUploads.mockResolvedValue({
+      success: true,
+      data: {
+        targets: buildUploadTargets(['component.js']).map((target) => ({
+          ...target,
+          filePath: 'component.js',
+        })),
+        errors: [
+          {
+            fileFolder: 'BuiltLogicFunction',
+            filePath: 'handler.mjs',
+            message: 'reservation refused',
+          },
+        ],
+      },
+    });
+
+    const failures = await buildUploader().uploadFiles(filesToUpload);
+
+    expect(failures).toEqual([
+      {
+        builtPath: join(OUTPUT_DIR, 'handler.mjs'),
+        error: 'reservation refused',
+      },
+    ]);
+    // Only the reserved file is uploaded and confirmed.
+    expect(mockPutFileToUploadUrl).toHaveBeenCalledTimes(1);
+    expect(mockCompleteApplicationFileUploads).toHaveBeenCalledWith({
+      applicationUniversalIdentifier: 'application-uid',
+      fileIds: ['file-id-0'],
+    });
+  });
+
+  it('should map per-file completion errors back to their built path (fail-slow)', async () => {
+    mockCompleteApplicationFileUploads.mockResolvedValue({
+      success: true,
+      data: {
+        files: [{ id: 'file-id-0', path: 'built-logic-function/handler.mjs' }],
+        errors: [{ fileId: 'file-id-1', message: 'size mismatch' }],
+      },
+    });
+
+    const failures = await buildUploader().uploadFiles(filesToUpload);
+
+    expect(failures).toEqual([
+      {
+        builtPath: join(OUTPUT_DIR, 'component.js'),
+        error: 'size mismatch',
+      },
+    ]);
   });
 
   it('should not call the api at all when there is nothing to upload', async () => {

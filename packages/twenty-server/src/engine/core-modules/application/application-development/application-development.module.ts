@@ -7,7 +7,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
-import { ApplicationDevelopmentThrottlerService } from 'src/engine/core-modules/application/application-development/application-development-throttler.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -36,7 +35,6 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   providers: [
     ApplicationDevelopmentResolver,
     ApplicationDevelopmentService,
-    ApplicationDevelopmentThrottlerService,
     ApplicationFileUploadService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(FileEntity),

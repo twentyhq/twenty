@@ -19,6 +19,27 @@ export type ApplicationFileUploadTarget = {
   expiresAt: string;
 };
 
+export type ApplicationFileUploadError = {
+  fileFolder: string;
+  filePath: string;
+  message: string;
+};
+
+export type CreateApplicationFileUploadsResult = {
+  targets: ApplicationFileUploadTarget[];
+  errors: ApplicationFileUploadError[];
+};
+
+export type ApplicationFileCompletionError = {
+  fileId: string;
+  message: string;
+};
+
+export type CompleteApplicationFileUploadsResult = {
+  files: { id: string; path: string }[];
+  errors: ApplicationFileCompletionError[];
+};
+
 export class FileApi {
   constructor(private readonly client: AxiosInstance) {}
 
@@ -166,20 +187,27 @@ export class FileApi {
   }: {
     applicationUniversalIdentifier: string;
     files: ApplicationFileUploadRequest[];
-  }): Promise<ApiResponse<ApplicationFileUploadTarget[]>> {
+  }): Promise<ApiResponse<CreateApplicationFileUploadsResult>> {
     const mutation = `
       mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String!, $files: [ApplicationFileUploadRequestInput!]!) {
         createApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, files: $files) {
-          fileId
-          filePath
-          uploadUrl
-          contentType
-          expiresAt
+          targets {
+            fileId
+            filePath
+            uploadUrl
+            contentType
+            expiresAt
+          }
+          errors {
+            fileFolder
+            filePath
+            message
+          }
         }
       }
     `;
 
-    return this.runMetadataMutation<ApplicationFileUploadTarget[]>({
+    return this.runMetadataMutation<CreateApplicationFileUploadsResult>({
       mutation,
       variables: {
         applicationUniversalIdentifier,
@@ -200,17 +228,23 @@ export class FileApi {
   }: {
     applicationUniversalIdentifier: string;
     fileIds: string[];
-  }): Promise<ApiResponse<{ id: string; path: string }[]>> {
+  }): Promise<ApiResponse<CompleteApplicationFileUploadsResult>> {
     const mutation = `
       mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String!, $fileIds: [UUID!]!) {
         completeApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, fileIds: $fileIds) {
-          id
-          path
+          files {
+            id
+            path
+          }
+          errors {
+            fileId
+            message
+          }
         }
       }
     `;
 
-    return this.runMetadataMutation<{ id: string; path: string }[]>({
+    return this.runMetadataMutation<CompleteApplicationFileUploadsResult>({
       mutation,
       variables: { applicationUniversalIdentifier, fileIds },
       resultKey: 'completeApplicationFileUploads',

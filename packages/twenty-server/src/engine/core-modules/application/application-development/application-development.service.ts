@@ -3,8 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationDevelopmentThrottlerService } from 'src/engine/core-modules/application/application-development/application-development-throttler.service';
-import { ALLOWED_APPLICATION_FILE_FOLDERS } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
+import {
+  ALLOWED_APPLICATION_FILE_FOLDERS,
+  APP_DEV_RATE_LIMIT_MAX,
+  APP_DEV_RATE_LIMIT_WINDOW_MS,
+} from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
 import { type ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
@@ -21,6 +24,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -40,7 +44,7 @@ export class ApplicationDevelopmentService {
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
-    private readonly applicationDevelopmentThrottlerService: ApplicationDevelopmentThrottlerService,
+    private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -246,10 +250,12 @@ export class ApplicationDevelopmentService {
     applicationIdentifier: string,
     workspaceId: string,
   ): Promise<void> {
-    await this.applicationDevelopmentThrottlerService.throttlePerApplication({
-      applicationIdentifier,
-      workspaceId,
-    });
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-dev:${workspaceId}:${applicationIdentifier}`,
+      1,
+      APP_DEV_RATE_LIMIT_MAX,
+      APP_DEV_RATE_LIMIT_WINDOW_MS,
+    );
   }
 
   private async findApplicationRegistrationId(
