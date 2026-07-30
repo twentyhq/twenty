@@ -743,29 +743,29 @@ Front components は現在も積極的に開発が進められています。 �
 
 ### イベント
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`<img>` の `load`/`error`、`<input>`/`\<textarea>` のクリップボードおよびコンポジション、`\<video>`/`\<audio>` のメディア、`\<details>`/`\<dialog>` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`<img>` の `onLoad`）は、警告なしに破棄されます。
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document.addEventListener()` と `window.addEventListener()` はエラーなく登録されますが、一度も発火しません。そのため、ドラッグは開始した要素からポインターが離れた瞬間に止まります。 `event.preventDefault()` も渡されません。フォーム送信、`dragover`/`drop`、およびリンクのクリックは、すでに保護されています。
 
-### Attributes and styling
+### 属性とスタイリング
 
-Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+各要素は自分自身のプロパティをホスト DOM にフォワードします（`\<a>` の `href`、`<img>` の `src`/`alt`、`<input>` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `\<style>` 要素のいずれであっても）は、ホストページの `\<head>` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
 
-### Storage and network
+### ストレージとネットワーク
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/ja/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/ja/developers/extend/apps/logic/key-value-store).
+`localStorage`、`sessionStorage`、IndexedDB、Cookie、Cache API、および `BroadcastChannel` はすべて利用できません。コンポーネントはオペークなオリジンの worker 内で実行されるためです。 状態を永続化するには、[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[キー・バリュー ストア](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
 
-`fetch` works, with caveats:
+`fetch` は動作しますが、いくつか注意点があります。
 
-* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
-* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
-* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+* Twenty API への呼び出しやアプリのルートへの呼び出しはホストによってプロキシされるため、[`RestApiClient`](#calling-the-twenty-rest-api) を優先して使用してください。 プロキシされた呼び出しでは、`AbortSignal` などの `RequestInit` オプションは破棄され、`string` と `URLSearchParams` のボディのみがサポートされます。
+* その他のオリジンからのリクエストは、`Origin: null` を付けてサンドボックスの外へ送信されるため、サードパーティ API は `Access-Control-Allow-Origin: *` を返す場合にのみ応答します。 代わりにロジック関数から呼び出してください。
+* `fetch('/rest/people')` は、サンドボックスに相対パスを解決するためのページ URL がないため、Twenty API には決してマッチしません。
 
-### Other gaps
+### その他のギャップ
 
-* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
-* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/ja/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+* **ファイル内容。** `<input type="file">` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` やアップロードはまだ利用できません。
+* **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
+* **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
+* **`\<iframe>`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。

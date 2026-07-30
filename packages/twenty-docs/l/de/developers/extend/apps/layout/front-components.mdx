@@ -703,69 +703,69 @@ Um explizit nach dem aktiven Schema zu verzweigen, lesen Sie es mit `useColorSch
 
 ## Aktuelle Einschränkungen
 
-Front components are under active development. Rendering, styling and handling events works well. Anything that reaches *past* rendering (measuring an element, calling a DOM method on a ref, portaling outside your tree, touching browser storage) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
+Front-Komponenten befinden sich in aktiver Entwicklung. Rendern, Styling und das Behandeln von Ereignissen funktionieren gut. Alles, was *über* das Rendern hinausgeht (Messen eines Elements, Aufrufen einer DOM-Methode auf einem Ref, Portaling außerhalb deines Baums, Zugriff auf den Browser-Speicher), fehlt heute noch oder ist unvollständig, und das meiste davon schlägt stillschweigend fehl: keine Exception und auch kein TypeScript-Fehler, da das Gerüst gegen das vollständige Browser-DOM typisiert ist.
 
-If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
+Wenn dich eines dieser Probleme blockiert, [eröffne ein Issue](https://github.com/twentyhq/twenty/issues/new/choose), damit es priorisiert wird.
 
-### Layout and measurement
+### Layout und Messung
 
-Nothing can measure itself yet.
+Noch kann sich nichts selbst messen.
 
-| API                                                           | What happens                                                                       |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Throws                                                                             |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silently `undefined`, so `width ?? 0` yields `0` and `width > 600` is always false |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guards do work)                                         |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Throws                                                                             |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silently `undefined`                                                               |
-| `new MutationObserver(fn)`                                    | Constructs, then `.observe()` throws                                               |
+| API                                                           | Was passiert                                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `getBoundingClientRect()`, `getClientRects()`                 | Löst eine Exception aus                                                                                |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Stillschweigend `undefined`, daher ergibt `width ?? 0` den Wert `0` und `width > 600` ist immer falsch |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof`-Guards funktionieren)                                                       |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Löst eine Exception aus                                                                                |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Stillschweigend `undefined`                                                                            |
+| `new MutationObserver(fn)`                                    | Wird konstruiert, dann löst `.observe()` eine Exception aus                                            |
 
-So recharts `ResponsiveContainer`, Floating UI / Popper, list virtualization and drag-to-resize do not work yet. Do layout in CSS instead: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally.
+Daher funktionieren recharts `ResponsiveContainer`, Floating UI / Popper, Listen-Virtualisierung und Drag-to-Resize noch nicht. Führe das Layout stattdessen in CSS aus: Dein Stylesheet erreicht die echte Seite, daher verhalten sich Flexbox, Grid, `aspect-ratio`, `clamp()` und `@container` alle normal.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
+`requestAnimationFrame`, `fetch`, `setTimeout` und `queueMicrotask` funktionieren ohne das Präfix `window.`. Nur `window.requestAnimationFrame(...)` und ähnliche Aufrufe lösen eine Exception aus.
 </Note>
 
-### DOM access
+### DOM-Zugriff
 
-A `ref` gives you a sandbox element, not an `HTMLElement`.
+Ein `ref` gibt dir ein Sandbox-Element, kein `HTMLElement`.
 
-| What you write                                                                                              | What happens                                         | Use instead                                                                               |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws                                               | Controlled components; read values from `event.target`                                    |
-| `element.classList.add(...)`                                                                                | Throws (`classList` is `undefined`)                  | Build the `className` string yourself                                                     |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Throws                                               | `querySelector()` / `querySelectorAll()`, which work                                      |
-| `document.activeElement`                                                                                    | Always `undefined`                                   | Track focus with `onFocus` / `onBlur`                                                     |
-| `\<canvas>`                                                                                | Renders nothing, no error                            | SVG, or draw offscreen and show an `<img src={dataUrl}>`                                  |
-| `createPortal(node, document.body)`                                                                         | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
+| Was du schreibst                                                                                            | Was passiert                                          | Stattdessen verwenden                                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Löst eine Exception aus                               | Gesteuerte Komponenten; Werte aus `event.target` auslesen                                             |
+| `element.classList.add(...)`                                                                                | Löst eine Exception aus (`classList` ist `undefined`) | Erstelle den `className`-String selbst                                                                |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Löst eine Exception aus                               | `querySelector()` / `querySelectorAll()`, die funktionieren                                           |
+| `document.activeElement`                                                                                    | Immer `undefined`                                     | Fokus mit `onFocus` / `onBlur` verfolgen                                                              |
+| `\<canvas>`                                                                                | Rendert nichts, keine Fehlermeldung                   | SVG verwenden oder Offscreen zeichnen und ein `<img src={dataUrl}>` anzeigen                          |
+| `createPortal(node, document.body)`                                                                         | Rendert nichts, während `isConnected` Erfolg meldet   | Overlays inline mit `position: absolute` oder der Bibliothek dein eigenes Container-Element übergeben |
 
-The portal gap is why Radix, Headless UI, MUI and react-select popovers render nothing by default. Most accept a container prop; point it at an element you rendered.
+Diese Portal-Lücke ist der Grund, warum Radix-, Headless-UI-, MUI- und react-select-Popover standardmäßig nichts rendern. Die meisten akzeptieren eine Container-Prop; verweise sie auf ein Element, das du gerendert hast.
 
 ### Ereignisse
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `<img>`, Zwischenablage und Composition auf `<input>`/`\<textarea>`, Medien auf `\<video>`/`\<audio>`, `toggle` auf `\<details>`/`\<dialog>`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `<img>`) wird ohne Warnung verworfen.
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document.addEventListener()` und `window.addEventListener()` werden ohne Fehler registriert und feuern nie, weshalb ein Drag aufhört, sobald der Zeiger das Element verlässt, auf dem er begonnen hat. `event.preventDefault()` wird ebenfalls nicht durchgereicht; Formularübermittlung, `dragover`/`drop` und Link-Klicks sind bereits für dich abgesichert.
 
-### Attributes and styling
+### Attribute und Styling
 
-Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `\<a>`, `src`/`alt` auf `<img>`, `value`/`placeholder`/`disabled` auf `<input>` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<style>`-Element, wird **unscoped** in den `\<head>` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
 
-### Storage and network
+### Speicher und Netzwerk
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/de/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/de/developers/extend/apps/logic/key-value-store).
+`localStorage`, `sessionStorage`, IndexedDB, Cookies, die Cache-API und `BroadcastChannel` sind alle nicht verfügbar, da die Komponente in einem Worker unter einem undurchsichtigen Origin läuft. Um Zustand zu persistieren, rufe eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auf und verwende deren [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store).
 
-`fetch` works, with caveats:
+`fetch` funktioniert, mit Einschränkungen:
 
-* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
-* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
-* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+* Aufrufe an die Twenty-API und die Routen deiner App werden vom Host als Proxy weitergeleitet, daher solltest du [`RestApiClient`](#calling-the-twenty-rest-api) bevorzugen. Bei proxied Aufrufen werden `AbortSignal` und die anderen `RequestInit`-Optionen verworfen, und es werden nur `string`- und `URLSearchParams`-Bodies unterstützt.
+* Andere Origins verlassen die Sandbox mit `Origin: null`, sodass eine Drittanbieter-API nur antwortet, wenn sie `Access-Control-Allow-Origin: *` sendet. Rufe sie stattdessen aus einer Logic Function auf.
+* `fetch('/rest/people')` wird niemals der Twenty-API zugeordnet, weil die Sandbox keine Seiten-URL hat, gegen die ein relativer Pfad aufgelöst werden könnte.
 
-### Other gaps
+### Weitere Lücken
 
-* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
-* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/de/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+* **Dateiinhalt.** `<input type="file">` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher sind `FileReader` und Uploads noch nicht möglich.
+* **Drag-and-drop-Nutzlasten.** Drag-Events werden ausgelöst, aber `event.dataTransfer` ist `undefined`.
+* **Node-Built-ins.** `fs`, `path` und `node:crypto` führen zu einem Build-Fehler, daher solltest du diese Arbeit in eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auslagern. Web Crypto, `fetch`, `TextEncoder` und `URL` sind verfügbar.
+* **`\<iframe>`** wird immer erneut ohne `allow-same-origin` sandboxed, sodass ein Embed, das von seiner eigenen Session abhängt, als ausgeloggt gerendert wird. Es hat auch kein `onLoad`.

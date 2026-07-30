@@ -703,9 +703,9 @@ Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useCol
 
 ## Limitări actuale
 
-Componentele Front sunt în dezvoltare activă. Redarea, stilizarea și gestionarea evenimentelor funcționează bine. Orice ajunge *dincolo de* redare (măsurarea unui element, apelarea unei metode DOM pe un ref, portarea în afara arborelui tău, accesarea stocării browserului) lipsește sau este incompletă astăzi, iar majoritatea eșuează în mod silențios: nu există excepție și nici eroare TypeScript, deoarece scheletul este tastat pentru întregul DOM al browserului.
+Componentele Front sunt în curs de dezvoltare activă. Redarea, stilizarea și gestionarea evenimentelor funcționează bine. Orice ajunge *dincolo de* redare (măsurarea unui element, apelarea unei metode DOM pe un ref, crearea unui portal în afara arborelui tău, accesarea spațiului de stocare al browserului) lipsește sau este incomplet astăzi, iar majoritatea eșuează în tăcere: fără excepție și fără eroare TypeScript, deoarece scheletul este tipizat pentru întregul DOM al browserului.
 
-Dacă una dintre acestea te blochează, [deschide un tichet](https://github.com/twentyhq/twenty/issues/new/choose) pentru a fi prioritizată.
+Dacă unul dintre aceste lucruri te blochează, [deschide un tichet](https://github.com/twentyhq/twenty/issues/new/choose) ca să fie prioritar.
 
 ### Layout și măsurare
 
@@ -715,12 +715,12 @@ Nimic nu se poate măsura singur încă.
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `getBoundingClientRect()`, `getClientRects()`                 | Aruncă o excepție                                                                                                 |
 | `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Este în mod silențios `undefined`, astfel încât `width ?? 0` produce `0`, iar `width > 600` este întotdeauna fals |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (gardurile `typeof` funcționează)                                                                |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (verificările cu `typeof` funcționează)                                                          |
 | `window.matchMedia()`, `window.getComputedStyle()`            | Aruncă o excepție                                                                                                 |
 | `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Este în mod silențios `undefined`                                                                                 |
 | `new MutationObserver(fn)`                                    | Se construiește, apoi `.observe()` aruncă o excepție                                                              |
 
-Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualizarea listelor și redimensionarea prin tragere nu funcționează încă. Fă layout-ul în CSS în schimb: foaia ta de stil ajunge la pagina reală, astfel încât flexbox, grid, `aspect-ratio`, `clamp()` și `@container` se comportă toate normal.
+Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualizarea listelor și redimensionarea prin tragere nu funcționează încă. Fă layout-ul în CSS în schimb: fișierul tău de stiluri ajunge la pagina reală, astfel încât flexbox, grid, `aspect-ratio`, `clamp()` și `@container` se comportă toate normal.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` și `queueMicrotask` funcționează fără prefixul `window.`. Numai `window.requestAnimationFrame(...)` și cele similare aruncă o excepție.
@@ -728,44 +728,44 @@ Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualiz
 
 ### Acces DOM
 
-Un `ref` îți oferă un element sandbox, nu un `HTMLElement`.
+Un `ref` îți oferă un element din sandbox, nu un `HTMLElement`.
 
 | Ce scrii                                                                                                    | Ce se întâmplă                                            | Folosește în schimb                                                                                 |
 | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Aruncă o excepție                                         | Componente controlate; citește valorile din `event.target`                                          |
-| `element.classList.add(...)`                                                                                | Aruncă o excepție (`classList` este `undefined`)          | Construiește manual șirul `className`                                                               |
+| `element.classList.add(...)`                                                                                | Aruncă o excepție (`classList` este `undefined`)          | Construiește singur șirul `className`                                                               |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Aruncă o excepție                                         | `querySelector()` / `querySelectorAll()`, care funcționează                                         |
 | `document.activeElement`                                                                                    | Întotdeauna `undefined`                                   | Urmărește focusul cu `onFocus` / `onBlur`                                                           |
-| `\<canvas>`                                                                                | Nu redă nimic, fără eroare                                | SVG sau desenează în offscreen și afișează un `<img src={dataUrl}>`                                 |
+| `\<canvas>`                                                                                | Nu redă nimic, fără eroare                                | SVG sau desenează offscreen și afișează un `<img src={dataUrl}>`                                    |
 | `createPortal(node, document.body)`                                                                         | Nu redă nimic, în timp ce `isConnected` raportează succes | Suprapuneri inline cu `position: absolute` sau transmite bibliotecii propriul tău element container |
 
 Golul portalului este motivul pentru care popover-urile Radix, Headless UI, MUI și react-select nu redau nimic în mod implicit. Majoritatea acceptă o proprietate de tip container; indică-i un element pe care l-ai redat.
 
 ### Evenimente
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+Mouse, pointer, touch, drag, tastatură, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` și `animationend`/`transitionend` trec către gazdă, plus câteva per element: `load`/`error` pe `<img>`, clipboard și compoziție pe `<input>`/`\<textarea>`, media pe `\<video>`/`\<audio>`, `toggle` pe `\<details>`/`\<dialog>`. Orice altceva (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` de pe `<img>`) este eliminat fără avertisment.
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document.addEventListener()` și `window.addEventListener()` se înregistrează fără eroare și nu se declanșează niciodată, motiv pentru care un drag se oprește imediat ce pointerul părăsește elementul de pe care a început. `event.preventDefault()` nu trece nici el; trimiterea formularelor, `dragover`/`drop` și clicurile pe linkuri sunt deja protejate pentru tine.
 
-### Attributes and styling
+### Atribute și stilizare
 
-Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+Fiecare element își transmite propriile proprietăți către DOM-ul gazdă (`href` pe `\<a>`, `src`/`alt` pe `<img>`, `value`/`placeholder`/`disabled` pe `<input>` și așa mai departe), plus un set comun pe fiecare element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` și orice atribut `aria-*` / `data-*` (cu cratimă, astfel încât `ariaLabel` este ignorat). Orice în afara acestora este ignorat în tăcere, așa că exprimă starea personalizată ca `data-*`.
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+CSS-ul componentei, fie din `import './styles.css'`, CSS-in-JS sau un element `\<style>`, este injectat în `\<head>` al paginii gazdă **fără scope**. Astfel numele de clase intră în coliziune cu cele ale Twenty (prefixează-le și nu scrie niciodată un selector simplu `div { ... }`), iar `@media` se potrivește cu fereastra browserului, nu cu widgetul tău (folosește `@container` cu propriul tău `container-type`). Proprietățile `style` inline nu sunt afectate.
 
-### Storage and network
+### Stocare și rețea
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/ro/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/ro/developers/extend/apps/logic/key-value-store).
+`localStorage`, `sessionStorage`, IndexedDB, cookie-urile, Cache API și `BroadcastChannel` nu sunt disponibile, deoarece componenta rulează într-un worker cu o origine opacă. Pentru a păstra starea, apelează o [logic function](/l/ro/developers/extend/apps/logic/logic-functions) și folosește [key-value store-ul](/l/ro/developers/extend/apps/logic/key-value-store) acesteia.
 
-`fetch` works, with caveats:
+`fetch` funcționează, cu unele rezerve:
 
-* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
-* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
-* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+* Apelurile către Twenty API și către rutele aplicației tale sunt proxate de gazdă, așa că preferă [`RestApiClient`](#calling-the-twenty-rest-api). La apelurile proxate, `AbortSignal` și celelalte opțiuni `RequestInit` sunt eliminate, iar doar corpurile de tip `string` și `URLSearchParams` sunt acceptate.
+* Alte origini părăsesc sandbox-ul cu `Origin: null`, astfel încât un API terț răspunde doar dacă trimite `Access-Control-Allow-Origin: *`. Apelează-l dintr-o logic function în schimb.
+* `fetch('/rest/people')` nu este niciodată asociat cu Twenty API, deoarece sandbox-ul nu are un URL de pagină față de care să rezolve o cale relativă.
 
-### Other gaps
+### Alte lacune
 
-* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
-* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/ro/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+* **Conținutul fișierului.** `<input type="file">` oferă handlerului tău doar metadatele fișierului, nu și octeții, astfel încât `FileReader` și încărcările nu sunt încă posibile.
+* **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
+* **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/l/ro/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` și `URL` sunt disponibile.
+* **`\<iframe>`** este întotdeauna pus din nou în sandbox fără `allow-same-origin`, astfel încât un embed care se bazează pe propria sesiune este randat ca delogat. Nu are nici `onLoad`.

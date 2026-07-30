@@ -703,24 +703,24 @@ Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki 
 
 ## Mevcut sınırlamalar
 
-Front bileşenleri aktif olarak geliştirilmektedir. Render etme, stil verme ve olayları işleme iyi çalışıyor. Render etmenin *ötesine* geçen her şey (bir öğeyi ölçmek, bir ref üzerinde bir DOM metodunu çağırmak, ağacınızın dışına portal oluşturmak, tarayıcı depolamasına dokunmak) bugün eksik veya tamamlanmamış durumda ve çoğu sessizce başarısız oluyor: hiçbir exception yok ve TypeScript hatası da yok, çünkü iskelet tam tarayıcı DOM’una göre type edilmiştir.
+Front bileşenleri aktif geliştirme aşamasındadır. Render etme, stil verme ve olayları işleme iyi çalışıyor. Render işleminin *ötesine* geçen her şey (bir öğeyi ölçmek, bir ref üzerinde bir DOM yöntemini çağırmak, ağacınızın dışına portal oluşturmak, tarayıcı depolamasına erişmek) bugün eksik ya da tamamlanmamış durumda ve çoğu sessizce başarısız olur: ne bir istisna fırlatılır ne de TypeScript hatası görülür; çünkü iskeletin türleri tam tarayıcı DOM’una göre tanımlanmıştır.
 
-Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [open an issue](https://github.com/twentyhq/twenty/issues/new/choose).
+Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [bir issue açın](https://github.com/twentyhq/twenty/issues/new/choose).
 
 ### Yerleşim ve ölçüm
 
-Hiçbir şey henüz kendi kendini ölçemiyor.
+Henüz hiçbir şey kendisini ölçemiyor.
 
-| API                                                           | Ne olur                                                                                             |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Fırlatır                                                                                            |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Sessizce `undefined`, bu yüzden `width ?? 0` sonucu `0` verir ve `width > 600` her zaman false olur |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guard’ları çalışır)                                                      |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Fırlatır                                                                                            |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Sessizce `undefined`                                                                                |
-| `new MutationObserver(fn)`                                    | Oluşturur, ardından `.observe()` fırlatır                                                           |
+| API                                                           | Ne olur                                                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Fırlatır                                                                                     |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Sessizce `undefined`, bu yüzden `width ?? 0` `0` döner ve `width > 600` her zaman false olur |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` kontrolleri çalışır)                                              |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Fırlatır                                                                                     |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Sessizce `undefined`                                                                         |
+| `new MutationObserver(fn)`                                    | Oluşturulur, ardından `.observe()` fırlatır                                                  |
 
-Bu yüzden recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaştırma ve sürükleyerek boyutlandırma henüz çalışmıyor. Bunun yerine yerleşimi CSS’te yapın: stil sayfanız gerçek sayfaya ulaştığı için flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` normal şekilde davranır.
+Bu nedenle recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaştırma ve sürükleyerek yeniden boyutlandırma henüz çalışmıyor. Bunun yerine yerleşimi CSS ile yapın: stil sayfanız gerçek sayfaya erişir, bu nedenle flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` normal şekilde davranır.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` ve `queueMicrotask` `window.` öneki olmadan çalışır. Yalnızca `window.requestAnimationFrame(...)` ve benzerleri fırlatır.
@@ -730,42 +730,42 @@ Bu yüzden recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaş
 
 Bir `ref` size bir `HTMLElement` değil, bir sandbox öğesi verir.
 
-| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                    |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                               |
-| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined`’dır)                           | `className` string’ini kendiniz oluşturun                                                                     |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Fırlatır                                                         | Çalışan `querySelector()` / `querySelectorAll()`                                                              |
-| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                     |
-| `\<canvas>`                                                                                | Hiçbir şey render etmez, hata yoktur                             | SVG kullanın veya ekranda olmayan bir yerde çizip bir `<img src={dataUrl}>` gösterin                          |
-| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | Yer paylaşımlarını `position: absolute` ile satır içinde yapın veya kütüphaneye kendi container öğenizi verin |
+| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                             |
+| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined` durumundadır)                  | `className` dizgisini kendiniz oluşturun                                                                    |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Fırlatır                                                         | Çalışan `querySelector()` / `querySelectorAll()`                                                            |
+| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                   |
+| `\<canvas>`                                                                                | Hiçbir şey render etmez, hata yoktur                             | SVG kullanın veya ekranda olmayan bir alana çizip bir `<img src={dataUrl}>` ile gösterin                    |
+| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | `position: absolute` ile satır içi yerleştirilmiş bindirmeler veya kitaplığa kendi konteyner öğenizi iletin |
 
 Portal boşluğu, Radix, Headless UI, MUI ve react-select popover’larının varsayılan olarak hiçbir şey render etmemesinin nedenidir. Çoğu bir container prop kabul eder; onu render ettiğiniz bir öğeye yönlendirin.
 
 ### Etkinlikler
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+Mouse, pointer, touch, sürükleme, klavye, odak, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` ve `animationend`/`transitionend` ana bilgisayara iletilir, ayrıca birkaç tane de öğe başına vardır: `<img>` üzerinde `load`/`error`, `<input>`/`\<textarea>` üzerinde panoya ve bileşime ilişkin olaylar, `\<video>`/`\<audio>` üzerinde medya, `\<details>`/`\<dialog>` üzerinde `toggle`. Bunun dışındaki her şey (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `<img>` üzerinde `onLoad`) uyarı verilmeden kaldırılır.
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document.addEventListener()` ve `window.addEventListener()` hatasız olarak kaydolur ancak asla tetiklenmez; bu yüzden bir sürükleme, işaretçi başladığı öğeden ayrılır ayrılmaz durur. `event.preventDefault()` da geçmez; form gönderimi, `dragover`/`drop` ve bağlantı tıklamaları zaten sizin için korunmuştur.
 
-### Attributes and styling
+### Öznitelikler ve stillendirme
 
-Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+Her öğe, kendi özelliklerini host DOM’a iletir (`\<a>` üzerinde `href`, `<img>` üzerinde `src`/`alt`, `<input>` üzerinde `value`/`placeholder`/`disabled` vb.), ayrıca her öğede ortak bir küme vardır: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` ve tireli olan tüm `aria-*` / `data-*` öznitelikleri (bu yüzden `ariaLabel` düşürülür). Bunun dışındaki her şey sessizce atılır, bu yüzden özel durumu `data-*` olarak ifade edin.
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da bir `\<style>` öğesinden gelsin, host sayfanın `\<head>` kısmına **scope’suz** olarak enjekte edilir. Bu nedenle sınıf adları Twenty’nin kendi sınıf adlarıyla çakışır (onlara önek ekleyin ve asla çıplak `div { ... }` seçicileri yazmayın) ve `@media`, sizin bileşeniniz yerine tarayıcı penceresini hedefler (kendi `container-type` değerinizle `@container` kullanın). Satır içi `style` prop’ları etkilenmez.
 
-### Storage and network
+### Depolama ve ağ
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/tr/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/tr/developers/extend/apps/logic/key-value-store).
+`localStorage`, `sessionStorage`, IndexedDB, çerezler, Cache API ve `BroadcastChannel`’ın tümü kullanılamaz, çünkü bileşen opak bir origin’e sahip bir worker içinde çalışır. Durumu kalıcı hale getirmek için bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çağırın ve onun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
 
-`fetch` works, with caveats:
+`fetch` çalışır, bazı sınırlamalarla:
 
-* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
-* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
-* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+* Twenty API’sine ve uygulamanızın rotalarına yapılan çağrılar host tarafından proxy’lenir, bu yüzden [`RestApiClient`](#calling-the-twenty-rest-api) kullanmayı tercih edin. Proxy’lenen çağrılarda `AbortSignal` ve diğer `RequestInit` seçenekleri kaldırılır ve yalnızca `string` ve `URLSearchParams` gövdeleri desteklenir.
+* Diğer origin’ler sandbox’tan `Origin: null` ile çıkar, bu yüzden üçüncü taraf bir API yalnızca `Access-Control-Allow-Origin: *` gönderirse yanıt verir. Bunun yerine onu bir mantık fonksiyonundan çağırın.
+* `fetch('/rest/people')` hiçbir zaman Twenty API’siyle eşleştirilmez, çünkü sandbox’un göreli yolu çözecek bir sayfa URL’si yoktur.
 
-### Other gaps
+### Diğer eksikler
 
-* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
-* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/tr/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+* **Dosya içerikleri.** `<input type="file">` handler’ınıza yalnızca dosya meta verilerini verir, baytları vermez, bu yüzden `FileReader` ve yüklemeler henüz mümkün değildir.
+* **Sürükle-bırak yükleri.** Sürükleme olayları tetiklenir, ancak `event.dataTransfer` `undefined` durumundadır.
+* **Node yerleşikleri.** `fs`, `path` ve `node:crypto` build aşamasında başarısız olur; bu nedenle bu işi bir [mantık fonksiyonuna](/l/tr/developers/extend/apps/logic/logic-functions) taşıyın. Web Crypto, `fetch`, `TextEncoder` ve `URL` kullanılabilir durumdadır.
+* **`\<iframe>`** her zaman `allow-same-origin` olmadan yeniden sandbox’a alınır, bu nedenle kendi oturumuna güvenen bir yerleştirme, oturum kapalı olarak işlenir. `onLoad`’u da yoktur.
