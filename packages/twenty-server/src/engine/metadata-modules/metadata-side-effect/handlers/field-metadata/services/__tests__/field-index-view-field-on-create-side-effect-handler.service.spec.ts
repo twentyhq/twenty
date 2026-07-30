@@ -331,7 +331,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
   });
 
   describe('field created on an existing object (historical createOneField behavior)', () => {
-    it('should append a hidden view field to the INDEX view resolved by its derived identifier', () => {
+    it('should append a visible view field to the INDEX view resolved by its derived identifier', () => {
       const result = handler.buildSideEffects(
         buildArgs({
           triggerFieldMetadata: PRIORITY_FIELD,
@@ -376,7 +376,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
         SYNCED_INDEX_VIEW.universalIdentifier,
       );
       expect(viewFields[0].position).toBe(5);
-      expect(viewFields[0].isVisible).toBe(false);
+      expect(viewFields[0].isVisible).toBe(true);
       expect(viewFields[0].isSystemSideEffect).toBe(true);
     });
 
@@ -487,7 +487,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(viewFields[0].position).toBe(0);
     });
 
-    it('should emit a hidden view field for a relation field', () => {
+    it('should emit a visible view field for a relation field', () => {
       const relationField = buildPendingFieldMetadata(
         'assignee',
         FieldMetadataType.RELATION,
@@ -513,7 +513,7 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       );
 
       expect(viewFields).toHaveLength(1);
-      expect(viewFields[0].isVisible).toBe(false);
+      expect(viewFields[0].isVisible).toBe(true);
     });
 
     // The emitted view field is engine-owned whatever the view provenance, so

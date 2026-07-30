@@ -1680,6 +1680,19 @@ export enum EngineComponentKey {
   VIEW_PREVIOUS_AI_CHATS = 'VIEW_PREVIOUS_AI_CHATS'
 }
 
+export type EnqueueJobInput = {
+  delayMs?: InputMaybe<Scalars['Int']['input']>;
+  logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  payload?: InputMaybe<Scalars['JSON']['input']>;
+  retryLimit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type EnqueueJobResult = {
+  __typename?: 'EnqueueJobResult';
+  enqueued: Scalars['Boolean']['output'];
+  logicFunctionUniversalIdentifier: Scalars['String']['output'];
+};
+
 export type EnterpriseLicenseInfoDto = {
   __typename?: 'EnterpriseLicenseInfoDTO';
   expiresAt?: Maybe<Scalars['DateTime']['output']>;
@@ -2673,6 +2686,7 @@ export type Mutation = {
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
+  enqueueJob: EnqueueJobResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
@@ -3325,6 +3339,11 @@ export type MutationEditSsoIdentityProviderArgs = {
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String']['input'];
   workspaceId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type MutationEnqueueJobArgs = {
+  input: EnqueueJobInput;
 };
 
 

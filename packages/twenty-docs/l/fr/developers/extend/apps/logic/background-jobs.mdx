@@ -1,0 +1,165 @@
+---
+title: Tâches en arrière-plan
+description: Confiez les travaux longs ou soumis à des limitations de débit aux workers de Twenty en mettant en file d’attente une autre exécution de fonction logique au lieu de tout faire en ligne.
+icon: layer-group
+---
+
+Une exécution de fonction logique est limitée par son `timeoutSeconds` (900 secondes maximum). Tout ce qui ne peut pas se terminer dans cette fenêtre — une resynchronisation complète, une diffusion par enregistrement, une API tierce qui vous applique des limitations de débit — doit être découpé en exécutions plus petites.
+
+`enqueueJob` fait exactement cela : il demande aux workers de Twenty d’exécuter plus tard l’une des fonctions logiques de votre application, dans son propre processus, avec son propre budget de délai d’expiration. La fonction appelante retourne immédiatement.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Mettre en file d’attente une exécution
+
+Importez `enqueueJob` depuis `twenty-sdk/logic-function` et pointez-le vers le `universalIdentifier` de la fonction logique que vous voulez exécuter.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+La fonction cible reçoit `payload` comme argument de son gestionnaire, exactement comme pour tout autre déclencheur. Elle doit appartenir à la **même application** que l’appelant — la mise en file d’attente de la fonction d’une autre application est rejetée avec `Logic function not found`.
+
+<Note>
+`enqueueJob` renvoie dès que le job est accepté, et non pas lorsqu’il a été exécuté. Il ne renvoie pas le résultat de la cible — faites en sorte que la cible écrive ce qu’elle produit dans le [key-value store](/l/fr/developers/extend/apps/logic/key-value-store) ou dans un enregistrement d’espace de travail si vous devez le lire à nouveau.
+</Note>
+
+## Options du job
+
+| Option       | Par défaut | Plage                     | Ce que cela fait                                                                                                                                                         |
+| ------------ | ---------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `retryLimit` | `0`        | `0`–`10`                  | Tentatives supplémentaires si l’exécution lève une exception. N’augmentez cette valeur que pour les gestionnaires qui peuvent être exécutés deux fois en toute sécurité. |
+| `delayMs`    | `0`        | `0`–`604800000` (7 jours) | Attendez ce délai avant que l’exécution devienne éligible.                                                                                                               |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**La priorité n’est pas encore configurable.** Les jobs mis en file d’attente s’exécutent toujours avec la priorité la plus basse, de sorte que le travail de la plateforme n’est jamais retardé derrière les jobs des applications. Le contrôle de la priorité arrive bientôt.
+</Note>
+
+L’exécution mise en file d’attente hérite de l’utilisateur exécutant la fonction qui l’a mise en file d’attente, elle agit donc avec les mêmes autorisations.
+
+## Utilisation : paginer une longue synchronisation
+
+La forme classique est une fonction qui met *elle-même* en file d’attente la prochaine exécution avec le curseur suivant. Chaque exécution traite une page de travail bien à l’intérieur de son propre délai d’expiration, et la chaîne s’arrête lorsqu’il ne reste plus rien.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Répartition par enregistrement
+
+Quand le travail est naturellement par élément, mettez en file d’attente un job par élément et laissez les workers les traiter en parallèle au lieu de boucler en ligne.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Bonnes pratiques pour les tâches de longue durée
+
+Deux règles couvrent presque toutes les longues tâches : **utilisez la récursion au lieu de boucles** et **traitez un bloc borné par exécution**.
+
+Une exécution qui essaie de tout faire est un mode d’échec — elle atteint le délai d’expiration, et avec une nouvelle tentative elle recommence tout depuis zéro. Au lieu de cela, dimensionnez un bloc de manière à ce qu’il se termine confortablement dans `timeoutSeconds`, conservez votre position et mettez en file d’attente l’exécution suivante.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Ce qui rend cette approche robuste :
+
+* **Dimensionnez le bloc à partir de l’élément le plus lent, pas de la moyenne.** `CHUNK_SIZE × worst-case item time` doit tenir dans `timeoutSeconds` avec une marge de sécurité, sinon la fin d’un bloc est perdue lorsque l’exécution est interrompue.
+* **Rendez la condition de terminaison explicite.** Utilisez la récursion uniquement lorsqu’un bloc complet est revenu. Une chaîne qui s’arrête uniquement sur "no results" continuera indéfiniment si la source renvoie un jour une page courte en cours de route.
+* **Conservez la progression avant de mettre en file d’attente l’exécution suivante,** afin qu’un maillon ayant échoué redémarre au dernier bloc terminé plutôt qu’au début.
+* **Gardez chaque bloc idempotent.** Le retraitement d’un bloc après une nouvelle tentative ne doit pas provoquer une double écriture — indexez les écritures sur l’enregistrement ou l’identifiant externe que vous traitez.
+* **Préférez une chaîne par blocs à un énorme déploiement parallèle** lorsque le travail touche un tiers soumis à des limitations de débit : une chaîne avec `delayMs` se régule elle-même, alors que des milliers de jobs mis en file d’attente d’un coup deviennent tous éligibles immédiatement.
+
+<Warning>
+Les nouvelles tentatives réexécutent tout le gestionnaire. Gardez les gestionnaires mis en file d’attente idempotents avant de définir `retryLimit` au-dessus de `0`.
+</Warning>

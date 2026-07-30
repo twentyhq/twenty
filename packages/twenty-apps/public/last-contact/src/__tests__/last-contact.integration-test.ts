@@ -4,12 +4,28 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
+import onCompanyCreated from 'src/logic-functions/on-company-created';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
+import onOpportunityCreated from 'src/logic-functions/on-opportunity-created';
+import onOpportunityUpdated from 'src/logic-functions/on-opportunity-updated';
+import onPersonUpdated from 'src/logic-functions/on-person-updated';
 
 const calendarHandler = onCalendarInteraction.config.handler as (
   event: unknown,
 ) => Promise<void>;
 const emailHandler = onEmailInteraction.config.handler as (
+  event: unknown,
+) => Promise<void>;
+const opportunityCreatedHandler = onOpportunityCreated.config.handler as (
+  event: unknown,
+) => Promise<void>;
+const opportunityUpdatedHandler = onOpportunityUpdated.config.handler as (
+  event: unknown,
+) => Promise<void>;
+const companyCreatedHandler = onCompanyCreated.config.handler as (
+  event: unknown,
+) => Promise<void>;
+const personUpdatedHandler = onPersonUpdated.config.handler as (
   event: unknown,
 ) => Promise<void>;
 
@@ -993,5 +1009,178 @@ describe('last contact handlers', () => {
       lastEmailId: messageId,
       lastMeetingId: calendarEventId,
     });
+  });
+
+  it('computes an opportunity last contact from its point of contact on creation', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    const opportunityId = await createOpportunity(client, {
+      pointOfContactId: personId,
+    });
+    createdOpportunityIds.push(opportunityId);
+
+    await opportunityCreatedHandler({
+      recordId: opportunityId,
+      properties: { after: { id: opportunityId } },
+    });
+
+    const opportunityContact = await getRelatedLastContact(
+      client,
+      'opportunity',
+      opportunityId,
+    );
+    expect(asTime(opportunityContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(opportunityContact.lastContactItemMessageId).toBe(messageId);
+    expect(opportunityContact.lastContactItemCalendarEventId).toBeNull();
+  });
+
+  it('recomputes an opportunity last contact when the point of contact changes', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const contactedPersonId = await createPerson(client);
+    createdPersonIds.push(contactedPersonId);
+    const uncontactedPersonId = await createPerson(client);
+    createdPersonIds.push(uncontactedPersonId);
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId: contactedPersonId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    const opportunityId = await createOpportunity(client, {
+      pointOfContactId: uncontactedPersonId,
+    });
+    createdOpportunityIds.push(opportunityId);
+
+    await client.mutation({
+      updateOpportunity: {
+        __args: {
+          id: opportunityId,
+          data: { pointOfContactId: contactedPersonId },
+        },
+        id: true,
+      },
+    });
+    await opportunityUpdatedHandler({
+      recordId: opportunityId,
+      properties: {
+        updatedFields: ['pointOfContactId'],
+        before: { id: opportunityId },
+        after: { id: opportunityId },
+      },
+    });
+
+    const opportunityContact = await getRelatedLastContact(
+      client,
+      'opportunity',
+      opportunityId,
+    );
+    expect(asTime(opportunityContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(opportunityContact.lastContactItemMessageId).toBe(messageId);
+  });
+
+  it("recomputes a company last contact when a person joins it after being contacted", async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    await setPersonCompany(client, { personId, companyId });
+    await personUpdatedHandler({
+      recordId: personId,
+      properties: {
+        updatedFields: ['companyId'],
+        before: { id: personId, companyId: null },
+        after: { id: personId, companyId },
+      },
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(asTime(companyContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(companyContact.lastContactItemMessageId).toBe(messageId);
+    expect(companyContact.lastContactItemCalendarEventId).toBeNull();
+  });
+
+  it('clears a company last contact when its only contacted person leaves', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    await setPersonCompany(client, { personId, companyId });
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    await client.mutation({
+      updatePerson: {
+        __args: { id: personId, data: { companyId: null } },
+        id: true,
+      },
+    });
+    await personUpdatedHandler({
+      recordId: personId,
+      properties: {
+        updatedFields: ['companyId'],
+        before: { id: personId, companyId },
+        after: { id: personId, companyId: null },
+      },
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(companyContact.lastContactAt).toBeNull();
+    expect(companyContact.lastContactItemMessageId).toBeNull();
+    expect(companyContact.lastContactItemCalendarEventId).toBeNull();
+  });
+
+  it('leaves the company last contact empty when the company has no contacted people on creation', async () => {
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+
+    await companyCreatedHandler({
+      recordId: companyId,
+      properties: { after: { id: companyId } },
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(companyContact.lastContactAt).toBeNull();
   });
 });
