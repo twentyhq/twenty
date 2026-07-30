@@ -80,7 +80,6 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
     if (
       !isDefined(indexFlatView) ||
       indexFlatView.isSystemSideEffect !== true ||
-      !indexFlatView.isActive ||
       isDefined(indexFlatView.deletedAt)
     ) {
       return { status: 'noop' };
