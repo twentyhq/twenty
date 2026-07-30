@@ -20,8 +20,16 @@ const CheckMark = INFORMATIVE_MARKS.check;
 const REPORT_INACCURACY_URL =
   'https://github.com/twentyhq/twenty/issues/new/choose';
 
+// On narrow viewports the three-column grid scrolls horizontally instead of
+// squeezing the price cells.
+const TableScroller = styled.div`
+  overflow-x: auto;
+  width: 100%;
+`;
+
 const TableScope = styled.div`
   color: ${semanticColor.ink};
+  min-width: 640px;
   width: 100%;
 `;
 
@@ -145,45 +153,61 @@ export function CompareCostTable({
   const i18n = getServerI18n();
 
   return (
-    <TableScope>
-      <GridRow>
-        <HeadCell>{i18n._(msg`Feature`)}</HeadCell>
-        <HeadCell data-tier>{i18n._(comparison.competitorColumnLabel)}</HeadCell>
-        <HeadCell data-tier>{i18n._(msg`On Twenty`)}</HeadCell>
-      </GridRow>
-      {comparison.rows.map((row) => (
-        <GridRow key={i18n._(row.feature)}>
-          <FeatureCell>
-            <FeatureName>{i18n._(row.feature)}</FeatureName>
-            <FeatureDescription>{i18n._(row.description)}</FeatureDescription>
-          </FeatureCell>
-          <ValueCell>
-            <CompetitorPrice>{i18n._(row.competitor.price)}</CompetitorPrice>
-            <CompetitorDetail>{i18n._(row.competitor.detail)}</CompetitorDetail>
-            {row.competitor.sourceUrl !== undefined ? (
-              <SourceLink
-                href={row.competitor.sourceUrl}
-                rel="nofollow noreferrer"
-                target="_blank"
-              >
-                {i18n._(msg`source`)}
-              </SourceLink>
-            ) : null}
-          </ValueCell>
-          <ValueCell>
-            <IncludedRow>
-              <CheckMark color={color('blue')} sizePx={16} />
-              <IncludedText>{i18n._(row.twenty.detail)}</IncludedText>
-            </IncludedRow>
-          </ValueCell>
-        </GridRow>
-      ))}
+    <div>
+      <TableScroller>
+        <TableScope>
+          <GridRow>
+            <HeadCell>{i18n._(msg`Feature`)}</HeadCell>
+            <HeadCell data-tier>
+              {i18n._(comparison.competitorColumnLabel)}
+            </HeadCell>
+            <HeadCell data-tier>{i18n._(msg`On Twenty`)}</HeadCell>
+          </GridRow>
+          {comparison.rows.map((row) => (
+            <GridRow key={i18n._(row.feature)}>
+              <FeatureCell>
+                <FeatureName>{i18n._(row.feature)}</FeatureName>
+                <FeatureDescription>
+                  {i18n._(row.description)}
+                </FeatureDescription>
+              </FeatureCell>
+              <ValueCell>
+                <CompetitorPrice>
+                  {i18n._(row.competitor.price)}
+                </CompetitorPrice>
+                <CompetitorDetail>
+                  {i18n._(row.competitor.detail)}
+                </CompetitorDetail>
+                {row.competitor.sourceUrl !== undefined ? (
+                  <SourceLink
+                    href={row.competitor.sourceUrl}
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                  >
+                    {i18n._(msg`source`)}
+                  </SourceLink>
+                ) : null}
+              </ValueCell>
+              <ValueCell>
+                <IncludedRow>
+                  <CheckMark color={color('blue')} sizePx={16} />
+                  <IncludedText>{i18n._(row.twenty.detail)}</IncludedText>
+                </IncludedRow>
+              </ValueCell>
+            </GridRow>
+          ))}
+        </TableScope>
+      </TableScroller>
       <SourceNote>
         {i18n._(comparison.sourceNote)}{' '}
-        <ReportLink href={REPORT_INACCURACY_URL} rel="noreferrer" target="_blank">
+        <ReportLink
+          href={REPORT_INACCURACY_URL}
+          rel="noreferrer"
+          target="_blank"
+        >
           {i18n._(msg`Spotted an inaccuracy? Tell us and we will fix it.`)}
         </ReportLink>
       </SourceNote>
-    </TableScope>
+    </div>
   );
 }
