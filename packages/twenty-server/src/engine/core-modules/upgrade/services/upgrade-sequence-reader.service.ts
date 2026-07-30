@@ -59,7 +59,9 @@ export class UpgradeSequenceReaderService {
     return sequence;
   }
 
-  getUpgradeStepNames(kinds?: Partial<Record<UpgradeStepKind, true>>): string[] {
+  getUpgradeStepNames(
+    kinds?: Partial<Record<UpgradeStepKind, true>>,
+  ): string[] {
     return this.getUpgradeSequence()
       .filter((step) => !isDefined(kinds) || kinds[step.kind] === true)
       .map((step) => step.name);
