@@ -33,7 +33,6 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   ),
 }));
 
-
 const Wrapper = ({ children }: { children: ReactNode }) =>
   createElement(
     WorkflowVisualizerComponentInstanceContext.Provider,
@@ -47,7 +46,10 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
   });
 
   it('should return draft version id when current version is draft', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersionOrThrow(), { wrapper: Wrapper });
+    const { result } = renderHook(
+      () => useGetUpdatableWorkflowVersionOrThrow(),
+      { wrapper: Wrapper },
+    );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
 
@@ -70,7 +72,10 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
     } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
     useWorkflowWithCurrentVersion.mockReturnValue(mockActiveWorkflow);
 
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersionOrThrow(), { wrapper: Wrapper });
+    const { result } = renderHook(
+      () => useGetUpdatableWorkflowVersionOrThrow(),
+      { wrapper: Wrapper },
+    );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
 
@@ -87,7 +92,10 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
     } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
     useWorkflowWithCurrentVersion.mockReturnValue(undefined);
 
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersionOrThrow(), { wrapper: Wrapper });
+    const { result } = renderHook(
+      () => useGetUpdatableWorkflowVersionOrThrow(),
+      { wrapper: Wrapper },
+    );
 
     await expect(result.current.getUpdatableWorkflowVersion()).rejects.toThrow(
       'Failed to get updatable workflow version',
