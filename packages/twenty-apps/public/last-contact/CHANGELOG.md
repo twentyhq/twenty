@@ -3,6 +3,7 @@
 ## 1.1.3
 
 - Stop declaring INDEX view fields explicitly: the server now provisions the INDEX view column for each app field automatically, so the manifest no longer targets the engine-owned standard INDEX views.
+- Require Twenty `>=2.26.0`: the engine-owned INDEX view fields this version relies on only exist from 2.26.
 
 ## 1.1.1
 
