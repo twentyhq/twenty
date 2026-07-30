@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_b3927bbca3beac::t_e206337f1688ec 10-11,24-27,56-58,140-141,171-172,213-219,276-293,495-497,499-502,504-505
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0c0d67629e0cb93243eb837b928a6f8d3f39f28a",
+  "prompts": {},
+  "sessions": {
+    "s_b3927bbca3beac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0b7d88-454f-48ba-91c9-7603d0dae167",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
