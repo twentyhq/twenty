@@ -22,9 +22,9 @@ import {
   toProfileForm,
   toSaveBody,
   type ProfileForm,
-  type ProfileOptions,
   type ProfilePayload,
 } from './my-profile/profile-form';
+import type { ProfileOptions } from './my-profile/types';
 
 type LoadResult =
   | { ok: true; profile: ProfilePayload; options: ProfileOptions }

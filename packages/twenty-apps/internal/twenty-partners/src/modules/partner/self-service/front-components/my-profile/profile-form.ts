@@ -1,35 +1,28 @@
-import type { SelectOption } from './form-fields';
+import type { MyProfilePayload } from './types';
 
-export type Currency = { amountMicros: number | null; currencyCode: string | null } | null;
+// Narrowed from the loader's payload so a field rename upstream breaks the build here.
+export type ProfilePayload = Pick<
+  MyProfilePayload,
+  | 'id'
+  | 'name'
+  | 'profilePictureUrl'
+  | 'introduction'
+  | 'city'
+  | 'country'
+  | 'languagesSpoken'
+  | 'region'
+  | 'partnerScope'
+  | 'skills'
+  | 'typeOfTeam'
+  | 'availability'
+  | 'hourlyRate'
+  | 'projectBudgetMin'
+  | 'website'
+  | 'linkedin'
+  | 'calendarLink'
+>;
 
-export type ProfilePayload = {
-  id: string;
-  name: string | null;
-  profilePictureUrl: string | null;
-  introduction: string | null;
-  city: string | null;
-  country: string | null;
-  languagesSpoken: string[] | null;
-  region: string[] | null;
-  partnerScope: string[] | null;
-  skills: string[] | null;
-  typeOfTeam: string | null;
-  availability: string | null;
-  hourlyRate: Currency;
-  projectBudgetMin: Currency;
-  website: string | null;
-  linkedin: string | null;
-  calendarLink: string | null;
-};
-
-export type ProfileOptions = {
-  country: SelectOption[];
-  languagesSpoken: SelectOption[];
-  region: SelectOption[];
-  partnerScope: SelectOption[];
-  typeOfTeam: SelectOption[];
-  availability: SelectOption[];
-};
+export type Currency = MyProfilePayload['hourlyRate'];
 
 export type MoneyField = { amount: number | null; currencyCode: string };
 
