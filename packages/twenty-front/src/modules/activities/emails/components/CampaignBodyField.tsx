@@ -1,12 +1,14 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconAdjustments } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
+import { EmailInsertRail } from '@/advanced-text-editor/components/EmailInsertRail';
 import { campaignBodyEditorState } from '@/activities/emails/states/campaignBodyEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
@@ -38,12 +40,21 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { openCampaignBlockSettingsInSidePanel } =
     useOpenCampaignBlockSettingsInSidePanel();
 
+  const [bodyEditor, setBodyEditor] = useState<Editor | null>(null);
+
   const handleEditorReady = useCallback(
     (editor: Editor | null) => {
       setCampaignBodyEditor(editor);
+      setBodyEditor(editor);
     },
     [setCampaignBodyEditor],
   );
+
+  // The settings panel is part of the composer, so it opens with it.
+  useEffect(() => {
+    openCampaignBlockSettingsInSidePanel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledContainer onBlur={() => flush()}>
@@ -63,6 +74,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         preset="campaignBody"
         onEditorReady={handleEditorReady}
       />
+      {isDefined(bodyEditor) && <EmailInsertRail editor={bodyEditor} />}
     </StyledContainer>
   );
 };

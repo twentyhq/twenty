@@ -29,6 +29,19 @@ const StyledSidesGrid = styled.div`
   margin-top: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledUnitChip = styled.div`
+  align-items: center;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 32px;
+  padding: 0 ${themeCssVariables.spacing[2]};
+`;
+
 const SIDE_KEYS = ['top', 'right', 'bottom', 'left'] as const;
 
 const SIDE_PLACEHOLDERS: Record<(typeof SIDE_KEYS)[number], string> = {
@@ -111,6 +124,7 @@ export const CampaignBoxSidesInput = ({
             fullWidth
           />
         )}
+        <StyledUnitChip>px</StyledUnitChip>
         <LightIconButton
           Icon={IconSquare}
           size="small"

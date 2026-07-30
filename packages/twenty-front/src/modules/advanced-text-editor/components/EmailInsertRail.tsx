@@ -1,0 +1,203 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type Editor } from '@tiptap/core';
+import { useState } from 'react';
+import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import {
+  IconBox,
+  IconClick,
+  IconColumns,
+  IconLayoutGrid,
+  IconMinus,
+  IconPhoto,
+  IconTypography,
+} from 'twenty-ui/icon';
+import { Button, LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { TextInput } from '@/ui/input/components/TextInput';
+
+const StyledRail = styled.div`
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  box-shadow:
+    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
+    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
+`;
+
+const StyledRailContainer = styled.div`
+  left: ${themeCssVariables.spacing[3]};
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+`;
+
+const StyledPopover = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow:
+    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
+    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  left: calc(100% + ${themeCssVariables.spacing[2]});
+  min-width: 180px;
+  padding: ${themeCssVariables.spacing[1]};
+  position: absolute;
+  top: 0;
+`;
+
+const StyledImageForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]};
+  width: 220px;
+`;
+
+const emailColumnJson = () => ({
+  type: TIPTAP_NODE_TYPES.EMAIL_COLUMN,
+  content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
+});
+
+type EmailInsertRailProps = {
+  editor: Editor;
+};
+
+// The floating insert rail on the left of the email canvas: text, image and
+// layout blocks, mirroring the slash menu for pointer-first authoring.
+export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
+  const { t } = useLingui();
+  const [openMenu, setOpenMenu] = useState<'image' | 'blocks' | null>(null);
+  const [imageUrl, setImageUrl] = useState('');
+
+  const insertAtEnd = (content: object) => {
+    editor
+      .chain()
+      .focus('end')
+      .insertContentAt(editor.state.doc.content.size, content)
+      .run();
+    setOpenMenu(null);
+  };
+
+  const handleInsertText = () => {
+    insertAtEnd({ type: TIPTAP_NODE_TYPES.PARAGRAPH });
+  };
+
+  const handleInsertImage = () => {
+    if (imageUrl.trim() === '') {
+      return;
+    }
+
+    insertAtEnd({
+      type: TIPTAP_NODE_TYPES.IMAGE,
+      attrs: { src: imageUrl.trim() },
+    });
+    setImageUrl('');
+  };
+
+  const blockItems = [
+    {
+      Icon: IconBox,
+      label: t`Section`,
+      content: {
+        type: TIPTAP_NODE_TYPES.EMAIL_SECTION,
+        content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
+      },
+    },
+    {
+      Icon: IconColumns,
+      label: t`2 Columns`,
+      content: {
+        type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
+        content: [emailColumnJson(), emailColumnJson()],
+      },
+    },
+    {
+      Icon: IconColumns,
+      label: t`3 Columns`,
+      content: {
+        type: TIPTAP_NODE_TYPES.EMAIL_COLUMNS,
+        content: [emailColumnJson(), emailColumnJson(), emailColumnJson()],
+      },
+    },
+    {
+      Icon: IconClick,
+      label: t`Button`,
+      content: {
+        type: TIPTAP_NODE_TYPES.EMAIL_BUTTON,
+        content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: t`Click here` }],
+      },
+    },
+    {
+      Icon: IconMinus,
+      label: t`Divider`,
+      content: { type: TIPTAP_NODE_TYPES.EMAIL_DIVIDER },
+    },
+  ];
+
+  return (
+    <StyledRailContainer>
+      <StyledRail>
+        <LightIconButton
+          Icon={IconTypography}
+          size="medium"
+          accent="tertiary"
+          title={t`Text`}
+          onClick={handleInsertText}
+        />
+        <LightIconButton
+          Icon={IconPhoto}
+          size="medium"
+          accent={openMenu === 'image' ? 'secondary' : 'tertiary'}
+          title={t`Image`}
+          onClick={() => setOpenMenu(openMenu === 'image' ? null : 'image')}
+        />
+        <LightIconButton
+          Icon={IconLayoutGrid}
+          size="medium"
+          accent={openMenu === 'blocks' ? 'secondary' : 'tertiary'}
+          title={t`Blocks`}
+          onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
+        />
+      </StyledRail>
+      {openMenu === 'blocks' && (
+        <StyledPopover>
+          {blockItems.map(({ Icon, label, content }) => (
+            <MenuItem
+              key={label}
+              LeftIcon={Icon}
+              text={label}
+              onClick={() => insertAtEnd(content)}
+            />
+          ))}
+        </StyledPopover>
+      )}
+      {openMenu === 'image' && (
+        <StyledPopover>
+          <StyledImageForm>
+            <TextInput
+              value={imageUrl}
+              onChange={setImageUrl}
+              placeholder={t`Image URL`}
+              fullWidth
+            />
+            <Button
+              title={t`Insert image`}
+              size="small"
+              onClick={handleInsertImage}
+            />
+          </StyledImageForm>
+        </StyledPopover>
+      )}
+    </StyledRailContainer>
+  );
+};

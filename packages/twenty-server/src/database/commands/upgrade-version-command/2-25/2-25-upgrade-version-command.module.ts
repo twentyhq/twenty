@@ -6,15 +6,17 @@ import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/co
 import { AddMessageCampaignComposerTabCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229940000-add-message-campaign-composer-tab.command';
 import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
+import { MakeMessageCampaignUserFacingCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785430000000-make-message-campaign-user-facing.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FieldMetadataEntity]),
+    TypeOrmModule.forFeature([FieldMetadataEntity, ObjectMetadataEntity]),
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
@@ -26,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMessageCampaignComposerTabCommand,
     ConfigureMessageCampaignCommandMenuCommand,
     AddMessageCampaignNameFieldCommand,
+    MakeMessageCampaignUserFacingCommand,
   ],
 })
 export class V2_25_UpgradeVersionCommandModule {}

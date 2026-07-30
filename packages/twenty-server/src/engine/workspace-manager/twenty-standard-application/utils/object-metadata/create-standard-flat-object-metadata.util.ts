@@ -270,7 +270,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
           msg`A bulk email send to an audience, with delivery stats`,
         ),
         icon: 'IconSend',
-        isSystem: true,
+        // Campaigns are user-authored records like dashboards and workflows;
+        // system objects get their standard fields locked in the UI, which
+        // would make the campaign title read-only.
+        isSystem: false,
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
       },
