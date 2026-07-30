@@ -21,7 +21,6 @@ export const useDeleteStep = () => {
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const deleteStep = async (stepId: string) => {

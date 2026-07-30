@@ -31,9 +31,6 @@ export const SidePanelWorkflowCreateStepContent = () => {
 
   const { createStep } = useCreateStep();
   const { updateStep } = useUpdateStep();
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();

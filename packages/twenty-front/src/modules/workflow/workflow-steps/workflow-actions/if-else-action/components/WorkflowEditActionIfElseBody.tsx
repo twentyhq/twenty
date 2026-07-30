@@ -70,7 +70,6 @@ export const WorkflowEditActionIfElseBody = ({
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const currentStepFilters = useAtomComponentStateValue(
