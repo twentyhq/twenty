@@ -5,9 +5,15 @@ import { CampaignBoxSidesInput } from '@/side-panel/pages/campaign-block-setting
 import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
 import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
 import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export type CampaignStyleFieldKind = 'text' | 'color' | 'box' | 'size';
+export type CampaignStyleFieldKind =
+  | 'text'
+  | 'color'
+  | 'box'
+  | 'size'
+  | 'textarea';
 
 type CampaignBlockSettingsFieldInputProps = {
   field: {
@@ -54,6 +60,20 @@ export const CampaignBlockSettingsFieldInput = ({
           onChange={onChange}
           placeholder={field.placeholder}
         />
+      );
+    case 'textarea':
+      return (
+        <div>
+          <StyledCampaignFieldLabel>{label}</StyledCampaignFieldLabel>
+          <TextArea
+            textAreaId={`campaign-block-settings-${label}`}
+            value={value}
+            onChange={onChange}
+            placeholder={field.placeholder ?? ''}
+            minRows={6}
+            maxRows={16}
+          />
+        </div>
       );
     default:
       return (

@@ -141,6 +141,23 @@ describe('renderRichTextToHtml', () => {
     expect(html).not.toContain('max-width:600px');
   });
 
+  it('should embed raw HTML blocks verbatim', async () => {
+    const html = await renderRichTextToHtml({
+      type: 'doc',
+      content: [
+        {
+          type: 'emailHtml',
+          attrs: {
+            html: '<table role="presentation"><tr><td>custom cell</td></tr></table>',
+          },
+        },
+      ],
+    });
+
+    expect(html).toContain('custom cell');
+    expect(html).toContain('<table role="presentation">');
+  });
+
   it('should render nothing for unknown node types', async () => {
     const html = await renderRichTextToHtml({
       type: 'doc',

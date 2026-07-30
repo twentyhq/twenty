@@ -1,4 +1,5 @@
 import { EmailButton } from '@/advanced-text-editor/extensions/email-blocks/EmailButton';
+import { EmailHtml } from '@/advanced-text-editor/extensions/email-blocks/EmailHtml';
 import { EmailColumn } from '@/advanced-text-editor/extensions/email-blocks/EmailColumn';
 import { EmailColumns } from '@/advanced-text-editor/extensions/email-blocks/EmailColumns';
 import { EmailDivider } from '@/advanced-text-editor/extensions/email-blocks/EmailDivider';
@@ -63,5 +64,6 @@ export const ADVANCED_TEXT_EDITOR_CAPABILITY_EXTENSIONS: Record<
     EmailColumn,
     EmailButton,
     EmailDivider,
+    EmailHtml,
   ],
 };

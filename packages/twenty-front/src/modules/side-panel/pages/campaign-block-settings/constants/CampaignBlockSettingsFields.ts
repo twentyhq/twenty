@@ -123,6 +123,15 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: '6',
     },
   ],
+  [TIPTAP_NODE_TYPES.EMAIL_HTML]: [
+    {
+      label: msg`HTML`,
+      kind: 'attribute',
+      property: 'html',
+      input: 'textarea',
+      placeholder: '<p>Hello</p>',
+    },
+  ],
   [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: [
     {
       label: msg`Thickness`,

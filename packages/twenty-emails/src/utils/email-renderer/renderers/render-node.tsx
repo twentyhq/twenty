@@ -2,6 +2,7 @@ import { bulletList } from '@/utils/email-renderer/nodes/bullet-list';
 import { emailButton } from '@/utils/email-renderer/nodes/email-button';
 import { emailColumns } from '@/utils/email-renderer/nodes/email-columns';
 import { emailDivider } from '@/utils/email-renderer/nodes/email-divider';
+import { emailHtml } from '@/utils/email-renderer/nodes/email-html';
 import { emailSection } from '@/utils/email-renderer/nodes/email-section';
 import { hardBreak } from '@/utils/email-renderer/nodes/hard-break';
 import { heading } from '@/utils/email-renderer/nodes/heading';
@@ -29,6 +30,7 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.EMAIL_COLUMNS]: emailColumns,
   [TIPTAP_NODE_TYPES.EMAIL_BUTTON]: emailButton,
   [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: emailDivider,
+  [TIPTAP_NODE_TYPES.EMAIL_HTML]: emailHtml,
 };
 
 const renderNode = (node: JSONContent): ReactNode => {

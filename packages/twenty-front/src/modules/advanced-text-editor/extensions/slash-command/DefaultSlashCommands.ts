@@ -6,6 +6,7 @@ import {
   type IconComponent,
   IconBox,
   IconClick,
+  IconCode,
   IconColumns,
   IconH1,
   IconH2,
@@ -159,6 +160,23 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
           type: TIPTAP_NODE_TYPES.EMAIL_BUTTON,
           content: [{ type: TIPTAP_NODE_TYPES.TEXT, text: 'Click here' }],
         })
+        .run(),
+  },
+  {
+    id: 'emailHtml',
+    title: msg`HTML`,
+    description: msg`Raw HTML embedded in the email`,
+    icon: IconCode,
+    keywords: [msg`html`, msg`embed`, msg`code`, msg`custom`],
+    getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.EMAIL_HTML),
+    getIsVisible: (editor) =>
+      hasSchemaNode(editor, TIPTAP_NODE_TYPES.EMAIL_HTML),
+    getOnSelect: (editor, range) => () =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent({ type: TIPTAP_NODE_TYPES.EMAIL_HTML })
         .run(),
   },
   {

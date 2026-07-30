@@ -6,6 +6,7 @@ import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
   IconBox,
   IconClick,
+  IconCode,
   IconColumns,
   IconH1,
   IconH2,
@@ -188,6 +189,11 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
       Icon: IconMinus,
       label: t`Divider`,
       content: { type: TIPTAP_NODE_TYPES.EMAIL_DIVIDER },
+    },
+    {
+      Icon: IconCode,
+      label: t`HTML`,
+      content: { type: TIPTAP_NODE_TYPES.EMAIL_HTML },
     },
   ];
 

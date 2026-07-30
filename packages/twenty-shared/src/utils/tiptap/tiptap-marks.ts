@@ -27,6 +27,7 @@ export const TIPTAP_NODE_TYPES = {
   EMAIL_COLUMN: 'emailColumn',
   EMAIL_BUTTON: 'emailButton',
   EMAIL_DIVIDER: 'emailDivider',
+  EMAIL_HTML: 'emailHtml',
 } as const;
 
 export type TipTapMarkType =
