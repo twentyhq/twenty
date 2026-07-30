@@ -29,6 +29,11 @@ is_running() {
 # would read as a leftover and delete.
 claim() { (set -C; echo $$ > "$PID_FILE") 2>/dev/null; }
 
+# Shared so start and logs cannot drift apart.
+detach_hint() {
+  echo "Ctrl+C detaches the stream only. Use 'yarn upgrade:background:stop' to stop the run."
+}
+
 last_run() {
   code=$(grep '^EXIT=' "$LOG_FILE" 2>/dev/null | tail -n 1 | cut -d= -f2)
   case "$code" in
@@ -43,18 +48,18 @@ last_run() {
 
 start() {
   command -v setsid > /dev/null || {
-    echo "setsid not found: cannot detach the run from this terminal." >&2
-    echo "Run 'yarn command:prod upgrade' in the foreground instead." >&2
+    echo "Failed to start: setsid not found, cannot detach the run from this terminal" >&2
+    echo "Use 'yarn command:prod upgrade' to run it in the foreground instead." >&2
     exit 1
   }
 
   if ! claim; then
     if is_running; then
-      echo "Already running (pid $(upgrade_pid))." >&2; exit 1
+      echo "Failed to start: already running (pid $(upgrade_pid))" >&2; exit 1
     fi
     # Pid file left by a run that is no longer alive.
     rm -f "$PID_FILE"
-    claim || { echo "Another start is claiming the run, retry." >&2; exit 1; }
+    claim || { echo "Failed to start: another start claimed the run, retry" >&2; exit 1; }
   fi
   : > "$LOG_FILE"
 
@@ -72,10 +77,10 @@ start() {
   while [ "$(cat "$PID_FILE" 2>/dev/null)" = "$$" ] && [ "$i" -lt 10 ]; do
     i=$((i + 1)); sleep 1
   done
-  is_running || { echo "Failed to start, see $LOG_FILE" >&2; tail -n 20 "$LOG_FILE" >&2; exit 1; }
+  is_running || { echo "Failed to start: see $LOG_FILE" >&2; tail -n 20 "$LOG_FILE" >&2; exit 1; }
 
-  echo "Upgrade started (pid $(upgrade_pid)), logging to $LOG_FILE"
-  echo "Ctrl-C detaches the log stream only. Use upgrade:background:stop to stop the run."
+  echo "Running (pid $(upgrade_pid)), logging to $LOG_FILE"
+  detach_hint
   stream
 }
 
@@ -83,37 +88,38 @@ start() {
 # between a slow workspace segment and a run that died without writing EXIT=.
 logs() {
   if is_running; then
-    echo "Running (pid $(upgrade_pid)), following $LOG_FILE. Ctrl-C detaches the stream only." >&2
+    echo "Running (pid $(upgrade_pid)), following $LOG_FILE" >&2
+    detach_hint >&2
     stream
   fi
-  [ -f "$LOG_FILE" ] || { echo "No run found, no log at $LOG_FILE" >&2; exit 1; }
+  [ -f "$LOG_FILE" ] || { echo "Not running, no log at $LOG_FILE" >&2; exit 1; }
   echo "Not running, last run $(last_run). Tail of $LOG_FILE:" >&2
   exec tail -n 20 "$LOG_FILE"
 }
 
 status() {
-  is_running && { echo "running (pid $(upgrade_pid))"; exit 0; }
-  echo "not running, last run $(last_run)"
+  is_running && { echo "Running (pid $(upgrade_pid))"; exit 0; }
+  echo "Not running, last run $(last_run)"
   exit 1
 }
 
 stop() {
-  is_running || { echo "Not running." >&2; rm -f "$PID_FILE"; exit 1; }
+  is_running || { echo "Not running, nothing to stop" >&2; rm -f "$PID_FILE"; exit 1; }
   pid=$(upgrade_pid)
 
   case "${1:-}" in
     "")
       kill -TERM "$pid"
-      echo "SIGTERM sent to $pid. It finishes the step in progress, then stops (exit 143)."
-      echo "Follow with upgrade:background:logs. Still stuck: 'stop --now'. Last resort: 'stop --force'."
+      echo "SIGTERM sent to $pid, it finishes the step in progress then stops (exit 143)"
+      echo "Follow with 'yarn upgrade:background:logs'. Still stuck: 'stop --now'. Last resort: 'stop --force'."
       ;;
     --now)
       kill -TERM "$pid"; sleep 2; kill -TERM "$pid" 2>/dev/null || true
-      echo "Second SIGTERM sent — immediate exit, step in progress left unfinished."
+      echo "Second SIGTERM sent to $pid, immediate exit with the step in progress left unfinished"
       ;;
     --force)
-      echo "SIGKILL: no graceful boundary, a multi-transaction command may leave partial work." >&2
       kill -KILL "$pid"
+      echo "SIGKILL sent to $pid, no graceful boundary so a multi-transaction command may leave partial work" >&2
       ;;
     *) echo "usage: stop [--now|--force]" >&2; exit 1 ;;
   esac
