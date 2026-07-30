@@ -12000,9 +12000,6 @@ export default {
             "retryLimit": [
                 30
             ],
-            "priority": [
-                30
-            ],
             "delayMs": [
                 30
             ],

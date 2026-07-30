@@ -1679,7 +1679,6 @@ export type EnqueueJobInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
   payload?: InputMaybe<Scalars['JSON']['input']>;
-  priority?: InputMaybe<Scalars['Int']['input']>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 

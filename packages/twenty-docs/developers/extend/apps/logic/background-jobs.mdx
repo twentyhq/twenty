@@ -39,7 +39,6 @@ The target function receives `payload` as its handler argument, exactly like any
 | Option | Default | Range | What it does |
 |--------|---------|-------|--------------|
 | `retryLimit` | `0` | `0`–`10` | Extra attempts if the run throws. Only raise this for handlers that are safe to run twice. |
-| `priority` | queue default | `1`–`10` | Lower value is picked first when jobs are waiting. |
 | `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
 
 ```ts
@@ -47,10 +46,13 @@ await enqueueJob({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
   payload: { page: 1 },
   retryLimit: 3,
-  priority: 2,
   delayMs: 60_000,
 });
 ```
+
+<Note>
+**Priority is not configurable yet.** Enqueued jobs always run at the lowest priority, so platform work is never delayed behind application jobs. Control over priority is coming soon.
+</Note>
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
 
@@ -73,7 +75,6 @@ const handler = async (params: { cursor?: string }) => {
     await enqueueJob({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
       payload: { cursor: nextCursor },
-      // Space runs out to stay under the provider's rate limit.
       delayMs: 2_000,
     });
   }

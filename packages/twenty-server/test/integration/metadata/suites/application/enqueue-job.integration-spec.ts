@@ -94,7 +94,6 @@ describe('enqueueJob (e2e)', () => {
           input: {
             logicFunctionUniversalIdentifier,
             payload: { a: 'enqueued', b: 1 },
-            priority: 5,
           },
         },
       },

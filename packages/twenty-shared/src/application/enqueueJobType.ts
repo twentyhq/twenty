@@ -1,6 +1,5 @@
 export type EnqueueJobOptions = {
   retryLimit?: number;
-  priority?: number;
   delayMs?: number;
 };
 

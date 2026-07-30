@@ -1,5 +1,6 @@
 import { type Repository } from 'typeorm';
 
+import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { ApplicationJobService } from 'src/engine/core-modules/application/application-job/services/application-job.service';
 import {
@@ -51,7 +52,6 @@ describe('ApplicationJobService', () => {
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       payload: { batchIndex: 2 },
       retryLimit: 3,
-      priority: 5,
       delayMs: 1000,
     });
 
@@ -67,7 +67,19 @@ describe('ApplicationJobService', () => {
         workspaceId: WORKSPACE_ID,
         payload: { batchIndex: 2 },
       },
-      { retryLimit: 3, priority: 5, delay: 1000 },
+      { retryLimit: 3, priority: ENQUEUE_JOB_PRIORITY, delay: 1000 },
+    );
+  });
+
+  it('should always enqueue at the lowest priority so platform jobs go first', async () => {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      expect.anything(),
+      expect.objectContaining({ priority: ENQUEUE_JOB_PRIORITY }),
     );
   });
 
@@ -83,7 +95,7 @@ describe('ApplicationJobService', () => {
         workspaceId: WORKSPACE_ID,
         payload: {},
       },
-      { retryLimit: 0 },
+      { retryLimit: 0, priority: ENQUEUE_JOB_PRIORITY },
     );
   });
 

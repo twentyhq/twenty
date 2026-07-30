@@ -4680,7 +4680,6 @@ input EnqueueJobInput {
   logicFunctionUniversalIdentifier: String!
   payload: JSON
   retryLimit: Int
-  priority: Int
   delayMs: Int
 }
 

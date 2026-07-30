@@ -46,7 +46,6 @@ describe('enqueueJob', () => {
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       payload: { batchIndex: 2 },
       retryLimit: 3,
-      priority: 5,
       delayMs: 1000,
     });
 
@@ -67,7 +66,6 @@ describe('enqueueJob', () => {
         logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
         payload: { batchIndex: 2 },
         retryLimit: 3,
-        priority: 5,
         delayMs: 1000,
       },
     });

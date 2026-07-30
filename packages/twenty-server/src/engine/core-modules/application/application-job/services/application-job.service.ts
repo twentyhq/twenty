@@ -5,7 +5,10 @@ import { type EnqueueJobResult } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
+import {
+  ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+  ENQUEUE_JOB_PRIORITY,
+} from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import {
   ApplicationException,
@@ -71,7 +74,7 @@ export class ApplicationJobService {
       },
       {
         retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-        ...(isDefined(input.priority) ? { priority: input.priority } : {}),
+        priority: ENQUEUE_JOB_PRIORITY,
         ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
       },
     );

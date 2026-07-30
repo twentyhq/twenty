@@ -14,10 +14,8 @@ import { type EnqueueJobInput } from 'twenty-shared/application';
 
 import {
   ENQUEUE_JOB_MAX_DELAY_MS,
-  ENQUEUE_JOB_MAX_PRIORITY,
   ENQUEUE_JOB_MAX_RETRY_LIMIT,
   ENQUEUE_JOB_MIN_DELAY_MS,
-  ENQUEUE_JOB_MIN_PRIORITY,
   ENQUEUE_JOB_MIN_RETRY_LIMIT,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 
@@ -39,13 +37,6 @@ export class EnqueueJobInputDTO implements EnqueueJobInput {
   @IsOptional()
   @Field(() => Int, { nullable: true })
   retryLimit?: number;
-
-  @IsInt()
-  @Min(ENQUEUE_JOB_MIN_PRIORITY)
-  @Max(ENQUEUE_JOB_MAX_PRIORITY)
-  @IsOptional()
-  @Field(() => Int, { nullable: true })
-  priority?: number;
 
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_DELAY_MS)
