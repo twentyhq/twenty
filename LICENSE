@@ -4,7 +4,7 @@ This project is mostly licensed under the GNU Affero General Public License v3.0
 1. Certain files are licensed under a commercial license. These files are clearly marked with the following comment at the top of the file: /* @license Enterprise */
 Files with this comment are not licensed under the AGPLv3, but instead are subject to the commercial license terms defined at the end of this file.
 
-2. Certain packages are licensed under the MIT license instead of the AGPLv3, as indicated by the license field of their package.json and the LICENSE file at the package root. This currently includes the application development toolkit (twenty-sdk, twenty-client-sdk, create-twenty-app, twenty-shared) and the applications under packages/twenty-apps.
+2. Certain packages are licensed under the MIT license instead of the AGPLv3, as indicated by the license field of their package.json and the LICENSE file at the package root. This currently includes the application development toolkit (twenty-sdk, twenty-client-sdk, create-twenty-app, twenty-shared), the twenty-ui component library, and the applications under packages/twenty-apps.
 
 The AGPLv3 applies to the rest of the project, with the following additional permission:
 
