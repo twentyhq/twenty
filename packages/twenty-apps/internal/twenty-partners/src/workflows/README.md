@@ -34,15 +34,14 @@ Partner self-apply on an **Opportunity** (brief). Creates an **Application** and
 8. Map fields:
    - **Opportunity** → `{{trigger.record.id}}`
    - **State** → `APPLIED`
-   - **Partner User** → `{{trigger.workspaceMember}}` *(see note below)*
+   - **Partner User** → `{{trigger.workspaceMember}}` *(mandatory — see note below)*
 9. **Publish** (activate) the workflow version.
 
-**Partner User note:** `on-application-created` resolves the Partner from
-`createdBy.workspaceMemberId` on the new Application. Manual workflows run as the
-clicking user, so **Create Record** sets `createdBy` to that member automatically. At
-build time, confirm whether **Partner User** is still required — if `createdBy` is
-populated on the new record, you can omit **Partner User** and rely on the logic
-function alone.
+**Partner User is mandatory.** The Partner role's row-level security on Application is
+`partnerUser IS the current member`, and the server validates it against the row as
+submitted. A **Create Record** without **Partner User** fails with *"Record does not
+satisfy row-level security constraints of your current role"*. `on-application-created`
+runs after the insert, so it cannot rescue it.
 
 ### Expected UI (partner)
 
