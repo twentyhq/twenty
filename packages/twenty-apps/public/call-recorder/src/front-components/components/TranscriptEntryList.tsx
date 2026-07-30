@@ -25,12 +25,18 @@ type TranscriptEntryListProps = {
   entries: TranscriptEntry[];
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
+  isAutoFollowEnabled: boolean;
+  onSeek: (startSeconds: number) => void;
+  onUserScrollIntent: () => void;
 };
 
 export const TranscriptEntryList = ({
   entries,
   currentTimeSeconds,
   calendarEventParticipants,
+  isAutoFollowEnabled,
+  onSeek,
+  onUserScrollIntent,
 }: TranscriptEntryListProps) => {
   const activeEntryIndex = findActiveTranscriptEntryIndex(
     entries,
@@ -41,8 +47,17 @@ export const TranscriptEntryList = ({
     [calendarEventParticipants],
   );
 
+  // Wheel and touch are the user's scroll gestures; the host's own follow
+  // scrolling only emits scroll events, so these two never misfire on it.
+  const userScrollIntentHandler = isAutoFollowEnabled
+    ? onUserScrollIntent
+    : undefined;
+
   return (
-    <StyledTranscriptContainer>
+    <StyledTranscriptContainer
+      onWheel={userScrollIntentHandler}
+      onTouchMove={userScrollIntentHandler}
+    >
       {entries.map((entry, entryIndex) => {
         const calendarEventParticipant =
           getCalendarEventParticipantForSpeakerName({
@@ -54,9 +69,14 @@ export const TranscriptEntryList = ({
           <TranscriptEntryListItem
             key={entryIndex}
             entry={entry}
+            entryIndex={entryIndex}
             isActive={entryIndex === activeEntryIndex}
+            isFollowTarget={
+              isAutoFollowEnabled && entryIndex === activeEntryIndex
+            }
             currentTimeSeconds={currentTimeSeconds}
             calendarEventParticipant={calendarEventParticipant}
+            onSeek={onSeek}
           />
         );
       })}

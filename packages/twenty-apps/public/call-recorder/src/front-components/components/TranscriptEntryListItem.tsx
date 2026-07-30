@@ -10,18 +10,27 @@ import {
 } from 'src/front-components/types/transcript-entry.type';
 import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
 
-const StyledEntry = styled.div<{ $isActive: boolean }>`
+const StyledEntry = styled.div<{ $isActive: boolean; $isSeekable: boolean }>`
   align-items: flex-start;
   background: ${({ $isActive }) =>
     $isActive ? themeCssVariables.background.transparent.blue : 'transparent'};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: ${({ $isSeekable }) => ($isSeekable ? 'pointer' : 'default')};
   display: flex;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[2]};
   justify-content: center;
   padding: ${() => themeCssVariables.spacing[2]};
+  scroll-margin-block: ${() => themeCssVariables.spacing[2]};
   width: 100%;
+
+  &:hover {
+    background: ${({ $isActive }) =>
+      $isActive
+        ? themeCssVariables.background.transparent.blue
+        : themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledEntryHeader = styled.div`
@@ -58,22 +67,41 @@ const StyledWord = styled.span<{ $isSpoken: boolean }>`
 
 type TranscriptEntryListItemProps = {
   entry: TranscriptEntry;
+  entryIndex: number;
   isActive: boolean;
+  isFollowTarget: boolean;
   currentTimeSeconds: number;
   calendarEventParticipant: CalendarEventRecordingParticipant | undefined;
+  onSeek: (startSeconds: number) => void;
 };
 
 export const TranscriptEntryListItem = ({
   entry,
+  entryIndex,
   isActive,
+  isFollowTarget,
   currentTimeSeconds,
   calendarEventParticipant,
+  onSeek,
 }: TranscriptEntryListItemProps) => {
   const speakerDisplayName =
     calendarEventParticipant?.displayName ?? entry.speakerName;
 
+  const isSeekable = !isUndefined(entry.startSeconds);
+
+  const handleClick = () => {
+    if (!isUndefined(entry.startSeconds)) {
+      onSeek(entry.startSeconds);
+    }
+  };
+
   return (
-    <StyledEntry $isActive={isActive}>
+    <StyledEntry
+      $isActive={isActive}
+      $isSeekable={isSeekable}
+      data-scroll-into-view={isFollowTarget ? String(entryIndex) : undefined}
+      onClick={isSeekable ? handleClick : undefined}
+    >
       <StyledEntryHeader>
         <Chip
           clickable={false}

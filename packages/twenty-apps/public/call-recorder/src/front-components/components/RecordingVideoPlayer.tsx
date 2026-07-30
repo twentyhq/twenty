@@ -100,12 +100,16 @@ const StyledRetryButton = styled.button`
 
 type RecordingVideoPlayerProps = {
   src: string;
+  seekToSeconds: number;
+  seekToken: number;
   onTimeUpdate: (currentTimeSeconds: number) => void;
   onRetry: () => void;
 };
 
 export const RecordingVideoPlayer = ({
   src,
+  seekToSeconds,
+  seekToken,
   onTimeUpdate,
   onRetry,
 }: RecordingVideoPlayerProps) => {
@@ -148,14 +152,24 @@ export const RecordingVideoPlayer = ({
     );
   }
 
+  // The remote bridge has no imperative handle on the host video element, so
+  // seeking swaps the media-fragment src and remounts: the browser reopens
+  // the file at the requested time and autoplay resumes playback from there.
+  const videoSrc =
+    seekToken > 0
+      ? `${src}#t=${Math.max(seekToSeconds, 0.001)}`
+      : `${src}${FIRST_FRAME_SEEK_FRAGMENT}`;
+
   return (
     <StyledVideoViewport>
       <StyledVideo
+        key={seekToken}
         $isFirstFrameReady={loadState === 'ready'}
+        autoPlay={seekToken > 0}
         controls
         playsInline
         preload="metadata"
-        src={`${src}${FIRST_FRAME_SEEK_FRAGMENT}`}
+        src={videoSrc}
         onCanPlay={markFirstFrameReady}
         onError={handleError}
         onLoadedData={markFirstFrameReady}

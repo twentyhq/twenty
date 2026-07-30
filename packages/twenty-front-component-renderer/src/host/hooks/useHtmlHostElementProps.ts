@@ -7,6 +7,7 @@ import {
 } from '@/host/contexts/FrontComponentInputFocusContext';
 import { useComposedElementRef } from '@/host/hooks/useComposedElementRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
+import { useScrollIntoViewRef } from '@/host/hooks/useScrollIntoViewRef';
 import { type ElementRefCallback } from '@/host/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
 import { createAnchorNavigationClickHandler } from '@/host/utils/createAnchorNavigationClickHandler';
@@ -40,8 +41,13 @@ export const useHtmlHostElementProps = (
     reactUnsupportedEventHandlers,
   );
 
+  const scrollIntoViewRef = useScrollIntoViewRef(
+    reactBindableProps['data-scroll-into-view'],
+  );
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
+    scrollIntoViewRef,
   ]);
 
   const anchorNavigationClickHandler =

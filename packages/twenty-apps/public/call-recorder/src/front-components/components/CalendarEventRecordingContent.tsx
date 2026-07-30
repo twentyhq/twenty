@@ -86,6 +86,8 @@ export const CalendarEventRecordingContent = ({
   calendarEventId,
 }: CalendarEventRecordingContentProps) => {
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+  const [seekRequest, setSeekRequest] = useState({ seconds: 0, token: 0 });
+  const [isAutoFollowEnabled, setIsAutoFollowEnabled] = useState(true);
 
   const updateCurrentTimeSeconds = (videoCurrentTimeSeconds: number) => {
     const nextCurrentTimeSeconds =
@@ -100,6 +102,19 @@ export const CalendarEventRecordingContent = ({
     );
   };
 
+  const handleTranscriptSeek = (startSeconds: number) => {
+    setSeekRequest((previousSeekRequest) => ({
+      seconds: startSeconds,
+      token: previousSeekRequest.token + 1,
+    }));
+    updateCurrentTimeSeconds(startSeconds);
+    setIsAutoFollowEnabled(true);
+  };
+
+  const handleTranscriptUserScrollIntent = () => {
+    setIsAutoFollowEnabled(false);
+  };
+
   const {
     transcript,
     videoFile,
@@ -112,6 +127,8 @@ export const CalendarEventRecordingContent = ({
 
   const handleVideoRetry = () => {
     setCurrentTimeSeconds(0);
+    setSeekRequest({ seconds: 0, token: 0 });
+    setIsAutoFollowEnabled(true);
     refetchCalendarEventRecording();
   };
 
@@ -154,8 +171,13 @@ export const CalendarEventRecordingContent = ({
             errorMessage={errorMessage}
             currentTimeSeconds={currentTimeSeconds}
             calendarEventParticipants={calendarEventParticipants}
+            seekToSeconds={seekRequest.seconds}
+            seekToken={seekRequest.token}
+            isAutoFollowEnabled={isAutoFollowEnabled}
             onVideoTimeUpdate={updateCurrentTimeSeconds}
             onVideoRetry={handleVideoRetry}
+            onTranscriptSeek={handleTranscriptSeek}
+            onTranscriptUserScrollIntent={handleTranscriptUserScrollIntent}
           />
         </StyledRecordingContentFrame>
       </StyledRecordingBody>

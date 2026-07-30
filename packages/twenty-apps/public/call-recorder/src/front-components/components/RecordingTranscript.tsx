@@ -23,12 +23,18 @@ type RecordingTranscriptProps = {
   transcript: unknown;
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
+  isAutoFollowEnabled: boolean;
+  onSeek: (startSeconds: number) => void;
+  onUserScrollIntent: () => void;
 };
 
 export const RecordingTranscript = ({
   transcript,
   currentTimeSeconds,
   calendarEventParticipants,
+  isAutoFollowEnabled,
+  onSeek,
+  onUserScrollIntent,
 }: RecordingTranscriptProps) => {
   const marker = useMemo(() => parseTranscriptMarker(transcript), [transcript]);
   const entries = useMemo(
@@ -87,6 +93,9 @@ export const RecordingTranscript = ({
       entries={entries}
       currentTimeSeconds={currentTimeSeconds}
       calendarEventParticipants={calendarEventParticipants}
+      isAutoFollowEnabled={isAutoFollowEnabled}
+      onSeek={onSeek}
+      onUserScrollIntent={onUserScrollIntent}
     />
   );
 };

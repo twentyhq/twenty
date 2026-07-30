@@ -10,5 +10,9 @@ export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   'aria-label': { type: 'string', optional: true },
   'aria-hidden': { type: 'boolean', optional: true },
   'data-testid': { type: 'string', optional: true },
+  // Remote code has no layout information, so scrolling an element into view
+  // must happen host-side: every time this value changes to a non-empty
+  // string, the host scrolls the element into the nearest scroll container.
+  'data-scroll-into-view': { type: 'string', optional: true },
   draggable: { type: 'string', optional: true },
 };
