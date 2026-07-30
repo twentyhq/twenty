@@ -1,0 +1,39 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/constants/RelationFieldRefetchDebounceMs.ts
+  s_b3927bbca3beac::t_d56fb176b45d5e 1
+packages/twenty-front/src/modules/object-record/record-field/ui/hooks/useRefetchRelationFieldOnRecordChange.ts
+  s_b3927bbca3beac::t_a6270f4ab0488a 1-86
+packages/twenty-front/src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+  s_b3927bbca3beac::t_f9e119f9360eae 8,73-78
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/log-driver-simulated-send-latency-ms.constant.ts
+  s_b3927bbca3beac::t_5dbaf62ddfb783 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_b3927bbca3beac::t_b68fc0b28c508d 8,121-124
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue-worker-config.constant.ts
+  s_b3927bbca3beac::t_6207261df21a33 70-78
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts
+  s_b3927bbca3beac::t_1217e1228619f2 11
+packages/twenty-server/src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+  s_b3927bbca3beac::t_f970f2827794a2 238-242
+packages/twenty-server/src/modules/emailing/jobs/refresh-campaign-stats.job.ts
+  s_b3927bbca3beac::t_dc61ecc18b0b64 8
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_b3927bbca3beac::t_e2a345c4e81c6a 3-4,63-64,77-91
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_b3927bbca3beac::t_daa6ee678007b8 134-135,422-425,495-497,499-502,504-505,582,789
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "11475e2d6b019201ad121989643f4d75a2f53974",
+  "prompts": {},
+  "sessions": {
+    "s_b3927bbca3beac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0b7d88-454f-48ba-91c9-7603d0dae167",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
