@@ -3,6 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import {
   ApplicationVariableEntityException,
@@ -10,8 +12,10 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('ApplicationVariableEntityService', () => {
@@ -65,6 +69,7 @@ describe('ApplicationVariableEntityService', () => {
           provide: WorkspaceCacheService,
           useValue: {
             invalidateAndRecompute: jest.fn(),
+            getOrRecompute: jest.fn(),
           },
         },
       ],
@@ -78,8 +83,177 @@ describe('ApplicationVariableEntityService', () => {
     workspaceCacheService = module.get(WorkspaceCacheService);
   });
 
+  const workspaceA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  const workspaceB = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+
+  const makeFlatVariable = (
+    overrides: Partial<FlatApplicationVariable>,
+  ): FlatApplicationVariable =>
+    ({
+      id: '1',
+      key: 'KEY',
+      value: '' as EncryptedString | '',
+      description: '',
+      isSecret: false,
+      type: FieldMetadataType.TEXT,
+      options: null,
+      applicationId: mockApplicationId,
+      workspaceId: workspaceA,
+      universalIdentifier: '00000000-0000-0000-0000-000000000000',
+      applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+      ...overrides,
+    }) as FlatApplicationVariable;
+
+  const mockCachedApplicationVariables = (
+    flatApplicationVariables: FlatApplicationVariable[],
+  ) => {
+    workspaceCacheService.getOrRecompute.mockResolvedValue({
+      applicationVariableMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          flatApplicationVariables.map((flatApplicationVariable) => [
+            flatApplicationVariable.universalIdentifier,
+            flatApplicationVariable,
+          ]),
+        ),
+        universalIdentifiersByApplicationId: {
+          [mockApplicationId]: flatApplicationVariables.map(
+            ({ universalIdentifier }) => universalIdentifier,
+          ),
+        },
+      },
+    } as never);
+  };
+
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('buildEnvRecord', () => {
+    it('should return an empty object when the application has no variable', async () => {
+      mockCachedApplicationVariables([]);
+
+      await expect(
+        service.buildEnvRecord({
+          workspaceId: workspaceA,
+          applicationId: mockApplicationId,
+        }),
+      ).resolves.toEqual({});
+    });
+
+    it('should decrypt all encrypted variables regardless of isSecret', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'PUBLIC_URL',
+          value:
+            `enc:v2:deadbeef:https://example.com|${workspaceA}` as EncryptedString,
+        }),
+        makeFlatVariable({
+          universalIdentifier: 'variable-2',
+          key: 'API_SECRET',
+          value: `enc:v2:deadbeef:secret-123|${workspaceA}` as EncryptedString,
+          isSecret: true,
+        }),
+      ]);
+
+      const result = await service.buildEnvRecord({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({
+        PUBLIC_URL: 'https://example.com',
+        API_SECRET: 'secret-123',
+      });
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledTimes(2);
+    });
+
+    it('should route each variable to its own workspace HKDF context', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'A_SECRET',
+          value: `enc:v2:deadbeef:value-a|${workspaceA}` as EncryptedString,
+          isSecret: true,
+        }),
+        makeFlatVariable({
+          universalIdentifier: 'variable-2',
+          key: 'B_SECRET',
+          value: `enc:v2:deadbeef:value-b|${workspaceB}` as EncryptedString,
+          isSecret: true,
+          workspaceId: workspaceB,
+        }),
+      ]);
+
+      await service.buildEnvRecord({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledWith(`enc:v2:deadbeef:value-a|${workspaceA}`, {
+        workspaceId: workspaceA,
+      });
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledWith(`enc:v2:deadbeef:value-b|${workspaceB}`, {
+        workspaceId: workspaceB,
+      });
+    });
+
+    it('should return an empty string for uninitialised variables without decrypting', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'EMPTY_VALUE',
+          value: '',
+        }),
+      ]);
+
+      const result = await service.buildEnvRecord({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({ EMPTY_VALUE: '' });
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('buildNonSecretEnvRecord', () => {
+    it('should exclude secret variables without decrypting them', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'PUBLIC_URL',
+          value:
+            `enc:v2:deadbeef:https://example.com|${workspaceA}` as EncryptedString,
+        }),
+        makeFlatVariable({
+          universalIdentifier: 'variable-2',
+          key: 'API_SECRET',
+          value: `enc:v2:deadbeef:secret-123|${workspaceA}` as EncryptedString,
+          isSecret: true,
+        }),
+      ]);
+
+      const result = await service.buildNonSecretEnvRecord({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({ PUBLIC_URL: 'https://example.com' });
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('update', () => {

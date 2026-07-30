@@ -12,6 +12,7 @@ import {
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -40,6 +41,91 @@ export class ApplicationVariableEntityService {
       applicationVariable.value,
       { workspaceId: applicationVariable.workspaceId },
     );
+  }
+
+  async buildEnvRecord({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<Record<string, string>> {
+    const flatApplicationVariables = await this.findFlatApplicationVariables({
+      workspaceId,
+      applicationId,
+    });
+
+    return this.reduceToEnvRecord(flatApplicationVariables);
+  }
+
+  async buildNonSecretEnvRecord({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<Record<string, string>> {
+    const flatApplicationVariables = await this.findFlatApplicationVariables({
+      workspaceId,
+      applicationId,
+    });
+
+    return this.reduceToEnvRecord(
+      flatApplicationVariables.filter(({ isSecret }) => !isSecret),
+    );
+  }
+
+  private async findFlatApplicationVariables({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<FlatApplicationVariable[]> {
+    const { applicationVariableMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'applicationVariableMaps',
+      ]);
+
+    const universalIdentifiers =
+      applicationVariableMaps.universalIdentifiersByApplicationId[
+        applicationId
+      ] ?? [];
+
+    return universalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
+  }
+
+  private reduceToEnvRecord(
+    flatApplicationVariables: FlatApplicationVariable[],
+  ): Record<string, string> {
+    return flatApplicationVariables.reduce<Record<string, string>>(
+      (acc, flatApplicationVariable) => {
+        acc[flatApplicationVariable.key] = this.decryptFlatValue(
+          flatApplicationVariable,
+        );
+
+        return acc;
+      },
+      {},
+    );
+  }
+
+  private decryptFlatValue({
+    value,
+    workspaceId,
+  }: FlatApplicationVariable): string {
+    if (value === '') {
+      return '';
+    }
+
+    return this.secretEncryptionService.decryptVersionedOrThrow(value, {
+      workspaceId,
+    });
   }
 
   async update({
