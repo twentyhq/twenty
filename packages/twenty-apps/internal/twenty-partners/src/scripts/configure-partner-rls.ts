@@ -487,6 +487,18 @@ async function main() {
       `[rls:configure] ✓ ${name}: predicate id=${predicate.id} ` +
         `(fieldMetadataId=${predicate.fieldMetadataId}, operand=${predicate.operand})`,
     );
+
+    // The operator reads this script's output, not the runbook. The application predicate is
+    // the one that needs a matching workflow edit in the same workspace.
+    if (name === 'application') {
+      console.log(
+        `\n[rls:configure] ⚠ The "Apply to Brief" workflow in this workspace MUST map\n` +
+          `  Partner User -> {{trigger.workspaceMember}} and map no other field.\n` +
+          `  Until it does, every partner apply fails with "Record does not satisfy\n` +
+          `  row-level security constraints of your current role".\n` +
+          `  Fix it now in Settings -> Workflows. See src/workflows/README.md.\n`,
+      );
+    }
   }
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.

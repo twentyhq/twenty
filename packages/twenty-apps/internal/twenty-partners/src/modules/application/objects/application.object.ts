@@ -85,9 +85,7 @@ export default defineObject({
       },
     },
     {
-      // RLS pivot: the partner's member. Set by the Apply workflow at insert (self-apply) or
-      // by on-application-created from the partner (admin invite). A row without it is
-      // invisible to its partner.
+      // RLS pivot: a row without it is invisible to its own partner.
       universalIdentifier: APPLICATION_PARTNER_USER_FIELD_ID,
       type: FieldType.RELATION,
       name: 'partnerUser',

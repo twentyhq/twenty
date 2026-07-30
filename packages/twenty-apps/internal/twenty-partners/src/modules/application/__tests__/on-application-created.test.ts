@@ -71,9 +71,7 @@ describe('on-application-created', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  // The Apply workflow now maps Partner User at insert (RLS rejects the row otherwise), so
-  // a self-apply event carries partnerUserId and no partnerId. Pins the branch ordering:
-  // partnerId first, partnerUserId only inside the admin branch.
+  // Pins the branch ordering: partnerId first, partnerUserId only inside the admin branch.
   it('resolves the candidacy when the self-apply row already carries partnerUser', async () => {
     queryMock.mockResolvedValue({
       partners: { edges: [{ node: { id: PARTNER_ID } }] },

@@ -26,9 +26,7 @@ export async function resolveCandidacy(
   const applicationId = after?.id;
   if (!applicationId) return {};
 
-  // Admin path (invite/import): the partner is set but partnerUser is not. RLS scopes a
-  // partner's reads to partnerUser, so mirror the partner's member or the invited partner
-  // never sees the row.
+  // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
   if (after.partnerId) {
     if (after.partnerUserId) return {};
 
