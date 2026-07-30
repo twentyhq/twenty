@@ -6,6 +6,7 @@ export default defineConnectionProvider({
   universalIdentifier: LINEAR_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: 'linear',
   displayName: 'Linear',
+  logo: 'public/linear-logomark.svg',
   type: 'oauth',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
