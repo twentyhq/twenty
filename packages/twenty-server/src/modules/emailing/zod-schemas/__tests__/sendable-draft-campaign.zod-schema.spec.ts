@@ -69,4 +69,51 @@ describe('sendableDraftCampaignSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('should accept a body holding a valid TipTap document', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Hello' }],
+            },
+          ],
+        }),
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should accept a legacy HTML body', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: '<p>Hello {{firstName}}</p>',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('should reject a body holding JSON that is not a document', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({ type: 'paragraph' }),
+      }).success,
+    ).toBe(false);
+  });
+
+  it('should reject a document with a malformed nested node', () => {
+    expect(
+      sendableDraftCampaignSchema.safeParse({
+        ...sendableDraftCampaign,
+        bodyTemplate: JSON.stringify({
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ text: 'no type' }] }],
+        }),
+      }).success,
+    ).toBe(false);
+  });
 });

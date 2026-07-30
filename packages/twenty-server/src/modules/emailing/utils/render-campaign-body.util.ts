@@ -1,6 +1,6 @@
 import { type JSONContent } from '@tiptap/core';
 
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
 import {
@@ -19,17 +19,32 @@ const isRenderableDocument = (
   document.type === 'doc' &&
   (!isDefined(document.content) || Array.isArray(document.content));
 
+const substituteIntoString = (
+  value: string,
+  variables: Record<string, string>,
+): string =>
+  value.replace(
+    CAMPAIGN_VARIABLE_PATTERN,
+    (_match, variableName: string) => variables[variableName] ?? '',
+  );
+
 const substituteVariables = (
   node: JSONContent,
   variables: Record<string, string>,
 ): JSONContent => ({
   ...node,
   ...(typeof node.text === 'string' && {
-    text: node.text.replace(
-      CAMPAIGN_VARIABLE_PATTERN,
-      (_match, variableName: string) => variables[variableName] ?? '',
-    ),
+    text: substituteIntoString(node.text, variables),
   }),
+  // Variable chips carry their placeholder in an attribute rather than in a
+  // text node, and the renderer prints that attribute verbatim.
+  ...(node.type === TIPTAP_NODE_TYPES.VARIABLE_TAG &&
+    typeof node.attrs?.variable === 'string' && {
+      attrs: {
+        ...node.attrs,
+        variable: substituteIntoString(node.attrs.variable, variables),
+      },
+    }),
   ...(Array.isArray(node.content) && {
     content: node.content.map((childNode) =>
       substituteVariables(childNode, variables),

@@ -60,6 +60,28 @@ describe('renderCampaignBodyToHtml', () => {
     );
   });
 
+  it('should substitute variables carried by variable chip attributes', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Dear ' },
+              { type: 'variableTag', attrs: { variable: '{{firstName}}' } },
+            ],
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].content[1].attrs.variable).toBe(
+      'Ada',
+    );
+  });
+
   it('should substitute variables nested under marks and lists', async () => {
     const document = JSON.stringify({
       type: 'doc',
