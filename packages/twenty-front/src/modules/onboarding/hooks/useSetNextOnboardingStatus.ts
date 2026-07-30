@@ -18,11 +18,10 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
@@ -46,9 +45,10 @@ const getNextOnboardingStatus = ({
     ? OnboardingStatus.PLAN_REQUIRED
     : OnboardingStatus.COMPLETED;
 
-  const statusBeforePlan = isBookCallRequired
-    ? OnboardingStatus.BOOK_CALL
-    : statusAfterBookCall;
+  const statusAfterInviteTeam =
+    isBookCallRequired && isPlanRequired
+      ? OnboardingStatus.BOOK_CALL
+      : statusAfterBookCall;
 
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.SYNC_EMAIL;
@@ -69,15 +69,15 @@ const getNextOnboardingStatus = ({
     if (currentWorkspace?.workspaceMembersCount === 1) {
       return OnboardingStatus.INVITE_TEAM;
     }
-    return statusBeforePlan;
+    return statusAfterInviteTeam;
   }
   if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
-    return statusBeforePlan;
+    return statusAfterInviteTeam;
   }
-  if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL) {
-    return statusAfterBookCall;
-  }
-  if (currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED) {
+  if (
+    currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL ||
+    currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED
+  ) {
     return statusAfterBookCall;
   }
   return OnboardingStatus.COMPLETED;
@@ -85,26 +85,22 @@ const getNextOnboardingStatus = ({
 
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();
-  const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
-  );
+
   return useCallback(() => {
-    const isBookCallRequired = getIsBookCallRequired({
-      companyEnrichment: store.get(companyEnrichmentState.atom),
-      bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),
-      calendarBookingPageId: store.get(calendarBookingPageIdState.atom),
-    });
+    const currentUser = store.get(currentUserState.atom);
+    const currentWorkspace = store.get(currentWorkspaceState.atom);
 
     const nextOnboardingStatus = getNextOnboardingStatus({
       currentUser,
       currentWorkspace,
-      isBillingEnabled,
-      isBookCallRequired,
+      isBillingEnabled: store.get(billingState.atom)?.isBillingEnabled ?? false,
+      isBookCallRequired: getIsBookCallRequired({
+        companyEnrichment: store.get(companyEnrichmentState.atom),
+        bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),
+        calendarBookingPageId: store.get(calendarBookingPageIdState.atom),
+      }),
     });
+
     store.set(currentUserState.atom, (current) => {
       if (isDefined(current)) {
         return {
@@ -124,14 +120,8 @@ export const useSetNextOnboardingStatus = () => {
       store.set(isWelcomeAnimationVisibleState.atom, true);
       store.set(
         shouldOpenAiChatAfterOnboardingState.atom,
-        isOnboardingAiChatEnabled,
+        store.get(isOnboardingAiChatEnabledState.atom),
       );
     }
-  }, [
-    currentUser,
-    currentWorkspace,
-    isBillingEnabled,
-    isOnboardingAiChatEnabled,
-    store,
-  ]);
+  }, [store]);
 };

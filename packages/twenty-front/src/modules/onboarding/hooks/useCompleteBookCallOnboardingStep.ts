@@ -1,8 +1,5 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
+import { useIsPlanRequired } from '@/onboarding/hooks/useIsPlanRequired';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,17 +9,10 @@ import { CompleteBookCallOnboardingStepDocument } from '~/generated-metadata/gra
 export const useCompleteBookCallOnboardingStep = () => {
   const navigate = useNavigate();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const isPlanRequired = useIsPlanRequired();
   const [completeBookCallOnboardingStepMutation] = useMutation(
     CompleteBookCallOnboardingStepDocument,
   );
-
-  const isPlanRequired = getIsPlanRequired({
-    isBillingEnabled,
-    currentWorkspace,
-  });
 
   return useCallback(async () => {
     await completeBookCallOnboardingStepMutation();

@@ -97,22 +97,19 @@ export class CompanyEnrichmentService {
       domain,
     });
 
-    // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
-    if (result.outcome !== 'skipped') {
-      await this.recordEnrichmentAttempt({
-        workspaceId,
-        domain,
-        result,
-      });
-    }
-
-    if (enrichmentResult.outcome === 'matched') {
-      await this.qualifyForBookCallOnboardingStep({
-        userId,
-        workspaceId,
-        employeeCount: enrichmentResult.enrichment.employeeCount,
-      });
-    }
+    await Promise.all([
+      // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
+      result.outcome === 'skipped'
+        ? undefined
+        : this.recordEnrichmentAttempt({ workspaceId, domain, result }),
+      enrichmentResult.outcome === 'matched'
+        ? this.qualifyForBookCallOnboardingStep({
+            userId,
+            workspaceId,
+            employeeCount: enrichmentResult.enrichment.employeeCount,
+          })
+        : undefined,
+    ]);
 
     return enrichmentResult;
   }

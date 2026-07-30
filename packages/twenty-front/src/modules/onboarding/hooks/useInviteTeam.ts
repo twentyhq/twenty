@@ -1,7 +1,5 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
-import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -35,16 +33,8 @@ export const useInviteTeam = () => {
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const store = useStore();
-  const companyEnrichment = useAtomStateValue(companyEnrichmentState);
-  const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
-    isCompanyEnrichmentFetchInFlightState,
-  );
-
-  const isCompanyEnrichmentAnswered =
-    isDefined(companyEnrichment) || !isCompanyEnrichmentFetchInFlight;
 
   const [isNavigating, setIsNavigating] = useState(false);
-  const [isAdvancing, setIsAdvancing] = useState(false);
 
   const {
     control,
@@ -143,9 +133,13 @@ export const useInviteTeam = () => {
         ),
       );
 
-      setIsAdvancing(true);
+      setIsNavigating(true);
 
       try {
+        const companyEnrichmentSettlement = waitForCompanyEnrichmentSettlement({
+          store,
+        });
+
         const result = await sendInvitation({ emails });
 
         if (isDefined(result.error)) {
@@ -169,19 +163,17 @@ export const useInviteTeam = () => {
           });
         }
 
-        if (!isCompanyEnrichmentAnswered) {
-          await waitForCompanyEnrichmentSettlement({ store });
-        }
+        await companyEnrichmentSettlement;
 
         setNextOnboardingStatus();
-        setIsNavigating(true);
-      } finally {
-        setIsAdvancing(false);
+      } catch (error) {
+        setIsNavigating(false);
+
+        throw error;
       }
     },
     [
       enqueueSuccessSnackBar,
-      isCompanyEnrichmentAnswered,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,
@@ -214,6 +206,6 @@ export const useInviteTeam = () => {
     getPlaceholder,
     isValid,
     isSubmitting,
-    isNavigating: isNavigating || isAdvancing,
+    isNavigating,
   };
 };

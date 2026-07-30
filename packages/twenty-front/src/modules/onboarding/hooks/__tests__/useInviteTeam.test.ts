@@ -3,12 +3,9 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
-import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -47,23 +44,6 @@ jest.mock('@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement', () => ({
 
 dynamicActivate(SOURCE_LOCALE);
 
-const enrichment: WorkspaceCompanyEnrichment = {
-  domain: 'acme.com',
-  enrichedAt: '2026-07-21T10:00:00.000Z',
-  name: 'Acme Inc',
-  website: null,
-  industry: null,
-  employeeCount: 320,
-  size: null,
-  founded: null,
-  headline: null,
-  summary: null,
-  tags: [],
-  locality: null,
-  region: null,
-  country: null,
-};
-
 const renderInviteTeam = () =>
   renderHook(() => useInviteTeam(), {
     wrapper: ({ children }) =>
@@ -83,9 +63,7 @@ describe('useInviteTeam', () => {
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
   });
 
-  it('should wait for the enrichment answer while the fetch is still in flight', async () => {
-    jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
-
+  it('should wait for the enrichment answer before advancing', async () => {
     const { result } = renderInviteTeam();
 
     await act(async () => {
@@ -96,29 +74,30 @@ describe('useInviteTeam', () => {
     expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
   });
 
-  it.each([
-    [
-      'an enrichment is already stored',
-      () => {
-        jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
-        jotaiStore.set(companyEnrichmentState.atom, enrichment);
-      },
-    ],
-    ['no fetch is in flight', () => {}],
-  ])('should not wait when %s', async (_label, seedAnswer) => {
-    seedAnswer();
+  it('should start waiting for the enrichment before the invitation resolves', async () => {
+    let resolveInvitation: (value: unknown) => void = () => {};
+
+    mockSendInvitation.mockReturnValue(
+      new Promise((resolve) => {
+        resolveInvitation = resolve;
+      }),
+    );
 
     const { result } = renderInviteTeam();
 
-    await act(async () => {
-      await result.current.handleSkip();
+    act(() => {
+      void result.current.handleSkip();
     });
 
-    expect(mockWaitForCompanyEnrichmentSettlement).not.toHaveBeenCalled();
-    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
+    expect(mockWaitForCompanyEnrichmentSettlement).toHaveBeenCalled();
+    expect(mockSetNextOnboardingStatus).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveInvitation({});
+    });
   });
 
-  it('should block a second submission while the first is still advancing', async () => {
+  it('should disable the form while the submission is still in flight', async () => {
     let resolveInvitation: (value: unknown) => void = () => {};
 
     mockSendInvitation.mockReturnValue(

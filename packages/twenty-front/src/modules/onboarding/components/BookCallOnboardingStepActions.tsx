@@ -8,27 +8,22 @@ export const BookCallOnboardingStepActions = () => {
   const completeBookCallOnboardingStep = useCompleteBookCallOnboardingStep();
   const [isCompleting, setIsCompleting] = useState(false);
 
-  const handleSkip = async () => {
+  const completeStep = useCallback(async () => {
     setIsCompleting(true);
 
     try {
       await completeBookCallOnboardingStep();
-    } finally {
+    } catch (error) {
       setIsCompleting(false);
+
+      throw error;
     }
-  };
+  }, [completeBookCallOnboardingStep]);
 
   const handleBookingSuccessful = useCallback(() => {
-    void (async () => {
-      setIsCompleting(true);
-
-      try {
-        await completeBookCallOnboardingStep();
-      } catch {
-        setIsCompleting(false);
-      }
-    })();
-  }, [completeBookCallOnboardingStep]);
+    // The user did not ask for this, so a failure stays silent: skipping remains available.
+    void completeStep().catch(() => {});
+  }, [completeStep]);
 
   return (
     <>
@@ -36,7 +31,7 @@ export const BookCallOnboardingStepActions = () => {
         onBookingSuccessful={handleBookingSuccessful}
       />
       <OnboardingSkipButton
-        onClick={() => void handleSkip()}
+        onClick={() => void completeStep()}
         disabled={isCompleting}
       />
     </>

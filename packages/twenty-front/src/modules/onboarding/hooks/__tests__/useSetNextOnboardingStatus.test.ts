@@ -297,11 +297,22 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.PROFILE_CREATION,
       {
         withOneWorkspaceMember: false,
+        isBillingEnabled: true,
         enrichedEmployeeCount: 320,
         bookCallMinEmployeeCount: 50,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
+  });
+
+  it('should skip the book-call step once the workspace has a subscription, matching the server', () => {
+    const { nextOnboardingStatus } = renderHooks(OnboardingStatus.INVITE_TEAM, {
+      isBillingEnabled: true,
+      withSubscription: true,
+      enrichedEmployeeCount: 320,
+      bookCallMinEmployeeCount: 50,
+    });
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it.each([

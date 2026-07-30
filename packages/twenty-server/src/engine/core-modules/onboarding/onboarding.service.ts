@@ -437,6 +437,22 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
+    const calendarBookingPageId = this.twentyConfigService.get(
+      'CALENDAR_BOOKING_PAGE_ID',
+    );
+    const minEmployeeCount = this.twentyConfigService.get(
+      'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+    );
+
+    if (
+      !isNonEmptyString(calendarBookingPageId) ||
+      !isNumber(minEmployeeCount) ||
+      !isNumber(employeeCount) ||
+      employeeCount < minEmployeeCount
+    ) {
+      return;
+    }
+
     const hasAlreadyBeenEvaluated = isDefined(
       await this.userVarsService.get({
         userId,
@@ -446,26 +462,6 @@ export class OnboardingService {
     );
 
     if (hasAlreadyBeenEvaluated) {
-      return;
-    }
-
-    const calendarBookingPageId = this.twentyConfigService.get(
-      'CALENDAR_BOOKING_PAGE_ID',
-    );
-
-    if (!isNonEmptyString(calendarBookingPageId)) {
-      return;
-    }
-
-    const minEmployeeCount = this.twentyConfigService.get(
-      'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
-    );
-
-    if (!isNumber(minEmployeeCount) || !isNumber(employeeCount)) {
-      return;
-    }
-
-    if (employeeCount < minEmployeeCount) {
       return;
     }
 
