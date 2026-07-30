@@ -2121,11 +2121,6 @@ msgstr "按字母顺序"
 msgid "Already in navbar"
 msgstr "已在导航栏中"
 
-#. js-lingui-id: 35jGKh
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Always allow links to this domain"
-msgstr ""
-
 #. js-lingui-id: Fc64QW
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Amazon Q Developer CLI"
@@ -3392,7 +3387,6 @@ msgstr "无法扫描？复制"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -13482,11 +13476,6 @@ msgstr "打开 Claude，并预填 Twenty 连接器名称和 MCP URL。"
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "打开 Cursor 的 MCP 安装程序，并使用 Twenty 远程服务器配置。"
 
-#. js-lingui-id: YIqGXO
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open external link?"
-msgstr ""
-
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -13507,11 +13496,6 @@ msgstr "在应用中打开"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "在角色中打开"
-
-#. js-lingui-id: x57cJf
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open link"
-msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx

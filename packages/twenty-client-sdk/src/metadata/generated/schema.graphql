@@ -3035,6 +3035,11 @@ type WorkspaceAiStats {
   toolsCount: Int!
 }
 
+type EnqueueJobResult {
+  enqueued: Boolean!
+  logicFunctionUniversalIdentifier: String!
+}
+
 type AppKeyValue {
   key: String!
   value: JSON
@@ -3589,6 +3594,7 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
+  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4721,6 +4727,13 @@ input SetAppKeyValueInput {
   key: String!
   value: JSON
   scope: AppKeyValueScope = WORKSPACE
+}
+
+input EnqueueJobInput {
+  logicFunctionUniversalIdentifier: String!
+  payload: JSON
+  retryLimit: Int
+  delayMs: Int
 }
 
 input FileAttachmentInput {
