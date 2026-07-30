@@ -14,9 +14,10 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
-import { ApplicationFileUploadTargetDTO } from 'src/engine/core-modules/application/application-development/dtos/application-file-upload-target.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
+import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
 import { CompleteApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads.input';
+import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads-result.dto';
 import { CreateApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
@@ -92,7 +93,7 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  @Mutation(() => [ApplicationFileUploadTargetDTO])
+  @Mutation(() => CreateApplicationFileUploadsResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async createApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -100,7 +101,7 @@ export class ApplicationDevelopmentResolver {
       applicationUniversalIdentifier,
       files,
     }: CreateApplicationFileUploadsInput,
-  ): Promise<ApplicationFileUploadTargetDTO[]> {
+  ): Promise<CreateApplicationFileUploadsResultDTO> {
     return this.applicationFileUploadService.createApplicationFileUploads({
       workspaceId,
       applicationUniversalIdentifier,
@@ -108,7 +109,7 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  @Mutation(() => [FileDTO])
+  @Mutation(() => CompleteApplicationFileUploadsResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async completeApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -116,7 +117,7 @@ export class ApplicationDevelopmentResolver {
       applicationUniversalIdentifier,
       fileIds,
     }: CompleteApplicationFileUploadsInput,
-  ): Promise<FileDTO[]> {
+  ): Promise<CompleteApplicationFileUploadsResultDTO> {
     return this.applicationFileUploadService.completeApplicationFileUploads({
       workspaceId,
       applicationUniversalIdentifier,

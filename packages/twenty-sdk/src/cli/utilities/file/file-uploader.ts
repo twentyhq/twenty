@@ -22,6 +22,19 @@ export type FileUploadFailure = {
 
 const DIRECT_UPLOAD_CONCURRENCY = 10;
 
+const isMissingDirectUploadMutationError = (error: unknown): boolean => {
+  const message = serializeError(error);
+
+  return (
+    (message.includes('createApplicationFileUploads') ||
+      message.includes('ApplicationFileUploadRequestInput') ||
+      message.includes('CreateApplicationFileUploads')) &&
+    (message.includes('Cannot query field') ||
+      message.includes('Unknown type') ||
+      message.includes('Unknown field'))
+  );
+};
+
 export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
@@ -58,6 +71,13 @@ export class FileUploader {
   private async uploadBatch(
     batch: FileToUpload[],
   ): Promise<FileUploadFailure[]> {
+    const builtPathByRelativePath = new Map<string, string>(
+      batch.map(({ builtPath }) => [
+        relative(OUTPUT_DIR, builtPath),
+        builtPath,
+      ]),
+    );
+
     const uploadRequests: ApplicationFileUploadRequest[] = batch.map(
       ({ builtPath, fileFolder }) => ({
         fileFolder,
@@ -72,37 +92,46 @@ export class FileUploader {
     });
 
     if (!createResult.success) {
+      if (
+        isMissingDirectUploadMutationError(
+          createResult.error ?? createResult.message,
+        )
+      ) {
+        return this.uploadBatchWithMultipartMutation(batch);
+      }
+
       return this.failWholeBatch(batch, serializeError(createResult.error));
     }
 
-    const uploadTargets = createResult.data;
+    const { targets, errors: createErrors } = createResult.data;
 
-    if (uploadTargets.length !== batch.length) {
-      return this.failWholeBatch(
-        batch,
-        `Server returned ${uploadTargets.length} upload urls for ${batch.length} files`,
-      );
-    }
+    const failures: FileUploadFailure[] = createErrors.map((error) => ({
+      builtPath: builtPathByRelativePath.get(error.filePath) ?? error.filePath,
+      error: error.message,
+    }));
 
-    const failures: FileUploadFailure[] = [];
+    const builtPathByFileId = new Map<string, string>();
     const uploadedFileIds: string[] = [];
 
-    await this.runWithConcurrency(batch, async (file, fileIndex) => {
-      const uploadTarget = uploadTargets[fileIndex];
+    await this.runWithConcurrency(targets, async (target) => {
+      const builtPath = builtPathByRelativePath.get(target.filePath);
+
+      if (builtPath === undefined) {
+        return;
+      }
+
+      builtPathByFileId.set(target.fileId, builtPath);
 
       try {
         await putFileToUploadUrl({
-          absolutePath: path.join(this.appPath, file.builtPath),
-          uploadUrl: uploadTarget.uploadUrl,
-          contentType: uploadTarget.contentType,
+          absolutePath: path.join(this.appPath, builtPath),
+          uploadUrl: target.uploadUrl,
+          contentType: target.contentType,
         });
 
-        uploadedFileIds.push(uploadTarget.fileId);
+        uploadedFileIds.push(target.fileId);
       } catch (error) {
-        failures.push({
-          builtPath: file.builtPath,
-          error: serializeError(error),
-        });
+        failures.push({ builtPath, error: serializeError(error) });
       }
     });
 
@@ -118,19 +147,45 @@ export class FileUploader {
     );
 
     if (!completeResult.success) {
-      const uploadedFiles = batch.filter(
-        (file) =>
-          !failures.some((failure) => failure.builtPath === file.builtPath),
-      );
-
       return [
         ...failures,
-        ...this.failWholeBatch(
-          uploadedFiles,
-          serializeError(completeResult.error),
-        ),
+        ...uploadedFileIds.map((fileId) => ({
+          builtPath: builtPathByFileId.get(fileId) ?? fileId,
+          error: serializeError(completeResult.error),
+        })),
       ];
     }
+
+    for (const error of completeResult.data.errors) {
+      failures.push({
+        builtPath: builtPathByFileId.get(error.fileId) ?? error.fileId,
+        error: error.message,
+      });
+    }
+
+    return failures;
+  }
+
+  private async uploadBatchWithMultipartMutation(
+    batch: FileToUpload[],
+  ): Promise<FileUploadFailure[]> {
+    const failures: FileUploadFailure[] = [];
+
+    await this.runWithConcurrency(batch, async ({ builtPath, fileFolder }) => {
+      const result = await this.apiService.uploadFile({
+        filePath: path.join(this.appPath, builtPath),
+        builtHandlerPath: relative(OUTPUT_DIR, builtPath),
+        fileFolder,
+        applicationUniversalIdentifier: this.applicationUniversalIdentifier,
+      });
+
+      if (!result.success) {
+        failures.push({
+          builtPath,
+          error: serializeError(result.error ?? result.message),
+        });
+      }
+    });
 
     return failures;
   }
@@ -142,23 +197,23 @@ export class FileUploader {
     return batch.map(({ builtPath }) => ({ builtPath, error }));
   }
 
-  private async runWithConcurrency(
-    files: FileToUpload[],
-    handle: (file: FileToUpload, fileIndex: number) => Promise<void>,
+  private async runWithConcurrency<TItem>(
+    items: TItem[],
+    handle: (item: TItem, index: number) => Promise<void>,
   ): Promise<void> {
     let nextIndex = 0;
 
     const worker = async () => {
-      while (nextIndex < files.length) {
-        const fileIndex = nextIndex++;
+      while (nextIndex < items.length) {
+        const index = nextIndex++;
 
-        await handle(files[fileIndex], fileIndex);
+        await handle(items[index], index);
       }
     };
 
     await Promise.all(
       Array.from(
-        { length: Math.min(DIRECT_UPLOAD_CONCURRENCY, files.length) },
+        { length: Math.min(DIRECT_UPLOAD_CONCURRENCY, items.length) },
         worker,
       ),
     );

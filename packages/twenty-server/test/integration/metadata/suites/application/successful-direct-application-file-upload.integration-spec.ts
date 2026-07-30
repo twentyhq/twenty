@@ -91,44 +91,48 @@ describe('Direct application file upload', () => {
 
     expect(createErrors).toBeUndefined();
 
-    const uploadTargets = createData!.createApplicationFileUploads;
+    const { targets, errors: reservationErrors } =
+      createData!.createApplicationFileUploads;
 
-    expect(uploadTargets).toHaveLength(2);
-    expect(uploadTargets[0].filePath).toBe(HANDLER_PATH);
-    expect(uploadTargets[0].fileFolder).toBe('BuiltLogicFunction');
-    expect(uploadTargets[1].filePath).toBe(LOGO_PATH);
+    expect(reservationErrors).toEqual([]);
+    expect(targets).toHaveLength(2);
+    expect(targets[0].filePath).toBe(HANDLER_PATH);
+    expect(targets[0].fileFolder).toBe('BuiltLogicFunction');
+    expect(targets[1].filePath).toBe(LOGO_PATH);
 
     const [pendingRow] = await globalThis.testDataSource.query(
       `SELECT status, "mimeType" FROM core."file" WHERE id = $1`,
-      [uploadTargets[0].fileId],
+      [targets[0].fileId],
     );
 
     expect(pendingRow.status).toBe('PENDING');
     expect(pendingRow.mimeType).toBe('application/octet-stream');
 
-    const handlerResponse = await putToUploadTarget(
-      uploadTargets[0],
-      handlerBuffer,
-    );
-    const logoResponse = await putToUploadTarget(uploadTargets[1], logoBuffer);
+    const handlerResponse = await putToUploadTarget(targets[0], handlerBuffer);
+    const logoResponse = await putToUploadTarget(targets[1], logoBuffer);
 
     expect(handlerResponse.status).toBe(204);
     expect(logoResponse.status).toBe(204);
 
-    const { data: completeData, errors: completeErrors } =
+    const { data: completeData, errors: completeRequestErrors } =
       await completeApplicationFileUploads({
         applicationUniversalIdentifier: TEST_APP_UID,
-        fileIds: uploadTargets.map((uploadTarget) => uploadTarget.fileId),
+        fileIds: targets.map((target) => target.fileId),
       });
 
     jest.useFakeTimers();
 
-    expect(completeErrors).toBeUndefined();
-    expect(completeData!.completeApplicationFileUploads).toHaveLength(2);
+    expect(completeRequestErrors).toBeUndefined();
+
+    const { files: completedFiles, errors: completionErrors } =
+      completeData!.completeApplicationFileUploads;
+
+    expect(completionErrors).toEqual([]);
+    expect(completedFiles).toHaveLength(2);
 
     const rows = await globalThis.testDataSource.query(
       `SELECT id, status, "mimeType" FROM core."file" WHERE id = ANY($1)`,
-      [uploadTargets.map((uploadTarget) => uploadTarget.fileId)],
+      [targets.map((target) => target.fileId)],
     );
 
     expect(rows).toHaveLength(2);
@@ -145,30 +149,38 @@ describe('Direct application file upload', () => {
     );
 
     const logoRow = rows.find(
-      (row: { id: string }) => row.id === uploadTargets[1].fileId,
+      (row: { id: string }) => row.id === targets[1].fileId,
     );
 
     expect(logoRow.mimeType).toBe('image/svg+xml');
   }, 60000);
 
-  it('should refuse a file folder that does not belong to an application', async () => {
+  it('should fail slow: reserve valid files and report a disallowed folder as a per-file error', async () => {
     jest.useRealTimers();
 
-    const { errors } = await createApplicationFileUploads({
+    const { data } = await createApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
-      files: [{ fileFolder: 'FilesField', filePath: 'note.pdf', size: 10 }],
+      files: [
+        { fileFolder: 'Source', filePath: 'src/valid.ts', size: 10 },
+        { fileFolder: 'FilesField', filePath: 'note.pdf', size: 10 },
+      ],
     });
 
     jest.useFakeTimers();
 
-    expect(errors).toBeDefined();
-    expect(errors![0].message).toContain('Invalid fileFolder');
+    const { targets, errors } = data!.createApplicationFileUploads;
+
+    expect(targets).toHaveLength(1);
+    expect(targets[0].filePath).toBe('src/valid.ts');
+    expect(errors).toHaveLength(1);
+    expect(errors[0].filePath).toBe('note.pdf');
+    expect(errors[0].message).toContain('Invalid fileFolder');
   }, 30000);
 
-  it('should refuse a path that escapes the application folder', async () => {
+  it('should fail slow: report a path escaping the application folder as a per-file error', async () => {
     jest.useRealTimers();
 
-    const { errors } = await createApplicationFileUploads({
+    const { data } = await createApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
       files: [
         {
@@ -181,27 +193,38 @@ describe('Direct application file upload', () => {
 
     jest.useFakeTimers();
 
-    expect(errors).toBeDefined();
+    const { targets, errors } = data!.createApplicationFileUploads;
+
+    expect(targets).toEqual([]);
+    expect(errors).toHaveLength(1);
+    expect(errors[0].filePath).toBe('../../../etc/passwd.ts');
   }, 30000);
 
-  it('should refuse to confirm a file whose bytes never reached storage', async () => {
+  it('should fail slow: report a file whose bytes never reached storage as a per-file completion error', async () => {
     jest.useRealTimers();
 
-    const { data } = await createApplicationFileUploads({
+    const { data: createData } = await createApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
       files: [
         { fileFolder: 'Source', filePath: 'never-uploaded.ts', size: 10 },
       ],
     });
 
-    const { errors } = await completeApplicationFileUploads({
+    const fileId =
+      createData!.createApplicationFileUploads.targets[0].fileId;
+
+    const { data: completeData } = await completeApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
-      fileIds: [data!.createApplicationFileUploads[0].fileId],
+      fileIds: [fileId],
     });
 
     jest.useFakeTimers();
 
-    expect(errors).toBeDefined();
-    expect(errors![0].message).toContain('has not been uploaded to storage');
+    const { files, errors } = completeData!.completeApplicationFileUploads;
+
+    expect(files).toEqual([]);
+    expect(errors).toHaveLength(1);
+    expect(errors[0].fileId).toBe(fileId);
+    expect(errors[0].message).toContain('has not been uploaded to storage');
   }, 30000);
 });

@@ -13,7 +13,6 @@ import {
 import { FileFolder } from 'twenty-shared/types';
 
 import { MAX_APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
-import { IsSafeRelativePath } from 'src/engine/core-modules/file-storage/validators/is-safe-relative-path.validator';
 
 @InputType()
 export class ApplicationFileUploadRequestInput {
@@ -21,8 +20,6 @@ export class ApplicationFileUploadRequestInput {
   fileFolder: FileFolder;
 
   @Field(() => String)
-  @IsNotEmpty()
-  @IsSafeRelativePath()
   filePath: string;
 
   @Field(() => Int)

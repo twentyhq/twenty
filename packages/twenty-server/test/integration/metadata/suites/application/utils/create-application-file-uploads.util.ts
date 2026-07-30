@@ -10,6 +10,22 @@ export type ApplicationFileUploadTarget = {
   expiresAt: string;
 };
 
+export type ApplicationFileUploadError = {
+  fileFolder: string;
+  filePath: string;
+  message: string;
+};
+
+export type CreateApplicationFileUploadsResult = {
+  targets: ApplicationFileUploadTarget[];
+  errors: ApplicationFileUploadError[];
+};
+
+export type CompleteApplicationFileUploadsResult = {
+  files: { id: string; path: string; size: number }[];
+  errors: { fileId: string; message: string }[];
+};
+
 export const createApplicationFileUploads = async ({
   applicationUniversalIdentifier,
   files,
@@ -27,12 +43,19 @@ export const createApplicationFileUploads = async ({
           applicationUniversalIdentifier: $applicationUniversalIdentifier
           files: $files
         ) {
-          fileId
-          fileFolder
-          filePath
-          uploadUrl
-          contentType
-          expiresAt
+          targets {
+            fileId
+            fileFolder
+            filePath
+            uploadUrl
+            contentType
+            expiresAt
+          }
+          errors {
+            fileFolder
+            filePath
+            message
+          }
         }
       }
     `,
@@ -41,7 +64,7 @@ export const createApplicationFileUploads = async ({
 
   return {
     data: response.body.data as {
-      createApplicationFileUploads: ApplicationFileUploadTarget[];
+      createApplicationFileUploads: CreateApplicationFileUploadsResult;
     } | null,
     errors: response.body.errors as { message: string }[] | undefined,
   };
@@ -64,9 +87,15 @@ export const completeApplicationFileUploads = async ({
           applicationUniversalIdentifier: $applicationUniversalIdentifier
           fileIds: $fileIds
         ) {
-          id
-          path
-          size
+          files {
+            id
+            path
+            size
+          }
+          errors {
+            fileId
+            message
+          }
         }
       }
     `,
@@ -75,11 +104,7 @@ export const completeApplicationFileUploads = async ({
 
   return {
     data: response.body.data as {
-      completeApplicationFileUploads: {
-        id: string;
-        path: string;
-        size: number;
-      }[];
+      completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
     } | null,
     errors: response.body.errors as { message: string }[] | undefined,
   };
