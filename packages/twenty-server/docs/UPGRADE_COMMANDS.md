@@ -174,6 +174,8 @@ It exits `0` while a run is alive and `1` once none is. Note that `1` means "not
 | `stop --now` | two spaced `SIGTERM`s | immediate exit, step in progress left unfinished |
 | `stop --force` | `SIGKILL` | no graceful boundary, a multi-transaction command may leave partial work |
 
+Every tier prints the tail of the log after signalling, so you can see which workspace and step the run was on without a second command. The plain `stop` waits a moment first, long enough for the runner's "finishing the step in progress" acknowledgement to reach the log, which is the confirmation that the signal was received and is being honoured rather than ignored.
+
 Only the node process is signalled, never the process group. A group signal would also hit the wrapper shell, killing the process that records the exit code and tearing down node's parent while it is trying to finish its segment.
 
 #### Reading the outcome

@@ -4,6 +4,7 @@ set -eu
 
 LOG_FILE="${TWENTY_UPGRADE_LOG_FILE:-/tmp/twenty-upgrade.log}"
 PID_FILE="${TWENTY_UPGRADE_PID_FILE:-/tmp/twenty-upgrade.pid}"
+TAIL_LINES=20
 export LOG_FILE PID_FILE
 
 upgrade_pid() { [ -s "$PID_FILE" ] && cat "$PID_FILE" || return 1; }
@@ -32,6 +33,13 @@ claim() { (set -C; echo $$ > "$PID_FILE") 2>/dev/null; }
 # Shared so start and logs cannot drift apart.
 detach_hint() {
   echo "Ctrl+C detaches the stream only. Use 'yarn upgrade:background:stop' to stop the run."
+}
+
+# Header on stderr, log content on stdout, so redirecting keeps the log clean.
+show_tail() {
+  [ -f "$LOG_FILE" ] || return 0
+  echo "Tail of $LOG_FILE:" >&2
+  tail -n "$TAIL_LINES" "$LOG_FILE"
 }
 
 last_run() {
@@ -77,7 +85,11 @@ start() {
   while [ "$(cat "$PID_FILE" 2>/dev/null)" = "$$" ] && [ "$i" -lt 10 ]; do
     i=$((i + 1)); sleep 1
   done
-  is_running || { echo "Failed to start: see $LOG_FILE" >&2; tail -n 20 "$LOG_FILE" >&2; exit 1; }
+  is_running || {
+    echo "Failed to start: see $LOG_FILE" >&2
+    tail -n "$TAIL_LINES" "$LOG_FILE" >&2
+    exit 1
+  }
 
   echo "Running (pid $(upgrade_pid)), logging to $LOG_FILE"
   detach_hint
@@ -93,8 +105,8 @@ logs() {
     stream
   fi
   [ -f "$LOG_FILE" ] || { echo "Not running, no log at $LOG_FILE" >&2; exit 1; }
-  echo "Not running, last run $(last_run). Tail of $LOG_FILE:" >&2
-  exec tail -n 20 "$LOG_FILE"
+  echo "Not running, last run $(last_run)" >&2
+  show_tail
 }
 
 status() {
@@ -110,16 +122,22 @@ stop() {
   case "${1:-}" in
     "")
       kill -TERM "$pid"
-      echo "SIGTERM sent to $pid, it finishes the step in progress then stops (exit 143)"
-      echo "Follow with 'yarn upgrade:background:logs'. Still stuck: 'stop --now'. Last resort: 'stop --force'."
+      echo "SIGTERM sent to $pid, it finishes the step in progress then stops (exit 143)" >&2
+      # Give the handler a moment so its acknowledgement makes the tail below.
+      sleep 1
+      show_tail
+      echo "Follow with 'yarn upgrade:background:logs'. Still stuck: 'stop --now'. Last resort: 'stop --force'." >&2
       ;;
     --now)
       kill -TERM "$pid"; sleep 2; kill -TERM "$pid" 2>/dev/null || true
-      echo "Second SIGTERM sent to $pid, immediate exit with the step in progress left unfinished"
+      echo "Second SIGTERM sent to $pid, immediate exit with the step in progress left unfinished" >&2
+      sleep 1
+      show_tail
       ;;
     --force)
       kill -KILL "$pid"
       echo "SIGKILL sent to $pid, no graceful boundary so a multi-transaction command may leave partial work" >&2
+      show_tail
       ;;
     *) echo "usage: stop [--now|--force]" >&2; exit 1 ;;
   esac
