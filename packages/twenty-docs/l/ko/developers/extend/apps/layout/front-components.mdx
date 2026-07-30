@@ -6,6 +6,10 @@ icon: window-maximize
 
 프런트 컴포넌트는 Twenty의 UI 내부에서 직접 렌더링되는 React 컴포넌트입니다. 이들은 Remote DOM을 사용하는 **격리된 Web Worker**에서 실행됩니다 — 코드는 샌드박스 처리된 opaque-origin iframe 내부에서 실행되지만, UI는 해당 iframe 안에 갇히지 않고 페이지 내에서 네이티브로 렌더링됩니다.
 
+<Warning>
+Front 컴포넌트는 여전히 활발히 개발 중입니다. 실제 브라우저 페이지가 아닌 부분적인 DOM을 대상으로 코드를 실행하므로 고급 사용 시에는 종종 아무런 표시 없이 실패할 수 있습니다. [현재 제한 사항](#current-limitations)을 참고하세요.
+</Warning>
+
 ## 프런트 컴포넌트를 사용할 수 있는 위치
 
 프런트 컴포넌트는 Twenty 내에서 세 위치에 렌더링될 수 있습니다:
@@ -696,3 +700,72 @@ const Card = () => {
 `useTheme()` 는 훅이므로, 컴포넌트 본문 안에서 토큰을 읽게 되어 값이 항상 실제 활성 테마를 반영합니다. 동일한 토큰 맵은 `themeCssVariables` 상수로도 export 되지만, 프론트 컴포넌트에서는 `useTheme()` 를 우선적으로 사용하세요. `themeCssVariables` 를 역참조하는 모듈 레벨 상수는 앱 매니페스트가 추출되는 동안에는 정의되지 않았을 수 있습니다.
 
 활성 스킴에 따라 분기해야 할 경우, `twenty-sdk/front-component` 의 `useColorScheme()` 으로 값을 읽으세요. 이 훅은 `'light'` 또는 `'dark'` 를 반환합니다.
+
+## 현재 제한 사항
+
+Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및 이벤트 처리는 잘 작동합니다. 렌더링 *이후* 단계에 해당하는 작업(요소 측정, ref에서 DOM 메서드 호출, 트리 외부로의 포털링, 브라우저 스토리지 접근 등)은 현재 누락되어 있거나 불완전하며, 대부분은 조용히 실패합니다. 예외도 발생하지 않고, 스캐폴드가 전체 브라우저 DOM을 기준으로 타입이 지정되어 있기 때문에 TypeScript 오류도 발생하지 않습니다.
+
+이 중 하나가 작업을 막고 있다면, 우선순위를 높일 수 있도록 [issue를 생성](https://github.com/twentyhq/twenty/issues/new/choose)해 주세요.
+
+### 레이아웃과 측정
+
+아직 어떤 요소도 스스로를 측정할 수 없습니다.
+
+| API                                                           | 무슨 일이 일어나는지                                                              |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `getBoundingClientRect()`, `getClientRects()`                 | 예외 발생(Throws)                                                            |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 조용히 `undefined`가 되어 `width ?? 0`은 `0`을 반환하고, `width > 600`은 항상 false입니다. |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError`가 발생합니다(`typeof` 가드는 동작함).                               |
+| `window.matchMedia()`, `window.getComputedStyle()`            | 예외 발생(Throws)                                                            |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | 조용히 `undefined`가 됩니다.                                                    |
+| `new MutationObserver(fn)`                                    | 생성은 되지만 이후 `.observe()`에서 예외가 발생합니다.                                     |
+
+따라서 recharts의 `ResponsiveContainer`, Floating UI / Popper, 리스트 가상화, 드래그로 크기 조절 등은 아직 동작하지 않습니다. 대신 CSS로 레이아웃을 구성하세요. 스타일시트는 실제 페이지에 도달하므로 flexbox, grid, `aspect-ratio`, `clamp()`, `@container`는 모두 정상적으로 동작합니다.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout`, `queueMicrotask`는 `window.` 접두사 없이도 동작합니다. `window.requestAnimationFrame(...)` 등만 예외를 발생시킵니다.
+</Note>
+
+### DOM 액세스
+
+`ref`는 `HTMLElement`가 아닌 샌드박스 요소를 제공합니다.
+
+| 작성한 코드                                                                                                      | 무슨 일이 일어나는지                                    | 대신 사용할 것                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 예외 발생(Throws)                                  | 제어 컴포넌트 사용; 값을 `event.target`에서 읽기                                          |
+| `element.classList.add(...)`                                                                                | 예외 발생(`classList`가 `undefined`임)               | `className` 문자열을 직접 구성하세요.                                                  |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 예외 발생(Throws)                                  | 정상 동작하는 `querySelector()` / `querySelectorAll()` 사용                         |
+| `document.activeElement`                                                                                    | 항상 `undefined`입니다.                             | `onFocus` / `onBlur`로 포커스를 추적하세요.                                           |
+| `\<canvas>`                                                                                | 아무것도 렌더링되지 않으며, 오류도 없습니다.                      | SVG를 사용하거나, 오프스크린에서 그린 뒤 `<img src={dataUrl}>`로 표시하세요.                      |
+| `createPortal(node, document.body)`                                                                         | `isConnected`는 성공을 보고하지만 실제로는 아무것도 렌더링되지 않습니다. | `position: absolute`를 사용해 인라인으로 오버레이를 배치하거나, 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요. |
+
+이 포털 간극 때문에 Radix, Headless UI, MUI, react-select의 팝오버는 기본적으로 아무것도 렌더링하지 않습니다. 대부분은 container prop을 받으므로, 여러분이 렌더링한 요소를 가리키도록 설정하면 됩니다.
+
+### 이벤트
+
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+
+`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/ko/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/ko/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### Other gaps
+
+* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/ko/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
+* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

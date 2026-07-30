@@ -6,6 +6,10 @@ icon: window-maximize
 
 Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
 
+<Warning>
+Komponenty Front jsou stále aktivně vyvíjeny. Váš kód běží nad částečným DOMem, nikoli nad skutečnou stránkou prohlížeče, takže pokročilé způsoby použití mohou selhávat, často bez zjevných chyb. Viz [Současná omezení](#current-limitations).
+</Warning>
+
 ## Kde lze použít frontendové komponenty
 
 Frontendové komponenty se mohou vykreslovat na třech místech v rámci Twenty:
@@ -696,3 +700,72 @@ const Card = () => {
 Protože `useTheme()` je hook, čtete tokeny uvnitř těla komponenty, takže hodnoty vždy odrážejí aktuální motiv. Stejná mapa tokenů je také exportována jako konstanta `themeCssVariables`, ale ve frontendových komponentách preferujte `useTheme()` — modulová konstanta, která dereferencuje `themeCssVariables`, může být během extrakce manifestu aplikace nedefinovaná.
 
 Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomocí `useColorScheme()` z `twenty-sdk/front-component`, která vrací `'light'` nebo `'dark'`.
+
+## Aktuální omezení
+
+Front components are under active development. Rendering, styling and handling events works well. Anything that reaches *past* rendering (measuring an element, calling a DOM method on a ref, portaling outside your tree, touching browser storage) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
+
+If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
+
+### Layout and measurement
+
+Nothing can measure itself yet.
+
+| API                                                           | What happens                                                                       |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Throws                                                                             |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silently `undefined`, so `width ?? 0` yields `0` and `width > 600` is always false |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guards do work)                                         |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Throws                                                                             |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silently `undefined`                                                               |
+| `new MutationObserver(fn)`                                    | Constructs, then `.observe()` throws                                               |
+
+So recharts `ResponsiveContainer`, Floating UI / Popper, list virtualization and drag-to-resize do not work yet. Do layout in CSS instead: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
+</Note>
+
+### DOM access
+
+A `ref` gives you a sandbox element, not an `HTMLElement`.
+
+| What you write                                                                                              | What happens                                         | Use instead                                                                               |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws                                               | Controlled components; read values from `event.target`                                    |
+| `element.classList.add(...)`                                                                                | Throws (`classList` is `undefined`)                  | Build the `className` string yourself                                                     |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Throws                                               | `querySelector()` / `querySelectorAll()`, which work                                      |
+| `document.activeElement`                                                                                    | Always `undefined`                                   | Track focus with `onFocus` / `onBlur`                                                     |
+| `\<canvas>`                                                                                | Renders nothing, no error                            | SVG, or draw offscreen and show an `<img src={dataUrl}>`                                  |
+| `createPortal(node, document.body)`                                                                         | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
+
+The portal gap is why Radix, Headless UI, MUI and react-select popovers render nothing by default. Most accept a container prop; point it at an element you rendered.
+
+### Události
+
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+
+`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/cs/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/cs/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### Other gaps
+
+* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
+* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
