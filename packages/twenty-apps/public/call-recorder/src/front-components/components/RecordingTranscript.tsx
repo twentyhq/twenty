@@ -23,12 +23,16 @@ type RecordingTranscriptProps = {
   transcript: unknown;
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
+  hasVideo: boolean;
+  onSeek: (startSeconds: number) => void;
 };
 
 export const RecordingTranscript = ({
   transcript,
   currentTimeSeconds,
   calendarEventParticipants,
+  hasVideo,
+  onSeek,
 }: RecordingTranscriptProps) => {
   const marker = useMemo(() => parseTranscriptMarker(transcript), [transcript]);
   const entries = useMemo(
@@ -87,6 +91,8 @@ export const RecordingTranscript = ({
       entries={entries}
       currentTimeSeconds={currentTimeSeconds}
       calendarEventParticipants={calendarEventParticipants}
+      hasVideo={hasVideo}
+      onSeek={onSeek}
     />
   );
 };

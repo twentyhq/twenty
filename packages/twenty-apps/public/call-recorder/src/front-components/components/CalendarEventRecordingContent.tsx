@@ -70,6 +70,7 @@ export const CalendarEventRecordingContent = ({
   calendarEventId,
 }: CalendarEventRecordingContentProps) => {
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+  const [seekRequest, setSeekRequest] = useState({ seconds: 0, token: 0 });
 
   const updateCurrentTimeSeconds = (videoCurrentTimeSeconds: number) => {
     const nextCurrentTimeSeconds =
@@ -94,8 +95,17 @@ export const CalendarEventRecordingContent = ({
   const { calendarEventParticipants } =
     useCalendarEventParticipants(calendarEventId);
 
+  const handleTranscriptSeek = (startSeconds: number) => {
+    setSeekRequest((previousSeekRequest) => ({
+      seconds: startSeconds,
+      token: previousSeekRequest.token + 1,
+    }));
+    updateCurrentTimeSeconds(startSeconds);
+  };
+
   const handleVideoRetry = () => {
     setCurrentTimeSeconds(0);
+    setSeekRequest({ seconds: 0, token: 0 });
     refetchCalendarEventRecording();
   };
 
@@ -138,8 +148,11 @@ export const CalendarEventRecordingContent = ({
             errorMessage={errorMessage}
             currentTimeSeconds={currentTimeSeconds}
             calendarEventParticipants={calendarEventParticipants}
+            seekToSeconds={seekRequest.seconds}
+            seekToken={seekRequest.token}
             onVideoTimeUpdate={updateCurrentTimeSeconds}
             onVideoRetry={handleVideoRetry}
+            onTranscriptSeek={handleTranscriptSeek}
           />
         </StyledRecordingContentFrame>
       </StyledRecordingBody>

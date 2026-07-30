@@ -9,24 +9,33 @@ import { buildCalendarEventParticipantBySpeakerName } from 'src/front-components
 import { findActiveTranscriptEntryIndex } from 'src/front-components/utils/find-active-transcript-entry-index.util';
 import { getCalendarEventParticipantForSpeakerName } from 'src/front-components/utils/get-calendar-event-participant-for-speaker-name.util';
 
-const StyledTranscriptContainer = styled.div`
+// The transcript scrolls internally instead of growing with its entries. The
+// widget is content-sized by the host, so the cap uses viewport units: with a
+// video above (itself capped at 45vh) the transcript gets less room, without
+// one it can take most of the viewport.
+const StyledTranscriptContainer = styled.div<{ $hasVideo: boolean }>`
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[2]};
-  min-height: 0;
+  max-height: ${({ $hasVideo }) => ($hasVideo ? '40vh' : '65vh')};
+  overflow-y: auto;
+  overscroll-behavior: contain;
 `;
 
 type TranscriptEntryListProps = {
   entries: TranscriptEntry[];
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
+  hasVideo: boolean;
+  onSeek: (startSeconds: number) => void;
 };
 
 export const TranscriptEntryList = ({
   entries,
   currentTimeSeconds,
   calendarEventParticipants,
+  hasVideo,
+  onSeek,
 }: TranscriptEntryListProps) => {
   const activeEntryIndex = findActiveTranscriptEntryIndex(
     entries,
@@ -38,7 +47,7 @@ export const TranscriptEntryList = ({
   );
 
   return (
-    <StyledTranscriptContainer>
+    <StyledTranscriptContainer $hasVideo={hasVideo}>
       {entries.map((entry, entryIndex) => {
         const calendarEventParticipant =
           getCalendarEventParticipantForSpeakerName({
@@ -53,6 +62,7 @@ export const TranscriptEntryList = ({
             isActive={entryIndex === activeEntryIndex}
             currentTimeSeconds={currentTimeSeconds}
             calendarEventParticipant={calendarEventParticipant}
+            onSeek={onSeek}
           />
         );
       })}

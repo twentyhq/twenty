@@ -12,10 +12,14 @@ const FIRST_FRAME_SEEK_FRAGMENT = '#t=0.001';
 
 type RecordingVideoLoadState = 'awaiting-first-frame' | 'ready' | 'errored';
 
+// The max-height cap keeps the player from swallowing the viewport on short
+// screens so the transcript always keeps room; the video letterboxes via
+// object-fit when the cap wins over the aspect ratio.
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
   background: ${() => themeCssVariables.background.primary};
   border-radius: ${() => themeCssVariables.border.radius.sm};
+  max-height: 45vh;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -96,12 +100,16 @@ const StyledRetryButton = styled.button`
 
 type RecordingVideoPlayerProps = {
   src: string;
+  seekToSeconds: number;
+  seekToken: number;
   onTimeUpdate: (currentTimeSeconds: number) => void;
   onRetry: () => void;
 };
 
 export const RecordingVideoPlayer = ({
   src,
+  seekToSeconds,
+  seekToken,
   onTimeUpdate,
   onRetry,
 }: RecordingVideoPlayerProps) => {
@@ -144,14 +152,24 @@ export const RecordingVideoPlayer = ({
     );
   }
 
+  // The remote bridge has no imperative handle on the host video element, so
+  // seeking swaps the media-fragment src and remounts: the browser reopens
+  // the file at the requested time and autoplay resumes playback from there.
+  const videoSrc =
+    seekToken > 0
+      ? `${src}#t=${Math.max(seekToSeconds, 0.001)}`
+      : `${src}${FIRST_FRAME_SEEK_FRAGMENT}`;
+
   return (
     <StyledVideoViewport>
       <StyledVideo
+        key={seekToken}
         $isFirstFrameReady={loadState === 'ready'}
+        autoPlay={seekToken > 0}
         controls
         playsInline
         preload="metadata"
-        src={`${src}${FIRST_FRAME_SEEK_FRAGMENT}`}
+        src={videoSrc}
         onCanPlay={markFirstFrameReady}
         onError={handleError}
         onLoadedData={markFirstFrameReady}

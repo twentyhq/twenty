@@ -37,8 +37,11 @@ type CalendarEventRecordingBodyProps = {
   errorMessage: string | undefined;
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
+  seekToSeconds: number;
+  seekToken: number;
   onVideoTimeUpdate: (videoCurrentTimeSeconds: number) => void;
   onVideoRetry: () => void;
+  onTranscriptSeek: (startSeconds: number) => void;
 };
 
 export const CalendarEventRecordingBody = ({
@@ -48,8 +51,11 @@ export const CalendarEventRecordingBody = ({
   errorMessage,
   currentTimeSeconds,
   calendarEventParticipants,
+  seekToSeconds,
+  seekToken,
   onVideoTimeUpdate,
   onVideoRetry,
+  onTranscriptSeek,
 }: CalendarEventRecordingBodyProps) => {
   const hasVideo = !isUndefined(videoFileUrl);
 
@@ -79,6 +85,8 @@ export const CalendarEventRecordingBody = ({
       {hasVideo && (
         <RecordingVideoPlayer
           src={videoFileUrl}
+          seekToSeconds={seekToSeconds}
+          seekToken={seekToken}
           onTimeUpdate={onVideoTimeUpdate}
           onRetry={onVideoRetry}
         />
@@ -87,6 +95,8 @@ export const CalendarEventRecordingBody = ({
         transcript={transcript}
         currentTimeSeconds={currentTimeSeconds}
         calendarEventParticipants={calendarEventParticipants}
+        hasVideo={hasVideo}
+        onSeek={onTranscriptSeek}
       />
     </StyledRecordingContainer>
   );
