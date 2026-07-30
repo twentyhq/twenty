@@ -21,12 +21,14 @@ export const resolveCompletedVersionFromCursor = ({
 
   const cursorVersion = extractVersionFromCommandNameOrThrow(cursor.name);
 
-  const isLastStepOfItsVersion =
-    cursorIndex === stepNames.length - 1 ||
-    extractVersionFromCommandNameOrThrow(stepNames[cursorIndex + 1]) !==
-      cursorVersion;
+  const nextStepName =
+    cursorIndex < stepNames.length - 1 ? stepNames[cursorIndex + 1] : null;
 
-  if (cursor.status === 'completed' && isLastStepOfItsVersion) {
+  const isCursorOnLastStepOfItsVersion =
+    nextStepName === null ||
+    extractVersionFromCommandNameOrThrow(nextStepName) !== cursorVersion;
+
+  if (cursor.status === 'completed' && isCursorOnLastStepOfItsVersion) {
     return cursorVersion;
   }
 
