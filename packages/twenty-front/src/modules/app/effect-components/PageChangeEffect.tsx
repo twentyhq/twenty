@@ -233,6 +233,18 @@ export const PageChangeEffect = () => {
             recordId: location.state.objectRecordId,
             fieldName: location.state.labelIdentifierFieldName,
           });
+
+          // isNewRecord lives in history state, which SURVIVES page refreshes —
+          // without consuming it here, every refresh of the record page re-opens
+          // the (empty-draft) title cell. Strip it in place; react-router keeps
+          // user state under history.state.usr.
+          window.history.replaceState(
+            {
+              ...window.history.state,
+              usr: { ...location.state, isNewRecord: undefined },
+            },
+            '',
+          );
         }
         break;
       }
