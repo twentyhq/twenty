@@ -16,6 +16,7 @@ const VARIABLES = {
   lastName: 'Lovelace',
   fullName: 'Ada Lovelace',
   email: 'ada@example.com',
+  personId: 'person-123',
 };
 
 const buildDocument = (text: string) =>
@@ -79,6 +80,44 @@ describe('renderCampaignBodyToHtml', () => {
 
     expect(renderedDocument().content[0].content[1].attrs.variable).toBe(
       'Ada',
+    );
+  });
+
+  it('should substitute variables inside button and link URLs', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'emailButton',
+            attrs: { href: 'https://example.com/p/{{personId}}' },
+            content: [{ type: 'text', text: 'Open' }],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'here',
+                marks: [
+                  {
+                    type: 'link',
+                    attrs: { href: 'https://example.com/u/{{personId}}' },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].attrs.href).toBe(
+      'https://example.com/p/person-123',
+    );
+    expect(renderedDocument().content[1].content[0].marks[0].attrs.href).toBe(
+      'https://example.com/u/person-123',
     );
   });
 

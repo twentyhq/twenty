@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+
+type EmailHtmlViewProps = Pick<NodeViewProps, 'node'>;
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPreview = styled.div`
@@ -18,7 +20,7 @@ const neutralizeScripts = (html: string): string =>
     .replace(/<script/gi, '&lt;script')
     .replace(/\son[a-z]+\s*=/gi, ' data-blocked-handler=');
 
-export const EmailHtmlView = ({ node }: NodeViewProps) => {
+export const EmailHtmlView = ({ node }: EmailHtmlViewProps) => {
   const html = typeof node.attrs.html === 'string' ? node.attrs.html : '';
 
   return (

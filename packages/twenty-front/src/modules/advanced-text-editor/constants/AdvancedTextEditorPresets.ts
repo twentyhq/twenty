@@ -13,7 +13,18 @@ export const ADVANCED_TEXT_EDITOR_PRESETS = {
     chrome: 'emailCanvas',
     minHeight: 0,
     enableFullScreen: false,
-    capabilities: [...FULL_RICH_TEXT_CAPABILITIES, 'emailBlocks'],
+    // campaignVariables rather than variables: same node, but the workflow
+    // chip view resolves against workflow context and throws without it.
+    capabilities: [
+      'basicMarks',
+      'headings',
+      'lists',
+      'links',
+      'images',
+      'campaignVariables',
+      'slashCommand',
+      'emailBlocks',
+    ],
   },
   inlineEmailBody: {
     contentType: 'html',

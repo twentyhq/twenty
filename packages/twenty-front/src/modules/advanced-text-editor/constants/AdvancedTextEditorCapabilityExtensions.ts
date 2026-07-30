@@ -1,3 +1,4 @@
+import { CampaignVariableTag } from '@/advanced-text-editor/extensions/campaign-variables/CampaignVariableTag';
 import { EmailButton } from '@/advanced-text-editor/extensions/email-blocks/EmailButton';
 import { EmailHtml } from '@/advanced-text-editor/extensions/email-blocks/EmailHtml';
 import { EmailColumn } from '@/advanced-text-editor/extensions/email-blocks/EmailColumn';
@@ -56,6 +57,7 @@ export const ADVANCED_TEXT_EDITOR_CAPABILITY_EXTENSIONS: Record<
     }),
   ],
   variables: () => [VariableTag],
+  campaignVariables: () => [CampaignVariableTag],
   mentions: () => [MentionTag, MentionSuggestion],
   slashCommand: () => [SlashCommand],
   emailBlocks: () => [

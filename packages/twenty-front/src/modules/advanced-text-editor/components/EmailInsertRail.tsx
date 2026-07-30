@@ -2,7 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useState } from 'react';
-import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import {
+  type CampaignVariableName,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
 import {
   IconBox,
   IconClick,
@@ -17,7 +20,10 @@ import {
   IconMinus,
   IconPhoto,
   IconTypography,
+  IconVariable,
 } from 'twenty-ui/icon';
+
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -82,10 +88,28 @@ type EmailInsertRailProps = {
 // layout blocks, mirroring the slash menu for pointer-first authoring.
 export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
   const { t } = useLingui();
-  const [openMenu, setOpenMenu] = useState<'text' | 'image' | 'blocks' | null>(
-    null,
-  );
+  const [openMenu, setOpenMenu] = useState<
+    'text' | 'image' | 'blocks' | 'variables' | null
+  >(null);
   const [imageUrl, setImageUrl] = useState('');
+
+  const hasVariables = hasEditorExtension(editor, 'variableTag');
+
+  const variableItems: Array<{
+    label: string;
+    name: CampaignVariableName;
+  }> = [
+    { label: t`First name`, name: 'firstName' },
+    { label: t`Last name`, name: 'lastName' },
+    { label: t`Full name`, name: 'fullName' },
+    { label: t`Email`, name: 'email' },
+    { label: t`Person ID`, name: 'personId' },
+  ];
+
+  const insertVariable = (name: CampaignVariableName) => {
+    editor.chain().focus().insertVariableTag(`{{${name}}}`).run();
+    setOpenMenu(null);
+  };
 
   const insertAtEnd = (content: object) => {
     editor
@@ -221,7 +245,30 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
           title={t`Blocks`}
           onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
         />
+        {hasVariables && (
+          <LightIconButton
+            Icon={IconVariable}
+            size="medium"
+            accent={openMenu === 'variables' ? 'secondary' : 'tertiary'}
+            title={t`Variables`}
+            onClick={() =>
+              setOpenMenu(openMenu === 'variables' ? null : 'variables')
+            }
+          />
+        )}
       </StyledRail>
+      {openMenu === 'variables' && (
+        <StyledPopover>
+          {variableItems.map(({ label, name }) => (
+            <MenuItem
+              key={name}
+              LeftIcon={IconVariable}
+              text={label}
+              onClick={() => insertVariable(name)}
+            />
+          ))}
+        </StyledPopover>
+      )}
       {openMenu === 'text' && (
         <StyledPopover>
           {textItems.map(({ Icon, label, content }) => (

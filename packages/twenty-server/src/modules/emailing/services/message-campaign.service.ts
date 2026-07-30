@@ -65,7 +65,7 @@ import {
   MessageParticipantRole,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type CampaignVariableName, isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
@@ -918,7 +918,7 @@ export class MessageCampaignService {
 
   private buildTemplateVariables(
     person: PersonWorkspaceEntity | null,
-  ): Record<string, string> {
+  ): Record<CampaignVariableName, string> {
     const firstName = person?.name?.firstName ?? '';
     const lastName = person?.name?.lastName ?? '';
 
@@ -927,6 +927,7 @@ export class MessageCampaignService {
       lastName,
       fullName: [firstName, lastName].filter(Boolean).join(' '),
       email: person?.emails?.primaryEmail ?? '',
+      personId: person?.id ?? '',
     };
   }
 

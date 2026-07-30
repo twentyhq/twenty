@@ -1,6 +1,11 @@
 import { type JSONContent } from '@tiptap/core';
 
-import { isDefined, parseJson, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseJson,
+  TIPTAP_MARK_TYPES,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
 
 import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
 import {
@@ -45,6 +50,29 @@ const substituteVariables = (
         variable: substituteIntoString(node.attrs.variable, variables),
       },
     }),
+  // Button URLs are where per-recipient values matter most (tracking links,
+  // per-person landing pages).
+  ...(node.type === TIPTAP_NODE_TYPES.EMAIL_BUTTON &&
+    typeof node.attrs?.href === 'string' && {
+      attrs: {
+        ...node.attrs,
+        href: substituteIntoString(node.attrs.href, variables),
+      },
+    }),
+  ...(Array.isArray(node.marks) && {
+    marks: node.marks.map((mark) =>
+      mark.type === TIPTAP_MARK_TYPES.LINK &&
+      typeof mark.attrs?.href === 'string'
+        ? {
+            ...mark,
+            attrs: {
+              ...mark.attrs,
+              href: substituteIntoString(mark.attrs.href, variables),
+            },
+          }
+        : mark,
+    ),
+  }),
   ...(Array.isArray(node.content) && {
     content: node.content.map((childNode) =>
       substituteVariables(childNode, variables),

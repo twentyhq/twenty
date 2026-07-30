@@ -9,6 +9,7 @@ export type AdvancedTextEditorCapability =
   | 'links'
   | 'images'
   | 'variables'
+  | 'campaignVariables'
   | 'mentions'
   | 'slashCommand'
   | 'emailBlocks';
