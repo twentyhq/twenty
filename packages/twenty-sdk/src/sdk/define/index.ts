@@ -165,6 +165,10 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
+export {
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {

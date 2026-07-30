@@ -1,16 +1,22 @@
 ---
-title: Systemfelder ansprechen
-description: Referenzieren Sie automatisch erstellte Systemfelder wie createdAt oder updatedAt aus Ansichten und anderen Entitäten mit getFieldUniversalIdentifier.
+title: Systemmetadaten ansprechen
+description: Lösen Sie die deterministischen universellen Bezeichner der Metadaten auf, die Twenty für jedes Objekt automatisch bereitstellt, damit Ihre App ohne Hardcoding darauf verweisen kann.
 icon: gears
 ---
 
-Jedes Objekt in Twenty wird mit einem Satz von **Systemfeldern** ausgeliefert, die Sie nie selbst deklarieren. Sie werden automatisch vom Server erstellt, wenn das Objekt bereitgestellt wird:
+Jedes Objekt in Twenty verfügt über **Systemmetadaten**, die Sie selbst nie deklarieren, wie etwa eine Reihe von Feldern und eine Hauptlistenansicht mit ihren Spalten. Der Server erstellt all dies, wenn das Objekt bereitgestellt wird, und der Umfang wächst mit Twenty.
+
+Da Sie sie nicht deklarieren, gibt es keine `universalIdentifier`-Konstante, die Sie importieren könnten. Stattdessen **leitet** der Server jeden Bezeichner deterministisch ab, und `twenty-sdk` stellt dieselbe Ableitung zur Verfügung, sodass Ihr Manifest den genauen Wert auflösen kann, den der Server verwendet.
+
+## Systemfelder
+
+Die skalaren Felder, die bei jedem Objekt vorhanden sind und die Sie nicht mit [`defineField()`](/l/de/developers/extend/apps/data/extending-objects) deklarieren:
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-Da Sie diese Felder nicht mit [`defineField()`](/l/de/developers/extend/apps/data/extending-objects) deklarieren, gibt es keine `universalIdentifier`-Konstante, die Sie importieren könnten. Wie referenzieren Sie also `createdAt` als Spalte in einer [Ansicht](/l/de/developers/extend/apps/layout/views)?
+Wie referenzieren Sie also `createdAt` als Spalte in einer [Ansicht](/l/de/developers/extend/apps/layout/views)?
 
-## Das Problem
+### Das Problem
 
 Seit Twenty 2.19 wird die universelle Kennung eines Systemfelds **deterministisch abgeleitet** vom Server aus drei Eingaben: der universellen Kennung der Applikation, der universellen Kennung des Objekts und dem Feldnamen. Sich eine ID auszudenken und sie hart zu codieren, funktioniert nicht: Sie stimmt mit nichts auf dem Server überein, und die Synchronisierung lehnt die lose Referenz ab:
 
@@ -18,7 +24,7 @@ Seit Twenty 2.19 wird die universelle Kennung eines Systemfelds **deterministisc
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## Die Lösung
+### Die Lösung
 
 <Note>
   `getFieldUniversalIdentifier` ist ab `twenty-sdk` 2.21 verfügbar.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` ist die Kennung des Objekts, zu dem das Feld gehört.
 * `name` ist der Name des Systemfelds, einer der oben aufgeführten Werte.
 
-## Beispiel: eine createdAt-Spalte in einer Ansicht
+### Beispiel: eine createdAt-Spalte in einer Ansicht
 
 Der typische Anwendungsfall ist das Hinzufügen einer `createdAt`-Spalte zu einer Ansicht eines Ihrer benutzerdefinierten Objekte. Lösen Sie die Feld-ID auf und referenzieren Sie sie wie jeden anderen `fieldMetadataUniversalIdentifier`:
 
@@ -85,7 +91,7 @@ Dieselbe aufgelöste ID funktioniert überall dort, wo ein `fieldMetadataUnivers
   Eingaben ändern, und verhindert Abweichungen, falls sich die Ableitung jemals weiterentwickelt.
 </Note>
 
-## System-Relationsfelder
+### System-Relationsfelder
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` ist ab Version 2.23 von `twenty-sdk` verfügbar und erfordert einen Twenty-Server in Version 2.23 oder höher.
@@ -130,18 +136,63 @@ const attachmentTargetRocketFieldId =
 
 Wie bei skalaren Systemfeldern funktioniert die aufgelöste ID überall dort, wo ein `fieldMetadataUniversalIdentifier` erwartet wird.
 
+## Systemansichten
+
+<Note>
+  `getSystemViewUniversalIdentifier` und `getSystemViewFieldUniversalIdentifier` sind ab Version 2.26 von `twenty-sdk` verfügbar und erfordern einen Twenty-Server in Version 2.26 oder höher.
+</Note>
+
+Der Server stellt außerdem für jedes Objekt eine **Systemansicht** bereit: die Hauptlistenansicht (`All {objectLabelPlural}`, mit dem Schlüssel `ViewKey.INDEX`), mit einer Spalte pro anzeigbarem Feld. Wie bei Systembeziehungsfeldern werden ihre Bezeichner **namensfrei** abgeleitet, sodass das Umbenennen eines Objekts oder eines Feldes sie nie ändert.
+
+Verwenden Sie `getSystemViewUniversalIdentifier`, um die Ansicht aufzulösen:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` ist die Anwendung, der das **Objekt** gehört; sie bestimmt den Namensraum der Ansicht.
+* `objectUniversalIdentifier` ist das Objekt, das die Ansicht auflistet.
+* `viewKey` ist der Systemansichtsschlüssel, aktuell `ViewKey.INDEX`.
+
+Die aufgelöste ID funktioniert überall dort, wo ein `viewUniversalIdentifier` erwartet wird, etwa bei einem [`NavigationMenuItemType.VIEW`](/l/de/developers/extend/apps/layout/navigation-menu-items)-Eintrag in der Seitenleiste. Um einfach die Hauptliste eines Objekts zu öffnen, sollten Sie `NavigationMenuItemType.OBJECT` mit `targetObjectUniversalIdentifier` bevorzugen: Es benötigt keine Ableitung.
+
+`getSystemViewFieldUniversalIdentifier` löst eine einzelne **Spalte** in einer Systemansicht auf, basierend auf der Ansicht und dem Feld, das sie anzeigt:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Beachten Sie das erste Argument: Eine Spalte ist dem Namensraum der Anwendung zugeordnet, die das **Feld, das sie anzeigt**, besitzt – nicht der Anwendung, der die Ansicht gehört. Ein Feld, das Ihre App zu einem Standardobjekt hinzufügt, erhält seine Spalte im Namensraum Ihrer Anwendung – auf einer Ansicht, die Twenty gehört.
+
+<Warning>
+  Systemansichten und ihre Spalten sind im Besitz des Servers: Lösen Sie ihre Bezeichner auf, um auf sie zu verweisen, niemals, um sie zu deklarieren. `key` in [`defineView()`](/l/de/developers/extend/apps/layout/views) ist veraltet und wird ignoriert, sodass eine Manifestansicht niemals den `INDEX`-Schlüssel beanspruchen kann, und der Server stellt bereits eine Spalte für jedes Feld bereit, das Sie hinzufügen, sodass das Deklarieren eines eigenen `defineViewField()` für dasselbe Feld in einer Systemansicht damit in Konflikt steht.
+</Warning>
+
 ## Standardobjekte von Twenty
 
-Für ein **Standard**-Twenty-Objekt (Person, Company, Opportunity, …) müssen Sie nichts ableiten: Die Systemfeld-Kennungen sind vorab berechnete Konstanten, die Sie direkt importieren können.
+Für ein **Standard**-Twenty-Objekt (Person, Company, Opportunity, …) müssen Sie nichts ableiten: Die Bezeichner für Felder und Ansichten sind vorab berechnete Konstanten, die Sie direkt importieren können.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-Greifen Sie zu `getFieldUniversalIdentifier`, wenn es sich um ein Objekt handelt, das **Ihre App** mit [`defineObject()`](/l/de/developers/extend/apps/data/objects) definiert, für das es keine solche Konstante gibt.
+Greifen Sie auf die obigen Helfer zurück, wenn es sich um ein Objekt handelt, das **Ihre App** mit [`defineObject()`](/l/de/developers/extend/apps/data/objects) definiert und für das es keine solche Konstante gibt.
 
 <Note>
   `name` ist ein **Standard**-Feld, kein Systemfeld. Es behält seine eigene hart codierte

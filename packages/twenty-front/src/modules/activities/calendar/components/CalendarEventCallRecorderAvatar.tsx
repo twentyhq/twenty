@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { createPortal } from 'react-dom';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { CallRecordingStatus } from '~/generated/graphql';
 
@@ -10,6 +11,11 @@ const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.JOINING,
   CallRecordingStatus.RECORDING,
   CallRecordingStatus.PROCESSING,
+];
+
+const UNAVAILABLE_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
+  CallRecordingStatus.FAILED,
+  CallRecordingStatus.NOT_RECORDED,
 ];
 
 const getCallRecordingStatusLabel = (status: CallRecordingStatus) => {
@@ -26,6 +32,10 @@ const getCallRecordingStatusLabel = (status: CallRecordingStatus) => {
       return t`Completed`;
     case CallRecordingStatus.FAILED:
       return t`Failed`;
+    case CallRecordingStatus.NOT_RECORDED:
+      return t`Not recorded`;
+    default:
+      return assertUnreachable(status);
   }
 };
 
@@ -44,12 +54,12 @@ export const CalendarEventCallRecorderAvatar = ({
   status,
 }: CalendarEventCallRecorderAvatarProps) => {
   const instanceId = useId();
-  const hasFailed = status === CallRecordingStatus.FAILED;
+  const hasNoRecording = UNAVAILABLE_CALL_RECORDING_STATUSES.includes(status);
   const tooltipAnchorId = `call-recorder-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
   return (
     <>
-      <StyledContainer id={tooltipAnchorId} isDisabled={hasFailed}>
+      <StyledContainer id={tooltipAnchorId} isDisabled={hasNoRecording}>
         <AppChip
           applicationId={applicationId}
           fallbackApplicationData={{ name: t`Call recorder` }}

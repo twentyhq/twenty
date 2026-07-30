@@ -94,6 +94,7 @@ export class AgentRunService {
       workspaceId: workspace.id,
       userWorkspaceId: requestUserWorkspaceId,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      toolLoadingStrategy: 'lazy' as const,
     };
 
     try {

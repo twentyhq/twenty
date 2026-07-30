@@ -121,6 +121,7 @@ describe('AgentRunService', () => {
     expect(executeAgentArgs.baseSystemPrompt).toBe(
       AGENT_RUN_BASE_SYSTEM_PROMPT,
     );
+    expect(executeAgentArgs.toolLoadingStrategy).toBe('lazy');
     expect(executeAgentArgs.authContext).toEqual({
       type: 'application',
       workspace,
@@ -170,6 +171,7 @@ describe('AgentRunService', () => {
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
         baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+        toolLoadingStrategy: 'lazy',
       }),
     );
   });
