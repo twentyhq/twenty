@@ -27,8 +27,6 @@ export const ObjectMetadataLink = ({
     },
   );
 
-  // An object the assistant only proposes to create has no metadata to link to
-  // yet, so it stays a chip without a destination.
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}

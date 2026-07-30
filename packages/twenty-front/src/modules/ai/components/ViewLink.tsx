@@ -25,8 +25,6 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
     ? flatObjectMetadataItems.find(findById(view.objectMetadataId))
     : undefined;
 
-  // A view id can only come from a tool, so an unresolvable one is a
-  // hallucination and must not be dressed up as a chip.
   if (!isDefined(view) || !isDefined(objectMetadataItem)) {
     return <span>{displayName}</span>;
   }

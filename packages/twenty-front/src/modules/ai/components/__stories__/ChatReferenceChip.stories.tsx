@@ -35,10 +35,8 @@ const allCompaniesView = {
   isActive: true,
 } as ViewWithRelations;
 
-// ObjectMetadataItemsDecorator loads views through the metadata store draft,
-// which drops them all because some mocked views target absent objects. The
-// view is declared here rather than imported from the generated view mocks,
-// whose module graph breaks the linaria build-time evaluator.
+// Declared locally because ObjectMetadataItemsDecorator drops every mocked view,
+// and importing the generated view mocks breaks the linaria build-time evaluator.
 const ChatReferenceStoreSeeder = ({ children }: { children: ReactNode }) => {
   const store = useStore();
   const [isSeeded, setIsSeeded] = useState(false);

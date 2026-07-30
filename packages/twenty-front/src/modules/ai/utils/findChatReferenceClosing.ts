@@ -20,8 +20,6 @@ export const findChatReferenceClosing = ({
     return { index: closeTagIndex, length: closeTag.length };
   }
 
-  // Only the record marker predates the tagged syntax, so it is the only kind
-  // allowed to close on a bare `]]`.
   if (kind !== 'record') {
     return undefined;
   }

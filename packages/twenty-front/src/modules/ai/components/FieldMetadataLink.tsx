@@ -29,8 +29,6 @@ export const FieldMetadataLink = ({
     PermissionFlagType.DATA_MODEL,
   );
 
-  // A field id can only come from a tool, so an unresolvable one is a
-  // hallucination and must not be dressed up as a chip.
   if (
     !isDefined(foundFieldMetadataItem) ||
     !isDefined(foundObjectMetadataItem)

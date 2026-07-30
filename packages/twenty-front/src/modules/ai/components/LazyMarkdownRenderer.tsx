@@ -48,8 +48,8 @@ const processChildrenForChatReferences = (
   return children;
 };
 
-// react-markdown uses each entry as the JSX element type, so these must keep a
-// stable identity or every rendered node remounts on each streamed chunk.
+// react-markdown uses each entry as the JSX element type, so rebuilding this map
+// per render would remount every node on every streamed chunk.
 const MARKDOWN_COMPONENTS = {
   table: ({ children }: { children?: React.ReactNode }) => (
     <StyledTableScrollContainer>
