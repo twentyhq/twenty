@@ -27,6 +27,7 @@ import { FlatApplication } from 'src/engine/core-modules/application/types/flat-
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
@@ -116,7 +117,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
-    const { flatApplication, flatLogicFunction } =
+    const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
@@ -131,6 +132,7 @@ export class LogicFunctionExecutorService {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
+      applicationVariableMaps,
       userId,
       userWorkspaceId,
     });
@@ -277,11 +279,15 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     logicFunctionId: string;
   }) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatLogicFunctionMaps',
-        'flatApplicationMaps',
-      ]);
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      applicationVariableMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatLogicFunctionMaps',
+      'flatApplicationMaps',
+      'applicationVariableMaps',
+    ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: logicFunctionId,
@@ -309,17 +315,19 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    return { flatApplication, flatLogicFunction };
+    return { flatApplication, flatLogicFunction, applicationVariableMaps };
   }
 
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
+    applicationVariableMaps,
     userId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
+    applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
   }) {
@@ -344,6 +352,7 @@ export class LogicFunctionExecutorService {
       await this.applicationVariableService.buildEnvRecord({
         workspaceId,
         applicationId: flatApplication.id,
+        applicationVariableMaps,
       });
 
     return {

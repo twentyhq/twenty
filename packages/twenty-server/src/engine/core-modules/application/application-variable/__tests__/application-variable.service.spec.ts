@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -106,23 +107,30 @@ describe('ApplicationVariableEntityService', () => {
       ...overrides,
     }) as FlatApplicationVariable;
 
+  const makeApplicationVariableMaps = (
+    flatApplicationVariables: FlatApplicationVariable[],
+  ) =>
+    ({
+      byUniversalIdentifier: Object.fromEntries(
+        flatApplicationVariables.map((flatApplicationVariable) => [
+          flatApplicationVariable.universalIdentifier,
+          flatApplicationVariable,
+        ]),
+      ),
+      universalIdentifiersByApplicationId: {
+        [mockApplicationId]: flatApplicationVariables.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
+      },
+    }) as unknown as ApplicationVariableCacheMaps;
+
   const mockCachedApplicationVariables = (
     flatApplicationVariables: FlatApplicationVariable[],
   ) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
-      applicationVariableMaps: {
-        byUniversalIdentifier: Object.fromEntries(
-          flatApplicationVariables.map((flatApplicationVariable) => [
-            flatApplicationVariable.universalIdentifier,
-            flatApplicationVariable,
-          ]),
-        ),
-        universalIdentifiersByApplicationId: {
-          [mockApplicationId]: flatApplicationVariables.map(
-            ({ universalIdentifier }) => universalIdentifier,
-          ),
-        },
-      },
+      applicationVariableMaps: makeApplicationVariableMaps(
+        flatApplicationVariables,
+      ),
     } as never);
   };
 
@@ -224,6 +232,26 @@ describe('ApplicationVariableEntityService', () => {
       expect(
         secretEncryptionService.decryptVersionedOrThrow,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should reuse provided application variable maps instead of reading the cache', async () => {
+      const applicationVariableMaps = makeApplicationVariableMaps([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'PUBLIC_URL',
+          value:
+            `enc:v2:deadbeef:https://example.com|${workspaceA}` as EncryptedString,
+        }),
+      ]);
+
+      const result = await service.buildEnvRecord({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+        applicationVariableMaps,
+      });
+
+      expect(result).toEqual({ PUBLIC_URL: 'https://example.com' });
+      expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
     });
   });
 
