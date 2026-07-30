@@ -82,28 +82,6 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
   {
-    id: 'bulletList',
-    title: msg`Bullet List`,
-    description: msg`Unordered list with bullets`,
-    icon: IconList,
-    keywords: [msg`bullet`, msg`list`, msg`ul`, msg`unordered`],
-    getIsActive: (editor) => editor.isActive('bulletList'),
-    getIsVisible: (editor) => editor.can().toggleBulletList?.() ?? false,
-    getOnSelect: (editor, range) => () =>
-      editor.chain().focus().deleteRange(range).toggleBulletList().run(),
-  },
-  {
-    id: 'orderedList',
-    title: msg`Ordered List`,
-    description: msg`Numbered list`,
-    icon: IconListNumbers,
-    keywords: [msg`ordered`, msg`list`, msg`ol`, msg`numbered`, msg`number`],
-    getIsActive: (editor) => editor.isActive('orderedList'),
-    getIsVisible: (editor) => editor.can().toggleOrderedList?.() ?? false,
-    getOnSelect: (editor, range) => () =>
-      editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
-  },
-  {
     id: 'emailSection',
     title: msg`Section`,
     description: msg`Styled container for email content`,
@@ -199,5 +177,27 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
         .deleteRange(range)
         .insertContent({ type: TIPTAP_NODE_TYPES.EMAIL_DIVIDER })
         .run(),
+  },
+  {
+    id: 'bulletList',
+    title: msg`Bullet List`,
+    description: msg`Unordered list with bullets`,
+    icon: IconList,
+    keywords: [msg`bullet`, msg`list`, msg`ul`, msg`unordered`],
+    getIsActive: (editor) => editor.isActive('bulletList'),
+    getIsVisible: (editor) => editor.can().toggleBulletList?.() ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).toggleBulletList().run(),
+  },
+  {
+    id: 'orderedList',
+    title: msg`Ordered List`,
+    description: msg`Numbered list`,
+    icon: IconListNumbers,
+    keywords: [msg`ordered`, msg`list`, msg`ol`, msg`numbered`, msg`number`],
+    getIsActive: (editor) => editor.isActive('orderedList'),
+    getIsVisible: (editor) => editor.can().toggleOrderedList?.() ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
 ];
