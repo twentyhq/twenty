@@ -125,15 +125,20 @@ export class OnboardingService {
       return OnboardingStatus.INVITE_TEAM;
     }
 
-    if (isBookCallPending) {
+    const isPlanRequired =
+      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+        workspace.id,
+      );
+
+    // Booking a call is a pre-sale touchpoint. The enrichment that qualifies a lead
+    // resolves asynchronously, so it can land after the user has already moved on;
+    // ignoring the flag once the workspace has a subscription is what stops a late
+    // qualification from pulling a paying user back out of checkout.
+    if (isBookCallPending && isPlanRequired) {
       return OnboardingStatus.BOOK_CALL;
     }
 
-    if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
-        workspace.id,
-      )
-    ) {
+    if (isPlanRequired) {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 

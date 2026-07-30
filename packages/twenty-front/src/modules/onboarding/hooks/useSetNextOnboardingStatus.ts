@@ -89,19 +89,16 @@ export const useSetNextOnboardingStatus = () => {
   const isOnboardingAiChatEnabled = useAtomStateValue(
     isOnboardingAiChatEnabledState,
   );
-  const companyEnrichment = useAtomStateValue(companyEnrichmentState);
-  const bookCallMinEmployeeCount = useAtomStateValue(
-    bookCallMinEmployeeCountState,
-  );
-  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
-
-  const isBookCallRequired = getIsBookCallRequired({
-    companyEnrichment,
-    bookCallMinEmployeeCount,
-    calendarBookingPageId,
-  });
-
   return useCallback(() => {
+    // Read at call time, not render time: a caller may have awaited the company
+    // enrichment before advancing, and a value captured at render would still be the
+    // stale null that made us skip the book-a-call step.
+    const isBookCallRequired = getIsBookCallRequired({
+      companyEnrichment: store.get(companyEnrichmentState.atom),
+      bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),
+      calendarBookingPageId: store.get(calendarBookingPageIdState.atom),
+    });
+
     const nextOnboardingStatus = getNextOnboardingStatus({
       currentUser,
       currentWorkspace,
@@ -134,7 +131,6 @@ export const useSetNextOnboardingStatus = () => {
     currentUser,
     currentWorkspace,
     isBillingEnabled,
-    isBookCallRequired,
     isOnboardingAiChatEnabled,
     store,
   ]);

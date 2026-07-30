@@ -1,6 +1,9 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
+import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -10,6 +13,7 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
@@ -30,8 +34,17 @@ export const useInviteTeam = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const store = useStore();
+  const companyEnrichment = useAtomStateValue(companyEnrichmentState);
+  const hasSettledCompanyEnrichmentFetch = useAtomStateValue(
+    hasSettledCompanyEnrichmentFetchState,
+  );
+
+  const isCompanyEnrichmentAnswered =
+    isDefined(companyEnrichment) || hasSettledCompanyEnrichmentFetch;
 
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isAdvancing, setIsAdvancing] = useState(false);
 
   const {
     control,
@@ -130,9 +143,13 @@ export const useInviteTeam = () => {
         ),
       );
 
+      setIsAdvancing(true);
+
       const result = await sendInvitation({ emails });
 
       if (isDefined(result.error)) {
+        setIsAdvancing(false);
+
         throw result.error;
       }
 
@@ -153,15 +170,25 @@ export const useInviteTeam = () => {
         });
       }
 
+      // The book-a-call step comes next for a qualified lead, and the enrichment that
+      // decides that resolves asynchronously. Treating an unanswered enrichment as
+      // "not qualified" would skip the step for exactly the fast-moving leads it
+      // targets, so wait briefly for the answer before advancing.
+      if (!isCompanyEnrichmentAnswered) {
+        await waitForCompanyEnrichmentSettlement({ store });
+      }
+
       setNextOnboardingStatus();
       setIsNavigating(true);
     },
     [
       enqueueSuccessSnackBar,
+      isCompanyEnrichmentAnswered,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,
       setOnboardingFreeCredits,
+      store,
       t,
     ],
   );
@@ -189,6 +216,6 @@ export const useInviteTeam = () => {
     getPlaceholder,
     isValid,
     isSubmitting,
-    isNavigating,
+    isNavigating: isNavigating || isAdvancing,
   };
 };

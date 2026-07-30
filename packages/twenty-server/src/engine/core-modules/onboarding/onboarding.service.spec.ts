@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -9,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { INSTALL_ONBOARDING_APPS_JOB_NAME } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import {
   OnboardingService,
@@ -16,16 +18,19 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('OnboardingService', () => {
   let service: OnboardingService;
   let userVarsService: UserVarsService;
+  let billingService: BillingService;
   let billingCreditService: BillingCreditService;
   let twentyConfigService: TwentyConfigService;
   let messageQueueService: MessageQueueService;
   let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
@@ -50,6 +55,7 @@ describe('OnboardingService', () => {
           provide: UserVarsService,
           useValue: {
             get: jest.fn(),
+            getAll: jest.fn(),
             set: jest.fn(),
             delete: jest.fn(),
           },
@@ -81,6 +87,10 @@ describe('OnboardingService', () => {
 
     service = module.get<OnboardingService>(OnboardingService);
     userVarsService = module.get<UserVarsService>(UserVarsService);
+    billingService = module.get<BillingService>(BillingService);
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
+    );
     billingCreditService =
       module.get<BillingCreditService>(BillingCreditService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
@@ -94,6 +104,77 @@ describe('OnboardingService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getOnboardingStatus', () => {
+    const user = { id: userId } as UserEntity;
+
+    const mockOnboardingState = ({
+      pendingSteps,
+      isPlanRequired,
+    }: {
+      pendingSteps: OnboardingStepKeys[];
+      isPlanRequired: boolean;
+    }) => {
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({
+        id: workspaceId,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as WorkspaceEntity);
+      jest
+        .spyOn(userVarsService, 'getAll')
+        .mockResolvedValue(
+          new Map(pendingSteps.map((key) => [key, true])) as never,
+        );
+      jest
+        .spyOn(billingService, 'isSubscriptionIncompleteOnboardingStatus')
+        .mockResolvedValue(isPlanRequired);
+    };
+
+    it('should return BOOK_CALL when the step is pending and a plan is still required', async () => {
+      mockOnboardingState({
+        pendingSteps: [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING],
+        isPlanRequired: true,
+      });
+
+      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
+        OnboardingStatus.BOOK_CALL,
+      );
+    });
+
+    // A late enrichment can arm the flag after checkout; honouring it then would drag
+    // a paying user off the payment-success screen and back to the booking page.
+    it('should ignore a pending BOOK_CALL once the workspace has a subscription', async () => {
+      mockOnboardingState({
+        pendingSteps: [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING],
+        isPlanRequired: false,
+      });
+
+      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
+        OnboardingStatus.COMPLETED,
+      );
+    });
+
+    it('should keep INVITE_TEAM ahead of a pending BOOK_CALL', async () => {
+      mockOnboardingState({
+        pendingSteps: [
+          OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+          OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        ],
+        isPlanRequired: true,
+      });
+
+      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
+        OnboardingStatus.INVITE_TEAM,
+      );
+    });
+
+    it('should return PLAN_REQUIRED when no step is pending and a plan is required', async () => {
+      mockOnboardingState({ pendingSteps: [], isPlanRequired: true });
+
+      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
+        OnboardingStatus.PLAN_REQUIRED,
+      );
+    });
   });
 
   describe('completeOnboardingConnectAccountStep', () => {

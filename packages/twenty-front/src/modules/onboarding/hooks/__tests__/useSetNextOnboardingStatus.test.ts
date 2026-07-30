@@ -383,4 +383,43 @@ describe('useSetNextOnboardingStatus', () => {
     expect(isWelcomeAnimationVisible).toBe(true);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
+
+  // A caller awaits the enrichment and then advances, so the callback it captured at
+  // render time must still see the value that landed during the await.
+  it('should honour an enrichment that arrives after the callback was captured', () => {
+    jotaiStore.set(currentUserState.atom, {
+      ...mockedUserData,
+      onboardingStatus: OnboardingStatus.INVITE_TEAM,
+    });
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      billingSubscriptions: [],
+      workspaceMembersCount: 1,
+    });
+    jotaiStore.set(billingState.atom, {
+      __typename: 'Billing',
+      isBillingEnabled: true,
+      trialPeriods: [],
+    } as never);
+    jotaiStore.set(calendarBookingPageIdState.atom, 'team/twenty/talk-to-us');
+    jotaiStore.set(bookCallMinEmployeeCountState.atom, 50);
+
+    const { result } = renderHook(() => useSetNextOnboardingStatus(), {
+      wrapper: Wrapper,
+    });
+
+    const advanceCapturedBeforeEnrichment = result.current;
+
+    act(() => {
+      jotaiStore.set(companyEnrichmentState.atom, {
+        ...mockCompanyEnrichment,
+        employeeCount: 320,
+      });
+      advanceCapturedBeforeEnrichment();
+    });
+
+    expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toEqual(
+      OnboardingStatus.BOOK_CALL,
+    );
+  });
 });

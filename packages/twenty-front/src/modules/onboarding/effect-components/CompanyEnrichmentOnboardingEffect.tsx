@@ -6,7 +6,9 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
@@ -22,6 +24,9 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     hasAttemptedCompanyEnrichmentFetch,
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
+  const setHasSettledCompanyEnrichmentFetch = useSetAtomState(
+    hasSettledCompanyEnrichmentFetchState,
+  );
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
 
   const isOnboardingInProgress =
@@ -59,6 +64,11 @@ export const CompanyEnrichmentOnboardingEffect = () => {
         setCompanyEnrichment(enrichment);
       } catch {
         return;
+      } finally {
+        // Every outcome counts as settled, including the ones that store nothing:
+        // the onboarding flow needs to tell "not qualified" apart from "not answered
+        // yet" before it decides whether the book-a-call step comes next.
+        setHasSettledCompanyEnrichmentFetch(true);
       }
     };
 
@@ -68,6 +78,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     companyEnrichment,
     isOnboardingInProgress,
     setHasAttemptedCompanyEnrichmentFetch,
+    setHasSettledCompanyEnrichmentFetch,
     setCompanyEnrichment,
     enrichWorkspaceCompany,
   ]);
