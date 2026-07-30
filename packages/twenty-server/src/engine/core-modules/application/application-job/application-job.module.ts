@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationJobResolver } from 'src/engine/core-modules/application/application-job/application-job.resolver';
 import { ApplicationJobService } from 'src/engine/core-modules/application/application-job/services/application-job.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogicFunctionEntity])],
+  imports: [WorkspaceCacheModule],
   providers: [ApplicationJobService, ApplicationJobResolver],
   exports: [ApplicationJobService],
 })

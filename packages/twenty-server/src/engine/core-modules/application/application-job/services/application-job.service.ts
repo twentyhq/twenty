@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type EnqueueJobResult } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
@@ -21,13 +19,13 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApplicationJobService {
   constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -47,16 +45,21 @@ export class ApplicationJobService {
   }): Promise<EnqueueJobResult> {
     const { logicFunctionUniversalIdentifier } = input;
 
-    const logicFunction = await this.logicFunctionRepository.findOne({
-      where: {
-        universalIdentifier: logicFunctionUniversalIdentifier,
-        workspaceId,
-        applicationId,
-      },
-      select: { id: true },
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+
+    const flatLogicFunction = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: logicFunctionUniversalIdentifier,
     });
 
-    if (!isDefined(logicFunction)) {
+    if (
+      !isDefined(flatLogicFunction) ||
+      isDefined(flatLogicFunction.deletedAt) ||
+      flatLogicFunction.applicationId !== applicationId
+    ) {
       throw new ApplicationException(
         `Logic function ${logicFunctionUniversalIdentifier} not found in this application`,
         ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -66,7 +69,7 @@ export class ApplicationJobService {
     await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
       {
-        logicFunctionId: logicFunction.id,
+        logicFunctionId: flatLogicFunction.id,
         workspaceId,
         payload: input.payload ?? {},
         ...(isDefined(userId) ? { userId } : {}),

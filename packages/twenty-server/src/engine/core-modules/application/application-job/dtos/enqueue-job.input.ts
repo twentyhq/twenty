@@ -29,7 +29,7 @@ export class EnqueueJobInputDTO implements EnqueueJobInput {
   @IsObject()
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  payload?: object;
+  payload?: Record<string, unknown>;
 
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_RETRY_LIMIT)

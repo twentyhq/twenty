@@ -5,7 +5,7 @@ export type EnqueueJobOptions = {
 
 export type EnqueueJobInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
-  payload?: object;
+  payload?: Record<string, unknown>;
 };
 
 export type EnqueueJobResult = {

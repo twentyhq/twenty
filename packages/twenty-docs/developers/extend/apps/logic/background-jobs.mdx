@@ -108,6 +108,58 @@ await Promise.all(
 );
 ```
 
+## Good practice for long-running work
+
+Two rules cover almost every long job: **recurse instead of looping**, and **process a bounded chunk per run**.
+
+A run that tries to do everything is the failure mode — it hits the timeout, and with a retry it starts the whole thing again from zero. Instead, size one chunk so it comfortably finishes inside `timeoutSeconds`, persist your position, and enqueue the next run.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+What makes this hold up:
+
+- **Size the chunk from the slowest item, not the average.** `CHUNK_SIZE × worst-case item time` has to fit in `timeoutSeconds` with room to spare, or the tail of a chunk is lost when the run is cut off.
+- **Make the terminating condition explicit.** Recurse only while a full chunk came back. A chain that stops on "no results" alone will keep going forever if the source ever returns a short page mid-way.
+- **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
+- **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
+- **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
+
 <Warning>
-Retries re-run the whole handler. Keep enqueued handlers idempotent — key writes on the record or external id you are processing — before setting `retryLimit` above `0`.
+Retries re-run the whole handler. Keep enqueued handlers idempotent before setting `retryLimit` above `0`.
 </Warning>

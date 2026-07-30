@@ -1,13 +1,31 @@
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import gql from 'graphql-tag';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
+import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
+import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+
+const MARKER_DIRECTORY = join(tmpdir(), `enqueue-job-${uuidv4()}`);
+
+const TARGET_SOURCE_CODE = `import { writeFileSync } from 'node:fs';
+
+export const main = async (params: { markerPath: string }): Promise<object> => {
+  writeFileSync(params.markerPath, 'ran', 'utf-8');
+
+  return { ok: true };
+};`;
 
 const ENQUEUE_JOB = gql`
   mutation EnqueueJob($input: EnqueueJobInput!) {
@@ -25,6 +43,8 @@ describe('enqueueJob (e2e)', () => {
   let logicFunctionUniversalIdentifier: string;
 
   beforeAll(async () => {
+    mkdirSync(MARKER_DIRECTORY, { recursive: true });
+
     const { data } = await findManyApplications({ expectToFail: false });
 
     const customApplication = data.findManyApplications.find(
@@ -74,6 +94,8 @@ describe('enqueueJob (e2e)', () => {
       input: { id: logicFunctionId },
       expectToFail: false,
     });
+
+    rmSync(MARKER_DIRECTORY, { recursive: true, force: true });
   });
 
   it('rejects requests that do not carry an APPLICATION_ACCESS token', async () => {
@@ -86,15 +108,32 @@ describe('enqueueJob (e2e)', () => {
     expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
   });
 
-  it('enqueues a logic function owned by the calling application', async () => {
+  it('enqueues a logic function owned by the calling application and the worker runs it', async () => {
+    const markerPath = join(MARKER_DIRECTORY, 'enqueued.txt');
+
+    await updateLogicFunctionSource({
+      input: {
+        id: logicFunctionId,
+        update: { sourceHandlerCode: TARGET_SOURCE_CODE },
+      },
+      expectToFail: false,
+    });
+
+    const { data: buildData } = await executeLogicFunction({
+      input: {
+        id: logicFunctionId,
+        payload: { markerPath: join(MARKER_DIRECTORY, 'build.txt') },
+      },
+      expectToFail: false,
+    });
+
+    expect(buildData.executeOneLogicFunction.error).toBeNull();
+
     const response = await makeMetadataAPIRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
-          input: {
-            logicFunctionUniversalIdentifier,
-            payload: { a: 'enqueued', b: 1 },
-          },
+          input: { logicFunctionUniversalIdentifier, payload: { markerPath } },
         },
       },
       customApplicationToken,
@@ -104,6 +143,12 @@ describe('enqueueJob (e2e)', () => {
     expect(response.body.data.enqueueJob).toEqual({
       enqueued: true,
       logicFunctionUniversalIdentifier,
+    });
+
+    await waitForAllJobsToFinish();
+
+    await expectEventually(() => {
+      expect(existsSync(markerPath)).toBe(true);
     });
   });
 
