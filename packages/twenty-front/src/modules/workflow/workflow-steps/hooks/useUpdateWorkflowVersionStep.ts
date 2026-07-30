@@ -63,15 +63,13 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
     });
 
     setFlow((currentFlow) => {
-      if (
-        !isDefined(currentFlow) ||
-        currentFlow.workflowVersionId !== input.workflowVersionId
-      ) {
+      if (!isDefined(currentFlow)) {
         return currentFlow;
       }
 
       return {
         ...currentFlow,
+        workflowVersionId: input.workflowVersionId,
         steps: (currentFlow.steps ?? []).map((step) =>
           step.id === updatedStep.id ? updatedStep : step,
         ),

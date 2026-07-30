@@ -54,9 +54,7 @@ export const WorkflowDiagramEffect = () => {
       workflowVisualizerWorkflowId ?? '',
     );
 
-  const [isReseedForced, setIsReseedForced] = useState(false);
-  const [shouldAdoptServerPositions, setShouldAdoptServerPositions] =
-    useState(false);
+  const [seededVersionId, setSeededVersionId] = useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
     useState<string>();
 
@@ -115,7 +113,7 @@ export const WorkflowDiagramEffect = () => {
 
     void refetchContent()
       .then(() => {
-        setIsReseedForced(true);
+        setSeededVersionId(undefined);
       })
       .catch(() => {});
   }, [
@@ -133,24 +131,18 @@ export const WorkflowDiagramEffect = () => {
       return;
     }
 
-    const flowAlreadyHoldsVersion =
-      flow?.workflowVersionId === currentVersion.id;
-
-    if (flowAlreadyHoldsVersion && !isReseedForced) {
+    if (seededVersionId === currentVersion.id) {
       return;
     }
 
-    if (isReseedForced) {
-      setIsReseedForced(false);
-      setShouldAdoptServerPositions(true);
-    }
+    setSeededVersionId(currentVersion.id);
 
     setFlow({
       workflowVersionId: currentVersion.id,
       trigger: content.trigger,
       steps: content.steps,
     });
-  }, [content, currentVersion, flow, isReseedForced, setFlow]);
+  }, [content, currentVersion, seededVersionId, setFlow]);
 
   useEffect(() => {
     if (!isDefined(flow)) {
@@ -159,12 +151,7 @@ export const WorkflowDiagramEffect = () => {
 
     const isSameVersion = previousDiagramVersionId === flow.workflowVersionId;
     const isTransitionToDraft = currentVersion?.status === 'DRAFT';
-    const shouldPreservePositions =
-      (isSameVersion || isTransitionToDraft) && !shouldAdoptServerPositions;
-
-    if (shouldAdoptServerPositions) {
-      setShouldAdoptServerPositions(false);
-    }
+    const shouldPreservePositions = isSameVersion || isTransitionToDraft;
 
     setPreviousDiagramVersionId(flow.workflowVersionId);
 

@@ -75,14 +75,11 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
     });
 
     setFlow((currentFlow) => {
-      if (
-        !isDefined(currentFlow) ||
-        currentFlow.workflowVersionId !== workflowVersionId
-      ) {
+      if (!isDefined(currentFlow)) {
         return currentFlow;
       }
 
-      return { ...currentFlow, trigger: updatedTrigger };
+      return { ...currentFlow, workflowVersionId, trigger: updatedTrigger };
     });
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);

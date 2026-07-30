@@ -46,10 +46,7 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
     await mutate({ variables: { input: { workflowVersionId, positions } } });
 
     setFlow((currentFlow) => {
-      if (
-        !isDefined(currentFlow) ||
-        currentFlow.workflowVersionId !== workflowVersionId
-      ) {
+      if (!isDefined(currentFlow)) {
         return currentFlow;
       }
 
@@ -59,6 +56,7 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
 
       return {
         ...currentFlow,
+        workflowVersionId,
         trigger:
           isDefined(triggerPositionInFlow) && isDefined(currentFlow.trigger)
             ? {

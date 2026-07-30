@@ -42,10 +42,7 @@ export const useApplyWorkflowVersionStepChanges = (instanceId?: string) => {
     const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
 
     setFlow((currentFlow) => {
-      if (
-        !isDefined(currentFlow) ||
-        currentFlow.workflowVersionId !== workflowVersionId
-      ) {
+      if (!isDefined(currentFlow)) {
         return currentFlow;
       }
 
