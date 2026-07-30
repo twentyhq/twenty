@@ -7,8 +7,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -23,6 +23,7 @@ export class CallDatabaseEventTriggerJobsJob {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -94,14 +95,16 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      await withApplicationJobEnqueueContext(
-        { applicationId, applicationRegistrationId },
-        () =>
-          this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
-            logicFunctionPayloads,
-            { retryLimit: 3 },
-          ),
+      await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+        applicationId,
+        applicationRegistrationId,
+        jobCount: logicFunctionPayloads.length,
+      });
+
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        logicFunctionPayloads,
+        { retryLimit: 3 },
       );
     }
   }

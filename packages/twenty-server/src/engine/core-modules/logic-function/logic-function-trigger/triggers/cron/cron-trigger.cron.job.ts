@@ -13,8 +13,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { withApplicationJobEnqueueContext } from 'src/engine/core-modules/message-queue/storage/application-job-enqueue-context.storage';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   LogicFunctionTriggerJob,
@@ -36,6 +36,7 @@ export class CronTriggerCronJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -99,21 +100,19 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          await withApplicationJobEnqueueContext(
+          await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+            applicationId: logicFunction.applicationId,
+            applicationRegistrationId,
+          });
+
+          await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+            LogicFunctionTriggerJob.name,
             {
-              applicationId: logicFunction.applicationId,
-              applicationRegistrationId,
+              logicFunctionId: logicFunction.id,
+              workspaceId: activeWorkspace.id,
+              payload: {},
             },
-            () =>
-              this.messageQueueService.add<LogicFunctionTriggerJobData>(
-                LogicFunctionTriggerJob.name,
-                {
-                  logicFunctionId: logicFunction.id,
-                  workspaceId: activeWorkspace.id,
-                  payload: {},
-                },
-                { retryLimit: 10 },
-              ),
+            { retryLimit: 10 },
           );
         }
       } catch (error) {
