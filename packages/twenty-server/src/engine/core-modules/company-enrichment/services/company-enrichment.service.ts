@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichmentResult } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
 
 import { COMPANY_ENRICHMENT_THROTTLE_MAX_REQUESTS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-max-requests.constant';
 import { COMPANY_ENRICHMENT_THROTTLE_WINDOW_MS } from 'src/engine/core-modules/company-enrichment/constants/company-enrichment-throttle-window-ms.constant';
@@ -23,17 +21,17 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class CompanyEnrichmentService {
   private readonly logger = new Logger(CompanyEnrichmentService.name);
 
   constructor(
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
     private readonly onboardingService: OnboardingService,
     private readonly throttlerService: ThrottlerService,
@@ -49,10 +47,11 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
-    const isWorkspaceCreator = await this.isWorkspaceCreator({
-      userId,
-      workspaceId,
-    });
+    const isWorkspaceCreator =
+      await this.userWorkspaceService.isWorkspaceCreator({
+        userId,
+        workspaceId,
+      });
 
     if (!isWorkspaceCreator) {
       return { outcome: 'unavailable', enrichment: null };
@@ -217,20 +216,5 @@ export class CompanyEnrichmentService {
         }`,
       );
     }
-  }
-
-  private async isWorkspaceCreator({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { workspaceId },
-      order: { createdAt: 'ASC' },
-    });
-
-    return earliestUserWorkspace?.userId === userId;
   }
 }

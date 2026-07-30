@@ -9,12 +9,12 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 
 type RecordTableContextProviderProps = {
@@ -59,11 +59,14 @@ export const RecordTableContextProvider = ({
     [objectNameSingular, updateOneRecord],
   );
 
-  const recordIndexOpenRecordIn = useAtomStateValue(
-    recordIndexOpenRecordInState,
-  );
+  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+
+  const isTouchDevice = useIsTouchDevice();
+
+  // Navigating on mouse down only buys a frame on a real pointer: a tap
+  // synthesises its mouse events after the finger is already gone.
   const triggerEvent =
-    recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL
+    openRecordIn === ViewOpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
       : 'MOUSE_DOWN';
 

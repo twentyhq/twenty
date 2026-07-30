@@ -8,7 +8,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
-import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -84,7 +84,9 @@ describe('useInviteTeam', () => {
   });
 
   // Otherwise a fast lead is treated as unqualified and never sees the booking step.
-  it('should wait for the enrichment answer before advancing when it is unresolved', async () => {
+  it('should wait for the enrichment answer while the fetch is still in flight', async () => {
+    jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
+
     const { result } = renderInviteTeam();
 
     await act(async () => {
@@ -98,12 +100,12 @@ describe('useInviteTeam', () => {
   it.each([
     [
       'an enrichment is already stored',
-      () => jotaiStore.set(companyEnrichmentState.atom, enrichment),
+      () => {
+        jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
+        jotaiStore.set(companyEnrichmentState.atom, enrichment);
+      },
     ],
-    [
-      'the fetch has already settled',
-      () => jotaiStore.set(hasSettledCompanyEnrichmentFetchState.atom, true),
-    ],
+    ['no fetch is in flight', () => {}],
   ])('should not wait when %s', async (_label, seedAnswer) => {
     seedAnswer();
 

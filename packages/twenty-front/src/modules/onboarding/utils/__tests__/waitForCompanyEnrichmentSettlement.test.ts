@@ -1,18 +1,11 @@
 import { createStore } from 'jotai';
 
-import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 
 describe('waitForCompanyEnrichmentSettlement', () => {
-  beforeEach(() => {
-    sessionStorage.clear();
-    jest.useRealTimers();
-  });
-
-  it('should resolve immediately when the fetch has already settled', async () => {
+  it('should resolve immediately when no fetch is in flight', async () => {
     const store = createStore();
-
-    store.set(hasSettledCompanyEnrichmentFetchState.atom, true);
 
     await expect(
       waitForCompanyEnrichmentSettlement({ store, timeoutMs: 10_000 }),
@@ -21,6 +14,8 @@ describe('waitForCompanyEnrichmentSettlement', () => {
 
   it('should resolve as soon as the fetch settles', async () => {
     const store = createStore();
+
+    store.set(isCompanyEnrichmentFetchInFlightState.atom, true);
 
     const settlement = waitForCompanyEnrichmentSettlement({
       store,
@@ -36,7 +31,7 @@ describe('waitForCompanyEnrichmentSettlement', () => {
     await Promise.resolve();
     expect(hasResolved).toBe(false);
 
-    store.set(hasSettledCompanyEnrichmentFetchState.atom, true);
+    store.set(isCompanyEnrichmentFetchInFlightState.atom, false);
 
     await expect(settlement).resolves.toBeUndefined();
   });
@@ -44,10 +39,12 @@ describe('waitForCompanyEnrichmentSettlement', () => {
   it('should resolve on timeout so a slow enrichment cannot block onboarding', async () => {
     const store = createStore();
 
+    store.set(isCompanyEnrichmentFetchInFlightState.atom, true);
+
     await expect(
       waitForCompanyEnrichmentSettlement({ store, timeoutMs: 1 }),
     ).resolves.toBeUndefined();
 
-    expect(store.get(hasSettledCompanyEnrichmentFetchState.atom)).toBe(false);
+    expect(store.get(isCompanyEnrichmentFetchInFlightState.atom)).toBe(true);
   });
 });

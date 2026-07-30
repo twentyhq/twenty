@@ -1,7 +1,7 @@
 import { type createStore } from 'jotai';
 
 import { COMPANY_ENRICHMENT_SETTLEMENT_TIMEOUT_MS } from '@/onboarding/constants/CompanyEnrichmentSettlementTimeoutMs';
-import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 
 type JotaiStore = ReturnType<typeof createStore>;
 
@@ -15,7 +15,7 @@ export const waitForCompanyEnrichmentSettlement = ({
   timeoutMs?: number;
 }): Promise<void> =>
   new Promise((resolve) => {
-    if (store.get(hasSettledCompanyEnrichmentFetchState.atom)) {
+    if (!store.get(isCompanyEnrichmentFetchInFlightState.atom)) {
       resolve();
 
       return;
@@ -28,8 +28,8 @@ export const waitForCompanyEnrichmentSettlement = ({
       resolve();
     }, timeoutMs);
 
-    unsubscribe = store.sub(hasSettledCompanyEnrichmentFetchState.atom, () => {
-      if (!store.get(hasSettledCompanyEnrichmentFetchState.atom)) {
+    unsubscribe = store.sub(isCompanyEnrichmentFetchInFlightState.atom, () => {
+      if (store.get(isCompanyEnrichmentFetchInFlightState.atom)) {
         return;
       }
 

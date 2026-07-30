@@ -1,16 +1,22 @@
 ---
-title: استهداف الحقول النظامية
-description: استدعِ الحقول النظامية التي يتم إنشاؤها تلقائيًا مثل `createdAt` أو `updatedAt` من العروض والكائنات الأخرى باستخدام `getFieldUniversalIdentifier`.
+title: استهداف البيانات الوصفية النظامية
+description: حلّ المعرّفات العالمية الحتمية للبيانات الوصفية التي يوفّرها Twenty تلقائيًا على كل كائن، بحيث يمكن لتطبيقك الرجوع إليها من دون ترميز ثابت.
 icon: gears
 ---
 
-كل كائن في Twenty يأتي مع مجموعة من **الحقول النظامية** التي لا تقوم بتعريفها بنفسك أبدًا. يتم إنشاؤها تلقائيًا بواسطة الخادم عندما يتم توفير الكائن:
+كل كائن في Twenty يأتي مع **بيانات وصفية نظامية** لا تقوم أنت بتعريفها، مثل مجموعة من الحقول وعرض القائمة الرئيسي مع أعمدته. يقوم الخادم بإنشاء كل ذلك عند توفير الكائن، وتنمو هذه المجموعة مع نمو Twenty.
+
+نظرًا لأنك لا تعرّفها، فلا يوجد ثابت `universalIdentifier` لتقوم باستيراده. بدلًا من ذلك، يقوم الخادم **باستخلاص** كل معرّف بشكل حتمي، ويعرض `twenty-sdk` نفس طريقة الاستخلاص بحيث يمكن لملف البيان (manifest) لديك حلّ القيمة الدقيقة التي يستخدمها الخادم.
+
+## حقول النظام
+
+الحقول البسيطة (scalar) الموجودة على كل كائن، والتي لا تعرّف أيًا منها باستخدام [`defineField()`](/l/ar/developers/extend/apps/data/extending-objects):
 
 `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
 
-نظرًا لأنك لا تعرّف هذه الحقول باستخدام [`defineField()`](/l/ar/developers/extend/apps/data/extending-objects)، فلا يوجد ثابت `universalIdentifier` لتقوم باستيراده. فكيف تُشير إلى `createdAt` كعمود في [عرض](/l/ar/developers/extend/apps/layout/views)؟
+فكيف تُشير إلى `createdAt` كعمود في [عرض](/l/ar/developers/extend/apps/layout/views)؟
 
-## المشكلة
+### المشكلة
 
 منذ Twenty 2.19، يتم اشتقاق المعرّف الشامل للحقل النظامي **بشكل حتمي** بواسطة الخادم من ثلاثة مُدخلات: المعرّف الشامل للتطبيق، والمعرّف الشامل للكائن، واسم الحقل. ابتكار معرّف (id) وتضمينه بشكل ثابت لن ينجح: لن يطابق أي شيء على الخادم، وسترفض المزامنة المرجع المعلّق:
 
@@ -18,7 +24,7 @@ icon: gears
 Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
 ```
 
-## الحل
+### الحل
 
 <Note>
   يتوفر `getFieldUniversalIdentifier` في `twenty-sdk` بدءًا من الإصدار 2.21 فصاعدًا.
@@ -40,7 +46,7 @@ const createdAtFieldId = getFieldUniversalIdentifier({
 * `objectUniversalIdentifier` هو معرّف الكائن الذي ينتمي إليه الحقل.
 * `name` هو اسم الحقل النظامي، وهو إحدى القيم المُدرجة أعلاه.
 
-## مثال: عمود `createdAt` في عرض
+### مثال: عمود `createdAt` في عرض
 
 الحالة النموذجية هي إضافة عمود `createdAt` إلى عرض لأحد الكائنات المخصّصة لديك. اشتقّ معرّف الحقل واستدعِه كما تستدعي أي `fieldMetadataUniversalIdentifier` آخر:
 
@@ -84,7 +90,7 @@ export default defineView({
   `getFieldUniversalIdentifier` يُبقي مرجعك صحيحًا حتى إذا تغيّرت تلك المُدخلات، ويتجنّب الانحراف إذا تطوّر أسلوب الاشتقاق في أي وقت.
 </Note>
 
-## حقول العلاقات الخاصة بالنظام
+### حقول العلاقات الخاصة بالنظام
 
 <Note>
   `getSystemRelationFieldUniversalIdentifier` متوفر في `twenty-sdk`
@@ -130,18 +136,66 @@ const attachmentTargetRocketFieldId =
 
 كما هو الحال مع حقول النظام القياسية (scalar)، يعمل المعرّف الناتج في أي موضع يُتوقَّع فيه `fieldMetadataUniversalIdentifier`.
 
+## العروض النظامية
+
+<Note>
+  إن `getSystemViewUniversalIdentifier` و`getSystemViewFieldUniversalIdentifier`
+  متوفران في `twenty-sdk` بدءًا من الإصدار 2.26، ويتطلبان خادم Twenty
+  بالإصدار 2.26 أو أحدث.
+</Note>
+
+يقوم الخادم أيضًا بتوفير **عرض نظامي** على كل كائن: عرض القائمة الرئيسي (`All {objectLabelPlural}`، ذو المفتاح `ViewKey.INDEX`)، مع عمود واحد لكل حقل قابل للعرض. تمامًا مثل حقول العلاقات النظامية، تُشتق معرّفاتها **من دون أسماء**، لذلك لن يؤدي تغيير اسم كائن أو حقل إلى تغييرها مطلقًا.
+
+استخدم `getSystemViewUniversalIdentifier` لحلّ العرض:
+
+```ts
+import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: ViewKey.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` هو التطبيق الذي يملك **الكائن**، وهو ما يتم بناء نطاق الاسم (namespace) للعرض على أساسه.
+* `objectUniversalIdentifier` هو الكائن الذي يعرضه (يسردُه) هذا العرض.
+* `viewKey` هو مفتاح العرض النظامي، وهو `ViewKey.INDEX` حاليًا.
+
+يعمل المعرّف المحلول في أي مكان يُتوقَّع فيه `viewUniversalIdentifier`، مثل إدخال الشريط الجانبي من النوع [`NavigationMenuItemType.VIEW`](/l/ar/developers/extend/apps/layout/navigation-menu-items). لفتح القائمة الرئيسية لكائن ما ببساطة، يُفضَّل استخدام `NavigationMenuItemType.OBJECT` مع `targetObjectUniversalIdentifier`، إذ لا يحتاج ذلك إلى أي اشتقاق.
+
+يقوم `getSystemViewFieldUniversalIdentifier` بحلّ **عمود** واحد في عرض نظامي، انطلاقًا من العرض والحقل الذي يعرضه هذا العمود:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+انتبه إلى الوسيطة الأولى: يتم تحديد نطاق اسم العمود بواسطة التطبيق الذي يملك **الحقل الذي يعرضه**، وليس التطبيق الذي يملك العرض. الحقل الذي يضيفه تطبيقك إلى كائن قياسي يحصل على عموده المشتق ضمن نطاق تطبيقك، على عرض مملوك من قِبَل Twenty.
+
+<Warning>
+  العروض النظامية وأعمدتها **مملوكة للخادم**: استخدم حلّ معرّفاتها للرجوع إليها، وليس لتعريفها. إن الخاصية `key` في
+  [`defineView()`](/l/ar/developers/extend/apps/layout/views) مهملة (deprecated) ويتم تجاهلها، لذلك لا يمكن لعرض مُعرَّف في ملف البيان المطالبة بالمفتاح `INDEX` مطلقًا، كما أن الخادم يوفّر بالفعل عمودًا لكل حقل تضيفه، لذا فإن تعريف `defineViewField()` خاصّتك لنفس الحقل على عرض نظامي يتعارض معه.
+</Warning>
+
 ## الكائنات القياسية في Twenty
 
-بالنسبة إلى كائن Twenty **قياسي** (Person، Company، Opportunity، …)، لا تحتاج إلى اشتقاق أي شيء: فمعرّفات الحقول النظامية هي ثوابت مُسبقة الحساب يمكنك استيرادها مباشرة.
+بالنسبة إلى كائن Twenty **قياسي** (Person، Company، Opportunity، …)، لا تحتاج إلى اشتقاق أي شيء: فمعرّفات الحقول والعروض النظامية هي ثوابت مُسبقة الحساب يمكنك استيرادها مباشرة.
 
 ```ts
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
 // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
 ```
 
-الجأ إلى `getFieldUniversalIdentifier` عندما يكون الكائن واحدًا مما يعرّفه تطبيقك باستخدام [`defineObject()`](/l/ar/developers/extend/apps/data/objects)، حيث لا يوجد مثل هذا الثابت.
+الجأ إلى أدوات المساعدة المذكورة أعلاه عندما يكون الكائن واحدًا مما يعرّفه **تطبيقك** باستخدام [`defineObject()`](/l/ar/developers/extend/apps/data/objects)، حيث لا يوجد مثل هذا الثابت.
 
 <Note>
   `name` حقل **افتراضي**، وليس حقلًا نظاميًا. يحتفظ بمعرّفه الشامل الثابت الخاص به ولا يتم اشتقاقه عبر

@@ -112,12 +112,12 @@ Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonc
 
 **Configuration**:
 
-* Sélectionnez le tableau d'enregistrements depuis une étape précédente (par ex., résultats de Rechercher des enregistrements, d'un déclencheur manuel avec exécution par lots, d'un nœud de code). Lorsqu’une étape Code ou fonction logique renvoie un tableau de premier niveau, sélectionnez l’option **Whole list** pour itérer sur l’intégralité de la sortie.
+* Sélectionnez le tableau des enregistrements à partir d'une étape précédente (par exemple, les résultats de la recherche d'enregistrements, à partir d'un déclencheur manuel avec disponibilité en vrac à partir d'un noeud de Code). Lorsqu’une étape Code ou fonction logique renvoie un tableau de premier niveau, sélectionnez l’option **Whole list** pour itérer sur l’intégralité de la sortie.
 * Définissez les actions à effectuer sur chaque enregistrement dans la boucle.
 
 <Note>
-- Vous pouvez ajouter plusieurs actions au sein d'un itérateur.
-- Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
+- Vous pouvez ajouter plusieurs actions dans un itérateur.
+- Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche se connecte à l'itérateur pour fermer la boucle.
 </Note>
 
 * Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes. Vous pouvez également sélectionner **Use the whole item** pour transmettre l’intégralité de l’élément en cours à une étape en aval.
@@ -181,7 +181,7 @@ La date planifiée ne peut pas être dans le passé. Si un champ de date d'une �
 ### Envoyer l'email
 
 Envoie un e-mail à partir de votre flux de travail. Idéal pour des e-mails groupés basés sur des modèles. Les e-mails auront l'apparence de ceux que vous envoyez depuis votre boîte aux lettres.
-Ne convient pas aux newsletters (qui nécessitent un formatage plus riche) ni aux séquences d'e-mails automatisées.
+Il ne convient pas aux lettres d'information (qui nécessitent un formatage plus riche) ou aux séquences automatiques de courriel.
 
 **Prérequis**: Ajoutez un compte de messagerie dans Paramètres → Comptes
 
@@ -202,7 +202,7 @@ Un seul destinataire est possible pour le moment.
 </Note>
 
 * Définissez la ligne d'objet.
-* Rédigez le corps du message. Vous pouvez formater des liens, créer des listes numérotées, des listes à puces, ajouter des pièces jointes.
+* Rédigez le corps du message. Vous pouvez formater des liens, créer des listes numérotées, des listes de puces et ajouter des pièces jointes.
 
 <Note>
 L'ajout de signatures HTML n'est pas possible pour le moment.
@@ -213,24 +213,24 @@ L'ajout de signatures HTML n'est pas possible pour le moment.
 Affiche un formulaire lors de l'exécution du flux de travail pour recueillir les saisies de l'utilisateur. Les réponses peuvent ensuite être utilisées dans les étapes suivantes pour créer des enregistrements, envoyer des e-mails ou exécuter toute autre action selon la saisie.
 
 <Warning>
-**Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notifications sera lancé en 2026 pour supporter correctement les formulaires dans les flux de travail automatisés.
+**Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notification sera publié en 2026 pour prendre en charge correctement les formulaires dans les flux de travail automatisés.
 </Warning>
 
 **Configuration**:
 
 * Configurez les champs que les utilisateurs devront remplir. Pour chaque champ, choisissez
-  * un type parmi texte, nombre, date, un enregistrement donné, un champ de sélection. Les champs de sélection de tous les objets sont disponibles.
+  * un type parmi texte, nombre, date, un enregistrement donné, un champ de sélection. Les champs de tous les objets sont disponibles pour la sélection.
   * une étiquette
   * une valeur par défaut sous `Placeholder` (facultatif)
 * Modifiez le titre du formulaire
 
 **Sortie**: Les réponses au formulaire sont disponibles pour une utilisation dans les étapes suivantes.
 
-**Exemple**: Le flux de travail "Quick Lead" est disponible par défaut dans tous les espaces de travail, accessible partout dans le menu de commande `Cmd + K`.
+**Exemple**: Le workflow "Lancer rapide" est disponible par défaut dans tous les espaces de travail, disponible n'importe où dans le menu de commande `Cmd+K`.
 
 **Comment remplir le formulaire**:
 
-* Déclenchez votre flux de travail manuel depuis le menu de commande `Cmd K`
+* Déclenchez votre workflow manuel depuis le menu de commande `Cmd+K`
 * Remplissez le formulaire affiché dans le panneau latéral et cliquez sur `Submit`.
 
 <Note>
@@ -249,7 +249,7 @@ En arrière-plan, chaque action de code est prise en charge par sa propre **fonc
 
 **Configuration**:
 
-* Accédez aux variables des étapes précédentes. Vous pouvez modifier dynamiquement les noms des variables.
+* Accédez aux variables des étapes précédentes. Vous pouvez modifier les noms des variables de façon dynamique.
 
 <VimeoEmbed videoId="1147281795" title="Démonstration vidéo" />
 

@@ -6,7 +6,7 @@ import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
-import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -24,10 +24,10 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     hasAttemptedCompanyEnrichmentFetch,
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
-  const setHasSettledCompanyEnrichmentFetch = useSetAtomState(
-    hasSettledCompanyEnrichmentFetchState,
-  );
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
+  const setIsCompanyEnrichmentFetchInFlight = useSetAtomState(
+    isCompanyEnrichmentFetchInFlightState,
+  );
 
   const isOnboardingInProgress =
     isDefined(onboardingStatus) &&
@@ -44,6 +44,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     }
 
     setHasAttemptedCompanyEnrichmentFetch(true);
+    setIsCompanyEnrichmentFetchInFlight(true);
 
     const fetchCompanyEnrichment = async () => {
       try {
@@ -65,10 +66,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
       } catch {
         return;
       } finally {
-        // Every outcome counts as settled, including the ones that store nothing:
-        // the onboarding flow needs to tell "not qualified" apart from "not answered
-        // yet" before it decides whether the book-a-call step comes next.
-        setHasSettledCompanyEnrichmentFetch(true);
+        setIsCompanyEnrichmentFetchInFlight(false);
       }
     };
 
@@ -78,7 +76,7 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     companyEnrichment,
     isOnboardingInProgress,
     setHasAttemptedCompanyEnrichmentFetch,
-    setHasSettledCompanyEnrichmentFetch,
+    setIsCompanyEnrichmentFetchInFlight,
     setCompanyEnrichment,
     enrichWorkspaceCompany,
   ]);

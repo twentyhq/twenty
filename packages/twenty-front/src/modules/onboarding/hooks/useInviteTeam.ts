@@ -1,7 +1,7 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
-import { hasSettledCompanyEnrichmentFetchState } from '@/onboarding/states/hasSettledCompanyEnrichmentFetchState';
+import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -36,12 +36,12 @@ export const useInviteTeam = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const store = useStore();
   const companyEnrichment = useAtomStateValue(companyEnrichmentState);
-  const hasSettledCompanyEnrichmentFetch = useAtomStateValue(
-    hasSettledCompanyEnrichmentFetchState,
+  const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
+    isCompanyEnrichmentFetchInFlightState,
   );
 
   const isCompanyEnrichmentAnswered =
-    isDefined(companyEnrichment) || hasSettledCompanyEnrichmentFetch;
+    isDefined(companyEnrichment) || !isCompanyEnrichmentFetchInFlight;
 
   const [isNavigating, setIsNavigating] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);

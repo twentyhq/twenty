@@ -4,12 +4,14 @@ import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/com
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof SettingsAccountsCalendarChannelsGeneral> = {
   title:
     'Modules/Settings/Accounts/CalendarChannels/SettingsAccountsCalendarChannelsGeneral',
   component: SettingsAccountsCalendarChannelsGeneral,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

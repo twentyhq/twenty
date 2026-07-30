@@ -134,6 +134,14 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+## Interrupting a run (Ctrl+C, SIGTERM)
+
+Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.
+
+Rerun the command to resume. Nothing is rolled back, and the run picks up from the last command recorded in `upgradeMigration`.
+
+Expect the first Ctrl+C to look like it did nothing while a long step is running: it takes effect once the step ends.
+
 ## Shipping a command for a future version (deferred drops)
 
 You can write a command for a version listed in `TWENTY_NEXT_VERSIONS` — typically the second half of a zero-downtime migration, e.g. dropping a column one release after its replacement ships. Pass the target version to the generator:

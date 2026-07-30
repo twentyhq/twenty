@@ -5,12 +5,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -52,6 +51,8 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
+  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
+
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord } = useCreateOneRecord({
@@ -85,19 +86,12 @@ export const useCreateNewIndexRecord = ({
         ...recordInput,
       };
 
-      const recordIndexOpenRecordIn = store.get(
-        recordIndexOpenRecordInState.atom,
-      );
-
       const createdRecord = await createOneRecord({
         id: recordId,
         ...mergedRecordInput,
       });
 
-      if (
-        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
-        canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
-      ) {
+      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -172,6 +166,7 @@ export const useCreateNewIndexRecord = ({
       navigate,
       objectMetadataItem,
       openRecordInSidePanel,
+      openRecordIn,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,

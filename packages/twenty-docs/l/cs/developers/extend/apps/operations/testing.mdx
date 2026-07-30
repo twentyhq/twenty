@@ -60,7 +60,7 @@ Krok sestavení používá esbuild k vytvoření jediného samostatného souboru
 
 **Logické funkce** běží v prostředí Node.js. Vestavěné moduly Node (`fs`, `path`, `crypto`, `http` atd.) jsou k dispozici a není je třeba instalovat.
 
-**Frontendové komponenty** běží ve Web Workeru. Vestavěné moduly Node nejsou k dispozici — pouze prohlížečová API a balíčky npm, které fungují v prohlížečovém prostředí.
+**Frontendové komponenty** běží ve Web Workeru. Vestavěné moduly Node nejsou k dispozici — pouze balíčky npm, které fungují v prohlížečovém prostředí. Všimněte si, že sandbox implementuje *částečné* DOM, takže balíček se může bez problémů sestavit, ale přesto selhat za běhu; viz [Aktuální omezení](/l/cs/developers/extend/apps/layout/front-components#current-limitations).
 
 V obou prostředích jsou jako předpřipravené moduly k dispozici `twenty-client-sdk/core` a `twenty-client-sdk/metadata` — nejsou součástí bundlu, ale server je za běhu načítá.
 

@@ -1875,6 +1875,11 @@ msgstr ""
 msgid "Could not resolve the existing object \"{0}\" to rename its default relations"
 msgstr ""
 
+#. js-lingui-id: 5rS7nl
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
+msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -2225,6 +2230,11 @@ msgstr "Διαγράφηκε Στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgid "Delivery status"
 msgstr "Κατάσταση παράδοσης"
+
+#. js-lingui-id: G768/0
+#: src/filters/__tests__/unhandled-exception.filter.spec.ts
+msgid "denied"
+msgstr ""
 
 #. js-lingui-id: Nu4oKW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5273,6 +5283,11 @@ msgstr "Κανονικοποιημένο διαχωρισμένο κατά ομ�
 msgid "Not authorized to access this OAuth provider."
 msgstr "Δεν επιτρέπεται η πρόσβαση σε αυτόν τον πάροχο OAuth."
 
+#. js-lingui-id: iXlml9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+msgid "Not recorded"
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -5424,6 +5439,11 @@ msgstr "Ο πάροχος OAuth δεν βρέθηκε."
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Το αντικείμενο υπάρχει ήδη"
+
+#. js-lingui-id: fjXGxN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Object already has an INDEX view"
+msgstr ""
 
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -7662,6 +7682,16 @@ msgstr "Το αρχείο δεν έχει ανέβει ακόμη. Παρακα�
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Το αρχείο είναι κενό ή υπερβαίνει το μέγιστο επιτρεπόμενο μέγεθος."
 
+#. js-lingui-id: oeePqy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the default view"
+msgstr ""
+
+#. js-lingui-id: jkNMHQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "The INDEX view key is reserved for the engine-owned default view; remove the key from the view definition"
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -7700,6 +7730,11 @@ msgstr "Η παράμετρος state του OAuth δεν είναι έγκυρ�
 #. js-lingui-id: w/9iNJ
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
 msgid "The object to rename could not be found to update its default relations"
+msgstr ""
+
+#. js-lingui-id: s9DUGk
+#: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
+msgid "The object to update could not be found to reconcile its INDEX view"
 msgstr ""
 
 #. js-lingui-id: hx2IZ4
@@ -8107,6 +8142,11 @@ msgstr "Αυτό το όνομα δεν είναι διαθέσιμο."
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
 msgstr "Το όνομα αυτό είναι δεσμευμένο. Χρησιμοποιήστε διαφορετικό όνομα ή το σύστημα θα προσθέσει το επίθημα \"Custom\"."
+
+#. js-lingui-id: /mGcny
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "This object already has a default view"
+msgstr ""
 
 #. js-lingui-id: R8zIJd
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts

@@ -17,7 +17,7 @@ Twenty podporuje SSO s:
 
 * **SAML 2.0**: Funguje s většinou podnikových poskytovatelů identity
 * **Google Workspace**: Pro organizace používající Google
-* **Microsoft Entra ID**: (dříve Azure AD) Pro prostředí Microsoftu
+* **Microsoft Entra ID** (dříve Azure AD): Pro prostředí Microsoft
 
 ## Nastavení SSO
 
@@ -25,7 +25,7 @@ Twenty podporuje SSO s:
 
 * Plán Organization (cloudové i self-hostované pracovní prostory)
 * Administrátorský přístup k vašemu poskytovateli identity
-* Administrátorský přístup k pracovnímu prostoru Twenty
+* Admin přístup do vašeho dvaceti pracovního prostoru
 
 ### Kroky konfigurace
 
@@ -64,14 +64,14 @@ Budete muset nakonfigurovat svého poskytovatele identity následujícími údaj
 ### Zřizování Just-in-Time (JIT)
 
 * Uživatelé jsou vytvořeni automaticky při prvním přihlášení
-* Automaticky jim je přiřazena výchozí role
+* Uživatelům je přiřazena výchozí role automaticky
 * Není potřeba ruční vytváření uživatelů
 
 ### Ruční zřizování
 
 * Pozvěte uživatele předtím, než se budou moci přihlásit
 * Předem přiřaďte konkrétní role
-* Větší kontrola nad tím, kdo má přístup
+* Více kontroly nad tím, kdo má přístup k pracovnímu prostoru
 
 ## Správa uživatelů SSO
 
@@ -108,8 +108,8 @@ Chcete-li odebrat přístup uživatelům SSO:
 
 ### Běžné problémy
 
-* **Chyby certifikátu**: Ujistěte se, že certifikátu nevypršela platnost
-* **Nesoulad URL**: Ověřte, že adresa ACS URL přesně odpovídá
+* **Chyby certifikátu**: Ujistěte se, že certifikát nebyl vypršen
+* \*\*URL neodpovídá \*\*: Ověřte adresu URL ACS přesně
 * **Uživatel nenalezen**: Zkontrolujte nastavení zřizování JIT
 
 ### Získání pomoci

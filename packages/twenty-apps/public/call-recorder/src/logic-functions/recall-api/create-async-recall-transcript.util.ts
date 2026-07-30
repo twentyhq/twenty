@@ -1,5 +1,6 @@
 import { isString } from '@sniptt/guards';
 
+import { RECALL_ASYNC_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/recall-async-transcript-provider';
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
@@ -24,7 +25,7 @@ export const createAsyncRecallTranscript = async ({
     path: `/recording/${externalRecordingId}/create_transcript/`,
     method: 'POST',
     body: {
-      provider: { recallai_async: { language_code: 'auto' } },
+      provider: RECALL_ASYNC_TRANSCRIPT_PROVIDER,
       diarization: { use_separate_streams_when_available: true },
     },
     maxAttempts: 1,

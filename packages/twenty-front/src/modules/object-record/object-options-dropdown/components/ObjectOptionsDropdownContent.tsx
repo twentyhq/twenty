@@ -1,4 +1,5 @@
 import { ObjectOptionsDropdownAddRecordGroupContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownAddRecordGroupContent';
+import { ObjectOptionsDropdownCalendarDateFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent';
 import { ObjectOptionsDropdownCalendarFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent';
 import { ObjectOptionsDropdownCalendarEndFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent';
 import { ObjectOptionsDropdownCalendarViewContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent';
@@ -43,6 +44,12 @@ export const ObjectOptionsDropdownContent = () => {
       return <ObjectOptionsDropdownAddRecordGroupContent />;
     case 'calendarView':
       return <ObjectOptionsDropdownCalendarViewContent />;
+    case 'calendarDateFields':
+      return isCalendarWeekViewEnabled ? (
+        <ObjectOptionsDropdownCalendarDateFieldsContent />
+      ) : (
+        <ObjectOptionsDropdownMenuContent />
+      );
     case 'calendarFields':
       return <ObjectOptionsDropdownCalendarFieldsContent />;
     case 'calendarEndFields':
