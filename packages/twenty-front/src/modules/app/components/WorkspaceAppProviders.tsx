@@ -35,7 +35,6 @@ import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProvider
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
-import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
@@ -73,7 +72,6 @@ export const WorkspaceAppProviders = () => {
                             <GlobalFilePreviewModal />
                             <CommandMenuConfirmationModalManager />
                             <FrontComponentExternalLinkModalManager />
-                            <OverrideWorkflowDraftConfirmationModal />
                             <CommandRunner />
                           </StrictMode>
                         </DialogManager>

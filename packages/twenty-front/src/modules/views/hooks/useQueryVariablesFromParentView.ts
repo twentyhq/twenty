@@ -27,9 +27,6 @@ export const useQueryVariablesFromParentView = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  // Navigating between record pages of different objects (through a relation
-  // chip for instance) keeps the parent view of the object we came from, whose
-  // filters and sorts target fields the current object does not have
   const parentView =
     contextStoreRecordShowParentView?.parentViewObjectNameSingular ===
     objectMetadataItem.nameSingular

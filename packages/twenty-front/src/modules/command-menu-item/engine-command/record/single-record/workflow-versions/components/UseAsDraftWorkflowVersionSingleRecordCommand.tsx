@@ -1,13 +1,11 @@
+import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { overrideWorkflowDraftConfirmationModalConfigState } from '@/workflow/states/overrideWorkflowDraftConfirmationModalConfigState';
+import { useLingui } from '@lingui/react/macro';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
@@ -17,33 +15,16 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
   workflowId: string;
   workflowVersionId: string;
 }) => {
-  const { openModal } = useModal();
+  const { t } = useLingui();
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const navigate = useNavigateApp();
 
-  const setOverrideWorkflowDraftConfirmationModalConfig = useSetAtomState(
-    overrideWorkflowDraftConfirmationModalConfigState,
-  );
-
   const hasAlreadyDraftVersion =
     workflow?.versions.some((version) => version.status === 'DRAFT') ?? false;
 
   const handleExecute = async () => {
-    // The confirmation modal is rendered outside of the command because the
-    // command unmounts as soon as it has been executed
-    if (hasAlreadyDraftVersion) {
-      setOverrideWorkflowDraftConfirmationModalConfig({
-        workflowId,
-        workflowVersionIdToCopy: workflowVersionId,
-      });
-
-      openModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
-
-      return;
-    }
-
     await createDraftFromWorkflowVersion({
       workflowId,
       workflowVersionIdToCopy: workflowVersionId,
@@ -55,10 +36,27 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
     });
   };
 
+  if (!isDefined(workflow)) {
+    return null;
+  }
+
+  if (!hasAlreadyDraftVersion) {
+    return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  }
+
   return (
-    <HeadlessEngineCommandWrapperEffect
+    <HeadlessConfirmationModalEngineCommandEffect
+      title={t`A draft already exists`}
+      subtitle={t`A draft already exists for this workflow. Are you sure you want to erase it?`}
+      confirmButtonText={t`Override Draft`}
+      linkButton={{
+        title: t`Go to Draft`,
+        to: getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: CoreObjectNameSingular.Workflow,
+          objectRecordId: workflowId,
+        }),
+      }}
       execute={handleExecute}
-      ready={isDefined(workflow)}
     />
   );
 };
