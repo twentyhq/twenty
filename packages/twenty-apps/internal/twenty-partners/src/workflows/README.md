@@ -47,10 +47,15 @@ the RLS predicate field — the server exempts those from the role's field locks
 so adding one (e.g. **State** → `APPLIED`) fails the insert with *"no permission to write
 field …"*. `state` defaults to `APPLIED` on its own.
 
-**Order of operations.** Publish this workflow version *before* running
-`yarn rls:configure` on the workspace — the strict predicate rejects every apply until the
-Partner User mapping is live. If the workflow already exists in the workspace, edit it
-instead: add **Partner User**, remove every other mapping, republish, then run the script.
+**Order of operations.** On a workspace that already runs the app:
+
+1. Publish this workflow version first — the strict predicate rejects every apply until the
+   Partner User mapping is live. If the workflow already exists, edit it instead: add
+   **Partner User**, remove every other mapping, republish.
+2. `yarn rls:configure` (`:prod`) — narrows the Application predicate to `partnerUser IS me`.
+3. `yarn backfill:partner-user` (`:prod`) — stamps `partnerUser` on rows created before the
+   narrowing. Skip it and an admin-created invite stays invisible to the partner it was
+   addressed to.
 
 ### Expected UI (partner)
 

@@ -85,6 +85,14 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'opportunity',
 ]);
 
+// Printed before and after the writes: the operator reads this output, not the runbook.
+const APPLY_WORKFLOW_WARNING =
+  `[rls:configure] \u26a0 The "Apply to Brief" workflow in this workspace MUST map\n` +
+  `  Partner User -> {{trigger.workspaceMember}} and map no other field, and every\n` +
+  `  Application created before this run needs \`yarn backfill:partner-user\`.\n` +
+  `  Otherwise partners cannot apply, and admin invites stay invisible to them.\n` +
+  `  See src/workflows/README.md.\n`;
+
 type ObjectInfo = {
   objectMetadataId: string;
   partnerUserFieldMetadataId: string;
@@ -449,6 +457,8 @@ async function main() {
     }
   };
 
+  console.log(`\n${APPLY_WORKFLOW_WARNING}`);
+
   const results: PredicateResult[] = [];
 
   for (const name of SIMPLE_TARGET_OBJECTS) {
@@ -490,14 +500,6 @@ async function main() {
 
   }
 
-  // The operator reads this script's output, not the runbook.
-  console.log(
-    `\n[rls:configure] ⚠ The "Apply to Brief" workflow in this workspace MUST map\n` +
-      `  Partner User -> {{trigger.workspaceMember}} and map no other field.\n` +
-      `  Until it does, every partner apply fails with "Record does not satisfy\n` +
-      `  row-level security constraints of your current role".\n` +
-      `  Fix it now in Settings -> Workflows. See src/workflows/README.md.\n`,
-  );
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
   {
@@ -589,6 +591,7 @@ async function main() {
     `\n[rls:configure] Done — ${results.length} predicates upserted on Partner role ` +
       `(${SIMPLE_TARGET_OBJECTS.length} simple objects + opportunity OR group + workspaceMember self-scope)`,
   );
+  console.log(`\n${APPLY_WORKFLOW_WARNING}`);
 
   // ── 5. Verify Opportunity field permissions (set via manifest, not here — see header) ─
 

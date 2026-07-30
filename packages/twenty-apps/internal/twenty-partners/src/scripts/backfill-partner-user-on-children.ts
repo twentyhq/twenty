@@ -9,11 +9,12 @@ const PAGE_SIZE = 200;
 
 const CHILD_QUERIES: {
   childObject: PartnerChildObject;
-  listKey: 'partnerLinks' | 'partnerServices' | 'partnerContents';
+  listKey: 'partnerLinks' | 'partnerServices' | 'partnerContents' | 'applications';
 }[] = [
   { childObject: 'partnerLink', listKey: 'partnerLinks' },
   { childObject: 'partnerService', listKey: 'partnerServices' },
   { childObject: 'partnerContent', listKey: 'partnerContents' },
+  { childObject: 'application', listKey: 'applications' },
 ];
 
 type Connection<T> = {

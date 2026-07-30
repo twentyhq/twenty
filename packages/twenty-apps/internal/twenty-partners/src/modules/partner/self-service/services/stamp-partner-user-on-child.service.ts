@@ -1,6 +1,95 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export type PartnerChildObject = 'partnerLink' | 'partnerService' | 'partnerContent';
+export type PartnerChildObject =
+  | 'partnerLink'
+  | 'partnerService'
+  | 'partnerContent'
+  | 'application';
+
+type ChildRecord = { partnerUserId?: string | null } | null | undefined;
+
+const CHILD_ACCESSORS: Record<
+  PartnerChildObject,
+  {
+    read: (client: CoreApiClient, id: string) => Promise<ChildRecord>;
+    write: (
+      client: CoreApiClient,
+      id: string,
+      partnerUserId: string,
+    ) => Promise<unknown>;
+  }
+> = {
+  partnerLink: {
+    read: (client, id) =>
+      client
+        .query({
+          partnerLink: {
+            __args: { filter: { id: { eq: id } } },
+            id: true,
+            partnerUserId: true,
+          },
+        })
+        .then((res) => res.partnerLink),
+    write: (client, id, partnerUserId) =>
+      client.mutation({
+        updatePartnerLink: { __args: { id, data: { partnerUserId } }, id: true },
+      }),
+  },
+  partnerService: {
+    read: (client, id) =>
+      client
+        .query({
+          partnerService: {
+            __args: { filter: { id: { eq: id } } },
+            id: true,
+            partnerUserId: true,
+          },
+        })
+        .then((res) => res.partnerService),
+    write: (client, id, partnerUserId) =>
+      client.mutation({
+        updatePartnerService: {
+          __args: { id, data: { partnerUserId } },
+          id: true,
+        },
+      }),
+  },
+  partnerContent: {
+    read: (client, id) =>
+      client
+        .query({
+          partnerContent: {
+            __args: { filter: { id: { eq: id } } },
+            id: true,
+            partnerUserId: true,
+          },
+        })
+        .then((res) => res.partnerContent),
+    write: (client, id, partnerUserId) =>
+      client.mutation({
+        updatePartnerContent: {
+          __args: { id, data: { partnerUserId } },
+          id: true,
+        },
+      }),
+  },
+  application: {
+    read: (client, id) =>
+      client
+        .query({
+          application: {
+            __args: { filter: { id: { eq: id } } },
+            id: true,
+            partnerUserId: true,
+          },
+        })
+        .then((res) => res.application),
+    write: (client, id, partnerUserId) =>
+      client.mutation({
+        updateApplication: { __args: { id, data: { partnerUserId } }, id: true },
+      }),
+  },
+};
 
 export const stampPartnerUserFromPartner = async (
   client: CoreApiClient,
@@ -19,63 +108,11 @@ export const stampPartnerUserFromPartner = async (
   const partnerUserId = partnerRes.partner?.partnerUserId;
   if (!partnerUserId) return;
 
-  if (childObject === 'partnerLink') {
-    const childRes = await client.query({
-      partnerLink: {
-        __args: { filter: { id: { eq: childId } } },
-        id: true,
-        partnerUserId: true,
-      },
-    });
+  const { read, write } = CHILD_ACCESSORS[childObject];
+  const child = await read(client, childId);
 
-    if (!childRes.partnerLink) return;
-    if (childRes.partnerLink.partnerUserId === partnerUserId) return;
+  if (!child) return;
+  if (child.partnerUserId === partnerUserId) return;
 
-    await client.mutation({
-      updatePartnerLink: {
-        __args: { id: childId, data: { partnerUserId } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  if (childObject === 'partnerService') {
-    const childRes = await client.query({
-      partnerService: {
-        __args: { filter: { id: { eq: childId } } },
-        id: true,
-        partnerUserId: true,
-      },
-    });
-
-    if (!childRes.partnerService) return;
-    if (childRes.partnerService.partnerUserId === partnerUserId) return;
-
-    await client.mutation({
-      updatePartnerService: {
-        __args: { id: childId, data: { partnerUserId } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  const childRes = await client.query({
-    partnerContent: {
-      __args: { filter: { id: { eq: childId } } },
-      id: true,
-      partnerUserId: true,
-    },
-  });
-
-  if (!childRes.partnerContent) return;
-  if (childRes.partnerContent.partnerUserId === partnerUserId) return;
-
-  await client.mutation({
-    updatePartnerContent: {
-      __args: { id: childId, data: { partnerUserId } },
-      id: true,
-    },
-  });
+  await write(client, childId, partnerUserId);
 };
