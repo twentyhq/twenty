@@ -288,14 +288,14 @@ export const ATTIO_COMPARISON: CompetitorComparison = {
       twenty: { detail: msg`Organization, $19/user` },
     },
     {
-      feature: msg`Workflow credits`,
-      description: msg`Automation that writes data or calls AI`,
+      feature: msg`Cost per workflow run`,
+      description: msg`An automation that writes a record`,
       competitor: {
-        price: msg`$150/mo per 10k`,
-        detail: msg`Shared credit wallet top-up`,
+        price: msg`From ≈ 1.5¢/run`,
+        detail: msg`One credit per data-writing block, $150 per 10k credits`,
         sourceUrl: ATTIO_PRICING_URL,
       },
-      twenty: { detail: msg`Workflows included, credits for AI only` },
+      twenty: { detail: msg`Credit allowance included with every plan` },
     },
     {
       feature: msg`Source code`,

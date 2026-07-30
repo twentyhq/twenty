@@ -163,7 +163,7 @@ export function CompareCostTable({
             {row.competitor.sourceUrl !== undefined ? (
               <SourceLink
                 href={row.competitor.sourceUrl}
-                rel="noreferrer"
+                rel="nofollow noreferrer"
                 target="_blank"
               >
                 {i18n._(msg`source`)}
