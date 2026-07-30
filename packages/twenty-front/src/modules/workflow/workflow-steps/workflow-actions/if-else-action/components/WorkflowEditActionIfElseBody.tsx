@@ -3,8 +3,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
   type WorkflowIfElseAction,
   type WorkflowStep,
@@ -67,9 +65,6 @@ export const WorkflowEditActionIfElseBody = ({
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
-  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const currentStepFilters = useAtomComponentStateValue(
