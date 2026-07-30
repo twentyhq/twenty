@@ -1,0 +1,109 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { formatChatReference } from '@/ai/utils/formatChatReference';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
+import { type ReactNode, useEffect, useState } from 'react';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+
+const StyledContainer = styled.div`
+  max-width: 640px;
+`;
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+
+const employeesFieldMetadataItem = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'employees',
+});
+
+const allCompaniesView = {
+  id: '20202020-4444-4444-4444-444444444444',
+  name: 'All Companies',
+  icon: 'IconList',
+  objectMetadataId: companyObjectMetadataItem.id,
+  isActive: true,
+} as ViewWithRelations;
+
+// ObjectMetadataItemsDecorator loads views through the metadata store draft,
+// which drops them all because some mocked views target absent objects. The
+// view is declared here rather than imported from the generated view mocks,
+// whose module graph breaks the linaria build-time evaluator.
+const ChatReferenceStoreSeeder = ({ children }: { children: ReactNode }) => {
+  const store = useStore();
+  const [isSeeded, setIsSeeded] = useState(false);
+
+  useEffect(() => {
+    setTestViewsInMetadataStore(store, [allCompaniesView]);
+
+    store.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [PermissionFlagType.DATA_MODEL],
+      twoFactorAuthenticationMethodSummary: [],
+      objectsPermissions: [],
+    });
+
+    setIsSeeded(true);
+  }, [store]);
+
+  return isSeeded ? <>{children}</> : null;
+};
+
+const meta: Meta<typeof LazyMarkdownRenderer> = {
+  title: 'Modules/AiChat/ChatReferenceChip',
+  component: LazyMarkdownRenderer,
+  decorators: [
+    (Story) => (
+      <ChatReferenceStoreSeeder>
+        <StyledContainer>
+          <Story />
+        </StyledContainer>
+      </ChatReferenceStoreSeeder>
+    ),
+    ObjectMetadataItemsDecorator,
+    IconsProviderDecorator,
+    ComponentWithRouterDecorator,
+  ],
+};
+
+export default meta;
+
+type Story = StoryObj<typeof LazyMarkdownRenderer>;
+
+export const ExistingMetadata: Story = {
+  args: {
+    text: `Your ${formatChatReference({
+      kind: 'object',
+      objectNameSingular: 'company',
+      displayName: 'Companies',
+    })} object is sorted by ${formatChatReference({
+      kind: 'field',
+      fieldMetadataItemId: employeesFieldMetadataItem.id,
+      displayName: 'Employees',
+    })} in the ${formatChatReference({
+      kind: 'view',
+      viewId: allCompaniesView.id,
+      displayName: allCompaniesView.name,
+    })} view.`,
+  },
+};
+
+export const ProposedObject: Story = {
+  args: {
+    text: `As a Head of Partnerships, you seem to work across partner companies, key contacts, and commercial follow-ups, so I suggest creating a ${formatChatReference(
+      {
+        kind: 'object',
+        objectNameSingular: 'partner',
+        displayName: 'Partners',
+      },
+    )} object to track relationship status, partner type, owner, and next step. Should I create it?`,
+  },
+};

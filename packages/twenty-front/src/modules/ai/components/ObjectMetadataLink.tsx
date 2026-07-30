@@ -1,0 +1,58 @@
+import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
+
+type ObjectMetadataLinkProps = {
+  objectNameSingular: string;
+  displayName: string;
+};
+
+export const ObjectMetadataLink = ({
+  objectNameSingular,
+  displayName,
+}: ObjectMetadataLinkProps) => {
+  const theme = useTheme();
+
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
+    },
+  );
+
+  // An object the assistant only proposes to create has no metadata to link to
+  // yet, so it stays a chip without a destination.
+  return (
+    <ChatReferenceChipDisplay
+      displayName={displayName}
+      to={
+        isDefined(objectMetadataItem)
+          ? getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })
+          : undefined
+      }
+      leftComponent={
+        <ObjectMetadataIcon
+          objectMetadataItem={
+            objectMetadataItem ?? {
+              icon: PROPOSED_OBJECT_METADATA_ICON,
+              nameSingular: objectNameSingular,
+              color: null,
+              isSystem: false,
+            }
+          }
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+        />
+      }
+    />
+  );
+};
