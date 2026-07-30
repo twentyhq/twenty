@@ -5,6 +5,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
+import { handler as recomputeHandler } from 'src/logic-functions/recompute-last-contact';
+import { type RecomputeTargetName } from 'src/types/recompute-target';
 
 const calendarHandler = onCalendarInteraction.config.handler as (
   event: unknown,
@@ -12,6 +14,11 @@ const calendarHandler = onCalendarInteraction.config.handler as (
 const emailHandler = onEmailInteraction.config.handler as (
   event: unknown,
 ) => Promise<void>;
+
+const recompute = (
+  objectNameSingular: RecomputeTargetName,
+  recordIds: string[],
+) => recomputeHandler({ objectNameSingular, recordIds });
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -992,6 +999,221 @@ describe('last contact handlers', () => {
       lastInboundAt: meetingAt,
       lastEmailId: messageId,
       lastMeetingId: calendarEventId,
+    });
+  });
+
+  const corruptLastContactAt = async (
+    mutationName: 'updatePerson' | 'updateCompany' | 'updateOpportunity',
+    recordId: string,
+  ): Promise<void> => {
+    await client.mutation({
+      [mutationName]: {
+        __args: {
+          id: recordId,
+          data: { lastContactAt: new Date(Date.now() + DAY_IN_MS).toISOString() },
+        },
+        id: true,
+      },
+    });
+  };
+
+  const destroyPersonMessageParticipants = async (
+    personId: string,
+  ): Promise<void> => {
+    const result = await client.query({
+      messageParticipants: {
+        __args: { filter: { personId: { eq: personId } }, first: 100 },
+        edges: { node: { id: true } },
+      },
+    });
+
+    for (const edge of result.messageParticipants?.edges ?? []) {
+      await client.mutation({
+        destroyMessageParticipant: { __args: { id: edge.node.id }, id: true },
+      });
+    }
+  };
+
+  it('recomputes a person whose stored last contact drifted', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+    await corruptLastContactAt('updatePerson', personId);
+
+    const result = await recompute('person', [personId]);
+
+    expect(result).toEqual({
+      success: true,
+      objectNameSingular: 'person',
+      total: 1,
+      updated: 1,
+    });
+    expectColumns(await getPersonLastContact(client, personId), {
+      lastContactAt: receivedAt,
+      lastContactById: workspaceMemberId,
+      itemMessageId: messageId,
+      itemCalendarEventId: null,
+      lastOutboundAt: receivedAt,
+      lastInboundAt: null,
+      lastEmailId: messageId,
+      lastMeetingId: null,
+    });
+  });
+
+  it('clears a person whose interactions were all deleted', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+
+    await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt: new Date(Date.now() - 5 * DAY_IN_MS).toISOString(),
+      direction: 'outbound',
+    });
+    await destroyPersonMessageParticipants(personId);
+
+    await recompute('person', [personId]);
+
+    expectColumns(await getPersonLastContact(client, personId), {
+      lastContactAt: null,
+      lastContactById: null,
+      itemMessageId: null,
+      itemCalendarEventId: null,
+      lastOutboundAt: null,
+      lastInboundAt: null,
+      lastEmailId: null,
+      lastMeetingId: null,
+    });
+  });
+
+  it('recomputes a company from the interactions of its people', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    await setPersonCompany(client, { personId, companyId });
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+    await corruptLastContactAt('updateCompany', companyId);
+
+    await recompute('company', [companyId]);
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(asTime(companyContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(companyContact.lastContactItemMessageId).toBe(messageId);
+    expect(companyContact.lastContactItemCalendarEventId).toBeNull();
+  });
+
+  it('recomputes an opportunity from its point of contact', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const opportunityId = await createOpportunity(client, {
+      pointOfContactId: personId,
+    });
+    createdOpportunityIds.push(opportunityId);
+    const startsAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const calendarEventId = await recordMeeting({
+      personId,
+      workspaceMemberId,
+      startsAt,
+    });
+    await corruptLastContactAt('updateOpportunity', opportunityId);
+
+    await recompute('opportunity', [opportunityId]);
+
+    const opportunityContact = await getRelatedLastContact(
+      client,
+      'opportunity',
+      opportunityId,
+    );
+    expect(asTime(opportunityContact.lastContactAt)).toBe(asTime(startsAt));
+    expect(opportunityContact.lastContactItemCalendarEventId).toBe(
+      calendarEventId,
+    );
+    expect(opportunityContact.lastContactItemMessageId).toBeNull();
+  });
+
+  it('clears an opportunity that has no point of contact', async () => {
+    const opportunityId = await createOpportunity(client, {});
+    createdOpportunityIds.push(opportunityId);
+    await corruptLastContactAt('updateOpportunity', opportunityId);
+
+    await recompute('opportunity', [opportunityId]);
+
+    const opportunityContact = await getRelatedLastContact(
+      client,
+      'opportunity',
+      opportunityId,
+    );
+    expect(opportunityContact.lastContactAt).toBeNull();
+  });
+
+  it('recomputes a mixed batch of people in a single call', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const contactedPersonId = await createPerson(client);
+    createdPersonIds.push(contactedPersonId);
+    const untouchedPersonId = await createPerson(client);
+    createdPersonIds.push(untouchedPersonId);
+    const receivedAt = new Date(Date.now() - 6 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId: contactedPersonId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'inbound',
+    });
+    await corruptLastContactAt('updatePerson', untouchedPersonId);
+
+    const result = await recompute('person', [
+      contactedPersonId,
+      untouchedPersonId,
+    ]);
+
+    expect(result).toMatchObject({ total: 2, updated: 2 });
+
+    const contacted = await getPersonLastContact(client, contactedPersonId);
+    expect(asTime(contacted.lastContactAt)).toBe(asTime(receivedAt));
+    expect(contacted.lastEmailId).toBe(messageId);
+
+    const untouched = await getPersonLastContact(client, untouchedPersonId);
+    expect(untouched.lastContactAt).toBeNull();
+  });
+
+  it('rejects a batch larger than the batch size', async () => {
+    const recordIds = Array.from(
+      { length: 21 },
+      (_unused, index) => `00000000-0000-4000-8000-0000000000${
+        index < 10 ? `0${index}` : index
+      }`,
+    );
+
+    const result = await recompute('person', recordIds);
+
+    expect(result).toMatchObject({
+      status: 400,
+      body: { success: false },
     });
   });
 });

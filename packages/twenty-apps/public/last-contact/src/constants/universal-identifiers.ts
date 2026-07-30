@@ -14,6 +14,23 @@ export const BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
 export const CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
   'c56013d7-208b-46e2-a91f-27f481645591';
 
+export const RECOMPUTE_LOGIC_FUNCTION = {
+  universalIdentifier: 'b1f76830-7517-42ea-a8f6-473fd62390d3',
+  path: '/last-contact/recompute-last-contact',
+} as const;
+
+export const RECOMPUTE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIERS = {
+  person: '4a1730e5-4809-4262-a54f-8258a305a83c',
+  company: '96263bbf-c849-47c5-8ced-5fa3aa339afd',
+  opportunity: 'e76d8ce4-e2a4-4f92-ac44-aa69a5fc7f83',
+} as const;
+
+export const RECOMPUTE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = {
+  person: 'a0f7269c-d7ec-4b0f-bbaf-fc4be8685814',
+  company: '17132e74-cdd9-40ba-9a45-b9323ebfd99d',
+  opportunity: 'a5ee210a-d5cd-4a8d-b2bd-666fd38943f7',
+} as const;
+
 export const LAST_CONTACT_BY_FIELD_UNIVERSAL_IDENTIFIER =
   'cfdee7bd-8d41-41e6-a888-512705e75d7b';
 export const LAST_CONTACT_FOR_PEOPLE_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =

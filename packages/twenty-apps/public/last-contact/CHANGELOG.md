@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Add a "Recompute last contact" command menu item on People, Companies and Opportunities. Select one or more records and the app recomputes their last-contact columns from the current messages and calendar events, in batches of 20, clearing values left behind by deleted messages, canceled events or moved people.
+
 ## 1.1.3
 
 - Stop declaring INDEX view fields explicitly: the server now provisions the INDEX view column for each app field automatically, so the manifest no longer targets the engine-owned standard INDEX views.
