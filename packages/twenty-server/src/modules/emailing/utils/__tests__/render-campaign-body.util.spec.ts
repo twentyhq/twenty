@@ -121,6 +121,28 @@ describe('renderCampaignBodyToHtml', () => {
     );
   });
 
+  it('should substitute variables inside image link URLs', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'image',
+            attrs: {
+              src: 'https://example.com/banner.png',
+              href: 'https://example.com/promo/{{personId}}',
+            },
+          },
+        ],
+      }),
+      VARIABLES,
+    );
+
+    expect(renderedDocument().content[0].attrs.href).toBe(
+      'https://example.com/promo/person-123',
+    );
+  });
+
   it('should substitute variables inside raw HTML blocks with escaping', async () => {
     await renderCampaignBodyToHtml(
       JSON.stringify({

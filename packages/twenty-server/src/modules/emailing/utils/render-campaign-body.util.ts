@@ -50,9 +50,10 @@ const substituteVariables = (
         variable: substituteIntoString(node.attrs.variable, variables),
       },
     }),
-  // Button URLs are where per-recipient values matter most (tracking links,
-  // per-person landing pages).
-  ...(node.type === TIPTAP_NODE_TYPES.EMAIL_BUTTON &&
+  // Button and image URLs are where per-recipient values matter most
+  // (tracking links, per-person landing pages).
+  ...((node.type === TIPTAP_NODE_TYPES.EMAIL_BUTTON ||
+    node.type === TIPTAP_NODE_TYPES.IMAGE) &&
     typeof node.attrs?.href === 'string' && {
       attrs: {
         ...node.attrs,

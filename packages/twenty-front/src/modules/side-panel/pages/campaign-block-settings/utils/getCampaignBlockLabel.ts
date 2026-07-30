@@ -15,6 +15,8 @@ export const getCampaignBlockLabel = (nodeType: string): string => {
       return t`Divider`;
     case TIPTAP_NODE_TYPES.EMAIL_HTML:
       return t`HTML`;
+    case TIPTAP_NODE_TYPES.IMAGE:
+      return t`Image`;
     default:
       return nodeType;
   }

@@ -123,6 +123,35 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       placeholder: '6',
     },
   ],
+  [TIPTAP_NODE_TYPES.IMAGE]: [
+    {
+      label: msg`Link URL`,
+      kind: 'attribute',
+      property: 'href',
+      input: 'text',
+      placeholder: 'https://',
+    },
+    {
+      label: msg`Source`,
+      kind: 'attribute',
+      property: 'src',
+      input: 'text',
+      placeholder: 'https://',
+    },
+    {
+      label: msg`Alt text`,
+      kind: 'attribute',
+      property: 'alt',
+      input: 'text',
+    },
+    {
+      label: msg`Width`,
+      kind: 'attribute',
+      property: 'width',
+      input: 'text',
+      placeholder: 'auto',
+    },
+  ],
   [TIPTAP_NODE_TYPES.EMAIL_HTML]: [
     {
       label: msg`HTML`,

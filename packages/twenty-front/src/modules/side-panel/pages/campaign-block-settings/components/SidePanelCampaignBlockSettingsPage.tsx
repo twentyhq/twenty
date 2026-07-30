@@ -72,6 +72,18 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
 
   const handleFieldChange = (field: (typeof fields)[number], value: string) => {
     if (field.kind === 'attribute') {
+      // The image width attribute is numeric (the resize handle writes
+      // pixel numbers); everything else is a plain string.
+      if (field.property === 'width') {
+        const trimmed = value.trim();
+        if (trimmed === '') {
+          updateTargetAttributes({ width: null });
+        } else if (!Number.isNaN(Number(trimmed))) {
+          updateTargetAttributes({ width: Number(trimmed) });
+        }
+        return;
+      }
+
       updateTargetAttributes({ [field.property]: value });
       return;
     }
@@ -107,7 +119,7 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
           field={field}
           value={
             field.kind === 'attribute'
-              ? ((target.attrs[field.property] as string | undefined) ?? '')
+              ? String(target.attrs[field.property] ?? '')
               : (styles[field.property] ?? '')
           }
           onChange={(value) => handleFieldChange(field, value)}

@@ -158,6 +158,26 @@ describe('renderRichTextToHtml', () => {
     expect(html).toContain('<table role="presentation">');
   });
 
+  it('should wrap linked images in an anchor', async () => {
+    const html = await renderRichTextToHtml({
+      type: 'doc',
+      content: [
+        {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/banner.png',
+            alt: 'Banner',
+            href: 'https://example.com/landing',
+          },
+        },
+      ],
+    });
+
+    expect(html).toContain('https://example.com/banner.png');
+    expect(html).toContain('href="https://example.com/landing"');
+    expect(html).toContain('alt="Banner"');
+  });
+
   it('should render nothing for unknown node types', async () => {
     const html = await renderRichTextToHtml({
       type: 'doc',
