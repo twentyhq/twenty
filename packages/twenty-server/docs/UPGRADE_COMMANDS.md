@@ -180,6 +180,8 @@ Limits of this mode:
 
 - Ctrl+C cannot reach a detached run, so `stop` is the only graceful entry point and `130` only ever appears on foreground runs.
 - Log and PID files live in `/tmp` in the container (`TWENTY_UPGRADE_LOG_FILE`, `TWENTY_UPGRADE_PID_FILE`) and are lost with the pod.
+- The log is capped at 50 MiB (`TWENTY_UPGRADE_LOG_MAX_BYTES`, in bytes, `0` disables it), since `/tmp` is the container's writable layer and an unbounded log fills the node's disk rather than just the pod. Past the cap the oldest half is dropped and the recent half kept, marked by a `--- log capped to ...` prefix on the first line, which the drop leaves truncated. The size is checked every second, so a run that logs fast can overshoot briefly. Nothing reads the dropped history: `logs` prints the last 20 lines and reads the verdict from the last `EXIT=` line, and the cap never runs while that line is being written.
+- A cap is visible to a concurrent `logs` reader: `tail -f` notices the file shrink and replays the retained half, so the same lines come past twice. Cosmetic only, the follower keeps up with the run.
 - The start refusal only sees this container. Nothing in `upgrade` prevents two concurrent sequences either: `upgradeMigration` has no in-progress state and the sequence runner takes no advisory lock. One upgrade at a time is an operational rule, not an enforced one.
 - Needs `setsid`, present in the runtime image and on Linux, absent on macOS where `start` refuses and points at the foreground command.
 - `terminationGracePeriodSeconds` does not apply. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion the detached process is torn down without ever receiving `SIGTERM`.
