@@ -1,0 +1,39 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/constants/RelationFieldRefetchDebounceMs.ts
+  s_b3927bbca3beac::t_f99ecf8a4037f1 1
+packages/twenty-front/src/modules/object-record/record-field/ui/hooks/useRefetchRelationFieldOnRecordChange.ts
+  s_b3927bbca3beac::t_fdd5a6a1741f8b 1-85
+packages/twenty-front/src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+  s_b3927bbca3beac::t_a7349bfd277c87 8,73-78
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/log-driver-simulated-send-latency-ms.constant.ts
+  s_b3927bbca3beac::t_f4dac908ab9631 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_b3927bbca3beac::t_8addde3fbca480 8,121-124
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue-worker-config.constant.ts
+  s_b3927bbca3beac::t_fc1985a9177014 70-78
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts
+  s_b3927bbca3beac::t_27626af6354327 11
+packages/twenty-server/src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+  s_b3927bbca3beac::t_8054478eaf2dce 238-242
+packages/twenty-server/src/modules/emailing/jobs/refresh-campaign-stats.job.ts
+  s_b3927bbca3beac::t_0c92669c8435fa 8
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_b3927bbca3beac::t_d84c90cfd5a5a8 3-4,63-64,77-91
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_b3927bbca3beac::t_c7e83ca54f6744 134-135,422-425,582,789
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "fbdc88030a5f00823b4b365d3957f9c75bab9dc5",
+  "prompts": {},
+  "sessions": {
+    "s_b3927bbca3beac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f0b7d88-454f-48ba-91c9-7603d0dae167",
+        "model": "claude-opus-5"
+      },
+      "human_author": "neo773 <huzef@twenty.com>"
+    }
+  }
+}
