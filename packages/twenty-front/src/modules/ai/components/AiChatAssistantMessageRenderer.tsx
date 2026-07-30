@@ -93,6 +93,11 @@ export const AiChatAssistantMessageRenderer = ({
     !hasError &&
     !messageParts.some(isMessagePartInProgress);
 
+  const lastRenderItemIndex = renderItems.length - 1;
+  const shouldShowStandaloneThinkingRow =
+    isAwaitingNextStep &&
+    renderItems[lastRenderItemIndex]?.type !== 'thinking-steps';
+
   if (!renderItems.length && !hasError) {
     return <AiChatInitialLoadingIndicator />;
   }
@@ -114,6 +119,9 @@ export const AiChatAssistantMessageRenderer = ({
                     nextRenderItem.part.type === 'text' &&
                     nextRenderItem.part.text.trim().length > 0,
                 )}
+              showPendingThinkingRow={
+                isAwaitingNextStep && index === lastRenderItemIndex
+              }
             />
           ) : (
             <MessagePartRenderer
@@ -123,7 +131,7 @@ export const AiChatAssistantMessageRenderer = ({
             />
           ),
         )}
-        {isAwaitingNextStep && <AiChatThinkingRow />}
+        {shouldShowStandaloneThinkingRow && <AiChatThinkingRow />}
       </StyledMessagePartsContainer>
     </div>
   );

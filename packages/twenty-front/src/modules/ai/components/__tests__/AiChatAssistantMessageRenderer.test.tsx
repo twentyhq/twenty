@@ -8,12 +8,14 @@ jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
   ThinkingStepsDisplay: ({
     hasAssistantTextResponseStarted,
     parts,
+    showPendingThinkingRow,
   }: {
     parts: unknown[];
     hasAssistantTextResponseStarted: boolean;
+    showPendingThinkingRow?: boolean;
   }) => (
     <div data-testid="thinking-steps-display">
-      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}`}
+      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${showPendingThinkingRow ? '-with-pending-thinking-row' : ''}`}
     </div>
   ),
 }));
@@ -241,7 +243,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
-  it('should show the pending next step indicator when streaming pauses between steps', () => {
+  it('should append the pending thinking row to the last thinking steps group when streaming pauses between steps', () => {
     const messageParts = [
       {
         type: 'reasoning',
@@ -259,7 +261,34 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'with-pending-thinking-row',
+    );
+    expect(screen.queryByTestId('thinking-row')).toBeNull();
+  });
+
+  it('should show a standalone thinking row when streaming pauses after a text part', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Intermediate summary',
+        state: 'done',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
     expect(screen.getByTestId('thinking-row')).toBeInTheDocument();
+    expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
+      'with-pending-thinking-row',
+    );
   });
 
   it('should not show the pending next step indicator while a tool call awaits its output', () => {

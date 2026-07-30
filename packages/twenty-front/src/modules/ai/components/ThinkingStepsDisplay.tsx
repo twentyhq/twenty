@@ -413,10 +413,12 @@ export const ThinkingStepsDisplay = ({
   parts,
   isLastMessageStreaming,
   hasAssistantTextResponseStarted,
+  showPendingThinkingRow = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted: boolean;
+  showPendingThinkingRow?: boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -472,6 +474,7 @@ export const ThinkingStepsDisplay = ({
                 )}
               />
             ))}
+            {showPendingThinkingRow && <AiChatThinkingRow />}
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>

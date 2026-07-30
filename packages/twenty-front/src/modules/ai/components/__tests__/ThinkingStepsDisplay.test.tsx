@@ -84,10 +84,12 @@ const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
+  showPendingThinkingRow = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
+  showPendingThinkingRow?: boolean;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -95,6 +97,7 @@ const renderThinkingStepsDisplay = ({
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+        showPendingThinkingRow={showPendingThinkingRow}
       />
     </ThemeProvider>,
   );
@@ -131,6 +134,25 @@ describe('ThinkingStepsDisplay', () => {
     expect(
       screen.getByText('Searching the web for crm software'),
     ).toBeInTheDocument();
+  });
+
+  it('should append the pending thinking row after completed steps when requested', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      showPendingThinkingRow: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByText('Thinking')).toBeInTheDocument();
+  });
+
+  it('should not render a thinking row for completed steps by default', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
   });
 
   it('should render done state collapsed by default', () => {
