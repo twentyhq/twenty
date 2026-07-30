@@ -9648,6 +9648,11 @@ msgstr "워크스페이스 스키마 변경이 일시적으로 잠겨 있습니�
 msgid "Workspace schema not found."
 msgstr "워크스페이스 스키마를 찾을 수 없음."
 
+#. js-lingui-id: 2gzz0t
+#: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
+msgid "Workspace setup"
+msgstr ""
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

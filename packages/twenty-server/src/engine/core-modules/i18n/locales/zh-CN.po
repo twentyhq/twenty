@@ -9648,6 +9648,11 @@ msgstr "工作区架构更改已暂时锁定。"
 msgid "Workspace schema not found."
 msgstr "未找到工作区架构。"
 
+#. js-lingui-id: 2gzz0t
+#: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
+msgid "Workspace setup"
+msgstr ""
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."

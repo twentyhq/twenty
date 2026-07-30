@@ -9648,6 +9648,11 @@ msgstr "ワークスペースのスキーマ変更は一時的にロックされ
 msgid "Workspace schema not found."
 msgstr "ワークスペーススキーマが見つかりません。"
 
+#. js-lingui-id: 2gzz0t
+#: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
+msgid "Workspace setup"
+msgstr ""
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
