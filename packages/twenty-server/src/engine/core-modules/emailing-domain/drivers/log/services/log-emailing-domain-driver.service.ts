@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { LOG_DRIVER_SIMULATED_SEND_LATENCY_MS } from 'src/engine/core-modules/emailing-domain/constants/log-driver-simulated-send-latency-ms.constant';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import {
   type EmailingDomainDriverInterface,
@@ -115,6 +116,10 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,
+    );
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, LOG_DRIVER_SIMULATED_SEND_LATENCY_MS),
     );
 
     const messageId = `log-${v4()}`;

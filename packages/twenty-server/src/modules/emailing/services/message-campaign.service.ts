@@ -7,6 +7,8 @@ import { v4, v5 } from 'uuid';
 
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
+  CAMPAIGN_TEST_SEND_THROTTLE_LIMIT,
+  CAMPAIGN_TEST_SEND_THROTTLE_WINDOW_MS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   MATERIALIZE_CAMPAIGN_JOB,
@@ -19,6 +21,10 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import {
+  EmailGroupAccessException,
+  EmailGroupAccessExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -47,6 +53,9 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { CampaignSendQuotaService } from 'src/modules/emailing/services/campaign-send-quota.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
@@ -122,10 +131,14 @@ export class MessageCampaignService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.emailStatsQueue)
+    private readonly emailStatsQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
+    private readonly campaignSendQuotaService: CampaignSendQuotaService,
+    private readonly throttlerService: ThrottlerService,
     private readonly emailBillingService: EmailBillingService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
@@ -155,6 +168,8 @@ export class MessageCampaignService {
     userWorkspaceId,
     campaignId,
   }: SendCampaignArgs): Promise<SendCampaignResult> {
+    const quota = await this.campaignSendQuotaService.getQuota(workspaceId);
+
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
@@ -194,6 +209,13 @@ export class MessageCampaignService {
             rawRecipients,
             MAX_CAMPAIGN_RECIPIENTS,
           );
+
+          if (normalized.recipients.length > quota.remaining) {
+            throw new EmailGroupAccessException(
+              `Campaign of ${normalized.recipients.length} recipients exceeds the remaining daily quota of ${quota.remaining}`,
+              EmailGroupAccessExceptionCode.CAMPAIGN_SEND_QUOTA_EXCEEDED,
+            );
+          }
 
           const campaignRepository = await this.getUserRepository(
             workspaceId,
@@ -251,6 +273,24 @@ export class MessageCampaignService {
     fromAddress,
     unsubscribeTopicId,
   }: SendCampaignTestArgs): Promise<EmailingDomainSendEmailResult> {
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `${workspaceId}-campaign-test-send`,
+        1,
+        CAMPAIGN_TEST_SEND_THROTTLE_LIMIT,
+        CAMPAIGN_TEST_SEND_THROTTLE_WINDOW_MS,
+      );
+    } catch (error) {
+      if (!(error instanceof ThrottlerException)) {
+        throw error;
+      }
+
+      throw new EmailingDomainException(
+        `Campaign test send rate limit exceeded for workspace ${workspaceId}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_TEST_RATE_LIMITED,
+      );
+    }
+
     const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
       workspaceId,
       fromAddress,
@@ -379,7 +419,10 @@ export class MessageCampaignService {
         );
       }
 
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+      await this.messageCampaignStatisticsService.refreshCampaignCounts({
+        workspaceId,
+        campaignId,
+      });
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -449,18 +492,18 @@ export class MessageCampaignService {
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
       const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
-      const hasEmailCredits =
-        await this.emailBillingService.hasEmailCredits(workspaceId);
-
-      if (!hasEmailCredits) {
-        await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-        });
-
-        return;
-      }
-
       try {
+        const hasEmailCredits =
+          await this.emailBillingService.hasEmailCredits(workspaceId);
+
+        if (!hasEmailCredits) {
+          await messageRepository.update(messageId, {
+            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+          });
+
+          return;
+        }
+
         let result: EmailingDomainSendEmailResult;
 
         try {
@@ -536,7 +579,7 @@ export class MessageCampaignService {
           },
         );
       } finally {
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+        await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
       }
     }, buildSystemAuthContext(workspaceId));
   }
@@ -727,55 +770,6 @@ export class MessageCampaignService {
     );
   }
 
-  private async finalizeCampaignIfComplete(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
-    const queuedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
-    });
-
-    if (queuedCount > 0) {
-      return;
-    }
-
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      },
-    });
-
-    const campaignRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
-
-    await campaignRepository.update(
-      { id: campaignId, status: MessageCampaignStatus.SENDING },
-      {
-        status:
-          failedCount > 0
-            ? MessageCampaignStatus.SENT_WITH_ERRORS
-            : MessageCampaignStatus.SENT,
-        sentAt: new Date(),
-      },
-    );
-
-    await this.scheduleCampaignStatsRefresh({
-      workspaceId,
-      campaignId,
-    });
-  }
-
   private async scheduleCampaignStatsRefresh({
     workspaceId,
     campaignId,
@@ -792,7 +786,7 @@ export class MessageCampaignService {
       return;
     }
 
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
+    await this.emailStatsQueueService.add<RefreshCampaignStatsJobData>(
       REFRESH_CAMPAIGN_STATS_JOB,
       { workspaceId, campaignId },
       { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },
