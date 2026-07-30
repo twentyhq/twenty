@@ -28,8 +28,6 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
     ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND,
 };
 
-// Both hooks are best effort: the connection is already created or already removed when they run,
-// so a misconfigured or failing hook must never break the caller. Failures go to Sentry.
 @Injectable()
 export class ConnectionProviderLifecycleHookService {
   constructor(
