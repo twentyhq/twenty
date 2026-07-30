@@ -3,9 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -52,34 +50,12 @@ type WorkspaceRecord = {
   displayName: string | null;
 };
 
-const buildWorkspaceCacheGetMock = (
-  workspaces: WorkspaceRecord[],
-): jest.Mock => {
-  const byId = new Map(
-    workspaces.map((workspace) => [workspace.id, workspace]),
-  );
-
-  return jest.fn(async (_cacheKey: string, workspaceId: string) => {
-    const workspace = byId.get(workspaceId);
-
-    if (!workspace) {
-      return null;
-    }
-
-    return {
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-      ...workspace,
-    };
-  });
-};
-
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
   let sequence: { kind: string; name: string }[];
   let getLastAttemptedInstanceCommand: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
-  let coreEntityCacheGet: jest.Mock;
   let cacheGetComputedAt: jest.Mock;
   let cacheGetBehindWorkspaceIds: jest.Mock;
   let cacheGetFailedWorkspaceIds: jest.Mock;
@@ -89,9 +65,6 @@ describe('UpgradeStatusService', () => {
 
   const mockActiveWorkspaces = (workspaces: WorkspaceRecord[]) => {
     workspaceFind.mockResolvedValue(workspaces);
-    coreEntityCacheGet.mockImplementation(
-      buildWorkspaceCacheGetMock(workspaces),
-    );
   };
 
   beforeEach(async () => {
@@ -99,7 +72,6 @@ describe('UpgradeStatusService', () => {
     getLastAttemptedInstanceCommand = jest.fn();
     getWorkspaceLastAttemptedCommandName = jest.fn();
     workspaceFind = jest.fn().mockResolvedValue([]);
-    coreEntityCacheGet = jest.fn().mockResolvedValue(null);
     cacheGetComputedAt = jest.fn();
     cacheGetBehindWorkspaceIds = jest.fn().mockResolvedValue([]);
     cacheGetFailedWorkspaceIds = jest.fn().mockResolvedValue([]);
@@ -132,10 +104,6 @@ describe('UpgradeStatusService', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: { find: workspaceFind },
-        },
-        {
-          provide: CoreEntityCacheService,
-          useValue: { get: coreEntityCacheGet },
         },
         {
           provide: UpgradeStatusCacheService,
@@ -551,12 +519,10 @@ describe('UpgradeStatusService', () => {
         errorMessage: null,
         createdAt: new Date('2025-06-01T00:00:00Z'),
       });
-      coreEntityCacheGet.mockImplementation(
-        buildWorkspaceCacheGetMock([
-          { id: 'ws-2', displayName: 'Banana' },
-          { id: 'ws-3', displayName: 'Cherry' },
-        ]),
-      );
+      workspaceFind.mockResolvedValue([
+        { id: 'ws-2', displayName: 'Banana' },
+        { id: 'ws-3', displayName: 'Cherry' },
+      ]);
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
@@ -564,6 +530,7 @@ describe('UpgradeStatusService', () => {
       expect(result.workspacesFailed).toEqual([{ id: 'ws-3', name: 'Cherry' }]);
       expect(result.upToDateWorkspaceCount).toBe(5);
       expect(result.computedAt).toEqual(computedAt);
+      expect(workspaceFind).toHaveBeenCalledTimes(1);
       expect(getWorkspaceLastAttemptedCommandName).not.toHaveBeenCalled();
       expect(cacheWrite).not.toHaveBeenCalled();
     });
@@ -580,11 +547,10 @@ describe('UpgradeStatusService', () => {
       expect(result.workspacesBehind).toEqual([{ id: 'ws-1', name: 'Apple' }]);
     });
 
-    it('should use null name when a cached id is missing from the cache', async () => {
+    it('should use null name when a cached id is missing from the database', async () => {
       cacheGetComputedAt.mockResolvedValue(new Date());
       cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-orphan']);
       getLastAttemptedInstanceCommand.mockResolvedValue(null);
-      coreEntityCacheGet.mockResolvedValue(null);
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
@@ -599,7 +565,66 @@ describe('UpgradeStatusService', () => {
 
       await service.getInstanceAndAllWorkspacesStatus();
 
-      expect(coreEntityCacheGet).not.toHaveBeenCalled();
+      expect(workspaceFind).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getInstanceAndWorkspaceCountsStatus', () => {
+    it('should derive counts from cached ids without loading workspace names', async () => {
+      const computedAt = new Date('2025-06-02T10:00:00Z');
+
+      cacheGetComputedAt.mockResolvedValue(computedAt);
+      cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-1', 'ws-2']);
+      cacheGetFailedWorkspaceIds.mockResolvedValue(['ws-3']);
+      cacheGetUpToDateWorkspaceCount.mockResolvedValue(5);
+      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+
+      const result = await service.getInstanceAndWorkspaceCountsStatus();
+
+      expect(result).toEqual({
+        instanceUpgradeStatus: {
+          inferredVersion: null,
+          health: UpgradeHealthEnum.BEHIND,
+          latestCommand: null,
+        },
+        behindWorkspaceCount: 2,
+        failedWorkspaceCount: 1,
+        upToDateWorkspaceCount: 5,
+        computedAt,
+      });
+      expect(workspaceFind).not.toHaveBeenCalled();
+      expect(cacheWrite).not.toHaveBeenCalled();
+    });
+
+    it('should derive counts from a refresh when the cache marker is missing', async () => {
+      cacheGetComputedAt.mockResolvedValue(null);
+      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+      mockActiveWorkspaces([
+        { id: 'ws-1', displayName: 'Apple' },
+        { id: 'ws-2', displayName: 'Banana' },
+      ]);
+      getWorkspaceLastAttemptedCommandName.mockResolvedValue(
+        new Map([
+          [
+            'ws-2',
+            {
+              workspaceId: 'ws-2',
+              name: NEWEST_WORKSPACE_COMMAND,
+              status: 'failed',
+              executedByVersion: NEWEST_VERSION,
+              errorMessage: 'boom',
+              createdAt: new Date('2025-06-01T00:00:00Z'),
+            },
+          ],
+        ]),
+      );
+
+      const result = await service.getInstanceAndWorkspaceCountsStatus();
+
+      expect(result.behindWorkspaceCount).toBe(1);
+      expect(result.failedWorkspaceCount).toBe(1);
+      expect(result.upToDateWorkspaceCount).toBe(0);
+      expect(cacheWrite).toHaveBeenCalledTimes(1);
     });
   });
 
