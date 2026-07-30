@@ -2121,11 +2121,6 @@ msgstr "alfabetisch"
 msgid "Already in navbar"
 msgstr ""
 
-#. js-lingui-id: 35jGKh
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Always allow links to this domain"
-msgstr ""
-
 #. js-lingui-id: Fc64QW
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Amazon Q Developer CLI"
@@ -3392,7 +3387,6 @@ msgstr "Kan je niet scannen? Kopieer de"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -13505,11 +13499,6 @@ msgstr "Open Claude met de naam van de Twenty-connector en MCP-URL vooraf ingevu
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Open de MCP-installer van Cursor met de Twenty-configuratie voor externe server."
 
-#. js-lingui-id: YIqGXO
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open external link?"
-msgstr ""
-
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -13530,11 +13519,6 @@ msgstr "In app openen"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Open in Rollen"
-
-#. js-lingui-id: x57cJf
-#: src/modules/front-components/components/FrontComponentExternalLinkModal.tsx
-msgid "Open link"
-msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
