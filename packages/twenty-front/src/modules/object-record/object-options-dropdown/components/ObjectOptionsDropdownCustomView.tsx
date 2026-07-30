@@ -4,6 +4,7 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -67,10 +68,13 @@ export const ObjectOptionsDropdownCustomView = ({
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
 
-  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+  const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
     ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarFieldMetadataId,
+        (field) => field.id === recordIndexCalendarFieldMetadataId,
       )
     : undefined;
 
