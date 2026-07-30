@@ -413,7 +413,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     });
   });
 
-  it('completes a transcript when Fireflies skips summary generation', async () => {
+  it('keeps a transcript processing when Fireflies skips summary generation', async () => {
     const callId = 'call-with-skipped-summary';
     const callRecordingId = computeCallRecordingIdForFirefliesMeeting(callId);
     const callDateMilliseconds = Date.parse('2026-06-02T10:00:00.000Z');
@@ -466,16 +466,6 @@ describe('importMissingFirefliesCalls synchronization', () => {
       sleep: skipSleep,
     });
 
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
-        __args: {
-          id: callRecordingId,
-          data: expect.objectContaining({
-            status: CALL_RECORDING_STATUS.COMPLETED,
-          }),
-        },
-        id: true,
-      },
-    });
+    expect(mutationMock).not.toHaveBeenCalled();
   });
 });
