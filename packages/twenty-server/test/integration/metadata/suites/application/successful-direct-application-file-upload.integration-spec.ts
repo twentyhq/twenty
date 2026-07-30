@@ -26,9 +26,6 @@ const LOGO_CONTENT =
 const EXPECTED_SANITIZED_LOGO_CONTENT =
   '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"></circle></svg>';
 
-// The local storage driver has no presign support, so createApplicationFileUploads
-// hands back the token-authenticated streaming endpoint. Only the path is kept
-// so the PUT reaches the app under test rather than whatever SERVER_URL says.
 const putToUploadTarget = (
   uploadTarget: ApplicationFileUploadTarget,
   body: Buffer,
@@ -143,7 +140,6 @@ describe('Direct application file upload', () => {
       HANDLER_CONTENT,
     );
 
-    // Bytes that bypassed the server still get sanitized at confirmation time.
     expect(readStoredFile('public-asset', LOGO_PATH)).toBe(
       EXPECTED_SANITIZED_LOGO_CONTENT,
     );

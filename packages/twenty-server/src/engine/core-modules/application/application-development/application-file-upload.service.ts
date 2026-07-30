@@ -33,10 +33,6 @@ const APPLICATION_FILE_SETTINGS = {
   toDelete: false,
 } as const;
 
-// Direct upload for application files: the CLI asks for one upload url per
-// built file in a single batched mutation, PUTs the bytes straight to storage,
-// then confirms the whole batch. Deploying a large app therefore costs a
-// handful of rate-limited api calls instead of one per file.
 @Injectable()
 export class ApplicationFileUploadService {
   constructor(
@@ -83,9 +79,6 @@ export class ApplicationFileUploadService {
 
     return Promise.all(
       files.map(async ({ fileFolder, filePath, size }) => {
-        // The path is deterministic for application files, so re-uploading an
-        // existing file reuses its record: take the id back from the upsert
-        // rather than assuming the generated one won.
         const pendingFile = await this.fileStorageService.createPendingFile({
           fileFolder,
           applicationUniversalIdentifier,
@@ -202,8 +195,6 @@ export class ApplicationFileUploadService {
       { ...storageLocation, filename: file.path },
     );
 
-    // The PENDING mime type is pinned to octet-stream by a db constraint, so
-    // the record has to leave PENDING before it can carry its real type.
     await this.fileRepository.update(
       workspaceId,
       { id: file.id },
@@ -220,9 +211,6 @@ export class ApplicationFileUploadService {
     return { id: file.id, path: file.path, size, createdAt: file.createdAt };
   }
 
-  // Bytes that go straight to storage skip the sanitization the multipart
-  // upload path applies. Only svg carries an active payload today, so it is
-  // read back, purified and rewritten in place.
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     fileId,

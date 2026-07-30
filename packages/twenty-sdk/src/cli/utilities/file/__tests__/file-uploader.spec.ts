@@ -8,14 +8,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockCreateApplicationFileUploads = vi.fn();
 const mockCompleteApplicationFileUploads = vi.fn();
-const mockUploadFile = vi.fn();
 const mockPutFileToUploadUrl = vi.fn();
 
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     createApplicationFileUploads = mockCreateApplicationFileUploads;
     completeApplicationFileUploads = mockCompleteApplicationFileUploads;
-    uploadFile = mockUploadFile;
   },
 }));
 
@@ -69,7 +67,6 @@ describe('FileUploader.uploadFiles', () => {
       data: [],
     });
     mockPutFileToUploadUrl.mockResolvedValue(undefined);
-    mockUploadFile.mockResolvedValue({ success: true, data: true });
   });
 
   it('should reserve, upload and confirm a batch in two api calls', async () => {
@@ -146,20 +143,6 @@ describe('FileUploader.uploadFiles', () => {
         failure.error.includes('confirmation failed'),
       ),
     ).toBe(true);
-  });
-
-  it('should fall back to the per-file upload against a server without the batched mutations', async () => {
-    mockCreateApplicationFileUploads.mockResolvedValue({
-      success: false,
-      error:
-        'Cannot query field "createApplicationFileUploads" on type "Mutation".',
-    });
-
-    const failures = await buildUploader().uploadFiles(filesToUpload);
-
-    expect(failures).toEqual([]);
-    expect(mockUploadFile).toHaveBeenCalledTimes(2);
-    expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
   });
 
   it('should not call the api at all when there is nothing to upload', async () => {
