@@ -252,8 +252,6 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
 
-      // Not throttled: a critical one-shot hook with no retry must not be
-      // dropped.
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {

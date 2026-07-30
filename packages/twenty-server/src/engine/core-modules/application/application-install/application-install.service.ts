@@ -563,8 +563,6 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      // Not throttled: post-install runs once with no retry and must not be
-      // dropped.
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {

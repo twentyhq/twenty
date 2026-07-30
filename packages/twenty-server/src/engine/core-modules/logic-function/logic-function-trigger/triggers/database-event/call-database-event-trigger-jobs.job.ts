@@ -54,8 +54,6 @@ export class CallDatabaseEventTriggerJobsJob {
         }),
       );
 
-    // Enqueue per application so each batch is attributed and throttled against
-    // the application it belongs to.
     const logicFunctionsByApplicationId = new Map<
       string,
       typeof logicFunctionsToTrigger

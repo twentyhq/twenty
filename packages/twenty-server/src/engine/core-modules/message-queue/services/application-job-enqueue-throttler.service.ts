@@ -9,11 +9,6 @@ import {
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Limits how many jobs an application can enqueue so a single app cannot flood a
-// queue. Two tiers mirror the API rate limiting: a lower per-installation ceiling
-// and a higher ceiling shared across every workspace that installed the same
-// registration. Both buckets are checked before either is debited, so a rejection
-// on one tier never burns quota on the other.
 @Injectable()
 export class ApplicationJobEnqueueThrottlerService {
   constructor(

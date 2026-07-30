@@ -163,8 +163,6 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    // Not throttled: a route trigger is a critical one-shot execution requested
-    // by an external caller and must not be dropped.
     await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
       {
