@@ -1403,8 +1403,6 @@ const buildDirectFieldGqlOperationFilter = ({
     }
     case 'PHONES': {
       if (!isSubFieldFilter) {
-        // Keep a leading '+' so an international calling code like '+33' is not
-        // matched against phone numbers merely containing '33'
         const filterValue = recordFilter.value
           .trim()
           .replace(/(?!^)\+|[^0-9+]/g, '');
