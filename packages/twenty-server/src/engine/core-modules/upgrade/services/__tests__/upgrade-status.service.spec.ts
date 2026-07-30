@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -120,6 +121,12 @@ describe('UpgradeStatusService', () => {
           provide: UpgradeSequenceReaderService,
           useValue: {
             getUpgradeSequence: () => sequence,
+            getUpgradeStepNames: (kinds?: Record<string, true>) =>
+              sequence
+                .filter(
+                  (step) => !isDefined(kinds) || kinds[step.kind] === true,
+                )
+                .map((step) => step.name),
           },
         },
         {

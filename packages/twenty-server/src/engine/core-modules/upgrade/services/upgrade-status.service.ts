@@ -89,7 +89,10 @@ export class UpgradeStatusService {
     const cursor =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
-    const stepNames = this.getInstanceStepNames();
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames({
+      'fast-instance': true,
+      'slow-instance': true,
+    });
     const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
     return {
@@ -131,7 +134,7 @@ export class UpgradeStatusService {
         loadedWorkspaceIds,
       );
 
-    const stepNames = this.getSequenceStepNames();
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames();
     const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
     return workspaces.map((workspace) => ({
@@ -158,7 +161,7 @@ export class UpgradeStatusService {
     }
 
     return resolveCompletedVersionFromCursor({
-      stepNames: this.getSequenceStepNames(),
+      stepNames: this.upgradeSequenceReaderService.getUpgradeStepNames(),
       cursor,
     });
   }
@@ -251,22 +254,6 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.invalidate();
   }
 
-  private getSequenceStepNames(): string[] {
-    return this.upgradeSequenceReaderService
-      .getUpgradeSequence()
-      .map((step) => step.name);
-  }
-
-  private getInstanceStepNames(): string[] {
-    return this.upgradeSequenceReaderService
-      .getUpgradeSequence()
-      .filter(
-        (step) =>
-          step.kind === 'fast-instance' || step.kind === 'slow-instance',
-      )
-      .map((step) => step.name);
-  }
-
   private resolveInstanceCompletedVersion(
     cursor: UpgradeCursor | null,
   ): string | null {
@@ -274,7 +261,10 @@ export class UpgradeStatusService {
       return null;
     }
 
-    const stepNames = this.getInstanceStepNames();
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames({
+      'fast-instance': true,
+      'slow-instance': true,
+    });
 
     const completedVersion = resolveCompletedVersionFromCursor({
       stepNames,
