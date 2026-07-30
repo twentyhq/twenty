@@ -28,6 +28,8 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
     ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND,
 };
 
+// Both hooks are best effort: the connection is already created or already removed when they run,
+// so a misconfigured or failing hook must never break the caller. Failures go to Sentry.
 @Injectable()
 export class ConnectionProviderLifecycleHookService {
   constructor(
@@ -43,18 +45,27 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId,
     connectedAccountId,
   }: {
-    provider: ConnectionProviderEntity;
+    provider: Pick<
+      ConnectionProviderEntity,
+      'id' | 'name' | 'onConnectLogicFunctionUniversalIdentifier'
+    >;
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
-    await this.dispatch({
-      hook: 'onConnect',
-      logicFunctionUniversalIdentifier:
-        provider.onConnectLogicFunctionUniversalIdentifier,
-      provider,
-      workspaceId,
-      connectedAccountId,
-    });
+    try {
+      await this.dispatchOrThrow({
+        hook: 'onConnect',
+        logicFunctionUniversalIdentifier:
+          provider.onConnectLogicFunctionUniversalIdentifier,
+        provider,
+        workspaceId,
+        connectedAccountId,
+      });
+    } catch (error) {
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
+    }
   }
 
   async dispatchOnDisconnect({
@@ -66,35 +77,28 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
-    let provider: ConnectionProviderEntity;
-
     try {
-      provider =
+      const provider =
         await this.connectionProviderService.findOneByIdOrThrow(
           connectionProviderId,
         );
+
+      await this.dispatchOrThrow({
+        hook: 'onDisconnect',
+        logicFunctionUniversalIdentifier:
+          provider.onDisconnectLogicFunctionUniversalIdentifier,
+        provider,
+        workspaceId,
+        connectedAccountId,
+      });
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
-
-      return;
     }
-
-    await this.dispatch({
-      hook: 'onDisconnect',
-      logicFunctionUniversalIdentifier:
-        provider.onDisconnectLogicFunctionUniversalIdentifier,
-      provider,
-      workspaceId,
-      connectedAccountId,
-    });
   }
 
-  // Lifecycle hooks are best-effort: the connection is already created or
-  // already removed by the time we get here, so a misconfigured or failing
-  // hook must not break the caller. Failures still go to Sentry.
-  private async dispatch({
+  private async dispatchOrThrow({
     hook,
     logicFunctionUniversalIdentifier,
     provider,
@@ -103,7 +107,7 @@ export class ConnectionProviderLifecycleHookService {
   }: {
     hook: ConnectionLifecycleHook;
     logicFunctionUniversalIdentifier: string | null;
-    provider: ConnectionProviderEntity;
+    provider: Pick<ConnectionProviderEntity, 'id' | 'name'>;
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
@@ -111,44 +115,38 @@ export class ConnectionProviderLifecycleHookService {
       return;
     }
 
-    try {
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]);
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
 
-      const flatLogicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          logicFunctionUniversalIdentifier
-        ];
+    const flatLogicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        logicFunctionUniversalIdentifier
+      ];
 
-      if (
-        !isDefined(flatLogicFunction) ||
-        isDefined(flatLogicFunction.deletedAt)
-      ) {
-        throw new ConnectionProviderException(
-          `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
-          MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],
-        );
-      }
-
-      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId: flatLogicFunction.id,
-          workspaceId,
-          payload: {
-            connectionProviderId: provider.id,
-            connectionProviderName: provider.name,
-            connectedAccountId,
-          },
-        },
-        { retryLimit: 3 },
+    if (
+      !isDefined(flatLogicFunction) ||
+      isDefined(flatLogicFunction.deletedAt)
+    ) {
+      throw new ConnectionProviderException(
+        `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
+        MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],
       );
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
     }
+
+    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+      LogicFunctionTriggerJob.name,
+      {
+        logicFunctionId: flatLogicFunction.id,
+        workspaceId,
+        payload: {
+          connectionProviderId: provider.id,
+          connectionProviderName: provider.name,
+          connectedAccountId,
+        },
+      },
+      { retryLimit: 3 },
+    );
   }
 }

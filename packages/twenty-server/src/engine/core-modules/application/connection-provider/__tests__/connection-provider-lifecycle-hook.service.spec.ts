@@ -18,12 +18,18 @@ describe('ConnectionProviderLifecycleHookService', () => {
   let messageQueueService: { add: jest.Mock };
   let exceptionHandlerService: { captureExceptions: jest.Mock };
 
-  const baseProvider = {
+  const baseProvider: Pick<
+    ConnectionProviderEntity,
+    | 'id'
+    | 'name'
+    | 'onConnectLogicFunctionUniversalIdentifier'
+    | 'onDisconnectLogicFunctionUniversalIdentifier'
+  > = {
     id: 'provider-1',
     name: 'linear',
     onConnectLogicFunctionUniversalIdentifier: null,
     onDisconnectLogicFunctionUniversalIdentifier: null,
-  } as unknown as ConnectionProviderEntity;
+  };
 
   beforeEach(async () => {
     connectionProviderService = {
