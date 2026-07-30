@@ -749,7 +749,7 @@ Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll
 
 ### Attributes and styling
 
-Only `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute reach the host DOM (hyphenated, so `ariaLabel` is dropped). Everything else is silently discarded, so express custom state as `data-*`.
+Each element forwards its own properties to the host DOM (`href` on `<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
 
 Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` element, is injected into the host page's `<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
 
@@ -759,7 +759,7 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` el
 
 `fetch` works, with caveats:
 
-- Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only string bodies are supported.
+- Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
 - Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
 - `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
 
