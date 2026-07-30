@@ -20,10 +20,10 @@ export const slackPostEphemeralMessageHandler = async (
   const { client } = slackClientResult;
 
   try {
-    const bodyFields = getSlackChatMessageBodyFields({
-      messageText: parameters.messageText,
-      messageFormat: parameters.messageFormat,
-    });
+    const bodyFields = getSlackChatMessageBodyFields(
+      parameters.messageText,
+      parameters.messageFormat,
+    );
 
     const postEphemeralPayload = {
       channel: parameters.slackChannelId,
