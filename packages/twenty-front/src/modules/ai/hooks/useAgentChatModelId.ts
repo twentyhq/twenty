@@ -1,7 +1,6 @@
-import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -13,7 +12,7 @@ export const useAgentChatModelId = () => {
     agentChatUserSelectedModelState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { pathname } = useLocation();
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
   const isUserModelAvailable =
     !isDefined(agentChatUserSelectedModel) ||
@@ -23,8 +22,9 @@ export const useAgentChatModelId = () => {
     ? agentChatUserSelectedModel
     : null;
 
-  const workspaceSetupModelId =
-    pathname === AppPath.WorkspaceSetup ? currentWorkspace?.fastModel : null;
+  const workspaceSetupModelId = isWorkspaceSetupChat
+    ? currentWorkspace?.fastModel
+    : null;
 
   const modelIdForRequest =
     selectedModelId ?? workspaceSetupModelId ?? undefined;
