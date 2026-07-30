@@ -121,6 +121,27 @@ describe('renderCampaignBodyToHtml', () => {
     );
   });
 
+  it('should substitute variables inside raw HTML blocks with escaping', async () => {
+    await renderCampaignBodyToHtml(
+      JSON.stringify({
+        type: 'doc',
+        content: [
+          {
+            type: 'emailHtml',
+            attrs: {
+              html: '<a href="https://example.com/p/{{personId}}">Hi {{firstName}}</a>',
+            },
+          },
+        ],
+      }),
+      { ...VARIABLES, firstName: '<b>Ada</b>' },
+    );
+
+    expect(renderedDocument().content[0].attrs.html).toBe(
+      '<a href="https://example.com/p/person-123">Hi &lt;b&gt;Ada&lt;/b&gt;</a>',
+    );
+  });
+
   it('should substitute variables nested under marks and lists', async () => {
     const document = JSON.stringify({
       type: 'doc',

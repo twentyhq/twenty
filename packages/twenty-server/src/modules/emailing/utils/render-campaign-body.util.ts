@@ -59,6 +59,17 @@ const substituteVariables = (
         href: substituteIntoString(node.attrs.href, variables),
       },
     }),
+  // Raw HTML blocks are emitted verbatim, so substituted values are escaped
+  // to keep record data from injecting markup into the email.
+  ...(node.type === TIPTAP_NODE_TYPES.EMAIL_HTML &&
+    typeof node.attrs?.html === 'string' && {
+      attrs: {
+        ...node.attrs,
+        html: renderCampaignTemplate(node.attrs.html, variables, {
+          escapeValues: true,
+        }),
+      },
+    }),
   ...(Array.isArray(node.marks) && {
     marks: node.marks.map((mark) =>
       mark.type === TIPTAP_MARK_TYPES.LINK &&
