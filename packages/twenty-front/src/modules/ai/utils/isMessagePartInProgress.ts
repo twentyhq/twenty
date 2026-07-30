@@ -1,6 +1,5 @@
 import { isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
 export const isMessagePartInProgress = (
   part: ExtendedUIMessagePart,
@@ -18,6 +17,7 @@ export const isMessagePartInProgress = (
   }
 
   return (
-    isToolUIPart(part) && !isDefined(part.output) && !isDefined(part.errorText)
+    isToolUIPart(part) &&
+    (part.state === 'input-streaming' || part.state === 'input-available')
   );
 };

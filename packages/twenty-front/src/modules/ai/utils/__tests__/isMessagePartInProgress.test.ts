@@ -69,6 +69,17 @@ describe('isMessagePartInProgress', () => {
       isMessagePartInProgress(
         createPart({
           type: 'tool-web_search',
+          toolCallId: 'tool-3-null-output',
+          input: { query: 'crm software' },
+          output: null,
+          state: 'output-available',
+        }),
+      ),
+    ).toBe(false);
+    expect(
+      isMessagePartInProgress(
+        createPart({
+          type: 'tool-web_search',
           toolCallId: 'tool-4',
           input: { query: 'crm software' },
           errorText: 'Tool execution failed',

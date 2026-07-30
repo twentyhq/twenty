@@ -3,17 +3,14 @@ import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconCpu,
-  ThinkingOrbitLoaderIcon,
-} from 'twenty-ui/icon';
+import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
+import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
@@ -138,11 +135,6 @@ const StyledReasoningText = styled.p`
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIconContainer = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-`;
-
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
@@ -202,6 +194,12 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
     outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: 2px;
   }
+`;
+
+const StyledShimmeringLabel = styled(ShimmeringText)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledToolDetailsContainer = styled.div`
@@ -299,13 +297,6 @@ const ThinkingToolStepRow = ({
     { id: 'input', title: t`Input` },
   ];
 
-  const toolRowLabel = (
-    <OverflowingTextWithTooltip
-      text={displayMessage}
-      tooltipDelay={TooltipDelay.shortDelay}
-    />
-  );
-
   return (
     <StyledToolRowContainer>
       <StyledToolRowButton
@@ -326,9 +317,12 @@ const ThinkingToolStepRow = ({
         <StyledRowLabelContainer>
           <StyledToolRowLabel>
             {isActive ? (
-              <ShimmeringText>{toolRowLabel}</ShimmeringText>
+              <StyledShimmeringLabel>{displayMessage}</StyledShimmeringLabel>
             ) : (
-              toolRowLabel
+              <OverflowingTextWithTooltip
+                text={displayMessage}
+                tooltipDelay={TooltipDelay.shortDelay}
+              />
             )}
           </StyledToolRowLabel>
           {isExpandable && (
@@ -399,19 +393,17 @@ const ThinkingStepRow = ({
     );
   }
 
+  if (isActive) {
+    return <AiChatThinkingRow />;
+  }
+
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? (
-          <StyledOrbitLoaderIconContainer>
-            <ThinkingOrbitLoaderIcon />
-          </StyledOrbitLoaderIconContainer>
-        ) : (
-          <IconCpu size={14} />
-        )}
+        <IconCpu size={14} />
       </StyledIconContainer>
       <StyledRowLabelContainer>
-        <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>
+        <StyledRowLabel>{t`Thought`}</StyledRowLabel>
       </StyledRowLabelContainer>
     </StyledRow>
   );

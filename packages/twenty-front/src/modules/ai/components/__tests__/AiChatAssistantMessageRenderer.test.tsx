@@ -40,10 +40,8 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-jest.mock('@/ai/components/AiChatPendingNextStepIndicator', () => ({
-  AiChatPendingNextStepIndicator: () => (
-    <div data-testid="pending-next-step-indicator" />
-  ),
+jest.mock('@/ai/components/AiChatThinkingRow', () => ({
+  AiChatThinkingRow: () => <div data-testid="thinking-row" />,
 }));
 
 const renderAssistantRenderer = (
@@ -261,9 +259,7 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
-    expect(
-      screen.getByTestId('pending-next-step-indicator'),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('thinking-row')).toBeInTheDocument();
   });
 
   it('should not show the pending next step indicator while a tool call awaits its output', () => {
@@ -278,7 +274,7 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
-    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
+    expect(screen.queryByTestId('thinking-row')).toBeNull();
   });
 
   it('should not show the pending next step indicator while answer text streams', () => {
@@ -299,7 +295,7 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
-    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
+    expect(screen.queryByTestId('thinking-row')).toBeNull();
   });
 
   it('should not show the pending next step indicator when the message is not streaming', () => {
@@ -320,7 +316,7 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts);
 
-    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
+    expect(screen.queryByTestId('thinking-row')).toBeNull();
   });
 
   it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {

@@ -24,7 +24,7 @@ const StyledLabel = styled.span`
   line-height: ${themeCssVariables.text.lineHeight.md};
 `;
 
-export const AiChatPendingNextStepIndicator = () => {
+export const AiChatThinkingRow = () => {
   return (
     <StyledRow>
       <StyledLoaderIconContainer>

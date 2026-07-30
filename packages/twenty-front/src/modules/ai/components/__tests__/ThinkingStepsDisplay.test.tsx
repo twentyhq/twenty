@@ -64,18 +64,20 @@ const createReasoningPart = ({
 const createToolPart = ({
   input = { query: 'crm software' },
   output = { result: { ok: true } },
+  state = 'output-available',
   type = 'tool-web_search',
 }: {
   type?: `tool-${string}`;
   input?: Record<string, unknown>;
   output?: unknown;
+  state?: string;
 } = {}): ThinkingStepPart =>
   ({
     type,
     toolCallId: `${type}-call-id`,
     input,
     output,
-    state: 'output-available',
+    state,
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
@@ -123,7 +125,7 @@ describe('ThinkingStepsDisplay', () => {
   it('should render the loading label for a tool step awaiting its output while streaming', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
-      parts: [createToolPart({ output: null })],
+      parts: [createToolPart({ output: null, state: 'input-available' })],
     });
 
     expect(

@@ -1,6 +1,6 @@
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
-import { AiChatPendingNextStepIndicator } from '@/ai/components/AiChatPendingNextStepIndicator';
+import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -123,7 +123,7 @@ export const AiChatAssistantMessageRenderer = ({
             />
           ),
         )}
-        {isAwaitingNextStep && <AiChatPendingNextStepIndicator />}
+        {isAwaitingNextStep && <AiChatThinkingRow />}
       </StyledMessagePartsContainer>
     </div>
   );
