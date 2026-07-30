@@ -436,6 +436,7 @@
                       "developers/extend/apps/logic/overview",
                       "developers/extend/apps/logic/logic-functions",
                       "developers/extend/apps/logic/key-value-store",
+                      "developers/extend/apps/logic/background-jobs",
                       "developers/extend/apps/logic/skills-and-agents",
                       "developers/extend/apps/logic/connections"
                     ]
@@ -902,6 +903,7 @@
                       "l/fr/developers/extend/apps/logic/overview",
                       "l/fr/developers/extend/apps/logic/logic-functions",
                       "l/fr/developers/extend/apps/logic/key-value-store",
+                      "l/fr/developers/extend/apps/logic/background-jobs",
                       "l/fr/developers/extend/apps/logic/skills-and-agents",
                       "l/fr/developers/extend/apps/logic/connections"
                     ]
@@ -1368,6 +1370,7 @@
                       "l/ar/developers/extend/apps/logic/overview",
                       "l/ar/developers/extend/apps/logic/logic-functions",
                       "l/ar/developers/extend/apps/logic/key-value-store",
+                      "l/ar/developers/extend/apps/logic/background-jobs",
                       "l/ar/developers/extend/apps/logic/skills-and-agents",
                       "l/ar/developers/extend/apps/logic/connections"
                     ]
@@ -1834,6 +1837,7 @@
                       "l/cs/developers/extend/apps/logic/overview",
                       "l/cs/developers/extend/apps/logic/logic-functions",
                       "l/cs/developers/extend/apps/logic/key-value-store",
+                      "l/cs/developers/extend/apps/logic/background-jobs",
                       "l/cs/developers/extend/apps/logic/skills-and-agents",
                       "l/cs/developers/extend/apps/logic/connections"
                     ]
@@ -2300,6 +2304,7 @@
                       "l/de/developers/extend/apps/logic/overview",
                       "l/de/developers/extend/apps/logic/logic-functions",
                       "l/de/developers/extend/apps/logic/key-value-store",
+                      "l/de/developers/extend/apps/logic/background-jobs",
                       "l/de/developers/extend/apps/logic/skills-and-agents",
                       "l/de/developers/extend/apps/logic/connections"
                     ]
@@ -2766,6 +2771,7 @@
                       "l/es/developers/extend/apps/logic/overview",
                       "l/es/developers/extend/apps/logic/logic-functions",
                       "l/es/developers/extend/apps/logic/key-value-store",
+                      "l/es/developers/extend/apps/logic/background-jobs",
                       "l/es/developers/extend/apps/logic/skills-and-agents",
                       "l/es/developers/extend/apps/logic/connections"
                     ]
@@ -3232,6 +3238,7 @@
                       "l/it/developers/extend/apps/logic/overview",
                       "l/it/developers/extend/apps/logic/logic-functions",
                       "l/it/developers/extend/apps/logic/key-value-store",
+                      "l/it/developers/extend/apps/logic/background-jobs",
                       "l/it/developers/extend/apps/logic/skills-and-agents",
                       "l/it/developers/extend/apps/logic/connections"
                     ]
@@ -3698,6 +3705,7 @@
                       "l/ja/developers/extend/apps/logic/overview",
                       "l/ja/developers/extend/apps/logic/logic-functions",
                       "l/ja/developers/extend/apps/logic/key-value-store",
+                      "l/ja/developers/extend/apps/logic/background-jobs",
                       "l/ja/developers/extend/apps/logic/skills-and-agents",
                       "l/ja/developers/extend/apps/logic/connections"
                     ]
@@ -4164,6 +4172,7 @@
                       "l/ko/developers/extend/apps/logic/overview",
                       "l/ko/developers/extend/apps/logic/logic-functions",
                       "l/ko/developers/extend/apps/logic/key-value-store",
+                      "l/ko/developers/extend/apps/logic/background-jobs",
                       "l/ko/developers/extend/apps/logic/skills-and-agents",
                       "l/ko/developers/extend/apps/logic/connections"
                     ]
@@ -5096,6 +5105,7 @@
                       "l/ro/developers/extend/apps/logic/overview",
                       "l/ro/developers/extend/apps/logic/logic-functions",
                       "l/ro/developers/extend/apps/logic/key-value-store",
+                      "l/ro/developers/extend/apps/logic/background-jobs",
                       "l/ro/developers/extend/apps/logic/skills-and-agents",
                       "l/ro/developers/extend/apps/logic/connections"
                     ]
@@ -5995,6 +6005,7 @@
                       "l/tr/developers/extend/apps/logic/overview",
                       "l/tr/developers/extend/apps/logic/logic-functions",
                       "l/tr/developers/extend/apps/logic/key-value-store",
+                      "l/tr/developers/extend/apps/logic/background-jobs",
                       "l/tr/developers/extend/apps/logic/skills-and-agents",
                       "l/tr/developers/extend/apps/logic/connections"
                     ]

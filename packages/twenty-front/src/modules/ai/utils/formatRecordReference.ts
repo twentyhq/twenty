@@ -1,4 +1,4 @@
-import { RECORD_REFERENCE_CLOSE_TAG } from '@/ai/constants/RecordReferenceCloseTag';
+import { formatChatReference } from '@/ai/utils/formatChatReference';
 
 export const formatRecordReference = ({
   objectNameSingular,
@@ -9,4 +9,9 @@ export const formatRecordReference = ({
   recordId: string;
   displayName: string;
 }): string =>
-  `[[record:${objectNameSingular}:${recordId}:${displayName}${RECORD_REFERENCE_CLOSE_TAG}`;
+  formatChatReference({
+    kind: 'record',
+    objectNameSingular,
+    recordId,
+    displayName,
+  });

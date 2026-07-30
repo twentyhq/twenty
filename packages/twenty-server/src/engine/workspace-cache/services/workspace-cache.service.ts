@@ -36,6 +36,7 @@ import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cac
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS = 60 * 1000;
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
@@ -71,6 +72,7 @@ export class WorkspaceCacheService implements OnModuleInit {
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
+  private lastLocalCacheExpirationSweepAt: number | undefined;
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
@@ -135,7 +137,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.evictExpiredLocalEntries();
+    this.evictExpiredLocalEntriesIfNeeded();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -640,9 +642,22 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
   }
 
-  private evictExpiredLocalEntries(): void {
+  private evictExpiredLocalEntriesIfNeeded(): void {
     const now = Date.now();
 
+    if (
+      isDefined(this.lastLocalCacheExpirationSweepAt) &&
+      now - this.lastLocalCacheExpirationSweepAt <
+        LOCAL_CACHE_EXPIRATION_SWEEP_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    this.evictExpiredLocalEntries(now);
+    this.lastLocalCacheExpirationSweepAt = now;
+  }
+
+  private evictExpiredLocalEntries(now: number): void {
     for (const [localKey, entry] of this.localCache) {
       for (const [hash, version] of entry.versions) {
         if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {

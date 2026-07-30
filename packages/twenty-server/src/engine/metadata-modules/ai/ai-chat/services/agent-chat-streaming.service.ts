@@ -297,6 +297,107 @@ export class AgentChatStreamingService {
     }
   }
 
+  async startHiddenKickoffStream({
+    thread,
+    userWorkspaceId,
+    workspace,
+    text,
+  }: {
+    thread: AgentChatThreadEntity;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+    text: string;
+  }): Promise<{ streamId: string; messageId: string; turnId: string } | null> {
+    const threadId = thread.id;
+    const streamId = generateId();
+
+    const hasClaimedStreamForKickoff = await this.tryClaimStream({
+      threadId,
+      workspaceId: workspace.id,
+      streamId,
+      where: { pendingQuestionMessageId: IsNull() },
+    });
+
+    if (!hasClaimedStreamForKickoff) {
+      return null;
+    }
+
+    try {
+      const hasConversationMessages =
+        await this.agentChatService.hasConversationMessages({
+          threadId,
+          workspaceId: workspace.id,
+        });
+
+      if (hasConversationMessages) {
+        await this.releaseStreamClaim(threadId, workspace.id, streamId);
+        await this.flushNextQueuedMessage(
+          threadId,
+          userWorkspaceId,
+          workspace.id,
+          !!thread.title,
+        );
+
+        return null;
+      }
+
+      const { id: messageId, turnId } =
+        await this.agentChatService.ensureHiddenKickoffMessage({
+          threadId,
+          workspaceId: workspace.id,
+          text,
+        });
+
+      const messages = await this.loadMessagesFromDB(
+        threadId,
+        userWorkspaceId,
+        workspace.id,
+      );
+
+      const kickoffMessage = messages[messages.length - 1];
+
+      if (!kickoffMessage || kickoffMessage.id !== messageId) {
+        throw new AiException(
+          'Workspace setup kickoff message could not be loaded',
+          AiExceptionCode.MESSAGE_NOT_FOUND,
+        );
+      }
+
+      await this.messageQueueService.add<StreamAgentChatJobData>(
+        STREAM_AGENT_CHAT_JOB_NAME,
+        {
+          threadId,
+          streamId,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+          messages,
+          browsingContext: null,
+          lastUserMessageText: text,
+          lastUserMessageParts: [{ type: 'text' as const, text }],
+          hasTitle: !!thread.title,
+          conversationSizeTokens: thread.conversationSize,
+          existingTurnId: turnId,
+        },
+      );
+
+      return { streamId, messageId, turnId };
+    } catch (error) {
+      await this.releaseStreamClaim(threadId, workspace.id, streamId);
+      const streamError = mapErrorToStreamError(error);
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: {
+          model: 'unknown',
+          failure_phase: 'enqueue',
+          error_code: streamError.code,
+        },
+      });
+      throw error;
+    }
+  }
+
   async retryLastFailedTurn({
     threadId,
     userWorkspaceId,

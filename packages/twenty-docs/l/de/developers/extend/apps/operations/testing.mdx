@@ -60,7 +60,7 @@ Der Build-Schritt verwendet esbuild, um pro Logikfunktion und pro Frontend-Kompo
 
 **Logikfunktionen** laufen in einer Node.js-Umgebung. Eingebaute Node.js-Module (`fs`, `path`, `crypto`, `http` usw.) stehen zur Verfügung und müssen nicht installiert werden.
 
-**Frontend-Komponenten** laufen in einem Web Worker. Eingebaute Node.js-Module sind **nicht** verfügbar — nur Browser-APIs und npm-Pakete, die in einer Browserumgebung funktionieren.
+**Frontend-Komponenten** laufen in einem Web Worker. Eingebaute Node.js-Module sind **nicht** verfügbar — nur npm-Pakete, die in einer Browserumgebung funktionieren. Beachte, dass die Sandbox nur ein *teilweises* DOM implementiert, sodass ein Paket sauber gebaut werden kann und trotzdem zur Laufzeit fehlschlägt; siehe [Aktuelle Einschränkungen](/l/de/developers/extend/apps/layout/front-components#current-limitations).
 
 In beiden Umgebungen stehen `twenty-client-sdk/core` und `twenty-client-sdk/metadata` als vorab bereitgestellte Module zur Verfügung — sie werden nicht gebündelt, sondern zur Laufzeit vom Server aufgelöst.
 
