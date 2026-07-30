@@ -26,6 +26,10 @@ export const AppErrorBoundary = ({
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
         scope.setExtras({ info });
+        scope.setTag('error-handler', 'app-error-boundary');
+        scope.setContext('react', {
+          componentStack: info.componentStack,
+        });
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);

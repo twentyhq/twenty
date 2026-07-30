@@ -8,27 +8,35 @@ export const getFirstNonEmptyLineOfRichText = (
     return '';
   }
   for (const block of blocks) {
-    if (!isUndefinedOrNull(block.content)) {
-      const contentArray = Array.isArray(block.content)
-        ? (block.content as Array<{ text: string } | { link: string }>)
-        : [block.content as { text: string } | { link: string } | string];
+    if (isUndefinedOrNull(block) || isUndefinedOrNull(block.content)) {
+      continue;
+    }
 
-      for (const content of contentArray) {
-        if (typeof content === 'string') {
-          const value = content.trim();
-          if (value !== '') {
-            return value;
-          }
-          continue;
+    const contentArray = Array.isArray(block.content)
+      ? (block.content as Array<{ text: string } | { link: string }>)
+      : [block.content as { text: string } | { link: string } | string];
+
+    for (const content of contentArray) {
+      if (typeof content === 'string') {
+        const value = content.trim();
+        if (value !== '') {
+          return value;
         }
-        if ('link' in content) {
-          return content.link;
-        }
-        if ('text' in content) {
-          const value = content.text.trim();
-          if (value !== '') {
-            return value;
-          }
+        continue;
+      }
+
+      if (typeof content !== 'object' || content === null) {
+        continue;
+      }
+
+      if ('link' in content && typeof content.link === 'string') {
+        return content.link;
+      }
+
+      if ('text' in content && typeof content.text === 'string') {
+        const value = content.text.trim();
+        if (value !== '') {
+          return value;
         }
       }
     }

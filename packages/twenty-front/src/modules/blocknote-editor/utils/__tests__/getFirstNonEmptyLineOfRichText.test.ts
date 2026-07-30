@@ -89,4 +89,23 @@ describe('getFirstNonEmptyLineOfRichText', () => {
     const result = getFirstNonEmptyLineOfRichText(input);
     expect(result).toBe('Fallback text');
   });
+
+  it('should skip non-string link content', () => {
+    const input = [
+      {
+        content: [
+          {
+            link: {
+              __typename: 'RichText',
+              blocknote: '[]',
+              markdown: '',
+            },
+          },
+        ],
+      },
+      { content: [{ text: 'Fallback text', type: 'text', styles: {} }] },
+    ] as unknown as PartialBlock[];
+    const result = getFirstNonEmptyLineOfRichText(input);
+    expect(result).toBe('Fallback text');
+  });
 });
