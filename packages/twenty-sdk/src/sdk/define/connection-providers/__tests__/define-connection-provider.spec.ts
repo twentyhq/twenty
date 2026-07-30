@@ -83,10 +83,15 @@ describe('defineConnectionProvider', () => {
     expect(result.success).toBe(false);
   });
 
-  it('accepts a valid onConnectLogicFunction', () => {
+  const lifecycleHookKeys = [
+    'onConnectLogicFunction',
+    'onDisconnectLogicFunction',
+  ] as const;
+
+  it.each(lifecycleHookKeys)('accepts a valid %s', (lifecycleHookKey) => {
     const result = defineConnectionProvider({
       ...baseValidConfig,
-      onConnectLogicFunction: {
+      [lifecycleHookKey]: {
         universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
       },
     });
@@ -95,41 +100,18 @@ describe('defineConnectionProvider', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('rejects a non-UUID onConnectLogicFunction universalIdentifier', () => {
-    const result = defineConnectionProvider({
-      ...baseValidConfig,
-      onConnectLogicFunction: { universalIdentifier: 'claim-team-id' },
-    });
+  it.each(lifecycleHookKeys)(
+    'rejects a non-UUID %s universalIdentifier',
+    (lifecycleHookKey) => {
+      const result = defineConnectionProvider({
+        ...baseValidConfig,
+        [lifecycleHookKey]: { universalIdentifier: 'not-a-uuid' },
+      });
 
-    expect(result.success).toBe(false);
-    expect(
-      result.errors.some((error) => error.includes('onConnectLogicFunction')),
-    ).toBe(true);
-  });
-
-  it('accepts a valid onDisconnectLogicFunction', () => {
-    const result = defineConnectionProvider({
-      ...baseValidConfig,
-      onDisconnectLogicFunction: {
-        universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-      },
-    });
-
-    expect(result.success).toBe(true);
-    expect(result.errors).toEqual([]);
-  });
-
-  it('rejects a non-UUID onDisconnectLogicFunction universalIdentifier', () => {
-    const result = defineConnectionProvider({
-      ...baseValidConfig,
-      onDisconnectLogicFunction: { universalIdentifier: 'release-team-id' },
-    });
-
-    expect(result.success).toBe(false);
-    expect(
-      result.errors.some((error) =>
-        error.includes('onDisconnectLogicFunction'),
-      ),
-    ).toBe(true);
-  });
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) => error.includes(lifecycleHookKey)),
+      ).toBe(true);
+    },
+  );
 });
