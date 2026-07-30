@@ -49,7 +49,8 @@ field …"*. `state` defaults to `APPLIED` on its own.
 
 **Order of operations.** Publish this workflow version *before* running
 `yarn rls:configure` on the workspace — the strict predicate rejects every apply until the
-Partner User mapping is live.
+Partner User mapping is live. If the workflow already exists in the workspace, edit it
+instead: add **Partner User**, remove every other mapping, republish, then run the script.
 
 ### Expected UI (partner)
 

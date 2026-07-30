@@ -5,7 +5,7 @@ import type {
 } from 'twenty-sdk/define';
 
 import { findPartnerByMember } from 'src/modules/application/graphql/queries/find-partner-by-member';
-import { findPartnerUserByPartner } from 'src/modules/application/graphql/queries/find-partner-user-by-partner';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
@@ -32,9 +32,10 @@ export async function resolveCandidacy(
   if (after.partnerId) {
     if (after.partnerUserId) return {};
 
-    const partnerUserId = (await findPartnerUserByPartner(client, after.partnerId))
-      .partner?.partnerUserId;
-    if (!partnerUserId) return { skipped: 'partner_has_no_member' };
+    const ownerRes = await getPartnerOwner(client, after.partnerId);
+    const partnerUserId = ownerRes.partner?.partnerUserId;
+    // linkPartnerUser backfills the row when that partner's member is created later.
+    if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });
     return { stamped: partnerUserId };

@@ -67,8 +67,30 @@ describe('on-application-created', () => {
       event({ id: APPLICATION_ID, partnerId: PARTNER_ID }),
     );
 
-    expect(result).toEqual({ skipped: 'partner_has_no_member' });
+    expect(result).toEqual({ skipped: true, reason: 'partner_has_no_user' });
     expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  // The Apply workflow now maps Partner User at insert (RLS rejects the row otherwise), so
+  // a self-apply event carries partnerUserId and no partnerId. Pins the branch ordering:
+  // partnerId first, partnerUserId only inside the admin branch.
+  it('resolves the candidacy when the self-apply row already carries partnerUser', async () => {
+    queryMock.mockResolvedValue({
+      partners: { edges: [{ node: { id: PARTNER_ID } }] },
+    });
+
+    const result = await handler(
+      event({
+        id: APPLICATION_ID,
+        partnerUserId: MEMBER_ID,
+        createdBy: { workspaceMemberId: MEMBER_ID },
+      }),
+    );
+
+    expect(result).toEqual({ applied: true, partnerId: PARTNER_ID });
+    const args = mutationMock.mock.calls[0][0].updateApplication.__args;
+    expect(args.data.partnerId).toBe(PARTNER_ID);
+    expect(args.data.state).toBe('APPLIED');
   });
 
   it('does nothing when createdBy.workspaceMemberId is missing', async () => {

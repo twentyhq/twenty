@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { getCompanyPartnerUser } from 'src/modules/partner/onboarding/graphql/queries/get-company-partner-user';
 import { getPartnerCascadeFields } from 'src/modules/partner/onboarding/graphql/queries/get-partner-cascade-fields';
-import { getPartnerOwner } from 'src/modules/partner/onboarding/graphql/queries/get-partner-owner';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { updateApplicationPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-application-partner-user';
 import { updateCompanyPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-company-partner-user';
 import { updatePartnerContentPartnerUser } from 'src/modules/partner/onboarding/graphql/mutations/update-partner-content-partner-user';
