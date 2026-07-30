@@ -1,3 +1,5 @@
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { createElement, type ReactNode } from 'react';
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { act, renderHook } from '@testing-library/react';
@@ -53,6 +55,13 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockMutate],
 }));
 
+const Wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(
+    WorkflowVisualizerComponentInstanceContext.Provider,
+    { value: { instanceId: 'workflow-visualizer-test' } },
+    children,
+  );
+
 describe('useUpdateWorkflowVersionTrigger', () => {
   const trigger: WorkflowTrigger = {
     name: 'Company created',
@@ -75,7 +84,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
   it('updates the trigger via the dedicated mutation and marks it for recomputation', async () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
 
-    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
+    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       await result.current.updateTrigger(trigger);
@@ -114,7 +125,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
         nextStepIds: [],
       } as unknown as WorkflowTrigger;
 
-      const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
+      const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
+        wrapper: Wrapper,
+      });
 
       await act(async () => {
         await result.current.updateTrigger(testTrigger);

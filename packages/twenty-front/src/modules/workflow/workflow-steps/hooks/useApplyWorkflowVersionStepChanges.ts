@@ -5,11 +5,13 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { applyDiff, isDefined } from 'twenty-shared/utils';
 import { type WorkflowVersionStepChanges } from '~/generated/graphql';
 
-export const useUpdateWorkflowVersionCache = () => {
+export const useApplyWorkflowVersionStepChanges = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -24,7 +26,9 @@ export const useUpdateWorkflowVersionCache = () => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
-  const updateWorkflowVersionCache = ({
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
+
+  const applyWorkflowVersionStepChanges = ({
     workflowVersionStepChanges,
     workflowVersionId,
   }: {
@@ -35,13 +39,26 @@ export const useUpdateWorkflowVersionCache = () => {
       return;
     }
 
+    const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
+
+    setFlow((currentFlow) => {
+      if (!isDefined(currentFlow)) {
+        return currentFlow;
+      }
+
+      return {
+        workflowVersionId,
+        trigger: applyDiff({ trigger: currentFlow.trigger }, triggerDiff)
+          .trigger,
+        steps: applyDiff({ steps: currentFlow.steps }, stepsDiff).steps,
+      };
+    });
+
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 
     if (!isDefined(cachedRecord)) {
       return;
     }
-
-    const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
 
     const newCachedRecord = {
       ...cachedRecord,
@@ -67,5 +84,5 @@ export const useUpdateWorkflowVersionCache = () => {
     return newCachedRecord;
   };
 
-  return { updateWorkflowVersionCache };
+  return { applyWorkflowVersionStepChanges };
 };

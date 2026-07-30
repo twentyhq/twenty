@@ -59,7 +59,8 @@ export const SidePanelWorkflowStepInfo = ({
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
-  const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
+  const { updateWorkflowVersionStep } =
+    useUpdateWorkflowVersionStep(instanceId);
   const { updateTrigger } = useUpdateWorkflowVersionTrigger(instanceId);
 
   const {
