@@ -121,7 +121,7 @@ describe('buildWorkspaceSetupPromptText', () => {
       'The turn is unfinished until you call ask_questions asking whether to go ahead and build it',
     );
     expect(result).toContain(
-      'End this reply with the ask_questions call asking whether to build the proposed data model.',
+      'the general guidance about skipping questions with obvious defaults does not apply',
     );
   });
 
@@ -135,6 +135,55 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('get_view_fields');
     expect(result).toContain('update_many_view_fields with isVisible true');
     expect(result).toContain('create_many_view_fields');
+    expect(result).toContain('Do not use upsert_complete_view');
+  });
+
+  it('should anchor the proposal on admission tests instead of numeric bands', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('filter, sort, or report on it');
+    expect(result).toContain('own lifecycle');
+    expect(result).toContain('not a demo');
+    expect(result).not.toContain('2 to 4 custom objects');
+    expect(result).not.toContain('3 to 6 key fields');
+    expect(result).not.toContain('under 250 words');
+  });
+
+  it('should propose tailored workflows built with the workflow tools', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('workflow-building');
+    expect(result).toContain('create_complete_workflow');
+    expect(result).toContain('validate_workflow');
+    expect(result).toContain('allowMultiSelect');
+  });
+
+  it('should propose a dashboard built with the dashboard tools', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('dashboard-building');
+    expect(result).toContain('create_complete_dashboard');
+    expect(result).toContain('widgetErrors');
+  });
+
+  it('should present roles as a settings pointer without offering to configure them', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('You cannot configure roles from this chat');
+    expect(result).toContain('Settings > Members > Roles');
+    expect(result).not.toContain('navigate_app');
   });
 
   it('should require English names with labels in the user language', () => {
