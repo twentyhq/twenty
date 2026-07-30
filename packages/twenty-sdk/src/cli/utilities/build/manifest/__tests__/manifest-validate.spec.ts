@@ -228,6 +228,37 @@ describe('manifestValidate', () => {
       expect(result.errors).toHaveLength(0);
     });
 
+    it('should not flag a connection provider referencing a logic function via onDisconnectLogicFunction as a duplicate', () => {
+      const logicFunctionId = '550e8400-e29b-41d4-a716-446655440042';
+
+      const logicFunction = {
+        universalIdentifier: logicFunctionId,
+        name: 'onDisconnect',
+        sourceHandlerPath: 'src/logic-functions/on-disconnect.ts',
+        builtHandlerPath: 'dist/on-disconnect.js',
+        builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+        handlerName: 'handler',
+      } as unknown as Manifest['logicFunctions'][number];
+
+      const connectionProvider = {
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440043',
+        name: 'slack',
+        displayName: 'Slack',
+        type: 'oauth',
+        oauth: {},
+        onDisconnectLogicFunction: { universalIdentifier: logicFunctionId },
+      } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+
+      const result = manifestValidate({
+        ...validManifest,
+        logicFunctions: [logicFunction],
+        connectionProviders: [connectionProvider],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
     it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
       const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
 

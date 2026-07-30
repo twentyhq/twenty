@@ -31,6 +31,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`A connection provider with this name already exists for this application.`;
     case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:
       return msg`The logic function to run on connect was not found.`;
+    case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function to run on disconnect was not found.`;
     default:
       assertUnreachable(code);
   }
