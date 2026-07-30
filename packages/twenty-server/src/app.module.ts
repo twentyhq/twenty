@@ -4,6 +4,7 @@ import {
   Module,
   RequestMethod,
 } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -31,6 +32,7 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
@@ -75,6 +77,12 @@ const MIGRATED_REST_METHODS = [
     I18nModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: UnhandledExceptionFilter,
+    },
   ],
 })
 export class AppModule {
