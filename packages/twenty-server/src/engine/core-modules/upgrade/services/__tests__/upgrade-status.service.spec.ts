@@ -5,32 +5,50 @@ import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const V1_21_INSTANCE_COMMAND = '1.21.0_InstanceCommand_1772000001000';
-const V1_21_SLOW_INSTANCE_COMMAND = '1.21.0_SlowInstanceCommand_1772000002000';
-const V1_21_FIRST_WORKSPACE_COMMAND =
-  '1.21.0_FirstWorkspaceCommand_1772000003000';
-const V1_21_SECOND_WORKSPACE_COMMAND =
-  '1.21.0_SecondWorkspaceCommand_1772000004000';
-const V1_22_INSTANCE_COMMAND = '1.22.0_InstanceCommand_1776000001000';
-const V1_23_INSTANCE_COMMAND = '1.23.0_InstanceCommand_1780000002000';
-const V1_23_WORKSPACE_COMMAND = '1.23.0_WorkspaceCommand_1780000003000';
+const V0_21_INSTANCE_COMMAND = '0.21.0_InstanceCommand_1772000001000';
+const V0_21_SLOW_INSTANCE_COMMAND = '0.21.0_SlowInstanceCommand_1772000002000';
+const V0_21_FIRST_WORKSPACE_COMMAND =
+  '0.21.0_FirstWorkspaceCommand_1772000003000';
+const V0_21_SECOND_WORKSPACE_COMMAND =
+  '0.21.0_SecondWorkspaceCommand_1772000004000';
+const V0_22_INSTANCE_COMMAND = '0.22.0_InstanceCommand_1776000001000';
+const V0_23_INSTANCE_COMMAND = '0.23.0_InstanceCommand_1780000002000';
+const V0_23_WORKSPACE_COMMAND = '0.23.0_WorkspaceCommand_1780000003000';
 
-// Three version segments: 1.21.0 has multiple workspace commands, 1.22.0 is
-// instance-only, 1.23.0 ends the sequence with a workspace command.
+// Three version segments: 0.21.0 has multiple workspace commands, 0.22.0 is
+// instance-only, 0.23.0 ends the sequence with a workspace command. These
+// versions sit outside TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS so the tests
+// below exercise cursor resolution alone.
 const MOCK_SEQUENCE = [
-  { kind: 'fast-instance', name: V1_21_INSTANCE_COMMAND },
-  { kind: 'slow-instance', name: V1_21_SLOW_INSTANCE_COMMAND },
-  { kind: 'workspace', name: V1_21_FIRST_WORKSPACE_COMMAND },
-  { kind: 'workspace', name: V1_21_SECOND_WORKSPACE_COMMAND },
-  { kind: 'fast-instance', name: V1_22_INSTANCE_COMMAND },
-  { kind: 'fast-instance', name: V1_23_INSTANCE_COMMAND },
-  { kind: 'workspace', name: V1_23_WORKSPACE_COMMAND },
+  { kind: 'fast-instance', name: V0_21_INSTANCE_COMMAND },
+  { kind: 'slow-instance', name: V0_21_SLOW_INSTANCE_COMMAND },
+  { kind: 'workspace', name: V0_21_FIRST_WORKSPACE_COMMAND },
+  { kind: 'workspace', name: V0_21_SECOND_WORKSPACE_COMMAND },
+  { kind: 'fast-instance', name: V0_22_INSTANCE_COMMAND },
+  { kind: 'fast-instance', name: V0_23_INSTANCE_COMMAND },
+  { kind: 'workspace', name: V0_23_WORKSPACE_COMMAND },
+];
+
+// The two most recent supported versions, so the workspace-only segment below
+// is made of versions the instance cursor actually knows how to walk.
+const [PENULTIMATE_SUPPORTED_VERSION, LAST_SUPPORTED_VERSION] =
+  TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.slice(-2);
+
+const PENULTIMATE_INSTANCE_COMMAND = `${PENULTIMATE_SUPPORTED_VERSION}_InstanceCommand_1784000001000`;
+const LAST_WORKSPACE_COMMAND = `${LAST_SUPPORTED_VERSION}_WorkspaceCommand_1785000001000`;
+
+// The last supported version ships workspace commands only: nothing for the
+// instance cursor to land on.
+const MOCK_SEQUENCE_WITHOUT_TRAILING_INSTANCE_COMMAND = [
+  { kind: 'fast-instance', name: PENULTIMATE_INSTANCE_COMMAND },
+  { kind: 'workspace', name: LAST_WORKSPACE_COMMAND },
 ];
 
 type WorkspaceRecord = {
@@ -61,8 +79,8 @@ const buildWorkspaceCacheGetMock = (
 
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
+  let sequence: { kind: string; name: string }[];
   let getLastAttemptedInstanceCommand: jest.Mock;
-  let getInferredVersion: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
   let coreEntityCacheGet: jest.Mock;
@@ -81,13 +99,8 @@ describe('UpgradeStatusService', () => {
   };
 
   beforeEach(async () => {
+    sequence = MOCK_SEQUENCE;
     getLastAttemptedInstanceCommand = jest.fn();
-    getInferredVersion = jest.fn(async (name?: string) => {
-      if (!name) return null;
-      const idx = name.indexOf('_');
-
-      return idx === -1 ? null : name.substring(0, idx);
-    });
     getWorkspaceLastAttemptedCommandName = jest.fn();
     workspaceFind = jest.fn().mockResolvedValue([]);
     coreEntityCacheGet = jest.fn().mockResolvedValue(null);
@@ -105,14 +118,13 @@ describe('UpgradeStatusService', () => {
           provide: UpgradeMigrationService,
           useValue: {
             getLastAttemptedInstanceCommand,
-            getInferredVersion,
             getWorkspaceLastAttemptedCommandName,
           },
         },
         {
           provide: UpgradeSequenceReaderService,
           useValue: {
-            getUpgradeSequence: () => MOCK_SEQUENCE,
+            getUpgradeSequence: () => sequence,
           },
         },
         {
@@ -143,9 +155,9 @@ describe('UpgradeStatusService', () => {
   describe('getInstanceStatus', () => {
     it('should return up-to-date when cursor is at last instance command', async () => {
       getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
+        name: V0_23_INSTANCE_COMMAND,
         status: 'completed',
-        executedByVersion: '1.23.0',
+        executedByVersion: '0.23.0',
         errorMessage: null,
         createdAt: new Date('2025-06-01T00:00:00Z'),
       });
@@ -153,14 +165,14 @@ describe('UpgradeStatusService', () => {
       const result = await service.getInstanceStatus();
 
       expect(result.health).toBe(UpgradeHealthEnum.UP_TO_DATE);
-      expect(result.inferredVersion).toBe('1.23.0');
+      expect(result.inferredVersion).toBe('0.23.0');
     });
 
     it('should return behind when cursor is before last instance command', async () => {
       getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_22_INSTANCE_COMMAND,
+        name: V0_22_INSTANCE_COMMAND,
         status: 'completed',
-        executedByVersion: '1.22.0',
+        executedByVersion: '0.22.0',
         errorMessage: null,
         createdAt: new Date('2025-06-01T00:00:00Z'),
       });
@@ -168,14 +180,14 @@ describe('UpgradeStatusService', () => {
       const result = await service.getInstanceStatus();
 
       expect(result.health).toBe(UpgradeHealthEnum.BEHIND);
-      expect(result.inferredVersion).toBe('1.22.0');
+      expect(result.inferredVersion).toBe('0.22.0');
     });
 
     it('should return failed when latest instance command failed', async () => {
       getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
+        name: V0_23_INSTANCE_COMMAND,
         status: 'failed',
-        executedByVersion: '1.23.0',
+        executedByVersion: '0.23.0',
         errorMessage: 'column does not exist',
         createdAt: new Date('2025-06-01T01:00:00Z'),
       });
@@ -197,6 +209,92 @@ describe('UpgradeStatusService', () => {
     });
   });
 
+  describe('getInstanceCompletedVersion', () => {
+    const mockInstanceCursor = (
+      cursor: { name: string; status: 'completed' | 'failed' } | null,
+    ) => {
+      getLastAttemptedInstanceCommand.mockResolvedValue(
+        cursor === null
+          ? null
+          : {
+              ...cursor,
+              executedByVersion: '0.23.0',
+              errorMessage: null,
+              createdAt: new Date('2025-06-01T00:00:00Z'),
+            },
+      );
+    };
+
+    it('should return null when no instance command has run', async () => {
+      mockInstanceCursor(null);
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBeNull();
+    });
+
+    it('should return the cursor version when completed at the last instance step of its segment', async () => {
+      mockInstanceCursor({ name: V0_23_INSTANCE_COMMAND, status: 'completed' });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        '0.23.0',
+      );
+    });
+
+    it('should ignore workspace steps of the same segment', async () => {
+      mockInstanceCursor({
+        name: V0_21_SLOW_INSTANCE_COMMAND,
+        status: 'completed',
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        '0.21.0',
+      );
+    });
+
+    it('should return the previous version when the last instance step of the segment failed', async () => {
+      mockInstanceCursor({ name: V0_23_INSTANCE_COMMAND, status: 'failed' });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        '0.22.0',
+      );
+    });
+
+    it('should return null when earlier instance steps of the same segment remain', async () => {
+      mockInstanceCursor({ name: V0_21_INSTANCE_COMMAND, status: 'completed' });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBeNull();
+    });
+
+    it('should reach a trailing version that declares no instance command', async () => {
+      sequence = MOCK_SEQUENCE_WITHOUT_TRAILING_INSTANCE_COMMAND;
+      mockInstanceCursor({
+        name: PENULTIMATE_INSTANCE_COMMAND,
+        status: 'completed',
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        LAST_SUPPORTED_VERSION,
+      );
+    });
+
+    it('should not reach a trailing version whose instance command has not run', async () => {
+      sequence = [
+        { kind: 'fast-instance', name: PENULTIMATE_INSTANCE_COMMAND },
+        {
+          kind: 'fast-instance',
+          name: `${LAST_SUPPORTED_VERSION}_InstanceCommand_1785000002000`,
+        },
+      ];
+      mockInstanceCursor({
+        name: PENULTIMATE_INSTANCE_COMMAND,
+        status: 'completed',
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        PENULTIMATE_SUPPORTED_VERSION,
+      );
+    });
+  });
+
   describe('getWorkspaceCompletedVersion', () => {
     const mockWorkspaceCursor = (
       cursor: { name: string; status: 'completed' | 'failed' } | null,
@@ -210,7 +308,7 @@ describe('UpgradeStatusService', () => {
                 {
                   workspaceId: 'ws-1',
                   ...cursor,
-                  executedByVersion: '1.23.0',
+                  executedByVersion: '0.23.0',
                   errorMessage: null,
                   createdAt: new Date('2025-06-01T00:00:00Z'),
                   isInitial: false,
@@ -222,67 +320,67 @@ describe('UpgradeStatusService', () => {
 
     it('should return the cursor version when at the last step of its segment with completed status', async () => {
       mockWorkspaceCursor({
-        name: V1_23_WORKSPACE_COMMAND,
+        name: V0_23_WORKSPACE_COMMAND,
         status: 'completed',
       });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.23.0',
+        '0.23.0',
       );
     });
 
     it('should return the immediately previous version when the cursor is mid-segment', async () => {
       mockWorkspaceCursor({
-        name: V1_23_INSTANCE_COMMAND,
+        name: V0_23_INSTANCE_COMMAND,
         status: 'completed',
       });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.22.0',
+        '0.22.0',
       );
     });
 
     it('should return the previous version when the last step of the segment failed', async () => {
-      mockWorkspaceCursor({ name: V1_23_WORKSPACE_COMMAND, status: 'failed' });
+      mockWorkspaceCursor({ name: V0_23_WORKSPACE_COMMAND, status: 'failed' });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.22.0',
+        '0.22.0',
       );
     });
 
     it('should return the cursor version when completed at the end of an instance-only segment', async () => {
       mockWorkspaceCursor({
-        name: V1_22_INSTANCE_COMMAND,
+        name: V0_22_INSTANCE_COMMAND,
         status: 'completed',
       });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.22.0',
+        '0.22.0',
       );
     });
 
     it('should return the previous version when an instance-only segment failed', async () => {
-      mockWorkspaceCursor({ name: V1_22_INSTANCE_COMMAND, status: 'failed' });
+      mockWorkspaceCursor({ name: V0_22_INSTANCE_COMMAND, status: 'failed' });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.21.0',
+        '0.21.0',
       );
     });
 
     it('should return the cursor version when completed at the last of several workspace commands', async () => {
       mockWorkspaceCursor({
-        name: V1_21_SECOND_WORKSPACE_COMMAND,
+        name: V0_21_SECOND_WORKSPACE_COMMAND,
         status: 'completed',
       });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.21.0',
+        '0.21.0',
       );
     });
 
     it('should not consider a segment completed while earlier workspace commands of the same segment remain', async () => {
       mockWorkspaceCursor({
-        name: V1_21_FIRST_WORKSPACE_COMMAND,
+        name: V0_21_FIRST_WORKSPACE_COMMAND,
         status: 'completed',
       });
 
@@ -293,7 +391,7 @@ describe('UpgradeStatusService', () => {
 
     it('should return null when the first segment failed with no previous segment', async () => {
       mockWorkspaceCursor({
-        name: V1_21_SECOND_WORKSPACE_COMMAND,
+        name: V0_21_SECOND_WORKSPACE_COMMAND,
         status: 'failed',
       });
 
@@ -332,9 +430,9 @@ describe('UpgradeStatusService', () => {
             'ws-1',
             {
               workspaceId: 'ws-1',
-              name: V1_23_WORKSPACE_COMMAND,
+              name: V0_23_WORKSPACE_COMMAND,
               status: 'completed',
-              executedByVersion: '1.23.0',
+              executedByVersion: '0.23.0',
               errorMessage: null,
               createdAt: new Date('2025-06-01T00:00:00Z'),
             },
@@ -360,9 +458,9 @@ describe('UpgradeStatusService', () => {
             'ws-1',
             {
               workspaceId: 'ws-1',
-              name: V1_23_WORKSPACE_COMMAND,
+              name: V0_23_WORKSPACE_COMMAND,
               status: 'completed',
-              executedByVersion: '1.23.0',
+              executedByVersion: '0.23.0',
               errorMessage: null,
               createdAt: new Date('2025-06-01T00:00:00Z'),
             },
@@ -371,9 +469,9 @@ describe('UpgradeStatusService', () => {
             'ws-2',
             {
               workspaceId: 'ws-2',
-              name: V1_22_INSTANCE_COMMAND,
+              name: V0_22_INSTANCE_COMMAND,
               status: 'completed',
-              executedByVersion: '1.22.0',
+              executedByVersion: '0.22.0',
               errorMessage: null,
               createdAt: new Date('2025-05-01T00:00:00Z'),
             },
@@ -419,9 +517,9 @@ describe('UpgradeStatusService', () => {
       cacheGetFailedWorkspaceIds.mockResolvedValue(['ws-3']);
       cacheGetUpToDateWorkspaceCount.mockResolvedValue(5);
       getLastAttemptedInstanceCommand.mockResolvedValue({
-        name: V1_23_INSTANCE_COMMAND,
+        name: V0_23_INSTANCE_COMMAND,
         status: 'completed',
-        executedByVersion: '1.23.0',
+        executedByVersion: '0.23.0',
         errorMessage: null,
         createdAt: new Date('2025-06-01T00:00:00Z'),
       });
@@ -491,9 +589,9 @@ describe('UpgradeStatusService', () => {
             'ws-1',
             {
               workspaceId: 'ws-1',
-              name: V1_23_WORKSPACE_COMMAND,
+              name: V0_23_WORKSPACE_COMMAND,
               status: 'completed',
-              executedByVersion: '1.23.0',
+              executedByVersion: '0.23.0',
               errorMessage: null,
               createdAt: new Date('2025-06-01T00:00:00Z'),
             },
@@ -502,9 +600,9 @@ describe('UpgradeStatusService', () => {
             'ws-2',
             {
               workspaceId: 'ws-2',
-              name: V1_22_INSTANCE_COMMAND,
+              name: V0_22_INSTANCE_COMMAND,
               status: 'completed',
-              executedByVersion: '1.22.0',
+              executedByVersion: '0.22.0',
               errorMessage: null,
               createdAt: new Date('2025-05-01T00:00:00Z'),
             },
@@ -513,9 +611,9 @@ describe('UpgradeStatusService', () => {
             'ws-3',
             {
               workspaceId: 'ws-3',
-              name: V1_23_WORKSPACE_COMMAND,
+              name: V0_23_WORKSPACE_COMMAND,
               status: 'failed',
-              executedByVersion: '1.23.0',
+              executedByVersion: '0.23.0',
               errorMessage: 'boom',
               createdAt: new Date('2025-06-01T00:00:00Z'),
             },

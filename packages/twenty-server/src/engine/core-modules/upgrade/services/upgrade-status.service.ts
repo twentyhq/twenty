@@ -6,11 +6,14 @@ import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspa
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { advanceThroughVersionsWithoutInstanceCommands } from 'src/engine/core-modules/upgrade/utils/advance-through-versions-without-instance-commands.util';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
+import { resolveCompletedVersionFromCursor } from 'src/engine/core-modules/upgrade/utils/resolve-completed-version-from-cursor.util';
 
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -86,18 +89,40 @@ export class UpgradeStatusService {
     const migration =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const lastInstanceStep = [...sequence]
-      .reverse()
-      .find(
-        (step) =>
-          step.kind === 'fast-instance' || step.kind === 'slow-instance',
-      );
+    if (!isDefined(migration)) {
+      return {
+        inferredVersion: null,
+        health: UpgradeHealthEnum.BEHIND,
+        latestCommand: null,
+      };
+    }
 
-    return await this.buildCursorStatus(
-      migration,
-      lastInstanceStep?.name ?? null,
-    );
+    const instanceStepNames = this.getInstanceStepNames();
+
+    return {
+      inferredVersion: this.resolveInstanceCompletedVersion(migration),
+      health: deriveHealth(
+        migration,
+        instanceStepNames[instanceStepNames.length - 1] ?? null,
+      ),
+      latestCommand: {
+        name: migration.name,
+        status: migration.status,
+        executedByVersion: migration.executedByVersion,
+        errorMessage: migration.errorMessage,
+        createdAt: migration.createdAt,
+      },
+    };
+  }
+
+  // The version the instance itself has reached, independently of any
+  // workspace. Used to decide whether this server can host an app declaring an
+  // `engines.twenty` range.
+  async getInstanceCompletedVersion(): Promise<string | null> {
+    const cursor =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+
+    return this.resolveInstanceCompletedVersion(cursor);
   }
 
   async getWorkspaceStatuses(
@@ -127,16 +152,14 @@ export class UpgradeStatusService {
     const lastStepName =
       sequence.length > 0 ? sequence[sequence.length - 1].name : null;
 
-    return Promise.all(
-      workspaces.map(async (workspace) => ({
-        ...(await this.buildCursorStatus(
-          cursors.get(workspace.id) ?? null,
-          lastStepName,
-        )),
-        workspaceId: workspace.id,
-        displayName: workspace.displayName ?? null,
-      })),
-    );
+    return workspaces.map((workspace) => ({
+      ...this.buildCursorStatus(
+        cursors.get(workspace.id) ?? null,
+        lastStepName,
+      ),
+      workspaceId: workspace.id,
+      displayName: workspace.displayName ?? null,
+    }));
   }
 
   async getWorkspaceCompletedVersion(
@@ -153,38 +176,12 @@ export class UpgradeStatusService {
     }
 
     const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const cursorIndex = sequence.findIndex((step) => step.name === cursor.name);
 
-    if (cursorIndex === -1) {
-      return null;
-    }
-
-    const cursorVersion = extractVersionFromCommandName(cursor.name);
-
-    if (!isDefined(cursorVersion)) {
-      return null;
-    }
-
-    const isLastStepOfItsVersion =
-      cursorIndex === sequence.length - 1 ||
-      extractVersionFromCommandName(sequence[cursorIndex + 1].name) !==
-        cursorVersion;
-
-    if (cursor.status === 'completed' && isLastStepOfItsVersion) {
-      return cursorVersion;
-    }
-
-    for (let stepIndex = cursorIndex - 1; stepIndex >= 0; stepIndex--) {
-      const stepVersion = extractVersionFromCommandName(
-        sequence[stepIndex].name,
-      );
-
-      if (stepVersion !== cursorVersion) {
-        return stepVersion;
-      }
-    }
-
-    return null;
+    return resolveCompletedVersionFromCursor({
+      sequenceStepNames: sequence.map((step) => step.name),
+      cursorName: cursor.name,
+      cursorStatus: cursor.status,
+    });
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
@@ -275,10 +272,50 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.invalidate();
   }
 
-  private async buildCursorStatus(
+  private getInstanceStepNames(): string[] {
+    return this.upgradeSequenceReaderService
+      .getUpgradeSequence()
+      .filter(
+        (step) =>
+          step.kind === 'fast-instance' || step.kind === 'slow-instance',
+      )
+      .map((step) => step.name);
+  }
+
+  private resolveInstanceCompletedVersion(
+    cursor: { name: string; status: UpgradeMigrationStatus } | null,
+  ): string | null {
+    if (!isDefined(cursor)) {
+      return null;
+    }
+
+    const instanceStepNames = this.getInstanceStepNames();
+
+    const completedVersion = resolveCompletedVersionFromCursor({
+      sequenceStepNames: instanceStepNames,
+      cursorName: cursor.name,
+      cursorStatus: cursor.status,
+    });
+
+    if (!isDefined(completedVersion)) {
+      return null;
+    }
+
+    return advanceThroughVersionsWithoutInstanceCommands({
+      completedVersion,
+      supportedVersions: TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS,
+      versionsWithInstanceCommands: new Set(
+        instanceStepNames
+          .map((name) => extractVersionFromCommandName(name))
+          .filter(isDefined),
+      ),
+    });
+  }
+
+  private buildCursorStatus(
     migration: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
-  ): Promise<InstanceUpgradeStatus> {
+  ): InstanceUpgradeStatus {
     if (!migration) {
       return {
         inferredVersion: null,
@@ -290,9 +327,7 @@ export class UpgradeStatusService {
     const health = deriveHealth(migration, lastExpectedCommandName);
 
     return {
-      inferredVersion: await this.upgradeMigrationService.getInferredVersion(
-        migration.name,
-      ),
+      inferredVersion: extractVersionFromCommandName(migration.name),
       health,
       latestCommand: {
         name: migration.name,

@@ -76,13 +76,9 @@ describe('Install application is gated by the workspace completed upgrade versio
   beforeAll(async () => {
     jest.useRealTimers();
 
-    // Derive the gate version from the last attempted instance command, which
-    // is exactly what the upload-time server-compat check uses
-    // (getInferredVersion). The seeded workspace cursor can sit a version ahead
-    // of the instance right after a version bump whose newest segment ends in
-    // workspace-scoped commands with no new instance command: requiring
-    // >=workspaceVersion would then fail the instance gate at upload time,
-    // before the workspace gate under test is reached.
+    // Derive the gate version from the last attempted instance command, so the
+    // requirement is one the instance gate at upload time always satisfies and
+    // the workspace gate under test is actually reached.
     const [instanceCommand] = await global.testDataSource.query(
       `SELECT migration.name AS name
        FROM core."upgradeMigration" migration
