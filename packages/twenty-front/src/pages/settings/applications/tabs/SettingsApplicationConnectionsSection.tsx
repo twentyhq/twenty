@@ -12,7 +12,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Status } from 'twenty-ui/data-display';
+import { Avatar, Status } from 'twenty-ui/data-display';
 import { Info } from 'twenty-ui/feedback';
 import {
   IconChevronRight,
@@ -125,6 +125,13 @@ export const SettingsApplicationConnectionsSection = ({
             <H2Title
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
+              adornment={
+                <Avatar
+                  type="app"
+                  avatarUrl={provider.logoUrl}
+                  placeholder={provider.displayName}
+                />
+              }
             />
             {isOAuth && !isClientCredentialsConfigured && (
               <Info

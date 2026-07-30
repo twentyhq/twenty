@@ -1071,6 +1071,7 @@ export interface ApplicationConnectionProvider {
     type: Scalars['String']
     name: Scalars['String']
     displayName: Scalars['String']
+    logoUrl?: Scalars['String']
     oauth?: ApplicationConnectionProviderOAuthConfig
     __typename: 'ApplicationConnectionProvider'
 }
@@ -4255,6 +4256,7 @@ export interface ApplicationConnectionProviderGenqlSelection{
     type?: boolean | number
     name?: boolean | number
     displayName?: boolean | number
+    logoUrl?: boolean | number
     oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
