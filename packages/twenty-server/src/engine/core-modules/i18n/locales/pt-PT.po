@@ -2231,6 +2231,11 @@ msgstr "Eliminado em"
 msgid "Delivery status"
 msgstr "Estado da entrega"
 
+#. js-lingui-id: G768/0
+#: src/filters/__tests__/unhandled-exception.filter.spec.ts
+msgid "denied"
+msgstr ""
+
 #. js-lingui-id: Nu4oKW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts

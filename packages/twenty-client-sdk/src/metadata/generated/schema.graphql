@@ -1593,6 +1593,12 @@ type BillingEndTrialPeriod {
   Billing portal URL for payment method update (returned when no payment method exists)
   """
   billingPortalUrl: String
+
+  """Updated current billing subscription"""
+  currentBillingSubscription: BillingSubscription
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]
 }
 
 type BillingResourceCreditUsage {
