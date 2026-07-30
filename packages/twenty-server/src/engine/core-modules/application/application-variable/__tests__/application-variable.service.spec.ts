@@ -138,12 +138,12 @@ describe('ApplicationVariableEntityService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('buildEnvRecord', () => {
+  describe('getServerEnvVariables', () => {
     it('should return an empty object when the application has no variable', async () => {
       mockCachedApplicationVariables([]);
 
       await expect(
-        service.buildEnvRecord({
+        service.getServerEnvVariables({
           workspaceId: workspaceA,
           applicationId: mockApplicationId,
         }),
@@ -166,7 +166,7 @@ describe('ApplicationVariableEntityService', () => {
         }),
       ]);
 
-      const result = await service.buildEnvRecord({
+      const result = await service.getServerEnvVariables({
         workspaceId: workspaceA,
         applicationId: mockApplicationId,
       });
@@ -197,7 +197,7 @@ describe('ApplicationVariableEntityService', () => {
         }),
       ]);
 
-      await service.buildEnvRecord({
+      await service.getServerEnvVariables({
         workspaceId: workspaceA,
         applicationId: mockApplicationId,
       });
@@ -223,7 +223,7 @@ describe('ApplicationVariableEntityService', () => {
         }),
       ]);
 
-      const result = await service.buildEnvRecord({
+      const result = await service.getServerEnvVariables({
         workspaceId: workspaceA,
         applicationId: mockApplicationId,
       });
@@ -244,7 +244,7 @@ describe('ApplicationVariableEntityService', () => {
         }),
       ]);
 
-      const result = await service.buildEnvRecord({
+      const result = await service.getServerEnvVariables({
         workspaceId: workspaceA,
         applicationId: mockApplicationId,
         applicationVariableMaps,
@@ -255,7 +255,7 @@ describe('ApplicationVariableEntityService', () => {
     });
   });
 
-  describe('buildNonSecretEnvRecord', () => {
+  describe('getPublicEnvVariables', () => {
     it('should exclude secret variables without decrypting them', async () => {
       mockCachedApplicationVariables([
         makeFlatVariable({
@@ -272,7 +272,7 @@ describe('ApplicationVariableEntityService', () => {
         }),
       ]);
 
-      const result = await service.buildNonSecretEnvRecord({
+      const result = await service.getPublicEnvVariables({
         workspaceId: workspaceA,
         applicationId: mockApplicationId,
       });

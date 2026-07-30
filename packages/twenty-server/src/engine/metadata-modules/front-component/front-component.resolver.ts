@@ -70,7 +70,7 @@ export class FrontComponentResolver {
       });
 
     const applicationVariables =
-      await this.applicationVariableService.buildNonSecretEnvRecord({
+      await this.applicationVariableService.getPublicEnvVariables({
         workspaceId: workspace.id,
         applicationId: dto.applicationId,
       });

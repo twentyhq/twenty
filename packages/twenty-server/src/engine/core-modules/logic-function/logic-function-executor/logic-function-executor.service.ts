@@ -349,7 +349,7 @@ export class LogicFunctionExecutorService {
       flatApplication.applicationRegistrationId,
     );
     const workspaceVariables =
-      await this.applicationVariableService.buildEnvRecord({
+      await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
         applicationId: flatApplication.id,
         applicationVariableMaps,

@@ -16,7 +16,7 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type BuildEnvRecordArgs = {
+type GetEnvVariablesArgs = {
   workspaceId: string;
   applicationId: string;
   applicationVariableMaps?: ApplicationVariableCacheMaps;
@@ -50,22 +50,22 @@ export class ApplicationVariableEntityService {
     );
   }
 
-  async buildEnvRecord(
-    args: BuildEnvRecordArgs,
+  async getServerEnvVariables(
+    args: GetEnvVariablesArgs,
   ): Promise<Record<string, string>> {
     const flatApplicationVariables =
       await this.findFlatApplicationVariables(args);
 
-    return this.reduceToEnvRecord(flatApplicationVariables);
+    return this.toEnvVariables(flatApplicationVariables);
   }
 
-  async buildNonSecretEnvRecord(
-    args: BuildEnvRecordArgs,
+  async getPublicEnvVariables(
+    args: GetEnvVariablesArgs,
   ): Promise<Record<string, string>> {
     const flatApplicationVariables =
       await this.findFlatApplicationVariables(args);
 
-    return this.reduceToEnvRecord(
+    return this.toEnvVariables(
       flatApplicationVariables.filter(({ isSecret }) => !isSecret),
     );
   }
@@ -74,7 +74,7 @@ export class ApplicationVariableEntityService {
     workspaceId,
     applicationId,
     applicationVariableMaps: preloadedApplicationVariableMaps,
-  }: BuildEnvRecordArgs): Promise<FlatApplicationVariable[]> {
+  }: GetEnvVariablesArgs): Promise<FlatApplicationVariable[]> {
     const applicationVariableMaps =
       preloadedApplicationVariableMaps ??
       (
@@ -96,12 +96,12 @@ export class ApplicationVariableEntityService {
       .filter(isDefined);
   }
 
-  private reduceToEnvRecord(
+  private toEnvVariables(
     flatApplicationVariables: FlatApplicationVariable[],
   ): Record<string, string> {
     return flatApplicationVariables.reduce<Record<string, string>>(
       (acc, flatApplicationVariable) => {
-        acc[flatApplicationVariable.key] = this.decryptFlatValue(
+        acc[flatApplicationVariable.key] = this.decryptValue(
           flatApplicationVariable,
         );
 
@@ -111,7 +111,7 @@ export class ApplicationVariableEntityService {
     );
   }
 
-  private decryptFlatValue({
+  private decryptValue({
     value,
     workspaceId,
   }: FlatApplicationVariable): string {
