@@ -1,3 +1,5 @@
+import { type KnownBlock } from '@slack/web-api';
+
 import { type SlackMessageBodyFormat } from 'src/logic-functions/types/slack-message-body-format.type';
 
 export type SlackPostMessageInput = {
@@ -5,4 +7,5 @@ export type SlackPostMessageInput = {
   messageText: string;
   parentMessageTimestamp?: string;
   messageFormat?: SlackMessageBodyFormat;
+  messageBlocks?: KnownBlock[];
 };

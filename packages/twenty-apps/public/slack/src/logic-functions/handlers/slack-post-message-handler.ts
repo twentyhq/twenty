@@ -22,10 +22,11 @@ export const slackPostMessageHandler = async (
   const parentTimestamp = parameters.parentMessageTimestamp;
 
   try {
-    const bodyFields = getSlackChatMessageBodyFields(
-      parameters.messageText,
-      parameters.messageFormat,
-    );
+    const bodyFields = getSlackChatMessageBodyFields({
+      messageText: parameters.messageText,
+      messageFormat: parameters.messageFormat,
+      messageBlocks: parameters.messageBlocks,
+    });
 
     const data = await client.chat.postMessage({
       channel: parameters.slackChannelId,
