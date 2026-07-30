@@ -8,7 +8,6 @@ import {
   resolveEmailTheme,
 } from 'twenty-shared/utils';
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CampaignBoxSidesInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
@@ -36,6 +35,31 @@ const StyledGroupTitle = styled.div`
 const StyledAlignRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledAlignButton = styled.button<{ isActive: boolean }>`
+  align-items: center;
+  background: ${({ isActive }) =>
+    isActive ? themeCssVariables.background.transparent.medium : 'none'};
+  border: 1px solid
+    ${({ isActive }) =>
+      isActive ? themeCssVariables.border.color.strong : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 32px;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledHint = styled.div`
@@ -108,13 +132,14 @@ export const CampaignPageStyleSection = ({
         <StyledCampaignFieldLabel>{t`Alignment`}</StyledCampaignFieldLabel>
         <StyledAlignRow>
           {BODY_ALIGN_OPTIONS.map(({ align, Icon }) => (
-            <LightIconButton
+            <StyledAlignButton
               key={align}
-              Icon={Icon}
-              size="small"
-              accent={emailTheme.bodyAlign === align ? 'secondary' : 'tertiary'}
+              type="button"
+              isActive={emailTheme.bodyAlign === align}
               onClick={() => setThemeValue('bodyAlign', align)}
-            />
+            >
+              <Icon size={16} />
+            </StyledAlignButton>
           ))}
         </StyledAlignRow>
       </div>
