@@ -1,7 +1,7 @@
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { groupCalendarFieldMetadataItemsByType } from '@/object-record/record-calendar/utils/groupCalendarFieldMetadataItemsByType';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -10,7 +10,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { getAvailableCalendarEndFieldMetadataItems } from '@/views/view-picker/utils/getAvailableCalendarEndFieldMetadataItems';
@@ -32,18 +33,23 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
 
   const { onContentChange, closeDropdown } = useObjectOptionsDropdown();
 
-  const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
-  const setRecordIndexCalendarEndFieldMetadataId = useSetAtomComponentState(
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
+  );
+  const [
+    recordIndexCalendarEndFieldMetadataId,
+    setRecordIndexCalendarEndFieldMetadataId,
+  ] = useAtomComponentState(
     recordIndexCalendarEndFieldMetadataIdComponentState,
   );
 
   const availableCalendarEndFieldMetadataItems =
     getAvailableCalendarEndFieldMetadataItems({
       availableFieldsForCalendar,
-      calendarFieldMetadataId: currentView?.calendarFieldMetadataId,
+      calendarFieldMetadataId: recordIndexCalendarFieldMetadataId,
     });
 
   const filteredCalendarEndFields =
@@ -94,7 +100,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <MenuItemSelect
-          selected={!isDefined(currentView?.calendarEndFieldMetadataId)}
+          selected={!isDefined(recordIndexCalendarEndFieldMetadataId)}
           onClick={() => handleCalendarEndFieldChange(null)}
           text={t`None`}
         />
@@ -105,8 +111,7 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
               <MenuItemSelect
                 key={fieldMetadataItem.id}
                 selected={
-                  fieldMetadataItem.id ===
-                  currentView?.calendarEndFieldMetadataId
+                  fieldMetadataItem.id === recordIndexCalendarEndFieldMetadataId
                 }
                 onClick={() => handleCalendarEndFieldChange(fieldMetadataItem)}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
