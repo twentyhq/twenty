@@ -11,24 +11,16 @@ upgrade_pid() { [ -s "$PID_FILE" ] && cat "$PID_FILE" || return 1; }
 stream()      { exec tail -f "$LOG_FILE"; }
 
 # A recorded pid outlives the run that wrote it, so a recycled pid would other-
-# wise be reported as running and, worse, signalled by stop. Matches node once
-# started and the claiming wrapper before that. Where /proc is unavailable
-# (macOS) the check cannot run and the pid is taken at face value.
+# wise be reported as running and, worse, signalled by stop. Where /proc is
+# unavailable (macOS) the check cannot run and the pid is taken at face value.
 is_our_upgrade() {
   [ -r "/proc/$1/cmdline" ] || return 0
-  tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null |
-    grep -qE 'dist/command/command|upgrade-background\.sh'
+  tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null | grep -q 'dist/command/command'
 }
 
 is_running() {
   pid=$(upgrade_pid) && kill -0 "$pid" 2>/dev/null && is_our_upgrade "$pid"
 }
-
-# O_EXCL create, the atomic half of the singleton check: two concurrent starts
-# both see no run in flight, but only one can create the pid file. It holds the
-# claiming shell's pid until node's replaces it, never a blank the other starts
-# would read as a leftover and delete.
-claim() { (set -C; echo $$ > "$PID_FILE") 2>/dev/null; }
 
 # Shared so start and logs cannot drift apart.
 detach_hint() {
@@ -61,15 +53,13 @@ start() {
     exit 1
   }
 
-  if ! claim; then
-    if is_running; then
-      echo "Failed to start: already running (pid $(upgrade_pid))" >&2; exit 1
-    fi
-    # Pid file left by a run that is no longer alive.
-    rm -f "$PID_FILE"
-    claim || { echo "Failed to start: another start claimed the run, retry" >&2; exit 1; }
+  # Keeps this wrapper's own bookkeeping straight, one pid file and one log per
+  # run. It is not a guard against concurrent upgrades: the pid file is local to
+  # this container, so nothing here constrains another pod or another machine.
+  if is_running; then
+    echo "Failed to start: already running (pid $(upgrade_pid))" >&2; exit 1
   fi
-  : > "$LOG_FILE"
+  : > "$LOG_FILE"; rm -f "$PID_FILE"
 
   # setsid: own session, no controlling terminal -> survives disconnect.
   # The wrapper outlives node on purpose, so it can record the exit code.
@@ -80,11 +70,8 @@ start() {
     echo "EXIT=$?"
   ' upgrade-background "$@" < /dev/null >> "$LOG_FILE" 2>&1 &
 
-  # Wait for node's pid to replace the claim, not merely for a non-empty file.
   i=0
-  while [ "$(cat "$PID_FILE" 2>/dev/null)" = "$$" ] && [ "$i" -lt 10 ]; do
-    i=$((i + 1)); sleep 1
-  done
+  while [ ! -s "$PID_FILE" ] && [ "$i" -lt 10 ]; do i=$((i + 1)); sleep 1; done
   is_running || {
     echo "Failed to start: see $LOG_FILE" >&2
     tail -n "$TAIL_LINES" "$LOG_FILE" >&2

@@ -154,7 +154,7 @@ yarn upgrade:background:logs     # re-attach from another shell
 yarn upgrade:background:stop     # graceful stop; --now for immediate, --force for SIGKILL
 ```
 
-`upgrade:background` refuses to start when a run is already in flight. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
+`upgrade:background` refuses to start when it can see a run already in flight. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
 
 Everything after `upgrade:background` is forwarded verbatim to `upgrade`, so it takes that command's options and no others:
 
@@ -202,6 +202,8 @@ A graceful stop is always safe to rerun: nothing is rolled back, and the rerun r
 Ctrl+C cannot reach a detached run at all: it has its own session and no controlling terminal, so no terminal can send it `SIGINT`. `upgrade:background:stop` is the only graceful entry point here, and the `130` exit code only ever shows up on foreground runs.
 
 The log and PID files live in `/tmp` inside the container (override with `TWENTY_UPGRADE_LOG_FILE` and `TWENTY_UPGRADE_PID_FILE`). Both are lost if the pod is replaced, along with the run itself.
+
+That also bounds what the refusal above is worth. It keeps one pod's bookkeeping straight, one PID file and one log per run, and nothing more: a second pod, or a laptop pointed at the same database, sees none of it. Nothing in `upgrade` itself prevents two sequences running at once either. `upgradeMigration` records only `completed` and `failed`, so it has no in-progress state to lock against, and there is no advisory lock in the sequence runner. Two concurrent runs would each do the work before one of them lost the race to record it and failed on a unique-index violation. Treat "only one upgrade at a time" as an operational rule, not something the tooling enforces.
 
 Detaching needs `setsid`, which is what puts the run in its own session. The runtime image has it (busybox provides the applet) and so does any Linux host, but macOS does not ship it, so `upgrade:background` refuses to start there and points you at the foreground command. That is no real loss, since a local run has no connection to drop in the first place.
 
