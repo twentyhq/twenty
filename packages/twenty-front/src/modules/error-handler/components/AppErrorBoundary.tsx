@@ -16,6 +16,8 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const nonCriticalErrorCodes = new Set(['INVALID_DATE_TIME_FILTER_VALUE']);
+
 export const AppErrorBoundary = ({
   children,
   FallbackComponent,
@@ -26,9 +28,17 @@ export const AppErrorBoundary = ({
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
         scope.setExtras({ info });
+        scope.setTag('error-handler', 'app-error-boundary');
+        scope.setTag('route', window.location.pathname);
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
+
+        if (hasErrorCode(error) && nonCriticalErrorCodes.has(error.code)) {
+          scope.setLevel('warning');
+          scope.setTag('error-expectedness', 'expected-invalid-filter-value');
+        }
+
         error.name = error.message;
         return scope;
       });
