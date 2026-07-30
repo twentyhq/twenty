@@ -2,11 +2,11 @@ import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-export const SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS: Record<
+export const SETTINGS_FIELD_TYPE_CATEGORY_LABELS: Record<
   SettingsFieldTypeCategoryType,
   MessageDescriptor
 > = {
-  Basic: msg`All the basic field types you need to start`,
-  Advanced: msg`More advanced fields for advanced projects`,
-  Relation: msg`Create a relation with other objects`,
+  Basic: msg`Basic`,
+  Advanced: msg`Advanced`,
+  Relation: msg`Relation`,
 };
