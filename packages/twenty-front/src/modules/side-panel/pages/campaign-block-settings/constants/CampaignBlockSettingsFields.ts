@@ -5,13 +5,15 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
+import { type CampaignStyleFieldKind } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+
 export type CampaignBlockSettingsField = {
   label: MessageDescriptor;
   // 'style' fields edit one property of the inline CSS style attribute;
   // 'attribute' fields edit a plain node attribute (e.g. the button href).
   kind: 'style' | 'attribute';
   property: string;
-  input: 'text' | 'color';
+  input: CampaignStyleFieldKind;
   placeholder?: string;
 };
 
@@ -32,22 +34,28 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       label: msg`Padding`,
       kind: 'style',
       property: 'padding',
-      input: 'text',
-      placeholder: '12px',
+      input: 'box',
+      placeholder: '12',
     },
     {
       label: msg`Corner radius`,
       kind: 'style',
       property: 'border-radius',
-      input: 'text',
-      placeholder: '8px',
+      input: 'box',
+      placeholder: '8',
     },
     {
       label: msg`Border`,
       kind: 'style',
-      property: 'border',
-      input: 'text',
-      placeholder: '1px solid #e1e1e1',
+      property: 'border-width',
+      input: 'size',
+      placeholder: '0',
+    },
+    {
+      label: msg`Border color`,
+      kind: 'style',
+      property: 'border-color',
+      input: 'color',
     },
   ],
   [TIPTAP_NODE_TYPES.EMAIL_COLUMNS]: [
@@ -61,8 +69,8 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       label: msg`Padding`,
       kind: 'style',
       property: 'padding',
-      input: 'text',
-      placeholder: '12px',
+      input: 'box',
+      placeholder: '12',
     },
   ],
   [TIPTAP_NODE_TYPES.EMAIL_COLUMN]: [
@@ -76,8 +84,8 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       label: msg`Padding`,
       kind: 'style',
       property: 'padding',
-      input: 'text',
-      placeholder: '12px',
+      input: 'box',
+      placeholder: '12',
     },
   ],
   [TIPTAP_NODE_TYPES.EMAIL_BUTTON]: [
@@ -104,31 +112,37 @@ export const CAMPAIGN_BLOCK_SETTINGS_FIELDS: Record<
       label: msg`Padding`,
       kind: 'style',
       property: 'padding',
-      input: 'text',
-      placeholder: '10px 20px',
+      input: 'box',
+      placeholder: '10',
     },
     {
       label: msg`Corner radius`,
       kind: 'style',
       property: 'border-radius',
-      input: 'text',
-      placeholder: '6px',
+      input: 'box',
+      placeholder: '6',
     },
   ],
   [TIPTAP_NODE_TYPES.EMAIL_DIVIDER]: [
     {
-      label: msg`Line`,
+      label: msg`Thickness`,
       kind: 'style',
-      property: 'border-top',
-      input: 'text',
-      placeholder: '1px solid #e1e1e1',
+      property: 'border-top-width',
+      input: 'size',
+      placeholder: '1',
+    },
+    {
+      label: msg`Color`,
+      kind: 'style',
+      property: 'border-top-color',
+      input: 'color',
     },
     {
       label: msg`Margin`,
       kind: 'style',
       property: 'margin',
-      input: 'text',
-      placeholder: '16px 0',
+      input: 'box',
+      placeholder: '16',
     },
   ],
 };

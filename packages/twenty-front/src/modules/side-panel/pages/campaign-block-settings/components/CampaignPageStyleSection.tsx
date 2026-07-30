@@ -2,23 +2,40 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
-import { isDefined, isEmailTheme } from 'twenty-shared/utils';
+import {
+  type EmailTheme,
+  isDefined,
+  resolveEmailTheme,
+} from 'twenty-shared/utils';
+import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
-import { CAMPAIGN_PAGE_STYLE_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignPageStyleFields';
+import { CampaignBoxSidesInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBoxSidesInput';
+import { CampaignColorInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignColorInput';
+import { CampaignSizeInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignSizeInput';
+import { StyledCampaignFieldLabel } from '@/side-panel/pages/campaign-block-settings/components/StyledCampaignFieldLabel';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledTitle = styled.div`
+const StyledGroupTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+
+  &:not(:first-child) {
+    margin-top: ${themeCssVariables.spacing[3]};
+  }
+`;
+
+const StyledAlignRow = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledHint = styled.div`
@@ -27,10 +44,18 @@ const StyledHint = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
+const BODY_ALIGN_OPTIONS = [
+  { align: 'left', Icon: IconAlignLeft },
+  { align: 'center', Icon: IconAlignCenter },
+  { align: 'right', Icon: IconAlignRight },
+] as const;
+
 type CampaignPageStyleSectionProps = {
   editor: Editor;
 };
 
+// The panel's default state, mirroring Resend's "Page style": the page
+// behind the email, then the email body itself.
 export const CampaignPageStyleSection = ({
   editor,
 }: CampaignPageStyleSectionProps) => {
@@ -38,10 +63,8 @@ export const CampaignPageStyleSection = ({
 
   const emailTheme = useEditorState({
     editor,
-    selector: ({ editor: currentEditor }) => {
-      const theme = currentEditor.state.doc.attrs.emailTheme;
-      return isEmailTheme(theme) ? theme : null;
-    },
+    selector: ({ editor: currentEditor }) =>
+      resolveEmailTheme(currentEditor.state.doc.attrs.emailTheme),
   });
 
   if (!isDefined(emailTheme)) {
@@ -52,7 +75,7 @@ export const CampaignPageStyleSection = ({
     );
   }
 
-  const handleThemeChange = (themeKey: string, value: string) => {
+  const setThemeValue = (themeKey: keyof EmailTheme, value: string) => {
     editor
       .chain()
       .command(({ tr }) => {
@@ -67,15 +90,73 @@ export const CampaignPageStyleSection = ({
 
   return (
     <StyledContainer>
-      <StyledTitle>{t`Page style`}</StyledTitle>
-      {CAMPAIGN_PAGE_STYLE_FIELDS.map((field) => (
-        <CampaignBlockSettingsFieldInput
-          key={field.themeKey}
-          field={field}
-          value={emailTheme[field.themeKey]}
-          onChange={(value) => handleThemeChange(field.themeKey, value)}
-        />
-      ))}
+      <StyledGroupTitle>{t`Page style`}</StyledGroupTitle>
+      <CampaignColorInput
+        label={t`Background`}
+        value={emailTheme.pageBackground}
+        onChange={(value) => setThemeValue('pageBackground', value)}
+      />
+      <CampaignBoxSidesInput
+        label={t`Padding`}
+        value={emailTheme.pagePadding}
+        onChange={(value) => setThemeValue('pagePadding', value)}
+        placeholder="24"
+      />
+
+      <StyledGroupTitle>{t`Body`}</StyledGroupTitle>
+      <div>
+        <StyledCampaignFieldLabel>{t`Alignment`}</StyledCampaignFieldLabel>
+        <StyledAlignRow>
+          {BODY_ALIGN_OPTIONS.map(({ align, Icon }) => (
+            <LightIconButton
+              key={align}
+              Icon={Icon}
+              size="small"
+              accent={emailTheme.bodyAlign === align ? 'secondary' : 'tertiary'}
+              onClick={() => setThemeValue('bodyAlign', align)}
+            />
+          ))}
+        </StyledAlignRow>
+      </div>
+      <CampaignColorInput
+        label={t`Text`}
+        value={emailTheme.textColor}
+        onChange={(value) => setThemeValue('textColor', value)}
+      />
+      <CampaignColorInput
+        label={t`Background`}
+        value={emailTheme.bodyBackground}
+        onChange={(value) => setThemeValue('bodyBackground', value)}
+      />
+      <CampaignSizeInput
+        label={t`Width`}
+        value={emailTheme.width}
+        onChange={(value) => setThemeValue('width', value)}
+        placeholder="600"
+      />
+      <CampaignBoxSidesInput
+        label={t`Padding`}
+        value={emailTheme.padding}
+        onChange={(value) => setThemeValue('padding', value)}
+        placeholder="24"
+      />
+      <CampaignBoxSidesInput
+        label={t`Corner radius`}
+        value={emailTheme.cornerRadius}
+        onChange={(value) => setThemeValue('cornerRadius', value)}
+        placeholder="8"
+      />
+      <CampaignSizeInput
+        label={t`Border`}
+        value={emailTheme.borderWidth}
+        onChange={(value) => setThemeValue('borderWidth', value)}
+        placeholder="0"
+      />
+      <CampaignColorInput
+        label={t`Border color`}
+        value={emailTheme.borderColor}
+        onChange={(value) => setThemeValue('borderColor', value)}
+      />
     </StyledContainer>
   );
 };

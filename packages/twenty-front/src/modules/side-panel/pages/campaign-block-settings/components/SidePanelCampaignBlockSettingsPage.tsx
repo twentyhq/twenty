@@ -34,9 +34,12 @@ const StyledBlockTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
-  const { t } = useLingui();
+const BORDER_STYLE_COMPANIONS: Record<string, string> = {
+  'border-width': 'border-style',
+  'border-top-width': 'border-top-style',
+};
 
+const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const target = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
@@ -78,6 +81,16 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       delete nextStyles[field.property];
     } else {
       nextStyles[field.property] = value;
+    }
+
+    // A border width without a border style renders no border at all.
+    const borderStyleProperty = BORDER_STYLE_COMPANIONS[field.property];
+    if (isDefined(borderStyleProperty)) {
+      if (value.trim() === '' || value.trim() === '0px') {
+        delete nextStyles[borderStyleProperty];
+      } else {
+        nextStyles[borderStyleProperty] ??= 'solid';
+      }
     }
 
     updateTargetAttributes({ style: serializeInlineStyle(nextStyles) });

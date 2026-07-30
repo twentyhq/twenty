@@ -12,7 +12,10 @@ export const EmailDivider = Node.create({
   addAttributes() {
     return {
       style: {
-        default: 'border-top: 1px solid #e1e1e1; margin: 16px 0;',
+        // Longhands rather than the border-top shorthand, so the settings
+        // panel can edit width and color independently.
+        default:
+          'border-top-width: 1px; border-top-style: solid; border-top-color: #e1e1e1; margin: 16px 0;',
         parseHTML: (element) => element.getAttribute('style'),
       },
     };

@@ -6,7 +6,7 @@ import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtens
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor, useEditorState } from '@tiptap/react';
-import { isDefined, isEmailTheme } from 'twenty-shared/utils';
+import { isDefined, resolveEmailTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditorContainer = styled.div<{
@@ -195,10 +195,8 @@ export const AdvancedTextEditor = ({
 
   const emailTheme = useEditorState({
     editor,
-    selector: ({ editor: currentEditor }) => {
-      const theme = currentEditor.state.doc.attrs.emailTheme;
-      return isEmailTheme(theme) ? theme : null;
-    },
+    selector: ({ editor: currentEditor }) =>
+      resolveEmailTheme(currentEditor.state.doc.attrs.emailTheme),
   });
 
   const hasEmailCanvas = chrome === 'emailCanvas' && isDefined(emailTheme);
@@ -207,14 +205,23 @@ export const AdvancedTextEditor = ({
     <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
       {hasEmailCanvas ? (
         <StyledEmailCanvasBackdrop
-          style={{ backgroundColor: emailTheme.pageBackground }}
+          style={{
+            backgroundColor: emailTheme.pageBackground,
+            padding: emailTheme.pagePadding,
+          }}
         >
           <StyledEmailPage
             style={{
               backgroundColor: emailTheme.bodyBackground,
-              border: emailTheme.border,
+              border:
+                emailTheme.borderWidth !== '' &&
+                emailTheme.borderWidth !== '0px'
+                  ? `${emailTheme.borderWidth} solid ${emailTheme.borderColor}`
+                  : undefined,
               borderRadius: emailTheme.cornerRadius,
               color: emailTheme.textColor,
+              marginLeft: emailTheme.bodyAlign === 'left' ? 0 : 'auto',
+              marginRight: emailTheme.bodyAlign === 'right' ? 0 : 'auto',
               padding: emailTheme.padding,
               width: emailTheme.width,
             }}
