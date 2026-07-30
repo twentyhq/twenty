@@ -703,69 +703,69 @@ Para hacer bifurcaciones explícitamente según el esquema activo, léelo con `u
 
 ## Limitaciones actuales
 
-Front components are under active development. Rendering, styling and handling events works well. Anything that reaches *past* rendering (measuring an element, calling a DOM method on a ref, portaling outside your tree, touching browser storage) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
+Los componentes de Front están en desarrollo activo. El renderizado, el estilo y el manejo de eventos funcionan bien. Cualquier cosa que vaya *más allá* del renderizado (medir un elemento, llamar a un método del DOM en un ref, hacer portal fuera de tu árbol, acceder al almacenamiento del navegador) falta o está incompleta hoy, y la mayoría falla silenciosamente: no hay excepción ni error de TypeScript tampoco, ya que el andamiaje está tipado contra el DOM completo del navegador.
 
-If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
+Si una de estas cosas te bloquea, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) para que se priorice.
 
-### Layout and measurement
+### Diseño y medición
 
-Nothing can measure itself yet.
+Nada puede medirse a sí mismo todavía.
 
-| API                                                           | What happens                                                                       |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Throws                                                                             |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silently `undefined`, so `width ?? 0` yields `0` and `width > 600` is always false |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guards do work)                                         |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Throws                                                                             |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silently `undefined`                                                               |
-| `new MutationObserver(fn)`                                    | Constructs, then `.observe()` throws                                               |
+| API                                                           | Qué ocurre                                                                                        |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | Lanza una excepción                                                                               |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silenciosamente `undefined`, por lo que `width ?? 0` produce `0` y `width > 600` siempre es falso |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (las comprobaciones con `typeof` sí funcionan)                                   |
+| `window.matchMedia()`, `window.getComputedStyle()`            | Lanza una excepción                                                                               |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silenciosamente `undefined`                                                                       |
+| `new MutationObserver(fn)`                                    | Se construye, luego `.observe()` lanza una excepción                                              |
 
-So recharts `ResponsiveContainer`, Floating UI / Popper, list virtualization and drag-to-resize do not work yet. Do layout in CSS instead: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally.
+Así que `ResponsiveContainer` de recharts, Floating UI / Popper, la virtualización de listas y arrastrar-para-redimensionar todavía no funcionan. Haz el diseño en CSS en su lugar: tu hoja de estilos llega a la página real, por lo que flexbox, grid, `aspect-ratio`, `clamp()` y `@container` se comportan con normalidad.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
+`requestAnimationFrame`, `fetch`, `setTimeout` y `queueMicrotask` funcionan sin el prefijo `window.`. Solo `window.requestAnimationFrame(...)` y similares lanzan una excepción.
 </Note>
 
-### DOM access
+### Acceso al DOM
 
-A `ref` gives you a sandbox element, not an `HTMLElement`.
+Un `ref` te da un elemento sandbox, no un `HTMLElement`.
 
-| What you write                                                                                              | What happens                                         | Use instead                                                                               |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws                                               | Controlled components; read values from `event.target`                                    |
-| `element.classList.add(...)`                                                                                | Throws (`classList` is `undefined`)                  | Build the `className` string yourself                                                     |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Throws                                               | `querySelector()` / `querySelectorAll()`, which work                                      |
-| `document.activeElement`                                                                                    | Always `undefined`                                   | Track focus with `onFocus` / `onBlur`                                                     |
-| `\<canvas>`                                                                                | Renders nothing, no error                            | SVG, or draw offscreen and show an `<img src={dataUrl}>`                                  |
-| `createPortal(node, document.body)`                                                                         | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
+| Lo que escribes                                                                                             | Qué ocurre                                                     | Usa en su lugar                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lanza una excepción                                            | Componentes controlados; lee los valores de `event.target`                                              |
+| `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()`, que sí funcionan                                              |
+| `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                               |
+| `\<canvas>`                                                                                | No renderiza nada, sin error                                   | SVG, o dibuja fuera de pantalla y muestra un `<img src={dataUrl}>`                                      |
+| `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor |
 
-The portal gap is why Radix, Headless UI, MUI and react-select popovers render nothing by default. Most accept a container prop; point it at an element you rendered.
+La brecha del portal es la razón por la que los popovers de Radix, Headless UI, MUI y react-select no renderizan nada de forma predeterminada. La mayoría acepta una prop de contenedor; apúntala a un elemento que hayas renderizado.
 
 ### Eventos
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+Eventos de ratón, puntero, tacto, arrastre, teclado, foco, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` y `animationend`/`transitionend` pasan al host, además de algunos específicos por elemento: `load`/`error` en `<img>`, portapapeles y composición en `<input>`/`\<textarea>`, medios en `\<video>`/`\<audio>`, `toggle` en `\<details>`/`\<dialog>`. Cualquier otra cosa (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, captura de puntero, `onLoad` fuera de `<img>`) se descarta sin aviso.
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document.addEventListener()` y `window.addEventListener()` se registran sin error y nunca se disparan, lo que explica por qué un arrastre se detiene tan pronto como el puntero sale del elemento en el que comenzó. `event.preventDefault()` tampoco cruza; el envío de formularios, `dragover`/`drop` y los clics en enlaces ya están protegidos por ti.
 
-### Attributes and styling
+### Atributos y estilos
 
-Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+Cada elemento reenvía sus propias propiedades al DOM del host (`href` en `\<a>`, `src`/`alt` en `<img>`, `value`/`placeholder`/`disabled` en `<input>`, etc.), además de un conjunto común en cada elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` y cualquier atributo `aria-*` / `data-*` (con guiones, por lo que `ariaLabel` se descarta). Cualquier cosa fuera de eso se descarta silenciosamente, así que expresa el estado personalizado como `data-*`.
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elemento `\<style>`, se inyecta en el `\<head>` de la página del host **sin ámbito**. Así que los nombres de clase colisionan con los de Twenty (ponles un prefijo y nunca escribas `div { ... }` como selectores), y `@media` coincide con la ventana del navegador en lugar de con tu widget (usa `@container` con tu propio `container-type`). Las props de `style` en línea no se ven afectadas.
 
-### Storage and network
+### Almacenamiento y red
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/es/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/es/developers/extend/apps/logic/key-value-store).
+`localStorage`, `sessionStorage`, IndexedDB, las cookies, la Cache API y `BroadcastChannel` no están disponibles, ya que el componente se ejecuta en un worker en un origen opaco. Para persistir el estado, llama a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions) y usa su [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
 
-`fetch` works, with caveats:
+`fetch` funciona, con matices:
 
-* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
-* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
-* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+* Las llamadas a la API de Twenty y a las rutas de tu aplicación se hacen por proxy a través del host, así que da prioridad a [`RestApiClient`](#calling-the-twenty-rest-api). En las llamadas con proxy, `AbortSignal` y las demás opciones de `RequestInit` se descartan, y solo se admiten cuerpos de tipo `string` y `URLSearchParams`.
+* Otros orígenes salen del sandbox con `Origin: null`, por lo que una API de terceros responde solo si envía `Access-Control-Allow-Origin: *`. Llámala desde una función de lógica en su lugar.
+* `fetch('/rest/people')` nunca se hace coincidir con la API de Twenty, porque el sandbox no tiene URL de página contra la que resolver una ruta relativa.
 
-### Other gaps
+### Otras carencias
 
-* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
-* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/es/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+* **Contenido de archivos.** `<input type="file">` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` y las subidas no son posibles todavía.
+* **Cargas útiles de arrastrar y soltar.** Los eventos de arrastre se disparan, pero `event.dataTransfer` es `undefined`.
+* **Integraciones nativas de Node.** `fs`, `path` y `node:crypto` hacen que la compilación falle, así que mueve ese trabajo a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` y `URL` están disponibles.
+* **`\<iframe>`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.
