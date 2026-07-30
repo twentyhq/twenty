@@ -1,6 +1,59 @@
 
-This project is mostly licensed under the GNU General Public License (GPL) as described below. However, certain files within this project are licensed under a different commercial license. These files are clearly marked with the following comment at the top of the file: /* @license Enterprise */
-Files with this comment are not licensed under the aGPL v3, but instead are subject to the commercial license terms defined later in this file. 
+This project is mostly licensed under the GNU Affero General Public License v3.0 (AGPLv3) as described below, with two qualifications:
+
+1. Certain files are licensed under a commercial license. These files are clearly marked with the following comment at the top of the file: /* @license Enterprise */
+Files with this comment are not licensed under the AGPLv3, but instead are subject to the commercial license terms defined at the end of this file.
+
+2. Certain packages are licensed under the MIT license instead of the AGPLv3, as indicated by the license field of their package.json and the LICENSE file at the package root. This currently includes the application development toolkit (twenty-sdk, twenty-client-sdk, create-twenty-app, twenty-shared) and the applications under packages/twenty-apps.
+
+The AGPLv3 applies to the rest of the project, with the following additional permission:
+
+---------------------------------------------------------------------------
+
+              ADDITIONAL PERMISSION UNDER AGPLv3 SECTION 7
+                     (Twenty Application Exception)
+
+As an additional permission under section 7 of the GNU Affero General
+Public License v3.0, the copyright holders of Twenty grant you the
+following rights:
+
+1. Definitions.
+
+   "Twenty" means the software made available in this repository under
+   the AGPLv3.
+
+   "Application Interfaces" means the interfaces Twenty exposes for
+   building applications: the published HTTP APIs (REST and GraphQL) and
+   webhooks; the application manifest and configuration formats consumed
+   by the Twenty application platform; logic functions executed by the
+   platform's function runtime; front components rendered by the
+   platform's component renderer; and the published Twenty SDKs.
+
+   "Application" means a work that interacts with Twenty through the
+   Application Interfaces and that does not otherwise incorporate or
+   modify the source code of Twenty.
+
+2. Permission. Developing an Application, conveying it, or making it
+   available for interaction over a network does not, by itself, cause
+   the Application to be governed by the AGPLv3. You may license your
+   Application under terms of your choice, including proprietary terms.
+
+3. Bundling. Combining an Application with libraries from this
+   repository, where that combination is produced by the official Twenty
+   application build tooling for the purpose of running the Application
+   on the Twenty platform, does not extend the AGPLv3 to the Application.
+   The AGPLv3 continues to apply to those libraries themselves, including
+   any modified versions of them.
+
+4. Limits. This additional permission does not apply to Twenty itself:
+   if you modify Twenty, the AGPLv3, including section 13, applies to
+   your modified version in full. This additional permission grants no
+   rights to Twenty's trademarks (see TRADEMARK.md).
+
+This is a grant of additional permission, not a restriction: nothing in
+it limits any rights otherwise granted by the AGPLv3.
+
+---------------------------------------------------------------------------
 
 
                     GNU AFFERO GENERAL PUBLIC LICENSE
