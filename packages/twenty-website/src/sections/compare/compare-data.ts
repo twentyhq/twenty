@@ -28,18 +28,20 @@ export type CompetitorComparison = {
   competitorColumnLabel: MessageDescriptor;
   eyebrow: MessageDescriptor;
   heading: MessageDescriptor;
-  honest: { points: MessageDescriptor[]; title: MessageDescriptor };
+  honest: MessageDescriptor;
   intro: MessageDescriptor;
   migrationLine: MessageDescriptor;
   receipt: {
     competitorLines: CompareReceiptLine[];
     competitorPerUser: MessageDescriptor;
-    competitorTotal: MessageDescriptor;
+    competitorTotalAmount: MessageDescriptor;
+    competitorTotalSuffix: MessageDescriptor;
     multiplier: MessageDescriptor;
     scenario: MessageDescriptor;
     twentyLines: CompareReceiptLine[];
     twentyPerUser: MessageDescriptor;
-    twentyTotal: MessageDescriptor;
+    twentyTotalAmount: MessageDescriptor;
+    twentyTotalSuffix: MessageDescriptor;
   };
   rows: CompareRow[];
   slug: string;
@@ -134,24 +136,19 @@ export const HUBSPOT_COMPARISON: CompetitorComparison = {
       },
       { label: msg`Mandatory onboarding (one-time)`, amount: msg`$3,500` },
     ],
-    competitorTotal: msg`$39,500 in year one`,
+    competitorTotalAmount: msg`$39,500`,
+    competitorTotalSuffix: msg`in year one`,
     competitorPerUser: msg`≈ $165 per user per month in year one`,
     twentyLines: [
       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
       { label: msg`Onboarding`, amount: msg`$0` },
     ],
-    twentyTotal: msg`$4,560 in year one`,
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`in year one`,
     twentyPerUser: msg`$19 per user per month, that's it`,
-    multiplier: msg`≈ 8× less in year one`,
+    multiplier: msg`≈ 8× less`,
   },
-  honest: {
-    title: msg`Where HubSpot is genuinely strong`,
-    points: [
-      msg`A full marketing suite: campaigns, ads, landing pages.`,
-      msg`A huge agency and integration ecosystem.`,
-      msg`If you need marketing automation more than a CRM, it is a fair choice.`,
-    ],
-  },
+  honest: msg`HubSpot brings a full marketing suite and a huge agency ecosystem. If you need marketing automation more than a CRM, it is a fair choice.`,
   sourceNote: msg`List prices from HubSpot's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
@@ -234,24 +231,19 @@ export const SALESFORCE_COMPARISON: CompetitorComparison = {
       },
       { label: msg`Premier support (+30%)`, amount: msg`$12,600/yr` },
     ],
-    competitorTotal: msg`$54,600 per year`,
+    competitorTotalAmount: msg`$54,600`,
+    competitorTotalSuffix: msg`per year`,
     competitorPerUser: msg`≈ $228 per user per month before add-ons`,
     twentyLines: [
       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
       { label: msg`Support`, amount: msg`Included` },
     ],
-    twentyTotal: msg`$4,560 per year`,
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`per year`,
     twentyPerUser: msg`$19 per user per month, that's it`,
-    multiplier: msg`≈ 12× less per year`,
+    multiplier: msg`≈ 12× less`,
   },
-  honest: {
-    title: msg`Where Salesforce is genuinely strong`,
-    points: [
-      msg`The deepest enterprise configurability on the market.`,
-      msg`AppExchange: an ecosystem for almost everything.`,
-      msg`Industry clouds and compliance depth very large enterprises need.`,
-    ],
-  },
+  honest: msg`Salesforce remains the deepest enterprise platform, with an ecosystem for almost everything. At a thousand seats with a dedicated admin team, it is a different conversation.`,
   sourceNote: msg`List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
@@ -306,15 +298,6 @@ export const ATTIO_COMPARISON: CompetitorComparison = {
       twenty: { detail: msg`Workflows included, credits for AI only` },
     },
     {
-      feature: msg`Self-hosting`,
-      description: msg`Run it on your infrastructure`,
-      competitor: {
-        price: msg`Not available`,
-        detail: msg`SaaS only`,
-      },
-      twenty: { detail: msg`Free, AGPL core` },
-    },
-    {
       feature: msg`Source code`,
       description: msg`Audit it, extend it, own it`,
       competitor: {
@@ -333,24 +316,19 @@ export const ATTIO_COMPARISON: CompetitorComparison = {
         amount: msg`Enterprise upgrade`,
       },
     ],
-    competitorTotal: msg`$18,960+ per year`,
+    competitorTotalAmount: msg`$18,960+`,
+    competitorTotalSuffix: msg`per year`,
     competitorPerUser: msg`$79 per user per month, before Enterprise`,
     twentyLines: [
       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
-      { label: msg`Or self-hosted core`, amount: msg`$0` },
+      { label: msg`SSO & advanced admin`, amount: msg`Included` },
     ],
-    twentyTotal: msg`$4,560 per year`,
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`per year`,
     twentyPerUser: msg`$19 per user per month, SSO included`,
-    multiplier: msg`≈ 4× less, or free self-hosted`,
+    multiplier: msg`≈ 4× less`,
   },
-  honest: {
-    title: msg`Where Attio is genuinely strong`,
-    points: [
-      msg`A very polished, fast product.`,
-      msg`Strong built-in data enrichment.`,
-      msg`A credible pick if you never need self-hosting or code access.`,
-    ],
-  },
+  honest: msg`Attio is a polished, fast product with strong built-in enrichment. If you never need to extend or own your CRM, it is a credible pick.`,
   sourceNote: msg`List prices from Attio's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
@@ -423,24 +401,19 @@ export const PIPEDRIVE_COMPARISON: CompetitorComparison = {
         amount: msg`+$7,200/yr`,
       },
     ],
-    competitorTotal: msg`$18,960 per year with SSO`,
+    competitorTotalAmount: msg`$18,960`,
+    competitorTotalSuffix: msg`per year with SSO`,
     competitorPerUser: msg`$79 per user per month with SSO`,
     twentyLines: [
       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
       { label: msg`SSO & row-level permissions`, amount: msg`Included` },
     ],
-    twentyTotal: msg`$4,560 per year`,
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`per year`,
     twentyPerUser: msg`$19 per user per month, SSO included`,
-    multiplier: msg`≈ 4× less, with SSO included`,
+    multiplier: msg`≈ 4× less`,
   },
-  honest: {
-    title: msg`Where Pipedrive is genuinely strong`,
-    points: [
-      msg`A famously simple pipeline UX.`,
-      msg`An affordable entry tier for tiny teams.`,
-      msg`A large marketplace of ready-made integrations.`,
-    ],
-  },
+  honest: msg`Pipedrive's pipeline UX is famously simple, and its entry tier is genuinely affordable for very small teams.`,
   sourceNote: msg`List prices from Pipedrive's public pricing page, billed annually, checked on July 30, 2026.`,
 };
 
@@ -482,7 +455,7 @@ export const DYNAMICS_COMPARISON: CompetitorComparison = {
         detail: msg`Dataverse database add-on`,
         sourceUrl: DYNAMICS_PRICING_URL,
       },
-      twenty: { detail: msg`Included; self-host on your own Postgres` },
+      twenty: { detail: msg`Included` },
     },
     {
       feature: msg`Customization apps`,
@@ -516,23 +489,18 @@ export const DYNAMICS_COMPARISON: CompetitorComparison = {
         amount: msg`$4,800/yr`,
       },
     ],
-    competitorTotal: msg`$30,000 per year`,
+    competitorTotalAmount: msg`$30,000`,
+    competitorTotalSuffix: msg`per year`,
     competitorPerUser: msg`≈ $125 per user per month`,
     twentyLines: [
       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
       { label: msg`Storage`, amount: msg`Included` },
     ],
-    twentyTotal: msg`$4,560 per year`,
+    twentyTotalAmount: msg`$4,560`,
+    twentyTotalSuffix: msg`per year`,
     twentyPerUser: msg`$19 per user per month, that's it`,
-    multiplier: msg`≈ 6× less per year`,
+    multiplier: msg`≈ 6× less`,
   },
-  honest: {
-    title: msg`Where Dynamics is genuinely strong`,
-    points: [
-      msg`Native Microsoft 365, Teams and Outlook integration.`,
-      msg`The Power Platform, if you are already invested in it.`,
-      msg`Enterprise governance and compliance machinery.`,
-    ],
-  },
+  honest: msg`If your company lives in Microsoft 365 and already runs on the Power Platform, Dynamics integrates like nothing else.`,
   sourceNote: msg`List prices from Microsoft's public Dynamics 365 pricing page, billed annually, checked on July 30, 2026.`,
 };
