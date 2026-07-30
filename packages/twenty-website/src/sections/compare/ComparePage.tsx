@@ -105,7 +105,7 @@ export function ComparePage({
 
       <SectionShell rhythm="section" scheme="dark">
         <SectionHeading>
-          <Heading as="h2" size="md" weight="light">
+          <Heading as="h2" size="sm" weight="light">
             {i18n._(comparison.tableTitle)}
           </Heading>
         </SectionHeading>
@@ -114,7 +114,7 @@ export function ComparePage({
 
       <SectionShell rhythm="section" scheme="muted">
         <SectionHeading>
-          <Heading as="h2" size="md" weight="light">
+          <Heading as="h2" size="sm" weight="light">
             {i18n._(msg`The bill, side by side`)}
           </Heading>
         </SectionHeading>
