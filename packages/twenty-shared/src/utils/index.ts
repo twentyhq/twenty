@@ -197,6 +197,8 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
+export type { EmailTheme } from './tiptap/email-theme';
+export { EMAIL_THEME_DEFAULTS, isEmailTheme } from './tiptap/email-theme';
 export type {
   TipTapMarkType,
   TipTapNodeType,

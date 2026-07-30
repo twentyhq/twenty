@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type CampaignBlockSettingsField } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBlockSettingsFields';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { type MessageDescriptor } from '@lingui/core';
 
 const StyledFieldRow = styled.div`
   align-items: flex-end;
@@ -43,7 +43,11 @@ const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 const COLOR_SWATCH_FALLBACK = '#ffffff';
 
 type CampaignBlockSettingsFieldInputProps = {
-  field: CampaignBlockSettingsField;
+  field: {
+    label: MessageDescriptor;
+    input: 'text' | 'color';
+    placeholder?: string;
+  };
   value: string;
   onChange: (value: string) => void;
 };

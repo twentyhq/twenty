@@ -229,6 +229,7 @@ export const FormAdvancedTextFieldInput = ({
               editor={editor}
               readonly={readonly}
               minHeight={editorMinHeight}
+              chrome={chrome}
             />
           </StyledFullScreenEditorContainer>
         </div>,
@@ -253,6 +254,7 @@ export const FormAdvancedTextFieldInput = ({
                   editor={editor}
                   readonly={readonly}
                   minHeight={editorMinHeight}
+                  chrome={chrome}
                 />
               )}
 

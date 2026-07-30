@@ -1,10 +1,12 @@
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
+import { type AdvancedTextEditorChrome } from '@/advanced-text-editor/types/AdvancedTextEditorPreset';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
-import { EditorContent, type Editor } from '@tiptap/react';
+import { EditorContent, type Editor, useEditorState } from '@tiptap/react';
+import { isDefined, isEmailTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditorContainer = styled.div<{
@@ -134,10 +136,38 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
+const StyledEmailCanvasBackdrop = styled.div`
+  box-sizing: border-box;
+  flex-grow: 1;
+  min-height: 100%;
+  padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[4]};
+  width: 100%;
+`;
+
+const StyledEmailPage = styled.div`
+  box-shadow:
+    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
+    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 100%;
+  min-height: 400px;
+
+  .editor-content {
+    min-height: inherit;
+  }
+
+  .tiptap {
+    min-height: inherit;
+    padding: 0;
+  }
+`;
+
 type AdvancedTextEditorProps = {
   readonly: boolean | undefined;
   editor: Editor;
   minHeight: number;
+  chrome?: AdvancedTextEditorChrome;
 };
 
 // Marks and nodes the text bubble menu can act on. When a preset loads none
@@ -157,14 +187,44 @@ export const AdvancedTextEditor = ({
   readonly,
   editor,
   minHeight,
+  chrome,
 }: AdvancedTextEditorProps) => {
   const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
 
+  const emailTheme = useEditorState({
+    editor,
+    selector: ({ editor: currentEditor }) => {
+      const theme = currentEditor.state.doc.attrs.emailTheme;
+      return isEmailTheme(theme) ? theme : null;
+    },
+  });
+
+  const hasEmailCanvas = chrome === 'emailCanvas' && isDefined(emailTheme);
+
   return (
     <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
-      <EditorContent className="editor-content" editor={editor} />
+      {hasEmailCanvas ? (
+        <StyledEmailCanvasBackdrop
+          style={{ backgroundColor: emailTheme.pageBackground }}
+        >
+          <StyledEmailPage
+            style={{
+              backgroundColor: emailTheme.bodyBackground,
+              border: emailTheme.border,
+              borderRadius: emailTheme.cornerRadius,
+              color: emailTheme.textColor,
+              padding: emailTheme.padding,
+              width: emailTheme.width,
+            }}
+          >
+            <EditorContent className="editor-content" editor={editor} />
+          </StyledEmailPage>
+        </StyledEmailCanvasBackdrop>
+      ) : (
+        <EditorContent className="editor-content" editor={editor} />
+      )}
       {hasEditorExtension(editor, 'image') && (
         <ImageBubbleMenu editor={editor} />
       )}

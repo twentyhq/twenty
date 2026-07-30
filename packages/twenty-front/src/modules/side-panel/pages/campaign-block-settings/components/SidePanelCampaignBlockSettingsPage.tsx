@@ -10,6 +10,7 @@ import { getEmailBlockSelectionTarget } from '@/advanced-text-editor/utils/getEm
 import { parseInlineStyle } from '@/advanced-text-editor/utils/parseInlineStyle';
 import { serializeInlineStyle } from '@/advanced-text-editor/utils/serializeInlineStyle';
 import { CampaignBlockSettingsFieldInput } from '@/side-panel/pages/campaign-block-settings/components/CampaignBlockSettingsFieldInput';
+import { CampaignPageStyleSection } from '@/side-panel/pages/campaign-block-settings/components/CampaignPageStyleSection';
 import { CAMPAIGN_BLOCK_SETTINGS_FIELDS } from '@/side-panel/pages/campaign-block-settings/constants/CampaignBlockSettingsFields';
 import { getCampaignBlockLabel } from '@/side-panel/pages/campaign-block-settings/utils/getCampaignBlockLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -42,12 +43,10 @@ const CampaignBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       getEmailBlockSelectionTarget(currentEditor),
   });
 
+  // With no block selected, the panel edits the page itself, like Resend's
+  // "Page style" default state.
   if (!isDefined(target)) {
-    return (
-      <StyledHint>
-        {t`Select a section, columns, button or divider in the email body to edit its settings.`}
-      </StyledHint>
-    );
+    return <CampaignPageStyleSection editor={editor} />;
   }
 
   const fields = CAMPAIGN_BLOCK_SETTINGS_FIELDS[target.nodeType] ?? [];

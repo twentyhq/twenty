@@ -98,6 +98,49 @@ describe('renderRichTextToHtml', () => {
     expect(html).toContain('2px dashed #ff0000');
   });
 
+  it('should wrap themed documents in a styled page and centered container', async () => {
+    const html = await renderRichTextToHtml({
+      type: 'doc',
+      attrs: {
+        emailTheme: {
+          pageBackground: '#f4f4f5',
+          bodyBackground: '#ffffff',
+          textColor: '#18181b',
+          width: '600px',
+          padding: '24px',
+          cornerRadius: '8px',
+          border: 'none',
+        },
+      },
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Themed content' }],
+        },
+      ],
+    });
+
+    expect(html).toContain('Themed content');
+    expect(html).toContain('background-color:#f4f4f5');
+    expect(html).toContain('background-color:#ffffff');
+    expect(html).toContain('max-width:600px');
+  });
+
+  it('should keep the bare body for documents without a theme', async () => {
+    const html = await renderRichTextToHtml({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Workflow email' }],
+        },
+      ],
+    });
+
+    expect(html).toContain('Workflow email');
+    expect(html).not.toContain('max-width:600px');
+  });
+
   it('should render nothing for unknown node types', async () => {
     const html = await renderRichTextToHtml({
       type: 'doc',
