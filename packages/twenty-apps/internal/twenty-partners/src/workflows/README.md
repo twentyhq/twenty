@@ -10,7 +10,7 @@ runbook.
 
 ## Prerequisites
 
-- Twenty Partners app installed and synced (`yarn twenty dev --once` or `install`).
+- Twenty Partners app installed and synced (`yarn twenty apply`).
 - **Partner role** already grants the **WORKFLOWS** permission flag (shipped in the app).
   Partners need this to see **Run workflow → Apply** on a brief. Admins run **Mark as
   Winner** with their own role (no special flag beyond workflow access).
@@ -31,9 +31,8 @@ Partner self-apply on an **Opportunity** (brief). Creates an **Application** and
 5. Choose object **Opportunity**.
 6. Add an action: **Create Record**.
 7. Set **Object** to **Application**.
-8. Map fields:
+8. Map exactly these two fields — **nothing else**:
    - **Opportunity** → `{{trigger.record.id}}`
-   - **State** → `APPLIED`
    - **Partner User** → `{{trigger.workspaceMember}}` *(mandatory — see note below)*
 9. **Publish** (activate) the workflow version.
 
@@ -41,7 +40,16 @@ Partner self-apply on an **Opportunity** (brief). Creates an **Application** and
 `partnerUser IS the current member`, and the server validates it against the row as
 submitted. A **Create Record** without **Partner User** fails with *"Record does not
 satisfy row-level security constraints of your current role"*. `on-application-created`
-runs after the insert, so it cannot rescue it.
+runs after the insert, so it cannot rescue it. Partner User is writable only because it is
+the RLS predicate field — the server exempts those from the role's field locks.
+
+**Map no other field.** Every remaining Application field is locked for the Partner role,
+so adding one (e.g. **State** → `APPLIED`) fails the insert with *"no permission to write
+field …"*. `state` defaults to `APPLIED` on its own.
+
+**Order of operations.** Publish this workflow version *before* running
+`yarn rls:configure` on the workspace — the strict predicate rejects every apply until the
+Partner User mapping is live.
 
 ### Expected UI (partner)
 

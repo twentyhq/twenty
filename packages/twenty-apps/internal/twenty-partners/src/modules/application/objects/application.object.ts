@@ -85,8 +85,9 @@ export default defineObject({
       },
     },
     {
-      // RLS pivot (B7): the applying member. Populated by the apply logic-function (B4);
-      // left null for admin-created invites until then. Locked from partner edits in B7.
+      // RLS pivot: the partner's member. Set by the Apply workflow at insert (self-apply) or
+      // by on-application-created from the partner (admin invite). A row without it is
+      // invisible to its partner.
       universalIdentifier: APPLICATION_PARTNER_USER_FIELD_ID,
       type: FieldType.RELATION,
       name: 'partnerUser',

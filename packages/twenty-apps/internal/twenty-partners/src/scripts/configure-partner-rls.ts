@@ -617,9 +617,9 @@ async function main() {
         `  ${missingLocks.join(', ')}\n\n` +
         `These permissions are declared in partner.role.ts and must be deployed via the\n` +
         `app manifest. Run the following to deploy them:\n\n` +
-        `  yarn twenty dev --once -r <remote>\n\n` +
-        `(e.g. \`yarn twenty dev --once\` for local, ` +
-        `\`yarn twenty dev --once -r partner-twenty-com\` for prod)\n`,
+        `  yarn twenty apply -r <remote>\n\n` +
+        `(e.g. \`yarn twenty apply\` for local, ` +
+        `\`yarn twenty apply -r partner-twenty-com\` for prod)\n`,
     );
     process.exitCode = 1;
     return;
@@ -686,9 +686,9 @@ async function main() {
         `  ${missingAppLocks.join(', ')}\n\n` +
         `These permissions are declared in partner.role.ts and must be deployed via the\n` +
         `app manifest. Run the following to deploy them:\n\n` +
-        `  yarn twenty dev --once -r <remote>\n\n` +
-        `(e.g. \`yarn twenty dev --once\` for local, ` +
-        `\`yarn twenty dev --once -r partner-twenty-com\` for prod)\n`,
+        `  yarn twenty apply -r <remote>\n\n` +
+        `(e.g. \`yarn twenty apply\` for local, ` +
+        `\`yarn twenty apply -r partner-twenty-com\` for prod)\n`,
     );
     process.exitCode = 1;
     return;
