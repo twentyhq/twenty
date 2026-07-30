@@ -35,7 +35,14 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
 
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    await tidyUpWorkflowVersion(workflowVersionId, workflowDiagram);
+    const tidiedUpDiagram = await tidyUpWorkflowVersion(
+      workflowVersionId,
+      workflowDiagram,
+    );
+
+    if (isDefined(tidiedUpDiagram)) {
+      store.set(workflowDiagramAtom, tidiedUpDiagram);
+    }
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
