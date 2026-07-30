@@ -62,8 +62,6 @@ describe('BookCallEmbed', () => {
     jest.clearAllMocks();
   });
 
-  // The profile step writes the workspace member, not the user, so the user's
-  // sign-up name is empty for anyone who signed up with an email and password.
   it('should prefill the name entered at the profile step', () => {
     const config = renderEmbed({
       workspaceMemberName: { firstName: 'Raphael', lastName: 'Bosi' },

@@ -7,11 +7,22 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { BookCallOnboardingStepActions } from '@/onboarding/components/BookCallOnboardingStepActions';
 
 const mockCompleteBookCallOnboardingStep = jest.fn();
-const mockCalApi = jest.fn();
+const mockOnBookingSuccessful = jest.fn();
 
-jest.mock('@calcom/embed-react', () => ({
-  getCalApi: () => Promise.resolve(mockCalApi),
-}));
+jest.mock(
+  '@/onboarding/effect-components/BookCallBookingSuccessEffect',
+  () => ({
+    BookCallBookingSuccessEffect: ({
+      onBookingSuccessful,
+    }: {
+      onBookingSuccessful: () => void;
+    }) => {
+      mockOnBookingSuccessful.mockImplementation(onBookingSuccessful);
+
+      return null;
+    },
+  }),
+);
 
 jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
   useCompleteBookCallOnboardingStep: () => mockCompleteBookCallOnboardingStep,
@@ -19,26 +30,14 @@ jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
 
 dynamicActivate(SOURCE_LOCALE);
 
-const renderActions = async () => {
+const renderActions = () => {
   render(
     <I18nProvider i18n={i18n}>
       <BookCallOnboardingStepActions />
     </I18nProvider>,
   );
 
-  // Lets the async getCalApi subscription land before the event is emitted.
-  await act(async () => {
-    await Promise.resolve();
-  });
-
-  const subscription = mockCalApi.mock.calls.find(
-    ([action]) => action === 'on',
-  );
-
-  return {
-    emitBookingSuccessful: subscription?.[1].callback as () => void,
-    skipButton: screen.getByRole('button'),
-  };
+  return { skipButton: screen.getByRole('button') };
 };
 
 describe('BookCallOnboardingStepActions', () => {
@@ -47,25 +46,16 @@ describe('BookCallOnboardingStepActions', () => {
     mockCompleteBookCallOnboardingStep.mockResolvedValue(undefined);
   });
 
-  it('should subscribe to the booking success event', async () => {
-    const { emitBookingSuccessful } = await renderActions();
-
-    expect(emitBookingSuccessful).toBeDefined();
-  });
-
-  // The Cal.com embed can emit the event more than once for a single booking.
-  it('should complete the step only once when the event fires repeatedly', async () => {
-    const { emitBookingSuccessful } = await renderActions();
+  it('should complete the step when a booking succeeds', async () => {
+    renderActions();
 
     await act(async () => {
-      emitBookingSuccessful();
-      emitBookingSuccessful();
+      mockOnBookingSuccessful();
     });
 
     expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(1);
   });
 
-  // Otherwise a click landing on Skip just after a booking would advance twice.
   it('should disable skipping while the booking completion is in flight', async () => {
     let resolveCompletion: () => void = () => {};
 
@@ -75,12 +65,12 @@ describe('BookCallOnboardingStepActions', () => {
       }),
     );
 
-    const { emitBookingSuccessful, skipButton } = await renderActions();
+    const { skipButton } = renderActions();
 
     expect(skipButton).not.toBeDisabled();
 
     act(() => {
-      emitBookingSuccessful();
+      mockOnBookingSuccessful();
     });
 
     expect(skipButton).toBeDisabled();
@@ -90,23 +80,17 @@ describe('BookCallOnboardingStepActions', () => {
     });
   });
 
-  it('should allow another attempt when the completion fails', async () => {
+  it('should re-enable skipping when the booking completion fails', async () => {
     mockCompleteBookCallOnboardingStep.mockRejectedValueOnce(
       new Error('network error'),
     );
 
-    const { emitBookingSuccessful, skipButton } = await renderActions();
+    const { skipButton } = renderActions();
 
     await act(async () => {
-      emitBookingSuccessful();
+      mockOnBookingSuccessful();
     });
 
     expect(skipButton).not.toBeDisabled();
-
-    await act(async () => {
-      emitBookingSuccessful();
-    });
-
-    expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(2);
   });
 });

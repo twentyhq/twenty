@@ -5,8 +5,6 @@ import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCom
 
 type JotaiStore = ReturnType<typeof createStore>;
 
-// Resolves as soon as the enrichment request has an answer, or after the timeout so a
-// slow People Data Labs call can never hold the onboarding flow hostage.
 export const waitForCompanyEnrichmentSettlement = ({
   store,
   timeoutMs = COMPANY_ENRICHMENT_SETTLEMENT_TIMEOUT_MS,

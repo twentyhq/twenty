@@ -73,8 +73,6 @@ describe('useCompleteBookCallOnboardingStep', () => {
     jest.clearAllMocks();
   });
 
-  // The redirect engine tolerates /book-call while the status is PLAN_REQUIRED,
-  // so without an explicit navigation the user would be left on the booking page.
   it('should navigate to the plan step when a plan is still required', async () => {
     const { result } = renderCompleteHook({
       isBillingEnabled: true,

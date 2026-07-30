@@ -130,10 +130,6 @@ export class OnboardingService {
         workspace.id,
       );
 
-    // Booking a call is a pre-sale touchpoint. The enrichment that qualifies a lead
-    // resolves asynchronously, so it can land after the user has already moved on;
-    // ignoring the flag once the workspace has a subscription is what stops a late
-    // qualification from pulling a paying user back out of checkout.
     if (isBookCallPending && isPlanRequired) {
       return OnboardingStatus.BOOK_CALL;
     }
@@ -421,9 +417,6 @@ export class OnboardingService {
     },
     queryRunner?: QueryRunner,
   ) {
-    // Unlike the other steps this one keeps a `false` row instead of deleting it:
-    // the row's presence is what stops a later enrichment from re-opening a step
-    // the user already booked or skipped.
     await this.userVarsService.set(
       {
         userId,

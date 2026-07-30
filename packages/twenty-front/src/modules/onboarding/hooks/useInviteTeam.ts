@@ -143,8 +143,6 @@ export const useInviteTeam = () => {
         ),
       );
 
-      // Guards the whole submission, which the form's own isSubmitting does not cover
-      // on the skip path. isNavigating takes over once the step has advanced.
       setIsAdvancing(true);
 
       try {
@@ -171,10 +169,6 @@ export const useInviteTeam = () => {
           });
         }
 
-        // The book-a-call step comes next for a qualified lead, and the enrichment
-        // that decides that resolves asynchronously. Treating an unanswered
-        // enrichment as "not qualified" would skip the step for exactly the
-        // fast-moving leads it targets, so wait briefly for the answer.
         if (!isCompanyEnrichmentAnswered) {
           await waitForCompanyEnrichmentSettlement({ store });
         }

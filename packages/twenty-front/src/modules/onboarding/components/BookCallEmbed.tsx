@@ -17,9 +17,6 @@ export const BookCallEmbed = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const isMobile = useIsMobile();
 
-  // The workspace member holds the name entered at the profile step, which the user
-  // has necessarily been through by now. currentUser only ever carries the name given
-  // at sign-up, so it is empty for anyone who signed up with an email and password.
   const attendeeName = [
     currentWorkspaceMember?.name?.firstName ?? currentUser?.firstName,
     currentWorkspaceMember?.name?.lastName ?? currentUser?.lastName,

@@ -83,7 +83,6 @@ describe('useInviteTeam', () => {
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
   });
 
-  // Otherwise a fast lead is treated as unqualified and never sees the booking step.
   it('should wait for the enrichment answer while the fetch is still in flight', async () => {
     jotaiStore.set(isCompanyEnrichmentFetchInFlightState.atom, true);
 
@@ -141,8 +140,6 @@ describe('useInviteTeam', () => {
     });
   });
 
-  // The step has advanced and a redirect is pending, so the buttons must stay disabled
-  // rather than briefly inviting a second submission.
   it('should stay disabled after advancing', async () => {
     const { result } = renderInviteTeam();
 

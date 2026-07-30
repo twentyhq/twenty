@@ -141,8 +141,6 @@ describe('OnboardingService', () => {
       );
     });
 
-    // A late enrichment can arm the flag after checkout; honouring it then would drag
-    // a paying user off the payment-success screen and back to the booking page.
     it('should ignore a pending BOOK_CALL once the workspace has a subscription', async () => {
       mockOnboardingState({
         pendingSteps: [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING],

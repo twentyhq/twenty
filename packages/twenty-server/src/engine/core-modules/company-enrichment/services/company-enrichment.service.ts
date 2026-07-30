@@ -126,7 +126,6 @@ export class CompanyEnrichmentService {
     workspaceId: string;
     employeeCount: number | null;
   }): Promise<void> {
-    // Best-effort: a failure to flag the lead must never fail the enrichment itself.
     try {
       await this.onboardingService.setOnboardingBookCallPendingIfQualified({
         userId,

@@ -77,8 +77,6 @@ const getNextOnboardingStatus = ({
   if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL) {
     return statusAfterBookCall;
   }
-  // Advancing from the plan step must not assume the plan was paid for: falling through
-  // to COMPLETED here would let a caller wave the paywall through.
   if (currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED) {
     return statusAfterBookCall;
   }
@@ -95,9 +93,6 @@ export const useSetNextOnboardingStatus = () => {
     isOnboardingAiChatEnabledState,
   );
   return useCallback(() => {
-    // Read at call time, not render time: a caller may have awaited the company
-    // enrichment before advancing, and a value captured at render would still be the
-    // stale null that made us skip the book-a-call step.
     const isBookCallRequired = getIsBookCallRequired({
       companyEnrichment: store.get(companyEnrichmentState.atom),
       bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),

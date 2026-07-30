@@ -28,11 +28,6 @@ export const useCompleteBookCallOnboardingStep = () => {
     await completeBookCallOnboardingStepMutation();
     setNextOnboardingStatus();
 
-    // The redirect engine tolerates /book-call while the status is PLAN_REQUIRED
-    // so the plan page's "talk to us" link can land here, which means it will not
-    // move us off this page on its own once the step is done. Leaving is therefore
-    // explicit. The COMPLETED case needs no help: /book-call is an onboarding path,
-    // so the engine routes it onward.
     if (isPlanRequired) {
       navigate(AppPath.PlanRequired);
     }
