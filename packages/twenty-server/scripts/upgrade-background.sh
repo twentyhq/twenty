@@ -109,12 +109,6 @@ logs() {
   show_tail
 }
 
-status() {
-  is_running && { echo "Running (pid $(upgrade_pid))"; exit 0; }
-  echo "Not running, last run $(last_run)"
-  exit 1
-}
-
 stop() {
   is_running || { echo "Not running, nothing to stop" >&2; rm -f "$PID_FILE"; exit 1; }
   pid=$(upgrade_pid)
@@ -144,9 +138,8 @@ stop() {
 }
 
 case "${1:-}" in
-  start)  shift; start "$@" ;;
-  logs)   logs ;;
-  status) status ;;
-  stop)   shift; stop "$@" ;;
-  *) echo "usage: $0 {start [args]|logs|status|stop [--now|--force]}" >&2; exit 1 ;;
+  start) shift; start "$@" ;;
+  logs)  logs ;;
+  stop)  shift; stop "$@" ;;
+  *) echo "usage: $0 {start [args]|logs|stop [--now|--force]}" >&2; exit 1 ;;
 esac

@@ -170,14 +170,6 @@ Everything after `upgrade:background` is forwarded verbatim to `upgrade`, so it 
 
 `logs` is the only one you need to check on a run, because it reports what it found before streaming. If a run is alive it announces the pid and follows the log. If none is alive it prints how the last one ended and dumps the tail instead of following, so it always terminates rather than waiting on a log that will never grow again. That distinction cannot be made from the log alone: a workspace segment can run for many minutes without printing anything, so a silent log looks identical whether the run is grinding through a slow segment or was killed twenty minutes ago. Only the recorded pid answers it.
 
-The script also takes a `status` subcommand, which gives the same verdict in one line and exits. It has no yarn entry point because it is meant for scripts rather than people, and calling the script directly avoids both yarn's startup cost per poll and its requirement to be run from the package directory:
-
-```bash
-until ! /app/packages/twenty-server/scripts/upgrade-background.sh status > /dev/null; do sleep 30; done
-```
-
-It exits `0` while a run is alive and `1` once none is. Note that `1` means "not running", not "failed": a run that completed cleanly still exits `1`, because the code answers liveness and the outcome is in the text.
-
 `stop` has three tiers, deliberately three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, so a timer that escalated to `SIGKILL` on its own would defeat the graceful path entirely.
 
 | Invocation | Signal | Effect |
