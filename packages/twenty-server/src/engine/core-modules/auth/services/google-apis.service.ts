@@ -241,7 +241,7 @@ export class GoogleAPIsService {
               });
             }
 
-            if (wasArchived && existingMessageChannels.length > 0) {
+            if (wasArchived && isMessagingEnabled && isMessagingAvailable && existingMessageChannels.length > 0) {
               await transactionManager
                 .getRepository(MessageChannelEntity)
                 .update(
@@ -253,7 +253,7 @@ export class GoogleAPIsService {
                 );
             }
 
-            if (wasArchived && existingCalendarChannels.length > 0) {
+            if (wasArchived && isMessagingEnabled && isMessagingAvailable && existingCalendarChannels.length > 0) {
               await transactionManager
                 .getRepository(CalendarChannelEntity)
                 .update(
