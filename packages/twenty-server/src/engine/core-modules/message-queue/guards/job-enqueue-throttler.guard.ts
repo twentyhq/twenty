@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { getWorkspaceAuthContextOrUndefined } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
@@ -26,7 +26,10 @@ export class JobEnqueueThrottlerGuard {
   ) {}
 
   async assertCanEnqueueOrThrow(tokensToConsume = 1): Promise<void> {
-    const authContext = getWorkspaceAuthContextOrUndefined();
+    // Jobs are also enqueued outside any request scope (crons, workers, system
+    // tasks), where no auth context is set. Those enqueues are not application
+    // attributed and are never throttled.
+    const authContext = workspaceAuthContextStorage.getStore();
 
     if (!isDefined(authContext) || !isApplicationAuthContext(authContext)) {
       return;

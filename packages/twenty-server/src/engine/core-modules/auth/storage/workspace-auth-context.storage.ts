@@ -17,12 +17,6 @@ export const getWorkspaceAuthContext = (): WorkspaceAuthContext => {
   return context;
 };
 
-export const getWorkspaceAuthContextOrUndefined = ():
-  | WorkspaceAuthContext
-  | undefined => {
-  return workspaceAuthContextStorage.getStore();
-};
-
 export const withWorkspaceAuthContext = <T>(
   context: WorkspaceAuthContext,
   fn: () => T | Promise<T>,
