@@ -1,0 +1,117 @@
+name: Frozen Version Guard
+description: >
+  Validates that a version bump only freezes an upgrade command directory that
+  still matches the release tag it shipped as. Bumping TWENTY_CURRENT_VERSION
+  makes upgrade-mutation-guard stop allowing writes to the outgoing version's
+  directory, so anything that landed there after its release tag was cut gets
+  frozen into a version that never shipped it. Keyed on the constant changing,
+  not on a branch name, so a renamed bump branch cannot skip the check.
+
+inputs:
+  base_sha:
+    description: Commit to diff the working tree against.
+    required: true
+  allow_frozen_version_drift:
+    description: Skip the drift check (PR label bypass).
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch base commit
+      shell: bash
+      env:
+        BASE_SHA: ${{ inputs.base_sha }}
+      run: |
+        set -euo pipefail
+        if [ -z "$BASE_SHA" ]; then
+          echo "::error::base_sha input is empty"
+          exit 1
+        fi
+        git fetch --no-tags --depth=1 origin "$BASE_SHA"
+
+    - name: Check the frozen upgrade command directory still matches its release tag
+      if: ${{ inputs.allow_frozen_version_drift != 'true' }}
+      shell: bash
+      env:
+        BASE_SHA: ${{ inputs.base_sha }}
+        COMMANDS_ROOT: packages/twenty-server/src/database/commands/upgrade-version-command
+      run: |
+        set -euo pipefail
+        VERSION_CONSTANT_FILE="packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts"
+
+        extract_version() {
+          sed -n "s/.*TWENTY_CURRENT_VERSION = '\([0-9.]*\)'.*/\1/p"
+        }
+
+        HEAD_VERSION=$(extract_version < "$VERSION_CONSTANT_FILE")
+        BASE_VERSION=$(git show "$BASE_SHA:$VERSION_CONSTANT_FILE" | extract_version)
+
+        if [ -z "$HEAD_VERSION" ]; then
+          echo "::error::Could not extract TWENTY_CURRENT_VERSION from $VERSION_CONSTANT_FILE"
+          exit 1
+        fi
+
+        if [ -z "$BASE_VERSION" ]; then
+          echo "::error::Could not extract TWENTY_CURRENT_VERSION from $VERSION_CONSTANT_FILE at $BASE_SHA"
+          exit 1
+        fi
+
+        if [ "$BASE_VERSION" = "$HEAD_VERSION" ]; then
+          echo "TWENTY_CURRENT_VERSION is unchanged ($HEAD_VERSION): nothing is being frozen, no drift to check."
+          exit 0
+        fi
+
+        version_dir() {
+          echo "$1" | sed -E 's/^([0-9]+)\.([0-9]+)\..*/\1-\2/'
+        }
+
+        FROZEN_DIR=$(version_dir "$BASE_VERSION")
+        HEAD_DIR=$(version_dir "$HEAD_VERSION")
+        RELEASE_TAG="twenty/v$BASE_VERSION"
+        FROZEN_PATH="$COMMANDS_ROOT/$FROZEN_DIR"
+
+        # A patch bump stays inside the same command directory, so it keeps being the
+        # current one and nothing is frozen.
+        if [ "$FROZEN_DIR" = "$HEAD_DIR" ]; then
+          echo "Version bump $BASE_VERSION -> $HEAD_VERSION stays in $FROZEN_DIR: nothing is being frozen, no drift to check."
+          exit 0
+        fi
+
+        echo "Version bump: $BASE_VERSION -> $HEAD_VERSION"
+        echo "This freezes $FROZEN_PATH, which must still match what $RELEASE_TAG shipped."
+
+        if ! git fetch --no-tags --depth=1 origin "+refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"; then
+          echo "There is no $RELEASE_TAG tag, so nothing pins what $BASE_VERSION actually shipped"
+          echo "and the upgrade sequence frozen into $FROZEN_DIR cannot be verified against a release."
+          echo ""
+          echo "Cut the $RELEASE_TAG release tag first, then re-queue this bump."
+          echo "::error::Release tag $RELEASE_TAG does not exist; cut it before bumping past $BASE_VERSION."
+          exit 1
+        fi
+
+        DRIFT=$(git diff --name-status --find-renames "$RELEASE_TAG" "$BASE_SHA" -- "$FROZEN_PATH")
+
+        if [ -n "$DRIFT" ]; then
+          echo "This bump would freeze $FROZEN_DIR in a state that $RELEASE_TAG never shipped."
+          echo ""
+          echo "The following upgrade command files changed between $RELEASE_TAG and the tip of main:"
+          echo "$DRIFT" | sed 's/^/  - /'
+          echo ""
+          echo "$RELEASE_TAG is the image running in production for $BASE_VERSION, and it does not"
+          echo "contain these commands. Instances upgrading to $BASE_VERSION from that image will"
+          echo "never run them, while main would claim they belong to $BASE_VERSION forever: once"
+          echo "TWENTY_CURRENT_VERSION is $HEAD_VERSION, upgrade-mutation-guard freezes $FROZEN_DIR"
+          echo "and the sequence can no longer be corrected in place."
+          echo ""
+          echo "Either move these commands into the new current directory ($HEAD_DIR) so they ship"
+          echo "with the next release, or cut a patch release off main that includes them (patch-bump"
+          echo "the constant, tag it, deploy it) so the tag pinning $FROZEN_DIR agrees with it again."
+          echo ""
+          echo "If this is intentional, add the label 'ci:allow-frozen-version-drift' to the PR and re-run CI."
+          echo "::error::Version bump would freeze $FROZEN_DIR with commands that $RELEASE_TAG did not ship."
+          exit 1
+        fi
+
+        echo "$FROZEN_PATH is identical between $RELEASE_TAG and the tip of main: safe to freeze."

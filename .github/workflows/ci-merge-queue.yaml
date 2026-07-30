@@ -58,3 +58,54 @@ jobs:
         with:
           base_sha: ${{ github.event.merge_group.base_sha }}
           allow_previous_version_mutation: ${{ steps.labels.outputs.skip }}
+
+  # A version bump freezes the outgoing version's upgrade command directory: once
+  # TWENTY_CURRENT_VERSION moves, upgrade-mutation-guard stops allowing writes to
+  # the old one. Anything that landed there after its release tag was cut is not in
+  # the image running in production, so instances upgrading to that version never
+  # run those commands while main claims they belong to it.
+  #
+  # This only works in the merge queue. base_sha is main's real tip at the merge
+  # attempt, which is exactly the question being asked: has anything landed in the
+  # frozen directory since the tag, as of now? A PR-level run would diff the bump
+  # PR's own base and be stale by construction, reporting green while main moved on.
+  #
+  # Like the job above, this one always runs and reports a real success/failure so
+  # the required check never resolves to a skipped state, and the bypass label is
+  # resolved from the queued PR because merge_group carries no labels.
+  frozen-version-guard:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merge candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
+      - name: Resolve frozen-version-drift bypass label from the queued PR
+        id: labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.event.merge_group.head_ref }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER=$(echo "$HEAD_REF" | sed -n -E 's|.*/pr-([0-9]+)-[0-9a-f]+$|\1|p')
+
+          skip=false
+          if [ -n "$PR_NUMBER" ]; then
+            LABELS=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
+            echo "Queued PR #$PR_NUMBER labels:"
+            echo "$LABELS"
+
+            if echo "$LABELS" | grep -qxF 'ci:allow-frozen-version-drift'; then
+              skip=true
+            fi
+          else
+            echo "Could not parse a PR number from '$HEAD_REF'; enforcing strictly."
+          fi
+
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+      - name: Validate the frozen upgrade directory against its release tag
+        uses: ./.github/actions/frozen-version-guard
+        with:
+          base_sha: ${{ github.event.merge_group.base_sha }}
+          allow_frozen_version_drift: ${{ steps.labels.outputs.skip }}
