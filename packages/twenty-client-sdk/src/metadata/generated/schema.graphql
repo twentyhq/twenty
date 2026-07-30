@@ -2955,6 +2955,17 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type StartWorkspaceSetupChatResult {
+  outcome: WorkspaceSetupChatOutcome!
+  thread: AgentChatThread
+}
+
+enum WorkspaceSetupChatOutcome {
+  STARTED
+  ALREADY_STARTED
+  UNAVAILABLE
+}
+
 type AgentTurnEvaluation {
   id: UUID!
   turnId: UUID!
@@ -3542,6 +3553,7 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  startWorkspaceSetupChat(companyContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!

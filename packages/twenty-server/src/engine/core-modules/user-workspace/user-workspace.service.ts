@@ -72,6 +72,22 @@ export class UserWorkspaceService {
     return this.userWorkspaceRepository.findOne({ where: { id } });
   }
 
+  async isWorkspaceCreator({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
+    });
+
+    return earliestUserWorkspace?.userId === userId;
+  }
+
   async updateUserWorkspaceLocaleForUserWorkspace({
     locale,
     userWorkspaceId,
