@@ -143,43 +143,47 @@ export const useInviteTeam = () => {
         ),
       );
 
+      // Guards the whole submission, which the form's own isSubmitting does not cover
+      // on the skip path. isNavigating takes over once the step has advanced.
       setIsAdvancing(true);
 
-      const result = await sendInvitation({ emails });
+      try {
+        const result = await sendInvitation({ emails });
 
-      if (isDefined(result.error)) {
+        if (isDefined(result.error)) {
+          throw result.error;
+        }
+
+        const creditsRewardPerUser =
+          onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+
+        setOnboardingFreeCredits((current) => ({
+          ...current,
+          inviteTeam: emails.length * creditsRewardPerUser,
+        }));
+
+        if (emails.length > 0) {
+          enqueueSuccessSnackBar({
+            message: t`Invite link sent to email addresses`,
+            options: {
+              duration: 2000,
+            },
+          });
+        }
+
+        // The book-a-call step comes next for a qualified lead, and the enrichment
+        // that decides that resolves asynchronously. Treating an unanswered
+        // enrichment as "not qualified" would skip the step for exactly the
+        // fast-moving leads it targets, so wait briefly for the answer.
+        if (!isCompanyEnrichmentAnswered) {
+          await waitForCompanyEnrichmentSettlement({ store });
+        }
+
+        setNextOnboardingStatus();
+        setIsNavigating(true);
+      } finally {
         setIsAdvancing(false);
-
-        throw result.error;
       }
-
-      const creditsRewardPerUser =
-        onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        inviteTeam: emails.length * creditsRewardPerUser,
-      }));
-
-      if (emails.length > 0) {
-        enqueueSuccessSnackBar({
-          message: t`Invite link sent to email addresses`,
-          options: {
-            duration: 2000,
-          },
-        });
-      }
-
-      // The book-a-call step comes next for a qualified lead, and the enrichment that
-      // decides that resolves asynchronously. Treating an unanswered enrichment as
-      // "not qualified" would skip the step for exactly the fast-moving leads it
-      // targets, so wait briefly for the answer before advancing.
-      if (!isCompanyEnrichmentAnswered) {
-        await waitForCompanyEnrichmentSettlement({ store });
-      }
-
-      setNextOnboardingStatus();
-      setIsNavigating(true);
     },
     [
       enqueueSuccessSnackBar,

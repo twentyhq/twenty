@@ -139,6 +139,18 @@ describe('useInviteTeam', () => {
     });
   });
 
+  // The step has advanced and a redirect is pending, so the buttons must stay disabled
+  // rather than briefly inviting a second submission.
+  it('should stay disabled after advancing', async () => {
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      await result.current.handleSkip();
+    });
+
+    expect(result.current.isNavigating).toBe(true);
+  });
+
   it('should re-enable submission when sending the invitations fails', async () => {
     mockSendInvitation.mockResolvedValue({ error: new Error('network error') });
 
