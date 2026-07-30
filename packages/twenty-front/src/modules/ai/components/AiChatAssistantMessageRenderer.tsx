@@ -1,5 +1,6 @@
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
+import { AiChatPendingNextStepIndicator } from '@/ai/components/AiChatPendingNextStepIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -9,6 +10,7 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
+import { isMessagePartInProgress } from '@/ai/utils/isMessagePartInProgress';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
@@ -86,6 +88,11 @@ export const AiChatAssistantMessageRenderer = ({
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
+  const isAwaitingNextStep =
+    isLastMessageStreaming &&
+    !hasError &&
+    !messageParts.some(isMessagePartInProgress);
+
   if (!renderItems.length && !hasError) {
     return <AiChatInitialLoadingIndicator />;
   }
@@ -116,6 +123,7 @@ export const AiChatAssistantMessageRenderer = ({
             />
           ),
         )}
+        {isAwaitingNextStep && <AiChatPendingNextStepIndicator />}
       </StyledMessagePartsContainer>
     </div>
   );

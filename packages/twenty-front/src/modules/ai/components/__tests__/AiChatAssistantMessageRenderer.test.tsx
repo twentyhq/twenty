@@ -40,12 +40,21 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-const renderAssistantRenderer = (messageParts: ExtendedUIMessagePart[]) => {
+jest.mock('@/ai/components/AiChatPendingNextStepIndicator', () => ({
+  AiChatPendingNextStepIndicator: () => (
+    <div data-testid="pending-next-step-indicator" />
+  ),
+}));
+
+const renderAssistantRenderer = (
+  messageParts: ExtendedUIMessagePart[],
+  { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
+) => {
   return render(
     <ThemeProvider colorScheme="light">
       <AiChatAssistantMessageRenderer
         messageParts={messageParts}
-        isLastMessageStreaming={false}
+        isLastMessageStreaming={isLastMessageStreaming}
       />
     </ThemeProvider>,
   );
@@ -232,6 +241,86 @@ describe('AiChatAssistantMessageRenderer', () => {
       'Routing complete',
     );
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
+  });
+
+  it('should show the pending next step indicator when streaming pauses between steps', () => {
+    const messageParts = [
+      {
+        type: 'reasoning',
+        text: 'Reasoning content',
+        state: 'done',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(
+      screen.getByTestId('pending-next-step-indicator'),
+    ).toBeInTheDocument();
+  });
+
+  it('should not show the pending next step indicator while a tool call awaits its output', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        state: 'input-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
+  });
+
+  it('should not show the pending next step indicator while answer text streams', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Partial answer',
+        state: 'streaming',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
+  });
+
+  it('should not show the pending next step indicator when the message is not streaming', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+        state: 'done',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.queryByTestId('pending-next-step-indicator')).toBeNull();
   });
 
   it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {
