@@ -1251,6 +1251,10 @@ export interface BillingEndTrialPeriod {
     hasPaymentMethod: Scalars['Boolean']
     /** Billing portal URL for payment method update (returned when no payment method exists) */
     billingPortalUrl?: Scalars['String']
+    /** Updated current billing subscription */
+    currentBillingSubscription?: BillingSubscription
+    /** All billing subscriptions */
+    billingSubscriptions?: BillingSubscription[]
     __typename: 'BillingEndTrialPeriod'
 }
 
@@ -4413,6 +4417,10 @@ export interface BillingEndTrialPeriodGenqlSelection{
     hasPaymentMethod?: boolean | number
     /** Billing portal URL for payment method update (returned when no payment method exists) */
     billingPortalUrl?: boolean | number
+    /** Updated current billing subscription */
+    currentBillingSubscription?: BillingSubscriptionGenqlSelection
+    /** All billing subscriptions */
+    billingSubscriptions?: BillingSubscriptionGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
