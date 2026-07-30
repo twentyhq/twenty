@@ -32,6 +32,7 @@ import {
   UuidValueSchema,
 } from 'src/engine/core-modules/record-crud/zod-schemas/shared-value-defs.zod-schema';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
@@ -101,7 +102,16 @@ export const generateRecordPropertiesZodSchema = (
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
-  objectMetadata.fields.forEach((field) => {
+  objectMetadata.fields.forEach((rawField) => {
+    const effectiveField = resolveEffectiveEntity(rawField);
+    const standardOverrides = (rawField as Record<string, unknown>)
+      .standardOverrides as Record<string, unknown> | undefined;
+
+    const field = {
+      ...effectiveField,
+      ...standardOverrides,
+    };
+
     if (
       !isFieldAvailable(field, forResponse) ||
       field.type === FieldMetadataType.TS_VECTOR
