@@ -120,6 +120,17 @@ describe('ThinkingStepsDisplay', () => {
     expect(document.querySelector('svg[viewBox="0 0 14 14"]')).not.toBeNull();
   });
 
+  it('should render the loading label for a tool step awaiting its output while streaming', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart({ output: null })],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
   it('should render done state collapsed by default', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,

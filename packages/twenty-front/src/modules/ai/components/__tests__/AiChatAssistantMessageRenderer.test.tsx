@@ -40,12 +40,19 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-const renderAssistantRenderer = (messageParts: ExtendedUIMessagePart[]) => {
+jest.mock('@/ai/components/AiChatStreamingIndicator', () => ({
+  AiChatStreamingIndicator: () => <div data-testid="streaming-indicator" />,
+}));
+
+const renderAssistantRenderer = (
+  messageParts: ExtendedUIMessagePart[],
+  { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
+) => {
   return render(
     <ThemeProvider colorScheme="light">
       <AiChatAssistantMessageRenderer
         messageParts={messageParts}
-        isLastMessageStreaming={false}
+        isLastMessageStreaming={isLastMessageStreaming}
       />
     </ThemeProvider>,
   );
@@ -232,6 +239,63 @@ describe('AiChatAssistantMessageRenderer', () => {
       'Routing complete',
     );
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
+  });
+
+  it('should show the streaming indicator between two tool steps while streaming', () => {
+    const messageParts = [
+      {
+        type: 'reasoning',
+        text: 'Reasoning content',
+        state: 'done',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.getByTestId('streaming-indicator')).toBeInTheDocument();
+  });
+
+  it('should show the streaming indicator while a tool call awaits its output', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        state: 'input-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.getByTestId('streaming-indicator')).toBeInTheDocument();
+  });
+
+  it('should not show the streaming indicator when the message is not streaming', () => {
+    const messageParts = [
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+        state: 'done',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.queryByTestId('streaming-indicator')).toBeNull();
   });
 
   it('should group a dynamic-tool part (native web search) into ThinkingStepsDisplay', () => {

@@ -176,7 +176,7 @@ export const AiChatMessage = ({
       <StyledMessageContainer isUser={isUser}>
         <StyledMessageText isUser={isUser}>
           <AiChatAssistantMessageRenderer
-            isLastMessageStreaming={isLastMessageStreaming}
+            isLastMessageStreaming={isLastMessageStreaming && !isUser}
             messageParts={agentChatMessage.parts}
             hasError={shouldShowError}
           />

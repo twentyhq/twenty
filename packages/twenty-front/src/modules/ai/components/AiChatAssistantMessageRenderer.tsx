@@ -1,5 +1,6 @@
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
+import { AiChatStreamingIndicator } from '@/ai/components/AiChatStreamingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -86,6 +87,8 @@ export const AiChatAssistantMessageRenderer = ({
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
+  const shouldShowStreamingIndicator = isLastMessageStreaming && !hasError;
+
   if (!renderItems.length && !hasError) {
     return <AiChatInitialLoadingIndicator />;
   }
@@ -116,6 +119,7 @@ export const AiChatAssistantMessageRenderer = ({
             />
           ),
         )}
+        {shouldShowStreamingIndicator && <AiChatStreamingIndicator />}
       </StyledMessagePartsContainer>
     </div>
   );

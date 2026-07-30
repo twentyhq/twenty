@@ -14,6 +14,7 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
@@ -298,6 +299,13 @@ const ThinkingToolStepRow = ({
     { id: 'input', title: t`Input` },
   ];
 
+  const toolRowLabel = (
+    <OverflowingTextWithTooltip
+      text={displayMessage}
+      tooltipDelay={TooltipDelay.shortDelay}
+    />
+  );
+
   return (
     <StyledToolRowContainer>
       <StyledToolRowButton
@@ -317,10 +325,11 @@ const ThinkingToolStepRow = ({
         </StyledIconContainer>
         <StyledRowLabelContainer>
           <StyledToolRowLabel>
-            <OverflowingTextWithTooltip
-              text={displayMessage}
-              tooltipDelay={TooltipDelay.shortDelay}
-            />
+            {isActive ? (
+              <ShimmeringText>{toolRowLabel}</ShimmeringText>
+            ) : (
+              toolRowLabel
+            )}
           </StyledToolRowLabel>
           {isExpandable && (
             <StyledChevronContainer isExpanded={isExpanded}>
