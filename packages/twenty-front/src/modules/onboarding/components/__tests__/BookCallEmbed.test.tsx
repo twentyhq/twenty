@@ -91,4 +91,14 @@ describe('BookCallEmbed', () => {
 
     expect(config.name).toBe('');
   });
+
+  it('should render nothing rather than an empty embed without a booking page', () => {
+    render(
+      <JotaiProvider store={jotaiStore}>
+        <BookCallEmbed />
+      </JotaiProvider>,
+    );
+
+    expect(mockCalConfig).not.toHaveBeenCalled();
+  });
 });

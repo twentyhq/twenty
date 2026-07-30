@@ -8,6 +8,7 @@ import { BookCallOnboardingStepActions } from '@/onboarding/components/BookCallO
 
 const mockCompleteBookCallOnboardingStep = jest.fn();
 const mockOnBookingSuccessful = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock(
   '@/onboarding/effect-components/BookCallBookingSuccessEffect',
@@ -26,6 +27,10 @@ jest.mock(
 
 jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
   useCompleteBookCallOnboardingStep: () => mockCompleteBookCallOnboardingStep,
+}));
+
+jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -80,7 +85,7 @@ describe('BookCallOnboardingStepActions', () => {
     });
   });
 
-  it('should re-enable skipping when the booking completion fails', async () => {
+  it('should re-enable skipping and report the failure when the completion fails', async () => {
     mockCompleteBookCallOnboardingStep.mockRejectedValueOnce(
       new Error('network error'),
     );
@@ -92,5 +97,20 @@ describe('BookCallOnboardingStepActions', () => {
     });
 
     expect(skipButton).not.toBeDisabled();
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
+  });
+
+  it('should complete the step once when skipping right after a booking succeeded', async () => {
+    const { skipButton } = renderActions();
+
+    await act(async () => {
+      mockOnBookingSuccessful();
+    });
+
+    await act(async () => {
+      skipButton.click();
+    });
+
+    expect(mockCompleteBookCallOnboardingStep).toHaveBeenCalledTimes(1);
   });
 });

@@ -12,5 +12,6 @@ export const getIsBookCallRequired = ({
 }) =>
   isNonEmptyString(calendarBookingPageId) &&
   isNumber(bookCallMinEmployeeCount) &&
+  bookCallMinEmployeeCount > 0 &&
   isNumber(companyEnrichment?.employeeCount) &&
   companyEnrichment.employeeCount >= bookCallMinEmployeeCount;

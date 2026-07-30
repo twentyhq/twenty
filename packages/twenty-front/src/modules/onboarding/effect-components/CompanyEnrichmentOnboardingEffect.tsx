@@ -43,8 +43,10 @@ export const CompanyEnrichmentOnboardingEffect = () => {
       return;
     }
 
-    setHasAttemptedCompanyEnrichmentFetch(true);
+    // Raise the in-flight flag first: waitForCompanyEnrichmentSettlement reads
+    // an attempted-but-not-in-flight fetch as settled.
     setIsCompanyEnrichmentFetchInFlight(true);
+    setHasAttemptedCompanyEnrichmentFetch(true);
 
     const fetchCompanyEnrichment = async () => {
       try {
