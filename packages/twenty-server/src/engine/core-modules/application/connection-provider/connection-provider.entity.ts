@@ -39,7 +39,7 @@ export class ConnectionProviderEntity
   @Column({ nullable: true, type: 'varchar' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.25.0_AddLogoToConnectionProviderFastInstanceCommand_1785395073888',
+      '2.26.0_AddLogoToConnectionProviderFastInstanceCommand_1785395073888',
   })
   logo: string | null;
 
