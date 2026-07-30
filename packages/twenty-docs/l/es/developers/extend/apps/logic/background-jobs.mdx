@@ -28,7 +28,7 @@ await enqueueJob({
 });
 ```
 
-La función de destino recibe `payload` como su argumento de manejador, exactamente igual que cualquier otro disparador. Debe pertenecer a la **misma aplicación** que la que la llama: poner en cola la función de otra aplicación se rechaza con `Logic function not found`.
+La función de destino recibe `payload` como su argumento de manejador, exactamente igual que cualquier otro disparador. Debe pertenecer a la **misma aplicación** que realiza la llamada: poner en cola la función de otra aplicación se rechaza con `Logic function not found`.
 
 <Note>
 `enqueueJob` devuelve tan pronto como se acepta el trabajo, no cuando ya se ha ejecutado. No devuelve el resultado del destino: haz que el destino escriba lo que produce en el [almacenamiento de pares clave-valor](/l/es/developers/extend/apps/logic/key-value-store) o en un registro del espacio de trabajo si necesitas leerlo después.
@@ -36,10 +36,10 @@ La función de destino recibe `payload` como su argumento de manejador, exactame
 
 ## Opciones del trabajo
 
-| Opción       | Predeterminado | Rango                    | Qué hace                                                                                                                                |
-| ------------ | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`            | `0`–`10`                 | Intentos adicionales si la ejecución produce una excepción. Solo aumenta este valor para manejadores que sea seguro ejecutar dos veces. |
-| `delayMs`    | `0`            | `0`–`604800000` (7 días) | Espera este tiempo antes de que la ejecución sea elegible.                                                                              |
+| Opción       | Predeterminado | Rango                    | Qué hace                                                                                                                                                  |
+| ------------ | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`            | `0`–`10`                 | Intentos adicionales si la ejecución produce una excepción. Solo incrementa este valor para manejadores que se puedan ejecutar dos veces de forma segura. |
+| `delayMs`    | `0`            | `0`–`604800000` (7 días) | Espera este tiempo antes de que la ejecución sea elegible.                                                                                                |
 
 ```ts
 await enqueueJob({
@@ -54,7 +54,7 @@ await enqueueJob({
 **La prioridad todavía no es configurable.** Los trabajos encolados siempre se ejecutan con la prioridad más baja, para que el trabajo de la plataforma nunca se retrase por detrás de los trabajos de las aplicaciones. El control sobre la prioridad llegará pronto.
 </Note>
 
-La ejecución encolada hereda el usuario en acción de la función que la puso en cola, por lo que actúa con los mismos permisos.
+La ejecución encolada hereda el usuario activo de la función que la puso en cola, por lo que actúa con los mismos permisos.
 
 ## Úsalo: recorre por páginas una sincronización larga
 
@@ -92,7 +92,7 @@ export default defineLogicFunction({
 
 ## Dividir por registro
 
-Cuando el trabajo es de forma natural por elemento, pone en cola un trabajo por elemento y deja que los workers los procesen en paralelo en lugar de iterar en línea.
+Cuando el trabajo es de forma natural por elemento, pon en cola un trabajo por elemento y deja que los workers los procesen en paralelo en lugar de iterar en línea.
 
 ```ts
 const companies = await listCompaniesToEnrich();
@@ -108,7 +108,7 @@ await Promise.all(
 );
 ```
 
-## Buenas prácticas para trabajo de larga duración
+## Buenas prácticas para trabajos de larga duración
 
 Dos reglas cubren casi cualquier trabajo largo: **usa recursión en lugar de bucles** y **procesa un bloque acotado por ejecución**.
 
@@ -157,8 +157,8 @@ Por qué esto se mantiene bien:
 * **Dimensiona el bloque a partir del elemento más lento, no del promedio.** `CHUNK_SIZE × worst-case item time` tiene que caber en `timeoutSeconds` con margen de sobra, o la parte final de un bloque se pierde cuando se corta la ejecución.
 * **Haz que la condición de terminación sea explícita.** Haz recursión solo mientras haya vuelto un bloque completo. Una cadena que se detiene solo con "sin resultados" seguirá ejecutándose para siempre si la fuente alguna vez devuelve una página corta a mitad de camino.
 * **Guarda el progreso antes de poner en cola la siguiente ejecución**, de modo que un eslabón fallido se reinicie desde el último bloque completado en lugar de desde el principio.
-* **Mantén cada bloque idempotente.** Volver a procesar un bloque después de un reintento no debe escribir dos veces: haz escrituras clave en el registro o en el id externo que estés procesando.
-* **Prefiere una cadena por bloques en lugar de una expansión masiva** cuando el trabajo golpea a un tercero con límite de velocidad: una cadena con `delayMs` se autorregula, mientras que miles de trabajos encolados a la vez se vuelven elegibles inmediatamente.
+* **Mantén cada bloque idempotente.** Volver a procesar un bloque después de un reintento no debe escribir dos veces — indexa las escrituras por el registro o el id externo que estés procesando.
+* **Prefiere una cadena por bloques en lugar de una expansión masiva** cuando el trabajo interactúa con un tercero con limitación de tasa: una cadena con `delayMs` se autorregula, mientras que miles de trabajos encolados a la vez se vuelven elegibles de inmediato.
 
 <Warning>
 Los reintentos vuelven a ejecutar todo el manejador. Mantén los manejadores encolados idempotentes antes de establecer `retryLimit` por encima de `0`.
