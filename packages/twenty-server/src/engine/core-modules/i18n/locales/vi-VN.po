@@ -9648,6 +9648,11 @@ msgstr "Các thay đổi đối với lược đồ không gian làm việc tạ
 msgid "Workspace schema not found."
 msgstr "Không tìm thấy lược đồ không gian làm việc."
 
+#. js-lingui-id: 2gzz0t
+#: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
+msgid "Workspace setup"
+msgstr ""
+
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
