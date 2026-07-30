@@ -144,70 +144,45 @@ Expect the first Ctrl+C to look like it did nothing while a long step is running
 
 ### Running detached
 
-A foreground `upgrade` is a child of the shell it was started from, so anything that drops that shell kills the run: a `kubectl exec` session losing its SSM tunnel, a closed laptop, an expired VPN. `scripts/upgrade-background.sh` puts the run in its own session with no controlling terminal and streams its output from a log file instead, so the run survives the disconnect and can be re-attached from a new shell.
-
-Use it for any long upgrade started over `kubectl exec` or SSH. A foreground run is still the right thing locally, or in CI where the parent process is stable.
+A foreground `upgrade` dies with the shell that started it, so a dropped `kubectl exec` tunnel, a closed laptop or an expired VPN kills the run. `scripts/upgrade-background.sh` gives it its own session with no controlling terminal and streams the output from a log file instead. Use it for long upgrades over `kubectl exec` or SSH; foreground is still right locally and in CI.
 
 ```bash
 yarn upgrade:background [args]   # start detached, then stream the log
 yarn upgrade:background:logs     # re-attach from another shell
-yarn upgrade:background:stop     # graceful stop; --now for immediate, --force for SIGKILL
+yarn upgrade:background:stop     # graceful stop; --now immediate, --force SIGKILL
 ```
 
-`upgrade:background` refuses to start when it can see a run already in flight. Ctrl+C on the log stream detaches the stream only, the run keeps going, and `logs` supports any number of concurrent readers.
+`[args]` is forwarded verbatim to `upgrade`: `-d/--dry-run`, `-v/--verbose`, `-w/--workspace-id <id>` (repeatable), `--start-from-workspace-id <id>`, `--workspace-count-limit <n>`. The two workspace selectors are mutually exclusive. `--include-slow` is not among them, it belongs to `run-instance-commands`.
 
-Everything after `upgrade:background` is forwarded verbatim to `upgrade`, so it takes that command's options and no others:
+Ctrl+C detaches the stream only, and `logs` takes any number of concurrent readers. `logs` reports whether a run is alive before streaming, and on a finished one prints the verdict and the log tail rather than following a log that will never grow again: a segment can run for minutes without printing, so a silent log alone cannot tell a slow step from a dead process.
 
-| Option | Effect |
-| --- | --- |
-| `-d`, `--dry-run` | simulate without making changes |
-| `-v`, `--verbose` | verbose output |
-| `-w`, `--workspace-id <id>` | restrict to a workspace, repeatable; all provisioned workspaces if omitted |
-| `--start-from-workspace-id <id>` | resume from a workspace, ascending id order |
-| `--workspace-count-limit <n>` | process at most n workspaces, ascending id order |
-
-`-w` and `--start-from-workspace-id` are mutually exclusive and `upgrade` rejects the combination. Note that `--include-slow` is **not** one of these: it belongs to `run-instance-commands`, which the upgrade pipeline invokes itself.
-
-`logs` is the only one you need to check on a run, because it reports what it found before streaming. If a run is alive it announces the pid and follows the log. If none is alive it prints how the last one ended and dumps the tail instead of following, so it always terminates rather than waiting on a log that will never grow again. That distinction cannot be made from the log alone: a workspace segment can run for many minutes without printing anything, so a silent log looks identical whether the run is grinding through a slow segment or was killed twenty minutes ago. Only the recorded pid answers it.
-
-`stop` has three tiers, deliberately three explicit invocations with no timed escalation between them: a single workspace segment can take many minutes, so a timer that escalated to `SIGKILL` on its own would defeat the graceful path entirely.
+`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code.
 
 | Invocation | Signal | Effect |
 | --- | --- | --- |
 | `stop` | one `SIGTERM` | stops at the next boundary, exit `143` |
 | `stop --now` | two spaced `SIGTERM`s | immediate exit, step in progress left unfinished |
-| `stop --force` | `SIGKILL` | no graceful boundary, a multi-transaction command may leave partial work |
+| `stop --force` | `SIGKILL` | no boundary, a multi-transaction command may leave partial work |
 
-Every tier prints the tail of the log after signalling, so you can see which workspace and step the run was on without a second command. The plain `stop` waits a moment first, long enough for the runner's "finishing the step in progress" acknowledgement to reach the log, which is the confirmation that the signal was received and is being honoured rather than ignored.
-
-Only the node process is signalled, never the process group. A group signal would also hit the wrapper shell, killing the process that records the exit code and tearing down node's parent while it is trying to finish its segment.
-
-#### Reading the outcome
-
-The wrapper outlives node and appends an `EXIT=<code>` line to the log, which is what `logs` and `status` translate:
+The wrapper outlives node and appends an `EXIT=<code>` line, which is what `logs` translates:
 
 | Log | Meaning |
 | --- | --- |
 | `EXIT=0` | completed |
-| `EXIT=130` | graceful stop on `SIGINT` |
-| `EXIT=143` | graceful stop on `SIGTERM`, what `stop` and `stop --now` produce |
-| `EXIT=137` | `SIGKILL`ed, what `stop --force` produces, and what an OOM kill looks like |
-| any other `EXIT=` | the upgrade failed |
-| no `EXIT=` line | the wrapper died too, so the run was killed without any graceful stop (pod replaced, container restarted, host lost) |
+| `EXIT=130` / `EXIT=143` | graceful stop on `SIGINT` / `SIGTERM` |
+| `EXIT=137` | `SIGKILL`ed, from `stop --force` or an OOM kill |
+| any other `EXIT=` | failed |
+| no `EXIT=` line | killed without a graceful stop, wrapper included (pod replaced, host lost) |
 
-A graceful stop is always safe to rerun: nothing is rolled back, and the rerun resumes from the last command recorded in `upgradeMigration`, with each workspace either fully done with its segment or untouched. Rerunning after a forced kill or a lost pod is safe too, but only because upgrade commands are idempotent, since a command interrupted mid-flight may have left partial work.
+A graceful stop is always safe to rerun: nothing is rolled back and the run resumes from the last command recorded in `upgradeMigration`, each workspace either fully done with its segment or untouched. Rerunning after a forced kill relies on commands being idempotent.
 
-#### Limits of this mode
+Limits of this mode:
 
-Ctrl+C cannot reach a detached run at all: it has its own session and no controlling terminal, so no terminal can send it `SIGINT`. `upgrade:background:stop` is the only graceful entry point here, and the `130` exit code only ever shows up on foreground runs.
-
-The log and PID files live in `/tmp` inside the container (override with `TWENTY_UPGRADE_LOG_FILE` and `TWENTY_UPGRADE_PID_FILE`). Both are lost if the pod is replaced, along with the run itself.
-
-That also bounds what the refusal above is worth. It keeps one pod's bookkeeping straight, one PID file and one log per run, and nothing more: a second pod, or a laptop pointed at the same database, sees none of it. Nothing in `upgrade` itself prevents two sequences running at once either. `upgradeMigration` records only `completed` and `failed`, so it has no in-progress state to lock against, and there is no advisory lock in the sequence runner. Two concurrent runs would each do the work before one of them lost the race to record it and failed on a unique-index violation. Treat "only one upgrade at a time" as an operational rule, not something the tooling enforces.
-
-Detaching needs `setsid`, which is what puts the run in its own session. The runtime image has it (busybox provides the applet) and so does any Linux host, but macOS does not ship it, so `upgrade:background` refuses to start there and points you at the foreground command. That is no real loss, since a local run has no connection to drop in the first place.
-
-Kubernetes cannot stop a detached run gracefully either, and `terminationGracePeriodSeconds` is not the lever it looks like. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion it exits immediately and the detached node process is torn down without ever receiving `SIGTERM`, however long the grace period is. Graceful shutdown on eviction only applies when node is the container's main process, which is the foreground case, not this one.
+- Ctrl+C cannot reach a detached run, so `stop` is the only graceful entry point and `130` only ever appears on foreground runs.
+- Log and PID files live in `/tmp` in the container (`TWENTY_UPGRADE_LOG_FILE`, `TWENTY_UPGRADE_PID_FILE`) and are lost with the pod.
+- The start refusal only sees this container. Nothing in `upgrade` prevents two concurrent sequences either: `upgradeMigration` has no in-progress state and the sequence runner takes no advisory lock. One upgrade at a time is an operational rule, not an enforced one.
+- Needs `setsid`, present in the runtime image and on Linux, absent on macOS where `start` refuses and points at the foreground command.
+- `terminationGracePeriodSeconds` does not apply. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion the detached process is torn down without ever receiving `SIGTERM`.
 
 ## Shipping a command for a future version (deferred drops)
 
