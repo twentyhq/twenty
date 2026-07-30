@@ -281,6 +281,13 @@ const MyProfile = () => {
               </Field>
             </div>
           </div>
+          <Field label="Regions served">
+            <ChipMultiSelect
+              value={form.region}
+              options={options.region}
+              onChange={(value) => set('region', value)}
+            />
+          </Field>
         </Section>
 
         <Section title="Links">

@@ -10,6 +10,7 @@ export type ProfilePayload = {
   city: string | null;
   country: string | null;
   languagesSpoken: string[] | null;
+  region: string[] | null;
   partnerScope: string[] | null;
   skills: string[] | null;
   typeOfTeam: string | null;
@@ -24,6 +25,7 @@ export type ProfilePayload = {
 export type ProfileOptions = {
   country: SelectOption[];
   languagesSpoken: SelectOption[];
+  region: SelectOption[];
   partnerScope: SelectOption[];
   typeOfTeam: SelectOption[];
   availability: SelectOption[];
@@ -41,6 +43,7 @@ export type ProfileForm = {
   partnerScope: string[];
   skills: string[];
   languagesSpoken: string[];
+  region: string[];
   country: string;
   city: string;
   website: string;
@@ -65,6 +68,7 @@ export const toProfileForm = (profile: ProfilePayload): ProfileForm => ({
   partnerScope: profile.partnerScope ?? [],
   skills: profile.skills ?? [],
   languagesSpoken: profile.languagesSpoken ?? [],
+  region: profile.region ?? [],
   country: profile.country ?? '',
   city: profile.city ?? '',
   website: profile.website ?? '',
@@ -83,6 +87,7 @@ export const toSaveBody = (form: ProfileForm): Record<string, unknown> => ({
   introduction: form.introduction,
   city: form.city,
   languagesSpoken: form.languagesSpoken,
+  region: form.region,
   partnerScope: form.partnerScope,
   skills: form.skills,
   website: form.website,
