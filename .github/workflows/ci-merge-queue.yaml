@@ -59,20 +59,6 @@ jobs:
           base_sha: ${{ github.event.merge_group.base_sha }}
           allow_previous_version_mutation: ${{ steps.labels.outputs.skip }}
 
-  # A version bump freezes the outgoing version's upgrade command directory: once
-  # TWENTY_CURRENT_VERSION moves, upgrade-mutation-guard stops allowing writes to
-  # the old one. Anything that landed there after its release tag was cut is not in
-  # the image running in production, so instances upgrading to that version never
-  # run those commands while main claims they belong to it.
-  #
-  # This only works in the merge queue. base_sha is main's real tip at the merge
-  # attempt, which is exactly the question being asked: has anything landed in the
-  # frozen directory since the tag, as of now? A PR-level run would diff the bump
-  # PR's own base and be stale by construction, reporting green while main moved on.
-  #
-  # Like the job above, this one always runs and reports a real success/failure so
-  # the required check never resolves to a skipped state, and the bypass label is
-  # resolved from the queued PR because merge_group carries no labels.
   frozen-version-guard:
     timeout-minutes: 5
     runs-on: ubuntu-latest

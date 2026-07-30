@@ -72,8 +72,6 @@ runs:
         RELEASE_TAG="twenty/v$BASE_VERSION"
         FROZEN_PATH="$COMMANDS_ROOT/$FROZEN_DIR"
 
-        # A patch bump stays inside the same command directory, so it keeps being the
-        # current one and nothing is frozen.
         if [ "$FROZEN_DIR" = "$HEAD_DIR" ]; then
           echo "Version bump $BASE_VERSION -> $HEAD_VERSION stays in $FROZEN_DIR: nothing is being frozen, no drift to check."
           exit 0
@@ -91,10 +89,6 @@ runs:
           exit 1
         fi
 
-        # Diffed against the merge candidate, not base_sha: the candidate is base_sha
-        # plus the bump itself, so this catches drift already on main and drift the bump
-        # PR introduces, and it lets the fix (moving commands into the new current
-        # directory) land in the bump PR and clear the check.
         DRIFT=$(git diff --name-status --find-renames "$RELEASE_TAG" HEAD -- "$FROZEN_PATH")
 
         if [ -n "$DRIFT" ]; then
