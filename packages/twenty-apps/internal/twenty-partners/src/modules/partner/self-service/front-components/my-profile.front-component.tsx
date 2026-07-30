@@ -17,61 +17,19 @@ import {
   TagInput,
   TextInput,
   UrlInput,
-  type SelectOption,
 } from './my-profile/form-fields';
-
-type Currency = { amountMicros: number | null; currencyCode: string | null } | null;
-
-type ProfilePayload = {
-  id: string;
-  name: string | null;
-  profilePictureUrl: string | null;
-  introduction: string | null;
-  city: string | null;
-  country: string | null;
-  languagesSpoken: string[] | null;
-  partnerScope: string[] | null;
-  skills: string[] | null;
-  typeOfTeam: string | null;
-  availability: string | null;
-  hourlyRate: Currency;
-  projectBudgetMin: Currency;
-  website: string | null;
-  linkedin: string | null;
-  calendarLink: string | null;
-};
-
-type ProfileOptions = {
-  country: SelectOption[];
-  languagesSpoken: SelectOption[];
-  partnerScope: SelectOption[];
-  typeOfTeam: SelectOption[];
-  availability: SelectOption[];
-};
+import {
+  toProfileForm,
+  toSaveBody,
+  type ProfileForm,
+  type ProfileOptions,
+  type ProfilePayload,
+} from './my-profile/profile-form';
 
 type LoadResult =
   | { ok: true; profile: ProfilePayload; options: ProfileOptions }
   | { ok: false; reason: string };
 type SaveResult = { ok: true } | { ok: false; reason: string };
-
-type MoneyField = { amount: number | null; currencyCode: string };
-
-type ProfileForm = {
-  name: string;
-  introduction: string;
-  availability: string;
-  typeOfTeam: string;
-  hourlyRate: MoneyField;
-  projectBudgetMin: MoneyField;
-  partnerScope: string[];
-  skills: string[];
-  languagesSpoken: string[];
-  country: string;
-  city: string;
-  website: string;
-  linkedin: string;
-  calendarLink: string;
-};
 
 const SKILL_SUGGESTIONS = [
   'Migrations',
@@ -89,53 +47,6 @@ const SKILL_SUGGESTIONS = [
   'Training',
   'Custom development',
 ];
-
-const MICROS = 1_000_000;
-
-const toMoneyField = (value: Currency): MoneyField => ({
-  amount: value?.amountMicros != null ? value.amountMicros / MICROS : null,
-  currencyCode: value?.currencyCode ?? 'USD',
-});
-
-const toProfileForm = (profile: ProfilePayload): ProfileForm => ({
-  name: profile.name ?? '',
-  introduction: profile.introduction ?? '',
-  availability: profile.availability ?? '',
-  typeOfTeam: profile.typeOfTeam ?? '',
-  hourlyRate: toMoneyField(profile.hourlyRate),
-  projectBudgetMin: toMoneyField(profile.projectBudgetMin),
-  partnerScope: profile.partnerScope ?? [],
-  skills: profile.skills ?? [],
-  languagesSpoken: profile.languagesSpoken ?? [],
-  country: profile.country ?? '',
-  city: profile.city ?? '',
-  website: profile.website ?? '',
-  linkedin: profile.linkedin ?? '',
-  calendarLink: profile.calendarLink ?? '',
-});
-
-const toMicros = (money: MoneyField) =>
-  money.amount == null
-    ? null
-    : { amountMicros: Math.round(money.amount * MICROS), currencyCode: money.currencyCode || 'USD' };
-
-// Enum/country selectors send null (not '') when reset to blank so the field clears.
-const toSaveBody = (form: ProfileForm): Record<string, unknown> => ({
-  name: form.name,
-  introduction: form.introduction,
-  city: form.city,
-  languagesSpoken: form.languagesSpoken,
-  partnerScope: form.partnerScope,
-  skills: form.skills,
-  website: form.website,
-  linkedin: form.linkedin,
-  calendarLink: form.calendarLink,
-  hourlyRate: toMicros(form.hourlyRate),
-  projectBudgetMin: toMicros(form.projectBudgetMin),
-  availability: form.availability === '' ? null : form.availability,
-  typeOfTeam: form.typeOfTeam === '' ? null : form.typeOfTeam,
-  country: form.country === '' ? null : form.country,
-});
 
 const styles = {
   root: {
