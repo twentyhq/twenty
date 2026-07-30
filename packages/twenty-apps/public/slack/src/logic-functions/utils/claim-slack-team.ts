@@ -2,6 +2,7 @@ import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
+import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
 type ClaimSlackTeamArgs = {
@@ -31,8 +32,11 @@ export const claimSlackTeam = async ({
     throw new Error('Slack auth.test returned no team_id to claim');
   }
 
-  // TODO: release the claim on disconnect once connection providers expose an onDisconnect hook.
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
+
+  // The connection is already gone by the time the onDisconnect hook runs, so
+  // the team it claimed has to be resolvable from the connectedAccountId alone.
+  await kv.set(getSlackConnectedAccountTeamKvKey(connectedAccountId), teamId);
 
   return { ok: true, teamId };
 };

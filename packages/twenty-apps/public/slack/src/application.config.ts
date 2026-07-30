@@ -1,6 +1,9 @@
 import { defineApplication } from 'twenty-sdk/define';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  SLACK_APP_UNINSTALL_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -14,6 +17,9 @@ export default defineApplication({
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+  uninstallLogicFunction: {
+    universalIdentifier: SLACK_APP_UNINSTALL_UNIVERSAL_IDENTIFIER,
+  },
   serverVariables: {
     SLACK_CLIENT_ID: {
       description:
