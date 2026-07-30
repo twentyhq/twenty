@@ -112,9 +112,11 @@ describe('OnboardingService', () => {
     const mockOnboardingState = ({
       pendingSteps,
       isPlanRequired,
+      isBookCallStepConfigured = true,
     }: {
       pendingSteps: OnboardingStepKeys[];
       isPlanRequired: boolean;
+      isBookCallStepConfigured?: boolean;
     }) => {
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({
         id: workspaceId,
@@ -128,6 +130,17 @@ describe('OnboardingService', () => {
       jest
         .spyOn(billingService, 'isSubscriptionIncompleteOnboardingStatus')
         .mockResolvedValue(isPlanRequired);
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          if (!isBookCallStepConfigured) {
+            return undefined as never;
+          }
+
+          return (
+            key === 'CALENDAR_BOOKING_PAGE_ID' ? 'team/twenty/talk-to-us' : 50
+          ) as never;
+        });
     };
 
     it('should return BOOK_CALL when the step is pending and a plan is still required', async () => {
@@ -149,6 +162,18 @@ describe('OnboardingService', () => {
 
       expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
         OnboardingStatus.COMPLETED,
+      );
+    });
+
+    it('should ignore a pending BOOK_CALL once the booking page is unconfigured', async () => {
+      mockOnboardingState({
+        pendingSteps: [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING],
+        isPlanRequired: true,
+        isBookCallStepConfigured: false,
+      });
+
+      expect(await service.getOnboardingStatus({ user, workspaceId })).toBe(
+        OnboardingStatus.PLAN_REQUIRED,
       );
     });
 
@@ -386,12 +411,12 @@ describe('OnboardingService', () => {
         );
     };
 
-    it('should not re-flag the step once it has already been evaluated', async () => {
+    it('should not offer the step twice', async () => {
       mockConfig({
         calendarBookingPageId: 'team/twenty/talk-to-us',
         minEmployeeCount: 50,
       });
-      jest.spyOn(userVarsService, 'get').mockResolvedValue(false);
+      jest.spyOn(userVarsService, 'get').mockResolvedValue(true);
 
       await service.setOnboardingBookCallPendingIfQualified({
         userId,
@@ -399,26 +424,68 @@ describe('OnboardingService', () => {
         employeeCount: 320,
       });
 
+      expect(userVarsService.get).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+      });
       expect(userVarsService.set).not.toHaveBeenCalled();
     });
 
-    it('should keep a false record when the step is completed so it cannot reopen', async () => {
+    it('should record the offer so a later enrichment cannot reopen the step', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 320,
+      });
+
+      expect(userVarsService.set).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+        value: true,
+      });
+    });
+
+    it('should not throw when the user vars are unavailable', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 50,
+      });
+      jest
+        .spyOn(userVarsService, 'get')
+        .mockRejectedValue(new Error('user vars down'));
+
+      await expect(
+        service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount: 320,
+        }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should clear the pending var when the step is completed', async () => {
       await service.setOnboardingBookCallPending({
         userId,
         workspaceId,
         value: false,
       });
 
-      expect(userVarsService.set).toHaveBeenCalledWith(
+      expect(userVarsService.delete).toHaveBeenCalledWith(
         {
           userId,
           workspaceId,
           key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-          value: false,
         },
         undefined,
       );
-      expect(userVarsService.delete).not.toHaveBeenCalled();
+      expect(userVarsService.set).not.toHaveBeenCalled();
     });
 
     it.each([50, 51])(
@@ -479,6 +546,21 @@ describe('OnboardingService', () => {
 
     it('should not flag the step when no threshold is configured', async () => {
       mockConfig({ calendarBookingPageId: 'team/twenty/talk-to-us' });
+
+      await service.setOnboardingBookCallPendingIfQualified({
+        userId,
+        workspaceId,
+        employeeCount: 5000,
+      });
+
+      expect(userVarsService.set).not.toHaveBeenCalled();
+    });
+
+    it('should treat a zero threshold as unconfigured', async () => {
+      mockConfig({
+        calendarBookingPageId: 'team/twenty/talk-to-us',
+        minEmployeeCount: 0,
+      });
 
       await service.setOnboardingBookCallPendingIfQualified({
         userId,

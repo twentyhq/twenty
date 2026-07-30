@@ -15,12 +15,13 @@ import { type PeopleDataLabsCompanyEnrichResult } from 'src/engine/core-modules/
 import { toWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-company-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { getBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/get-book-call-step-min-employee-count.util';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
@@ -33,7 +34,7 @@ export class CompanyEnrichmentService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly peopleDataLabsCompanyClientService: PeopleDataLabsCompanyClientService,
-    private readonly onboardingService: OnboardingService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentAttemptKeyValueTypeMap>,
   ) {}
@@ -47,6 +48,10 @@ export class CompanyEnrichmentService {
     email: string;
     workspaceId: string;
   }): Promise<WorkspaceCompanyEnrichmentResult> {
+    if (!this.hasEnrichmentConsumer()) {
+      return { outcome: 'unavailable', enrichment: null };
+    }
+
     const isWorkspaceCreator =
       await this.userWorkspaceService.isWorkspaceCreator({
         userId,
@@ -97,45 +102,30 @@ export class CompanyEnrichmentService {
       domain,
     });
 
-    await Promise.all([
-      // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
-      result.outcome === 'skipped'
-        ? undefined
-        : this.recordEnrichmentAttempt({ workspaceId, domain, result }),
-      enrichmentResult.outcome === 'matched'
-        ? this.qualifyForBookCallOnboardingStep({
-            userId,
-            workspaceId,
-            employeeCount: enrichmentResult.enrichment.employeeCount,
-          })
-        : undefined,
-    ]);
+    // 'skipped' means the feature is disabled (no API key); don't persist the domain in that case.
+    if (result.outcome !== 'skipped') {
+      await this.recordEnrichmentAttempt({ workspaceId, domain, result });
+    }
 
     return enrichmentResult;
   }
 
-  private async qualifyForBookCallOnboardingStep({
-    userId,
-    workspaceId,
-    employeeCount,
-  }: {
-    userId: string;
-    workspaceId: string;
-    employeeCount: number | null;
-  }): Promise<void> {
-    try {
-      await this.onboardingService.setOnboardingBookCallPendingIfQualified({
-        userId,
-        workspaceId,
-        employeeCount,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to flag the book-call onboarding step for workspace ${workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
+  // The enrichment is only ever read by the AI-chat workspace setup and the
+  // book-a-call onboarding step, so calling a paid API without either is waste.
+  private hasEnrichmentConsumer(): boolean {
+    return (
+      this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED') ||
+      isDefined(
+        getBookCallStepMinEmployeeCount({
+          calendarBookingPageId: this.twentyConfigService.get(
+            'CALENDAR_BOOKING_PAGE_ID',
+          ),
+          minEmployeeCount: this.twentyConfigService.get(
+            'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+          ),
+        }),
+      )
+    );
   }
 
   private resolveEnrichmentResult({

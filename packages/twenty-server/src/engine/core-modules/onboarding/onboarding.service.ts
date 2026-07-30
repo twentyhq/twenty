@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
@@ -17,6 +17,7 @@ import {
   INSTALL_ONBOARDING_APPS_JOB_NAME,
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
+import { getBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/get-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -29,6 +30,7 @@ export enum OnboardingStepKeys {
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
+  ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
 }
 
 export type OnboardingKeyValueTypeMap = {
@@ -37,6 +39,7 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
 };
 
 @Injectable()
@@ -130,7 +133,11 @@ export class OnboardingService {
         workspace.id,
       );
 
-    if (isBookCallPending && isPlanRequired) {
+    if (
+      isBookCallPending &&
+      isPlanRequired &&
+      isDefined(this.getBookCallStepMinEmployeeCount())
+    ) {
       return OnboardingStatus.BOOK_CALL;
     }
 
@@ -405,6 +412,17 @@ export class OnboardingService {
     );
   }
 
+  private getBookCallStepMinEmployeeCount(): number | null {
+    return getBookCallStepMinEmployeeCount({
+      calendarBookingPageId: this.twentyConfigService.get(
+        'CALENDAR_BOOKING_PAGE_ID',
+      ),
+      minEmployeeCount: this.twentyConfigService.get(
+        'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+      ),
+    });
+  }
+
   async setOnboardingBookCallPending(
     {
       userId,
@@ -417,17 +435,32 @@ export class OnboardingService {
     },
     queryRunner?: QueryRunner,
   ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
     await this.userVarsService.set(
       {
         userId,
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-        value,
+        value: true,
       },
       queryRunner,
     );
   }
 
+  // Best-effort: a lead that cannot be flagged still onboards, it just goes
+  // straight to the plan step.
   async setOnboardingBookCallPendingIfQualified({
     userId,
     workspaceId,
@@ -437,39 +470,46 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
-    const calendarBookingPageId = this.twentyConfigService.get(
-      'CALENDAR_BOOKING_PAGE_ID',
-    );
-    const minEmployeeCount = this.twentyConfigService.get(
-      'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
-    );
+    const minEmployeeCount = this.getBookCallStepMinEmployeeCount();
 
     if (
-      !isNonEmptyString(calendarBookingPageId) ||
-      !isNumber(minEmployeeCount) ||
+      !isDefined(minEmployeeCount) ||
       !isNumber(employeeCount) ||
       employeeCount < minEmployeeCount
     ) {
       return;
     }
 
-    const hasAlreadyBeenEvaluated = isDefined(
-      await this.userVarsService.get({
+    try {
+      const hasAlreadyBeenOffered =
+        (await this.userVarsService.get({
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+        })) === true;
+
+      if (hasAlreadyBeenOffered) {
+        return;
+      }
+
+      await this.userVarsService.set({
         userId,
         workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
-      }),
-    );
+        key: OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED,
+        value: true,
+      });
 
-    if (hasAlreadyBeenEvaluated) {
-      return;
+      await this.setOnboardingBookCallPending({
+        userId,
+        workspaceId,
+        value: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to flag the book-call onboarding step for workspace ${workspaceId}`,
+        error,
+      );
     }
-
-    await this.setOnboardingBookCallPending({
-      userId,
-      workspaceId,
-      value: true,
-    });
   }
 
   async setOnboardingCreateProfilePending(

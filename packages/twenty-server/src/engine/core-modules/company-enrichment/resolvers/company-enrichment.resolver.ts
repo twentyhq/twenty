@@ -9,6 +9,7 @@ import { WorkspaceCompanyEnrichmentResultDTO } from 'src/engine/core-modules/com
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -23,6 +24,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class CompanyEnrichmentResolver {
   constructor(
     private readonly companyEnrichmentService: CompanyEnrichmentService,
+    private readonly onboardingService: OnboardingService,
   ) {}
 
   @Mutation(() => WorkspaceCompanyEnrichmentResultDTO)
@@ -31,10 +33,21 @@ export class CompanyEnrichmentResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WorkspaceCompanyEnrichmentResult> {
-    return this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
-      userId: user.id,
-      email: user.email,
-      workspaceId: workspace.id,
-    });
+    const enrichmentResult =
+      await this.companyEnrichmentService.enrichCompanyForWorkspaceCreator({
+        userId: user.id,
+        email: user.email,
+        workspaceId: workspace.id,
+      });
+
+    if (enrichmentResult.outcome === 'matched') {
+      await this.onboardingService.setOnboardingBookCallPendingIfQualified({
+        userId: user.id,
+        workspaceId: workspace.id,
+        employeeCount: enrichmentResult.enrichment.employeeCount,
+      });
+    }
+
+    return enrichmentResult;
   }
 }
