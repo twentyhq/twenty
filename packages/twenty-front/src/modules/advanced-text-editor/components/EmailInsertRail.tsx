@@ -7,7 +7,12 @@ import {
   IconBox,
   IconClick,
   IconColumns,
+  IconH1,
+  IconH2,
+  IconH3,
   IconLayoutGrid,
+  IconList,
+  IconListNumbers,
   IconMinus,
   IconPhoto,
   IconTypography,
@@ -76,21 +81,63 @@ type EmailInsertRailProps = {
 // layout blocks, mirroring the slash menu for pointer-first authoring.
 export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
   const { t } = useLingui();
-  const [openMenu, setOpenMenu] = useState<'image' | 'blocks' | null>(null);
+  const [openMenu, setOpenMenu] = useState<'text' | 'image' | 'blocks' | null>(
+    null,
+  );
   const [imageUrl, setImageUrl] = useState('');
 
   const insertAtEnd = (content: object) => {
     editor
       .chain()
-      .focus('end')
       .insertContentAt(editor.state.doc.content.size, content)
+      .focus('end')
       .run();
     setOpenMenu(null);
   };
 
-  const handleInsertText = () => {
-    insertAtEnd({ type: TIPTAP_NODE_TYPES.PARAGRAPH });
-  };
+  const listItemJson = () => ({
+    type: TIPTAP_NODE_TYPES.LIST_ITEM,
+    content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
+  });
+
+  const textItems = [
+    {
+      Icon: IconTypography,
+      label: t`Text`,
+      content: { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+    },
+    {
+      Icon: IconH1,
+      label: t`Title`,
+      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 1 } },
+    },
+    {
+      Icon: IconH2,
+      label: t`Subtitle`,
+      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 2 } },
+    },
+    {
+      Icon: IconH3,
+      label: t`Heading`,
+      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 3 } },
+    },
+    {
+      Icon: IconList,
+      label: t`Bullet list`,
+      content: {
+        type: TIPTAP_NODE_TYPES.BULLET_LIST,
+        content: [listItemJson()],
+      },
+    },
+    {
+      Icon: IconListNumbers,
+      label: t`Numbered list`,
+      content: {
+        type: TIPTAP_NODE_TYPES.ORDERED_LIST,
+        content: [listItemJson()],
+      },
+    },
+  ];
 
   const handleInsertImage = () => {
     if (imageUrl.trim() === '') {
@@ -150,9 +197,9 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
         <LightIconButton
           Icon={IconTypography}
           size="medium"
-          accent="tertiary"
+          accent={openMenu === 'text' ? 'secondary' : 'tertiary'}
           title={t`Text`}
-          onClick={handleInsertText}
+          onClick={() => setOpenMenu(openMenu === 'text' ? null : 'text')}
         />
         <LightIconButton
           Icon={IconPhoto}
@@ -169,6 +216,18 @@ export const EmailInsertRail = ({ editor }: EmailInsertRailProps) => {
           onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
         />
       </StyledRail>
+      {openMenu === 'text' && (
+        <StyledPopover>
+          {textItems.map(({ Icon, label, content }) => (
+            <MenuItem
+              key={label}
+              LeftIcon={Icon}
+              text={label}
+              onClick={() => insertAtEnd(content)}
+            />
+          ))}
+        </StyledPopover>
+      )}
       {openMenu === 'blocks' && (
         <StyledPopover>
           {blockItems.map(({ Icon, label, content }) => (
