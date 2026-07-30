@@ -5,12 +5,13 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   type FilterableAndTSVectorFieldType,
-  type ViewFilterOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
   FILTER_OPERANDS_MAP,
   getFilterOperandsForFilterableFieldType,
   isDefined,
+  relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -134,6 +135,15 @@ export class FlatViewFilterValidatorService {
         if (isDefined(invalidSelectOptionError)) {
           validationResult.errors.push(invalidSelectOptionError);
         }
+      }
+
+      const invalidRelativeDateError = this.getInvalidRelativeDateValueError({
+        operand: flatViewFilterToValidate.operand,
+        value: flatViewFilterToValidate.value,
+      });
+
+      if (isDefined(invalidRelativeDateError)) {
+        validationResult.errors.push(invalidRelativeDateError);
       }
     }
 
@@ -296,6 +306,17 @@ export class FlatViewFilterValidatorService {
           validationResult.errors.push(invalidSelectOptionError);
         }
       }
+
+      if ('value' in flatEntityUpdate || 'operand' in flatEntityUpdate) {
+        const invalidRelativeDateError = this.getInvalidRelativeDateValueError({
+          operand: updatedFlatViewFilter.operand,
+          value: updatedFlatViewFilter.value,
+        });
+
+        if (isDefined(invalidRelativeDateError)) {
+          validationResult.errors.push(invalidRelativeDateError);
+        }
+      }
     }
 
     if (isDefined(updatedFlatViewFilter.viewFilterGroupUniversalIdentifier)) {
@@ -388,5 +409,30 @@ export class FlatViewFilterValidatorService {
       message: t`Operand "${operand}" is not supported on field type "${effectiveFieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
       userFriendlyMessage: msg`Filter operand is not supported for this field type`,
     };
+  }
+
+  private getInvalidRelativeDateValueError({
+    operand,
+    value,
+  }: {
+    operand: ViewFilterOperand;
+    value: ViewFilterValue;
+  }) {
+    if (operand !== ViewFilterOperand.IS_RELATIVE) {
+      return undefined;
+    }
+
+    if (
+      typeof value !== 'string' ||
+      !relativeDateFilterStringifiedSchema.safeParse(value).success
+    ) {
+      return {
+        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+        message: t`Filter operand "${operand}" requires a valid stringified relative date value, but received "${String(value)}".`,
+        userFriendlyMessage: msg`Filter relative date value is invalid`,
+      };
+    }
+
+    return undefined;
   }
 }

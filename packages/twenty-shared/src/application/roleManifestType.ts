@@ -27,17 +27,28 @@ export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
   position?: number | null;
 };
 
+type RowLevelPermissionPredicateValueManifest =
+  | {
+      operand: RowLevelPermissionPredicateOperand.IS_RELATIVE;
+      value?: string | null;
+    }
+  | {
+      operand: Exclude<
+        RowLevelPermissionPredicateOperand,
+        RowLevelPermissionPredicateOperand.IS_RELATIVE
+      >;
+      value?: RowLevelPermissionPredicateValue | null;
+    };
+
 export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
-  operand: RowLevelPermissionPredicateOperand;
-  value?: RowLevelPermissionPredicateValue | null;
   subFieldName?: string | null;
   workspaceMemberFieldUniversalIdentifier?: string | null;
   workspaceMemberSubFieldName?: string | null;
   predicateGroupUniversalIdentifier?: string | null;
   position?: number | null;
-};
+} & RowLevelPermissionPredicateValueManifest;
 
 export type RoleManifest = SyncableEntityOptions & {
   label: string;
