@@ -10,9 +10,9 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import { MAX_APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
 import { IsSafeRelativePath } from 'src/engine/core-modules/file-storage/validators/is-safe-relative-path.validator';
 
 @InputType()
@@ -40,7 +40,7 @@ export class CreateApplicationFileUploadsInput {
   @Field(() => [ApplicationFileUploadRequestInput])
   @IsArray()
   @ArrayNotEmpty()
-  @ArrayMaxSize(APPLICATION_FILE_UPLOAD_BATCH_SIZE)
+  @ArrayMaxSize(MAX_APPLICATION_FILE_UPLOAD_BATCH_SIZE)
   @ValidateNested({ each: true })
   @Type(() => ApplicationFileUploadRequestInput)
   files: ApplicationFileUploadRequestInput[];

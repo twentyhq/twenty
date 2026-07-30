@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { Readable } from 'stream';
+
 import bytes from 'bytes';
 import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -195,25 +197,23 @@ export class ApplicationFileUploadService {
       { ...storageLocation, filename: file.path },
     );
 
-    await this.fileRepository.update(
-      workspaceId,
-      { id: file.id },
-      { status: FILE_STATUS.UPLOADED, mimeType },
-    );
-
     const size = await this.sanitizeUploadedFileIfNeeded({
       storageLocation,
-      fileId: file.id,
       mimeType,
       size: metadata.size,
     });
+
+    await this.fileRepository.update(
+      workspaceId,
+      { id: file.id },
+      { status: FILE_STATUS.UPLOADED, mimeType, size },
+    );
 
     return { id: file.id, path: file.path, size, createdAt: file.createdAt };
   }
 
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
-    fileId,
     mimeType,
     size,
   }: {
@@ -223,7 +223,6 @@ export class ApplicationFileUploadService {
       workspaceId: string;
       resourcePath: string;
     };
-    fileId: string;
     mimeType: string;
     size: number;
   }): Promise<number> {
@@ -238,14 +237,17 @@ export class ApplicationFileUploadService {
       mimeType,
     });
 
-    const rewrittenFile = await this.fileStorageService.writeFile({
+    const sanitizedBuffer = Buffer.isBuffer(sanitizedFile)
+      ? sanitizedFile
+      : Buffer.from(sanitizedFile);
+
+    await this.fileStorageService.writeFileStream({
       ...storageLocation,
-      sourceFile: sanitizedFile,
-      fileId,
-      settings: APPLICATION_FILE_SETTINGS,
+      stream: Readable.from(sanitizedBuffer),
+      mimeType,
     });
 
-    return Number(rewrittenFile.size);
+    return sanitizedBuffer.length;
   }
 
   private validateFileFolderOrThrow(fileFolder: FileFolder): void {
