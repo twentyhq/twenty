@@ -497,9 +497,7 @@ async function main() {
       `[rls:configure] ✓ ${name}: predicate id=${predicate.id} ` +
         `(fieldMetadataId=${predicate.fieldMetadataId}, operand=${predicate.operand})`,
     );
-
   }
-
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
   {
