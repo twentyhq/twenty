@@ -29,7 +29,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     metadataName: 'fieldMetadata',
     name: 'fieldIndexViewFieldOnCreate',
     description:
-      'When a field is created, provision its view field on the parent object INDEX view. This handler owns the view fields of every caller-provided field. When the parent object is created in the same batch, the default view assembly applies: only displayable fields (no relations) get a visible view field, positioned before the system-field view fields emitted by objectSystemFieldsAndIndexViewOnCreate; both handlers derive positions from the same caller-input list so no ordering dependency exists. When the parent object pre-exists, every created field (relations included) gets a HIDDEN view field appended to the INDEX view, preserving the historical createOneField behavior previously implemented caller-side. Emitted view fields are always isSystemSideEffect, whatever the provenance of the view they land on: the engine authored them, so manifest sync deletion inference must never drop them. Both branches resolve the INDEX view through its name-free deterministic identifier (object identifier + INDEX key), so the lookup is a single map access and never a scan; workspaces synced before the 2-26 reconcile command hold underived INDEX view identifiers and are simply skipped until it runs. Engine-owned fields (the reserved system fields, the searchVector) never reach this handler: they are emitted as side effects and the engine only triggers handlers on the original input, so their view fields belong to the handler that emits them. Noop when the created field is not displayable in the default view (object created in the same batch) or when the object has no active INDEX view (pre-existing object). The engine owns the INDEX view, so this handler never defers to a caller-provided one: the flat view validator rejects caller-created INDEX views outright, and a second writer claiming the same INDEX view field is a genuine conflict left to surface downstream (engine universal-identifier collision, then the flat view field validator on the (view, field) pair).',
+      'When a field is created, provision its visible view field on the parent object INDEX view. Owns the view fields of every caller-provided field; engine-emitted fields get theirs from the handler that emits them.',
   },
 ) {
   buildSideEffects({
@@ -267,7 +267,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         sourceFlatFieldMetadata.universalIdentifier,
       viewUniversalIdentifier: indexViewUniversalIdentifier,
       viewFieldGroupUniversalIdentifier: null,
-      isVisible: false,
+      isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position: appendBasePosition + indexAmongCallerFlatFieldMetadatas,
       aggregateOperation: null,
