@@ -135,8 +135,8 @@ export const CampaignPageStyleSection = ({
             <StyledAlignButton
               key={align}
               type="button"
-              isActive={emailTheme.bodyAlign === align}
-              onClick={() => setThemeValue('bodyAlign', align)}
+              isActive={emailTheme.textAlign === align}
+              onClick={() => setThemeValue('textAlign', align)}
             >
               <Icon size={16} />
             </StyledAlignButton>

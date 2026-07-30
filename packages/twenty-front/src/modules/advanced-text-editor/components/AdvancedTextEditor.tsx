@@ -220,9 +220,8 @@ export const AdvancedTextEditor = ({
                   : undefined,
               borderRadius: emailTheme.cornerRadius,
               color: emailTheme.textColor,
-              marginLeft: emailTheme.bodyAlign === 'left' ? 0 : 'auto',
-              marginRight: emailTheme.bodyAlign === 'right' ? 0 : 'auto',
               padding: emailTheme.padding,
+              textAlign: emailTheme.textAlign,
               width: emailTheme.width,
             }}
           >

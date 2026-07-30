@@ -23,10 +23,9 @@ const themedBody = (theme: EmailTheme, children: React.ReactNode) => (
             : undefined,
         borderRadius: theme.cornerRadius,
         color: theme.textColor,
-        marginLeft: theme.bodyAlign === 'left' ? 0 : 'auto',
-        marginRight: theme.bodyAlign === 'right' ? 0 : 'auto',
         maxWidth: theme.width,
         padding: theme.padding,
+        textAlign: theme.textAlign,
       }}
     >
       {children}

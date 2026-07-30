@@ -5,7 +5,7 @@
 export type EmailTheme = {
   pageBackground: string;
   pagePadding: string;
-  bodyAlign: 'left' | 'center' | 'right';
+  textAlign: 'left' | 'center' | 'right';
   bodyBackground: string;
   textColor: string;
   width: string;
@@ -18,7 +18,7 @@ export type EmailTheme = {
 export const EMAIL_THEME_DEFAULTS: EmailTheme = {
   pageBackground: '#f4f4f5',
   pagePadding: '24px',
-  bodyAlign: 'center',
+  textAlign: 'left',
   bodyBackground: '#ffffff',
   textColor: '#18181b',
   width: '600px',
