@@ -10,10 +10,31 @@ export const BookCallOnboardingStepActions = () => {
 
   useEffect(() => {
     let isSubscribed = true;
+    let hasHandledBookingSuccess = false;
     let calApi: Awaited<ReturnType<typeof getCalApi>> | undefined;
 
+    // The embed can emit the event more than once, and completing the step also
+    // disables Skip so the two entry points cannot both advance the flow.
     const onBookingSuccessful = () => {
-      void completeBookCallOnboardingStep();
+      if (hasHandledBookingSuccess) {
+        return;
+      }
+
+      hasHandledBookingSuccess = true;
+
+      void (async () => {
+        setIsCompleting(true);
+
+        try {
+          await completeBookCallOnboardingStep();
+        } catch {
+          // The call is already booked on Cal's side and the step is still pending
+          // server-side, so there is nothing to warn about: re-enable Skip and let the
+          // user move on themselves.
+          hasHandledBookingSuccess = false;
+          setIsCompleting(false);
+        }
+      })();
     };
 
     const subscribeToBookingSuccess = async () => {
