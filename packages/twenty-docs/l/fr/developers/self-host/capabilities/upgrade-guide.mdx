@@ -25,11 +25,11 @@ Si vous utilisez Docker Compose, suivez ces étapes :
 
 Le serveur exécute automatiquement au démarrage toutes les migrations de mise à niveau requises. Aucune commande manuelle n'est nécessaire.
 
-## Mises à niveau entre versions (v1.22+)
+## Mises à niveau entre versions (v1.23+)
 
-À partir de **v1.22**, Twenty prend en charge les mises à niveau entre versions. Vous pouvez passer directement de n'importe quelle version prise en charge à la dernière version sans devoir passer par chaque version intermédiaire.
+À partir de **v1.23**, Twenty prend en charge les mises à niveau entre versions. Vous pouvez passer directement de n'importe quelle version prise en charge à la dernière version sans devoir passer par chaque version intermédiaire.
 
-Par exemple, la mise à niveau de la v1.22 directement vers la v2.0 est entièrement prise en charge.
+Par exemple, la mise à niveau de la v1.23 directement vers la v2.0 est entièrement prise en charge.
 
 ## Mise à niveau vers la v2.5+ — enveloppe de chiffrement au repos
 
@@ -97,6 +97,6 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 
 Cela affiche uniquement les espaces de travail en retard ou en échec, ainsi que le message d'erreur pour chaque échec.
 
-## Avant la v1.22
+## Avant la v1.23
 
-Si votre instance est antérieure à la v1.22, vous devez effectuer une mise à niveau progressive à travers chaque version majeure marquée (de v1.6 à v1.7, puis de v1.7 à v1.8, et ainsi de suite) jusqu'à atteindre la v1.22. À partir de là, vous pouvez passer directement à la dernière version.
+Si votre instance est antérieure à la v1.23, vous devez effectuer une mise à niveau progressive à travers chaque version majeure marquée (de v1.6 à v1.7, puis de v1.7 à v1.8, et ainsi de suite) jusqu'à atteindre la v1.23. À partir de là, vous pouvez passer directement à la dernière version.
