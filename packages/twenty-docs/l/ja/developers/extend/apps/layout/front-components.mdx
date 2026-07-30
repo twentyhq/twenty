@@ -6,6 +6,10 @@ icon: window-maximize
 
 フロントコンポーネントは、Twenty の UI 内で直接レンダリングされる React コンポーネントです。 フロントコンポーネントは Remote DOM を使用する**分離された Web Worker**内で実行されます。コードはサンドボックス化され、不透明なオリジンの iframe 内で動作しますが、その UI はその iframe 内に制限されるのではなく、ページ内でネイティブにレンダリングされます。
 
+<Warning>
+Front components は現在も積極的に開発が進められています。 あなたのコードは実際のブラウザページではなく不完全な DOM に対して実行されるため、高度な使い方では、しばしば何の表示もなく失敗することがあります。 [現在の制限](#current-limitations) を参照してください。
+</Warning>
+
 ## フロントコンポーネントを使用できる場所
 
 フロントコンポーネントは、Twenty 内の3つの場所でレンダリングできます:
@@ -696,3 +700,72 @@ const Card = () => {
 `useTheme()` はフックなので、コンポーネント本体の中でトークンを読み取り、値が常に現在のテーマを反映するようにできます。 同じトークンマップは `themeCssVariables` 定数としてもエクスポートされていますが、フロントエンドコンポーネントでは `useTheme()` を優先してください。アプリのマニフェストを抽出している間は、`themeCssVariables` を参照するモジュールレベルの定数が未定義になる可能性があります。
 
 アクティブなスキームを明示的に分岐させるには、`twenty-sdk/front-component` の `useColorScheme()` を使って取得します。このフックは `'light'` または `'dark'` を返します。
+
+## 現在の制限
+
+Front components は現在も積極的に開発が進められています。 レンダリング、スタイリング、イベント処理は問題なく動作します。 レンダリングを*越えた*処理（要素の計測、ref に対する DOM メソッドの呼び出し、ツリーの外へのポータル、ブラウザー ストレージへのアクセス）については、現在は未実装または不完全であり、そのほとんどは例外も出さずに黙って失敗します。スキャフォールドがフルなブラウザー DOM を前提に型付けされているため、TypeScript エラーも発生しません。
+
+これらのいずれかが原因でブロックされている場合は、[issue を作成](https://github.com/twentyhq/twenty/issues/new/choose)して、優先度を上げてもらってください。
+
+### レイアウトと計測
+
+まだ自分自身を計測できるものはありません。
+
+| API                                                           | 何が起きるか                                                                     |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `getClientRects()`                 | 例外を投げます                                                                    |
+| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 黙って `undefined` になるため、`width ?? 0` は `0` になり、`width > 600` は常に false になります |
+| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError`（`typeof` ガードは機能します）                                       |
+| `window.matchMedia()`, `window.getComputedStyle()`            | 例外を投げます                                                                    |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | 黙って `undefined` になります                                                      |
+| `new MutationObserver(fn)`                                    | コンストラクタ呼び出しは成功しますが、その後の `.observe()` が例外を投げます                              |
+
+そのため、recharts の `ResponsiveContainer`、Floating UI / Popper、リストの仮想化、およびドラッグによるサイズ変更はまだ動作しません。 代わりに CSS でレイアウトしてください。スタイルシートは実際のページに適用されるので、flexbox、grid、`aspect-ratio`、`clamp()`、`@container` はすべて通常どおり動作します。
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout`, `queueMicrotask` は、`window.` プレフィックスなしで動作します。 `window.requestAnimationFrame(...)` などを使った場合だけ例外が投げられます。
+</Note>
+
+### DOM アクセス
+
+`ref` が返すのは `HTMLElement` ではなくサンドボックス要素です。
+
+| 記述するコード                                                                                                     | 何が起きるか                                 | 代わりに使うもの                                                          |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 例外を投げます                                | 制御されたコンポーネントを使い、値は `event.target` から読み取ります                        |
+| `element.classList.add(...)`                                                                                | 例外を投げます（`classList` は `undefined` です）  | `className` 文字列を自分で組み立ててください                                      |
+| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 例外を投げます                                | 動作する `querySelector()` / `querySelectorAll()` を使ってください            |
+| `document.activeElement`                                                                                    | 常に `undefined` です                      | `onFocus` / `onBlur` でフォーカスを追跡してください                              |
+| `\<canvas>`                                                                                | 何もレンダリングされず、エラーも出ません                   | SVG を使うか、オフスクリーンで描画して `<img src={dataUrl}>` として表示してください           |
+| `createPortal(node, document.body)`                                                                         | `isConnected` は成功を報告しますが、何もレンダリングされません | `position: absolute` によるインラインのオーバーレイを使うか、ライブラリに自前のコンテナー要素を渡してください |
+
+このポータルのギャップが原因で、Radix、Headless UI、MUI、react-select のポップオーバーはデフォルトでは何もレンダリングしません。 ほとんどのライブラリは container プロップを受け付けるので、自分がレンダリングした要素を指定してください。
+
+### イベント
+
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`\<textarea>`, media on `\<video>`/`\<audio>`, `toggle` on `\<details>`/`\<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+
+`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `\<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `\<style>` element, is injected into the host page's `\<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/l/ja/developers/extend/apps/logic/logic-functions) and use its [key-value store](/l/ja/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+* Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+* Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+* `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### Other gaps
+
+* **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+* **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+* **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/l/ja/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
+* **`\<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

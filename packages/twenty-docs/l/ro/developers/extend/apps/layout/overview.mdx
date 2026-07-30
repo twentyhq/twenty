@@ -55,3 +55,5 @@ icon: table-columns
 | **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                                        | `defineCommandMenuItem`                   |
 
 Componentele front rulează în interiorul unui Web Worker izolat folosind Remote DOM — acestea sunt redate *nativ* în pagină (nu într-un iframe), dar nu pot accesa direct pagina gazdă sau DOM-ul. Comunicarea cu Twenty se face printr-un API al gazdei bazat pe transmiterea de mesaje.
+
+Sunt încă în curs de dezvoltare activă: sandbox-ul implementează un DOM parțial, astfel încât utilizările avansate pot eșua. Vezi [limitările actuale](/l/ro/developers/extend/apps/layout/front-components#current-limitations).
