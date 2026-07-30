@@ -447,4 +447,34 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.BOOK_CALL,
     );
   });
+
+  it('should still sync emails when the server status landed before advancing', () => {
+    jotaiStore.set(currentUserState.atom, {
+      ...mockedUserData,
+      onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION,
+    });
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      billingSubscriptions: [],
+      workspaceMembersCount: 1,
+    });
+
+    const { result } = renderHook(() => useSetNextOnboardingStatus(), {
+      wrapper: Wrapper,
+    });
+
+    const advanceCapturedBeforeActivation = result.current;
+
+    act(() => {
+      jotaiStore.set(currentUserState.atom, {
+        ...mockedUserData,
+        onboardingStatus: OnboardingStatus.SYNC_EMAIL,
+      });
+      advanceCapturedBeforeActivation();
+    });
+
+    expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toEqual(
+      OnboardingStatus.SYNC_EMAIL,
+    );
+  });
 });

@@ -18,6 +18,7 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -85,15 +86,21 @@ const getNextOnboardingStatus = ({
 
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();
+  // Never read currentUser from the store here: WorkspaceActivation awaits
+  // loadCurrentUser first, so the atom already holds the step to go through.
+  const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const isOnboardingAiChatEnabled = useAtomStateValue(
+    isOnboardingAiChatEnabledState,
+  );
 
   return useCallback(() => {
-    const currentUser = store.get(currentUserState.atom);
-    const currentWorkspace = store.get(currentWorkspaceState.atom);
-
     const nextOnboardingStatus = getNextOnboardingStatus({
       currentUser,
       currentWorkspace,
-      isBillingEnabled: store.get(billingState.atom)?.isBillingEnabled ?? false,
+      isBillingEnabled,
       isBookCallRequired: getIsBookCallRequired({
         companyEnrichment: store.get(companyEnrichmentState.atom),
         bookCallMinEmployeeCount: store.get(bookCallMinEmployeeCountState.atom),
@@ -120,8 +127,14 @@ export const useSetNextOnboardingStatus = () => {
       store.set(isWelcomeAnimationVisibleState.atom, true);
       store.set(
         shouldOpenAiChatAfterOnboardingState.atom,
-        store.get(isOnboardingAiChatEnabledState.atom),
+        isOnboardingAiChatEnabled,
       );
     }
-  }, [store]);
+  }, [
+    currentUser,
+    currentWorkspace,
+    isBillingEnabled,
+    isOnboardingAiChatEnabled,
+    store,
+  ]);
 };
