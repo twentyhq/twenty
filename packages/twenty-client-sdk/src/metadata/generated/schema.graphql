@@ -1142,6 +1142,7 @@ type PieChartConfiguration {
   showCenterMetric: Boolean
   displayLegend: Boolean
   hideEmptyCategory: Boolean
+  numberFormat: ChartNumberFormat
   splitMultiValueFields: Boolean
   description: String
   color: String
@@ -1195,6 +1196,7 @@ type LineChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String
@@ -1238,6 +1240,7 @@ type BarChartConfiguration {
   axisNameDisplay: AxisNameDisplay
   displayDataLabel: Boolean
   displayLegend: Boolean
+  numberFormat: ChartNumberFormat
   rangeMin: Float
   rangeMax: Float
   description: String

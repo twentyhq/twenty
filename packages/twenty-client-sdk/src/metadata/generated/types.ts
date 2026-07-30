@@ -2230,6 +2230,9 @@ export default {
             "hideEmptyCategory": [
                 3
             ],
+            "numberFormat": [
+                91
+            ],
             "splitMultiValueFields": [
                 3
             ],
@@ -2308,6 +2311,9 @@ export default {
             ],
             "displayLegend": [
                 3
+            ],
+            "numberFormat": [
+                91
             ],
             "rangeMin": [
                 16
@@ -2406,6 +2412,9 @@ export default {
             ],
             "displayLegend": [
                 3
+            ],
+            "numberFormat": [
+                91
             ],
             "rangeMin": [
                 16
