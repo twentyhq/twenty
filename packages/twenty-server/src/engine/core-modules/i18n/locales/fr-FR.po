@@ -158,6 +158,12 @@ msgstr "Une version plus récente de cette application est déjà installée. La
 msgid "A name conflict occurred."
 msgstr "Un conflit de nom s'est produit."
 
+#. js-lingui-id: idm+pJ
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for FOLDER type"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -280,6 +286,42 @@ msgstr "Une erreur réseau temporaire s'est produite."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "Un utilisateur avec cette adresse e-mail existe déjà."
+
+#. js-lingui-id: Dwa/Bm
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid link is required for LINK type"
+msgstr ""
+
+#. js-lingui-id: hfYxN9
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type"
+msgstr ""
+
+#. js-lingui-id: jS+jUv
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type"
+msgstr ""
+
+#. js-lingui-id: KUnzGr
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: RfwvVB
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetRecordId is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: +FHERL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid viewUniversalIdentifier is required for VIEW type"
+msgstr ""
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -3097,12 +3139,6 @@ msgstr "Premier message amical"
 msgid "Flow"
 msgstr "Flux"
 
-#. js-lingui-id: Fzrzfe
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required"
-msgstr "Le nom du dossier est requis"
-
 #. js-lingui-id: Hxo3YN
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
@@ -4587,12 +4623,6 @@ msgstr "La disposition est obligatoire pour le graphique à barres"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "La disposition est obligatoire pour le widget de graphique à barres \"{widgetTitle}\""
 
-#. js-lingui-id: oDC0sf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "link is required for LINK type"
-msgstr "Le lien est requis pour le type LINK"
-
 #. js-lingui-id: wR9USP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5153,8 +5183,8 @@ msgid "Navigation menu item not found."
 msgstr "Élément de menu de navigation introuvable."
 
 #. js-lingui-id: Ii6d/e
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "Navigation menu item type is required"
 msgstr "Le type d'élément de menu de navigation est requis"
 
@@ -5917,12 +5947,6 @@ msgstr "Le widget de mise en page avec l'identifiant universel {flatPageLayoutWi
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout"
 msgstr "L'élément de menu de navigation PAGE_LAYOUT doit référencer une mise en page de page STANDALONE_PAGE"
-
-#. js-lingui-id: RDkmYK
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "pageLayoutId is required for PAGE_LAYOUT type"
-msgstr "pageLayoutId est requis pour le type PAGE_LAYOUT"
 
 #. js-lingui-id: T1gSWA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -7366,18 +7390,6 @@ msgstr "Le champ de relation cible ne fait pas référence à ce champ"
 msgid "Target URL is required"
 msgstr "L'URL cible est requise"
 
-#. js-lingui-id: L3vVWc
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetObjectMetadataId is required for OBJECT type"
-msgstr "targetObjectMetadataId est requis pour le type OBJECT"
-
-#. js-lingui-id: NGynR3
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
-msgstr "targetRecordId et targetObjectMetadataId sont requis pour le type RECORD"
-
 #. js-lingui-id: Q3P/4s
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -8544,6 +8556,12 @@ msgstr "L'identifiant universel est réservé aux métadonnées gérées par le 
 msgid "Unknown"
 msgstr ""
 
+#. js-lingui-id: of4ZuG
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "Unknown navigation menu item type {type}"
+msgstr ""
+
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Unknown operation."
@@ -9118,12 +9136,6 @@ msgstr "Vue à mettre à jour non trouvée"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View with same universal identifier already exists"
 msgstr "Une vue avec le même identifiant universel existe déjà"
-
-#. js-lingui-id: 14WoDD
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "viewId is required for VIEW type"
-msgstr "viewId est requis pour le type VIEW"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts

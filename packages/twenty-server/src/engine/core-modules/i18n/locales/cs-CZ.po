@@ -158,6 +158,12 @@ msgstr "Je už nainstalována novější verze této aplikace. Snížení verze 
 msgid "A name conflict occurred."
 msgstr "Došlo ke konfliktu názvů."
 
+#. js-lingui-id: idm+pJ
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for FOLDER type"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -280,6 +286,42 @@ msgstr "Došlo k dočasné síťové chybě."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
 msgstr "Uživatel s tímto e-mailem již existuje."
+
+#. js-lingui-id: Dwa/Bm
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid link is required for LINK type"
+msgstr ""
+
+#. js-lingui-id: hfYxN9
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type"
+msgstr ""
+
+#. js-lingui-id: jS+jUv
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type"
+msgstr ""
+
+#. js-lingui-id: KUnzGr
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: RfwvVB
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid targetRecordId is required for RECORD type"
+msgstr ""
+
+#. js-lingui-id: +FHERL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid viewUniversalIdentifier is required for VIEW type"
+msgstr ""
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -3097,12 +3139,6 @@ msgstr "První přívětivá zpráva"
 msgid "Flow"
 msgstr "Tok"
 
-#. js-lingui-id: Fzrzfe
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required"
-msgstr "Název složky je vyžadován"
-
 #. js-lingui-id: Hxo3YN
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
@@ -4587,12 +4623,6 @@ msgstr "Rozvržení je vyžadováno pro sloupcový graf"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Rozvržení je vyžadováno pro widget sloupcového grafu \"{widgetTitle}\""
 
-#. js-lingui-id: oDC0sf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "link is required for LINK type"
-msgstr "Odkaz je vyžadován pro typ LINK"
-
 #. js-lingui-id: wR9USP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5153,8 +5183,8 @@ msgid "Navigation menu item not found."
 msgstr "Položka navigační nabídky nenalezena."
 
 #. js-lingui-id: Ii6d/e
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "Navigation menu item type is required"
 msgstr "Typ položky navigační nabídky je vyžadován"
 
@@ -5917,12 +5947,6 @@ msgstr "Widget rozložení stránky s univerzálním identifikátorem {flatPageL
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout"
 msgstr "Položka navigačního menu PAGE_LAYOUT musí odkazovat na rozvržení stránky STANDALONE_PAGE"
-
-#. js-lingui-id: RDkmYK
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "pageLayoutId is required for PAGE_LAYOUT type"
-msgstr "pageLayoutId je vyžadováno pro typ PAGE_LAYOUT"
 
 #. js-lingui-id: T1gSWA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -7366,18 +7390,6 @@ msgstr "Cílové relační pole neodkazuje na toto pole"
 msgid "Target URL is required"
 msgstr "Cílová adresa URL je vyžadována"
 
-#. js-lingui-id: L3vVWc
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetObjectMetadataId is required for OBJECT type"
-msgstr "targetObjectMetadataId je vyžadováno u typu OBJECT"
-
-#. js-lingui-id: NGynR3
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
-msgstr "targetRecordId a targetObjectMetadataId jsou vyžadovány u typu RECORD"
-
 #. js-lingui-id: Q3P/4s
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -8544,6 +8556,12 @@ msgstr "Univerzální identifikátor je vyhrazen pro systémem spravovaná metad
 msgid "Unknown"
 msgstr ""
 
+#. js-lingui-id: of4ZuG
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "Unknown navigation menu item type {type}"
+msgstr ""
+
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Unknown operation."
@@ -9118,12 +9136,6 @@ msgstr "Zobrazení pro aktualizaci nebylo nalezeno"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View with same universal identifier already exists"
 msgstr "Pohled se stejným univerzálním identifikátorem již existuje"
-
-#. js-lingui-id: 14WoDD
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "viewId is required for VIEW type"
-msgstr "viewId je vyžadováno u typu VIEW"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
