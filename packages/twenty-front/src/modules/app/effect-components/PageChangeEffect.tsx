@@ -19,6 +19,7 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -206,7 +207,6 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
-        const isNewRecord = location.state?.isNewRecord === true;
         const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
 
         if (!isSidePanelOpen) {
@@ -225,26 +225,21 @@ export const PageChangeEffect = () => {
           });
         }
 
-        if (
-          isNewRecord &&
-          isDefined(location.state?.labelIdentifierFieldName)
-        ) {
-          openNewRecordTitleCell({
-            recordId: location.state.objectRecordId,
-            fieldName: location.state.labelIdentifierFieldName,
-          });
+        const newRecordTitleCellToOpen = store.get(
+          newRecordTitleCellToOpenState.atom,
+        );
 
-          // isNewRecord lives in history state, which SURVIVES page refreshes —
-          // without consuming it here, every refresh of the record page re-opens
-          // the (empty-draft) title cell. Strip it in place; react-router keeps
-          // user state under history.state.usr.
-          window.history.replaceState(
-            {
-              ...window.history.state,
-              usr: { ...location.state, isNewRecord: undefined },
-            },
-            '',
-          );
+        if (isDefined(newRecordTitleCellToOpen)) {
+          const objectRecordIdFromPath = matchPath(
+            AppPath.RecordShowPage,
+            location.pathname,
+          )?.params.objectRecordId;
+
+          if (newRecordTitleCellToOpen.recordId === objectRecordIdFromPath) {
+            openNewRecordTitleCell(newRecordTitleCellToOpen);
+          }
+
+          store.set(newRecordTitleCellToOpenState.atom, null);
         }
         break;
       }
