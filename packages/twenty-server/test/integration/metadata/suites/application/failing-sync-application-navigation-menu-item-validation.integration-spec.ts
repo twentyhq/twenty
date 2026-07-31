@@ -116,6 +116,17 @@ const failingNavigationMenuItemSyncTestCases: EachTestingContext<TestContext>[] 
         },
       },
     },
+    {
+      title: 'when syncing an item with an unknown type',
+      context: {
+        navigationMenuItem: {
+          universalIdentifier: TEST_NAVIGATION_MENU_ITEM_ID,
+          type: 'UNKNOWN_NAVIGATION_MENU_ITEM_TYPE' as NavigationMenuItemType,
+          position: 0,
+          name: 'Item with unknown type',
+        },
+      },
+    },
   ];
 
 describe('Sync application should fail on invalid navigation menu items', () => {

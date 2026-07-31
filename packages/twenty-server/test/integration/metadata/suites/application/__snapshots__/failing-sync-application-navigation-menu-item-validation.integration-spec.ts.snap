@@ -295,3 +295,40 @@ exports[`Sync application should fail on invalid navigation menu items when sync
   "name": "GraphQLError",
 }
 `;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing an item with an unknown type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Unknown navigation menu item type UNKNOWN_NAVIGATION_MENU_ITEM_TYPE",
+              "userFriendlyMessage": "Unknown navigation menu item type UNKNOWN_NAVIGATION_MENU_ITEM_TYPE",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Item with unknown type",
+            "type": "UNKNOWN_NAVIGATION_MENU_ITEM_TYPE",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Unknown navigation menu item type UNKNOWN_NAVIGATION_MENU_ITEM_TYPE",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

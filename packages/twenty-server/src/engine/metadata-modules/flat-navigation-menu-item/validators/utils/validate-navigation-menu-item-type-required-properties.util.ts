@@ -1,12 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import {
-  assertUnreachable,
-  isDefined,
-  isValidUrl,
-  isValidUuid,
-} from 'twenty-shared/utils';
+import { isDefined, isValidUrl, isValidUuid } from 'twenty-shared/utils';
 
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
@@ -118,7 +113,16 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       });
     }
     default: {
-      return assertUnreachable(type);
+      // Manifests reach this validator as raw JSON, so an unknown type must be
+      // reported as a validation error rather than thrown as an internal error
+      const unknownType: never = type;
+
+      return [
+        buildInvalidInputError(
+          t`Unknown navigation menu item type ${unknownType}`,
+          msg`Unknown navigation menu item type ${unknownType}`,
+        ),
+      ];
     }
   }
 };
