@@ -262,7 +262,9 @@ describe('UpgradeMigrationService', () => {
     // Attempts were previously numbered by counting rows, so removing one
     // handed the next write a number that already existed.
     it('numbers the next attempt above the highest, not by row count', async () => {
-      const { service, saved } = buildRecordingService({ highestAttempts: [9] });
+      const { service, saved } = buildRecordingService({
+        highestAttempts: [9],
+      });
 
       await service.recordUpgradeMigration({
         name: WORKSPACE_C,
