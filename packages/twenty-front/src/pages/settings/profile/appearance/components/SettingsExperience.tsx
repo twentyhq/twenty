@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
-import { OpenRecordInPreferenceSelect } from '@/settings/experience/components/OpenRecordInPreferenceSelect';
+import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -41,9 +41,9 @@ export const SettingsExperience = () => {
         <Section>
           <H2Title
             title={t`Navigation`}
-            description={t`Choose where records open for objects that follow your preference`}
+            description={t`Choose where records open by default. Some objects may use a workspace setting`}
           />
-          <OpenRecordInPreferenceSelect />
+          <OpenRecordInPreferencePicker />
         </Section>
 
         <Section>
