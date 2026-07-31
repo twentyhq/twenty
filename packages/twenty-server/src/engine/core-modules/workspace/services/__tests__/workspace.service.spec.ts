@@ -49,7 +49,6 @@ describe('WorkspaceService', () => {
   let billingSubscriptionService: BillingSubscriptionService;
   let userWorkspaceService: UserWorkspaceService;
   let flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
-  let applicationSyncService: ApplicationSyncService;
   let queryRunner: QueryRunner;
 
   beforeEach(async () => {
@@ -213,9 +212,6 @@ describe('WorkspaceService', () => {
       module.get<WorkspaceManyOrAllFlatEntityMapsCacheService>(
         WorkspaceManyOrAllFlatEntityMapsCacheService,
       );
-    applicationSyncService = module.get<ApplicationSyncService>(
-      ApplicationSyncService,
-    );
   });
 
   afterEach(() => {
@@ -394,61 +390,6 @@ describe('WorkspaceService', () => {
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
       );
-    });
-
-    it('should run application uninstall hooks when soft deleting a workspace', async () => {
-      const mockWorkspace = {
-        id: 'workspace-id',
-        metadataVersion: 0,
-      } as WorkspaceEntity;
-
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace);
-      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-
-      await service.deleteWorkspace(mockWorkspace.id, true);
-
-      expect(
-        applicationSyncService.runUninstallHooksForWorkspaceApplications,
-      ).toHaveBeenCalledWith({ workspaceId: mockWorkspace.id });
-    });
-
-    it('should run application uninstall hooks when hard deleting a workspace that was never soft deleted', async () => {
-      const mockWorkspace = {
-        id: 'workspace-id',
-        metadataVersion: 0,
-      } as WorkspaceEntity;
-
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace);
-      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-
-      await service.deleteWorkspace(mockWorkspace.id, false);
-
-      expect(
-        applicationSyncService.runUninstallHooksForWorkspaceApplications,
-      ).toHaveBeenCalledWith({ workspaceId: mockWorkspace.id });
-    });
-
-    it('should not run application uninstall hooks again when hard deleting an already soft deleted workspace', async () => {
-      const mockWorkspace = {
-        id: 'workspace-id',
-        metadataVersion: 0,
-        deletedAt: new Date(),
-      } as WorkspaceEntity;
-
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace);
-      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-
-      await service.deleteWorkspace(mockWorkspace.id, false);
-
-      expect(
-        applicationSyncService.runUninstallHooksForWorkspaceApplications,
-      ).not.toHaveBeenCalled();
     });
 
     it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {

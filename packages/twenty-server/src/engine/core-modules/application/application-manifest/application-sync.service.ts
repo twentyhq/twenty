@@ -342,11 +342,6 @@ export class ApplicationSyncService {
     return validateAndBuildResult.workspaceMigration;
   }
 
-  // Runs the uninstall hook of every application installed in the workspace
-  // without uninstalling the applications themselves. Used when a workspace is
-  // deactivated or deleted so applications can clean up external resources
-  // (e.g. meeting bots) that would otherwise keep running. Best-effort: a
-  // failure must never block the workspace deletion.
   public async runUninstallHooksForWorkspaceApplications({
     workspaceId,
   }: {

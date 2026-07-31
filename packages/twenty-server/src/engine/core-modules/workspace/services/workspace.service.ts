@@ -552,8 +552,6 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
-    // Hooks run on the first deletion only (soft or direct hard delete): a
-    // hard delete following a soft delete has already executed them.
     if (!isDefined(workspace.deletedAt)) {
       await this.applicationSyncService.runUninstallHooksForWorkspaceApplications(
         { workspaceId: id },
