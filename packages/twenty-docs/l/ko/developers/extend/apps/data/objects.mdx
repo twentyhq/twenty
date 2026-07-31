@@ -79,6 +79,7 @@ export default defineObject({
 * `universalIdentifier`는 배포 전반에서 고유하고 안정적이어야 합니다.
 * 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
 * `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 개체를 정의할 수 있습니다.
+* `openRecordIn`은 이 오브젝트의 레코드를 클릭했을 때 어디에서 열릴지 설정합니다: `ObjectOpenRecordIn.USER_CHOICE`(기본값이며, 각 워크스페이스 구성원이 Settings → Experience에서 지정한 개인 설정을 따릅니다), `ObjectOpenRecordIn.SIDE_PANEL`, 또는 `ObjectOpenRecordIn.RECORD_PAGE`. 워크플로와 대시보드처럼 전체 페이지에서 사용해야 하는 레코드의 경우 `RECORD_PAGE`에 고정하고, 캘린더 이벤트처럼 빠른 패널로 볼 때만 의미가 있는 레코드의 경우 `SIDE_PANEL`에 고정하세요.
 * 여기에서 정의된 인라인 필드는 `objectUniversalIdentifier`가 **필요하지 않습니다** — 상위 개체에서 상속됩니다. 소유하지 않은 개체에 필드를 추가하려면 [`defineField()`](/l/ko/developers/extend/apps/data/extending-objects)를 사용하세요.
 * `yarn twenty dev:add object`를 사용하여 새 개체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다. [Architecture → Scaffolding entities](/l/ko/developers/extend/apps/getting-started/scaffolding)를 참조하세요.
 
