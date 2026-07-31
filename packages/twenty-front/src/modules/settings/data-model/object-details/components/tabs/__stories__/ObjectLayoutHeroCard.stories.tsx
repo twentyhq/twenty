@@ -1,0 +1,63 @@
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
+import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
+import { styled } from '@linaria/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { IconAddressBook, IconPencil } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledCanvas = styled.div`
+  background: ${themeCssVariables.background.primary};
+  box-sizing: border-box;
+  padding: 32px;
+  width: 758px;
+`;
+
+const meta: Meta = {
+  title: 'Modules/Settings/Data Model/Object Layout Hero Card',
+};
+
+export default meta;
+
+type Story = StoryObj;
+
+const renderCard = (colorScheme: 'light' | 'dark') => (
+  <ThemeProvider colorScheme={colorScheme} applyToRoot={false}>
+    <StyledCanvas>
+      <SettingsDiscoveryHeroCard
+        lightSrc={recordPageLayoutCoverLight}
+        darkSrc={recordPageLayoutCoverDark}
+        coverHeight={153}
+        instanceIdPrefix={`object-layout-${colorScheme}`}
+        tabs={[]}
+        footer={
+          <SettingsOptionCardContentButton
+            Icon={IconAddressBook}
+            title="Customize record page"
+            description="Customize how your record page looks."
+            variant="hero"
+            Button={
+              <Button
+                title="Customize"
+                variant="primary"
+                accent="blue"
+                size="small"
+                Icon={IconPencil}
+              />
+            }
+          />
+        }
+      />
+    </StyledCanvas>
+  </ThemeProvider>
+);
+
+export const Light: Story = {
+  render: () => renderCard('light'),
+};
+
+export const Dark: Story = {
+  render: () => renderCard('dark'),
+};
