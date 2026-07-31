@@ -799,6 +799,60 @@ describe('should work as expected for the different field types', () => {
     });
   });
 
+  it('phones field type with an international calling code prefix', () => {
+    const personMockPhonesFieldMetadataItem =
+      personMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'phones',
+      );
+
+    if (!isDefined(personMockPhonesFieldMetadataItem)) {
+      throw new Error('Person mock phones field metadata ID is undefined');
+    }
+
+    const phonesFilterContains: RecordFilter = {
+      id: 'person-phones-filter-contains-calling-code',
+      value: '+33 6 12',
+      fieldMetadataId: personMockPhonesFieldMetadataItem.id,
+      displayValue: '+33 6 12',
+      operand: ViewFilterOperand.CONTAINS,
+      label: 'Phones',
+      type: FieldMetadataType.PHONES,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [phonesFilterContains],
+      recordFilterGroups: [],
+      fieldMetadataItems: personFields,
+    });
+
+    expect(result).toEqual({
+      or: [
+        {
+          phones: {
+            primaryPhoneNumber: {
+              ilike: '%+33612%',
+            },
+          },
+        },
+        {
+          phones: {
+            primaryPhoneCallingCode: {
+              ilike: '%+33612%',
+            },
+          },
+        },
+        {
+          phones: {
+            additionalPhones: {
+              like: '%+33612%',
+            },
+          },
+        },
+      ],
+    });
+  });
+
   it('emails field type', () => {
     const personMockEmailFieldMetadataId = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: personMockObjectMetadataItem,

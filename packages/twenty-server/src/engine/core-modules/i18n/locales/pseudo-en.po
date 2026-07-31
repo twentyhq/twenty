@@ -9740,14 +9740,24 @@ msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/role/role.resolver.ts
+#: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
+msgstr ""
+
+#. js-lingui-id: xqrB9X
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr ""
 
 #. js-lingui-id: y5haJ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
+msgstr ""
+
+#. js-lingui-id: KcnT7Q
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr ""
 
 #. js-lingui-id: 8wovNr
