@@ -189,6 +189,16 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('ask_questions is for new decisions');
   });
 
+  it('should keep ask_questions options within the single-recommended limit', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('at most one of them marked recommended');
+    expect(result).toContain('mark none of them recommended');
+  });
+
   it('should anchor the proposal on admission tests instead of numeric bands', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
