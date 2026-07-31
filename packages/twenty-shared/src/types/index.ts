@@ -15,6 +15,7 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export type { AssertUnreachable } from './AssertUnreachable.type';
 export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
