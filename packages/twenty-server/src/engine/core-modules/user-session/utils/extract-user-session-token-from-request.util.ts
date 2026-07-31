@@ -1,10 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 
-import {
-  USER_SESSION_COOKIE_NAME,
-  USER_SESSION_SECURE_COOKIE_NAME,
-} from 'src/engine/core-modules/user-session/constants/user-session-cookie.constants';
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 
 const readCookieValue = (

@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type CookieOptions, type Response } from 'express';
 
-import {
-  USER_SESSION_COOKIE_NAME,
-  USER_SESSION_SECURE_COOKIE_NAME,
-} from 'src/engine/core-modules/user-session/constants/user-session-cookie.constants';
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
