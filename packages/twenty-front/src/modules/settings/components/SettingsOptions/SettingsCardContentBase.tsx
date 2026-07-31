@@ -21,10 +21,10 @@ export const StyledSettingsCardIcon = styled.div`
   border: 2px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  height: ${themeCssVariables.spacing[7]};
+  height: ${themeCssVariables.spacing[8]};
   justify-content: center;
-  min-width: ${themeCssVariables.icon.size.md};
-  width: ${themeCssVariables.spacing[7]};
+  min-width: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
 `;
 
 export const StyledSettingsCardTitle = styled.div`

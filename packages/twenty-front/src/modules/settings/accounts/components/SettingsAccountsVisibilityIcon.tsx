@@ -15,14 +15,15 @@ const StyledCardMedia = styled.div`
   align-items: stretch;
   border: 2px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  height: ${themeCssVariables.spacing[8]};
+  height: 40px;
   justify-content: center;
   padding: ${themeCssVariables.spacing['0.5']};
-  width: ${themeCssVariables.spacing[6]};
+  width: 32px;
 `;
 
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
