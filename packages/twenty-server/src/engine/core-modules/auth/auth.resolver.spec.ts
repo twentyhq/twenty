@@ -13,11 +13,7 @@ import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/serv
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { EmailPasswordResetLinkJob } from 'src/engine/core-modules/auth/jobs/email-password-reset-link.job';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -48,7 +44,7 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
-  let messageQueueService: MessageQueueService;
+  let resetPasswordService: ResetPasswordService;
   let throttlerService: ThrottlerService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
@@ -118,12 +114,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: ResetPasswordService,
-          useValue: {},
-        },
-        {
-          provide: getQueueToken(MessageQueue.emailQueue),
           useValue: {
-            add: jest.fn().mockResolvedValue(undefined),
+            generateAndSendPasswordResetLink: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -195,9 +189,8 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
-    messageQueueService = module.get<MessageQueueService>(
-      getQueueToken(MessageQueue.emailQueue),
-    );
+    resetPasswordService =
+      module.get<ResetPasswordService>(ResetPasswordService);
     throttlerService = module.get<ThrottlerService>(ThrottlerService);
   });
 
@@ -212,32 +205,30 @@ describe('AuthResolver', () => {
     } as EmailPasswordResetLinkInput;
     const context = { req: { locale: 'en' } } as I18nContext;
 
-    it('should enqueue the password reset link job and return success', async () => {
+    it('should send the password reset link and return success', async () => {
       const result = await resolver.emailPasswordResetLink(
         emailPasswordResetInput,
         context,
       );
 
       expect(result).toEqual({ success: true });
-      expect(messageQueueService.add).toHaveBeenCalledWith(
-        EmailPasswordResetLinkJob.name,
-        {
-          email: 'test@example.com',
-          workspaceId: 'workspace-id',
-          locale: 'en',
-        },
-        { retryLimit: 3 },
-      );
+      expect(
+        resetPasswordService.generateAndSendPasswordResetLink,
+      ).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+        locale: 'en',
+      });
     });
 
-    it('should return success without waiting for the job to be enqueued', async () => {
+    it('should return success without waiting for the link to be sent', async () => {
       const loggerErrorSpy = jest
         .spyOn(Logger.prototype, 'error')
         .mockImplementation();
 
-      (messageQueueService.add as jest.Mock).mockRejectedValue(
-        new Error('redis down'),
-      );
+      (
+        resetPasswordService.generateAndSendPasswordResetLink as jest.Mock
+      ).mockRejectedValue(new Error('database down'));
 
       const result = await resolver.emailPasswordResetLink(
         emailPasswordResetInput,
@@ -246,12 +237,12 @@ describe('AuthResolver', () => {
 
       expect(result).toEqual({ success: true });
       expect(loggerErrorSpy).toHaveBeenCalledWith(
-        'Failed to enqueue the password reset email job',
+        'Failed to send the password reset link',
         expect.any(Error),
       );
     });
 
-    it('should throttle and enqueue with a normalized email address', async () => {
+    it('should throttle and send with a normalized email address', async () => {
       await resolver.emailPasswordResetLink(
         {
           email: 'TeSt@Example.com',
@@ -265,14 +256,14 @@ describe('AuthResolver', () => {
         expect.any(Number),
         expect.any(Number),
       );
-      expect(messageQueueService.add).toHaveBeenCalledWith(
-        EmailPasswordResetLinkJob.name,
+      expect(
+        resetPasswordService.generateAndSendPasswordResetLink,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({ email: 'test@example.com' }),
-        { retryLimit: 3 },
       );
     });
 
-    it('should surface the throttling error without enqueuing the job', async () => {
+    it('should surface the throttling error without sending the link', async () => {
       (
         throttlerService.tokenBucketThrottleOrThrow as jest.Mock
       ).mockRejectedValue(
@@ -285,7 +276,9 @@ describe('AuthResolver', () => {
       await expect(
         resolver.emailPasswordResetLink(emailPasswordResetInput, context),
       ).rejects.toThrow(ThrottlerException);
-      expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(
+        resetPasswordService.generateAndSendPasswordResetLink,
+      ).not.toHaveBeenCalled();
     });
 
     it('should rethrow non throttling errors', async () => {
@@ -296,7 +289,9 @@ describe('AuthResolver', () => {
       await expect(
         resolver.emailPasswordResetLink(emailPasswordResetInput, context),
       ).rejects.toThrow('cache down');
-      expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(
+        resetPasswordService.generateAndSendPasswordResetLink,
+      ).not.toHaveBeenCalled();
     });
   });
 });

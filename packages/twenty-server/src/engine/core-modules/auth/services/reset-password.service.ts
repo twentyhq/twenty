@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -26,7 +26,7 @@ import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { type PasswordResetTokenGenerationResult } from 'src/engine/core-modules/auth/types/password-reset-token-generation-result.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -35,6 +35,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 @Injectable()
 export class ResetPasswordService {
+  private readonly logger = new Logger(ResetPasswordService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -42,10 +44,45 @@ export class ResetPasswordService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
-    private readonly emailSenderService: EmailSenderService,
+    private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
     private readonly userService: UserService,
   ) {}
+
+  async generateAndSendPasswordResetLink({
+    email,
+    workspaceId,
+    locale,
+  }: {
+    email: string;
+    workspaceId?: string;
+    locale: keyof typeof APP_LOCALES;
+  }): Promise<void> {
+    const generationResult = await this.generatePasswordResetToken(
+      email,
+      workspaceId,
+    );
+
+    if (generationResult.status !== 'TOKEN_GENERATED') {
+      this.logger.warn(
+        `Password reset request silently ignored: ${generationResult.status}`,
+      );
+
+      return;
+    }
+
+    await this.rotatePasswordResetToken({
+      userId: generationResult.user.id,
+      resetToken: generationResult.resetToken,
+    });
+
+    await this.sendEmailPasswordResetLink({
+      resetToken: generationResult.resetToken,
+      user: generationResult.user,
+      workspace: generationResult.workspace,
+      locale,
+    });
+  }
 
   async generatePasswordResetToken(
     email: string,
@@ -201,7 +238,7 @@ export class ResetPasswordService {
       : msg`Action Needed to Set Password`;
     const subject = i18n._(subjectTemplate);
 
-    await this.emailSenderService.send({
+    await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,

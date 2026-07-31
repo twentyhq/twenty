@@ -42,13 +42,6 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
-import {
-  EmailPasswordResetLinkJob,
-  type EmailPasswordResetLinkJobData,
-} from 'src/engine/core-modules/auth/jobs/email-password-reset-link.job';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -137,8 +130,6 @@ export class AuthResolver {
   private readonly logger = new Logger(AuthResolver.name);
 
   constructor(
-    @InjectMessageQueue(MessageQueue.emailQueue)
-    private readonly messageQueueService: MessageQueueService,
     private readonly throttlerService: ThrottlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -953,21 +944,14 @@ export class AuthResolver {
       PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
     );
 
-    void this.messageQueueService
-      .add<EmailPasswordResetLinkJobData>(
-        EmailPasswordResetLinkJob.name,
-        {
-          email: normalizedEmail,
-          workspaceId: emailPasswordResetInput.workspaceId,
-          locale: context.req.locale,
-        },
-        { retryLimit: 3 },
-      )
+    void this.resetPasswordService
+      .generateAndSendPasswordResetLink({
+        email: normalizedEmail,
+        workspaceId: emailPasswordResetInput.workspaceId,
+        locale: context.req.locale,
+      })
       .catch((error) => {
-        this.logger.error(
-          'Failed to enqueue the password reset email job',
-          error,
-        );
+        this.logger.error('Failed to send the password reset link', error);
       });
 
     return { success: true };

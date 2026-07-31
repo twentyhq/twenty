@@ -13,7 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -41,7 +41,7 @@ describe('ResetPasswordService', () => {
   let userService: UserService;
   let workspaceRepository: Repository<WorkspaceEntity>;
   let appTokenRepository: Repository<AppTokenEntity>;
-  let emailSenderService: EmailSenderService;
+  let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
   let workspaceDomainsService: WorkspaceDomainsService;
 
@@ -65,7 +65,7 @@ describe('ResetPasswordService', () => {
           useClass: Repository,
         },
         {
-          provide: EmailSenderService,
+          provide: EmailService,
           useValue: {
             send: jest.fn().mockResolvedValue(undefined),
           },
@@ -101,7 +101,7 @@ describe('ResetPasswordService', () => {
     appTokenRepository = module.get<Repository<AppTokenEntity>>(
       getRepositoryToken(AppTokenEntity),
     );
-    emailSenderService = module.get<EmailSenderService>(EmailSenderService);
+    emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
@@ -270,6 +270,50 @@ describe('ResetPasswordService', () => {
     });
   });
 
+  describe('generateAndSendPasswordResetLink', () => {
+    it('should rotate the token and send the email when a token is generated', async () => {
+      const { updateSpy, saveSpy } = mockAppTokenTransaction();
+
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+      } as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({ id: 'workspace-id' } as WorkspaceEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+      jest
+        .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
+        .mockReturnValue(new URL('https://subdomain.localhost.com:3000/reset'));
+
+      await service.generateAndSendPasswordResetLink({
+        email: 'test@example.com',
+        workspaceId: 'workspace-id',
+        locale: 'en',
+      });
+
+      expect(updateSpy).toHaveBeenCalled();
+      expect(saveSpy).toHaveBeenCalled();
+      expect(emailService.send).toHaveBeenCalled();
+    });
+
+    it.each(['USER_NOT_FOUND', 'NO_PASSWORD_AUTH_ENABLED_WORKSPACE_FOUND'])(
+      'should skip sending the email when generation status is %s',
+      async (status) => {
+        jest
+          .spyOn(service, 'generatePasswordResetToken')
+          .mockResolvedValue({ status } as never);
+
+        await service.generateAndSendPasswordResetLink({
+          email: 'test@example.com',
+          locale: 'en',
+        });
+
+        expect(emailService.send).not.toHaveBeenCalled();
+      },
+    );
+  });
+
   describe('rotatePasswordResetToken', () => {
     const mockResetToken = {
       workspaceId: 'workspace-id',
@@ -341,7 +385,7 @@ describe('ResetPasswordService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(emailSenderService.send).toHaveBeenCalled();
+      expect(emailService.send).toHaveBeenCalled();
     });
   });
 
