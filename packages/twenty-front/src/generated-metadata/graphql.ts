@@ -952,6 +952,7 @@ export type ClientConfig = {
   isClickHouseConfigured: Scalars['Boolean']['output'];
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
+  isCookieSessionEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isEmailingDomainInDemoMode: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
@@ -2719,7 +2720,9 @@ export type Mutation = {
   resetPageLayoutToDefault: PageLayout;
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
   retryChatMessage: SendChatMessageResult;
+  revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
+  revokeUserSession: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
@@ -3492,6 +3495,11 @@ export type MutationRetryChatMessageArgs = {
 
 export type MutationRevokeApiKeyArgs = {
   input: RevokeApiKeyInput;
+};
+
+
+export type MutationRevokeUserSessionArgs = {
+  userSessionId: Scalars['UUID']['input'];
 };
 
 
@@ -4490,6 +4498,7 @@ export type Query = {
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
+  currentUserSessions: Array<UserSession>;
   currentWorkspace: Workspace;
   enterpriseCheckoutSession?: Maybe<Scalars['String']['output']>;
   enterprisePortalSession?: Maybe<Scalars['String']['output']>;
@@ -6146,6 +6155,20 @@ export type User = {
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
+};
+
+export type UserSession = {
+  __typename?: 'UserSession';
+  authProvider: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  ipAddress?: Maybe<Scalars['String']['output']>;
+  isCurrent: Scalars['Boolean']['output'];
+  isImpersonating: Scalars['Boolean']['output'];
+  lastActiveAt: Scalars['DateTime']['output'];
+  userAgent?: Maybe<Scalars['String']['output']>;
+  workspaceId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type UserWorkspace = {
