@@ -1,11 +1,9 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
-import {
-  type BackfillBatchResult,
-  BACKFILL_COMPANIES_ROUTE_PATH,
-} from 'src/constants/backfill';
+import { type BackfillBatchPayload } from 'src/constants/backfill';
 import { BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { buildBackfillBatchArgs } from 'src/utils/backfill-batch-args';
 import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { collectPeopleByCompany } from 'src/utils/collect-people-by-company';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
@@ -16,20 +14,14 @@ import {
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
 
-type BackfillBody = { cursor?: string };
-
-const handler = async (
-  payload: RoutePayload<BackfillBody>,
-): Promise<BackfillBatchResult> => {
+const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   const client = new CoreApiClient();
-  const cursor = payload.body?.cursor;
 
   const { companies } = await executeWithRetry(() =>
     client.query({
       companies: {
-        __args: { first: getBackfillBatchSize(), after: cursor },
+        __args: buildBackfillBatchArgs(batchId, getBackfillBatchSize()),
         edges: { node: { id: true } },
-        pageInfo: { hasNextPage: true, endCursor: true },
       },
     }),
   );
@@ -39,7 +31,7 @@ const handler = async (
     .filter(Boolean);
 
   if (companyIds.length === 0) {
-    return { nextCursor: null, count: 0 };
+    return { batchId, count: 0 };
   }
 
   const peopleByCompanyId = await collectPeopleByCompany(client, companyIds);
@@ -67,24 +59,14 @@ const handler = async (
     );
   }
 
-  const nextCursor =
-    companies?.pageInfo.hasNextPage && companies.pageInfo.endCursor
-      ? companies.pageInfo.endCursor
-      : null;
-
-  return { nextCursor, count: companyIds.length };
+  return { batchId, count: companyIds.length };
 };
 
 export default defineLogicFunction({
   universalIdentifier: BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-companies-last-contact',
   description:
-    'Backfills last-contact fields for one page of companies from the most recent contact of their people, returning the next cursor to the backfill orchestrator.',
+    'Backfills last-contact fields for one batch of companies from the most recent contact of their people, resolved from the batch id in its payload.',
   timeoutSeconds: 120,
   handler,
-  httpRouteTriggerSettings: {
-    path: BACKFILL_COMPANIES_ROUTE_PATH,
-    httpMethod: 'POST',
-    isAuthRequired: true,
-  },
 });

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,8 +25,6 @@ export type InjectActorParams = {
 
 @Injectable()
 export class ActorFromAuthContextService {
-  private readonly logger = new Logger(ActorFromAuthContextService.name);
-
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
@@ -113,15 +111,7 @@ export class ActorFromAuthContextService {
         ).fieldIdByName
       : {};
 
-    this.logger.log(
-      `Object metadata found with fields: ${Object.keys(fieldIdByName)}`,
-    );
-
     if (!isDefined(fieldIdByName[fieldName])) {
-      this.logger.log(
-        `${fieldName} field not found in object metadata, skipping injection`,
-      );
-
       return records;
     }
 

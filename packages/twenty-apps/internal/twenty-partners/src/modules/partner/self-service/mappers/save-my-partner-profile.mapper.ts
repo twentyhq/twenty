@@ -25,6 +25,7 @@ export const saveProfileSchema = z
     country: z.string().nullable().optional(),
     languagesSpoken: z.array(z.string()).optional(),
     partnerScope: z.array(z.string()).optional(),
+    region: z.array(z.string()).optional(),
     skills: z.array(z.string()).optional(),
     typeOfTeam: z.enum(['SOLO', 'AGENCY']).nullable().optional(),
     availability: z.enum(['AVAILABLE', 'UNAVAILABLE']).nullable().optional(),
@@ -44,6 +45,7 @@ const optionValueSet = (options: { value: string }[]): Set<string> =>
 const COUNTRY_VALUES = optionValueSet(PROFILE_OPTIONS.country);
 const LANGUAGE_VALUES = optionValueSet(PROFILE_OPTIONS.languagesSpoken);
 const PARTNER_SCOPE_VALUES = optionValueSet(PROFILE_OPTIONS.partnerScope);
+const REGION_VALUES = optionValueSet(PROFILE_OPTIONS.region);
 
 // Kept separate from buildPartnerUpdateData so each concern (validation vs.
 // mapping) is independently unit-testable.
@@ -60,6 +62,10 @@ export function validateProfileOptionValues(
   if (input.partnerScope !== undefined) {
     const unknown = input.partnerScope.find((value) => !PARTNER_SCOPE_VALUES.has(value));
     if (unknown !== undefined) return { error: `Unknown partner scope: ${unknown}` };
+  }
+  if (input.region !== undefined) {
+    const unknown = input.region.find((value) => !REGION_VALUES.has(value));
+    if (unknown !== undefined) return { error: `Unknown region: ${unknown}` };
   }
   return null;
 }
@@ -87,6 +93,9 @@ export function buildPartnerUpdateData(
     data.partnerScope = input.partnerScope.map(
       (value) => value as CoreSchema.PartnerPartnerScopeEnum,
     );
+  }
+  if (input.region !== undefined) {
+    data.region = input.region.map((value) => value as CoreSchema.PartnerRegionEnum);
   }
   if (input.skills !== undefined) data.skills = input.skills;
   if (input.typeOfTeam !== undefined) data.typeOfTeam = input.typeOfTeam;

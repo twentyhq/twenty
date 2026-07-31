@@ -189,6 +189,7 @@ export {
   HTTPMethod,
   NavigationMenuItemType,
   NumberDataType,
+  ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   PageLayoutType,

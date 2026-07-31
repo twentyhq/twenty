@@ -17,6 +17,7 @@ import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscove
 import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
+import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -120,6 +121,13 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
             />
           }
         />
+      </Section>
+      <Section>
+        <H2Title
+          title={t`Navigation`}
+          description={t`Where records of this object open`}
+        />
+        <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
       </Section>
       <Section>
         <H2Title
