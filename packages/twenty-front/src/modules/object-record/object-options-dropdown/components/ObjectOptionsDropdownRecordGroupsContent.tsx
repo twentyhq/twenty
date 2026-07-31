@@ -86,8 +86,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
 
-  // A table view can always drop its grouping through the None option, so the
-  // field picker has to stay reachable even when a single field is groupable
   const isGroupByFieldPickerDisabled =
     availableFieldsForGrouping.length <= 1 && viewType !== ViewType.TABLE;
 
