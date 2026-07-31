@@ -97,17 +97,37 @@ export class UserSessionService {
     }
 
     try {
+      const sessionInput = this.buildCreateSessionInputFromTokenPair(
+        tokenPair,
+        request,
+        origin,
+      );
+
+      if (!isDefined(sessionInput)) {
+        return;
+      }
+
       const presentedSessionToken =
         extractUserSessionTokenFromRequestCookie(request);
 
       if (isDefined(presentedSessionToken)) {
         if (origin === 'renewal_bridge') {
           try {
-            await this.resolveSessionPayload(presentedSessionToken);
+            const presentedPayload = await this.resolveSessionPayload(
+              presentedSessionToken,
+            );
 
-            // The client already holds a valid session: renewals must not
-            // mint a new row every 30 minutes.
-            return;
+            // The client already holds a valid session for the same user:
+            // renewals must not mint a new row every 30 minutes. A session
+            // for a different identity is replaced, never kept.
+            if (presentedPayload.userId === sessionInput.userId) {
+              return;
+            }
+
+            await this.revokeSessionByToken(
+              presentedSessionToken,
+              UserSessionRevokedReason.Superseded,
+            );
           } catch {
             // Invalid or expired session: fall through and mint a fresh one.
           }
@@ -119,16 +139,6 @@ export class UserSessionService {
             UserSessionRevokedReason.Superseded,
           );
         }
-      }
-
-      const sessionInput = this.buildCreateSessionInputFromTokenPair(
-        tokenPair,
-        request,
-        origin,
-      );
-
-      if (!isDefined(sessionInput)) {
-        return;
       }
 
       const { sessionToken, session } = await this.createSession(sessionInput);
@@ -276,8 +286,29 @@ export class UserSessionService {
       refreshedCachedSession,
       USER_SESSION_CACHE_TTL_MS,
     );
+    await this.assertNotRevokedAfterCaching(session.id, tokenHash);
 
     return this.buildPayloadFromCachedSession(refreshedCachedSession);
+  }
+
+  // A revocation racing the cache write above may have had its cache delete
+  // land before our set, silently resurrecting the revoked session for a
+  // full cache TTL. Re-checking after the write closes the race: any
+  // revocation committing later deletes the entry we just wrote.
+  private async assertNotRevokedAfterCaching(
+    sessionId: string,
+    tokenHash: string,
+  ): Promise<void> {
+    const session = await this.userSessionRepository.findOne({
+      where: { id: sessionId },
+      select: { id: true, revokedAt: true },
+    });
+
+    if (!isDefined(session) || isDefined(session.revokedAt)) {
+      await this.cacheStorageService.del(tokenHash);
+
+      throw buildInvalidSessionException();
+    }
   }
 
   async findSessionByToken(
@@ -485,26 +516,39 @@ export class UserSessionService {
       return;
     }
 
+    let affected: number | null | undefined;
+
     try {
-      await this.userSessionRepository.update(
+      ({ affected } = await this.userSessionRepository.update(
         { id: cachedSession.sessionId, revokedAt: IsNull() },
         { lastActiveAt: now },
-      );
-
-      cachedSession.lastActiveAt = now.toISOString();
-
-      await this.cacheStorageService.set(
-        tokenHash,
-        cachedSession,
-        USER_SESSION_CACHE_TTL_MS,
-      );
+      ));
     } catch (error) {
       this.logger.warn(
         `Failed to touch session ${cachedSession.sessionId}: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
+
+      return;
     }
+
+    // Zero rows means the session was revoked or deleted since it was
+    // cached: drop the entry instead of extending a dead session.
+    if (affected === 0) {
+      await this.cacheStorageService.del(tokenHash);
+
+      throw buildInvalidSessionException();
+    }
+
+    cachedSession.lastActiveAt = now.toISOString();
+
+    await this.cacheStorageService.set(
+      tokenHash,
+      cachedSession,
+      USER_SESSION_CACHE_TTL_MS,
+    );
+    await this.assertNotRevokedAfterCaching(cachedSession.sessionId, tokenHash);
   }
 
   private toCachedSession(session: UserSessionEntity): CachedUserSession {

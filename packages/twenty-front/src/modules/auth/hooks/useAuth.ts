@@ -25,6 +25,7 @@ import {
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -132,8 +133,11 @@ export const useAuth = () => {
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
       setTokenPair(tokens);
+      // A fresh authentication supersedes any un-acknowledged sign-out:
+      // without this, the boot retry would revoke the new session.
+      store.set(isPendingServerSignOutState.atom, false);
     },
-    [setTokenPair],
+    [setTokenPair, store],
   );
 
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
@@ -451,15 +455,20 @@ export const useAuth = () => {
   const handleSignOut = useCallback(async () => {
     // Server-side revocation must run before clearSession: it needs the
     // refresh token and the navigation there kills in-flight requests.
-    // Sign-out always completes locally even if the server is unreachable.
+    // Sign-out always completes locally even if the server is unreachable,
+    // but the pending marker makes the next boot retry the revocation
+    // instead of resurrecting the still-alive httpOnly session.
+    store.set(isPendingServerSignOutState.atom, true);
+
     try {
       await signOutMutation({
         variables: {
           refreshToken: store.get(tokenPairState.atom)?.refreshToken?.token,
         },
       });
+      store.set(isPendingServerSignOutState.atom, false);
     } catch {
-      // The cleanup cron eventually reaps sessions we failed to revoke.
+      // Marker stays set; the boot effect finishes the revocation later.
     }
 
     broadcastSignOutToOtherTabs();

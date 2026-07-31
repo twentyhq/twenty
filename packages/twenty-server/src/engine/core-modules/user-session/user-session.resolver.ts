@@ -77,10 +77,15 @@ export class UserSessionResolver {
       ? await this.userSessionService.findSessionByToken(presentedSessionToken)
       : null;
 
+    // A stale cookie can reference another user's session: it must never
+    // shape which of the authenticated user's sessions survive.
+    const exceptSessionId =
+      currentSession?.userId === user.id ? currentSession.id : undefined;
+
     return await this.userSessionService.revokeAllSessionsForUser({
       userId: user.id,
       reason: UserSessionRevokedReason.UserRevoked,
-      exceptSessionId: currentSession?.id,
+      exceptSessionId,
     });
   }
 

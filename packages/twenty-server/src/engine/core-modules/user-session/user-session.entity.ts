@@ -36,7 +36,10 @@ export class UserSessionEntity {
   @ManyToOne(() => UserEntity, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({
+    name: 'userId',
+    foreignKeyConstraintName: 'FK_USER_SESSION_USER_ID',
+  })
   user: Relation<UserEntity>;
 
   @Index('IDX_USER_SESSION_USER_ID')
@@ -46,7 +49,10 @@ export class UserSessionEntity {
   @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'workspaceId' })
+  @JoinColumn({
+    name: 'workspaceId',
+    foreignKeyConstraintName: 'FK_USER_SESSION_WORKSPACE_ID',
+  })
   workspace: Relation<WorkspaceEntity> | null;
 
   // Null for workspace-agnostic sessions (multi-workspace picker).
