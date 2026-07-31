@@ -60,7 +60,6 @@ import {
   computeRelationGqlFieldJoinColumnName,
 } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 
-// Strips every non-digit except a single leading + (preserving the calling code)
 const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
 
 const CONTAINS_DIGIT = /[0-9]/;
