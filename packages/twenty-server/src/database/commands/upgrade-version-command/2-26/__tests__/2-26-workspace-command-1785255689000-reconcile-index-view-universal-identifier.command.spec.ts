@@ -3,6 +3,7 @@ import {
   getSystemViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
+import { In } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReconcileIndexViewUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-workspace-command-1785255689000-reconcile-index-view-universal-identifier.command';
@@ -114,7 +115,9 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
   let getOrRecomputeMock: jest.Mock;
   let invalidateCacheMock: jest.Mock;
   let viewUpdateMock: jest.Mock;
+  let viewDeleteMock: jest.Mock;
   let viewFieldUpdateMock: jest.Mock;
+  let viewFieldDeleteMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -122,15 +125,17 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     getOrRecomputeMock = jest.fn();
     invalidateCacheMock = jest.fn().mockResolvedValue(undefined);
     viewUpdateMock = jest.fn().mockResolvedValue(undefined);
+    viewDeleteMock = jest.fn().mockResolvedValue(undefined);
     viewFieldUpdateMock = jest.fn().mockResolvedValue(undefined);
+    viewFieldDeleteMock = jest.fn().mockResolvedValue(undefined);
 
     const entityManagerMock = {
       getRepository: (entity: unknown) => {
         if (entity === ViewEntity) {
-          return { update: viewUpdateMock };
+          return { update: viewUpdateMock, delete: viewDeleteMock };
         }
         if (entity === ViewFieldEntity) {
-          return { update: viewFieldUpdateMock };
+          return { update: viewFieldUpdateMock, delete: viewFieldDeleteMock };
         }
         throw new Error('Unexpected repository');
       },
@@ -324,7 +329,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     );
   });
 
-  it('releases a soft-deleted view holding the derived identifier before re-owning the active view', async () => {
+  it('deletes a soft-deleted view holding the derived identifier before re-owning the active view', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -343,16 +348,15 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
 
     await runOnWorkspace();
 
-    expect(viewUpdateMock).toHaveBeenCalledTimes(2);
-    // The tombstone moves onto its own primary key first, freeing the
-    // derived identifier for the active view.
-    expect(viewUpdateMock).toHaveBeenNthCalledWith(
-      1,
-      { id: 'tombstone-view-id', workspaceId: WORKSPACE_ID },
-      { universalIdentifier: 'tombstone-view-id' },
-    );
-    expect(viewUpdateMock).toHaveBeenNthCalledWith(
-      2,
+    // The unrestorable tombstone is removed first, freeing the derived
+    // identifier for the active view.
+    expect(viewDeleteMock).toHaveBeenCalledTimes(1);
+    expect(viewDeleteMock).toHaveBeenCalledWith({
+      id: In(['tombstone-view-id']),
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
       { id: 'active-view-id', workspaceId: WORKSPACE_ID },
       {
         universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
@@ -361,7 +365,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     );
   });
 
-  it('demotes a duplicate INDEX view when another active view already holds the derived identifier', async () => {
+  it('skips an INDEX view whose derived identifier is held by another active view', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -380,14 +384,12 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
 
     await runOnWorkspace();
 
-    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
-    expect(viewUpdateMock).toHaveBeenCalledWith(
-      { id: 'duplicate-view-id', workspaceId: WORKSPACE_ID },
-      { key: null },
-    );
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(viewDeleteMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
   });
 
-  it('demotes the second of two INDEX views deriving the same identifier when neither holds it', async () => {
+  it('re-owns only the first of two INDEX views deriving the same identifier when neither holds it', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -405,23 +407,17 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
 
     await runOnWorkspace();
 
-    expect(viewUpdateMock).toHaveBeenCalledTimes(2);
-    expect(viewUpdateMock).toHaveBeenNthCalledWith(
-      1,
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
       { id: 'first-view-id', workspaceId: WORKSPACE_ID },
       {
         universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: true,
       },
     );
-    expect(viewUpdateMock).toHaveBeenNthCalledWith(
-      2,
-      { id: 'second-view-id', workspaceId: WORKSPACE_ID },
-      { key: null },
-    );
   });
 
-  it('releases a soft-deleted view field holding the derived identifier before re-owning the active one', async () => {
+  it('deletes a soft-deleted view field holding the derived identifier before re-owning the active one', async () => {
     mockWorkspaceCache({
       views: [
         buildFlatView({
@@ -451,14 +447,13 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     await runOnWorkspace();
 
     expect(viewUpdateMock).not.toHaveBeenCalled();
-    expect(viewFieldUpdateMock).toHaveBeenCalledTimes(2);
-    expect(viewFieldUpdateMock).toHaveBeenNthCalledWith(
-      1,
-      { id: 'tombstone-view-field-id', workspaceId: WORKSPACE_ID },
-      { universalIdentifier: 'tombstone-view-field-id' },
-    );
-    expect(viewFieldUpdateMock).toHaveBeenNthCalledWith(
-      2,
+    expect(viewFieldDeleteMock).toHaveBeenCalledTimes(1);
+    expect(viewFieldDeleteMock).toHaveBeenCalledWith({
+      id: In(['tombstone-view-field-id']),
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(viewFieldUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewFieldUpdateMock).toHaveBeenCalledWith(
       { id: 'active-view-field-id', workspaceId: WORKSPACE_ID },
       {
         universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
