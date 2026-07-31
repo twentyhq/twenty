@@ -1,11 +1,13 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
 
 import {
-  type BackfillBatchResult,
-  BACKFILL_PEOPLE_ROUTE_PATH,
+  type BackfillState,
+  BACKFILL_STATE_KV_KEY,
 } from 'src/constants/backfill';
 import { BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { advanceBackfill } from 'src/utils/advance-backfill';
 import { getBackfillBatchSize } from 'src/utils/backfill-settings';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
@@ -13,13 +15,17 @@ import {
   buildPersonUpdateData,
 } from 'src/utils/person-last-contact-aggregation';
 
-type BackfillBody = { cursor?: string };
+const PHASE = 'people';
 
-const handler = async (
-  payload: RoutePayload<BackfillBody>,
-): Promise<BackfillBatchResult> => {
+const handler = async (): Promise<object> => {
+  const state = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
+
+  if (!state || state.phase !== PHASE) {
+    return { outcome: 'skipped', phase: state?.phase ?? null };
+  }
+
   const client = new CoreApiClient();
-  const cursor = payload.body?.cursor;
+  const cursor = state.cursor ?? undefined;
 
   const { people } = await executeWithRetry(() =>
     client.query({
@@ -36,7 +42,11 @@ const handler = async (
     .filter(Boolean);
 
   if (personIds.length === 0) {
-    return { nextCursor: null, count: 0 };
+    return advanceBackfill({
+      phase: PHASE,
+      nextCursor: null,
+      iterations: state.iterations,
+    });
   }
 
   const aggByPersonId = await buildPersonAggregates(client, personIds);
@@ -61,19 +71,18 @@ const handler = async (
       ? people.pageInfo.endCursor
       : null;
 
-  return { nextCursor, count: personIds.length };
+  return advanceBackfill({
+    phase: PHASE,
+    nextCursor,
+    iterations: state.iterations,
+  });
 };
 
 export default defineLogicFunction({
   universalIdentifier: BACKFILL_PEOPLE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-people-last-contact',
   description:
-    'Backfills last-contact fields for one page of people from their messages and calendar events, returning the next cursor to the backfill orchestrator.',
+    'Backfills last-contact fields for one page of people from their messages and calendar events, then enqueues the next backfill batch.',
   timeoutSeconds: 120,
   handler,
-  httpRouteTriggerSettings: {
-    path: BACKFILL_PEOPLE_ROUTE_PATH,
-    httpMethod: 'POST',
-    isAuthRequired: true,
-  },
 });

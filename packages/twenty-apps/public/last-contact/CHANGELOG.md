@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+- Drive the last-contact backfill with enqueued background jobs instead of a logic function that called its own HTTP route in a loop with blocking sleeps. Each phase now processes one batch and enqueues the next via `enqueueJob`, using `delayMs` to stay under the hosted API rate limiting.
+
 ## 1.2.0
 
 - Compute last contact on Companies and Opportunities when the record or its relationships change, not only on new interactions: opportunities recompute from their point of contact on creation and when it changes, and companies recompute from their people on creation and when a person joins or leaves.
