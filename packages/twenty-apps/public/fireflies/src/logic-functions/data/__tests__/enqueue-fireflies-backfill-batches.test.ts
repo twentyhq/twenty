@@ -32,6 +32,7 @@ describe('enqueueFirefliesBackfillBatches', () => {
         FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payload: { transcriptIds: ['call-1', 'call-2'] },
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
+      delayMs: 0,
     });
     expect(enqueueJobMock).toHaveBeenNthCalledWith(2, {
       logicFunctionUniversalIdentifier:

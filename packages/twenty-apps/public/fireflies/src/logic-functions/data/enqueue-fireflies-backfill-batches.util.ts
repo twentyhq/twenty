@@ -16,12 +16,7 @@ export const enqueueFirefliesBackfillBatches = async ({
           FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
         payload: { transcriptIds },
         retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
-        ...(batchIndex === 0
-          ? {}
-          : {
-              delayMs:
-                batchIndex * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
-            }),
+        delayMs: batchIndex * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
       }),
     ),
   );
