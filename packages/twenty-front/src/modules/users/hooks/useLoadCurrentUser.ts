@@ -81,6 +81,7 @@ export const useLoadCurrentUser = () => {
           (user.currentUserWorkspace.objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
+        isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
       });
     }
 

@@ -14,6 +14,8 @@ import { ImpersonationAuthorizationService } from 'src/engine/core-modules/imper
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -60,6 +62,20 @@ describe('ImpersonationService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: TwentyConfigServiceGetMock,
+          },
+        },
+        {
+          provide: UserSessionService,
+          useValue: {
+            createSession: jest.fn(),
+            revokeSessionByToken: jest.fn(),
+          },
+        },
+        {
+          provide: UserSessionCookieService,
+          useValue: {
+            attachSessionTokenToResponse: jest.fn(),
+            clearSessionCookie: jest.fn(),
           },
         },
         {

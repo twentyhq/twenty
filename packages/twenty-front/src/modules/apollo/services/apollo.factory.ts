@@ -200,6 +200,13 @@ export class ApolloFactory implements ApolloManager {
         forward: ApolloLink.ForwardFunction,
         error: ErrorLike,
       ) => {
+        // Operations that deliberately carry no token (e.g. the cookie
+        // session probe) must fail as-is: renewing and replaying them
+        // headerless could loop.
+        if (operation.getContext().skipAuthToken === true) {
+          return throwError(() => error);
+        }
+
         if (!getTokenPair()?.refreshToken?.token) {
           onUnauthenticatedError?.();
 

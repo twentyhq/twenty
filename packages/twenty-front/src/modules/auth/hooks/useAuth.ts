@@ -16,6 +16,7 @@ import {
   GetLoginTokenFromCredentialsDocument,
   GetWorkspaceCreationDefaultsDocument,
   SignInDocument,
+  SignOutDocument,
   SignUpInWorkspaceDocument,
   SignUpDocument,
   VerifyEmailAndGetLoginTokenDocument,
@@ -23,6 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -100,6 +102,7 @@ export const useAuth = () => {
     VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
   );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
+  const [signOutMutation] = useMutation(SignOutDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
@@ -116,6 +119,7 @@ export const useAuth = () => {
   const clearSession = useCallback(() => {
     sessionStorage.clear();
     store.set(tokenPairState.atom, null);
+    store.set(isCookieAuthActiveState.atom, false);
     store.set(currentUserState.atom, null);
     store.set(currentWorkspaceState.atom, null);
     store.set(currentWorkspaceMemberState.atom, null);
@@ -444,10 +448,23 @@ export const useAuth = () => {
     [handleGetLoginTokenFromCredentials, handleGetAuthTokensFromLoginToken],
   );
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = useCallback(async () => {
+    // Server-side revocation must run before clearSession: it needs the
+    // refresh token and the navigation there kills in-flight requests.
+    // Sign-out always completes locally even if the server is unreachable.
+    try {
+      await signOutMutation({
+        variables: {
+          refreshToken: store.get(tokenPairState.atom)?.refreshToken?.token,
+        },
+      });
+    } catch {
+      // The cleanup cron eventually reaps sessions we failed to revoke.
+    }
+
     broadcastSignOutToOtherTabs();
     clearSession();
-  }, [clearSession]);
+  }, [clearSession, signOutMutation, store]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({
