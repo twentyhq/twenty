@@ -106,6 +106,8 @@ export interface MergeManyResolverArgs {
   ids: string[];
   conflictPriorityIndex: number;
   dryRun?: boolean;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  data?: Record<string, any>;
 }
 
 export interface DestroyOneResolverArgs {

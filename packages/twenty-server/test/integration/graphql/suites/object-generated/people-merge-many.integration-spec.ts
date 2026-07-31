@@ -12,6 +12,10 @@ describe('people merge resolvers (integration)', () => {
 
   afterEach(async () => {
     if (createdPersonIdsForCleaning.length > 0) {
+      await global.testDataSource.query(
+        'DELETE FROM core."personRecordMerge" WHERE "sourcePersonId" = ANY($1)',
+        [createdPersonIdsForCleaning],
+      );
       await deleteRecordsByIds('person', createdPersonIdsForCleaning);
       createdPersonIdsForCleaning = [];
     }
@@ -220,6 +224,99 @@ describe('people merge resolvers (integration)', () => {
           'second.extra@example.com',
         ]),
       );
+    });
+
+    it('should apply reviewed contact values, trash absorbed people, and record provenance', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'Merge',
+              lastName: 'Survivor',
+            },
+            emails: {
+              primaryEmail: 'survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: {
+              firstName: 'Merge',
+              lastName: 'Absorbed',
+            },
+            emails: {
+              primaryEmail: 'absorbed@example.com',
+              additionalEmails: [],
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const createdPersonIds = createResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+      const [survivorPersonId, absorbedPersonId] = createdPersonIds;
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const mergeOperation = mergeManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        ids: createdPersonIds,
+        conflictPriorityIndex: 0,
+        data: {
+          emails: {
+            primaryEmail: 'absorbed@example.com',
+            additionalEmails: ['survivor@example.com'],
+          },
+        },
+      });
+      const mergeResponse = await makeGraphqlAPIRequest(mergeOperation);
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(mergeResponse.body.data.mergePeople.id).toBe(survivorPersonId);
+      expect(mergeResponse.body.data.mergePeople.emails).toEqual({
+        primaryEmail: 'absorbed@example.com',
+        additionalEmails: ['survivor@example.com'],
+      });
+
+      const findAbsorbedPerson = findOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        filter: {
+          id: {
+            eq: absorbedPersonId,
+          },
+          not: {
+            deletedAt: {
+              is: 'NULL',
+            },
+          },
+        },
+      });
+      const findAbsorbedPersonResponse =
+        await makeGraphqlAPIRequest(findAbsorbedPerson);
+
+      expect(findAbsorbedPersonResponse.body.data.person.id).toBe(
+        absorbedPersonId,
+      );
+      expect(
+        findAbsorbedPersonResponse.body.data.person.deletedAt,
+      ).not.toBeNull();
+
+      const provenanceRows = await global.testDataSource.query(
+        'SELECT "mergedByWorkspaceMemberId" FROM core."personRecordMerge" WHERE "sourcePersonId" = $1 AND "targetPersonId" = $2',
+        [absorbedPersonId, survivorPersonId],
+      );
+
+      expect(provenanceRows).toHaveLength(1);
+      expect(provenanceRows[0].mergedByWorkspaceMemberId).toBeTruthy();
     });
 
     it('should handle dry run mode', async () => {
