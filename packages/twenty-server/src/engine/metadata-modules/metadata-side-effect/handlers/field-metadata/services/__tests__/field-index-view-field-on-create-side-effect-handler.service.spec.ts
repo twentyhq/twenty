@@ -312,22 +312,54 @@ describe('FieldIndexViewFieldOnCreateSideEffectHandlerService', () => {
       expect(result.status).toBe('success');
     });
 
-    it('should noop for a non-displayable field (relation) at object creation', () => {
-      const relationField = buildPendingFieldMetadata(
-        'assignee',
-        FieldMetadataType.RELATION,
-      );
+    // Parity with the existing-object path: a relation created in the same
+    // batch as its object gets a visible INDEX view field too, otherwise the
+    // same manifest yields different views depending on whether the object
+    // pre-existed (twentyhq/core-team-issues#2749).
+    it.each([
+      ['relation', FieldMetadataType.RELATION],
+      ['morph relation', FieldMetadataType.MORPH_RELATION],
+    ])(
+      'should emit a visible view field for a %s field created in the same batch as its object',
+      (_label, fieldMetadataType) => {
+        const relationField = buildPendingFieldMetadata(
+          'assignee',
+          fieldMetadataType,
+        );
 
-      const result = handler.buildSideEffects(
-        buildArgs({
-          triggerFieldMetadata: relationField,
-          pendingFieldMetadatas: [NAME_FIELD, relationField],
-          objectMetadataCreatedInBatch: true,
-        }),
-      );
+        const result = handler.buildSideEffects(
+          buildArgs({
+            triggerFieldMetadata: relationField,
+            pendingFieldMetadatas: [NAME_FIELD, relationField],
+            objectMetadataCreatedInBatch: true,
+          }),
+        );
 
-      expect(result.status).toBe('noop');
-    });
+        expect(result.status).toBe('success');
+
+        if (result.status !== 'success') {
+          throw new Error('expected success');
+        }
+
+        const viewFields = Object.values(
+          result.operations.viewField?.flatEntityToCreate ?? {},
+        );
+
+        expect(viewFields).toHaveLength(1);
+        expect(viewFields[0].universalIdentifier).toBe(
+          computeViewFieldUniversalIdentifier({
+            viewUniversalIdentifier: DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: relationField.universalIdentifier,
+          }),
+        );
+        expect(viewFields[0].viewUniversalIdentifier).toBe(
+          DERIVED_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+        );
+        expect(viewFields[0].position).toBe(1);
+        expect(viewFields[0].isVisible).toBe(true);
+        expect(viewFields[0].isSystemSideEffect).toBe(true);
+      },
+    );
   });
 
   describe('field created on an existing object (historical createOneField behavior)', () => {
