@@ -83,18 +83,37 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           SHA: ${{ steps.resolve.outputs.sha }}
+          REQUESTED_REF: ${{ inputs.ref }}
           ACTOR: ${{ github.actor }}
         run: |
-          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<JSON
-          {
-            "ref": "${SHA}",
-            "environment": "staging",
-            "description": "requested by ${ACTOR}",
-            "auto_merge": false,
-            "required_contexts": []
-          }
-          JSON
-          )"
+          # `ref` stays the resolved SHA rather than the branch: GitHub would
+          # re-resolve a branch here, and staging deploys unmerged branches
+          # that move, so the record could name a commit whose image was never
+          # verified above. The branch is recorded beside it, because a bare
+          # SHA does not say what was deployed.
+          #
+          # Built with jq so a ref containing quotes cannot break the JSON.
+          # GitHub truncates descriptions past 140 characters.
+          description="$(printf '%s @ %s, requested by %s' \
+            "$REQUESTED_REF" "${SHA:0:7}" "$ACTOR" | cut -c1-140)"
+          body="$(jq -nc \
+            --arg sha "$SHA" \
+            --arg description "$description" \
+            --arg requested_ref "$REQUESTED_REF" \
+            --arg actor "$ACTOR" \
+            '{
+              ref: $sha,
+              environment: "staging",
+              description: $description,
+              payload: {
+                requested_ref: $requested_ref,
+                sha: $sha,
+                requested_by: $actor
+              },
+              auto_merge: false,
+              required_contexts: []
+            }')"
+          id="$(gh api --method POST "repos/${REPO}/deployments" --jq .id --input - <<<"$body")"
           gh api --method POST "repos/${REPO}/deployments/${id}/statuses" \
             -f state=in_progress \
             -f description="waiting for the staging host to converge" >/dev/null
