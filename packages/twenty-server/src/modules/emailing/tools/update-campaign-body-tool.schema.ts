@@ -1,8 +1,4 @@
-import {
-  CAMPAIGN_VARIABLE_NAMES,
-  emailDocumentSchema,
-  isValidUuid,
-} from 'twenty-shared/utils';
+import { emailDocumentSchema, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const UpdateCampaignBodyToolInputZodSchema = z.object({
@@ -16,7 +12,7 @@ export const UpdateCampaignBodyToolInputZodSchema = z.object({
     'The full email document that replaces the campaign body. ' +
       'A document is {type: "doc", content: [...blocks]}. Blocks: paragraph and heading (level 1-3) hold inline text, variableTag chips ({attrs: {variable: "{{firstName}}"}}) and hardBreak; emailSection wraps blocks in a styled band; emailColumns holds 2-4 emailColumn children; emailButton is a call-to-action with an href; image, emailDivider, bulletList/orderedList and emailHtml (raw HTML) complete the set. ' +
       'Style attributes are inline CSS strings, e.g. "padding: 12px; background-color: #f4f4f5;". ' +
-      `Per-recipient variables (${CAMPAIGN_VARIABLE_NAMES.map((name) => `{{${name}}}`).join(', ')}) work in text, button and link URLs and raw HTML. ` +
+      'Per-recipient variables reference person fields by path, e.g. {{name.firstName}}, {{emails.primaryEmail}}, {{city}} or any custom person field; {{firstName}}, {{lastName}}, {{fullName}}, {{email}} and {{personId}} also work. They apply in text, button and link URLs and raw HTML, and unknown names are rejected with the available list. ' +
       'To modify an existing body, read the record first, edit the parsed document and send the whole result back.',
   ),
 });

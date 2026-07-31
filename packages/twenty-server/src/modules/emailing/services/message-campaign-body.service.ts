@@ -2,7 +2,6 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import {
-  CAMPAIGN_VARIABLE_NAMES,
   EMAIL_DOCUMENT_SCHEMA_VERSION,
   EMAIL_THEME_DEFAULTS,
   type EmailDocument,
@@ -17,6 +16,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variables.util';
 
@@ -39,6 +39,7 @@ export class MessageCampaignBodyService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly campaignVariableService: CampaignVariableService,
   ) {}
 
   private getUserRepository<T extends ObjectLiteral>(
@@ -70,20 +71,11 @@ export class MessageCampaignBodyService {
     const variablesUsed = [
       ...collectCampaignVariableNames(stampedDocument),
     ].sort();
-    const unknownVariables = variablesUsed.filter(
-      (variableName) =>
-        !CAMPAIGN_VARIABLE_NAMES.includes(
-          variableName as (typeof CAMPAIGN_VARIABLE_NAMES)[number],
-        ),
-    );
 
-    if (unknownVariables.length > 0) {
-      throw new EmailingDomainException(
-        `Unknown campaign variables: ${unknownVariables.join(', ')}. ` +
-          `Available variables: ${CAMPAIGN_VARIABLE_NAMES.join(', ')}`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-      );
-    }
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      variablesUsed,
+    );
 
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,

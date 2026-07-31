@@ -2,13 +2,18 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
-import { EmailingDomainException } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignBodyService } from 'src/modules/emailing/services/message-campaign-body.service';
 
 describe('MessageCampaignBodyService', () => {
   let service: MessageCampaignBodyService;
+  let assertKnownVariables: jest.Mock;
   let campaignRepository: {
     findOne: jest.Mock;
     update: jest.Mock;
@@ -41,9 +46,15 @@ describe('MessageCampaignBodyService', () => {
       update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
 
+    assertKnownVariables = jest.fn().mockResolvedValue(undefined);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessageCampaignBodyService,
+        {
+          provide: CampaignVariableService,
+          useValue: { assertKnownVariables },
+        },
         {
           provide: UserRoleService,
           useValue: {
@@ -131,6 +142,13 @@ describe('MessageCampaignBodyService', () => {
   });
 
   it('should reject unknown variables without writing', async () => {
+    assertKnownVariables.mockRejectedValue(
+      new EmailingDomainException(
+        'Unknown campaign variables: firstNam',
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      ),
+    );
+
     await expect(
       service.updateDraftBody({
         workspaceId,
@@ -148,6 +166,9 @@ describe('MessageCampaignBodyService', () => {
       }),
     ).rejects.toThrow(/Unknown campaign variables: firstNam/);
 
+    expect(assertKnownVariables).toHaveBeenCalledWith(workspaceId, [
+      'firstNam',
+    ]);
     expect(campaignRepository.update).not.toHaveBeenCalled();
   });
 

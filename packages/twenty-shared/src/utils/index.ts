@@ -197,8 +197,14 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
-export type { CampaignVariableName } from './tiptap/campaign-variables';
-export { CAMPAIGN_VARIABLE_NAMES } from './tiptap/campaign-variables';
+export type {
+  CampaignVariableName,
+  CampaignVariableDefinition,
+} from './tiptap/campaign-variables';
+export {
+  CAMPAIGN_VARIABLE_NAMES,
+  listCampaignVariablesForFields,
+} from './tiptap/campaign-variables';
 export type {
   EmailDocumentNode,
   EmailDocument,

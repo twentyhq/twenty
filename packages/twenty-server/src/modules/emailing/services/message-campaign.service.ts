@@ -45,12 +45,14 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variables.util';
 import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
@@ -65,7 +67,7 @@ import {
   MessageParticipantRole,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
-import { type CampaignVariableName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
@@ -127,6 +129,7 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly campaignVariableService: CampaignVariableService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -256,7 +259,11 @@ export class MessageCampaignService {
       fromAddress,
     );
 
-    const variables = this.buildTemplateVariables(null);
+    const variables =
+      await this.campaignVariableService.buildVariablesForPerson(
+        workspaceId,
+        null,
+      );
     const renderedSubject = renderCampaignTemplate(subject, variables, {
       escapeValues: false,
     });
@@ -433,7 +440,11 @@ export class MessageCampaignService {
         where: { id: personId },
       });
 
-      const variables = this.buildTemplateVariables(person);
+      const variables =
+        await this.campaignVariableService.buildVariablesForPerson(
+          workspaceId,
+          person,
+        );
       const subject = renderCampaignTemplate(
         campaign.subject ?? '',
         variables,
@@ -612,6 +623,16 @@ export class MessageCampaignService {
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
       );
     }
+
+    // A variable that resolves to nothing blanks text for every recipient,
+    // so unknown names block the send instead.
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplates({
+        subject: sendableCampaign.data.subject,
+        bodyTemplate: sendableCampaign.data.bodyTemplate,
+      }),
+    );
 
     return sendableCampaign.data;
   }
@@ -914,21 +935,6 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
-  }
-
-  private buildTemplateVariables(
-    person: PersonWorkspaceEntity | null,
-  ): Record<CampaignVariableName, string> {
-    const firstName = person?.name?.firstName ?? '';
-    const lastName = person?.name?.lastName ?? '';
-
-    return {
-      firstName,
-      lastName,
-      fullName: [firstName, lastName].filter(Boolean).join(' '),
-      email: person?.emails?.primaryEmail ?? '',
-      personId: person?.id ?? '',
-    };
   }
 
   private campaignMessageId(campaignId: string, personId: string): string {

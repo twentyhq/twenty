@@ -1,4 +1,4 @@
-import { type EmailDocumentNode } from 'twenty-shared/utils';
+import { type EmailDocumentNode, parseJson } from 'twenty-shared/utils';
 
 import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/utils/render-campaign-template.util';
 
@@ -44,6 +44,37 @@ export const collectCampaignVariableNames = (
   };
 
   walk(node);
+
+  return names;
+};
+
+// Collects the variables a whole campaign uses: the subject is always a
+// plain template string; the body is either a serialized email document or
+// a legacy HTML string that gets string interpolation.
+export const collectCampaignVariableNamesFromTemplates = ({
+  subject,
+  bodyTemplate,
+}: {
+  subject: string;
+  bodyTemplate: string;
+}): Set<string> => {
+  const names = new Set<string>();
+
+  collectFromString(subject, names);
+
+  const parsedBody = parseJson<EmailDocumentNode>(bodyTemplate);
+
+  if (
+    typeof parsedBody === 'object' &&
+    parsedBody !== null &&
+    parsedBody.type === 'doc'
+  ) {
+    for (const name of collectCampaignVariableNames(parsedBody)) {
+      names.add(name);
+    }
+  } else {
+    collectFromString(bodyTemplate, names);
+  }
 
   return names;
 };
