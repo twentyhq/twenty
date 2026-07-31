@@ -125,17 +125,26 @@ describe('buildWorkspaceSetupPromptText', () => {
     );
   });
 
-  it('should require making the created fields visible in the views', () => {
+  it('should not instruct any view work since new fields are visible by default', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
-    expect(result).toContain('view-building');
-    expect(result).toContain('get_view_fields');
-    expect(result).toContain('update_many_view_fields with isVisible true');
-    expect(result).toContain('create_many_view_fields');
-    expect(result).toContain('Do not use upsert_complete_view');
+    expect(result).toContain('New fields land visible on their object');
+    expect(result).not.toContain('view-building');
+    expect(result).not.toContain('get_view_fields');
+    expect(result).not.toContain('create_many_view_fields');
+    expect(result).not.toContain('update_many_view_fields');
+  });
+
+  it('should never re-ask for something the user already approved', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('ask_questions is for new decisions');
   });
 
   it('should anchor the proposal on admission tests instead of numeric bands', () => {
