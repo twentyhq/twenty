@@ -8,14 +8,14 @@ jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
   ThinkingStepsDisplay: ({
     hasAssistantTextResponseStarted,
     parts,
-    showPendingThinkingRow,
+    isTrailingWhileStreaming,
   }: {
     parts: unknown[];
     hasAssistantTextResponseStarted: boolean;
-    showPendingThinkingRow?: boolean;
+    isTrailingWhileStreaming?: boolean;
   }) => (
     <div data-testid="thinking-steps-display">
-      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${showPendingThinkingRow ? '-with-pending-thinking-row' : ''}`}
+      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}`}
     </div>
   ),
 }));
@@ -239,7 +239,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
-  it('should mark the trailing thinking steps group as pending while streaming', () => {
+  it('should flag the trailing thinking steps group while streaming', () => {
     const messageParts = [
       {
         type: 'reasoning',
@@ -258,11 +258,11 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'with-pending-thinking-row',
+      'trailing-while-streaming',
     );
   });
 
-  it('should not mark a thinking steps group as pending when answer text follows it', () => {
+  it('should not flag a thinking steps group when answer text follows it', () => {
     const messageParts = [
       {
         type: 'tool-web_search',
@@ -281,11 +281,11 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
     expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
-      'with-pending-thinking-row',
+      'trailing-while-streaming',
     );
   });
 
-  it('should not mark the trailing thinking steps group as pending when the message is not streaming', () => {
+  it('should not flag the trailing thinking steps group when the message is not streaming', () => {
     const messageParts = [
       {
         type: 'tool-web_search',
@@ -299,7 +299,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).not.toHaveTextContent(
-      'with-pending-thinking-row',
+      'trailing-while-streaming',
     );
   });
 

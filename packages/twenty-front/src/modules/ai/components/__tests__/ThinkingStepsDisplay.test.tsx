@@ -84,12 +84,12 @@ const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
-  showPendingThinkingRow = false,
+  isTrailingWhileStreaming = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
-  showPendingThinkingRow?: boolean;
+  isTrailingWhileStreaming?: boolean;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -97,7 +97,7 @@ const renderThinkingStepsDisplay = ({
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
-        showPendingThinkingRow={showPendingThinkingRow}
+        isTrailingWhileStreaming={isTrailingWhileStreaming}
       />
     </ThemeProvider>,
   );
@@ -139,7 +139,7 @@ describe('ThinkingStepsDisplay', () => {
   it('should append the pending thinking row after completed steps when requested', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
-      showPendingThinkingRow: true,
+      isTrailingWhileStreaming: true,
       parts: [createToolPart()],
     });
 
@@ -158,7 +158,7 @@ describe('ThinkingStepsDisplay', () => {
   it('should not append the pending thinking row while a tool step is still running', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
-      showPendingThinkingRow: true,
+      isTrailingWhileStreaming: true,
       parts: [createToolPart({ output: null, state: 'input-available' })],
     });
 

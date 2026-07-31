@@ -109,7 +109,7 @@ export const AiChatAssistantMessageRenderer = ({
                     nextRenderItem.part.type === 'text' &&
                     nextRenderItem.part.text.trim().length > 0,
                 )}
-              showPendingThinkingRow={
+              isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
                 index === lastRenderItemIndex

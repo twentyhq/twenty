@@ -413,32 +413,32 @@ export const ThinkingStepsDisplay = ({
   parts,
   isLastMessageStreaming,
   hasAssistantTextResponseStarted,
-  showPendingThinkingRow = false,
+  isTrailingWhileStreaming = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted: boolean;
-  showPendingThinkingRow?: boolean;
+  isTrailingWhileStreaming?: boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const stepCount = parts.length;
-  const isThinking = parts.some((part) =>
+  const hasActiveStep = parts.some((part) =>
     isThinkingStepPartActive(part, isLastMessageStreaming),
   );
 
   const activeReasoningContent = getActiveReasoningContent(parts);
   const finalReasoningContent = getLastReasoningContent(parts);
-  const reasoningContent = isThinking
+  const reasoningContent = hasActiveStep
     ? activeReasoningContent
     : finalReasoningContent;
   const shouldDisplayReasoningContent = reasoningContent?.trim().length;
   const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
   const shouldShowSummaryButton =
-    !isThinking && !shouldKeepExpandedBeforeAnswer;
+    !hasActiveStep && !shouldKeepExpandedBeforeAnswer;
 
   const shouldRenderRows =
-    isThinking || isExpanded || shouldKeepExpandedBeforeAnswer;
+    hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
 
   return (
     <StyledContainer>
@@ -474,7 +474,9 @@ export const ThinkingStepsDisplay = ({
                 )}
               />
             ))}
-            {showPendingThinkingRow && !isThinking && <AiChatThinkingRow />}
+            {isTrailingWhileStreaming && !hasActiveStep && (
+              <AiChatThinkingRow />
+            )}
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>
