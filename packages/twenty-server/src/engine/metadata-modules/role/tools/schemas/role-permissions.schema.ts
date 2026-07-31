@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Shared by create_role and update_role so a new role flag is declared once.
 export const rolePermissionsSchema = z.object({
   canUpdateAllSettings: z
     .boolean()
