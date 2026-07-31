@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isEmptyObject,
+  isNonEmptyArray,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -90,6 +92,13 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
           },
         })
       : {};
+
+    if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
+      throw new WorkflowStepExecutorException(
+        'Filter could not be resolved to a valid query. Check that filtered fields exist and that grouped filters include their recordFilterGroups.',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
