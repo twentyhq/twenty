@@ -4,11 +4,10 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 
-// Mirrors the server-side computeFlatViewGroupsOnViewCreate so the edit-mode
-// draft preview matches what the server generates on save: one group per
-// select option (in option order) plus an empty group for nullable fields.
-// Relation group-by generates no option groups, the groups to display are
-// picked by the user, but it still gets the empty group when nullable.
+// Mirrors the server-side computeFlatViewGroupsOnViewCreate so the edit-mode draft
+// preview matches what the server generates on save: one group per select option (in
+// option order), none for relations since their groups are picked by the user, plus
+// an empty group for nullable fields.
 export const buildDraftViewGroupsForFieldMetadataItem = ({
   viewId,
   fieldMetadataItem,
@@ -16,27 +15,34 @@ export const buildDraftViewGroupsForFieldMetadataItem = ({
   viewId: string;
   fieldMetadataItem: FieldMetadataItem;
 }): FlatViewGroup[] => {
-  const viewGroupsFromOptions: FlatViewGroup[] = (
-    isManyToOneRelationField(fieldMetadataItem)
-      ? []
-      : (fieldMetadataItem.options ?? [])
-  ).map((option, index) => ({
-    id: v4(),
-    viewId,
-    fieldValue: option.value,
-    position: index,
-    isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
-  }));
+  const selectOptions = isManyToOneRelationField(fieldMetadataItem)
+    ? []
+    : (fieldMetadataItem.options ?? []);
 
-  if (fieldMetadataItem.isNullable === true) {
-    viewGroupsFromOptions.push({
+  const viewGroupsFromOptions: FlatViewGroup[] = selectOptions.map(
+    (option, index) => ({
+      id: v4(),
+      viewId,
+      fieldValue: option.value,
+      position: index,
+      isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
+    }),
+  );
+
+  if (fieldMetadataItem.isNullable !== true) {
+    return viewGroupsFromOptions;
+  }
+
+  const emptyViewGroupPosition = viewGroupsFromOptions.length;
+
+  return [
+    ...viewGroupsFromOptions,
+    {
       id: v4(),
       viewId,
       fieldValue: '',
-      position: viewGroupsFromOptions.length,
-      isVisible: viewGroupsFromOptions.length < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
-    });
-  }
-
-  return viewGroupsFromOptions;
+      position: emptyViewGroupPosition,
+      isVisible: emptyViewGroupPosition < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
+    },
+  ];
 };
