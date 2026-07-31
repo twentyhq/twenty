@@ -1,4 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+
+import { OpenRecordIn } from 'twenty-shared/types';
 import { Max, Min } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -8,6 +10,8 @@ import {
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+registerEnumType(OpenRecordIn, { name: 'OpenRecordIn' });
 
 @ObjectType('FullName')
 export class FullNameDTO {
@@ -31,6 +35,9 @@ export class WorkspaceMemberDTO {
 
   @Field({ nullable: false })
   colorScheme: string;
+
+  @Field(() => OpenRecordIn, { nullable: false })
+  openRecordIn: OpenRecordIn;
 
   @Field({ nullable: true })
   avatarUrl: string;

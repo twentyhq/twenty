@@ -79,6 +79,7 @@ export default defineObject({
 * Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
 * Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
 * Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
+* `openRecordIn` legt fest, wo Datensätze dieses Objekts beim Klicken geöffnet werden: `ObjectOpenRecordIn.USER_CHOICE` (die Standardeinstellung, gemäß der individuellen Präferenz jedes Workspace-Mitglieds in Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` oder `ObjectOpenRecordIn.RECORD_PAGE`. Heften Sie es an `RECORD_PAGE` für Datensätze, die für die Nutzung eine ganze Seite benötigen – wie Workflows und Dashboards –, oder an `SIDE_PANEL` für Datensätze, die nur als schnelles Panel sinnvoll sind, wie Kalendereinträge.
 * Inline definierte Felder benötigen **kein** `objectUniversalIdentifier` – er wird vom übergeordneten Objekt geerbt. Verwenden Sie [`defineField()`](/l/de/developers/extend/apps/data/extending-objects), um Objekten Felder hinzuzufügen, die Ihnen nicht gehören.
 * Sie können mit `yarn twenty dev:add object` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen. Siehe [Architektur → Gerüste für Entitäten](/l/de/developers/extend/apps/getting-started/scaffolding).
 

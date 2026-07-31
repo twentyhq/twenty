@@ -131,7 +131,8 @@ import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-2
 import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
-import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504750000-create-user-session-core-table';
+import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
+import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -265,5 +266,6 @@ export const INSTANCE_COMMANDS = [
   AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand,
   AddIsHiddenToAgentMessageFastInstanceCommand,
   AddConnectedAccountHandleProviderIndexFastInstanceCommand,
+  AddOpenRecordInToObjectMetadataFastInstanceCommand,
   CreateUserSessionCoreTableFastInstanceCommand,
 ];

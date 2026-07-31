@@ -1,4 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -132,6 +133,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
+        openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };
