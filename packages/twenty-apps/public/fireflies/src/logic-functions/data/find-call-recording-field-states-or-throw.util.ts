@@ -12,55 +12,29 @@ export const findCallRecordingFieldStatesOrThrow = async ({
   coreApiClient: CoreApiClient;
   callRecordingIds: string[];
 }): Promise<Map<string, CallRecordingFieldState>> => {
-  const [summaryStateQueryResult, transcriptStateQueryResult] =
-    await Promise.all([
-      coreApiClient.query({
-        callRecordings: {
-          __args: {
-            filter: { id: { in: callRecordingIds } },
-            first: callRecordingIds.length,
-          },
-          edges: {
-            node: {
-              id: true,
-              status: true,
-              summary: {
-                markdown: true,
-              },
-            },
+  const fieldStateQueryResult = await coreApiClient.query({
+    callRecordings: {
+      __args: {
+        filter: { id: { in: callRecordingIds } },
+        first: callRecordingIds.length,
+      },
+      edges: {
+        node: {
+          id: true,
+          status: true,
+          transcript: true,
+          summary: {
+            markdown: true,
           },
         },
-      }),
-      coreApiClient.query({
-        callRecordings: {
-          __args: {
-            filter: {
-              id: { in: callRecordingIds },
-              transcript: { is: 'NOT_NULL' },
-            },
-            first: callRecordingIds.length,
-          },
-          edges: {
-            node: {
-              id: true,
-            },
-          },
-        },
-      }),
-    ]);
-  const parsedSummaryStateQueryResult =
-    callRecordingFieldStateQueryResultSchema.parse(summaryStateQueryResult);
-  const parsedTranscriptStateQueryResult =
-    callRecordingFieldStateQueryResultSchema.parse(transcriptStateQueryResult);
-  const callRecordingIdsWithTranscript = new Set(
-    (parsedTranscriptStateQueryResult.callRecordings?.edges ?? [])
-      .map((edge) => edge?.node?.id)
-      .filter(isDefined),
-  );
+      },
+    },
+  });
+  const parsedFieldStateQueryResult =
+    callRecordingFieldStateQueryResultSchema.parse(fieldStateQueryResult);
   const callRecordingFieldStates = new Map<string, CallRecordingFieldState>();
 
-  for (const edge of parsedSummaryStateQueryResult.callRecordings?.edges ??
-    []) {
+  for (const edge of parsedFieldStateQueryResult.callRecordings?.edges ?? []) {
     const node = edge?.node;
 
     if (!isDefined(node)) {
@@ -68,7 +42,7 @@ export const findCallRecordingFieldStatesOrThrow = async ({
     }
 
     callRecordingFieldStates.set(node.id, {
-      isTranscriptFilled: callRecordingIdsWithTranscript.has(node.id),
+      isTranscriptFilled: isDefined(node.transcript),
       isSummaryFilled: isNonEmptyString(node.summary?.markdown?.trim()),
       status: node.status,
     });

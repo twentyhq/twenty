@@ -102,7 +102,6 @@ export const answerTwentyQueries = ({
         __args?: {
           filter?: {
             id?: { in?: string[]; eq?: string };
-            transcript?: { is?: string };
           };
         };
       };
@@ -113,13 +112,7 @@ export const answerTwentyQueries = ({
         return {
           callRecordings: {
             edges: callRecordings
-              .filter(
-                ({ id, transcript }) =>
-                  idFilter.in?.includes(id) &&
-                  (query.callRecordings?.__args?.filter?.transcript?.is !==
-                    'NOT_NULL' ||
-                    (transcript !== null && transcript !== undefined)),
-              )
+              .filter(({ id }) => idFilter.in?.includes(id))
               .map((node) => ({ node })),
           },
         };

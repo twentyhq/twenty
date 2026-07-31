@@ -17,6 +17,7 @@ export const callRecordingFieldStateQueryResultSchema = z.object({
                     CALL_RECORDING_STATUS.COMPLETED,
                   ])
                   .optional(),
+                transcript: z.unknown().nullable().optional(),
                 summary: z
                   .object({
                     markdown: z.string().nullable().optional(),

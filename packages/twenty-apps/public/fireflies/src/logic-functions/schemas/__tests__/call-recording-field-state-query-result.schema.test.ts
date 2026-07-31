@@ -11,6 +11,7 @@ describe('callRecordingFieldStateQueryResultSchema', () => {
             {
               node: {
                 id: 'call-recording-id',
+                transcript: [{ speakerName: 'A', text: 'hello' }],
                 summary: { markdown: 'Imported summary' },
               },
             },
