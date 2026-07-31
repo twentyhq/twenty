@@ -116,6 +116,7 @@ export interface MergeManyQueryArgs {
   ids: string[];
   conflictPriorityIndex: number;
   dryRun?: boolean;
+  data?: Partial<ObjectRecord>;
 }
 
 export type CommonQueryArgs =
@@ -132,7 +133,8 @@ export type CommonQueryArgs =
   | UpdateManyQueryArgs
   | FindDuplicatesQueryArgs
   | RestoreManyQueryArgs
-  | RestoreOneQueryArgs;
+  | RestoreOneQueryArgs
+  | MergeManyQueryArgs;
 
 export type CommonInput<T extends CommonQueryArgs> = T & BaseQueryArgs;
 

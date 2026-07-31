@@ -64,6 +64,7 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
     return {
       conflictPriorityIndex: request.body.conflictPriorityIndex,
       dryRun: request.body.dryRun,
+      data: request.body.data,
       ids: request.body.ids,
       depth,
     };

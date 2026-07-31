@@ -117,6 +117,14 @@ const MassEmailPage = lazy(() =>
   })),
 );
 
+const PersonDuplicatesPage = lazy(() =>
+  import('~/pages/person-duplicate-review/PersonDuplicatesPage').then(
+    (module) => ({
+      default: module.PersonDuplicatesPage,
+    }),
+  ),
+);
+
 const WorkspaceSetup = lazyWithPreload(() =>
   import('~/pages/onboarding/WorkspaceSetup').then((module) => ({
     default: module.WorkspaceSetup,
@@ -195,6 +203,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <MassEmailPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Duplicates}
+                element={
+                  <LazyRoute>
+                    <PersonDuplicatesPage />
                   </LazyRoute>
                 }
               />

@@ -1,5 +1,6 @@
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
+import { PersonDuplicatesNavigationSection } from '@/person-duplicate-review/components/PersonDuplicatesNavigationSection';
 
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
@@ -34,6 +35,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <NavigationDrawerOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <FavoritesSectionDispatcher />
+        <PersonDuplicatesNavigationSection />
         <WorkspaceSectionDispatcher />
       </Suspense>
     </StyledScrollableItemsContainer>
