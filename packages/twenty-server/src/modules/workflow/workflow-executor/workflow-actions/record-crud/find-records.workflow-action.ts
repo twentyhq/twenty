@@ -75,20 +75,21 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const gqlOperationFilter =
-      workflowActionInput.filter?.recordFilters &&
-      workflowActionInput.filter?.recordFilterGroups
-        ? computeRecordGqlOperationFilter({
-            fieldMetadataItems: Object.values(
-              flatFieldMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
-            recordFilters: workflowActionInput.filter.recordFilters,
-            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {
-              timeZone: 'UTC',
-            },
-          })
-        : {};
+    const recordFilters = workflowActionInput.filter?.recordFilters;
+
+    const gqlOperationFilter = isDefined(recordFilters)
+      ? computeRecordGqlOperationFilter({
+          fieldMetadataItems: Object.values(
+            flatFieldMetadataMaps.byUniversalIdentifier,
+          ).filter(isDefined),
+          recordFilters,
+          recordFilterGroups:
+            workflowActionInput.filter?.recordFilterGroups ?? [],
+          filterValueDependencies: {
+            timeZone: 'UTC',
+          },
+        })
+      : {};
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
