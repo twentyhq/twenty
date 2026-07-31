@@ -31,6 +31,24 @@ type ReownUpdate = {
   };
 };
 
+type FlatViewFromMaps = NonNullable<
+  AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
+>;
+
+type FlatViewFieldFromMaps = NonNullable<
+  AllFlatEntityMaps['flatViewFieldMaps']['byUniversalIdentifier'][string]
+>;
+
+// Outcome of trying to claim a derived universal identifier for an entity:
+// the unique index on (workspaceId, universalIdentifier) is not partial on
+// deletedAt, so the identifier may already be reserved by another row.
+type DerivedIdentifierClaim<TFlatEntity> =
+  | { outcome: 'alreadyOwned' }
+  | { outcome: 'claimable'; tombstoneReleaseUpdate?: ReownUpdate }
+  | { outcome: 'heldByActiveEntity'; occupyingFlatEntity: TFlatEntity }
+  | { outcome: 'unreleasable'; occupyingFlatEntity: TFlatEntity }
+  | { outcome: 'alreadyClaimed' };
+
 @RegisteredWorkspaceCommand('2.26.0', 1785255689000)
 @Command({
   name: 'upgrade:2-26:reconcile-index-view-universal-identifier',
@@ -150,9 +168,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatFieldMetadataMaps,
   }: {
     workspaceId: string;
-    flatIndexViews: NonNullable<
-      AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
-    >[];
+    flatIndexViews: FlatViewFromMaps[];
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
@@ -183,98 +199,19 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         viewKey: ViewKey.INDEX,
       });
 
-      if (flatView.universalIdentifier === derivedViewUniversalIdentifier) {
-        claimedViewUniversalIdentifiers.add(derivedViewUniversalIdentifier);
+      const { updates, shouldReownViewFields } = this.computeViewReownUpdates({
+        workspaceId,
+        flatView,
+        derivedViewUniversalIdentifier,
+        flatViewMaps,
+        claimedViewUniversalIdentifiers,
+      });
 
-        if (!flatView.isSystemSideEffect) {
-          viewUpdates.push({
-            id: flatView.id,
-            update: { isSystemSideEffect: true },
-          });
-        }
+      viewUpdates.push(...updates);
 
-        viewFieldUpdates.push(
-          ...this.computeViewFieldReownUpdates({
-            workspaceId,
-            flatView,
-            derivedViewUniversalIdentifier,
-            flatViewFieldMaps,
-            flatFieldMetadataMaps,
-            claimedViewFieldUniversalIdentifiers,
-          }),
-        );
+      if (!shouldReownViewFields) {
         continue;
       }
-
-      const occupyingFlatView =
-        flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier];
-
-      if (
-        isDefined(occupyingFlatView) &&
-        !isDefined(occupyingFlatView.deletedAt)
-      ) {
-        const isDuplicateIndexViewOfSameObject =
-          occupyingFlatView.key === ViewKey.INDEX &&
-          occupyingFlatView.objectMetadataUniversalIdentifier ===
-            flatView.objectMetadataUniversalIdentifier;
-
-        if (isDuplicateIndexViewOfSameObject) {
-          this.logger.warn(
-            `INDEX view ${flatView.id} duplicates INDEX view ${occupyingFlatView.id} already holding ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
-          );
-          viewUpdates.push({ id: flatView.id, update: { key: null } });
-        } else {
-          this.logger.warn(
-            `Derived identifier ${derivedViewUniversalIdentifier} of INDEX view ${flatView.id} is held by unrelated active view ${occupyingFlatView.id} in workspace ${workspaceId}, skipping`,
-          );
-        }
-        continue;
-      }
-
-      if (isDefined(occupyingFlatView)) {
-        // A soft-deleted view still reserves the derived identifier: the
-        // unique index is not partial on deletedAt. Move the tombstone onto
-        // its own primary key to free the identifier for the active view.
-        const releasedUniversalIdentifier = occupyingFlatView.id;
-
-        if (
-          isDefined(
-            flatViewMaps.byUniversalIdentifier[releasedUniversalIdentifier],
-          ) ||
-          claimedViewUniversalIdentifiers.has(releasedUniversalIdentifier)
-        ) {
-          this.logger.warn(
-            `Cannot release derived identifier ${derivedViewUniversalIdentifier} from soft-deleted view ${occupyingFlatView.id} in workspace ${workspaceId}, skipping INDEX view ${flatView.id}`,
-          );
-          continue;
-        }
-
-        claimedViewUniversalIdentifiers.add(releasedUniversalIdentifier);
-        viewUpdates.push({
-          id: occupyingFlatView.id,
-          update: { universalIdentifier: releasedUniversalIdentifier },
-        });
-      } else if (
-        claimedViewUniversalIdentifiers.has(derivedViewUniversalIdentifier)
-      ) {
-        this.logger.warn(
-          `INDEX view ${flatView.id} duplicates another INDEX view already reconciled onto ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
-        );
-        viewUpdates.push({ id: flatView.id, update: { key: null } });
-        continue;
-      }
-
-      claimedViewUniversalIdentifiers.add(derivedViewUniversalIdentifier);
-
-      const update: ReownUpdate['update'] = {
-        universalIdentifier: derivedViewUniversalIdentifier,
-      };
-
-      if (!flatView.isSystemSideEffect) {
-        update.isSystemSideEffect = true;
-      }
-
-      viewUpdates.push({ id: flatView.id, update });
 
       viewFieldUpdates.push(
         ...this.computeViewFieldReownUpdates({
@@ -291,6 +228,95 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     return { viewUpdates, viewFieldUpdates };
   }
 
+  // View fields are only re-owned when the view itself converges onto the
+  // derived identifier: a demoted or skipped duplicate keeps its view fields
+  // untouched, so they cannot collide with the canonical view's derived view
+  // field identifiers.
+  private computeViewReownUpdates({
+    workspaceId,
+    flatView,
+    derivedViewUniversalIdentifier,
+    flatViewMaps,
+    claimedViewUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    flatView: FlatViewFromMaps;
+    derivedViewUniversalIdentifier: string;
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
+    claimedViewUniversalIdentifiers: Set<string>;
+  }): { updates: ReownUpdate[]; shouldReownViewFields: boolean } {
+    const claim = this.resolveDerivedIdentifierClaim({
+      flatEntity: flatView,
+      derivedUniversalIdentifier: derivedViewUniversalIdentifier,
+      flatEntityMaps: flatViewMaps,
+      claimedUniversalIdentifiers: claimedViewUniversalIdentifiers,
+    });
+
+    switch (claim.outcome) {
+      case 'alreadyOwned':
+        return {
+          updates: flatView.isSystemSideEffect
+            ? []
+            : [{ id: flatView.id, update: { isSystemSideEffect: true } }],
+          shouldReownViewFields: true,
+        };
+      case 'claimable':
+        return {
+          updates: [
+            ...(isDefined(claim.tombstoneReleaseUpdate)
+              ? [claim.tombstoneReleaseUpdate]
+              : []),
+            {
+              id: flatView.id,
+              update: this.buildClaimUpdate({
+                flatEntity: flatView,
+                derivedUniversalIdentifier: derivedViewUniversalIdentifier,
+              }),
+            },
+          ],
+          shouldReownViewFields: true,
+        };
+      case 'heldByActiveEntity': {
+        const isDuplicateIndexViewOfSameObject =
+          claim.occupyingFlatEntity.key === ViewKey.INDEX &&
+          claim.occupyingFlatEntity.objectMetadataUniversalIdentifier ===
+            flatView.objectMetadataUniversalIdentifier;
+
+        if (!isDuplicateIndexViewOfSameObject) {
+          this.logger.warn(
+            `Derived identifier ${derivedViewUniversalIdentifier} of INDEX view ${flatView.id} is held by unrelated active view ${claim.occupyingFlatEntity.id} in workspace ${workspaceId}, skipping`,
+          );
+
+          return { updates: [], shouldReownViewFields: false };
+        }
+
+        this.logger.warn(
+          `INDEX view ${flatView.id} duplicates INDEX view ${claim.occupyingFlatEntity.id} already holding ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
+        );
+
+        return {
+          updates: [{ id: flatView.id, update: { key: null } }],
+          shouldReownViewFields: false,
+        };
+      }
+      case 'alreadyClaimed':
+        this.logger.warn(
+          `INDEX view ${flatView.id} duplicates another INDEX view already reconciled onto ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
+        );
+
+        return {
+          updates: [{ id: flatView.id, update: { key: null } }],
+          shouldReownViewFields: false,
+        };
+      case 'unreleasable':
+        this.logger.warn(
+          `Cannot release derived identifier ${derivedViewUniversalIdentifier} from soft-deleted view ${claim.occupyingFlatEntity.id} in workspace ${workspaceId}, skipping INDEX view ${flatView.id}`,
+        );
+
+        return { updates: [], shouldReownViewFields: false };
+    }
+  }
+
   private computeViewFieldReownUpdates({
     workspaceId,
     flatView,
@@ -300,25 +326,21 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     claimedViewFieldUniversalIdentifiers,
   }: {
     workspaceId: string;
-    flatView: NonNullable<
-      AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
-    >;
+    flatView: FlatViewFromMaps;
     derivedViewUniversalIdentifier: string;
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     claimedViewFieldUniversalIdentifiers: Set<string>;
   }): ReownUpdate[] {
-    const viewFieldUpdates: ReownUpdate[] = [];
-
     const flatViewFields =
       findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
         flatEntityMaps: flatViewFieldMaps,
         universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
       });
 
-    for (const flatViewField of flatViewFields) {
+    return flatViewFields.flatMap((flatViewField) => {
       if (isDefined(flatViewField.deletedAt)) {
-        continue;
+        return [];
       }
 
       const flatFieldMetadata =
@@ -330,7 +352,8 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         this.logger.warn(
           `Missing field for INDEX view field ${flatViewField.id} in workspace ${workspaceId}, skipping`,
         );
-        continue;
+
+        return [];
       }
 
       const derivedViewFieldUniversalIdentifier =
@@ -342,86 +365,160 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
             flatViewField.fieldMetadataUniversalIdentifier,
         });
 
-      if (
-        flatViewField.universalIdentifier ===
-        derivedViewFieldUniversalIdentifier
-      ) {
-        claimedViewFieldUniversalIdentifiers.add(
-          derivedViewFieldUniversalIdentifier,
-        );
+      return this.computeSingleViewFieldReownUpdates({
+        workspaceId,
+        flatViewField,
+        derivedViewFieldUniversalIdentifier,
+        flatViewFieldMaps,
+        claimedViewFieldUniversalIdentifiers,
+      });
+    });
+  }
 
-        if (!flatViewField.isSystemSideEffect) {
-          viewFieldUpdates.push({
+  private computeSingleViewFieldReownUpdates({
+    workspaceId,
+    flatViewField,
+    derivedViewFieldUniversalIdentifier,
+    flatViewFieldMaps,
+    claimedViewFieldUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    flatViewField: FlatViewFieldFromMaps;
+    derivedViewFieldUniversalIdentifier: string;
+    flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
+    claimedViewFieldUniversalIdentifiers: Set<string>;
+  }): ReownUpdate[] {
+    const claim = this.resolveDerivedIdentifierClaim({
+      flatEntity: flatViewField,
+      derivedUniversalIdentifier: derivedViewFieldUniversalIdentifier,
+      flatEntityMaps: flatViewFieldMaps,
+      claimedUniversalIdentifiers: claimedViewFieldUniversalIdentifiers,
+    });
+
+    switch (claim.outcome) {
+      case 'alreadyOwned':
+        return flatViewField.isSystemSideEffect
+          ? []
+          : [{ id: flatViewField.id, update: { isSystemSideEffect: true } }];
+      case 'claimable':
+        return [
+          ...(isDefined(claim.tombstoneReleaseUpdate)
+            ? [claim.tombstoneReleaseUpdate]
+            : []),
+          {
             id: flatViewField.id,
-            update: { isSystemSideEffect: true },
-          });
-        }
-        continue;
-      }
-
-      const occupyingFlatViewField =
-        flatViewFieldMaps.byUniversalIdentifier[
-          derivedViewFieldUniversalIdentifier
+            update: this.buildClaimUpdate({
+              flatEntity: flatViewField,
+              derivedUniversalIdentifier: derivedViewFieldUniversalIdentifier,
+            }),
+          },
         ];
-
-      if (
-        isDefined(occupyingFlatViewField) &&
-        !isDefined(occupyingFlatViewField.deletedAt)
-      ) {
+      case 'heldByActiveEntity':
         this.logger.warn(
-          `Derived identifier ${derivedViewFieldUniversalIdentifier} of view field ${flatViewField.id} is held by active view field ${occupyingFlatViewField.id} in workspace ${workspaceId}, skipping`,
+          `Derived identifier ${derivedViewFieldUniversalIdentifier} of view field ${flatViewField.id} is held by active view field ${claim.occupyingFlatEntity.id} in workspace ${workspaceId}, skipping`,
         );
-        continue;
-      }
 
-      if (isDefined(occupyingFlatViewField)) {
-        const releasedUniversalIdentifier = occupyingFlatViewField.id;
-
-        if (
-          isDefined(
-            flatViewFieldMaps.byUniversalIdentifier[
-              releasedUniversalIdentifier
-            ],
-          ) ||
-          claimedViewFieldUniversalIdentifiers.has(releasedUniversalIdentifier)
-        ) {
-          this.logger.warn(
-            `Cannot release derived identifier ${derivedViewFieldUniversalIdentifier} from soft-deleted view field ${occupyingFlatViewField.id} in workspace ${workspaceId}, skipping view field ${flatViewField.id}`,
-          );
-          continue;
-        }
-
-        claimedViewFieldUniversalIdentifiers.add(releasedUniversalIdentifier);
-        viewFieldUpdates.push({
-          id: occupyingFlatViewField.id,
-          update: { universalIdentifier: releasedUniversalIdentifier },
-        });
-      } else if (
-        claimedViewFieldUniversalIdentifiers.has(
-          derivedViewFieldUniversalIdentifier,
-        )
-      ) {
+        return [];
+      case 'alreadyClaimed':
         this.logger.warn(
           `View field ${flatViewField.id} duplicates another view field already reconciled onto ${derivedViewFieldUniversalIdentifier} in workspace ${workspaceId}, skipping`,
         );
-        continue;
-      }
 
-      claimedViewFieldUniversalIdentifiers.add(
-        derivedViewFieldUniversalIdentifier,
-      );
+        return [];
+      case 'unreleasable':
+        this.logger.warn(
+          `Cannot release derived identifier ${derivedViewFieldUniversalIdentifier} from soft-deleted view field ${claim.occupyingFlatEntity.id} in workspace ${workspaceId}, skipping view field ${flatViewField.id}`,
+        );
 
-      const update: ReownUpdate['update'] = {
-        universalIdentifier: derivedViewFieldUniversalIdentifier,
-      };
+        return [];
+    }
+  }
 
-      if (!flatViewField.isSystemSideEffect) {
-        update.isSystemSideEffect = true;
-      }
+  // Resolves whether the derived identifier can be written for the entity and
+  // registers successful claims (including released tombstone identifiers) in
+  // claimedUniversalIdentifiers, so two entities deriving the same identifier
+  // in one run cannot both claim it.
+  private resolveDerivedIdentifierClaim<
+    TFlatEntity extends {
+      id: string;
+      universalIdentifier: string;
+      deletedAt: string | Date | null;
+    },
+  >({
+    flatEntity,
+    derivedUniversalIdentifier,
+    flatEntityMaps,
+    claimedUniversalIdentifiers,
+  }: {
+    flatEntity: TFlatEntity;
+    derivedUniversalIdentifier: string;
+    flatEntityMaps: {
+      byUniversalIdentifier: Partial<Record<string, TFlatEntity>>;
+    };
+    claimedUniversalIdentifiers: Set<string>;
+  }): DerivedIdentifierClaim<TFlatEntity> {
+    if (flatEntity.universalIdentifier === derivedUniversalIdentifier) {
+      claimedUniversalIdentifiers.add(derivedUniversalIdentifier);
 
-      viewFieldUpdates.push({ id: flatViewField.id, update });
+      return { outcome: 'alreadyOwned' };
     }
 
-    return viewFieldUpdates;
+    const occupyingFlatEntity =
+      flatEntityMaps.byUniversalIdentifier[derivedUniversalIdentifier];
+
+    if (
+      isDefined(occupyingFlatEntity) &&
+      !isDefined(occupyingFlatEntity.deletedAt)
+    ) {
+      return { outcome: 'heldByActiveEntity', occupyingFlatEntity };
+    }
+
+    if (isDefined(occupyingFlatEntity)) {
+      // A soft-deleted entity still reserves the derived identifier: the
+      // unique index is not partial on deletedAt. Moving the tombstone onto
+      // its own primary key frees the identifier.
+      const releasedUniversalIdentifier = occupyingFlatEntity.id;
+
+      if (
+        isDefined(
+          flatEntityMaps.byUniversalIdentifier[releasedUniversalIdentifier],
+        ) ||
+        claimedUniversalIdentifiers.has(releasedUniversalIdentifier)
+      ) {
+        return { outcome: 'unreleasable', occupyingFlatEntity };
+      }
+
+      claimedUniversalIdentifiers.add(releasedUniversalIdentifier);
+      claimedUniversalIdentifiers.add(derivedUniversalIdentifier);
+
+      return {
+        outcome: 'claimable',
+        tombstoneReleaseUpdate: {
+          id: occupyingFlatEntity.id,
+          update: { universalIdentifier: releasedUniversalIdentifier },
+        },
+      };
+    }
+
+    if (claimedUniversalIdentifiers.has(derivedUniversalIdentifier)) {
+      return { outcome: 'alreadyClaimed' };
+    }
+
+    claimedUniversalIdentifiers.add(derivedUniversalIdentifier);
+
+    return { outcome: 'claimable' };
+  }
+
+  private buildClaimUpdate({
+    flatEntity,
+    derivedUniversalIdentifier,
+  }: {
+    flatEntity: { isSystemSideEffect: boolean };
+    derivedUniversalIdentifier: string;
+  }): ReownUpdate['update'] {
+    return {
+      universalIdentifier: derivedUniversalIdentifier,
+      ...(flatEntity.isSystemSideEffect ? {} : { isSystemSideEffect: true }),
+    };
   }
 }
