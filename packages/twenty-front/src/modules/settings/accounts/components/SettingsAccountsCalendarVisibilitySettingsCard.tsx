@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
+import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
 import { CalendarChannelVisibility } from '~/generated/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -13,7 +13,7 @@ type SettingsAccountsEventVisibilitySettingsCardProps = {
 
 const StyledCardMediaContainer = styled.div`
   > * {
-    height: ${themeCssVariables.spacing[6]};
+    height: ${themeCssVariables.spacing[8]};
   }
 `;
 
@@ -44,7 +44,7 @@ export const SettingsAccountsEventVisibilitySettingsCard = ({
   onChange,
   value = CalendarChannelVisibility.SHARE_EVERYTHING,
 }: SettingsAccountsEventVisibilitySettingsCardProps) => (
-  <SettingsAccountsRadioSettingsCard
+  <SettingsRadioSettingsCard
     name="event-visibility"
     options={eventSettingsVisibilityOptions}
     value={value}
