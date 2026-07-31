@@ -25,10 +25,8 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   });
 
   const viewGroupsSignature = view?.viewGroups
-    .map(
-      (viewGroup) =>
-        `${viewGroup.id}:${viewGroup.position}:${viewGroup.isVisible}`,
-    )
+    .map((viewGroup) => viewGroup.id)
+    .sort()
     .join(',');
 
   const currentViewLoadKey = isDefined(contextStoreCurrentViewId)
