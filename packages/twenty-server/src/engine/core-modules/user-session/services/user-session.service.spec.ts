@@ -206,12 +206,19 @@ describe('UserSessionService', () => {
     });
   });
 
+  const mockPostCachingRevocationCheck = (
+    session: UserSessionEntity | null,
+  ) => {
+    jest.spyOn(userSessionRepository, 'findOne').mockResolvedValue(session);
+  };
+
   describe('resolveSessionPayload', () => {
     it('should resolve an access payload from the database on cache miss', async () => {
       const session = buildActiveSession();
 
       cacheStorageService.get.mockResolvedValue(undefined);
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(session);
 
       const payload = await service.resolveSessionPayload('sess_token');
 
@@ -234,6 +241,7 @@ describe('UserSessionService', () => {
 
       cacheStorageService.get.mockResolvedValue(undefined);
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(session);
 
       const payload = await service.resolveSessionPayload('sess_token');
 
@@ -319,6 +327,7 @@ describe('UserSessionService', () => {
 
       cacheStorageService.get.mockResolvedValue(undefined);
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(session);
       const updateSpy = jest
         .spyOn(userSessionRepository, 'update')
         .mockResolvedValue({ affected: 1 } as never);
@@ -336,11 +345,43 @@ describe('UserSessionService', () => {
 
       cacheStorageService.get.mockResolvedValue(undefined);
       jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(session);
       const updateSpy = jest.spyOn(userSessionRepository, 'update');
 
       await service.resolveSessionPayload('sess_token');
 
       expect(updateSpy).not.toHaveBeenCalled();
+    });
+
+    it('should reject and drop the cache entry when the touch hits a revoked session', async () => {
+      const staleLastActiveAt = new Date(Date.now() - 10 * 60 * 1000);
+      const session = buildActiveSession({ lastActiveAt: staleLastActiveAt });
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      jest
+        .spyOn(userSessionRepository, 'update')
+        .mockResolvedValue({ affected: 0 } as never);
+
+      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+        'Session is invalid or has expired.',
+      );
+      expect(cacheStorageService.del).toHaveBeenCalled();
+    });
+
+    it('should reject when a revocation raced the cache write', async () => {
+      const session = buildActiveSession();
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(session);
+      mockPostCachingRevocationCheck(
+        buildActiveSession({ id: session.id, revokedAt: new Date() }),
+      );
+
+      await expect(service.resolveSessionPayload('sess_token')).rejects.toThrow(
+        'Session is invalid or has expired.',
+      );
+      expect(cacheStorageService.del).toHaveBeenCalled();
     });
   });
 
