@@ -87,8 +87,9 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
 
 const APPLY_WORKFLOW_WARNING =
   `[rls:configure] \u26a0 The "Apply to Brief" workflow in this workspace MUST map\n` +
-  `  Partner User -> {{trigger.workspaceMember}} and map no other field, and every\n` +
-  `  Application created before this run needs \`yarn backfill:partner-user\`.\n` +
+  `  Partner User -> {{trigger.workspaceMember}} and map no other field. Run this\n` +
+  `  after \`yarn twenty app:install\`, whose post-install hook stamps the rows\n` +
+  `  created before the narrowing.\n` +
   `  Otherwise partners cannot apply, and admin invites stay invisible to them.\n` +
   `  See src/workflows/README.md.\n`;
 
