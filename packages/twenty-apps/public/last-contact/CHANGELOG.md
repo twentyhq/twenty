@@ -2,7 +2,7 @@
 
 ## 1.2.3
 
-- Drive the last-contact backfill with enqueued background jobs instead of a logic function that called its own HTTP route in a loop with blocking sleeps. Each phase now processes one batch and enqueues the next via `enqueueJob`, using `delayMs` to stay under the hosted API rate limiting.
+- Rework the last-contact backfill into a single fan-out instead of a logic function that called its own HTTP route in a loop with blocking sleeps. On install it counts people, opportunities and companies and enqueues one job per record batch via `enqueueJob`. Each job receives its batch id and processes the matching record window (offset pagination). Jobs are staggered with `delayMs` to stay under the hosted API rate limiting.
 
 ## 1.2.0
 

@@ -1,20 +1,14 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
-import { kv } from 'twenty-sdk/logic-function';
 
-import {
-  type BackfillState,
-  BACKFILL_STATE_KV_KEY,
-} from 'src/constants/backfill';
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { startBackfill } from 'src/utils/advance-backfill';
 import {
   getBackfillBatchSize,
   getBackfillSleepMs,
 } from 'src/utils/backfill-settings';
+import { enqueueBackfillJobs } from 'src/utils/enqueue-backfill-jobs';
 
 const handler = async (): Promise<object> => {
-  const existingState = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
-
   console.log(
     'Backfill params',
     JSON.stringify({
@@ -23,21 +17,17 @@ const handler = async (): Promise<object> => {
     }),
   );
 
-  if (existingState) {
-    return { outcome: 'already-running', state: existingState };
-  }
+  const plans = await enqueueBackfillJobs(new CoreApiClient());
 
-  await startBackfill();
-
-  return { outcome: 'started' };
+  return { outcome: 'enqueued', plans };
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Enqueues the sequential last-contact backfill after installation.',
-  timeoutSeconds: 60,
+    'Counts people, opportunities and companies after installation and enqueues one backfill job per record batch.',
+  timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: false,
   handler,
 });

@@ -6,16 +6,20 @@ import {
 
 export type BackfillPhase = 'people' | 'opportunities' | 'companies';
 
-// People run first so companies and opportunities can read the freshly
-// computed person last-contact, then opportunities, then companies.
 export const BACKFILL_PHASE_ORDER: BackfillPhase[] = [
   'people',
   'opportunities',
   'companies',
 ];
 
-// Each phase is driven by its own enqueued logic function; a phase enqueues
-// the next batch of itself, then hands off to the following phase.
+// GraphQL query field exposing the record connection for each phase.
+export const BACKFILL_PHASE_QUERY_FIELD: Record<BackfillPhase, string> = {
+  people: 'people',
+  opportunities: 'opportunities',
+  companies: 'companies',
+};
+
+// Logic function each phase's batch jobs are enqueued against.
 export const BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS: Record<
   BackfillPhase,
   string
@@ -25,18 +29,8 @@ export const BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS: Record<
   companies: BACKFILL_COMPANIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 };
 
-export type BackfillState = {
-  phase: BackfillPhase;
-  cursor: string | null;
-  iterations: number;
-};
-
-// Presence of this key acts as the backfill lock; it is deleted once every
-// phase has completed.
-export const BACKFILL_STATE_KV_KEY = 'last-contact:backfill-state';
-
-// Safety valve against an unbounded enqueue chain.
-export const MAX_BACKFILL_ITERATIONS = 10_000;
+// A batch job resolves the records it owns from this index and the batch size.
+export type BackfillBatchPayload = { batchId: number };
 
 // Server variables, injected into process.env on every execution.
 export const BACKFILL_BATCH_SIZE_ENV_VAR_NAME =
