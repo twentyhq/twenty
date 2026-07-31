@@ -48,10 +48,7 @@ export const SettingsAccountsMessageAutoCreationIcon = ({
   return (
     <StyledIconContainer className={className}>
       <StyledDirectionSkeleton isActive={isSentActive}>
-        <IconArrowUp
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.md}
-        />
+        <IconArrowUp size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
       </StyledDirectionSkeleton>
       <StyledDirectionSkeleton isActive={isReceivedActive}>
         <IconArrowDown
