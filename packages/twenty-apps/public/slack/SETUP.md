@@ -30,6 +30,26 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 4. Copy the **Client ID** and **Client Secret**.
 
+### Display information
+
+Under **Basic Information → Display Information**, fill in the app name and descriptions Slack shows on the OAuth consent screen and in the App Directory.
+
+**Short description** (max 140 characters):
+
+> Bring your Twenty CRM into Slack. Mention the bot to read, create and update records, and post to any channel from your workflows.
+
+**Long description:**
+
+> Twenty Slack connects your Twenty CRM to your Slack workspace.
+>
+> Mention the bot in any channel or send it a direct message to ask about your data in plain language: "how many open opportunities do we have?" or "create a company called ACME." It answers in-thread, remembers the conversation, and can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Once it has replied you can keep the conversation going without mentioning it again.
+>
+> Beyond the assistant, Twenty Slack adds Slack steps to your Twenty workflows: post messages, send ephemeral messages, update or delete messages, add reactions and list channels. The Send Slack message command lets you post to any channel from anywhere in Twenty.
+>
+> Everyone who messages the bot acts with a dedicated Slack Assistant role, so you stay in control of what it can see and do. One Slack workspace connects to one Twenty workspace.
+>
+> Twenty is open source. Free to use, no credits, no metering.
+
 ## 2. Twenty
 
 1. Install this app (`slack`) on your Twenty server.
