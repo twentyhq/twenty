@@ -87,9 +87,7 @@ const SidePanelPreview = () => (
   </StyledSidePanelPreview>
 );
 
-export const OpenRecordInCardMedia = ({
-  type,
-}: OpenRecordInCardMediaProps) => {
+export const OpenRecordInCardMedia = ({ type }: OpenRecordInCardMediaProps) => {
   if (type === 'member-preference') {
     return (
       <StyledPreviewFrame>
