@@ -50,7 +50,7 @@ export class ConnectionProviderEntity
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.26.0_AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand_1785378891192',
+      '2.27.0_AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand_1785458985832',
   })
   onDisconnectLogicFunctionUniversalIdentifier: string | null;
 
