@@ -54,6 +54,13 @@ const createFlatEntityMapsKeyedById = <TEntity extends { id: string }>(
   ),
 });
 
+type RowLevelOwnershipRow = {
+  id: string;
+  roleId: string;
+  objectMetadataId: string;
+  deletedAt?: string | null;
+};
+
 type BuildProviderOptions = {
   flatRoles?: FlatRole[];
   rolesPermissionFlagEntities?: {
@@ -61,6 +68,10 @@ type BuildProviderOptions = {
     permissionFlagUniversalIdentifier: string;
   }[];
   hasRolesPermission?: boolean;
+  flatPredicates?: RowLevelOwnershipRow[];
+  flatPredicateGroups?: RowLevelOwnershipRow[];
+  flatFields?: { id: string; name: string; objectMetadataId: string }[];
+  flatObjects?: { id: string; nameSingular: string; namePlural: string }[];
 };
 
 const buildProvider = (options?: BuildProviderOptions) => {
@@ -106,6 +117,18 @@ const buildProvider = (options?: BuildProviderOptions) => {
       flatRoleMaps: createFlatEntityMapsKeyedById(flatRoles),
       flatRolePermissionFlagMaps: createFlatEntityMapsKeyedById(
         options?.rolesPermissionFlagEntities ?? [],
+      ),
+      flatRowLevelPermissionPredicateMaps: createFlatEntityMapsKeyedById(
+        options?.flatPredicates ?? [],
+      ),
+      flatRowLevelPermissionPredicateGroupMaps: createFlatEntityMapsKeyedById(
+        options?.flatPredicateGroups ?? [],
+      ),
+      flatFieldMetadataMaps: createFlatEntityMapsKeyedById(
+        options?.flatFields ?? [],
+      ),
+      flatObjectMetadataMaps: createFlatEntityMapsKeyedById(
+        options?.flatObjects ?? [],
       ),
     }),
   };
@@ -784,6 +807,51 @@ describe('RoleToolProvider', () => {
   });
 
   describe('upsert_row_level_permission_rules', () => {
+    const supportRole = createFlatRole({
+      id: 'support-role-id',
+      label: 'Support',
+      isEditable: true,
+    });
+    const objectMetadataId = 'object-metadata-id';
+    const workspaceMemberObjectMetadataId = 'workspace-member-object-id';
+    const ownerFieldMetadataId = 'owner-field-metadata-id';
+    const workspaceMemberIdFieldMetadataId =
+      'workspace-member-id-field-metadata-id';
+
+    const rowLevelRuleFixtures = {
+      flatRoles: [supportRole],
+      flatObjects: [
+        {
+          id: objectMetadataId,
+          nameSingular: 'opportunity',
+          namePlural: 'opportunities',
+        },
+        {
+          id: workspaceMemberObjectMetadataId,
+          nameSingular: 'workspaceMember',
+          namePlural: 'workspaceMembers',
+        },
+      ],
+      flatFields: [
+        {
+          id: ownerFieldMetadataId,
+          name: 'owner',
+          objectMetadataId,
+        },
+        {
+          id: workspaceMemberIdFieldMetadataId,
+          name: 'id',
+          objectMetadataId: workspaceMemberObjectMetadataId,
+        },
+      ],
+    };
+
+    const ownerMatchesCurrentUserPredicate = {
+      fieldMetadataId: ownerFieldMetadataId,
+      operand: 'IS',
+      workspaceMemberFieldMetadataId: workspaceMemberIdFieldMetadataId,
+    };
+
     it('rejects changes on a system-managed role', async () => {
       const { provider, rowLevelPermissionPredicateService } = buildProvider({
         flatRoles: [
@@ -814,27 +882,17 @@ describe('RoleToolProvider', () => {
     });
 
     it('upserts predicates and injects the object metadata id into groups', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider({
-        flatRoles: [
-          createFlatRole({
-            id: 'support-role-id',
-            label: 'Support',
-            isEditable: true,
-          }),
-        ],
-      });
+      const { provider, rowLevelPermissionPredicateService } =
+        buildProvider(rowLevelRuleFixtures);
 
       const output = await provider.executeStaticTool(
         'upsert_row_level_permission_rules',
         {
           roleId: 'support-role-id',
-          objectMetadataId: 'object-metadata-id',
+          objectMetadataId,
           predicates: [
             {
-              fieldMetadataId: 'owner-field-metadata-id',
-              operand: 'IS',
-              workspaceMemberFieldMetadataId:
-                'workspace-member-id-field-metadata-id',
+              ...ownerMatchesCurrentUserPredicate,
               rowLevelPermissionPredicateGroupId: 'group-id',
             },
           ],
@@ -850,16 +908,209 @@ describe('RoleToolProvider', () => {
         workspaceId,
         input: expect.objectContaining({
           roleId: 'support-role-id',
-          objectMetadataId: 'object-metadata-id',
+          objectMetadataId,
           predicateGroups: [
             expect.objectContaining({
               id: 'group-id',
               logicalOperator: 'AND',
-              objectMetadataId: 'object-metadata-id',
+              objectMetadataId,
             }),
           ],
         }),
       });
+    });
+
+    it('rejects a predicate id owned by another role', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider({
+        ...rowLevelRuleFixtures,
+        flatPredicates: [
+          {
+            id: 'foreign-predicate-id',
+            roleId: 'another-role-id',
+            objectMetadataId,
+            deletedAt: null,
+          },
+        ],
+      });
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [
+            { ...ownerMatchesCurrentUserPredicate, id: 'foreign-predicate-id' },
+          ],
+          predicateGroups: [],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('different role or object');
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('rejects a predicate group id owned by another object', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider({
+        ...rowLevelRuleFixtures,
+        flatPredicateGroups: [
+          {
+            id: 'foreign-group-id',
+            roleId: 'support-role-id',
+            objectMetadataId: 'another-object-metadata-id',
+            deletedAt: null,
+          },
+        ],
+      });
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [{ id: 'foreign-group-id', logicalOperator: 'AND' }],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('different role or object');
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('rejects a predicate referencing a group of another role', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider({
+        ...rowLevelRuleFixtures,
+        flatPredicateGroups: [
+          {
+            id: 'foreign-group-id',
+            roleId: 'another-role-id',
+            objectMetadataId,
+            deletedAt: null,
+          },
+        ],
+      });
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [
+            {
+              ...ownerMatchesCurrentUserPredicate,
+              rowLevelPermissionPredicateGroupId: 'foreign-group-id',
+            },
+          ],
+          predicateGroups: [],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('not a group of this role and object');
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('rejects a field belonging to another object', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider({
+        ...rowLevelRuleFixtures,
+        flatFields: [
+          ...rowLevelRuleFixtures.flatFields,
+          {
+            id: 'other-object-field-id',
+            name: 'unrelatedField',
+            objectMetadataId: 'another-object-metadata-id',
+          },
+        ],
+      });
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [
+            { fieldMetadataId: 'other-object-field-id', operand: 'IS' },
+          ],
+          predicateGroups: [],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('belongs to another object');
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('rejects a workspaceMemberFieldMetadataId that is not a workspaceMember field', async () => {
+      const { provider, rowLevelPermissionPredicateService } =
+        buildProvider(rowLevelRuleFixtures);
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: ownerFieldMetadataId,
+              operand: 'IS',
+              workspaceMemberFieldMetadataId: ownerFieldMetadataId,
+            },
+          ],
+          predicateGroups: [],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(false);
+      expect(output.error).toContain('not a field of the workspaceMember');
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('allows reusing an existing predicate id owned by the same role and object', async () => {
+      const { provider, rowLevelPermissionPredicateService } = buildProvider({
+        ...rowLevelRuleFixtures,
+        flatPredicates: [
+          {
+            id: 'own-predicate-id',
+            roleId: 'support-role-id',
+            objectMetadataId,
+            deletedAt: null,
+          },
+        ],
+      });
+
+      const output = await provider.executeStaticTool(
+        'upsert_row_level_permission_rules',
+        {
+          roleId: 'support-role-id',
+          objectMetadataId,
+          predicates: [
+            { ...ownerMatchesCurrentUserPredicate, id: 'own-predicate-id' },
+          ],
+          predicateGroups: [],
+        },
+        context,
+      );
+
+      expect(output.success).toBe(true);
+      expect(
+        rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates,
+      ).toHaveBeenCalled();
     });
   });
 });
