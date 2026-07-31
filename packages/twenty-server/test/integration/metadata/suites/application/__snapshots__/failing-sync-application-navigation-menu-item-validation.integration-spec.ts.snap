@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a FOLDER item with a blank name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A name is required for FOLDER type",
+              "userFriendlyMessage": "A name is required for FOLDER type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A name is required for FOLDER type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a FOLDER item without name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A name is required for FOLDER type",
+              "userFriendlyMessage": "A name is required for FOLDER type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A name is required for FOLDER type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a LINK item with a link that is not a valid url 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid link is required for LINK type",
+              "userFriendlyMessage": "A valid link is required for LINK type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid link is required for LINK type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a LINK item without link 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid link is required for LINK type",
+              "userFriendlyMessage": "A valid link is required for LINK type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid link is required for LINK type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a PAGE_LAYOUT item with a pageLayoutUniversalIdentifier that is not a uuid 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+              "userFriendlyMessage": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing a VIEW item with a viewUniversalIdentifier that is not a uuid 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid viewUniversalIdentifier is required for VIEW type",
+              "userFriendlyMessage": "A valid viewUniversalIdentifier is required for VIEW type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid viewUniversalIdentifier is required for VIEW type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing an OBJECT item with a targetObjectUniversalIdentifier that is not a uuid 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+              "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid navigation menu items when syncing an OBJECT item without targetObjectUniversalIdentifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+              "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

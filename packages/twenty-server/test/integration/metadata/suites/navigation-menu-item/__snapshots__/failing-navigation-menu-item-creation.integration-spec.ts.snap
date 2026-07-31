@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NavigationMenuItem creation should fail when creating with empty targetObjectMetadataId 1`] = `
 {
@@ -100,8 +100,8 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
           "errors": [
             {
               "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "targetRecordId and targetObjectMetadataId are required for RECORD type",
-              "userFriendlyMessage": "targetRecordId and targetObjectMetadataId are required for RECORD type",
+              "message": "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type",
+              "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -118,7 +118,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
       "navigationMenuItem": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "targetRecordId and targetObjectMetadataId are required for RECORD type",
+    "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type",
   },
   "message": "Multiple validation errors occurred while creating navigation menu items",
   "name": "GraphQLError",
