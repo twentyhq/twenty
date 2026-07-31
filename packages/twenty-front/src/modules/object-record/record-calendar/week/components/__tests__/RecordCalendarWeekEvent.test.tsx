@@ -71,6 +71,17 @@ const renderEvent = () =>
   );
 
 describe('RecordCalendarWeekEvent', () => {
+  it('keeps the selection control on the exposed edge of overlapping events', () => {
+    const { container } = renderEvent();
+
+    const checkboxContainer = container.querySelector('.checkbox-container');
+
+    expect(checkboxContainer).toContainElement(
+      container.querySelector('input[type="checkbox"]'),
+    );
+    expect(checkboxContainer?.nextElementSibling).toHaveTextContent('Event');
+  });
+
   it('stays focused only while its record is open in the side panel', () => {
     viewableRecordId = 'record-1';
     const { container, rerender } = renderEvent();

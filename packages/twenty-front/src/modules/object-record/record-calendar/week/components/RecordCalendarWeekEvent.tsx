@@ -156,7 +156,6 @@ const StyledCheckboxContainer = styled.div`
   display: flex;
   flex-shrink: 0;
   height: 20px;
-  margin-left: auto;
 `;
 
 const StyledEventTimeRow = styled.div`
@@ -287,6 +286,18 @@ export const RecordCalendarWeekEvent = ({
       >
         <StyledEventContent isAllDay={isAllDay}>
           <StyledEventHeader>
+            <StyledCheckboxContainer className="checkbox-container">
+              <StopPropagationContainer>
+                <Checkbox
+                  hoverable
+                  checked={isRecordCalendarCardSelected}
+                  onChange={(event) => {
+                    setIsRecordCalendarCardSelected(event.target.checked);
+                  }}
+                  variant={CheckboxVariant.Secondary}
+                />
+              </StopPropagationContainer>
+            </StyledCheckboxContainer>
             <StyledEventLabel isDateOnly={isDateOnly}>
               <StyledRecordChipContainer>
                 <RecordChip
@@ -304,18 +315,6 @@ export const RecordCalendarWeekEvent = ({
                 </StyledCompactEventStartTime>
               )}
             </StyledEventLabel>
-            <StyledCheckboxContainer className="checkbox-container">
-              <StopPropagationContainer>
-                <Checkbox
-                  hoverable
-                  checked={isRecordCalendarCardSelected}
-                  onChange={(event) => {
-                    setIsRecordCalendarCardSelected(event.target.checked);
-                  }}
-                  variant={CheckboxVariant.Secondary}
-                />
-              </StopPropagationContainer>
-            </StyledCheckboxContainer>
           </StyledEventHeader>
           {!isAllDay &&
             !isCompactTimedEvent &&
