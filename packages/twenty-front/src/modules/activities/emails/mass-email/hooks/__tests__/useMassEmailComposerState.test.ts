@@ -110,4 +110,23 @@ describe('useMassEmailComposerState', () => {
     });
     expect(onSent).toHaveBeenCalledTimes(1);
   });
+
+  it('resumes an existing draft without creating another campaign', async () => {
+    const { result } = renderHook(() =>
+      useMassEmailComposerState({
+        connectedAccountId: 'account-1',
+        personIds: ['person-1'],
+        initialDraft: {
+          campaignId: 'campaign-1',
+          subject: 'Existing subject',
+          body: '<p>Existing body</p>',
+        },
+      }),
+    );
+
+    expect(result.current.draftCampaignId).toBe('campaign-1');
+    expect(result.current.subjectTemplate).toBe('Existing subject');
+    expect(result.current.bodyTemplate).toBe('<p>Existing body</p>');
+    expect(saveDraftMock).not.toHaveBeenCalled();
+  });
 });

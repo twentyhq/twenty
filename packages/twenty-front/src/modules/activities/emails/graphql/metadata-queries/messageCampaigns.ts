@@ -52,6 +52,7 @@ export const GET_MESSAGE_CAMPAIGN = gql`
       body
       unsubscribeTopicId
       canEdit
+      draftPersonIds
       recipients {
         messageId
         personId

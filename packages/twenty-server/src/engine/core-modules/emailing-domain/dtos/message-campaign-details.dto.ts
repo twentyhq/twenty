@@ -16,4 +16,7 @@ export class MessageCampaignDetailsDTO extends MessageCampaignSummaryDTO {
 
   @Field(() => [MessageCampaignRecipientDTO])
   recipients: MessageCampaignRecipientDTO[];
+
+  @Field(() => [String])
+  draftPersonIds: string[];
 }

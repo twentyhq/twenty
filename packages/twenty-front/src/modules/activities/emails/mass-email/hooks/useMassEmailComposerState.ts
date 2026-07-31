@@ -25,29 +25,39 @@ type ResolvedMassEmail = {
 type UseMassEmailComposerStateArgs = {
   connectedAccountId: string;
   personIds: string[];
+  initialDraft?: {
+    campaignId: string;
+    subject: string;
+    body: string;
+  };
   onSent?: () => void;
 };
 
 export const useMassEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
   personIds,
+  initialDraft,
   onSent,
 }: UseMassEmailComposerStateArgs) => {
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
-  const [subjectTemplate, setSubjectTemplate] = useState('');
-  const [bodyTemplate, setBodyTemplate] = useState('');
+  const [subjectTemplate, setSubjectTemplate] = useState(
+    initialDraft?.subject ?? '',
+  );
+  const [bodyTemplate, setBodyTemplate] = useState(initialDraft?.body ?? '');
   const [overrides, setOverrides] = useState<Record<string, MassEmailOverride>>(
     {},
   );
   const [excludedPersonIds, setExcludedPersonIds] = useState<string[]>([]);
-  const [draftCampaignId, setDraftCampaignId] = useState<string>();
+  const [draftCampaignId, setDraftCampaignId] = useState<string | undefined>(
+    initialDraft?.campaignId,
+  );
   const [draftSaveStatus, setDraftSaveStatus] = useState<
     'saving' | 'saved' | 'error'
   >('saving');
   // oxlint-disable-next-line twenty/no-state-useref -- Prevents duplicate drafts under React Strict Mode.
-  const hasStartedDraftCreation = useRef(false);
+  const hasStartedDraftCreation = useRef(isDefined(initialDraft));
 
   const {
     recipients,

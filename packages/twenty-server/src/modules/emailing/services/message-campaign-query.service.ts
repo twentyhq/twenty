@@ -150,7 +150,7 @@ export class MessageCampaignQueryService {
                 MessageListMemberWorkspaceEntity,
               ).then((repository) =>
                 repository.find({
-                  select: ['id'],
+                  select: ['personId'],
                   where: { listId: campaign.listId as string },
                 }),
               ),
@@ -207,6 +207,7 @@ export class MessageCampaignQueryService {
             campaign.status === CAMPAIGN_STATUS.DRAFT &&
             campaign.createdBy.workspaceMemberId === workspaceMemberId,
           recipients,
+          draftPersonIds: draftAudience.map(({ personId }) => personId),
         };
       },
     );

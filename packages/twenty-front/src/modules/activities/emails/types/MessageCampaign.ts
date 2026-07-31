@@ -31,5 +31,6 @@ export type MessageCampaignDetails = MessageCampaignSummary & {
   body: string | null;
   unsubscribeTopicId: string | null;
   canEdit: boolean;
+  draftPersonIds: string[];
   recipients: MessageCampaignRecipient[];
 };

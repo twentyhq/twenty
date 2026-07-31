@@ -2,11 +2,14 @@ import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconMail, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CampaignComposerFields } from '@/activities/emails/components/CampaignComposerFields';
+import { MassEmailWorkspace } from '@/activities/emails/mass-email/components/MassEmailWorkspace';
+import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useMessageCampaignDraft } from '@/activities/emails/hooks/useMessageCampaignDraft';
 import {
@@ -709,6 +712,13 @@ const ExistingCampaignPage = ({ campaignId }: { campaignId: string }) => {
   }
 
   if (isDraftCampaign(campaign)) {
+    if (
+      campaign.canEdit &&
+      campaign.listName?.startsWith('Selected people (') === true
+    ) {
+      return <MassEmailDraftEditor campaign={campaign} />;
+    }
+
     return campaign.canEdit ? (
       <CampaignEditor campaign={campaign} />
     ) : (
@@ -717,6 +727,54 @@ const ExistingCampaignPage = ({ campaignId }: { campaignId: string }) => {
   }
 
   return <CampaignDetail campaign={campaign} />;
+};
+
+const MassEmailDraftEditor = ({
+  campaign,
+}: {
+  campaign: MessageCampaignDetails;
+}) => {
+  const navigate = useNavigate();
+  const { connectedAccountId, loading } = useFirstConnectedAccount({
+    preferredHandle: campaign.fromAddress ?? undefined,
+  });
+
+  if (loading) {
+    return <StyledEmpty>Loading draft...</StyledEmpty>;
+  }
+
+  if (!isDefined(connectedAccountId)) {
+    return (
+      <StyledEmpty>
+        The connected email account for this draft is no longer available.
+      </StyledEmpty>
+    );
+  }
+
+  if (campaign.draftPersonIds.length === 0) {
+    return <StyledEmpty>This draft has no recipients.</StyledEmpty>;
+  }
+
+  return (
+    <PageContainer>
+      <PageHeader
+        title={campaign.subject || 'Mass email draft'}
+        Icon={IconMail}
+        hasClosePageButton
+        onClosePage={() => navigate(AppPath.Emails)}
+      />
+      <MassEmailWorkspace
+        connectedAccountId={connectedAccountId}
+        personIds={campaign.draftPersonIds}
+        initialDraft={{
+          campaignId: campaign.id,
+          subject: campaign.subject ?? '',
+          body: campaign.body ?? '',
+        }}
+        onSent={() => navigate(AppPath.Emails)}
+      />
+    </PageContainer>
+  );
 };
 
 export const EmailsPage = () => {
