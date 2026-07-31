@@ -25,7 +25,6 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
   PageLayoutTabLayoutMode,
@@ -197,7 +196,6 @@ const createView = (
   shouldHideEmptyGroups: false,
   position: 0,
   isCompact: false,
-  openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   viewFields: [],
   viewGroups: [],
   viewFilters: [],
