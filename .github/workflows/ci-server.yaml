@@ -343,6 +343,7 @@ jobs:
           tag: scope:backend
           tasks: 'test:integration'
           configuration: 'with-db-reset'
+          parallel: 1
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
 
   cross-version-upgrade:
