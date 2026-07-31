@@ -4,6 +4,7 @@ import recordPageLayoutCoverDark from '@/settings/data-model/object-details/asse
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { IconAddressBook, IconPencil } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -56,8 +57,26 @@ const renderCard = (colorScheme: 'light' | 'dark') => (
 
 export const Light: Story = {
   render: () => renderCard('light'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText('Customize record page')).toBeVisible();
+    expect(
+      canvas.getByText('Customize how your record page looks.'),
+    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
+  },
 };
 
 export const Dark: Story = {
   render: () => renderCard('dark'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText('Customize record page')).toBeVisible();
+    expect(
+      canvas.getByText('Customize how your record page looks.'),
+    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
+  },
 };

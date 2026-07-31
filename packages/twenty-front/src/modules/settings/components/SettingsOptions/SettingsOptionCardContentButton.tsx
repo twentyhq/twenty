@@ -47,8 +47,8 @@ const StyledHeroCardTextContainer = styled(StyledSettingsCardTextContainer)`
 const StyledHeroCardTitle = styled(StyledSettingsCardTitle)`
   align-items: center;
   display: flex;
-  height: var(--t-spacing-4);
   margin-bottom: 0;
+  min-height: var(--t-spacing-4);
   width: 100%;
 `;
 
