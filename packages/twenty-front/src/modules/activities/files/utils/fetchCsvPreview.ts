@@ -8,7 +8,7 @@ export type CsvPreviewData = {
 };
 
 export const fetchCsvPreview = async (url: string): Promise<CsvPreviewData> => {
-  const response = await fetch(url);
+  const response = await fetch(url, { credentials: 'include' });
   const text = await response.text();
 
   const result = Papa.parse<string[]>(text, {

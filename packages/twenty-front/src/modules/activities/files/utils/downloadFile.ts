@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 
 export const downloadFile = (fullPath: string, fileName: string) => {
-  return fetch(fullPath)
+  return fetch(fullPath, { credentials: 'include' })
     .then((resp) =>
       resp.status === 200
         ? resp.blob()

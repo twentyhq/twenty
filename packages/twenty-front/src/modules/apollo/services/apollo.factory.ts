@@ -112,16 +112,21 @@ export class ApolloFactory implements ApolloManager {
     this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
+      // credentials: 'include' sends the httpOnly session cookie alongside
+      // the Bearer header during the cookie-session migration.
       const uploadLink = new UploadHttpLink({
         uri,
+        credentials: 'include',
       });
 
       const streamingRestLink = new StreamingRestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const restLink = new RestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const authLink = setContext(async (_, { headers, skipAuthToken }) => {

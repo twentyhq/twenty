@@ -12,6 +12,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import {
   UserSessionEntity,
@@ -70,6 +71,7 @@ describe('UserSessionService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserSessionService,
+        UserSessionCookieService,
         {
           provide: getRepositoryToken(UserSessionEntity),
           useClass: Repository,
@@ -414,6 +416,172 @@ describe('UserSessionService', () => {
         'hash-1',
         'hash-2',
       ]);
+    });
+  });
+
+  describe('issueSessionForTokenPair', () => {
+    const buildTokenPair = () => ({
+      accessOrWorkspaceAgnosticToken: {
+        token: 'jwt-access-token',
+        expiresAt: new Date(),
+      },
+      refreshToken: { token: 'jwt-refresh-token', expiresAt: new Date() },
+    });
+
+    const buildRequest = (cookieHeader?: string) =>
+      ({
+        headers: {
+          ...(cookieHeader === undefined ? {} : { cookie: cookieHeader }),
+          'user-agent': 'jest',
+        },
+        ip: '127.0.0.1',
+        res: { cookie: jest.fn() },
+      }) as never;
+
+    const mockAccessPayload = () => {
+      jest.spyOn(jwtWrapperService, 'decode').mockReturnValue({
+        sub: 'user-id',
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
+        authProvider: AuthProviderEnum.Password,
+        type: JwtTokenTypeEnum.ACCESS,
+      });
+    };
+
+    beforeEach(() => {
+      mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = true;
+    });
+
+    it('should be a no-op when cookie sessions are disabled', async () => {
+      mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = false;
+
+      const createSessionSpy = jest.spyOn(service, 'createSession');
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request: buildRequest(),
+        origin: 'sign_in',
+      });
+
+      expect(createSessionSpy).not.toHaveBeenCalled();
+    });
+
+    it('should mint a session and set the cookie on sign-in', async () => {
+      mockAccessPayload();
+
+      const session = buildActiveSession();
+      const request = buildRequest();
+
+      jest
+        .spyOn(service, 'createSession')
+        .mockResolvedValue({ sessionToken: 'sess_new', session });
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request,
+        origin: 'sign_in',
+      });
+
+      expect(service.createSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-id',
+          workspaceId: 'workspace-id',
+          userWorkspaceId: 'user-workspace-id',
+          origin: 'sign_in',
+          userAgent: 'jest',
+          ipAddress: '127.0.0.1',
+        }),
+      );
+      expect(
+        (request as { res: { cookie: jest.Mock } }).res.cookie,
+      ).toHaveBeenCalled();
+    });
+
+    it('should supersede the presented session on sign-in', async () => {
+      mockAccessPayload();
+
+      const presentedSession = buildActiveSession();
+
+      jest
+        .spyOn(userSessionRepository, 'findOneBy')
+        .mockResolvedValue(presentedSession);
+      jest
+        .spyOn(userSessionRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+      jest.spyOn(service, 'createSession').mockResolvedValue({
+        sessionToken: 'sess_new',
+        session: buildActiveSession(),
+      });
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request: buildRequest('twenty-session=sess_old'),
+        origin: 'sign_in',
+      });
+
+      expect(userSessionRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({ id: presentedSession.id }),
+        expect.objectContaining({
+          revokedReason: UserSessionRevokedReason.Superseded,
+        }),
+      );
+      expect(service.createSession).toHaveBeenCalled();
+    });
+
+    it('should not mint a new session on renewal when a valid one is presented', async () => {
+      const presentedSession = buildActiveSession();
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest
+        .spyOn(userSessionRepository, 'findOneBy')
+        .mockResolvedValue(presentedSession);
+      const createSessionSpy = jest.spyOn(service, 'createSession');
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request: buildRequest('twenty-session=sess_current'),
+        origin: 'renewal_bridge',
+      });
+
+      expect(createSessionSpy).not.toHaveBeenCalled();
+    });
+
+    it('should mint a session on renewal when the presented one is invalid', async () => {
+      mockAccessPayload();
+
+      cacheStorageService.get.mockResolvedValue(undefined);
+      jest.spyOn(userSessionRepository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(service, 'createSession').mockResolvedValue({
+        sessionToken: 'sess_new',
+        session: buildActiveSession(),
+      });
+
+      await service.issueSessionForTokenPair({
+        tokenPair: buildTokenPair(),
+        request: buildRequest('twenty-session=sess_stale'),
+        origin: 'renewal_bridge',
+      });
+
+      expect(service.createSession).toHaveBeenCalledWith(
+        expect.objectContaining({ origin: 'renewal_bridge' }),
+      );
+    });
+
+    it('should never throw when session creation fails', async () => {
+      mockAccessPayload();
+
+      jest
+        .spyOn(service, 'createSession')
+        .mockRejectedValue(new Error('database is down'));
+
+      await expect(
+        service.issueSessionForTokenPair({
+          tokenPair: buildTokenPair(),
+          request: buildRequest(),
+          origin: 'sign_in',
+        }),
+      ).resolves.toBeUndefined();
     });
   });
 
