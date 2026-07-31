@@ -137,8 +137,6 @@ export const useFrontComponentExecutionContext = ({
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;
 
-        // A developer's explicit openSidePanelPage call still honours an
-        // object pinned to the record page, and a viewport with no room.
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.nameSingular === objectNameSingular,
         );

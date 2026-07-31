@@ -6,10 +6,6 @@ type ResolveOpenRecordInArgs = {
   canDisplaySidePanel: boolean;
 };
 
-// The object either pins where its records open or hands the choice to the
-// member, and the side panel is only a real destination when there is room to
-// display it. Nothing else has a say, so a chip resolves the same way
-// everywhere it renders.
 export const resolveOpenRecordIn = ({
   objectOpenRecordIn,
   openRecordInPreference,

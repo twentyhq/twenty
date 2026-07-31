@@ -23,9 +23,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
     'Seed objectMetadata.openRecordIn from the standard definitions and from deliberate per-view record page choices',
 })
 export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRunner {
-  // Universal identifiers are workspace-invariant, so the expensive standard
-  // application build behind this set runs once per command run, not once per
-  // workspace.
+  // Workspace-invariant, so the standard application is only built once per run.
   private pinnedStandardUniversalIdentifiers?: string[];
 
   constructor(
@@ -83,10 +81,6 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
         'flatViewMaps',
       ]);
 
-    // The column arrives as USER_CHOICE everywhere, so two kinds of objects
-    // have to be told otherwise: standard objects the definitions pin, and
-    // objects whose index view had been deliberately switched to the record
-    // page back when the view was the only place to say so.
     const pinnedUniversalIdentifiers = new Set(
       await this.getPinnedStandardUniversalIdentifiers(workspaceId),
     );

@@ -7,8 +7,7 @@ import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useResolveOpenRecordIn = (objectNameSingular: string) => {
-  // Non-throwing on purpose: record chips render in a lot of places, and a
-  // chip is not the right component to crash when metadata is still loading.
+  // Non-throwing on purpose: a chip must not crash while metadata is loading.
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {

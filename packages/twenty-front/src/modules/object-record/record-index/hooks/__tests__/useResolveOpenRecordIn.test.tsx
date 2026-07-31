@@ -22,7 +22,6 @@ const mockUseAtomFamilySelectorValue = jest.requireMock(
   '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
 ).useAtomFamilySelectorValue as jest.Mock;
 
-// Stands in for the object metadata store.
 const setObjectOpenRecordIn = (
   openRecordIn: ObjectOpenRecordIn | undefined,
 ) => {
