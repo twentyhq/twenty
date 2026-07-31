@@ -231,9 +231,8 @@ describe('buildWorkspaceSetupPromptText', () => {
       locale: 'en',
     });
 
+    expect(result).toContain('roles skill');
     expect(result).toContain('list_roles');
-    expect(result).toContain('create_role');
-    expect(result).toContain('upsert_object_permissions');
     expect(result).toContain('Settings > Members > Roles');
     expect(result).not.toContain('You cannot configure roles from this chat');
     expect(result).not.toContain('navigate_app');
