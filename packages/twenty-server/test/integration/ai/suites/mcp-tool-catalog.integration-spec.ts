@@ -62,6 +62,12 @@ const getToolCatalog = async (
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
 
+// Deliberate exceptions to the "every advertised category is dispatchable
+// through a read-only tool" contract. Currently none: every category the MCP
+// catalog advertises ships at least one read-only tool. Adding a category
+// here must be a conscious decision, not silent drift.
+const EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS: string[] = [];
+
 const createApiKeyToken = async (roleId: string): Promise<string> => {
   const createResponse = await makeMetadataAPIRequest({
     query: gql`
@@ -177,8 +183,8 @@ describe('MCP tool catalog (integration)', () => {
           .slice(0, 3);
 
         if (readOnlyCandidates.length === 0) {
-          // Write-only categories (e.g. ACTION) have nothing safe to dispatch
-          // in CI; the listing itself already proves the provider registered.
+          // A write-only category has nothing safe to dispatch in CI; it is
+          // collected and checked against the deliberate exception list below.
           categoriesWithoutReadOnlyTool.push(category);
           continue;
         }
@@ -203,14 +209,11 @@ describe('MCP tool catalog (integration)', () => {
         });
       }
 
-      // The registry currently ships read-only tools for every category
-      // except ACTION; fail loudly if that assumption drifts so the skip
-      // list stays deliberate.
-      expect(
-        categoriesWithoutReadOnlyTool.filter(
-          (category) => category !== ToolCategory.ACTION,
-        ),
-      ).toEqual([]);
+      // Exact equality fails in both directions, so gaining or losing a
+      // skipped category forces a deliberate update of the exception list.
+      expect([...categoriesWithoutReadOnlyTool].sort()).toEqual(
+        EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS,
+      );
     });
   });
 
