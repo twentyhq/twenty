@@ -9,7 +9,6 @@ import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type View as GqlView } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
@@ -27,7 +26,13 @@ export const useHandleRecordGroupField = () => {
   const store = useStore();
 
   const updateViewMainGroupByFieldMetadataId = useCallback(
-    async (viewId: string, mainGroupByFieldMetadataId: string | null) => {
+    async ({
+      viewId,
+      mainGroupByFieldMetadataId,
+    }: {
+      viewId: string;
+      mainGroupByFieldMetadataId: string | null;
+    }) => {
       const updatedViewResult = await performViewAPIUpdate({
         id: viewId,
         input: {
@@ -39,12 +44,13 @@ export const useHandleRecordGroupField = () => {
         return;
       }
 
-      const updatedView = updatedViewResult.response.data
-        ?.updateView as GqlView;
+      const updatedView = updatedViewResult.response.data?.updateView;
 
-      if (isDefined(updatedView)) {
-        loadRecordIndexStates(updatedView, objectMetadataItem);
+      if (!isDefined(updatedView)) {
+        return;
       }
+
+      loadRecordIndexStates(updatedView, objectMetadataItem);
     },
     [performViewAPIUpdate, loadRecordIndexStates, objectMetadataItem],
   );
@@ -73,7 +79,10 @@ export const useHandleRecordGroupField = () => {
         return;
       }
 
-      await updateViewMainGroupByFieldMetadataId(view.id, fieldMetadataItem.id);
+      await updateViewMainGroupByFieldMetadataId({
+        viewId: view.id,
+        mainGroupByFieldMetadataId: fieldMetadataItem.id,
+      });
     },
     [
       currentViewIdCallbackState,
@@ -100,7 +109,10 @@ export const useHandleRecordGroupField = () => {
       return;
     }
 
-    await updateViewMainGroupByFieldMetadataId(view.id, null);
+    await updateViewMainGroupByFieldMetadataId({
+      viewId: view.id,
+      mainGroupByFieldMetadataId: null,
+    });
   }, [
     currentViewIdCallbackState,
     getViewFromState,

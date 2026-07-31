@@ -7,6 +7,7 @@ import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { computeViewGroupsReplacementForView } from '@/views/utils/computeViewGroupsReplacementForView';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
@@ -14,6 +15,7 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
+  type UpdateViewMutation,
   type UpdateViewMutationVariables,
   UpdateViewDocument,
 } from '~/generated-metadata/graphql';
@@ -32,10 +34,13 @@ export const usePerformViewAPIUpdate = () => {
   // The server recreates the view groups when mainGroupByFieldMetadataId changes,
   // so the store has to be realigned on the groups returned by the mutation
   const syncViewGroupsFromMutationResult = useCallback(
-    (
-      viewId: string,
-      viewGroups: (FlatViewGroup & { __typename?: string })[],
-    ) => {
+    ({
+      viewId,
+      updatedViewGroups,
+    }: {
+      viewId: string;
+      updatedViewGroups: UpdateViewMutation['updateView']['viewGroups'];
+    }) => {
       const viewGroupsEntry = store.get(
         metadataStoreState.atomFamily('viewGroups'),
       );
@@ -46,26 +51,16 @@ export const usePerformViewAPIUpdate = () => {
           : viewGroupsEntry.current
       ) as FlatViewGroup[];
 
-      const updatedViewGroupIds = new Set(
-        viewGroups.map((viewGroup) => viewGroup.id),
-      );
+      const { viewGroupIdsToRemove, viewGroupsToAdd } =
+        computeViewGroupsReplacementForView({
+          viewId,
+          existingViewGroups,
+          updatedViewGroups,
+        });
 
-      const deletedViewGroupIds = existingViewGroups
-        .filter(
-          (viewGroup) =>
-            viewGroup.viewId === viewId &&
-            !updatedViewGroupIds.has(viewGroup.id),
-        )
-        .map((viewGroup) => viewGroup.id);
+      removeFromDraft({ key: 'viewGroups', itemIds: viewGroupIdsToRemove });
 
-      removeFromDraft({ key: 'viewGroups', itemIds: deletedViewGroupIds });
-
-      addToDraft({
-        key: 'viewGroups',
-        items: viewGroups.map(
-          ({ __typename: _typename, ...viewGroup }) => viewGroup,
-        ),
-      });
+      addToDraft({ key: 'viewGroups', items: viewGroupsToAdd });
 
       applyChanges();
     },
@@ -94,16 +89,16 @@ export const usePerformViewAPIUpdate = () => {
         const hasUpdatedMainGroupByFieldMetadataId =
           variables.input.mainGroupByFieldMetadataId !== undefined;
 
-        const updatedViewGroups = result.data?.updateView?.viewGroups;
+        const updatedViewGroups = result.data?.updateView.viewGroups;
 
         if (
           hasUpdatedMainGroupByFieldMetadataId &&
           isDefined(updatedViewGroups)
         ) {
-          syncViewGroupsFromMutationResult(
-            variables.id,
-            updatedViewGroups as (FlatViewGroup & { __typename?: string })[],
-          );
+          syncViewGroupsFromMutationResult({
+            viewId: variables.id,
+            updatedViewGroups,
+          });
         }
 
         return {
