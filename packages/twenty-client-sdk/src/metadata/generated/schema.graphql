@@ -1685,19 +1685,6 @@ type EventSubscription {
   metadataEvents: [MetadataEvent!]!
 }
 
-type UserSession {
-  id: UUID!
-  workspaceId: UUID
-  authProvider: String!
-  isImpersonating: Boolean!
-  userAgent: String
-  ipAddress: String
-  createdAt: DateTime!
-  lastActiveAt: DateTime!
-  expiresAt: DateTime!
-  isCurrent: Boolean!
-}
-
 type BillingEndTrialPeriod {
   """Updated subscription status"""
   status: SubscriptionStatus
@@ -1981,7 +1968,6 @@ type ClientConfig {
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
-  isCookieSessionEnabled: Boolean!
   isMicrosoftMessagingEnabled: Boolean!
   isMicrosoftCalendarEnabled: Boolean!
   isGoogleMessagingEnabled: Boolean!
@@ -3190,7 +3176,6 @@ type Query {
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
-  currentUserSessions: [UserSession!]!
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
@@ -3462,8 +3447,6 @@ type Mutation {
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  revokeUserSession(userSessionId: UUID!): Boolean!
-  revokeAllOtherUserSessions: Int!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
