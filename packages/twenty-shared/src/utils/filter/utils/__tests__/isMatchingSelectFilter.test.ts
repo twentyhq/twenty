@@ -72,6 +72,29 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('comparison operators emitted by cursor pagination', () => {
+    it.each(['gt', 'gte', 'lt', 'lte'])(
+      'should not throw for %s',
+      (operator) => {
+        expect(() =>
+          isMatchingSelectFilter({
+            selectFilter: { [operator]: 'NEW' } as any,
+            value: 'ACTIVE',
+          }),
+        ).not.toThrow();
+      },
+    );
+
+    it('should keep the record rather than exclude it', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lt: 'NEW' } as any,
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
