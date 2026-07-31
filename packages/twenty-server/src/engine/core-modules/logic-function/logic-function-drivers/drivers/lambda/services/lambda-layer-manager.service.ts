@@ -21,7 +21,15 @@ import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+
+// The metadata client is app-agnostic and ships with the server build, but it
+// is bundled inside each app's SDK layer archive. Swapping it for the live
+// module at publish time keeps the layer's client in sync with the running
+// server (e.g. so a newly added metadata mutation is callable) instead of
+// serving whatever was frozen into the archive when it was last generated.
+const SDK_METADATA_MODULE_ARCHIVE_PATH = 'dist/metadata.mjs';
 
 type LayerAppContext = {
   flatApplication: FlatApplication;
@@ -69,9 +77,12 @@ export class LambdaLayerManagerService {
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
     const { flatApplication, applicationUniversalIdentifier } = context;
+    const { moduleBuffer: metadataModuleBuffer, checksum: metadataChecksum } =
+      await getInstalledSdkMetadataModule();
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
+      metadataModuleChecksum: metadataChecksum,
     });
 
     if (!flatApplication.isSdkLayerStale) {
@@ -94,6 +105,9 @@ export class LambdaLayerManagerService {
     const zipBuffer = await reprefixLambdaZipEntries({
       sourceBuffer: sdkArchiveBuffer,
       prefix: SDK_LAYER_PREFIX_IN_ZIP,
+      entryReplacements: {
+        [SDK_METADATA_MODULE_ARCHIVE_PATH]: metadataModuleBuffer,
+      },
     });
 
     const arn = await this.publishLayer({ layerName, zipBuffer });
@@ -113,27 +127,32 @@ export class LambdaLayerManagerService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
+    const { checksum: metadataChecksum } =
+      await getInstalledSdkMetadataModule();
     const layerName = getLambdaSdkLayerName({
       workspaceId,
       applicationUniversalIdentifier,
+      metadataModuleChecksum: metadataChecksum,
     });
 
     await this.deleteAllLayerVersions(layerName);
   }
 
-  hasExpectedLayers({
+  async hasExpectedLayers({
     lambdaExecutor,
     flatApplication,
     applicationUniversalIdentifier,
   }: LayerAppContext & {
     lambdaExecutor: GetFunctionCommandOutput;
-  }): boolean {
+  }): Promise<boolean> {
     const layers = lambdaExecutor.Configuration?.Layers;
 
     if (!isDefined(layers) || layers.length !== 2) {
       return false;
     }
 
+    const { checksum: metadataChecksum } =
+      await getInstalledSdkMetadataModule();
     const depsLayerName = getLambdaDepsLayerName({
       flatApplication,
       namespace: this.options.resourceNamespace,
@@ -141,6 +160,7 @@ export class LambdaLayerManagerService {
     const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
+      metadataModuleChecksum: metadataChecksum,
     });
 
     return (

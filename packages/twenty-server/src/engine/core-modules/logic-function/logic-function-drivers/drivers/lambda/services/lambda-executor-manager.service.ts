@@ -286,11 +286,11 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.layerManager.hasExpectedLayers({
+      (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
-      });
+      }));
 
     return { canSkip, lambdaExecutor };
   }

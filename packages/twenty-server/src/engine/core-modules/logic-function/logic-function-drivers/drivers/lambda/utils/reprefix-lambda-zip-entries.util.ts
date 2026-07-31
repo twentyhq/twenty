@@ -1,10 +1,14 @@
 // Re-wraps zip entries under a new prefix path without extracting to disk.
+// entryReplacements swaps the content of matching entries (keyed by their
+// original path) so an app-agnostic module can be refreshed at publish time.
 export const reprefixLambdaZipEntries = async ({
   sourceBuffer,
   prefix,
+  entryReplacements = {},
 }: {
   sourceBuffer: Buffer;
   prefix: string;
+  entryReplacements?: Record<string, Buffer>;
 }): Promise<Buffer> => {
   const { default: unzipper } = await import('unzipper');
   const archiver = (await import('archiver')).default;
@@ -21,7 +25,10 @@ export const reprefixLambdaZipEntries = async ({
       continue;
     }
 
-    archive.append(entry.stream(), {
+    const normalizedPath = entry.path.replace(/^\.\//, '');
+    const replacement = entryReplacements[normalizedPath];
+
+    archive.append(replacement ?? entry.stream(), {
       name: `${prefix}/${entry.path}`,
     });
   }
