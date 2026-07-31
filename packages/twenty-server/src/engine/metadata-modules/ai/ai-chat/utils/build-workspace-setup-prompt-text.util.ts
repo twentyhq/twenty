@@ -8,10 +8,10 @@ const NO_COMPANY_CONTEXT_LINE =
   'No information about the company that owns this workspace is available.';
 
 const FIRST_REPLY_INSTRUCTION_WITH_COMPANY_CONTEXT =
-  'Greet the user with one short sentence tailored to their business, then immediately present the data model proposal described below.';
+  'Greet the user with one short sentence tailored to their business, add one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then immediately present the data model proposal described below.';
 
 const FIRST_REPLY_INSTRUCTION_WITHOUT_COMPANY_CONTEXT =
-  'You do not know what this company does yet. Greet the user briefly, then call ask_questions to learn what the business does, who its customers are, and how it sells, offering the most likely answers as options. Once the user answers, present the data model proposal described below before doing anything else.';
+  'You do not know what this company does yet. Greet the user briefly, add one line saying you are an AI agent who will walk them through Twenty and set their workspace up with them, then call ask_questions to learn what the business does, who its customers are, and how it sells, offering the most likely answers as options. Once the user answers, present the data model proposal described below before doing anything else.';
 
 export const buildWorkspaceSetupPromptText = ({
   companyEnrichment,

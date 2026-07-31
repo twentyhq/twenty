@@ -138,6 +138,23 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).not.toContain('update_many_view_fields');
   });
 
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should introduce the agent and the walkthrough when %s is provided',
+    (_label, enrichment) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
+
+      expect(result).toContain(
+        'you are an AI agent who will walk them through Twenty',
+      );
+    },
+  );
+
   it('should teach each capability where it comes up', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
