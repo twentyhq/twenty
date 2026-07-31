@@ -1,6 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
+import { type MetadataUniversalFlatEntityPropertyName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-property-name.type';
 
 // targetRecordId is a workspace record identifier and not a metadata relation,
 // it has no universal counterpart
@@ -16,5 +16,5 @@ export const NAVIGATION_MENU_ITEM_REQUIRED_UNIVERSAL_PROPERTIES_BY_TYPE = {
   [NavigationMenuItemType.PAGE_LAYOUT]: ['pageLayoutUniversalIdentifier'],
 } as const satisfies Record<
   NavigationMenuItemType,
-  readonly (keyof UniversalFlatNavigationMenuItem)[]
+  readonly MetadataUniversalFlatEntityPropertyName<'navigationMenuItem'>[]
 >;
