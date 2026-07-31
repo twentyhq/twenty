@@ -2734,6 +2734,7 @@ export type Mutation = {
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
+  signOut: Scalars['Boolean']['output'];
   signUp: AvailableWorkspacesAndAccessTokens;
   signUpInNewWorkspace: SignUp;
   signUpInWorkspace: SignUp;
@@ -3574,6 +3575,11 @@ export type MutationSignInArgs = {
   locale?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationSignOutArgs = {
+  refreshToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 

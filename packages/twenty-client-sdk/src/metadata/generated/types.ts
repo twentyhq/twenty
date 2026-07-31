@@ -50,9 +50,9 @@ export default {
         133,
         141,
         144,
-        162,
-        165,
-        167,
+        152,
+        155,
+        157,
         171,
         178,
         179,
@@ -3066,6 +3066,164 @@ export default {
                 1
             ]
         },
+        "RecordIdentifier": {
+            "id": [
+                4
+            ],
+            "labelIdentifier": [
+                1
+            ],
+            "imageIdentifier": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "NavigationMenuItem": {
+            "id": [
+                4
+            ],
+            "userWorkspaceId": [
+                4
+            ],
+            "targetRecordId": [
+                4
+            ],
+            "targetObjectMetadataId": [
+                4
+            ],
+            "viewId": [
+                4
+            ],
+            "type": [
+                152
+            ],
+            "name": [
+                1
+            ],
+            "link": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "folderId": [
+                4
+            ],
+            "pageLayoutId": [
+                4
+            ],
+            "position": [
+                16
+            ],
+            "applicationId": [
+                4
+            ],
+            "createdAt": [
+                6
+            ],
+            "updatedAt": [
+                6
+            ],
+            "targetRecordIdentifier": [
+                150
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "NavigationMenuItemType": {},
+        "ObjectRecordEventProperties": {
+            "updatedFields": [
+                1
+            ],
+            "before": [
+                5
+            ],
+            "after": [
+                5
+            ],
+            "diff": [
+                5
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "MetadataEvent": {
+            "type": [
+                155
+            ],
+            "metadataName": [
+                1
+            ],
+            "recordId": [
+                1
+            ],
+            "properties": [
+                153
+            ],
+            "updatedCollectionHash": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "MetadataEventAction": {},
+        "ObjectRecordEvent": {
+            "action": [
+                157
+            ],
+            "objectNameSingular": [
+                1
+            ],
+            "recordId": [
+                1
+            ],
+            "userId": [
+                1
+            ],
+            "workspaceMemberId": [
+                1
+            ],
+            "properties": [
+                153
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DatabaseEventAction": {},
+        "ObjectRecordEventWithQueryIds": {
+            "queryIds": [
+                1
+            ],
+            "objectRecordEvent": [
+                156
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EventSubscription": {
+            "eventStreamId": [
+                1
+            ],
+            "objectRecordEventsWithQueryIds": [
+                158
+            ],
+            "metadataEvents": [
+                154
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "BillingEndTrialPeriod": {
             "status": [
                 141
@@ -3206,165 +3364,7 @@ export default {
                 1
             ],
             "result": [
-                158
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RecordIdentifier": {
-            "id": [
-                4
-            ],
-            "labelIdentifier": [
-                1
-            ],
-            "imageIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "NavigationMenuItem": {
-            "id": [
-                4
-            ],
-            "userWorkspaceId": [
-                4
-            ],
-            "targetRecordId": [
-                4
-            ],
-            "targetObjectMetadataId": [
-                4
-            ],
-            "viewId": [
-                4
-            ],
-            "type": [
-                162
-            ],
-            "name": [
-                1
-            ],
-            "link": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "folderId": [
-                4
-            ],
-            "pageLayoutId": [
-                4
-            ],
-            "position": [
-                16
-            ],
-            "applicationId": [
-                4
-            ],
-            "createdAt": [
-                6
-            ],
-            "updatedAt": [
-                6
-            ],
-            "targetRecordIdentifier": [
-                160
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "NavigationMenuItemType": {},
-        "ObjectRecordEventProperties": {
-            "updatedFields": [
-                1
-            ],
-            "before": [
-                5
-            ],
-            "after": [
-                5
-            ],
-            "diff": [
-                5
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MetadataEvent": {
-            "type": [
-                165
-            ],
-            "metadataName": [
-                1
-            ],
-            "recordId": [
-                1
-            ],
-            "properties": [
-                163
-            ],
-            "updatedCollectionHash": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MetadataEventAction": {},
-        "ObjectRecordEvent": {
-            "action": [
-                167
-            ],
-            "objectNameSingular": [
-                1
-            ],
-            "recordId": [
-                1
-            ],
-            "userId": [
-                1
-            ],
-            "workspaceMemberId": [
-                1
-            ],
-            "properties": [
-                163
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DatabaseEventAction": {},
-        "ObjectRecordEventWithQueryIds": {
-            "queryIds": [
-                1
-            ],
-            "objectRecordEvent": [
-                166
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EventSubscription": {
-            "eventStreamId": [
-                1
-            ],
-            "objectRecordEventsWithQueryIds": [
                 168
-            ],
-            "metadataEvents": [
-                164
             ],
             "__typename": [
                 1
@@ -6200,10 +6200,10 @@ export default {
         },
         "Query": {
             "navigationMenuItems": [
-                161
+                151
             ],
             "navigationMenuItem": [
-                161,
+                151,
                 {
                     "id": [
                         4,
@@ -6372,7 +6372,7 @@ export default {
                 }
             ],
             "getInviteSuggestions": [
-                156
+                166
             ],
             "applicationConnectionProviders": [
                 125,
@@ -6384,7 +6384,7 @@ export default {
                 }
             ],
             "billingPortalSession": [
-                154,
+                164,
                 {
                     "returnUrlPath": [
                         1
@@ -6395,13 +6395,13 @@ export default {
                 }
             ],
             "listPlans": [
-                152
+                162
             ],
             "getResourceCreditUsage": [
-                151
+                161
             ],
             "findWorkspaceInvitations": [
-                158
+                168
             ],
             "getApprovedAccessDomains": [
                 147
@@ -7288,7 +7288,7 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                161,
+                151,
                 {
                     "inputs": [
                         371,
@@ -7297,7 +7297,7 @@ export default {
                 }
             ],
             "createNavigationMenuItem": [
-                161,
+                151,
                 {
                     "input": [
                         371,
@@ -7306,7 +7306,7 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                161,
+                151,
                 {
                     "inputs": [
                         372,
@@ -7315,7 +7315,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                161,
+                151,
                 {
                     "input": [
                         372,
@@ -7324,7 +7324,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                161,
+                151,
                 {
                     "ids": [
                         4,
@@ -7333,7 +7333,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                161,
+                151,
                 {
                     "id": [
                         4,
@@ -7760,10 +7760,10 @@ export default {
                 }
             ],
             "skipSyncEmailOnboardingStep": [
-                157
+                167
             ],
             "triggerInstallAppsOnboardingStep": [
-                157,
+                167,
                 {
                     "universalIdentifiers": [
                         1,
@@ -7789,7 +7789,7 @@ export default {
                 }
             ],
             "checkoutSession": [
-                154,
+                164,
                 {
                     "recurringInterval": [
                         133,
@@ -7809,7 +7809,7 @@ export default {
                 }
             ],
             "createSubscriptionPaymentIntent": [
-                153,
+                163,
                 {
                     "recurringInterval": [
                         133,
@@ -7833,22 +7833,22 @@ export default {
                 }
             ],
             "createBillingPaymentMethodSetupIntent": [
-                153
+                163
             ],
             "switchSubscriptionInterval": [
-                155
+                165
             ],
             "switchBillingPlan": [
-                155
+                165
             ],
             "cancelSwitchBillingPlan": [
-                155
+                165
             ],
             "cancelSwitchBillingInterval": [
-                155
+                165
             ],
             "setResourceCreditSubscriptionPrice": [
-                155,
+                165,
                 {
                     "priceId": [
                         1,
@@ -7857,10 +7857,10 @@ export default {
                 }
             ],
             "endSubscriptionTrialPeriod": [
-                150
+                160
             ],
             "cancelSwitchResourceCreditPrice": [
-                155
+                165
             ],
             "deleteWorkspaceInvitation": [
                 1,
@@ -7872,7 +7872,7 @@ export default {
                 }
             ],
             "resendWorkspaceInvitation": [
-                159,
+                169,
                 {
                     "appTokenId": [
                         1,
@@ -7881,7 +7881,7 @@ export default {
                 }
             ],
             "sendInvitations": [
-                159,
+                169,
                 {
                     "emails": [
                         1,
@@ -9245,6 +9245,14 @@ export default {
                     ]
                 }
             ],
+            "signOut": [
+                3,
+                {
+                    "refreshToken": [
+                        1
+                    ]
+                }
+            ],
             "generateApiKeyToken": [
                 261,
                 {
@@ -9655,7 +9663,7 @@ export default {
                 4
             ],
             "type": [
-                162
+                152
             ],
             "name": [
                 1
@@ -12341,7 +12349,7 @@ export default {
         },
         "Subscription": {
             "onEventSubscription": [
-                169,
+                159,
                 {
                     "eventStreamId": [
                         1,
