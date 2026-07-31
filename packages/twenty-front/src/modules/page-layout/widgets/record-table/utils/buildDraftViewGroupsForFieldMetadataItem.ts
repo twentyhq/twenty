@@ -7,7 +7,8 @@ import { v4 } from 'uuid';
 // Mirrors the server-side computeFlatViewGroupsOnViewCreate so the edit-mode
 // draft preview matches what the server generates on save: one group per
 // select option (in option order) plus an empty group for nullable fields.
-// Relation group-by generates no option groups.
+// Relation group-by generates no option groups, the groups to display are
+// picked by the user, but it still gets the empty group when nullable.
 export const buildDraftViewGroupsForFieldMetadataItem = ({
   viewId,
   fieldMetadataItem,
@@ -15,12 +16,10 @@ export const buildDraftViewGroupsForFieldMetadataItem = ({
   viewId: string;
   fieldMetadataItem: FieldMetadataItem;
 }): FlatViewGroup[] => {
-  if (isManyToOneRelationField(fieldMetadataItem)) {
-    return [];
-  }
-
   const viewGroupsFromOptions: FlatViewGroup[] = (
-    fieldMetadataItem.options ?? []
+    isManyToOneRelationField(fieldMetadataItem)
+      ? []
+      : (fieldMetadataItem.options ?? [])
   ).map((option, index) => ({
     id: v4(),
     viewId,
