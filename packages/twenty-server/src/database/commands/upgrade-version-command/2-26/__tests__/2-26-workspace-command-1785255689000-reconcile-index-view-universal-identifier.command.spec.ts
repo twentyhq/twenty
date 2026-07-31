@@ -324,6 +324,149 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
     );
   });
 
+  it('releases a soft-deleted view holding the derived identifier before re-owning the active view', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'tombstone-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          deletedAt: '2024-01-01T00:00:00.000Z',
+        }),
+        buildFlatView({
+          id: 'active-view-id',
+          universalIdentifier: 'active-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(2);
+    // The tombstone moves onto its own primary key first, freeing the
+    // derived identifier for the active view.
+    expect(viewUpdateMock).toHaveBeenNthCalledWith(
+      1,
+      { id: 'tombstone-view-id', workspaceId: WORKSPACE_ID },
+      { universalIdentifier: 'tombstone-view-id' },
+    );
+    expect(viewUpdateMock).toHaveBeenNthCalledWith(
+      2,
+      { id: 'active-view-id', workspaceId: WORKSPACE_ID },
+      {
+        universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      },
+    );
+  });
+
+  it('demotes a duplicate INDEX view when another active view already holds the derived identifier', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'holder-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+        }),
+        buildFlatView({
+          id: 'duplicate-view-id',
+          universalIdentifier: 'duplicate-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'duplicate-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
+  });
+
+  it('demotes the second of two INDEX views deriving the same identifier when neither holds it', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'first-view-id',
+          universalIdentifier: 'first-view-uid',
+          key: ViewKey.INDEX,
+        }),
+        buildFlatView({
+          id: 'second-view-id',
+          universalIdentifier: 'second-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(2);
+    expect(viewUpdateMock).toHaveBeenNthCalledWith(
+      1,
+      { id: 'first-view-id', workspaceId: WORKSPACE_ID },
+      {
+        universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      },
+    );
+    expect(viewUpdateMock).toHaveBeenNthCalledWith(
+      2,
+      { id: 'second-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
+  });
+
+  it('releases a soft-deleted view field holding the derived identifier before re-owning the active one', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+          viewFieldUniversalIdentifiers: [
+            DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+            'active-view-field-uid',
+          ],
+        }),
+      ],
+      viewFields: [
+        buildFlatViewField({
+          id: 'tombstone-view-field-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          deletedAt: '2024-01-01T00:00:00.000Z',
+        }),
+        buildFlatViewField({
+          id: 'active-view-field-id',
+          universalIdentifier: 'active-view-field-uid',
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(viewFieldUpdateMock).toHaveBeenCalledTimes(2);
+    expect(viewFieldUpdateMock).toHaveBeenNthCalledWith(
+      1,
+      { id: 'tombstone-view-field-id', workspaceId: WORKSPACE_ID },
+      { universalIdentifier: 'tombstone-view-field-id' },
+    );
+    expect(viewFieldUpdateMock).toHaveBeenNthCalledWith(
+      2,
+      { id: 'active-view-field-id', workspaceId: WORKSPACE_ID },
+      {
+        universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      },
+    );
+  });
+
   it('re-owns only the active row of a soft-deleted + re-created view field pair', async () => {
     mockWorkspaceCache({
       views: [

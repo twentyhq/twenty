@@ -27,6 +27,7 @@ type ReownUpdate = {
   update: {
     universalIdentifier?: string;
     isSystemSideEffect?: boolean;
+    key?: null;
   };
 };
 
@@ -90,6 +91,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     const { viewUpdates, viewFieldUpdates } = this.computeReownUpdates({
       workspaceId,
       flatIndexViews,
+      flatViewMaps,
       flatViewFieldMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -142,6 +144,7 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
   private computeReownUpdates({
     workspaceId,
     flatIndexViews,
+    flatViewMaps,
     flatViewFieldMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -150,12 +153,15 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
     flatIndexViews: NonNullable<
       AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
     >[];
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): { viewUpdates: ReownUpdate[]; viewFieldUpdates: ReownUpdate[] } {
     const viewUpdates: ReownUpdate[] = [];
     const viewFieldUpdates: ReownUpdate[] = [];
+    const claimedViewUniversalIdentifiers = new Set<string>();
+    const claimedViewFieldUniversalIdentifiers = new Set<string>();
 
     for (const flatView of flatIndexViews) {
       const flatObjectMetadata =
@@ -177,114 +183,245 @@ export class ReconcileIndexViewUniversalIdentifierCommand extends ProvisionedWor
         viewKey: ViewKey.INDEX,
       });
 
-      const viewUpdate = this.computeViewReownUpdate({
-        flatView,
-        derivedViewUniversalIdentifier,
-      });
+      if (flatView.universalIdentifier === derivedViewUniversalIdentifier) {
+        claimedViewUniversalIdentifiers.add(derivedViewUniversalIdentifier);
 
-      if (isDefined(viewUpdate)) {
-        viewUpdates.push(viewUpdate);
+        if (!flatView.isSystemSideEffect) {
+          viewUpdates.push({
+            id: flatView.id,
+            update: { isSystemSideEffect: true },
+          });
+        }
+
+        viewFieldUpdates.push(
+          ...this.computeViewFieldReownUpdates({
+            workspaceId,
+            flatView,
+            derivedViewUniversalIdentifier,
+            flatViewFieldMaps,
+            flatFieldMetadataMaps,
+            claimedViewFieldUniversalIdentifiers,
+          }),
+        );
+        continue;
       }
 
+      const occupyingFlatView =
+        flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier];
+
+      if (
+        isDefined(occupyingFlatView) &&
+        !isDefined(occupyingFlatView.deletedAt)
+      ) {
+        const isDuplicateIndexViewOfSameObject =
+          occupyingFlatView.key === ViewKey.INDEX &&
+          occupyingFlatView.objectMetadataUniversalIdentifier ===
+            flatView.objectMetadataUniversalIdentifier;
+
+        if (isDuplicateIndexViewOfSameObject) {
+          this.logger.warn(
+            `INDEX view ${flatView.id} duplicates INDEX view ${occupyingFlatView.id} already holding ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
+          );
+          viewUpdates.push({ id: flatView.id, update: { key: null } });
+        } else {
+          this.logger.warn(
+            `Derived identifier ${derivedViewUniversalIdentifier} of INDEX view ${flatView.id} is held by unrelated active view ${occupyingFlatView.id} in workspace ${workspaceId}, skipping`,
+          );
+        }
+        continue;
+      }
+
+      if (isDefined(occupyingFlatView)) {
+        // A soft-deleted view still reserves the derived identifier: the
+        // unique index is not partial on deletedAt. Move the tombstone onto
+        // its own primary key to free the identifier for the active view.
+        const releasedUniversalIdentifier = occupyingFlatView.id;
+
+        if (
+          isDefined(
+            flatViewMaps.byUniversalIdentifier[releasedUniversalIdentifier],
+          ) ||
+          claimedViewUniversalIdentifiers.has(releasedUniversalIdentifier)
+        ) {
+          this.logger.warn(
+            `Cannot release derived identifier ${derivedViewUniversalIdentifier} from soft-deleted view ${occupyingFlatView.id} in workspace ${workspaceId}, skipping INDEX view ${flatView.id}`,
+          );
+          continue;
+        }
+
+        claimedViewUniversalIdentifiers.add(releasedUniversalIdentifier);
+        viewUpdates.push({
+          id: occupyingFlatView.id,
+          update: { universalIdentifier: releasedUniversalIdentifier },
+        });
+      } else if (
+        claimedViewUniversalIdentifiers.has(derivedViewUniversalIdentifier)
+      ) {
+        this.logger.warn(
+          `INDEX view ${flatView.id} duplicates another INDEX view already reconciled onto ${derivedViewUniversalIdentifier} in workspace ${workspaceId}, demoting it`,
+        );
+        viewUpdates.push({ id: flatView.id, update: { key: null } });
+        continue;
+      }
+
+      claimedViewUniversalIdentifiers.add(derivedViewUniversalIdentifier);
+
+      const update: ReownUpdate['update'] = {
+        universalIdentifier: derivedViewUniversalIdentifier,
+      };
+
+      if (!flatView.isSystemSideEffect) {
+        update.isSystemSideEffect = true;
+      }
+
+      viewUpdates.push({ id: flatView.id, update });
+
       viewFieldUpdates.push(
-        ...findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-          flatEntityMaps: flatViewFieldMaps,
-          universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
-        })
-          .map((flatViewField) =>
-            this.computeViewFieldReownUpdate({
-              workspaceId,
-              flatViewField,
-              derivedViewUniversalIdentifier,
-              flatFieldMetadataMaps,
-            }),
-          )
-          .filter(isDefined),
+        ...this.computeViewFieldReownUpdates({
+          workspaceId,
+          flatView,
+          derivedViewUniversalIdentifier,
+          flatViewFieldMaps,
+          flatFieldMetadataMaps,
+          claimedViewFieldUniversalIdentifiers,
+        }),
       );
     }
 
     return { viewUpdates, viewFieldUpdates };
   }
 
-  private computeViewReownUpdate({
+  private computeViewFieldReownUpdates({
+    workspaceId,
     flatView,
     derivedViewUniversalIdentifier,
+    flatViewFieldMaps,
+    flatFieldMetadataMaps,
+    claimedViewFieldUniversalIdentifiers,
   }: {
+    workspaceId: string;
     flatView: NonNullable<
       AllFlatEntityMaps['flatViewMaps']['byUniversalIdentifier'][string]
     >;
     derivedViewUniversalIdentifier: string;
-  }): ReownUpdate | undefined {
-    const update: ReownUpdate['update'] = {};
-
-    if (flatView.universalIdentifier !== derivedViewUniversalIdentifier) {
-      update.universalIdentifier = derivedViewUniversalIdentifier;
-    }
-    if (!flatView.isSystemSideEffect) {
-      update.isSystemSideEffect = true;
-    }
-
-    if (Object.keys(update).length === 0) {
-      return undefined;
-    }
-
-    return { id: flatView.id, update };
-  }
-
-  private computeViewFieldReownUpdate({
-    workspaceId,
-    flatViewField,
-    derivedViewUniversalIdentifier,
-    flatFieldMetadataMaps,
-  }: {
-    workspaceId: string;
-    flatViewField: NonNullable<
-      AllFlatEntityMaps['flatViewFieldMaps']['byUniversalIdentifier'][string]
-    >;
-    derivedViewUniversalIdentifier: string;
+    flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-  }): ReownUpdate | undefined {
-    if (isDefined(flatViewField.deletedAt)) {
-      return undefined;
-    }
+    claimedViewFieldUniversalIdentifiers: Set<string>;
+  }): ReownUpdate[] {
+    const viewFieldUpdates: ReownUpdate[] = [];
 
-    const flatFieldMetadata =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        flatViewField.fieldMetadataUniversalIdentifier
-      ];
-
-    if (!isDefined(flatFieldMetadata)) {
-      this.logger.warn(
-        `Missing field for INDEX view field ${flatViewField.id} in workspace ${workspaceId}, skipping`,
-      );
-
-      return undefined;
-    }
-
-    const derivedViewFieldUniversalIdentifier =
-      getSystemViewFieldUniversalIdentifier({
-        fieldMetadataApplicationUniversalIdentifier:
-          flatFieldMetadata.applicationUniversalIdentifier,
-        viewUniversalIdentifier: derivedViewUniversalIdentifier,
-        fieldMetadataUniversalIdentifier:
-          flatViewField.fieldMetadataUniversalIdentifier,
+    const flatViewFields =
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+        flatEntityMaps: flatViewFieldMaps,
+        universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
       });
 
-    const update: ReownUpdate['update'] = {};
+    for (const flatViewField of flatViewFields) {
+      if (isDefined(flatViewField.deletedAt)) {
+        continue;
+      }
 
-    if (
-      flatViewField.universalIdentifier !== derivedViewFieldUniversalIdentifier
-    ) {
-      update.universalIdentifier = derivedViewFieldUniversalIdentifier;
-    }
-    if (!flatViewField.isSystemSideEffect) {
-      update.isSystemSideEffect = true;
+      const flatFieldMetadata =
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          flatViewField.fieldMetadataUniversalIdentifier
+        ];
+
+      if (!isDefined(flatFieldMetadata)) {
+        this.logger.warn(
+          `Missing field for INDEX view field ${flatViewField.id} in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
+
+      const derivedViewFieldUniversalIdentifier =
+        getSystemViewFieldUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier:
+            flatFieldMetadata.applicationUniversalIdentifier,
+          viewUniversalIdentifier: derivedViewUniversalIdentifier,
+          fieldMetadataUniversalIdentifier:
+            flatViewField.fieldMetadataUniversalIdentifier,
+        });
+
+      if (
+        flatViewField.universalIdentifier ===
+        derivedViewFieldUniversalIdentifier
+      ) {
+        claimedViewFieldUniversalIdentifiers.add(
+          derivedViewFieldUniversalIdentifier,
+        );
+
+        if (!flatViewField.isSystemSideEffect) {
+          viewFieldUpdates.push({
+            id: flatViewField.id,
+            update: { isSystemSideEffect: true },
+          });
+        }
+        continue;
+      }
+
+      const occupyingFlatViewField =
+        flatViewFieldMaps.byUniversalIdentifier[
+          derivedViewFieldUniversalIdentifier
+        ];
+
+      if (
+        isDefined(occupyingFlatViewField) &&
+        !isDefined(occupyingFlatViewField.deletedAt)
+      ) {
+        this.logger.warn(
+          `Derived identifier ${derivedViewFieldUniversalIdentifier} of view field ${flatViewField.id} is held by active view field ${occupyingFlatViewField.id} in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
+
+      if (isDefined(occupyingFlatViewField)) {
+        const releasedUniversalIdentifier = occupyingFlatViewField.id;
+
+        if (
+          isDefined(
+            flatViewFieldMaps.byUniversalIdentifier[
+              releasedUniversalIdentifier
+            ],
+          ) ||
+          claimedViewFieldUniversalIdentifiers.has(releasedUniversalIdentifier)
+        ) {
+          this.logger.warn(
+            `Cannot release derived identifier ${derivedViewFieldUniversalIdentifier} from soft-deleted view field ${occupyingFlatViewField.id} in workspace ${workspaceId}, skipping view field ${flatViewField.id}`,
+          );
+          continue;
+        }
+
+        claimedViewFieldUniversalIdentifiers.add(releasedUniversalIdentifier);
+        viewFieldUpdates.push({
+          id: occupyingFlatViewField.id,
+          update: { universalIdentifier: releasedUniversalIdentifier },
+        });
+      } else if (
+        claimedViewFieldUniversalIdentifiers.has(
+          derivedViewFieldUniversalIdentifier,
+        )
+      ) {
+        this.logger.warn(
+          `View field ${flatViewField.id} duplicates another view field already reconciled onto ${derivedViewFieldUniversalIdentifier} in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
+
+      claimedViewFieldUniversalIdentifiers.add(
+        derivedViewFieldUniversalIdentifier,
+      );
+
+      const update: ReownUpdate['update'] = {
+        universalIdentifier: derivedViewFieldUniversalIdentifier,
+      };
+
+      if (!flatViewField.isSystemSideEffect) {
+        update.isSystemSideEffect = true;
+      }
+
+      viewFieldUpdates.push({ id: flatViewField.id, update });
     }
 
-    if (Object.keys(update).length === 0) {
-      return undefined;
-    }
-
-    return { id: flatViewField.id, update };
+    return viewFieldUpdates;
   }
 }
