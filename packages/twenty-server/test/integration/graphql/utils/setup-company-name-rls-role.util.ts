@@ -10,8 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-// No seeded company name contains this token, so the predicate only ever
-// matches companies a suite created itself
 export const VISIBLE_COMPANY_NAME_TOKEN = 'Visible';
 
 export type CompanyNameRlsRoleSetup = {
@@ -104,8 +102,6 @@ export const setupCompanyNameRlsRole = async ({
   return { customRoleId, originalMemberRoleId: memberRole.id };
 };
 
-// Tolerates a partial setup so a suite whose beforeAll threw still restores
-// whatever it managed to change
 export const cleanupCompanyNameRlsRole = async (
   setup: Partial<CompanyNameRlsRoleSetup> = {},
 ): Promise<void> => {

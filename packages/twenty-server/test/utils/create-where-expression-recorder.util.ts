@@ -20,9 +20,6 @@ export type WhereExpressionRecorder = {
   calls: RecordedWhereCall[];
 };
 
-// TypeORM invokes a Brackets whereFactory eagerly against a child builder whose
-// wheres array starts empty, so replaying it into a nested recorder reproduces
-// the condition tree the walker actually emits
 export const createWhereExpressionRecorder = (): WhereExpressionRecorder => {
   const calls: RecordedWhereCall[] = [];
 

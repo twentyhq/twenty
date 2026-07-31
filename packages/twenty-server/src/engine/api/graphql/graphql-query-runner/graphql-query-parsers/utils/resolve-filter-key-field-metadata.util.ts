@@ -4,8 +4,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-// Returns undefined rather than throwing so each caller can raise the error its
-// own context calls for
 export const resolveFilterKeyFieldMetadata = ({
   filterKey,
   fieldIdByName,

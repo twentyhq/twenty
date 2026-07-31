@@ -11,7 +11,6 @@ import {
   setupCompanyNameRlsRole,
 } from 'test/integration/graphql/utils/setup-company-name-rls-role.util';
 
-// used not to mix records with the seeded ones
 const FILTER_2020 = {
   and: [
     { createdAt: { gte: '2020-01-01T00:00:00.000Z' } },

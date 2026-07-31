@@ -11,7 +11,6 @@ import {
   setupRlsCompanyRelationRecords,
 } from 'test/integration/graphql/utils/setup-rls-company-relation-records.util';
 
-// used not to mix records with the seeded ones
 const RECORDS_CREATED_AT = '2019-07-15T10:00:00.000Z';
 const RECORDS_WINDOW_FILTER = {
   and: [

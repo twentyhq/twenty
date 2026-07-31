@@ -18,8 +18,6 @@ export type RlsCompanyRelationRecords = {
   personWithoutCompanyId: string;
 };
 
-// Suites sharing the workspace schema must not share company names, so each one
-// passes its own prefix
 export const setupRlsCompanyRelationRecords = async ({
   companyNamePrefix,
   createdAt,

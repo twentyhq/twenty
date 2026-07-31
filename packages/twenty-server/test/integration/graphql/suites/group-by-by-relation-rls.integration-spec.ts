@@ -16,7 +16,6 @@ const SEEDED_PEOPLE_COUNT = 3;
 const PEOPLE_LINKED_TO_VISIBLE_COMPANY_COUNT = 1;
 const PEOPLE_LINKED_TO_HIDDEN_COMPANY_OR_NO_COMPANY_COUNT = 2;
 
-// used not to mix records with the seeded ones
 const RECORDS_CREATED_AT = '2019-06-15T10:00:00.000Z';
 const RECORDS_WINDOW_FILTER = {
   and: [
