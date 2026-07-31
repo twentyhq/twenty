@@ -79,6 +79,7 @@ export default defineObject({
 * El `universalIdentifier` debe ser único y estable entre implementaciones.
 * Cada campo requiere `name`, `type`, `label` y su propio `universalIdentifier` estable.
 * La matriz `fields` es opcional: puedes definir objetos sin campos personalizados.
+* `openRecordIn` establece dónde se abren los registros de este objeto al hacer clic: `ObjectOpenRecordIn.USER_CHOICE` (el valor predeterminado, que sigue la preferencia de cada miembro del espacio de trabajo en Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` o `ObjectOpenRecordIn.RECORD_PAGE`. Fíjalo en `RECORD_PAGE` para los registros que necesitan una página completa para ser utilizables, como ocurre con los flujos de trabajo y los paneles, o en `SIDE_PANEL` para los registros que solo tienen sentido como un panel rápido, como los eventos del calendario.
 * Los campos en línea definidos aquí **no** necesitan un `objectUniversalIdentifier`, ya que se hereda del objeto padre. Usa [`defineField()`](/l/es/developers/extend/apps/data/extending-objects) para añadir campos a objetos que no te pertenecen.
 * Puedes generar nuevos objetos con `yarn twenty dev:add object`, que te guía en la asignación de nombres, los campos y las relaciones. Consulta [Arquitectura → Generación de entidades](/l/es/developers/extend/apps/getting-started/scaffolding).
 
