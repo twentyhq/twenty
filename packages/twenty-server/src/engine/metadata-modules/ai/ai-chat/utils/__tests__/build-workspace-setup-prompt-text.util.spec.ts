@@ -176,6 +176,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('Open each reply with a short plain title');
+    expect(result).toContain('title each new step');
     expect(result).toContain('Write objects as chips');
   });
 
