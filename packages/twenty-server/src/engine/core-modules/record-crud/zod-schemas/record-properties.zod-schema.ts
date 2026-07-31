@@ -302,6 +302,10 @@ export const generateRecordPropertiesZodSchema = (
         break;
     }
 
+    if (field.isNullable) {
+      fieldSchema = fieldSchema.optional();
+    }
+
     if (field.name === 'position') {
       fieldSchema = z.union([
         z.number(),
@@ -314,10 +318,6 @@ export const generateRecordPropertiesZodSchema = (
       );
     } else if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
-    }
-
-    if (field.isNullable) {
-      fieldSchema = fieldSchema.optional();
     }
 
     shape[field.name] = fieldSchema;

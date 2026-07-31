@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import type { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('generateCreateRecordInputSchema', () => {
   it('uses standardOverrides description when present on a field via overrides', () => {
@@ -17,14 +18,18 @@ describe('generateCreateRecordInputSchema', () => {
       },
     } as unknown as FlatFieldMetadata;
 
-    const schema = generateCreateRecordInputSchema({
-      id: 'obj-1',
-      nameSingular: 'task',
-      namePlural: 'tasks',
-      labelSingular: 'Task',
-      labelPlural: 'Tasks',
+    const objectMetadata = {
+      ...getFlatObjectMetadataMock({
+        universalIdentifier: 'task',
+        nameSingular: 'task',
+        namePlural: 'tasks',
+        labelSingular: 'Task',
+        labelPlural: 'Tasks',
+      }),
       fields: [rawField],
-    });
+    };
+
+    const schema = generateCreateRecordInputSchema(objectMetadata);
 
     const dueAtProperty = schema.shape.dueAt;
 
@@ -45,14 +50,18 @@ describe('generateCreateRecordInputSchema', () => {
       },
     } as unknown as FlatFieldMetadata;
 
-    const schema = generateCreateRecordInputSchema({
-      id: 'obj-2',
-      nameSingular: 'task',
-      namePlural: 'tasks',
-      labelSingular: 'Task',
-      labelPlural: 'Tasks',
+    const objectMetadata = {
+      ...getFlatObjectMetadataMock({
+        universalIdentifier: 'task',
+        nameSingular: 'task',
+        namePlural: 'tasks',
+        labelSingular: 'Task',
+        labelPlural: 'Tasks',
+      }),
       fields: [rawField],
-    });
+    };
+
+    const schema = generateCreateRecordInputSchema(objectMetadata);
 
     const statusProperty = schema.shape.status;
 
