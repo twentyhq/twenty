@@ -22,39 +22,64 @@ export type GraphQLDirectExecutionQueryCost = {
   selectedLeafFieldCount: number;
 };
 
+type FragmentTraversalContext = {
+  fieldCountByFragmentName: Map<string, number>;
+  visitingFragmentNames: Set<string>;
+};
+
+const addWithMaximumSafeInteger = (left: number, right: number): number =>
+  Math.min(left + right, Number.MAX_SAFE_INTEGER);
+
+const multiplyWithMaximumSafeInteger = (left: number, right: number): number =>
+  Math.min(left * right, Number.MAX_SAFE_INTEGER);
+
 const countSelectedFields = (
   selections: readonly SelectionNode[],
   fragmentMap: Map<string, FragmentDefinitionNode>,
-  visitedFragmentNames: ReadonlySet<string> = new Set(),
+  fragmentTraversalContext: FragmentTraversalContext,
 ): number => {
   let fieldCount = 0;
 
   for (const selection of selections) {
     if (selection.kind === Kind.FIELD) {
-      fieldCount += isDefined(selection.selectionSet)
-        ? countSelectedFields(
-            selection.selectionSet.selections,
-            fragmentMap,
-            visitedFragmentNames,
-          )
-        : 1;
+      fieldCount = addWithMaximumSafeInteger(
+        fieldCount,
+        isDefined(selection.selectionSet)
+          ? countSelectedFields(
+              selection.selectionSet.selections,
+              fragmentMap,
+              fragmentTraversalContext,
+            )
+          : 1,
+      );
 
       continue;
     }
 
     if (selection.kind === Kind.INLINE_FRAGMENT) {
-      fieldCount += countSelectedFields(
-        selection.selectionSet.selections,
-        fragmentMap,
-        visitedFragmentNames,
+      fieldCount = addWithMaximumSafeInteger(
+        fieldCount,
+        countSelectedFields(
+          selection.selectionSet.selections,
+          fragmentMap,
+          fragmentTraversalContext,
+        ),
       );
 
       continue;
     }
 
     const fragmentName = selection.name.value;
+    const cachedFieldCount =
+      fragmentTraversalContext.fieldCountByFragmentName.get(fragmentName);
 
-    if (visitedFragmentNames.has(fragmentName)) {
+    if (isDefined(cachedFieldCount)) {
+      fieldCount = addWithMaximumSafeInteger(fieldCount, cachedFieldCount);
+
+      continue;
+    }
+
+    if (fragmentTraversalContext.visitingFragmentNames.has(fragmentName)) {
       continue;
     }
 
@@ -64,11 +89,21 @@ const countSelectedFields = (
       continue;
     }
 
-    fieldCount += countSelectedFields(
+    fragmentTraversalContext.visitingFragmentNames.add(fragmentName);
+
+    const fragmentFieldCount = countSelectedFields(
       fragment.selectionSet.selections,
       fragmentMap,
-      new Set([...visitedFragmentNames, fragmentName]),
+      fragmentTraversalContext,
     );
+
+    fragmentTraversalContext.visitingFragmentNames.delete(fragmentName);
+    fragmentTraversalContext.fieldCountByFragmentName.set(
+      fragmentName,
+      fragmentFieldCount,
+    );
+
+    fieldCount = addWithMaximumSafeInteger(fieldCount, fragmentFieldCount);
   }
 
   return fieldCount;
@@ -95,21 +130,39 @@ export const computeGraphQLDirectExecutionQueryCost = ({
 }: {
   rootFields: DirectExecutionRootField[];
   fragmentMap: Map<string, FragmentDefinitionNode>;
-}): GraphQLDirectExecutionQueryCost =>
-  rootFields.reduce<GraphQLDirectExecutionQueryCost>(
+}): GraphQLDirectExecutionQueryCost => {
+  const fragmentTraversalContext: FragmentTraversalContext = {
+    fieldCountByFragmentName: new Map(),
+    visitingFragmentNames: new Set(),
+  };
+
+  return rootFields.reduce<GraphQLDirectExecutionQueryCost>(
     (queryCost, { field, method, args }) => {
       const selectedLeafFieldCount = isDefined(field.selectionSet)
-        ? countSelectedFields(field.selectionSet.selections, fragmentMap)
+        ? countSelectedFields(
+            field.selectionSet.selections,
+            fragmentMap,
+            fragmentTraversalContext,
+          )
         : 1;
       const requestedRowCount = getRequestedRowCount({ method, args });
 
       return {
-        estimatedResultFieldCount:
-          queryCost.estimatedResultFieldCount +
-          selectedLeafFieldCount * requestedRowCount,
-        requestedRowCount: queryCost.requestedRowCount + requestedRowCount,
-        selectedLeafFieldCount:
-          queryCost.selectedLeafFieldCount + selectedLeafFieldCount,
+        estimatedResultFieldCount: addWithMaximumSafeInteger(
+          queryCost.estimatedResultFieldCount,
+          multiplyWithMaximumSafeInteger(
+            selectedLeafFieldCount,
+            requestedRowCount,
+          ),
+        ),
+        requestedRowCount: addWithMaximumSafeInteger(
+          queryCost.requestedRowCount,
+          requestedRowCount,
+        ),
+        selectedLeafFieldCount: addWithMaximumSafeInteger(
+          queryCost.selectedLeafFieldCount,
+          selectedLeafFieldCount,
+        ),
       };
     },
     {
@@ -118,3 +171,4 @@ export const computeGraphQLDirectExecutionQueryCost = ({
       selectedLeafFieldCount: 0,
     },
   );
+};

@@ -128,4 +128,52 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
       selectedLeafFieldCount: 4,
     });
   });
+
+  it('computes each shared fragment once', () => {
+    const fragmentCount = 60;
+    const fragmentDefinitions = Array.from(
+      { length: fragmentCount },
+      (_, index) =>
+        index === fragmentCount - 1
+          ? `fragment SharedFragment${index} on Person { id }`
+          : `fragment SharedFragment${index} on Person {
+              ...SharedFragment${index + 1}
+              ...SharedFragment${index + 1}
+            }`,
+    ).join('\n');
+    const document = parse(`
+      query FindPeople {
+        people(first: 1) {
+          edges {
+            node {
+              ...SharedFragment0
+            }
+          }
+        }
+      }
+
+      ${fragmentDefinitions}
+    `);
+    const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
+    const fragmentMap = graphQLBuildFragmentMap(document);
+    const fragmentLookupSpy = jest.spyOn(fragmentMap, 'get');
+
+    const result = computeGraphQLDirectExecutionQueryCost({
+      rootFields: [
+        {
+          field,
+          method: RESOLVER_METHOD_NAMES.FIND_MANY,
+          args: { first: 1 },
+        },
+      ],
+      fragmentMap,
+    });
+
+    expect(result).toEqual({
+      estimatedResultFieldCount: Number.MAX_SAFE_INTEGER,
+      requestedRowCount: 1,
+      selectedLeafFieldCount: Number.MAX_SAFE_INTEGER,
+    });
+    expect(fragmentLookupSpy).toHaveBeenCalledTimes(fragmentCount);
+  });
 });
