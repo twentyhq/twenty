@@ -269,18 +269,22 @@ export const usePersistField = ({
           return;
         }
 
-        updateOneRecord({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          idToUpdate: recordId,
-          updateOneRecordInput: {
-            [fieldName]: valueToPersist,
-          },
-        });
+        try {
+          await updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            idToUpdate: recordId,
+            updateOneRecordInput: {
+              [fieldName]: valueToPersist,
+            },
+          });
 
-        store.set(
-          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
-          valueToPersist,
-        );
+          store.set(
+            recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+            valueToPersist,
+          );
+        } catch {
+          // mutation rejected by server — leave store at current value
+        }
       } else {
         throw new Error(
           `Invalid value to persist: ${JSON.stringify(
