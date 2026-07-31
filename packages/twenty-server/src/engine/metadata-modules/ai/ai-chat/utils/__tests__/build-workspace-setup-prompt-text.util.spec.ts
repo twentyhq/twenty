@@ -162,10 +162,21 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('one plain sentence');
+    expect(result).toContain('before proposing anything that uses it');
+    expect(result).toContain('fully customizable');
     expect(result).toContain('Settings > Data model');
     expect(result).toContain('sidebar under Workflows');
     expect(result).toContain('sidebar under Dashboards');
-    expect(result).toContain('Teach each one where it comes up');
+  });
+
+  it('should require a title per reply and chips for objects', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('Open each reply with a short plain title');
+    expect(result).toContain('Write objects as chips');
   });
 
   it('should never re-ask for something the user already approved', () => {
