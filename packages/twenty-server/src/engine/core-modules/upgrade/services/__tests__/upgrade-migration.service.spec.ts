@@ -1,4 +1,4 @@
-import { type Repository } from 'typeorm';
+import { QueryFailedError, type Repository } from 'typeorm';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { type UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -60,6 +60,56 @@ const buildService = (rows: Row[]): UpgradeMigrationService => {
   } as unknown as UpgradeSequenceReaderService;
 
   return new UpgradeMigrationService(repository, sequenceReader);
+};
+
+const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
+const buildUniqueViolation = (): QueryFailedError =>
+  new QueryFailedError('INSERT', [], {
+    code: '23505',
+    message: 'duplicate key value violates unique constraint',
+  } as unknown as Error);
+
+// Mirrors the write path: each try reads the highest attempt, then saves.
+const buildRecordingService = ({
+  highestAttempts,
+}: {
+  highestAttempts: number[];
+}) => {
+  const saved: { attempt: number; status: string }[] = [];
+  const remainingAttempts = [...highestAttempts];
+
+  const save = jest.fn((batch: { attempt: number; status: string }[]) => {
+    saved.push(...batch);
+
+    return Promise.resolve(batch);
+  });
+
+  const findOne = jest.fn(() => {
+    const attempt = remainingAttempts.shift();
+
+    return Promise.resolve(attempt === undefined ? null : { attempt });
+  });
+
+  const transactionalRepository = { findOne, save };
+
+  const repository = {
+    manager: {
+      transaction: (runInTransaction: (manager: unknown) => Promise<void>) =>
+        runInTransaction({ getRepository: () => transactionalRepository }),
+    },
+  } as unknown as Repository<UpgradeMigrationEntity>;
+
+  const sequenceReader = {
+    getUpgradeSequence: () => SEQUENCE,
+  } as unknown as UpgradeSequenceReaderService;
+
+  return {
+    service: new UpgradeMigrationService(repository, sequenceReader),
+    saved,
+    save,
+    findOne,
+  };
 };
 
 describe('UpgradeMigrationService', () => {
@@ -162,6 +212,69 @@ describe('UpgradeMigrationService', () => {
       await expect(service.getInstanceCommandCursorOrThrow()).rejects.toThrow(
         'No instance command found',
       );
+    });
+  });
+
+  describe('recordUpgradeMigration', () => {
+    // Two upgrade processes against one database read the same highest attempt
+    // and both write attempt N. The loser used to record its own collision as a
+    // failure of the command, which had in fact succeeded.
+    it('retries with a fresh attempt number when a concurrent writer takes it', async () => {
+      const { service, saved, save } = buildRecordingService({
+        highestAttempts: [3, 4],
+      });
+
+      save.mockRejectedValueOnce(buildUniqueViolation());
+
+      await service.recordUpgradeMigration({
+        name: WORKSPACE_C,
+        workspaceIds: [WORKSPACE_ID],
+        isInstance: false,
+        status: 'completed',
+        executedByVersion: 'test',
+      });
+
+      expect(save).toHaveBeenCalledTimes(2);
+      expect(saved[saved.length - 1]).toMatchObject({
+        attempt: 5,
+        status: 'completed',
+      });
+    });
+
+    it('gives up on an error that is not an attempt collision', async () => {
+      const { service, save } = buildRecordingService({ highestAttempts: [3] });
+
+      save.mockRejectedValueOnce(new Error('connection reset'));
+
+      await expect(
+        service.recordUpgradeMigration({
+          name: WORKSPACE_C,
+          workspaceIds: [WORKSPACE_ID],
+          isInstance: false,
+          status: 'completed',
+          executedByVersion: 'test',
+        }),
+      ).rejects.toThrow('connection reset');
+
+      expect(save).toHaveBeenCalledTimes(1);
+    });
+
+    // Attempts were previously numbered by counting rows, so removing one
+    // handed the next write a number that already existed.
+    it('numbers the next attempt above the highest, not by row count', async () => {
+      const { service, saved } = buildRecordingService({
+        highestAttempts: [9],
+      });
+
+      await service.recordUpgradeMigration({
+        name: WORKSPACE_C,
+        workspaceIds: [WORKSPACE_ID],
+        isInstance: false,
+        status: 'completed',
+        executedByVersion: 'test',
+      });
+
+      expect(saved[saved.length - 1]).toMatchObject({ attempt: 10 });
     });
   });
 });

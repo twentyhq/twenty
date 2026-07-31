@@ -154,12 +154,20 @@ case "$action" in
       grep -Eq 'Workspaces:.*0 failed|No workspaces' ||
       fail "one or more staging workspace upgrades failed"
 
+    # Only the newest attempt of each command counts. A failed attempt that a
+    # later attempt superseded is history, not a live fault, and counting every
+    # 'failed' row ever written let one transient failure wedge every future
+    # deploy: the gate could not pass again until someone edited the table.
     failed_commands="$(
       compose exec -T db psql -U postgres -d staging -Atc \
-        "SELECT count(*) FROM core.\"upgradeMigration\" WHERE status = 'failed'"
+        "SELECT count(*) FROM (
+           SELECT DISTINCT ON (name, \"workspaceId\") status
+           FROM core.\"upgradeMigration\"
+           ORDER BY name, \"workspaceId\", attempt DESC
+         ) latest WHERE status = 'failed'"
     )"
     [ "$failed_commands" = "0" ] ||
-      fail "staging has $failed_commands failed upgrade command(s)"
+      fail "staging has $failed_commands upgrade command(s) whose latest attempt failed"
 
     echo "[staging] no failed upgrade commands"
     ;;
