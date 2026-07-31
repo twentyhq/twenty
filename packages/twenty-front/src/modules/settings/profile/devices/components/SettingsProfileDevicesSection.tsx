@@ -50,7 +50,11 @@ export const SettingsProfileDevicesSection = () => {
   );
 
   const sessions = data?.currentUserSessions ?? [];
-  const hasOtherSessions = sessions.some((session) => !session.isCurrent);
+  // Without an identified current session, "log out all other devices"
+  // would revoke every session including the one serving this browser.
+  const hasCurrentSession = sessions.some((session) => session.isCurrent);
+  const hasOtherSessions =
+    hasCurrentSession && sessions.some((session) => !session.isCurrent);
 
   // Sessions only exist once cookie sessions are enabled server-side: with
   // an empty list there is nothing to manage, so the section hides itself.
@@ -66,6 +70,18 @@ export const SettingsProfileDevicesSection = () => {
     } catch {
       enqueueErrorSnackBar({ message: t`Failed to log out other devices` });
     }
+  };
+
+  const getSessionLabel = (session: UserSessionListItem) => {
+    const { browser, operatingSystem } = parseUserAgentDescription(
+      session.userAgent,
+    );
+
+    if (browser && operatingSystem) {
+      return t`${browser} on ${operatingSystem}`;
+    }
+
+    return browser ?? operatingSystem ?? t`Unknown device`;
   };
 
   const getSessionDescription = (session: UserSessionListItem) => {
@@ -89,9 +105,7 @@ export const SettingsProfileDevicesSection = () => {
         <SettingsListCard
           items={sessions}
           isLoading={loading}
-          getItemLabel={(session) =>
-            parseUserAgentDescription(session.userAgent)
-          }
+          getItemLabel={getSessionLabel}
           getItemDescription={getSessionDescription}
           RowIcon={IconDeviceDesktop}
           RowRightComponent={({ item: session }) => (

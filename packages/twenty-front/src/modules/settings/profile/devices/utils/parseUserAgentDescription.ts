@@ -25,24 +25,19 @@ const OPERATING_SYSTEM_MATCHERS: UserAgentMatcher[] = [
   { label: 'Linux', pattern: /Linux/ },
 ];
 
+// Returns proper-noun parts only; the caller localizes the surrounding copy.
 export const parseUserAgentDescription = (
   userAgent: string | null | undefined,
-): string => {
+): { browser?: string; operatingSystem?: string } => {
   if (!isNonEmptyString(userAgent)) {
-    return 'Unknown device';
+    return {};
   }
 
-  const browser = BROWSER_MATCHERS.find(({ pattern }) =>
-    pattern.test(userAgent),
-  )?.label;
-
-  const operatingSystem = OPERATING_SYSTEM_MATCHERS.find(({ pattern }) =>
-    pattern.test(userAgent),
-  )?.label;
-
-  if (browser && operatingSystem) {
-    return `${browser} on ${operatingSystem}`;
-  }
-
-  return browser ?? operatingSystem ?? 'Unknown device';
+  return {
+    browser: BROWSER_MATCHERS.find(({ pattern }) => pattern.test(userAgent))
+      ?.label,
+    operatingSystem: OPERATING_SYSTEM_MATCHERS.find(({ pattern }) =>
+      pattern.test(userAgent),
+    )?.label,
+  };
 };
