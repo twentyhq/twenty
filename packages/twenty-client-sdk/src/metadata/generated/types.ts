@@ -9887,6 +9887,9 @@ export default {
             "kanbanColumnWidth": [
                 31
             ],
+            "openRecordIn": [
+                69
+            ],
             "kanbanAggregateOperation": [
                 57
             ],
@@ -9933,6 +9936,9 @@ export default {
             ],
             "isCompact": [
                 3
+            ],
+            "openRecordIn": [
+                69
             ],
             "kanbanAggregateOperation": [
                 57
@@ -10000,6 +10006,9 @@ export default {
             ],
             "shouldHideEmptyGroups": [
                 3
+            ],
+            "openRecordIn": [
+                69
             ],
             "kanbanAggregateOperation": [
                 57

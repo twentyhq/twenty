@@ -10,6 +10,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "HTTPMethod",
     "NavigationMenuItemType",
     "NumberDataType",
+    "ObjectOpenRecordIn",
     "ObjectRecordGroupByDateGranularity",
     "OnDeleteAction",
     "PageLayoutTabLayoutMode",

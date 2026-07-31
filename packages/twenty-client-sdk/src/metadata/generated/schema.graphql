@@ -3762,6 +3762,11 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
+  openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   anyFieldFilterValue: String
@@ -3779,6 +3784,11 @@ input UpdateViewInput {
   icon: String
   position: Float
   isCompact: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
+  openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   anyFieldFilterValue: String
@@ -3820,6 +3830,11 @@ input UpsertViewWidgetViewSettingsInput {
   type: ViewType
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
+
+  """
+  Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
+  """
+  openRecordIn: ViewOpenRecordIn
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
