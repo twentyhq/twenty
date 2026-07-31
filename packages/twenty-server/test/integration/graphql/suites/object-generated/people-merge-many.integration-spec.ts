@@ -1,24 +1,31 @@
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
+  let createdOpportunityIdsForCleaning: string[] = [];
 
   afterEach(async () => {
+    await deleteRecordsByIds('opportunity', createdOpportunityIdsForCleaning);
+
     if (createdPersonIdsForCleaning.length > 0) {
       await global.testDataSource.query(
         'DELETE FROM core."personRecordMerge" WHERE "sourcePersonId" = ANY($1)',
         [createdPersonIdsForCleaning],
       );
       await deleteRecordsByIds('person', createdPersonIdsForCleaning);
-      createdPersonIdsForCleaning = [];
     }
+
+    createdOpportunityIdsForCleaning = [];
+    createdPersonIdsForCleaning = [];
   });
 
   describe('merging composite fields', () => {
@@ -317,6 +324,321 @@ describe('people merge resolvers (integration)', () => {
 
       expect(provenanceRows).toHaveLength(1);
       expect(provenanceRows[0].mergedByWorkspaceMemberId).toBeTruthy();
+    });
+
+    it('should clear absorbed emails across sequential and multi-person merges', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: { firstName: 'First', lastName: 'Survivor' },
+            emails: {
+              primaryEmail: 'first-survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'First', lastName: 'Absorbed' },
+            emails: {
+              primaryEmail: 'first-absorbed@example.com',
+              additionalEmails: ['first-absorbed-alt@example.com'],
+            },
+          },
+          {
+            name: { firstName: 'Second', lastName: 'Survivor' },
+            emails: {
+              primaryEmail: 'second-survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'Second', lastName: 'AbsorbedOne' },
+            emails: {
+              primaryEmail: 'second-absorbed-one@example.com',
+              additionalEmails: ['second-absorbed-one-alt@example.com'],
+            },
+          },
+          {
+            name: { firstName: 'Second', lastName: 'AbsorbedTwo' },
+            emails: {
+              primaryEmail: 'second-absorbed-two@example.com',
+              additionalEmails: ['second-absorbed-two-alt@example.com'],
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const createdPeople = createResponse.body.data.createPeople as Array<{
+        id: string;
+      }>;
+      const createdPersonIds = createdPeople.map(({ id }) => id);
+
+      createdPersonIdsForCleaning.push(...createdPersonIds);
+
+      const firstMergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: createdPersonIds.slice(0, 2),
+          conflictPriorityIndex: 0,
+          data: {
+            emails: {
+              primaryEmail: 'first-absorbed@example.com',
+              additionalEmails: ['first-survivor@example.com'],
+            },
+          },
+        }),
+      );
+
+      expect(firstMergeResponse.body.errors).toBeUndefined();
+      expect(firstMergeResponse.body.data.mergePeople.emails.primaryEmail).toBe(
+        'first-absorbed@example.com',
+      );
+
+      const secondMergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: createdPersonIds.slice(2),
+          conflictPriorityIndex: 0,
+          data: {
+            emails: {
+              primaryEmail: 'second-absorbed-two@example.com',
+              additionalEmails: [
+                'second-survivor@example.com',
+                'second-absorbed-one@example.com',
+              ],
+            },
+          },
+        }),
+      );
+
+      expect(secondMergeResponse.body.errors).toBeUndefined();
+      expect(
+        secondMergeResponse.body.data.mergePeople.emails.primaryEmail,
+      ).toBe('second-absorbed-two@example.com');
+
+      for (const absorbedPersonId of [
+        createdPersonIds[1],
+        createdPersonIds[3],
+        createdPersonIds[4],
+      ]) {
+        const findAbsorbedPersonResponse = await makeGraphqlAPIRequest(
+          findOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            filter: {
+              id: { eq: absorbedPersonId },
+              not: { deletedAt: { is: 'NULL' } },
+            },
+          }),
+        );
+
+        expect(findAbsorbedPersonResponse.body.errors).toBeUndefined();
+        expect(
+          findAbsorbedPersonResponse.body.data.person.deletedAt,
+        ).not.toBeNull();
+        expect(findAbsorbedPersonResponse.body.data.person.emails).toEqual({
+          primaryEmail: '',
+          additionalEmails: [],
+        });
+      }
+    });
+
+    it('should restore an absorbed person without reclaiming migrated relationships', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: { firstName: 'Restore', lastName: 'Survivor' },
+            emails: {
+              primaryEmail: 'restore-survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'Restore', lastName: 'Absorbed' },
+            emails: {
+              primaryEmail: 'restore-absorbed@example.com',
+              additionalEmails: [],
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const [survivorPersonId, absorbedPersonId] =
+        createResponse.body.data.createPeople.map(
+          ({ id }: { id: string }) => id,
+        );
+
+      createdPersonIdsForCleaning.push(survivorPersonId, absorbedPersonId);
+
+      const opportunityResponse = await createOneOperation({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id pointOfContactId',
+        input: {
+          name: 'Relationship retained by merge survivor',
+          pointOfContactId: absorbedPersonId,
+        },
+      });
+      const opportunityId = opportunityResponse.data.createOneResponse.id;
+
+      createdOpportunityIdsForCleaning.push(opportunityId);
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [survivorPersonId, absorbedPersonId],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const restoreResponse = await makeGraphqlAPIRequest(
+        restoreOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          recordId: absorbedPersonId,
+        }),
+      );
+
+      expect(restoreResponse.body.errors).toBeUndefined();
+      expect(restoreResponse.body.data.restorePerson.deletedAt).toBeNull();
+      expect(restoreResponse.body.data.restorePerson.emails).toEqual({
+        primaryEmail: '',
+        additionalEmails: [],
+      });
+
+      const findOpportunityResponse = await makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          gqlFields: 'id pointOfContactId',
+          filter: { id: { eq: opportunityId } },
+        }),
+      );
+
+      expect(findOpportunityResponse.body.errors).toBeUndefined();
+      expect(
+        findOpportunityResponse.body.data.opportunity.pointOfContactId,
+      ).toBe(survivorPersonId);
+    });
+
+    it('should roll back relationship moves, deletion, and updates when the survivor update fails', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: { firstName: 'Rollback', lastName: 'Survivor' },
+            emails: {
+              primaryEmail: 'rollback-survivor@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'Rollback', lastName: 'Absorbed' },
+            emails: {
+              primaryEmail: 'rollback-absorbed@example.com',
+              additionalEmails: [],
+            },
+          },
+          {
+            name: { firstName: 'Rollback', lastName: 'Conflict' },
+            emails: {
+              primaryEmail: 'rollback-conflict@example.com',
+              additionalEmails: [],
+            },
+          },
+        ],
+      });
+      const createResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const [survivorPersonId, absorbedPersonId, conflictingPersonId] =
+        createResponse.body.data.createPeople.map(
+          ({ id }: { id: string }) => id,
+        );
+
+      createdPersonIdsForCleaning.push(
+        survivorPersonId,
+        absorbedPersonId,
+        conflictingPersonId,
+      );
+
+      const opportunityResponse = await createOneOperation({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id pointOfContactId',
+        input: {
+          name: 'Relationship protected by merge rollback',
+          pointOfContactId: absorbedPersonId,
+        },
+      });
+      const opportunityId = opportunityResponse.data.createOneResponse.id;
+
+      createdOpportunityIdsForCleaning.push(opportunityId);
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [survivorPersonId, absorbedPersonId],
+          conflictPriorityIndex: 0,
+          data: {
+            emails: {
+              primaryEmail: 'rollback-conflict@example.com',
+              additionalEmails: [],
+            },
+          },
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeDefined();
+
+      for (const [personId, primaryEmail] of [
+        [survivorPersonId, 'rollback-survivor@example.com'],
+        [absorbedPersonId, 'rollback-absorbed@example.com'],
+      ]) {
+        const findPersonResponse = await makeGraphqlAPIRequest(
+          findOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            filter: { id: { eq: personId } },
+          }),
+        );
+
+        expect(findPersonResponse.body.errors).toBeUndefined();
+        expect(findPersonResponse.body.data.person.deletedAt).toBeNull();
+        expect(findPersonResponse.body.data.person.emails.primaryEmail).toBe(
+          primaryEmail,
+        );
+      }
+
+      const findOpportunityResponse = await makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          gqlFields: 'id pointOfContactId',
+          filter: { id: { eq: opportunityId } },
+        }),
+      );
+
+      expect(findOpportunityResponse.body.errors).toBeUndefined();
+      expect(
+        findOpportunityResponse.body.data.opportunity.pointOfContactId,
+      ).toBe(absorbedPersonId);
     });
 
     it('should handle dry run mode', async () => {

@@ -207,13 +207,15 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   ): Promise<void> {
     // Person emails remain subject to a workspace unique index after a soft
     // delete. Release them inside the merge transaction so a reviewed email
-    // can be assigned to the survivor. Other record details remain in Trash.
+    // can be assigned to the survivor. Use null because PostgreSQL unique
+    // indexes allow multiple nulls; the API still exposes this as an empty
+    // primary email in Trash. Other record details remain in Trash.
     await repository
       .createQueryBuilder('person')
       .update()
       .set({
         emails: {
-          primaryEmail: '',
+          primaryEmail: null,
           additionalEmails: [],
         },
       })
