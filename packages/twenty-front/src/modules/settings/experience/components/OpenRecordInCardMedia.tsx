@@ -7,7 +7,7 @@ type OpenRecordInCardMediaProps = {
 };
 
 const StyledPreviewFrame = styled.div`
-  background-color: ${themeCssVariables.border.color.light};
+  background-color: ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -35,15 +35,18 @@ const StyledMemberPreferenceCanvas = styled(StyledPreviewCanvas)`
 
 const StyledMemberPreferenceIcon = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.color.blue7};
+  background-color: ${themeCssVariables.background.secondary};
   border-radius: 50%;
-  color: ${themeCssVariables.font.color.inverted};
+  box-sizing: border-box;
+  color: ${themeCssVariables.color.blue7};
   display: flex;
   height: 16px;
   justify-content: center;
-  left: 6px;
+  left: 50%;
+  padding: 1px;
   position: absolute;
-  top: 10px;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 16px;
 `;
 
@@ -55,7 +58,7 @@ const StyledSidePanelPreview = styled.div`
 `;
 
 const StyledSidePanelContent = styled.div`
-  background-color: ${themeCssVariables.background.transparent.light};
+  background-color: ${themeCssVariables.border.color.medium};
   border-radius: 1px;
   flex: 1;
 `;
@@ -92,9 +95,7 @@ export const OpenRecordInCardMedia = ({
       <StyledPreviewFrame>
         <StyledMemberPreferenceCanvas>
           <SidePanelPreview />
-          <StyledFullPage>
-            <IconArrowsDiagonal size={14} />
-          </StyledFullPage>
+          <StyledFullPage />
           <StyledMemberPreferenceIcon>
             <IconUserCircle size={14} />
           </StyledMemberPreferenceIcon>
