@@ -12,6 +12,16 @@ const collectFromString = (value: unknown, names: Set<string>): void => {
   }
 };
 
+export const collectCampaignVariableNamesFromString = (
+  value: string,
+): Set<string> => {
+  const names = new Set<string>();
+
+  collectFromString(value, names);
+
+  return names;
+};
+
 // Collects every {{variable}} referenced anywhere substitution happens at
 // send time: text, variable chips, button and image URLs, link marks and raw
 // HTML blocks. Mirrors the traversal in render-campaign-body.util so a

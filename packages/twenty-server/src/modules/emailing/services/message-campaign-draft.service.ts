@@ -9,6 +9,7 @@ import {
   parseEmailDocument,
 } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   EmailingDomainException,
@@ -18,24 +19,32 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variables.util';
+import {
+  collectCampaignVariableNames,
+  collectCampaignVariableNamesFromString,
+} from 'src/modules/emailing/utils/collect-campaign-variables.util';
 
-export type UpdateDraftCampaignBodyArgs = {
+export type SaveDraftCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
-  campaignId: string;
-  document: unknown;
+  campaignId?: string;
+  name?: string;
+  subject?: string;
+  body?: unknown;
 };
 
-export type UpdateDraftCampaignBodyResult = {
+export type SaveDraftCampaignResult = {
   campaignId: string;
   campaignName: string;
-  blockCount: number;
+  created: boolean;
+  blockCount?: number;
   variablesUsed: string[];
 };
 
+const DEFAULT_CAMPAIGN_NAME = 'Untitled campaign';
+
 @Injectable()
-export class MessageCampaignBodyService {
+export class MessageCampaignDraftService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -52,30 +61,38 @@ export class MessageCampaignBodyService {
     });
   }
 
-  async updateDraftBody({
+  // One path for creating and editing: without a campaignId a fresh draft is
+  // inserted, with one the provided fields update the existing draft. Body
+  // and subject go through the same validation either way.
+  async saveDraft({
     workspaceId,
     userWorkspaceId,
     campaignId,
-    document,
-  }: UpdateDraftCampaignBodyArgs): Promise<UpdateDraftCampaignBodyResult> {
-    const parseResult = parseEmailDocument(document);
+    name,
+    subject,
+    body,
+  }: SaveDraftCampaignArgs): Promise<SaveDraftCampaignResult> {
+    const stampedDocument = isDefined(body)
+      ? this.parseAndStampDocument(body)
+      : undefined;
 
-    if (!parseResult.success) {
-      throw new EmailingDomainException(
-        `Invalid email document: ${parseResult.error}`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-      );
-    }
-
-    const stampedDocument = this.stampDocumentDefaults(parseResult.document);
     const variablesUsed = [
-      ...collectCampaignVariableNames(stampedDocument),
+      ...new Set([
+        ...(isDefined(stampedDocument)
+          ? collectCampaignVariableNames(stampedDocument)
+          : []),
+        ...(isDefined(subject)
+          ? collectCampaignVariableNamesFromString(subject)
+          : []),
+      ]),
     ].sort();
 
-    await this.campaignVariableService.assertKnownVariables(
-      workspaceId,
-      variablesUsed,
-    );
+    if (variablesUsed.length > 0) {
+      await this.campaignVariableService.assertKnownVariables(
+        workspaceId,
+        variablesUsed,
+      );
+    }
 
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
@@ -89,6 +106,36 @@ export class MessageCampaignBodyService {
           MessageCampaignWorkspaceEntity,
           roleId,
         );
+
+        if (!isDefined(campaignId)) {
+          const createdCampaignId = v4();
+          const campaignName = name ?? DEFAULT_CAMPAIGN_NAME;
+
+          await campaignRepository.insert({
+            id: createdCampaignId,
+            name: campaignName,
+            status: MessageCampaignStatus.DRAFT,
+            ...(isDefined(subject) && { subject }),
+            ...(isDefined(stampedDocument) && {
+              bodyTemplate: JSON.stringify(stampedDocument),
+            }),
+          });
+
+          return {
+            campaignId: createdCampaignId,
+            campaignName,
+            created: true,
+            blockCount: stampedDocument?.content?.length,
+            variablesUsed,
+          };
+        }
+
+        if (!isDefined(name) && !isDefined(subject) && !isDefined(body)) {
+          throw new EmailingDomainException(
+            'Nothing to update: provide a name, subject or body',
+            EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+          );
+        }
 
         const campaign = await campaignRepository.findOne({
           where: { id: campaignId },
@@ -111,7 +158,13 @@ export class MessageCampaignBodyService {
         // Conditional on status so a concurrent send cannot be overwritten.
         const { affected } = await campaignRepository.update(
           { id: campaignId, status: MessageCampaignStatus.DRAFT },
-          { bodyTemplate: JSON.stringify(stampedDocument) },
+          {
+            ...(isDefined(name) && { name }),
+            ...(isDefined(subject) && { subject }),
+            ...(isDefined(stampedDocument) && {
+              bodyTemplate: JSON.stringify(stampedDocument),
+            }),
+          },
         );
 
         if (affected !== 1) {
@@ -123,12 +176,26 @@ export class MessageCampaignBodyService {
 
         return {
           campaignId,
-          campaignName: campaign.name,
-          blockCount: stampedDocument.content?.length ?? 0,
+          campaignName: name ?? campaign.name,
+          created: false,
+          blockCount: stampedDocument?.content?.length,
           variablesUsed,
         };
       },
     );
+  }
+
+  private parseAndStampDocument(body: unknown): EmailDocument {
+    const parseResult = parseEmailDocument(body);
+
+    if (!parseResult.success) {
+      throw new EmailingDomainException(
+        `Invalid email document: ${parseResult.error}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
+
+    return this.stampDocumentDefaults(parseResult.document);
   }
 
   // Documents written by the AI tool get the same doc-level attributes the

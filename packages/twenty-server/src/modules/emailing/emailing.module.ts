@@ -22,12 +22,12 @@ import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubsc
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
-import { MessageCampaignBodyService } from 'src/modules/emailing/services/message-campaign-body.service';
+import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
-import { UpdateCampaignBodyTool } from 'src/modules/emailing/tools/update-campaign-body-tool';
+import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Module({
   imports: [
@@ -52,12 +52,12 @@ import { UpdateCampaignBodyTool } from 'src/modules/emailing/tools/update-campai
     CampaignVariableService,
     EmailBillingService,
     MessageCampaignService,
-    MessageCampaignBodyService,
+    MessageCampaignDraftService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
-    UpdateCampaignBodyTool,
+    SaveCampaignTool,
     EmailingSendResolver,
     MessageSuppressionResolver,
     UnsubscribeTopicResolver,
@@ -68,11 +68,11 @@ import { UpdateCampaignBodyTool } from 'src/modules/emailing/tools/update-campai
   exports: [
     EmailingDomainSenderService,
     MessageCampaignService,
-    MessageCampaignBodyService,
+    MessageCampaignDraftService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
-    UpdateCampaignBodyTool,
+    SaveCampaignTool,
   ],
 })
 export class EmailingModule {}

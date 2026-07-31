@@ -6,49 +6,54 @@ import { EmailingDomainException } from 'src/engine/core-modules/emailing-domain
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { MessageCampaignBodyService } from 'src/modules/emailing/services/message-campaign-body.service';
+import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import {
-  type UpdateCampaignBodyToolInput,
-  UpdateCampaignBodyToolInputZodSchema,
-} from 'src/modules/emailing/tools/update-campaign-body-tool.schema';
+  type SaveCampaignToolInput,
+  SaveCampaignToolInputZodSchema,
+} from 'src/modules/emailing/tools/save-campaign-tool.schema';
 
 @Injectable()
-export class UpdateCampaignBodyTool implements Tool {
-  private readonly logger = new Logger(UpdateCampaignBodyTool.name);
+export class SaveCampaignTool implements Tool {
+  private readonly logger = new Logger(SaveCampaignTool.name);
 
   description =
-    'Replace the body of a draft email campaign (messageCampaign record) with a structured email document. ' +
-    'The document is validated against the campaign email schema before anything is written, and the campaign must still be a draft. ' +
-    'Requires update permission on campaigns.';
-  inputSchema = UpdateCampaignBodyToolInputZodSchema;
+    'Create a draft email campaign (messageCampaign record) or edit an existing one: name, subject and body. ' +
+    'The body is a structured email document validated against the campaign email schema before anything is written. ' +
+    'Only draft campaigns can be edited, and this tool never sends anything. ' +
+    'Requires create/update permission on campaigns.';
+  inputSchema = SaveCampaignToolInputZodSchema;
 
   constructor(
-    private readonly messageCampaignBodyService: MessageCampaignBodyService,
+    private readonly messageCampaignDraftService: MessageCampaignDraftService,
   ) {}
 
   async execute(
-    parameters: UpdateCampaignBodyToolInput,
+    parameters: SaveCampaignToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     if (!isDefined(context.userWorkspaceId)) {
       return {
         success: false,
-        message: 'Failed to update campaign body',
+        message: 'Failed to save campaign',
         error: 'This tool can only run on behalf of a workspace member',
       };
     }
 
     try {
-      const result = await this.messageCampaignBodyService.updateDraftBody({
+      const result = await this.messageCampaignDraftService.saveDraft({
         workspaceId: context.workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         campaignId: parameters.campaignId,
-        document: parameters.body,
+        name: parameters.name,
+        subject: parameters.subject,
+        body: parameters.body,
       });
 
       return {
         success: true,
-        message: `Campaign body updated (${result.blockCount} top-level blocks)`,
+        message: result.created
+          ? `Draft campaign "${result.campaignName}" created`
+          : `Campaign "${result.campaignName}" updated`,
         result,
         recordReferences: [
           {
@@ -62,20 +67,18 @@ export class UpdateCampaignBodyTool implements Tool {
       if (error instanceof EmailingDomainException) {
         return {
           success: false,
-          message: 'Failed to update campaign body',
+          message: 'Failed to save campaign',
           error: error.message,
         };
       }
 
-      this.logger.error(`Failed to update campaign body: ${error}`);
+      this.logger.error(`Failed to save campaign: ${error}`);
 
       return {
         success: false,
-        message: 'Failed to update campaign body',
+        message: 'Failed to save campaign',
         error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to update campaign body',
+          error instanceof Error ? error.message : 'Failed to save campaign',
       };
     }
   }
