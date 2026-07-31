@@ -15,10 +15,8 @@ import { executeWithRetry } from 'src/utils/execute-with-retry';
 
 // enqueueJob rejects delays beyond 7 days.
 const MAX_ENQUEUE_DELAY_MS = 7 * 24 * 60 * 60 * 1_000;
-const ENQUEUE_CONCURRENCY = 20;
 
 type BackfillPhasePlan = { phase: BackfillPhase; count: number; batches: number };
-type BackfillJob = { phase: BackfillPhase; batchId: number; delayMs: number };
 
 const countPhaseRecords = async (
   client: CoreApiClient,
@@ -43,34 +41,23 @@ export const enqueueBackfillJobs = async (
   const sleepMs = getBackfillSleepMs();
 
   const plans: BackfillPhasePlan[] = [];
-  const jobs: BackfillJob[] = [];
+  let enqueuedCount = 0;
 
   for (const phase of BACKFILL_PHASE_ORDER) {
     const count = await countPhaseRecords(client, phase);
     const batches = Math.ceil(count / batchSize);
 
     for (let batchId = 0; batchId < batches; batchId++) {
-      jobs.push({
-        phase,
-        batchId,
-        delayMs: Math.min(jobs.length * sleepMs, MAX_ENQUEUE_DELAY_MS),
+      await enqueueJob({
+        logicFunctionUniversalIdentifier:
+          BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS[phase],
+        payload: { batchId },
+        delayMs: Math.min(enqueuedCount * sleepMs, MAX_ENQUEUE_DELAY_MS),
       });
+      enqueuedCount++;
     }
 
     plans.push({ phase, count, batches });
-  }
-
-  for (let start = 0; start < jobs.length; start += ENQUEUE_CONCURRENCY) {
-    await Promise.all(
-      jobs.slice(start, start + ENQUEUE_CONCURRENCY).map((job) =>
-        enqueueJob({
-          logicFunctionUniversalIdentifier:
-            BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS[job.phase],
-          payload: { batchId: job.batchId },
-          delayMs: job.delayMs,
-        }),
-      ),
-    );
   }
 
   return plans;
