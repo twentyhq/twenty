@@ -22,12 +22,12 @@ export default defineApplication({
   description: APP_DESCRIPTION,
   serverVariables: {
     [BACKFILL_BATCH_SIZE_ENV_VAR_NAME]: {
-      description: `How many records each last-contact backfill run processes before handing the next cursor back to the orchestrator. Defaults to ${DEFAULT_BACKFILL_BATCH_SIZE} when unset.`,
+      description: `How many records each last-contact backfill job processes. Also sets how many batch jobs are enqueued (record count divided by this). Defaults to ${DEFAULT_BACKFILL_BATCH_SIZE} when unset.`,
       isSecret: false,
       type: FieldType.NUMBER,
     },
     [BACKFILL_SLEEP_MS_ENV_VAR_NAME]: {
-      description: `How many milliseconds the last-contact backfill orchestrator pauses between runs to stay under the API rate limiting. Defaults to ${DEFAULT_BACKFILL_SLEEP_MS} when unset.`,
+      description: `How many milliseconds to stagger consecutive backfill jobs by, so they do not all run at once and hit the API rate limiting. Defaults to ${DEFAULT_BACKFILL_SLEEP_MS} when unset.`,
       isSecret: false,
       type: FieldType.NUMBER,
     },

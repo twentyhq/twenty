@@ -79,6 +79,7 @@ export default defineObject({
 * Le `universalIdentifier` doit être unique et stable entre les déploiements.
 * Chaque champ nécessite un `name`, un `type`, un `label` et son propre `universalIdentifier` stable.
 * Le tableau `fields` est facultatif — vous pouvez définir des objets sans champs personnalisés.
+* `openRecordIn` définit où les enregistrements de cet objet s’ouvrent lorsqu’on clique dessus : `ObjectOpenRecordIn.USER_CHOICE` (la valeur par défaut, qui suit la préférence de chaque membre de l’espace de travail dans Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` ou `ObjectOpenRecordIn.RECORD_PAGE`. Épinglez-le sur `RECORD_PAGE` pour les enregistrements qui ont besoin d’une page complète pour être utilisables, comme les flux de travail et les tableaux de bord, ou sur `SIDE_PANEL` pour les enregistrements qui n’ont de sens qu’en tant que panneau rapide, comme les événements de calendrier.
 * Les champs en ligne définis ici n’ont **pas** besoin d’un `objectUniversalIdentifier` — il est hérité de l’objet parent. Utilisez [`defineField()`](/l/fr/developers/extend/apps/data/extending-objects) pour ajouter des champs aux objets que vous ne possédez pas.
 * Vous pouvez générer de nouveaux objets avec `yarn twenty dev:add object`, qui vous guide à travers le nommage, les champs et les relations. Voir [Architecture → Scaffolding entities](/l/fr/developers/extend/apps/getting-started/scaffolding).
 
