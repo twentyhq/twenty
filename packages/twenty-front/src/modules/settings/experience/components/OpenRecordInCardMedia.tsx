@@ -38,7 +38,7 @@ const StyledMemberPreferenceIcon = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border-radius: 50%;
   box-sizing: border-box;
-  color: ${themeCssVariables.color.blue7};
+  color: ${themeCssVariables.accent.accent7};
   display: flex;
   height: 16px;
   justify-content: center;
@@ -64,14 +64,14 @@ const StyledSidePanelContent = styled.div`
 `;
 
 const StyledSidePanel = styled.div`
-  background-color: ${themeCssVariables.color.blue7};
+  background-color: ${themeCssVariables.accent.accent7};
   border-radius: 1px;
   width: 6px;
 `;
 
 const StyledFullPage = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.color.blue7};
+  background-color: ${themeCssVariables.accent.accent7};
   border-radius: 1px;
   color: ${themeCssVariables.font.color.inverted};
   display: flex;

@@ -29,7 +29,7 @@ const StyledCardMedia = styled.div`
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
@@ -38,7 +38,7 @@ const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
 const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
@@ -48,7 +48,7 @@ const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
 const StyledBodySkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.xs};
   flex: 1 0 auto;
