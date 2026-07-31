@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
+import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageAutoCreationIconProps = {
   className?: string;
@@ -24,21 +25,40 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledDirectionSkeleton = styled.div<{ isActive?: boolean }>`
+  align-items: center;
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
-      : themeCssVariables.background.quaternary};
+      ? themeCssVariables.accent.accent7
+      : themeCssVariables.border.color.medium};
   border-radius: 1px;
-  height: 24px;
+  color: ${themeCssVariables.font.color.inverted};
+  display: flex;
+  flex: 1 0 0;
+  justify-content: center;
+  min-height: 0;
 `;
 
 export const SettingsAccountsMessageAutoCreationIcon = ({
   className,
   isSentActive,
   isReceivedActive,
-}: SettingsAccountsMessageAutoCreationIconProps) => (
-  <StyledIconContainer className={className}>
-    <StyledDirectionSkeleton isActive={isSentActive} />
-    <StyledDirectionSkeleton isActive={isReceivedActive} />
-  </StyledIconContainer>
-);
+}: SettingsAccountsMessageAutoCreationIconProps) => {
+  const theme = useTheme();
+
+  return (
+    <StyledIconContainer className={className}>
+      <StyledDirectionSkeleton isActive={isSentActive}>
+        <IconArrowUp
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+        />
+      </StyledDirectionSkeleton>
+      <StyledDirectionSkeleton isActive={isReceivedActive}>
+        <IconArrowDown
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+        />
+      </StyledDirectionSkeleton>
+    </StyledIconContainer>
+  );
+};
