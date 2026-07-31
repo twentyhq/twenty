@@ -29,13 +29,65 @@ describe('on-application-created', () => {
     mutationMock.mockResolvedValue({ updateApplication: { id: APPLICATION_ID } });
   });
 
-  it('does nothing when partnerId is already set (admin path)', async () => {
+  it('does nothing when the admin-created row already carries partnerUser', async () => {
     const result = await handler(
-      event({ id: APPLICATION_ID, partnerId: PARTNER_ID }),
+      event({
+        id: APPLICATION_ID,
+        partnerId: PARTNER_ID,
+        partnerUserId: MEMBER_ID,
+      }),
     );
     expect(result).toEqual({});
     expect(queryMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('stamps partnerUser from the partner on an admin-created row', async () => {
+    queryMock.mockResolvedValue({
+      partner: { id: PARTNER_ID, partnerUserId: MEMBER_ID },
+    });
+
+    const result = await handler(
+      event({ id: APPLICATION_ID, partnerId: PARTNER_ID }),
+    );
+
+    expect(result).toEqual({ stamped: MEMBER_ID });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    const args = mutationMock.mock.calls[0][0].updateApplication.__args;
+    expect(args.id).toBe(APPLICATION_ID);
+    expect(args.data).toEqual({ partnerUserId: MEMBER_ID });
+  });
+
+  it('leaves an admin-created row alone when the partner has no member', async () => {
+    queryMock.mockResolvedValue({
+      partner: { id: PARTNER_ID, partnerUserId: null },
+    });
+
+    const result = await handler(
+      event({ id: APPLICATION_ID, partnerId: PARTNER_ID }),
+    );
+
+    expect(result).toEqual({ skipped: true, reason: 'partner_has_no_user' });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('resolves the candidacy when the self-apply row already carries partnerUser', async () => {
+    queryMock.mockResolvedValue({
+      partners: { edges: [{ node: { id: PARTNER_ID } }] },
+    });
+
+    const result = await handler(
+      event({
+        id: APPLICATION_ID,
+        partnerUserId: MEMBER_ID,
+        createdBy: { workspaceMemberId: MEMBER_ID },
+      }),
+    );
+
+    expect(result).toEqual({ applied: true, partnerId: PARTNER_ID });
+    const args = mutationMock.mock.calls[0][0].updateApplication.__args;
+    expect(args.data.partnerId).toBe(PARTNER_ID);
+    expect(args.data.state).toBe('APPLIED');
   });
 
   it('does nothing when createdBy.workspaceMemberId is missing', async () => {
