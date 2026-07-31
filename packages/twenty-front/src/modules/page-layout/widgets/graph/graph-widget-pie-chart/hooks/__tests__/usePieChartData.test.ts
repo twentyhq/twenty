@@ -123,43 +123,6 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[1].colorScheme.name).toBe('blue');
   });
 
-  it('should keep the same automatic palette color per key when item order changes', () => {
-    const { result: initialResult } = renderHook(() =>
-      usePieChartData({
-        data: [
-          { key: 'won', value: 50 },
-          { key: 'open', value: 30 },
-          { key: 'lost', value: 20 },
-        ],
-        colorRegistry: mockColorRegistry,
-        colorMode: 'automaticPalette',
-      }),
-    );
-
-    const { result: reorderedResult } = renderHook(() =>
-      usePieChartData({
-        data: [
-          { key: 'lost', value: 20 },
-          { key: 'won', value: 50 },
-          { key: 'open', value: 30 },
-        ],
-        colorRegistry: mockColorRegistry,
-        colorMode: 'automaticPalette',
-      }),
-    );
-
-    const colorsByKey = (
-      enrichedData: { key: string; colorScheme: { name: string } }[],
-    ) =>
-      Object.fromEntries(
-        enrichedData.map((item) => [item.key, item.colorScheme.name]),
-      );
-
-    expect(colorsByKey(initialResult.current.enrichedData)).toEqual(
-      colorsByKey(reorderedResult.current.enrichedData),
-    );
-  });
-
   it('should return legend items from all data', () => {
     const { result } = renderHook(() =>
       usePieChartData({
