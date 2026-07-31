@@ -225,14 +225,17 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('widgetErrors');
   });
 
-  it('should present roles as a settings pointer without offering to configure them', () => {
+  it('should propose roles and build them with the role tools', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
-    expect(result).toContain('You cannot configure roles from this chat');
+    expect(result).toContain('list_roles');
+    expect(result).toContain('create_role');
+    expect(result).toContain('upsert_object_permissions');
     expect(result).toContain('Settings > Members > Roles');
+    expect(result).not.toContain('You cannot configure roles from this chat');
     expect(result).not.toContain('navigate_app');
   });
 
