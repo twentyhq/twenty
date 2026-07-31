@@ -164,6 +164,7 @@ export class WorkspaceSetupChatService {
           companyEnrichment: companyContext,
           locale,
         }),
+        modelId: workspace.fastModel,
       });
 
     if (!isDefined(kickoffResult)) {

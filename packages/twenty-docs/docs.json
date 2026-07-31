@@ -6610,7 +6610,7 @@
     },
     {
       "source": "/developers/extend/capabilities/apps",
-      "destination": "/developers/extend/apps/getting-started"
+      "destination": "/developers/extend/apps/getting-started/quick-start"
     },
     {
       "source": "/developers/extend/mcp",
@@ -7058,7 +7058,7 @@
     },
     {
       "source": "/user-guide/settings/releases-settings",
-      "destination": "/user-guide/settings/capabilities/updates-settings"
+      "destination": "/user-guide/settings/capabilities/community-settings"
     },
     {
       "source": "/user-guide/settings/settings-faq",

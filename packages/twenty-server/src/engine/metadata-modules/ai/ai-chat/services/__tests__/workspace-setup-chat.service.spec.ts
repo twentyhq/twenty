@@ -28,6 +28,8 @@ const EXPECTED_THREAD_ID = v5(
 describe('WorkspaceSetupChatService', () => {
   const workspace = {
     id: 'workspace-id',
+    fastModel: 'fast-model-id',
+    smartModel: 'smart-model-id',
   } as WorkspaceEntity;
 
   const startArguments = {
@@ -235,6 +237,7 @@ describe('WorkspaceSetupChatService', () => {
       text: expect.stringContaining(
         'No information about the company that owns this workspace is available.',
       ),
+      modelId: 'fast-model-id',
     });
     expect(result).toEqual({
       outcome: WorkspaceSetupChatOutcome.STARTED,
