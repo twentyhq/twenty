@@ -8,7 +8,7 @@ type GetRecordCalendarWeekEventHorizontalPositionArgs = {
 };
 
 export type RecordCalendarWeekEventHorizontalPosition = {
-  hoverStackingOrder: number;
+  focusedStackingOrder: number;
   left: string;
   stackingOrder: number;
   width: string;
@@ -49,7 +49,7 @@ export const getRecordCalendarWeekEventHorizontalPosition = ({
   );
 
   return {
-    hoverStackingOrder: columnCount + 1,
+    focusedStackingOrder: columnCount + 1,
     left: formatPercentageWithPixelOffset(leftPercentage, leftPixelOffset),
     stackingOrder: columnIndex + 1,
     width: `calc(${widthPercentage}% - ${widthPixelReduction}px)`,

@@ -2,8 +2,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RecordCalendarDateGrid } from '@/object-record/record-calendar/date-grid/components/RecordCalendarDateGrid';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
-import { RecordCalendarTimeGridAllDayCell } from '@/object-record/record-calendar/time-grid/components/RecordCalendarTimeGridAllDayCell';
 import { RecordCalendarWeekEvent } from '@/object-record/record-calendar/week/components/RecordCalendarWeekEvent';
 import { RecordCalendarWeekDragDropContext } from '@/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
@@ -21,7 +21,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useStore } from 'jotai';
@@ -108,20 +107,6 @@ const StyledDayNumber = styled.span<{ isToday: boolean }>`
   height: 20px;
   justify-content: center;
   width: 20px;
-`;
-
-const StyledAllDayLabel = styled(StyledHeaderGutter)`
-  align-items: flex-start;
-  height: auto;
-  min-height: 28px;
-  padding-top: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAllDayGrid = styled.div<{ dayCount: number }>`
-  display: grid;
-  grid-template-columns:
-    ${RECORD_CALENDAR_WEEK_DIMENSIONS.timeGutterWidth}px
-    repeat(${({ dayCount }) => dayCount}, minmax(120px, 1fr));
 `;
 
 const StyledGrid = styled.div<{ dayCount: number }>`
@@ -557,6 +542,16 @@ export const RecordCalendarTimeGrid = ({
     return null;
   }
 
+  if (isAllDayView) {
+    return (
+      <RecordCalendarDateGrid
+        days={days}
+        minWidthInPixels={minWidthInPixels}
+        timeZone={timeZone}
+      />
+    );
+  }
+
   return (
     <RecordCalendarWeekDragDropContext
       days={days.map(({ date }) => date)}
@@ -578,19 +573,6 @@ export const RecordCalendarTimeGrid = ({
             );
           })}
         </StyledHeader>
-        {isAllDayView && (
-          <StyledAllDayGrid dayCount={days.length}>
-            <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
-            {days.map(({ date }) => (
-              <RecordCalendarTimeGridAllDayCell
-                key={`all-day-${date.toString()}`}
-                calendarFieldType={calendarFieldMetadataItem.type}
-                day={date}
-                timeZone={timeZone}
-              />
-            ))}
-          </StyledAllDayGrid>
-        )}
         {isTimedView && (
           <StyledGrid
             ref={gridRef}
