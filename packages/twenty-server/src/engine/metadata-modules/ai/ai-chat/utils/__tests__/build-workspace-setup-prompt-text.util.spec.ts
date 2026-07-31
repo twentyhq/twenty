@@ -138,6 +138,19 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).not.toContain('update_many_view_fields');
   });
 
+  it('should teach each capability where it comes up', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('one plain sentence');
+    expect(result).toContain('Settings > Data model');
+    expect(result).toContain('sidebar under Workflows');
+    expect(result).toContain('sidebar under Dashboards');
+    expect(result).toContain('Teach each one where it comes up');
+  });
+
   it('should never re-ask for something the user already approved', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
