@@ -66,7 +66,9 @@ export const assertRowLevelRuleOwnership = ({
   }
 
   const groupIdsInPayload = new Set(
-    predicateGroups.map((predicateGroup) => predicateGroup.id).filter(isDefined),
+    predicateGroups
+      .map((predicateGroup) => predicateGroup.id)
+      .filter(isDefined),
   );
 
   for (const predicate of predicates) {
