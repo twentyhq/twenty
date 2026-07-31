@@ -13,11 +13,6 @@ import { BACKFILL_ORCHESTRATOR_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/c
 import { getBackfillSleepMs } from 'src/utils/backfill-settings';
 import { callOwnRoute, postToOwnRoute, sleep } from 'src/utils/post-to-own-route';
 
-// Drives the backfill one batch at a time: it runs the current phase from the
-// stored cursor, persists the returned cursor, then re-triggers itself. When a
-// phase is exhausted it advances to the next one, and once every phase is done
-// it releases the kv-store lock. Keeping a single orchestrator in flight makes
-// the whole backfill sequential.
 const handler = async (): Promise<object> => {
   const state = await kv.get<BackfillState>(BACKFILL_STATE_KV_KEY);
 

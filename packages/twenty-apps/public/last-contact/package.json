@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/last-contact",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
