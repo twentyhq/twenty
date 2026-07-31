@@ -1,0 +1,165 @@
+---
+title: Trabajos en segundo plano
+description: Puede delegar el trabajo prolongado o sujeto a limitaciones de tasa a los workers de Twenty encolando otra ejecución de una función lógica en lugar de hacerlo todo en el mismo flujo.
+icon: layer-group
+---
+
+La ejecución de una función lógica está limitada por su `timeoutSeconds` (900 segundos como máximo). Cualquier cosa que no pueda terminar en esa ventana — una resincronización completa, una distribución por registro, una API de terceros que impone límites de tasa — debe dividirse en ejecuciones más pequeñas.
+
+`enqueueJob` hace exactamente eso: solicita a los workers de Twenty que ejecuten más tarde una de las funciones lógicas de su aplicación, en su propio proceso, con su propio presupuesto de tiempo de espera. La llamada devuelve de inmediato.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Poner en cola una ejecución
+
+Importa `enqueueJob` desde `twenty-sdk/logic-function` y apúntalo al `universalIdentifier` de la función lógica que quieres ejecutar.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+La función de destino recibe `payload` como su argumento de manejador, exactamente igual que cualquier otro disparador. Debe pertenecer a la **misma aplicación** que realiza la llamada: poner en cola la función de otra aplicación se rechaza con `Logic function not found`.
+
+<Note>
+`enqueueJob` devuelve tan pronto como se acepta el trabajo, no cuando ya se ha ejecutado. No devuelve el resultado del destino: haz que el destino escriba lo que produce en el [almacenamiento de pares clave-valor](/l/es/developers/extend/apps/logic/key-value-store) o en un registro del espacio de trabajo si necesitas leerlo después.
+</Note>
+
+## Opciones del trabajo
+
+| Opción       | Predeterminado | Rango                    | Qué hace                                                                                                                                                  |
+| ------------ | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`            | `0`–`10`                 | Intentos adicionales si la ejecución produce una excepción. Solo incrementa este valor para manejadores que se puedan ejecutar dos veces de forma segura. |
+| `delayMs`    | `0`            | `0`–`604800000` (7 días) | Espera este tiempo antes de que la ejecución sea elegible.                                                                                                |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**La prioridad todavía no es configurable.** Los trabajos encolados siempre se ejecutan con la prioridad más baja, para que el trabajo de la plataforma nunca se retrase por detrás de los trabajos de las aplicaciones. El control sobre la prioridad llegará pronto.
+</Note>
+
+La ejecución encolada hereda el usuario activo de la función que la puso en cola, por lo que actúa con los mismos permisos.
+
+## Úsalo: recorre por páginas una sincronización larga
+
+La forma clásica es una función que se pone en cola *a sí misma* con el cursor siguiente. Cada ejecución hace una página de trabajo bien dentro de su propio tiempo de espera, y la cadena se detiene cuando no queda nada.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Dividir por registro
+
+Cuando el trabajo es de forma natural por elemento, pon en cola un trabajo por elemento y deja que los workers los procesen en paralelo en lugar de iterar en línea.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Buenas prácticas para trabajos de larga duración
+
+Dos reglas cubren casi cualquier trabajo largo: **usa recursión en lugar de bucles** y **procesa un bloque acotado por ejecución**.
+
+Una ejecución que intenta hacerlo todo es la forma en que falla: alcanza el tiempo de espera y, con un reintento, vuelve a empezar todo desde cero. En su lugar, dimensiona un bloque para que termine con holgura dentro de `timeoutSeconds`, guarda tu posición y pon en cola la siguiente ejecución.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Por qué esto se mantiene bien:
+
+* **Dimensiona el bloque a partir del elemento más lento, no del promedio.** `CHUNK_SIZE × worst-case item time` tiene que caber en `timeoutSeconds` con margen de sobra, o la parte final de un bloque se pierde cuando se corta la ejecución.
+* **Haz que la condición de terminación sea explícita.** Haz recursión solo mientras haya vuelto un bloque completo. Una cadena que se detiene solo con "sin resultados" seguirá ejecutándose para siempre si la fuente alguna vez devuelve una página corta a mitad de camino.
+* **Guarda el progreso antes de poner en cola la siguiente ejecución**, de modo que un eslabón fallido se reinicie desde el último bloque completado en lugar de desde el principio.
+* **Mantén cada bloque idempotente.** Volver a procesar un bloque después de un reintento no debe escribir dos veces — indexa las escrituras por el registro o el id externo que estés procesando.
+* **Prefiere una cadena por bloques en lugar de una expansión masiva** cuando el trabajo interactúa con un tercero con limitación de tasa: una cadena con `delayMs` se autorregula, mientras que miles de trabajos encolados a la vez se vuelven elegibles de inmediato.
+
+<Warning>
+Los reintentos vuelven a ejecutar todo el manejador. Mantén los manejadores encolados idempotentes antes de establecer `retryLimit` por encima de `0`.
+</Warning>

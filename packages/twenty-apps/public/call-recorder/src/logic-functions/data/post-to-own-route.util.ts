@@ -1,7 +1,5 @@
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
-import { resolveOwnRouteBaseUrl } from 'src/logic-functions/data/resolve-own-route-base-url.util';
-
 const OWN_ROUTE_FLUSH_MS = 5_000;
 
 // Fire-and-forget POST to one of this app's own HTTP routes; a timeout only
@@ -14,9 +12,9 @@ export const postToOwnRoute = async ({
   body: object;
 }): Promise<boolean> => {
   try {
-    const client = new RestApiClient({ baseUrl: resolveOwnRouteBaseUrl() });
+    const client = new RestApiClient();
 
-    await client.post(path, body, {
+    await client.post(`/s${path}`, body, {
       signal: AbortSignal.timeout(OWN_ROUTE_FLUSH_MS),
     });
 

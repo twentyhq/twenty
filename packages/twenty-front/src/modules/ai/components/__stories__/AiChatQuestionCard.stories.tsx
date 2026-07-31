@@ -10,6 +10,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
 import { styled } from '@linaria/react';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -103,6 +104,7 @@ const meta: Meta<typeof AiChatQuestionCard> = {
     ),
     SnackBarDecorator,
     ComponentDecorator,
+    MemoryRouterDecorator,
     RootDecorator,
   ],
 };

@@ -2955,6 +2955,17 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type StartWorkspaceSetupChatResult {
+  outcome: WorkspaceSetupChatOutcome!
+  thread: AgentChatThread
+}
+
+enum WorkspaceSetupChatOutcome {
+  STARTED
+  ALREADY_STARTED
+  UNAVAILABLE
+}
+
 type AgentTurnEvaluation {
   id: UUID!
   turnId: UUID!
@@ -2976,6 +2987,11 @@ type WorkspaceAiStats {
   conversationsCount: Int!
   skillsCount: Int!
   toolsCount: Int!
+}
+
+type EnqueueJobResult {
+  enqueued: Boolean!
+  logicFunctionUniversalIdentifier: String!
 }
 
 type AppKeyValue {
@@ -3532,6 +3548,7 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
+  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -3542,6 +3559,7 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  startWorkspaceSetupChat(companyContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -4677,6 +4695,13 @@ input SetAppKeyValueInput {
   key: String!
   value: JSON
   scope: AppKeyValueScope = WORKSPACE
+}
+
+input EnqueueJobInput {
+  logicFunctionUniversalIdentifier: String!
+  payload: JSON
+  retryLimit: Int
+  delayMs: Int
 }
 
 input FileAttachmentInput {
