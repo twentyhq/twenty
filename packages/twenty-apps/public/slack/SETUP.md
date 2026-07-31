@@ -6,6 +6,26 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps). Use a dedicated app — do not reuse one across Twenty apps.
 
+   Under **Basic Information → Display Information** you can paste these descriptions (Slack caps the short description at 140 characters):
+
+   **Short description**
+
+   ```text
+   Your Twenty CRM inside Slack. Mention the bot to read, create and update records, and post to any channel from your workflows.
+   ```
+
+   **Long description**
+
+   ```text
+   Twenty brings your CRM into Slack so your team can work records without switching tabs.
+
+   Mention the bot in any channel or send it a direct message to ask about your data ("how many open opportunities do we have?") or change it ("create a company called ACME"). It replies in the thread using your CRM as context and remembers the conversation, so follow-ups need no new mention. It can read, create, update and soft-delete people, companies, opportunities, notes and tasks, with access controlled by a dedicated role you can tighten at any time.
+
+   Beyond the assistant, Twenty adds Slack steps to your workflows: post, update, delete and ephemeral messages, reactions and channel listing, so your automations reach the right channel at the right moment. A "Send Slack message" command lets anyone post to a channel from inside Twenty.
+
+   Twenty is the open-source CRM. Learn more at https://twenty.com.
+   ```
+
 2. **OAuth & Permissions → Bot Token Scopes.** Twenty uses Slack's bot OAuth (`oauth/v2/authorize` with `scope=…`), so scopes must be added here and not only under **User Token Scopes**, otherwise Slack refuses the install with *"doesn't have a bot user to install"*.
 
    The scopes requested at connect time must all appear under **Bot Token Scopes** (Slack validates the set):
