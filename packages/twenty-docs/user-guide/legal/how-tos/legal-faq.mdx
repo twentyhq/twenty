@@ -44,7 +44,7 @@ AI can be fully disabled by turning off all AI models in Settings → AI → Mod
 All data is encrypted in transit and at rest. Tenant data is isolated through a schema-per-tenant setup, and encryption keys are periodically rotated.
 </Accordion>
 <Accordion title="Which Twenty personnel or sub-processors may access customer workspaces, for what purposes, and how is access approved and logged?">
-Twenty's engineering and support teams can access customer workspaces only after the customer reports an issue and grants access via Settings → General → Security.
+Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Security, and it stays off until you turn it back on.
 </Accordion>
 <Accordion title="What is your incident-notification process and target notification timeframe following a confirmed security incident affecting our data?">
 In the event of a confirmed personal data breach affecting your data, we will notify you without undue delay and in any event within 48 hours of becoming aware of it. Our notification will include, to the extent known at the time: the nature of the breach, the categories and approximate volume of data and individuals affected, likely consequences, and the remediation and mitigation measures taken or planned. We will provide updates as the investigation progresses.
@@ -64,7 +64,7 @@ By default, soft-deleted records are kept for 14 days, after which they are perm
 A removed record remains in backups for 30 days, after which it is permanently deleted.
 </Accordion>
 <Accordion title="When a workspace is closed or full deletion is requested, what exact timeline applies to production data, attachments, logs, and backups?">
-When a workspace is deleted, its data is immediately removed from active systems. Backups are retained for 7 days, after which all data is permanently deleted.
+When a workspace is deleted, its data is removed from live systems within approximately 90 days of service termination, and usually much sooner. Back-up and archival copies are then overwritten or purged within a further 90 days, after which all data is permanently deleted. Throughout both periods the data is isolated from any operational use. On request, we can provide written certification once the purge is complete. See clause 4.9 of your Data Processing Agreement for the full terms.
 </Accordion>
 <Accordion title="During any backup-retention period, is deleted data isolated from operational access and use?">
 Yes, during any backup-retention period, deleted data is isolated from operational use.
