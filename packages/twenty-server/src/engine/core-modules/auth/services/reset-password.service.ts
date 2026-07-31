@@ -26,7 +26,7 @@ import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
 import { type PasswordResetTokenGenerationResult } from 'src/engine/core-modules/auth/types/password-reset-token-generation-result.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -42,7 +42,7 @@ export class ResetPasswordService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
-    private readonly emailService: EmailService,
+    private readonly emailSenderService: EmailSenderService,
     private readonly i18nService: I18nService,
     private readonly userService: UserService,
   ) {}
@@ -201,7 +201,7 @@ export class ResetPasswordService {
       : msg`Action Needed to Set Password`;
     const subject = i18n._(subjectTemplate);
 
-    await this.emailService.send({
+    await this.emailSenderService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,

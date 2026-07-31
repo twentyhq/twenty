@@ -13,7 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -41,7 +41,7 @@ describe('ResetPasswordService', () => {
   let userService: UserService;
   let workspaceRepository: Repository<WorkspaceEntity>;
   let appTokenRepository: Repository<AppTokenEntity>;
-  let emailService: EmailService;
+  let emailSenderService: EmailSenderService;
   let twentyConfigService: TwentyConfigService;
   let workspaceDomainsService: WorkspaceDomainsService;
 
@@ -65,9 +65,9 @@ describe('ResetPasswordService', () => {
           useClass: Repository,
         },
         {
-          provide: EmailService,
+          provide: EmailSenderService,
           useValue: {
-            send: jest.fn().mockResolvedValue({ success: true }),
+            send: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -101,7 +101,7 @@ describe('ResetPasswordService', () => {
     appTokenRepository = module.get<Repository<AppTokenEntity>>(
       getRepositoryToken(AppTokenEntity),
     );
-    emailService = module.get<EmailService>(EmailService);
+    emailSenderService = module.get<EmailSenderService>(EmailSenderService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
@@ -341,7 +341,7 @@ describe('ResetPasswordService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(emailService.send).toHaveBeenCalled();
+      expect(emailSenderService.send).toHaveBeenCalled();
     });
   });
 
