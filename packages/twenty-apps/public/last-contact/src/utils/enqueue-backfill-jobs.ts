@@ -16,6 +16,11 @@ import { executeWithRetry } from 'src/utils/execute-with-retry';
 // enqueueJob rejects delays beyond 7 days.
 const MAX_ENQUEUE_DELAY_MS = 7 * 24 * 60 * 60 * 1_000;
 
+// Batch handlers are idempotent (they recompute from source and overwrite), so
+// a batch that dies mid-run can safely be retried by the queue rather than
+// leaving its records unbackfilled.
+const BACKFILL_JOB_RETRY_LIMIT = 3;
+
 type BackfillPhasePlan = { phase: BackfillPhase; count: number; batches: number };
 
 const countPhaseRecords = async (
@@ -53,6 +58,7 @@ export const enqueueBackfillJobs = async (
           BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS[phase],
         payload: { batchId },
         delayMs: Math.min(enqueuedCount * sleepMs, MAX_ENQUEUE_DELAY_MS),
+        retryLimit: BACKFILL_JOB_RETRY_LIMIT,
       });
       enqueuedCount++;
     }
