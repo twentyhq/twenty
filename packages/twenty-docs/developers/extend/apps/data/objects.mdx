@@ -79,7 +79,7 @@ export default defineObject({
 - The `universalIdentifier` must be unique and stable across deployments.
 - Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
 - The `fields` array is optional — you can define objects without custom fields.
-- `openRecordIn` sets where records of this object open when clicked: `ObjectOpenRecordIn.USER_CHOICE` (the default, following each workspace member's own preference from Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL`, or `ObjectOpenRecordIn.RECORD_PAGE`. Pin it to `RECORD_PAGE` for records that need a full page to be usable, the way workflows and dashboards do.
+- `openRecordIn` sets where records of this object open when clicked: `ObjectOpenRecordIn.USER_CHOICE` (the default, following each workspace member's own preference from Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL`, or `ObjectOpenRecordIn.RECORD_PAGE`. Pin it to `RECORD_PAGE` for records that need a full page to be usable, the way workflows and dashboards do, or to `SIDE_PANEL` for records that only make sense as a quick panel, the way calendar events do.
 - Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
 - You can scaffold new objects with `yarn twenty dev:add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
 

@@ -145,6 +145,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         nameSingular: 'calendarEvent',
+        openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
         namePlural: 'calendarEvents',
         labelSingular: i18nLabel(msg`Calendar event`),
         labelPlural: i18nLabel(msg`Calendar events`),

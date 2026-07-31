@@ -24,7 +24,10 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 })
 export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRunner {
   // Workspace-invariant, so the standard application is only built once per run.
-  private pinnedStandardUniversalIdentifiers?: string[];
+  private standardOpenRecordInByUniversalIdentifier?: Record<
+    string,
+    ObjectOpenRecordIn
+  >;
 
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
@@ -35,11 +38,11 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
     super(workspaceIteratorService);
   }
 
-  private async getPinnedStandardUniversalIdentifiers(
+  private async getStandardOpenRecordInByUniversalIdentifier(
     workspaceId: string,
-  ): Promise<string[]> {
-    if (isDefined(this.pinnedStandardUniversalIdentifiers)) {
-      return this.pinnedStandardUniversalIdentifiers;
+  ): Promise<Record<string, ObjectOpenRecordIn>> {
+    if (isDefined(this.standardOpenRecordInByUniversalIdentifier)) {
+      return this.standardOpenRecordInByUniversalIdentifier;
     }
 
     const { twentyStandardFlatApplication } =
@@ -54,19 +57,23 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    this.pinnedStandardUniversalIdentifiers = Object.values(
-      standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (standardObjectMetadata) =>
-          standardObjectMetadata.openRecordIn === ObjectOpenRecordIn.RECORD_PAGE,
+    this.standardOpenRecordInByUniversalIdentifier = Object.fromEntries(
+      Object.values(
+        standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
       )
-      .map(
-        (standardObjectMetadata) => standardObjectMetadata.universalIdentifier,
-      );
+        .filter(isDefined)
+        .filter(
+          (standardObjectMetadata) =>
+            standardObjectMetadata.openRecordIn !==
+            ObjectOpenRecordIn.USER_CHOICE,
+        )
+        .map((standardObjectMetadata) => [
+          standardObjectMetadata.universalIdentifier,
+          standardObjectMetadata.openRecordIn,
+        ]),
+    );
 
-    return this.pinnedStandardUniversalIdentifiers;
+    return this.standardOpenRecordInByUniversalIdentifier;
   }
 
   override async runOnWorkspace({
@@ -81,19 +88,29 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
         'flatViewMaps',
       ]);
 
-    const pinnedUniversalIdentifiers = new Set(
-      await this.getPinnedStandardUniversalIdentifiers(workspaceId),
-    );
+    const targetOpenRecordInByUniversalIdentifier: Record<
+      string,
+      ObjectOpenRecordIn
+    > = {
+      ...(await this.getStandardOpenRecordInByUniversalIdentifier(workspaceId)),
+    };
 
+    // A deliberate per-view record page choice is lifted to the object, unless
+    // the standard definitions already pin that object.
     for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
       if (
         isDefined(flatView) &&
         flatView.key === ViewKey.INDEX &&
-        flatView.openRecordIn === ViewOpenRecordIn.RECORD_PAGE
+        flatView.openRecordIn === ViewOpenRecordIn.RECORD_PAGE &&
+        !isDefined(
+          targetOpenRecordInByUniversalIdentifier[
+            flatView.objectMetadataUniversalIdentifier
+          ],
+        )
       ) {
-        pinnedUniversalIdentifiers.add(
-          flatView.objectMetadataUniversalIdentifier,
-        );
+        targetOpenRecordInByUniversalIdentifier[
+          flatView.objectMetadataUniversalIdentifier
+        ] = ObjectOpenRecordIn.RECORD_PAGE;
       }
     }
 
@@ -103,18 +120,27 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (flatObjectMetadata) =>
-          pinnedUniversalIdentifiers.has(
-            flatObjectMetadata.universalIdentifier,
-          ) &&
-          flatObjectMetadata.openRecordIn !== ObjectOpenRecordIn.RECORD_PAGE,
-      )
-      .map((flatObjectMetadata) => ({
-        ...flatObjectMetadata,
-        openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
-        updatedAt: now,
-      }));
+      .flatMap((flatObjectMetadata) => {
+        const targetOpenRecordIn =
+          targetOpenRecordInByUniversalIdentifier[
+            flatObjectMetadata.universalIdentifier
+          ];
+
+        if (
+          !isDefined(targetOpenRecordIn) ||
+          flatObjectMetadata.openRecordIn === targetOpenRecordIn
+        ) {
+          return [];
+        }
+
+        return [
+          {
+            ...flatObjectMetadata,
+            openRecordIn: targetOpenRecordIn,
+            updatedAt: now,
+          },
+        ];
+      });
 
     if (objectMetadatasToUpdate.length === 0) {
       this.logger.log(
@@ -125,7 +151,7 @@ export class SeedObjectOpenRecordInCommand extends ProvisionedWorkspaceCommandRu
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: pinning ${objectMetadatasToUpdate.length} object(s) to the record page`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: seeding openRecordIn on ${objectMetadatasToUpdate.length} object(s)`,
     );
 
     if (isDryRun) {
