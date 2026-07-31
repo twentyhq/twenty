@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
-import { Trans } from '@lingui/react';
+import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio } from 'twenty-ui/input';
@@ -70,6 +70,8 @@ export const SettingsRadioSettingsCard = <
   options,
   value,
 }: SettingsRadioSettingsCardProps<Option>) => {
+  const { i18n } = useLingui();
+
   const handleKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
     optionValue: Option['value'],
@@ -100,11 +102,9 @@ export const SettingsRadioSettingsCard = <
               <StyledOptionHeader>
                 {option.cardMedia}
                 <StyledTextContainer>
-                  <StyledTitle>
-                    <Trans id={option.title.id} />
-                  </StyledTitle>
+                  <StyledTitle>{i18n._(option.title)}</StyledTitle>
                   <StyledDescription>
-                    <Trans id={option.description.id} />
+                    {i18n._(option.description)}
                   </StyledDescription>
                 </StyledTextContainer>
                 <StyledRadioContainer
