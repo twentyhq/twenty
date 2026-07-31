@@ -8,7 +8,7 @@ import {
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'Twenty Fireflies',
+  displayName: 'Fireflies',
   description:
     'Sync Fireflies call transcripts and AI summaries into CallRecording records linked to matching CalendarEvents in Twenty, and trigger sync / list / search of Fireflies calls from workflows and the AI chat.',
   logoUrl: 'public/twenty-fireflies.svg',
