@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { IconArrowsDiagonal, IconUserCog } from 'twenty-ui/icon';
+import { IconArrowsDiagonal, IconUserCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type OpenRecordInCardMediaProps = {
@@ -30,6 +30,21 @@ const StyledPreviewCanvas = styled.div`
 
 const StyledMemberPreferenceCanvas = styled(StyledPreviewCanvas)`
   flex-direction: column;
+  position: relative;
+`;
+
+const StyledMemberPreferenceIcon = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.color.blue7};
+  border-radius: 50%;
+  color: ${themeCssVariables.font.color.inverted};
+  display: flex;
+  height: 16px;
+  justify-content: center;
+  left: 6px;
+  position: absolute;
+  top: 10px;
+  width: 16px;
 `;
 
 const StyledSidePanelPreview = styled.div`
@@ -78,8 +93,11 @@ export const OpenRecordInCardMedia = ({
         <StyledMemberPreferenceCanvas>
           <SidePanelPreview />
           <StyledFullPage>
-            <IconUserCog size={10} />
+            <IconArrowsDiagonal size={14} />
           </StyledFullPage>
+          <StyledMemberPreferenceIcon>
+            <IconUserCircle size={14} />
+          </StyledMemberPreferenceIcon>
         </StyledMemberPreferenceCanvas>
       </StyledPreviewFrame>
     );
