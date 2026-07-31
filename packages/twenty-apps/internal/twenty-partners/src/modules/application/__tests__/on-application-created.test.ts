@@ -71,7 +71,6 @@ describe('on-application-created', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  // Pins the branch ordering: partnerId first, partnerUserId only inside the admin branch.
   it('resolves the candidacy when the self-apply row already carries partnerUser', async () => {
     queryMock.mockResolvedValue({
       partners: { edges: [{ node: { id: PARTNER_ID } }] },

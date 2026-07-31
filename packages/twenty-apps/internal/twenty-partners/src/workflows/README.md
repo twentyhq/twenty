@@ -53,9 +53,10 @@ field …"*. `state` defaults to `APPLIED` on its own.
    Partner User mapping is live. If the workflow already exists, edit it instead: add
    **Partner User**, remove every other mapping, republish.
 2. `yarn rls:configure` (`:prod`) — narrows the Application predicate to `partnerUser IS me`.
-3. `yarn backfill:partner-user` (`:prod`) — stamps `partnerUser` on rows created before the
-   narrowing. Skip it and an admin-created invite stays invisible to the partner it was
-   addressed to.
+
+Rows created before the narrowing carry no `partnerUser`, so the predicate hides them from
+their own partner. The app's post-install logic function stamps them during `app:install`,
+before step 2 runs. No manual step.
 
 ### Expected UI (partner)
 

@@ -85,7 +85,6 @@ export default defineObject({
       },
     },
     {
-      // RLS pivot: a row without it is invisible to its own partner.
       universalIdentifier: APPLICATION_PARTNER_USER_FIELD_ID,
       type: FieldType.RELATION,
       name: 'partnerUser',

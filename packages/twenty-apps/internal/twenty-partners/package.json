@@ -20,8 +20,6 @@
     "test:watch": "vitest",
     "seed": "tsx src/scripts/seed.ts",
     "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
-    "backfill:partner-user": "tsx src/scripts/backfill-partner-user.ts",
-    "backfill:partner-user:prod": "ENV_FILE=.env.prod tsx src/scripts/backfill-partner-user.ts",
     "purge": "tsx src/scripts/purge-soft-deleted.ts",
     "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
     "rls:configure": "tsx src/scripts/configure-partner-rls.ts",

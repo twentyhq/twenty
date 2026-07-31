@@ -416,9 +416,8 @@ export default defineRole({
     },
     // Application — lock every field except pitch and opportunity (partner sets opportunity
     // on apply/create; state is populated by on-application-created as the app). partnerUser
-    // is listed as locked but stays writable at insert: the server exempts RLS predicate
-    // fields there (permissions.utils.ts, insert case only), which is what lets the Apply
-    // workflow stamp the applying member.
+    // is listed as locked but stays writable at insert — the server exempts RLS predicate
+    // fields there (permissions.utils.ts, insert case only).
     // System/server-managed fields (id, timestamps, updatedBy, position, searchVector) stay
     // out — locking updatedBy/position breaks every update (same trap as Opportunity above).
     {

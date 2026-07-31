@@ -32,7 +32,6 @@ export async function resolveCandidacy(
 
     const ownerRes = await getPartnerOwner(client, after.partnerId);
     const partnerUserId = ownerRes.partner?.partnerUserId;
-    // Rows left here are picked up by `yarn backfill:partner-user` once the partner links.
     if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });

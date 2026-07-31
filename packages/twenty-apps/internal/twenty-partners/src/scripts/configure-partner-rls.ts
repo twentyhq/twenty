@@ -85,7 +85,6 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'opportunity',
 ]);
 
-// Printed before and after the writes: the operator reads this output, not the runbook.
 const APPLY_WORKFLOW_WARNING =
   `[rls:configure] \u26a0 The "Apply to Brief" workflow in this workspace MUST map\n` +
   `  Partner User -> {{trigger.workspaceMember}} and map no other field, and every\n` +
