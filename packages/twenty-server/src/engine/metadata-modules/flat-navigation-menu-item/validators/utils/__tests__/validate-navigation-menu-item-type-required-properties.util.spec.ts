@@ -4,11 +4,14 @@ import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/met
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 
+const VALID_UUID = '20202020-b001-4b01-8b01-c0aba11c0001';
+const OTHER_VALID_UUID = '20202020-b002-4b02-8b02-c0aba11c0002';
+
 const buildFlatNavigationMenuItem = (
   overrides: Partial<UniversalFlatNavigationMenuItem>,
 ): UniversalFlatNavigationMenuItem =>
   ({
-    universalIdentifier: '20202020-0000-0000-0000-000000000001',
+    universalIdentifier: VALID_UUID,
     name: null,
     link: null,
     icon: null,
@@ -41,67 +44,126 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
   it.each([
     {
       type: NavigationMenuItemType.FOLDER,
-      missingProperties: ['name'],
+      expectedMessages: ['A name is required for FOLDER type'],
     },
     {
       type: NavigationMenuItemType.OBJECT,
-      missingProperties: ['targetObjectMetadataUniversalIdentifier'],
+      expectedMessages: [
+        'A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type',
+      ],
     },
     {
       type: NavigationMenuItemType.VIEW,
-      missingProperties: ['viewUniversalIdentifier'],
+      expectedMessages: [
+        'A valid viewUniversalIdentifier is required for VIEW type',
+      ],
     },
     {
       type: NavigationMenuItemType.RECORD,
-      missingProperties: [
-        'targetRecordId',
-        'targetObjectMetadataUniversalIdentifier',
+      expectedMessages: [
+        'A valid targetRecordId is required for RECORD type',
+        'A valid targetObjectMetadataUniversalIdentifier is required for RECORD type',
       ],
     },
     {
       type: NavigationMenuItemType.LINK,
-      missingProperties: ['link'],
+      expectedMessages: ['A valid link is required for LINK type'],
     },
     {
       type: NavigationMenuItemType.PAGE_LAYOUT,
-      missingProperties: ['pageLayoutUniversalIdentifier'],
+      expectedMessages: [
+        'A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type',
+      ],
     },
   ])(
-    'should report every missing universal property for $type type',
-    ({ type, missingProperties }) => {
+    'should report every missing property for $type type',
+    ({ type, expectedMessages }) => {
       const errors = validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: buildFlatNavigationMenuItem({ type }),
       });
 
-      expect(errors.map(({ message }) => message)).toEqual(
-        missingProperties.map(
-          (property) => `${property} is required for ${type} type`,
-        ),
-      );
+      expect(errors.map(({ message }) => message)).toEqual(expectedMessages);
     },
   );
 
-  it('should not report any error when required universal properties are defined', () => {
+  it.each([
+    {
+      type: NavigationMenuItemType.FOLDER,
+      overrides: { name: 'My folder' },
+    },
+    {
+      type: NavigationMenuItemType.OBJECT,
+      overrides: { targetObjectMetadataUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.VIEW,
+      overrides: { viewUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.RECORD,
+      overrides: {
+        targetRecordId: VALID_UUID,
+        targetObjectMetadataUniversalIdentifier: OTHER_VALID_UUID,
+      },
+    },
+    {
+      type: NavigationMenuItemType.LINK,
+      overrides: { link: 'https://twenty.com' },
+    },
+    {
+      type: NavigationMenuItemType.PAGE_LAYOUT,
+      overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
+    },
+  ])(
+    'should not report any error when $type type properties are valid',
+    ({ type, overrides }) => {
+      const errors = validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type,
+          ...overrides,
+        }),
+      });
+
+      expect(errors).toEqual([]);
+    },
+  );
+
+  it('should treat blank folder names as missing', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
-        type: NavigationMenuItemType.PAGE_LAYOUT,
-        pageLayoutUniversalIdentifier: '20202020-0000-0000-0000-0000000000aa',
-      }),
-    });
-
-    expect(errors).toEqual([]);
-  });
-
-  it('should treat blank strings as missing', () => {
-    const errors = validateNavigationMenuItemTypeRequiredProperties({
-      flatNavigationMenuItem: buildFlatNavigationMenuItem({
-        type: NavigationMenuItemType.LINK,
-        link: '   ',
+        type: NavigationMenuItemType.FOLDER,
+        name: '   ',
       }),
     });
 
     expect(errors.map(({ message }) => message)).toEqual([
-      'link is required for LINK type',
+      'A name is required for FOLDER type',
+    ]);
+  });
+
+  it('should report an error when the link is not a valid url', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.LINK,
+        link: 'not a link',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid link is required for LINK type',
+    ]);
+  });
+
+  it('should report an error when a universal identifier is not a valid uuid', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.VIEW,
+        viewUniversalIdentifier: 'not-a-uuid',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid viewUniversalIdentifier is required for VIEW type',
     ]);
   });
 });
