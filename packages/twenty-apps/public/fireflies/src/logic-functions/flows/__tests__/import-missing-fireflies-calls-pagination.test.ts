@@ -84,7 +84,7 @@ describe('importMissingFirefliesCalls pagination', () => {
     );
     let nowMilliseconds = 0;
     const getNowMilliseconds = () => {
-      nowMilliseconds += 60_000;
+      nowMilliseconds += 1_000;
 
       return nowMilliseconds;
     };
@@ -96,7 +96,7 @@ describe('importMissingFirefliesCalls pagination', () => {
       apiKey: FIREFLIES_API_KEY,
       coreApiClient: new CoreApiClient(),
       cursor: initialCursor,
-      deadlineAtMilliseconds: 120_000,
+      deadlineAtMilliseconds: 100_000,
       getNowMilliseconds,
       sleep: skipSleep,
     });
@@ -109,6 +109,52 @@ describe('importMissingFirefliesCalls pagination', () => {
         continuationCursor: {
           ...initialCursor,
           skip: pageSize,
+        },
+      }),
+    );
+  });
+
+  it('returns a mid-page cursor when the deadline expires during a page', async () => {
+    const pageSize = 50;
+    const newestCallDateMilliseconds = Date.parse('2026-06-10T00:00:00.000Z');
+    const initialCursor = {
+      fromDate: FIREFLIES_BACKFILL_FROM_DATE,
+      toDate: '2026-06-11T00:00:00.000Z',
+      skip: 0,
+    };
+    const fullPage = Array.from({ length: pageSize }, (_, index) =>
+      buildListedTranscript(
+        `call-${index}`,
+        newestCallDateMilliseconds - index * 60_000,
+      ),
+    );
+    let nowMilliseconds = 0;
+    const getNowMilliseconds = () => {
+      nowMilliseconds += 60_000;
+
+      return nowMilliseconds;
+    };
+
+    serveFirefliesApi([fullPage], fetchMock);
+
+    const { CoreApiClient } = await import('twenty-client-sdk/core');
+    const result = await importMissingFirefliesCalls({
+      apiKey: FIREFLIES_API_KEY,
+      coreApiClient: new CoreApiClient(),
+      cursor: initialCursor,
+      deadlineAtMilliseconds: 150_000,
+      getNowMilliseconds,
+      sleep: skipSleep,
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        stopReason: 'deadline',
+        pageCount: 1,
+        importedCallCount: 1,
+        continuationCursor: {
+          ...initialCursor,
+          skip: 1,
         },
       }),
     );

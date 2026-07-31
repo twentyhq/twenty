@@ -149,12 +149,22 @@ const importNextFirefliesTranscriptPage = async ({
     firefliesCallSummaries,
     callRecordingFieldStates,
     pageCursor: cursor,
+    deadlineAtMilliseconds,
+    getNowMilliseconds,
     sleep,
   });
   const nextFirefliesBackfillProgress = addPageToFirefliesBackfillProgress({
     firefliesBackfillProgress,
     pageResult: pageSyncResult,
   });
+
+  if (pageSyncResult.status === 'deadline') {
+    return {
+      stopReason: 'deadline',
+      ...nextFirefliesBackfillProgress,
+      continuationCursor: pageSyncResult.continuationCursor,
+    };
+  }
 
   if (
     pageSyncResult.status === 'rate-limited' ||
