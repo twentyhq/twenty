@@ -235,7 +235,10 @@ describe('UpgradeMigrationService', () => {
       });
 
       expect(save).toHaveBeenCalledTimes(2);
-      expect(saved.at(-1)).toMatchObject({ attempt: 5, status: 'completed' });
+      expect(saved[saved.length - 1]).toMatchObject({
+        attempt: 5,
+        status: 'completed',
+      });
     });
 
     it('gives up on an error that is not an attempt collision', async () => {
@@ -269,7 +272,7 @@ describe('UpgradeMigrationService', () => {
         executedByVersion: 'test',
       });
 
-      expect(saved.at(-1)).toMatchObject({ attempt: 10 });
+      expect(saved[saved.length - 1]).toMatchObject({ attempt: 10 });
     });
   });
 });
