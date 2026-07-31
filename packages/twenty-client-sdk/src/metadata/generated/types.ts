@@ -2732,6 +2732,9 @@ export default {
             "displayName": [
                 1
             ],
+            "logoUrl": [
+                1
+            ],
             "oauth": [
                 124
             ],

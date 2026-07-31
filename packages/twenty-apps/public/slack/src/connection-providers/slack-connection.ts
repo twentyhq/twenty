@@ -9,6 +9,7 @@ export default defineConnectionProvider({
   universalIdentifier: SLACK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: 'slack',
   displayName: 'Slack',
+  logo: 'public/twenty-slack.svg',
   type: 'oauth',
   onConnectLogicFunction: {
     universalIdentifier: SLACK_TEAM_CLAIM_UNIVERSAL_IDENTIFIER,

@@ -35,6 +35,15 @@ export class ApplicationConnectionProviderDTO {
   @Field()
   displayName: string;
 
+  // Not exposed via @Field: raw manifest-relative path. Only logoUrl below
+  // (the resolved servable url) is meant to be consumed over GraphQL.
+  logo: string | null;
+
+  // Explicit String type: same reflection limitation as `type` above, this
+  // time triggered by the `string | null` union rather than a string union.
+  @Field(() => String, { nullable: true })
+  logoUrl: string | null;
+
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })
   oauth: ApplicationConnectionProviderOAuthConfigDTO | null;
 }

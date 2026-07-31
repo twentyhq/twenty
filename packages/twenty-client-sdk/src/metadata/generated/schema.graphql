@@ -1402,6 +1402,7 @@ type ApplicationConnectionProvider {
   type: String!
   name: String!
   displayName: String!
+  logoUrl: String
   oauth: ApplicationConnectionProviderOAuthConfig
 }
 

@@ -34,6 +34,15 @@ export class ConnectionProviderEntity
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
+  // Relative path into the app's public/ assets, e.g. 'public/logo.svg'.
+  // Resolved to a servable URL by ApplicationConnectionProviderResolver.logoUrl.
+  @Column({ nullable: true, type: 'varchar' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.27.0_AddLogoToConnectionProviderFastInstanceCommand_1785472373539',
+  })
+  logo: string | null;
+
   @Column({ nullable: false, type: 'varchar' })
   type: ConnectionProviderType;
 
