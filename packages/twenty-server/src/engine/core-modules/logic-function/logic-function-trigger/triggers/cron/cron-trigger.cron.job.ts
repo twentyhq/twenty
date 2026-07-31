@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -12,6 +13,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -34,6 +36,7 @@ export class CronTriggerCronJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -50,9 +53,10 @@ export class CronTriggerCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const { flatLogicFunctionMaps } =
+        const { flatLogicFunctionMaps, flatApplicationMaps } =
           await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
             'flatLogicFunctionMaps',
+            'flatApplicationMaps',
           ]);
 
         const logicFunctions = Object.values(
@@ -84,6 +88,22 @@ export class CronTriggerCronJob {
           if (!shouldDispatch) {
             continue;
           }
+
+          const application = findActiveFlatApplicationById(
+            flatApplicationMaps,
+            logicFunction.applicationId,
+          );
+          const applicationRegistrationId =
+            application?.applicationRegistrationId;
+
+          if (!isDefined(applicationRegistrationId)) {
+            continue;
+          }
+
+          await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+            applicationId: logicFunction.applicationId,
+            applicationRegistrationId,
+          });
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData>(
             LogicFunctionTriggerJob.name,

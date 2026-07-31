@@ -1,3 +1,4 @@
+import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels';
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
@@ -300,6 +301,12 @@ export const useChartSettingsValues = ({
           ? (configuration.displayLegend ?? true)
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.FORMAT:
+        if (isBarOrLineChart || isPieChart) {
+          return getChartNumberFormatLabel(
+            configuration.numberFormat ?? CHART_NUMBER_FORMAT_DEFAULT,
+          );
+        }
+
         return configuration.__typename === 'AggregateChartConfiguration' &&
           isDefined(configuration.numberFormat)
           ? getChartNumberFormatLabel(configuration.numberFormat)

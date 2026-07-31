@@ -53,7 +53,8 @@ export default definePageLayout({
 
 * `type`은 `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` 중 하나입니다. 'RECORD_PAGE'를 사용하면 특정 객체의 상세 보기를 사용자 지정할 수 있습니다.
 * `objectUniversalIdentifier`는 이 레이아웃이 적용되는 객체를 지정합니다.
-* 각 `tab`은 `title`, `position`, `layoutMode`(`VERTICAL_LIST`는 레코드 페이지용, `GRID`는 대시보드용)를 통해 페이지의 섹션을 정의합니다. 단일 위젯이 있는 탭은 자동으로 전체 너비로 렌더링되며, 여러 위젯이 있으면 카드 형태로 위에서 아래로 쌓입니다.
+* 각 `tab`은 `title`, `position`, `layoutMode`를 사용해 페이지의 섹션을 정의합니다. 레코드 페이지와 독립형 페이지에는 `VERTICAL_LIST`를, 대시보드에는 `GRID`를 사용합니다. `VERTICAL_LIST` 탭에서는 단일 위젯이 전체 너비로 렌더링되며 탭 전체를 차지합니다. 여러 개의 위젯이 있으면 카드 형태로 위에서 아래로 쌓입니다. `GRID` 탭은 위젯의 개수와 관계없이 항상 12열 그리드에서 카드 형태로 배치되므로, 하나의 위젯이 페이지 전체를 채우도록 하려면 `VERTICAL_LIST`를 선택하세요.
+* `layoutMode`를 명시적으로 설정하세요. 이를 생략하면 `STANDALONE_PAGE`에서는 `VERTICAL_LIST`가, 그 외의 경우에는 `GRID`가 기본값으로 설정되는데, 이는 레코드 페이지에서는 거의 원하지 않는 동작입니다.
 * 탭 내부의 각 `widget`은 [front component](/l/ko/developers/extend/apps/layout/front-components), 관계 목록 또는 기타 기본 제공 위젯 타입을 렌더링할 수 있습니다.
 * 탭의 `position`은 탭의 순서를 제어합니다. 값을 더 높게 설정하면(예: 50) 기본 탭 뒤에 사용자 지정 탭을 배치할 수 있습니다.
 

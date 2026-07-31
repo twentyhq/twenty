@@ -10,9 +10,11 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   RouteTriggerException,
@@ -20,6 +22,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { sanitizeRouteTriggerPath } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/sanitize-route-trigger-path.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -30,6 +33,18 @@ import {
   LogicFunctionExecutionExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
+
+type RouteTriggerWorkspace = Pick<
+  WorkspaceEntity,
+  'activationStatus' | 'id' | 'subdomain'
+>;
+
+type RouteTriggerRequestContext = {
+  workspace: RouteTriggerWorkspace;
+  applicationId: string | null;
+  isIsolatedOrigin: boolean;
+  authenticationContext: AuthContext | undefined;
+};
 
 @Injectable()
 export class RouteTriggerService {
@@ -44,21 +59,51 @@ export class RouteTriggerService {
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
-  private async getLogicFunctionWithPathParamsOrFail({
+  private async resolveAuthenticationContextForWorkspaceFallback({
     request,
-    httpMethod,
+    workspaceFromHost,
   }: {
     request: Request;
-    httpMethod: HTTPMethod;
-  }): Promise<{
-    logicFunction: LogicFunctionEntity;
-    pathParams: Partial<Record<string, string | string[]>>;
-    isIsolatedOrigin: boolean;
-  }> {
+    workspaceFromHost: RouteTriggerWorkspace | undefined;
+  }): Promise<AuthContext | undefined> {
+    if (
+      isDefined(workspaceFromHost) ||
+      !isNonEmptyString(request.headers.authorization)
+    ) {
+      return undefined;
+    }
+
+    try {
+      return await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      if (error instanceof AuthException) {
+        return undefined;
+      }
+
+      throw error;
+    }
+  }
+
+  private async resolveRouteTriggerRequestContextOrFail(
+    request: Request,
+  ): Promise<RouteTriggerRequestContext> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const { workspace, publicDomain, isIsolatedOrigin } =
-      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
+    const {
+      workspace: workspaceFromHost,
+      publicDomain,
+      isIsolatedOrigin,
+    } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
+      host,
+    );
+
+    const authenticationContext =
+      await this.resolveAuthenticationContextForWorkspaceFallback({
+        request,
+        workspaceFromHost,
+      });
+
+    const workspace = workspaceFromHost ?? authenticationContext?.workspace;
 
     assertIsDefinedOrThrow(
       workspace,
@@ -75,20 +120,26 @@ export class RouteTriggerService {
       );
     }
 
-    // App-scoped public domain → restrict matches to that app's logic functions.
-    const applicationId = publicDomain?.applicationId ?? null;
+    return {
+      workspace,
+      applicationId: publicDomain?.applicationId ?? null,
+      isIsolatedOrigin,
+      authenticationContext,
+    };
+  }
 
-    const logicFunctionsWithHttpRouteTrigger =
-      await this.logicFunctionRepository.find({
-        where: {
-          workspaceId: workspace.id,
-          httpRouteTriggerSettings: Not(IsNull()),
-          ...(isDefined(applicationId) ? { applicationId } : {}),
-        },
-      });
-
-    const requestPath = request.path.replace(/^\/s\//, '/');
-
+  private findLogicFunctionWithPathParamsOrFail({
+    httpMethod,
+    logicFunctionsWithHttpRouteTrigger,
+    requestPath,
+  }: {
+    httpMethod: HTTPMethod;
+    logicFunctionsWithHttpRouteTrigger: LogicFunctionEntity[];
+    requestPath: string;
+  }): {
+    logicFunction: LogicFunctionEntity;
+    pathParams: Partial<Record<string, string | string[]>>;
+  } {
     for (const logicFunction of logicFunctionsWithHttpRouteTrigger) {
       const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
@@ -105,16 +156,9 @@ export class RouteTriggerService {
       const routeMatched = routeMatcher(requestPath);
 
       if (routeMatched) {
-        this.assertLegacyRouteIsServableOrThrow({
-          logicFunction,
-          workspace,
-          isIsolatedOrigin,
-        });
-
         return {
           logicFunction,
           pathParams: routeMatched.params,
-          isIsolatedOrigin,
         };
       }
     }
@@ -131,7 +175,7 @@ export class RouteTriggerService {
     isIsolatedOrigin,
   }: {
     logicFunction: LogicFunctionEntity;
-    workspace: WorkspaceEntity;
+    workspace: RouteTriggerWorkspace;
     isIsolatedOrigin: boolean;
   }) {
     if (isIsolatedOrigin) {
@@ -177,33 +221,6 @@ export class RouteTriggerService {
     }
   }
 
-  private async validateWorkspaceFromRequest({
-    request,
-    workspaceId,
-  }: {
-    request: Request;
-    workspaceId: string;
-  }) {
-    const authContext =
-      await this.accessTokenService.validateTokenByRequest(request);
-
-    if (!isDefined(authContext.workspace)) {
-      throw new RouteTriggerException(
-        'Workspace not found',
-        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (authContext.workspace.id !== workspaceId) {
-      throw new RouteTriggerException(
-        'You are not authorized',
-        RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    return authContext;
-  }
-
   private mapErrorToRouteTriggerCode(
     error: unknown,
   ): RouteTriggerExceptionCode {
@@ -235,11 +252,34 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
-    const { logicFunction, pathParams, isIsolatedOrigin } =
-      await this.getLogicFunctionWithPathParamsOrFail({
-        request,
-        httpMethod,
+    const {
+      workspace,
+      applicationId,
+      isIsolatedOrigin,
+      authenticationContext,
+    } = await this.resolveRouteTriggerRequestContextOrFail(request);
+
+    const logicFunctionsWithHttpRouteTrigger =
+      await this.logicFunctionRepository.find({
+        where: {
+          workspaceId: workspace.id,
+          httpRouteTriggerSettings: Not(IsNull()),
+          ...(isDefined(applicationId) ? { applicationId } : {}),
+        },
       });
+
+    const { logicFunction, pathParams } =
+      this.findLogicFunctionWithPathParamsOrFail({
+        httpMethod,
+        logicFunctionsWithHttpRouteTrigger,
+        requestPath: sanitizeRouteTriggerPath(request.path),
+      });
+
+    this.assertLegacyRouteIsServableOrThrow({
+      logicFunction,
+      workspace,
+      isIsolatedOrigin,
+    });
 
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
@@ -247,13 +287,26 @@ export class RouteTriggerService {
     let userId: string | null = null;
 
     if (httpRouteSettings?.isAuthRequired) {
-      const authContext = await this.validateWorkspaceFromRequest({
-        request,
-        workspaceId: logicFunction.workspaceId,
-      });
+      const routeAuthenticationContext =
+        authenticationContext ??
+        (await this.accessTokenService.validateTokenByRequest(request));
 
-      userWorkspaceId = authContext.userWorkspaceId ?? null;
-      userId = authContext.user?.id ?? null;
+      if (!isDefined(routeAuthenticationContext.workspace)) {
+        throw new RouteTriggerException(
+          'Workspace not found',
+          RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      if (routeAuthenticationContext.workspace.id !== workspace.id) {
+        throw new RouteTriggerException(
+          'You are not authorized',
+          RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      userWorkspaceId = routeAuthenticationContext.userWorkspaceId ?? null;
+      userId = routeAuthenticationContext.user?.id ?? null;
     }
 
     let outcome;

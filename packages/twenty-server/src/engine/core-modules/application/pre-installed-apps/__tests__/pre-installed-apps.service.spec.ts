@@ -9,6 +9,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 describe('PreInstalledAppsService', () => {
   let service: PreInstalledAppsService;
@@ -18,11 +20,13 @@ describe('PreInstalledAppsService', () => {
     findOne: jest.Mock;
   };
   let workspaceIteratorService: { iterate: jest.Mock };
+  let messageQueueService: { add: jest.Mock };
 
   beforeEach(async () => {
     applicationInstallService = { installApplication: jest.fn() };
     applicationRegistrationRepository = { find: jest.fn(), findOne: jest.fn() };
     workspaceIteratorService = { iterate: jest.fn() };
+    messageQueueService = { add: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -38,6 +42,10 @@ describe('PreInstalledAppsService', () => {
         {
           provide: WorkspaceIteratorService,
           useValue: workspaceIteratorService,
+        },
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: messageQueueService,
         },
       ],
     }).compile();

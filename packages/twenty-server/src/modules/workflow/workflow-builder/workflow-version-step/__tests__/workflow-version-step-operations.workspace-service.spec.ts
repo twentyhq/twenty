@@ -6,7 +6,9 @@ import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-funct
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -34,6 +36,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
+  let aiModelRegistryService: jest.Mocked<AiModelRegistryService>;
+  let workspaceRepository: jest.Mocked<any>;
 
   beforeEach(async () => {
     codeStepBuildService = {
@@ -123,6 +127,15 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       flush: jest.fn(),
     } as unknown as jest.Mocked<WorkspaceCacheService>;
 
+    aiModelRegistryService = {
+      getEffectiveModelConfig: jest.fn(),
+      validateModelAvailability: jest.fn(),
+    } as unknown as jest.Mocked<AiModelRegistryService>;
+
+    workspaceRepository = {
+      findOneBy: jest.fn().mockResolvedValue(null),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowVersionStepOperationsWorkspaceService,
@@ -149,6 +162,14 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: objectMetadataRepository,
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: workspaceRepository,
+        },
+        {
+          provide: AiModelRegistryService,
+          useValue: aiModelRegistryService,
         },
         {
           provide: WorkflowCommonWorkspaceService,

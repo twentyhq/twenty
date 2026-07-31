@@ -4,10 +4,12 @@ description: Ship pre-configured saved views — column order, filters, groups �
 icon: 'list'
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app.
+
+Every object automatically gets its main list view (the "All ..." table an `OBJECT` navigation item opens) provisioned by the server — including the objects your app creates, with one column per field your app declares. Views you define with `defineView()` are always **additional** views on top of that default one.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,8 +34,8 @@ export default defineView({
 ## Key points
 
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-- `key: ViewKey.INDEX` marks the view as the object's main list view (the one an `OBJECT` navigation item opens).
-- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Fields](/developers/extend/apps/data/system-fields).
+- The object's main list view is server-owned: `key` is deprecated and ignored, so a manifest view can never claim it. Ship a `VIEW` navigation item if you want your view one click away in the sidebar.
+- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
@@ -44,7 +45,7 @@ export default defineView({
 |----------|--------|-------------|
 | `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
-| `openRecordIn` | `ViewOpenRecordIn.SIDE_PANEL` (default), `ViewOpenRecordIn.RECORD_PAGE` | Where clicking a record opens it. |
+| `openRecordIn` | deprecated | No longer read: where records open is now a property of the [object](/developers/extend/apps/data/objects) (`openRecordIn` on `defineObject()`), falling back to each member's own preference. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
 | `isCompact` | `boolean` | Compact row display. |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |

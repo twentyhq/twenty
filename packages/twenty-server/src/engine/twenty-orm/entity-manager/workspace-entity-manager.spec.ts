@@ -1,6 +1,7 @@
 import {
   type FieldMetadataType,
   type ObjectsPermissions,
+  ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
@@ -124,6 +125,7 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIEditable: true,
       isUICreatable: true,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

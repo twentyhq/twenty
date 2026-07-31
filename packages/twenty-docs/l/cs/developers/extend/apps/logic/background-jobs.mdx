@@ -1,0 +1,165 @@
+---
+title: Úlohy na pozadí
+description: Předejte dlouhotrvající nebo rychlostně omezenou práci Twenty workerům tak, že místo provádění všeho přímo vkládáte do fronty další spuštění logické funkce.
+icon: layer-group
+---
+
+Běh logické funkce je omezen svým `timeoutSeconds` (maximálně 900 sekund). Cokoli, co se nedokáže dokončit v tomto časovém okně — úplná resynchronizace, fan-out pro jednotlivé záznamy, služba třetí strany, která vás omezuje rychlostí — musí být rozděleno do menších běhů.
+
+`enqueueJob` dělá přesně to: požádá Twenty workery, aby jednu z logických funkcí vaší aplikace spustili později, ve vlastním procesu a s vlastním časovým limitem. Volající se vrátí okamžitě.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Zařazení spuštění do fronty
+
+Importujte `enqueueJob` z `twenty-sdk/logic-function` a nasměrujte ho na `universalIdentifier` logické funkce, kterou chcete spustit.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+Cílová funkce přijímá `payload` jako argument svého handleru, úplně stejně jako jakýkoli jiný spouštěč. Musí patřit do **stejné aplikace** jako volající – zařazení funkce jiné aplikace je odmítnuto s chybou `Logic function not found`.
+
+<Note>
+`enqueueJob` se vrátí, jakmile je úloha přijata, ne až když je dokončena. Nevrací výsledek cíle – nechte cíl zapsat, co vytváří, do [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store) nebo do záznamu v pracovním prostoru, pokud to potřebujete znovu přečíst.
+</Note>
+
+## Možnosti úlohy
+
+| Možnost      | Výchozí | Rozsah                  | K čemu slouží                                                                                                         |
+| ------------ | ------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`     | `0`–`10`                | Další pokusy, pokud spuštění vyvolá výjimku. Zvyšujte tuto hodnotu jen u handlerů, které je bezpečné spustit dvakrát. |
+| `delayMs`    | `0`     | `0`–`604800000` (7 dní) | Po tuto dobu se čeká, než se spuštění stane způsobilým.                                                               |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**Prioritu zatím nelze konfigurovat.** Zařazené úlohy jsou vždy spuštěny s nejnižší prioritou, takže práce platformy není nikdy zdržována úlohami aplikací. Možnost řízení priority brzy přibude.
+</Note>
+
+Zařazené spuštění dědí jednajícího uživatele funkce, která ho zařadila, takže pracuje se stejnými oprávněními.
+
+## Použití: stránkování dlouhé synchronizace
+
+Klasický tvar je funkce, která do fronty zařazuje *samu sebe* s dalším kurzorem. Každé spuštění zpracuje jednu stránku práce s velkou rezervou vůči svému vlastnímu časovému limitu a řetězec se zastaví, když už nic nezbývá.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Rozvětvení po záznamech
+
+Když je práce přirozeně po položkách, zařaďte do fronty jednu úlohu na položku a nechte workery zpracovávat je paralelně místo smyčky inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Doporučené postupy pro dlouhotrvající práci
+
+Dvě pravidla pokryjí téměř každou dlouhou úlohu: **rekurze místo smyčky** a **zpracování omezeného bloku na jedno spuštění**.
+
+Spuštění, které se snaží udělat všechno, je způsob selhání – narazí na časový limit a při opakování začne celé znovu od nuly. Místo toho nastavte velikost jednoho bloku tak, aby se pohodlně vešel do `timeoutSeconds`, uložte si svou pozici a zařaďte do fronty další spuštění.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Co to drží pohromadě:
+
+* **Velikost bloku určete podle nejpomalejší položky, ne podle průměru.** `CHUNK_SIZE × worst-case item time` se musí vejít do `timeoutSeconds` s rezervou, jinak se konec bloku ztratí, když je spuštění utnuto.
+* **Udělejte ukončovací podmínku explicitní.** Rekurzi provádějte jen tehdy, když se vrátil plný blok. Řetězec, který se zastavuje jen na základě „žádné výsledky“, poběží donekonečna, pokud zdroj někdy uprostřed vrátí krátkou stránku.
+* **Uložte průběh před zařazením dalšího spuštění,** takže se neúspěšný článek řetězu znovu spustí od posledního dokončeného bloku místo od začátku.
+* **Udržujte každý blok idempotentní.** Znovuzpracování jednoho bloku po opakování nesmí vést k dvojím zápisům – své zápisy važte na záznam nebo externí ID, které zpracováváte.
+* **Preferujte řetězec po blocích před jedním obřím rozvětvením**, když práce zasahuje třetí stranu s omezením rychlosti: řetězec s `delayMs` sám sebe dávkuje, zatímco tisíce úloh zařazených najednou se stanou způsobilými okamžitě.
+
+<Warning>
+Opakované pokusy znovu spustí celý handler. Než nastavíte `retryLimit` nad `0`, udržujte zařazené handlery idempotentní.
+</Warning>

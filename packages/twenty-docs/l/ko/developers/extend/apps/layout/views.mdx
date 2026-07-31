@@ -4,10 +4,12 @@ description: 앱의 객체에 대해 열 순서, 필터, 그룹이 미리 구성
 icon: list
 ---
 
-**보기**는 객체 레코드가 어떻게 표시될지에 대한 저장된 구성입니다. 어떤 필드가 표시되는지, 그 순서, 표시 여부, 적용된 필터나 그룹 등을 정의합니다. `defineView()`를 사용해 앱에 미리 구성된 보기를 포함할 수 있습니다. 일반적으로 생성하는 각 커스텀 객체마다 기본 목록 보기를 제공합니다.
+**보기**는 객체 레코드가 어떻게 표시될지에 대한 저장된 구성입니다. 어떤 필드가 표시되는지, 그 순서, 표시 여부, 적용된 필터나 그룹 등을 정의합니다. 앱과 함께 미리 구성된 뷰를 제공하려면 `defineView()`를 사용하세요.
+
+모든 개체는 서버에서 기본 목록 뷰(`OBJECT` 탐색 항목이 여는 "All ..." 테이블)를 자동으로 프로비저닝됩니다. 여기에는 앱이 생성하는 개체도 포함되며, 앱이 선언한 각 필드당 하나의 열이 생성됩니다. `defineView()`로 정의한 뷰는 항상 해당 기본 뷰 위에 추가되는 **추가** 뷰입니다.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,23 +34,23 @@ export default defineView({
 ## 핵심 요점
 
 * `objectUniversalIdentifier`는 이 뷰가 적용되는 객체를 지정합니다. 이 객체는 사용자가 정의한 커스텀 객체일 수도 있고, 표준 Twenty 객체일 수도 있습니다.
-* `key: ViewKey.INDEX`는 뷰를 객체의 기본 목록 보기( `OBJECT` 내비게이션 항목이 여는 보기)로 표시합니다.
-* `fields`는 어떤 열을 어떤 순서로 표시할지를 제어합니다. 각 필드는 `fieldMetadataUniversalIdentifier`를 참조합니다. 자동 생성된 시스템 필드(예: `createdAt`)를 참조하는 방법은 [시스템 필드 대상으로 지정하기](/l/ko/developers/extend/apps/data/system-fields)를 참조하세요.
+* 개체의 기본 목록 뷰는 서버 소유입니다. `key` 는 더 이상 사용되지 않으며 무시되므로 매니페스트 뷰가 이를 소유할 수 없습니다. 사이드바에서 한 번의 클릭으로 뷰에 접근할 수 있게 하려면 `VIEW` 탐색 항목을 제공하십시오.
+* `fields`는 어떤 열을 어떤 순서로 표시할지를 제어합니다. 각 필드는 `fieldMetadataUniversalIdentifier`를 참조합니다. 자동 생성된 시스템 필드(예: `createdAt`)를 참조하는 방법은 [시스템 메타데이터 대상으로 지정하기](/l/ko/developers/extend/apps/data/system-fields)를 참조하세요.
 * 또한 더 고급 구성을 위해 `filters`, `filterGroups`, `sorts`, `groups`, `fieldGroups`를 선언할 수 있습니다.
 * `position`은 동일한 객체에 여러 뷰가 있을 때의 정렬 순서를 제어합니다.
 
 ## 선택적 속성
 
-| 속성                                                                                                          | 값                                                                                  | 설명                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`                                                                                                      | `ViewType.TABLE`(기본값), `ViewType.KANBAN`, `ViewType.CALENDAR`                      | 레코드가 어떻게 배치되는지에 대한 설정입니다. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, 및 `CALENDAR_WIDGET`도 존재하지만, 페이지 레이아웃 위젯에서 내부적으로 사용됩니다.) |
-| `visibility`                                                                                                | `ViewVisibility.WORKSPACE`(기본값), `ViewVisibility.UNLISTED`                         | 워크스페이스 전체에 대해 뷰가 목록에 표시되는지, 선택기에서 숨겨지는지 여부입니다.                                                                                       |
-| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL`(기본값), `ViewOpenRecordIn.RECORD_PAGE`                 | 레코드를 클릭했을 때 어디에서 열리는지에 대한 설정입니다.                                                                                                     |
-| `정렬`                                                                                                        | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | 기본 정렬 순서입니다.                                                                                                                         |
-| `isCompact`                                                                                                 | `boolean`                                                                          | 행을 압축 형태로 표시합니다.                                                                                                                     |
-| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 레코드를 필드별로 그룹화합니다(예: 칸반 열).                                                                                                           |
-| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 칸반 열의 집계 및 크기 설정입니다.                                                                                                                 |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 캘린더 뷰: 레이아웃, 레코드의 위치를 결정하는 날짜 필드, 그리고 선택적인 종료 날짜 필드입니다.                                                                              |
+| 속성                                                                                                          | 값                                                                                  | 설명                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`                                                                                                      | `ViewType.TABLE`(기본값), `ViewType.KANBAN`, `ViewType.CALENDAR`                      | 레코드가 어떻게 배치되는지에 대한 설정입니다. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, 및 `CALENDAR_WIDGET`도 존재하지만, 페이지 레이아웃 위젯에서 내부적으로 사용됩니다.)                         |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE`(기본값), `ViewVisibility.UNLISTED`                         | 워크스페이스 전체에 대해 뷰가 목록에 표시되는지, 선택기에서 숨겨지는지 여부입니다.                                                                                                               |
+| `openRecordIn`                                                                                              | 사용 중단됨                                                                             | 더 이상 읽지 않음: 레코드가 어디에서 열리는지는 이제 [object](/l/ko/developers/extend/apps/data/objects)의 속성(`defineObject()`의 `openRecordIn`)으로 정의되며, 설정되지 않은 경우 각 멤버의 개별 기본 설정을 따릅니다. |
+| `정렬`                                                                                                        | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | 기본 정렬 순서입니다.                                                                                                                                                 |
+| `isCompact`                                                                                                 | `boolean`                                                                          | 행을 압축 형태로 표시합니다.                                                                                                                                             |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 레코드를 필드별로 그룹화합니다(예: 칸반 열).                                                                                                                                   |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 칸반 열의 집계 및 크기 설정입니다.                                                                                                                                         |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 캘린더 뷰: 레이아웃, 레코드의 위치를 결정하는 날짜 필드, 그리고 선택적인 종료 날짜 필드입니다.                                                                                                      |
 
 위의 모든 enum은 `twenty-sdk/define`에서 내보내집니다.
 

@@ -7,7 +7,7 @@ import {
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -80,11 +80,17 @@ export class AgentChatService {
   async createThread({
     userWorkspaceId,
     workspaceId,
+    id,
+    title,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
+    id?: string;
+    title?: string;
   }) {
     const savedThread = await this.threadRepository.save(workspaceId, {
+      ...(isDefined(id) ? { id } : {}),
+      ...(isDefined(title) ? { title } : {}),
       userWorkspaceId,
     });
 
@@ -106,6 +112,23 @@ export class AgentChatService {
     return savedThread;
   }
 
+  async findThreadById({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }) {
+    return this.threadRepository.findOne(workspaceId, {
+      where: {
+        id: threadId,
+        userWorkspaceId,
+      },
+    });
+  }
+
   async getThreadById({
     threadId,
     userWorkspaceId,
@@ -115,11 +138,10 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: {
-        id: threadId,
-        userWorkspaceId,
-      },
+    const thread = await this.findThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
     });
 
     if (!thread) {
@@ -266,7 +288,7 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: messageValues.processedAt,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -324,11 +346,29 @@ export class AgentChatService {
         threadId,
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
-        isHidden: false,
       },
-      order: { createdAt: 'DESC', id: 'DESC' },
+      order: {
+        processedAt: { direction: 'DESC', nulls: 'LAST' },
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
       select: ['id', 'turnId'],
     });
+  }
+
+  async hasConversationMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const visibleMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { threadId, isHidden: false },
+      select: ['id'],
+    });
+
+    return isDefined(visibleMessage);
   }
 
   async deleteAssistantMessagesForTurn({
@@ -379,6 +419,65 @@ export class AgentChatService {
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
     });
+  }
+
+  async ensureHiddenKickoffMessage({
+    threadId,
+    workspaceId,
+    text,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    text: string;
+  }): Promise<{ id: string; turnId: string }> {
+    const existingKickoffMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, isHidden: true },
+        relations: ['parts'],
+      },
+    );
+
+    if (isDefined(existingKickoffMessage)) {
+      if (
+        isDefined(existingKickoffMessage.turnId) &&
+        isNonEmptyArray(existingKickoffMessage.parts)
+      ) {
+        return {
+          id: existingKickoffMessage.id,
+          turnId: existingKickoffMessage.turnId,
+        };
+      }
+
+      await this.messageRepository.delete(workspaceId, {
+        id: existingKickoffMessage.id,
+      });
+
+      if (isDefined(existingKickoffMessage.turnId)) {
+        await this.turnRepository.delete(workspaceId, {
+          id: existingKickoffMessage.turnId,
+        });
+      }
+    }
+
+    const savedMessage = await this.addMessage({
+      threadId,
+      workspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text' as const, text }],
+      },
+      isHidden: true,
+    });
+
+    if (!isDefined(savedMessage.turnId)) {
+      throw new AiException(
+        'Workspace setup kickoff message was persisted without a turn',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    return { id: savedMessage.id, turnId: savedMessage.turnId };
   }
 
   async queueMessage({

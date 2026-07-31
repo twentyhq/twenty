@@ -28,6 +28,8 @@ export type WorkspaceUpgradeStep = {
 
 export type UpgradeStep = InstanceUpgradeStep | WorkspaceUpgradeStep;
 
+export type UpgradeStepKind = UpgradeStep['kind'];
+
 @Injectable()
 export class UpgradeSequenceReaderService {
   constructor(
@@ -55,6 +57,14 @@ export class UpgradeSequenceReaderService {
     }
 
     return sequence;
+  }
+
+  getUpgradeStepNames(
+    kinds?: Partial<Record<UpgradeStepKind, true>>,
+  ): string[] {
+    return this.getUpgradeSequence()
+      .filter((step) => !isDefined(kinds) || kinds[step.kind] === true)
+      .map((step) => step.name);
   }
 
   locateStepInSequenceOrThrow({

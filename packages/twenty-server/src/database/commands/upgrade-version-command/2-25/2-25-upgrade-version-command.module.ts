@@ -6,6 +6,8 @@ import { BackfillMessageListMembersJunctionTargetCommand } from 'src/database/co
 import { AddMessageCampaignComposerTabCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229940000-add-message-campaign-composer-tab.command';
 import { ConfigureMessageCampaignCommandMenuCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229960000-configure-message-campaign-command-menu.command';
 import { AddMessageCampaignNameFieldCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785229970000-add-message-campaign-name-field.command';
+import { RemoveMessageCampaignNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332550000-remove-message-campaign-navigation-menu-item.command';
+import { AlignMessageCampaignViewFieldPositionsCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785332560000-align-message-campaign-view-field-positions.command';
 import { MakeMessageCampaignUserFacingCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785430000000-make-message-campaign-user-facing.command';
 import { MakeMessageListUserFacingCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-workspace-command-1785430000001-make-message-list-user-facing.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -29,6 +31,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddMessageCampaignComposerTabCommand,
     ConfigureMessageCampaignCommandMenuCommand,
     AddMessageCampaignNameFieldCommand,
+    RemoveMessageCampaignNavigationMenuItemCommand,
+    AlignMessageCampaignViewFieldPositionsCommand,
     MakeMessageCampaignUserFacingCommand,
     MakeMessageListUserFacingCommand,
   ],
