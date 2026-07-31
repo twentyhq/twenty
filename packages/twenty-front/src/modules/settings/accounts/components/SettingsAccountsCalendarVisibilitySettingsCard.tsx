@@ -13,7 +13,7 @@ type SettingsAccountsEventVisibilitySettingsCardProps = {
 
 const StyledCardMediaContainer = styled.div`
   > * {
-    height: ${themeCssVariables.spacing[6]};
+    height: ${themeCssVariables.spacing[8]};
   }
 `;
 
