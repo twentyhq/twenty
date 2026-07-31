@@ -16,11 +16,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
+import { MessageCampaignResolver } from 'src/modules/emailing/resolvers/message-campaign.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
+import { MessageCampaignQueryService } from 'src/modules/emailing/services/message-campaign-query.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
@@ -46,11 +48,13 @@ import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscri
   providers: [
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignQueryService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
     EmailingSendResolver,
+    MessageCampaignResolver,
     MessageSuppressionResolver,
     UnsubscribeTopicResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),

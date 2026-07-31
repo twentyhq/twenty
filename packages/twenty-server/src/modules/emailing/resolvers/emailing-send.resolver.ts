@@ -8,6 +8,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
+import { SaveMessageCampaignDraftInput } from 'src/engine/core-modules/emailing-domain/dtos/save-message-campaign-draft.input';
+import { SaveMessageCampaignDraftOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/save-message-campaign-draft-output.dto';
 import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
@@ -17,6 +19,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
@@ -75,6 +78,7 @@ export class EmailingSendResolver {
     @Args('input') input: SendMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailCreditsOrThrow(
@@ -84,11 +88,49 @@ export class EmailingSendResolver {
     return this.messageCampaignService.send({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
+      workspaceMemberId,
+      campaignId: input.campaignId,
       unsubscribeTopicId: input.unsubscribeTopicId,
       listId: input.listId,
       subject: input.subject,
       html: input.body,
       fromAddress: input.fromAddress,
+    });
+  }
+
+  @Mutation(() => SaveMessageCampaignDraftOutputDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async saveMessageCampaignDraft(
+    @Args('input') input: SaveMessageCampaignDraftInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+  ): Promise<SaveMessageCampaignDraftOutputDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.messageCampaignService.saveDraft({
+      workspaceId: currentWorkspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+      ...input,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async deleteMessageCampaignDraft(
+    @Args('campaignId', { type: () => String }) campaignId: string,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+  ): Promise<boolean> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.messageCampaignService.deleteDraft({
+      workspaceId: currentWorkspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+      campaignId,
     });
   }
 

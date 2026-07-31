@@ -10,6 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type SendMessageCampaignParams = {
+  campaignId?: string;
   listId: string;
   unsubscribeTopicId?: string;
   subject: string;

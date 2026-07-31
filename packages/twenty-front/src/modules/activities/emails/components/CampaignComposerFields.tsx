@@ -140,7 +140,7 @@ export const CampaignComposerFields = ({
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        defaultValue={campaignState.body}
         onChange={campaignState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}
