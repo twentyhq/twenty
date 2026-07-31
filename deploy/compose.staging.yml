@@ -32,6 +32,12 @@ services:
       AUTH_GOOGLE_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_CALLBACK_URL:-}
       AUTH_GOOGLE_APIS_CALLBACK_URL: ${STAGING_AUTH_GOOGLE_APIS_CALLBACK_URL:-}
       CALENDAR_PROVIDER_GOOGLE_ENABLED: ${STAGING_CALENDAR_PROVIDER_GOOGLE_ENABLED:-false}
+      # Migrations are driven explicitly by `staging.sh migrate`, never from the
+      # entrypoint. Both callers start the server and then migrate, so leaving
+      # this unset ran two `upgrade` processes against one database: they read
+      # the same attempt number, collided on UQ_upgrade_migration_workspace, and
+      # recorded a failure for a command that had actually succeeded.
+      DISABLE_DB_MIGRATIONS: "true"
       DISABLE_CRON_JOBS_REGISTRATION: "true"
       STORAGE_TYPE: local
       EMAIL_DRIVER: logger

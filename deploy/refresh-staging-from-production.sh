@@ -124,8 +124,13 @@ docker exec "$FILE_HELPER" chown -R 1000:1000 /data
 docker rm -f "$FILE_HELPER" >/dev/null
 
 echo "[staging-refresh] starting staging and running migrations/upgrades"
-compose up -d server worker
+# Same order as staging-converge.sh: start without the health gate, migrate,
+# then require health. The server no longer migrates from its entrypoint, so
+# the restored production schema has to be brought forward explicitly here.
+"$REPO_ROOT/deploy/staging.sh" up --no-wait
+"$REPO_ROOT/deploy/staging.sh" migrate
 "$REPO_ROOT/deploy/staging.sh" wait
+"$REPO_ROOT/deploy/staging.sh" up
 "$REPO_ROOT/deploy/staging.sh" tailnet-up
 "$REPO_ROOT/deploy/staging.sh" test
 

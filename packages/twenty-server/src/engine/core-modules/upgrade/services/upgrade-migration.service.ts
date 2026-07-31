@@ -3,7 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
+import {
+  In,
+  IsNull,
+  QueryFailedError,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import {
@@ -39,6 +45,18 @@ export type InstanceUpgradeProgress = {
 };
 
 const UPGRADE_MIGRATION_SAVE_BATCH_SIZE = 1000;
+const UPGRADE_MIGRATION_CONFLICT_RETRIES = 5;
+const POSTGRES_UNIQUE_VIOLATION = '23505';
+
+const isAttemptConflict = (error: unknown): boolean => {
+  if (!(error instanceof QueryFailedError)) {
+    return false;
+  }
+
+  const driverError = error.driverError as { code?: string } | undefined;
+
+  return driverError?.code === POSTGRES_UNIQUE_VIOLATION;
+};
 
 @Injectable()
 export class UpgradeMigrationService {
@@ -101,25 +119,91 @@ export class UpgradeMigrationService {
     const { name, workspaceIds, isInstance, status, executedByVersion } =
       params;
 
-    const repository = params.queryRunner
-      ? params.queryRunner.manager.getRepository(UpgradeMigrationEntity)
-      : this.upgradeMigrationRepository;
-
     const errorMessage =
       params.status === 'failed'
         ? formatUpgradeErrorForStorage(params.error)
         : null;
 
+    const insertArgs = {
+      name,
+      workspaceIds,
+      isInstance,
+      status,
+      executedByVersion,
+      errorMessage,
+    };
+
+    // A caller that supplies a query runner owns the transaction, so a conflict
+    // has to surface: retrying inside its aborted transaction cannot succeed.
+    if (isDefined(params.queryRunner)) {
+      await this.insertAttempts({
+        repository: params.queryRunner.manager.getRepository(
+          UpgradeMigrationEntity,
+        ),
+        ...insertArgs,
+      });
+
+      return;
+    }
+
+    // The attempt number is derived from rows this call is about to write, so
+    // two upgrade processes can read the same number and collide on the attempt
+    // uniqueness constraint. Recompute and retry, one transaction per try so a
+    // conflict leaves nothing half-written.
+    for (
+      let retriesLeft = UPGRADE_MIGRATION_CONFLICT_RETRIES;
+      ;
+      retriesLeft--
+    ) {
+      try {
+        await this.upgradeMigrationRepository.manager.transaction(
+          async (entityManager) =>
+            this.insertAttempts({
+              repository: entityManager.getRepository(UpgradeMigrationEntity),
+              ...insertArgs,
+            }),
+        );
+
+        return;
+      } catch (error) {
+        if (retriesLeft <= 0 || !isAttemptConflict(error)) {
+          throw error;
+        }
+      }
+    }
+  }
+
+  private async insertAttempts({
+    repository,
+    name,
+    workspaceIds,
+    isInstance,
+    status,
+    executedByVersion,
+    errorMessage,
+  }: {
+    repository: Repository<UpgradeMigrationEntity>;
+    name: string;
+    workspaceIds: string[];
+    isInstance: boolean;
+    status: UpgradeMigrationStatus;
+    executedByVersion: string;
+    errorMessage: string | null;
+  }): Promise<void> {
     if (isInstance) {
-      const previousAttempts = await repository.count({
-        where: { name, workspaceId: IsNull() },
+      // Every row an instance command writes shares the instance attempt
+      // number, including the per-workspace cursor rows.
+      const attempt = await this.getNextAttempt({
+        repository,
+        name,
+        workspaceId: null,
       });
 
       const instanceRows = [
         {
           name,
           status,
-          attempt: previousAttempts + 1,
+          attempt,
           executedByVersion,
           workspaceId: null,
           errorMessage,
@@ -127,7 +211,7 @@ export class UpgradeMigrationService {
         ...workspaceIds.map((workspaceId) => ({
           name,
           status,
-          attempt: previousAttempts + 1,
+          attempt,
           executedByVersion,
           workspaceId,
           errorMessage,
@@ -147,14 +231,10 @@ export class UpgradeMigrationService {
     const rows = [];
 
     for (const workspaceId of workspaceIds) {
-      const previousAttempts = await repository.count({
-        where: { name, workspaceId },
-      });
-
       rows.push({
         name,
         status,
-        attempt: previousAttempts + 1,
+        attempt: await this.getNextAttempt({ repository, name, workspaceId }),
         executedByVersion,
         workspaceId,
         errorMessage,
@@ -164,6 +244,28 @@ export class UpgradeMigrationService {
     for (const batch of chunk(rows, UPGRADE_MIGRATION_SAVE_BATCH_SIZE)) {
       await repository.save(batch);
     }
+  }
+
+  // Counting rows would renumber attempts if any were ever removed, handing the
+  // next write a number that already exists.
+  private async getNextAttempt({
+    repository,
+    name,
+    workspaceId,
+  }: {
+    repository: Repository<UpgradeMigrationEntity>;
+    name: string;
+    workspaceId: string | null;
+  }): Promise<number> {
+    const highestAttempt = await repository.findOne({
+      where: {
+        name,
+        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+      },
+      order: { attempt: 'DESC' },
+    });
+
+    return isDefined(highestAttempt) ? highestAttempt.attempt + 1 : 1;
   }
 
   async markAsWorkspaceInitial({
