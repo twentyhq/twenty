@@ -57,7 +57,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
         existingGroup.objectMetadataId !== objectMetadataId)
     ) {
       throw new RowLevelPermissionPredicateException(
-        `Predicate group "${predicateGroup.id}" belongs to a different role or object and cannot be modified here. Omit the id to create a new group.`,
+        'Predicate group belongs to a different role or object and cannot be modified here. Omit the id to create a new group.',
         RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
       );
     }
@@ -83,7 +83,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
           existingPredicate.objectMetadataId !== objectMetadataId)
       ) {
         throw new RowLevelPermissionPredicateException(
-          `Predicate "${predicate.id}" belongs to a different role or object and cannot be modified here. Omit the id to create a new predicate.`,
+          'Predicate belongs to a different role or object and cannot be modified here. Omit the id to create a new predicate.',
           RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
         );
       }
@@ -104,7 +104,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
         referencedGroup.objectMetadataId !== objectMetadataId
       ) {
         throw new RowLevelPermissionPredicateException(
-          `Predicate group "${groupId}" is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.`,
+          'Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.',
           RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         );
       }
@@ -117,14 +117,14 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
 
     if (!isDefined(fieldMetadata)) {
       throw new RowLevelPermissionPredicateException(
-        `Field "${predicate.fieldMetadataId}" not found.`,
+        'Field metadata not found',
         RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
       );
     }
 
     if (fieldMetadata.objectMetadataId !== objectMetadataId) {
       throw new RowLevelPermissionPredicateException(
-        `Field "${fieldMetadata.name}" belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict.`,
+        'Field belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict.',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }
@@ -150,7 +150,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
         workspaceMemberObjectMetadataId
     ) {
       throw new RowLevelPermissionPredicateException(
-        `workspaceMemberFieldMetadataId "${workspaceMemberFieldMetadataId}" is not a field of the workspaceMember object. The rule would silently never apply.`,
+        'workspaceMemberFieldMetadataId is not a field of the workspaceMember object. The rule would silently never apply.',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }

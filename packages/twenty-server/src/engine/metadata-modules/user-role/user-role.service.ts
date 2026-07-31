@@ -70,6 +70,13 @@ export class UserRoleService {
       );
     }
 
+    // Checked before role validation so a self-assignment fails with the
+    // self-role error even when the supplied role does not exist.
+    this.validateNotSelfAssignmentOrThrow({
+      userWorkspaceIds: [userWorkspace.id],
+      actingUserWorkspaceId,
+    });
+
     await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
       roleId,
       workspaceId,
@@ -100,18 +107,10 @@ export class UserRoleService {
       return;
     }
 
-    if (
-      isDefined(actingUserWorkspaceId) &&
-      userWorkspaceIds.includes(actingUserWorkspaceId)
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
-        PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
-        {
-          userFriendlyMessage: msg`You cannot change your own role. Please ask another administrator to update your role.`,
-        },
-      );
-    }
+    this.validateNotSelfAssignmentOrThrow({
+      userWorkspaceIds,
+      actingUserWorkspaceId,
+    });
 
     const userWorkspaceIdsToAssign =
       await this.validateAssignRoleInputsAndGetUserWorkspaceIdsToAssign({
@@ -243,6 +242,27 @@ export class UserRoleService {
       },
       authContext,
     );
+  }
+
+  private validateNotSelfAssignmentOrThrow({
+    userWorkspaceIds,
+    actingUserWorkspaceId,
+  }: {
+    userWorkspaceIds: string[];
+    actingUserWorkspaceId?: string;
+  }): void {
+    if (
+      isDefined(actingUserWorkspaceId) &&
+      userWorkspaceIds.includes(actingUserWorkspaceId)
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
+        PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
+        {
+          userFriendlyMessage: msg`You cannot change your own role. Please ask another administrator to update your role.`,
+        },
+      );
+    }
   }
 
   private async getWorkspaceMemberByIdOrThrow({

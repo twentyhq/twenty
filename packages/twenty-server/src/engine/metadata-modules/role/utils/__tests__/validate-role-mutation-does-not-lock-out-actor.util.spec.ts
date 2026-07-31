@@ -14,6 +14,7 @@ const createFlatRole = (overrides: Partial<FlatRole>): FlatRole =>
   ({
     id: actingRoleId,
     label: 'Manager',
+    isEditable: true,
     canUpdateAllSettings: true,
     rolePermissionFlagIds: [],
     ...overrides,
