@@ -39,8 +39,8 @@ import {
   hashUserSessionToken,
 } from 'src/engine/core-modules/user-session/utils/user-session-token.util';
 
-export const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
-export const USER_SESSION_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
+const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
+const USER_SESSION_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
 
 // Impersonation sessions keep today's short impersonation token lifetime.
 const IMPERSONATION_SESSION_LIFETIME = '1d';
